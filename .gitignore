@@ -6,6 +6,7 @@ lex.yy.cc
 *.tab.c
 *.tab.h
 phase1-lexer/lexer
+phase1-lexer/logs/
 phase2-parser/parser
 phase3-ir/ir
 phase4-codegen/codegen

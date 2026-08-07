@@ -21,6 +21,8 @@
 
 %option noyywrap
 %option yylineno
+%option nounput
+%option noinput
 
 %{
 #include <cstdio>
@@ -30,17 +32,9 @@
 #include <vector>
 #include <utility>
 
-/* collected results */
-static std::vector<std::pair<std::string,std::string>> tokens;   /* lexeme, token */
-static std::vector<std::string> lex_errors;                      /* formatted error messages */
-
-static void addToken(const char* tokName, const char* lexeme) {
-    tokens.push_back(std::make_pair(std::string(lexeme), std::string(tokName)));
-}
-
-static void addError(int line, const std::string& msg) {
-    lex_errors.push_back("Line " + std::to_string(line) + ": " + msg);
-}
+#include "diagnostics.h"
+#include "logger.h"
+#include "token.h"
 
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
@@ -62,7 +56,7 @@ HEXDIGIT    [0-9a-fA-F]
 <COMMENTSTATE>"*/"               { BEGIN(INITIAL); }
 <COMMENTSTATE>\n                 { /* keep counting via yylineno automatically */ }
 <COMMENTSTATE><<EOF>>            {
-                                    addError(tokStartLine, "unterminated block comment '/*'");
+                                    reportError( tokStartLine,  "/*",  "Unterminated block comment");
                                     BEGIN(INITIAL);
                                     yyterminate();
                                   }
@@ -77,16 +71,16 @@ HEXDIGIT    [0-9a-fA-F]
 \"                                { strbuf = "\""; tokStartLine = yylineno; BEGIN(STRSTATE); }
 <STRSTATE>\\.                     { strbuf += yytext; }
 <STRSTATE>\"                      { strbuf += "\""; addToken("string_literal", strbuf.c_str()); BEGIN(INITIAL); }
-<STRSTATE>\n                      { addError(tokStartLine, "unterminated string literal " + strbuf); BEGIN(INITIAL); yyless(0); }
-<STRSTATE><<EOF>>                 { addError(tokStartLine, "unterminated string literal " + strbuf); BEGIN(INITIAL); yyterminate(); }
+<STRSTATE>\n                      {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
+<STRSTATE><<EOF>>                 {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
 <STRSTATE>.                       { strbuf += yytext; }
 
  /* ---- char literals ---- */
 '                                  { strbuf = "'"; tokStartLine = yylineno; BEGIN(CHRSTATE); }
 <CHRSTATE>\\.                     { strbuf += yytext; }
 <CHRSTATE>'                       { strbuf += "'"; addToken("char_constant", strbuf.c_str()); BEGIN(INITIAL); }
-<CHRSTATE>\n                      { addError(tokStartLine, "unterminated char literal " + strbuf); BEGIN(INITIAL); yyless(0); }
-<CHRSTATE><<EOF>>                 { addError(tokStartLine, "unterminated char literal " + strbuf); BEGIN(INITIAL); yyterminate(); }
+<CHRSTATE>\n                      { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
+<CHRSTATE><<EOF>>                 { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
 <CHRSTATE>.                       { strbuf += yytext; }
 
  /* ---- numeric constants ---- */
@@ -94,8 +88,8 @@ HEXDIGIT    [0-9a-fA-F]
 {DIGIT}+\.{DIGIT}+([eE][+-]?{DIGIT}+)?[fF]?               { addToken("float_constant", yytext); }
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken("float_constant", yytext); }
 {DIGIT}+                                                   { addToken("integer_constant", yytext); }
-{DIGIT}+{LETTER}({LETTER}|{DIGIT})*                        { addError(yylineno, std::string("invalid numeric literal '") + yytext + "'"); }
-{DIGIT}+\.{DIGIT}*{LETTER}({LETTER}|{DIGIT})*              { addError(yylineno, std::string("invalid numeric literal '") + yytext + "'"); }
+{DIGIT}+{LETTER}({LETTER}|{DIGIT})*                        {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
+{DIGIT}+\.{DIGIT}*{LETTER}({LETTER}|{DIGIT})*              {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
 
  /* ---- identifiers ---- */
 {ID}                              { addToken("identifier", yytext); }
@@ -133,10 +127,9 @@ HEXDIGIT    [0-9a-fA-F]
 [ \t\r]+                          { /* skip whitespace */ }
 \n                                 { /* newline: yylineno auto-increments */ }
 
-.                                  { addError(yylineno, std::string("illegal character '") + yytext + "'"); }
+.                                  { reportError(  yylineno,  yytext,  "Illegal character"); }
 
 %%
-
 int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <source-file>\n", argv[0]);
@@ -151,18 +144,26 @@ int main(int argc, char** argv) {
     yylex();
     fclose(f);
 
-    if (!lex_errors.empty()) {
-        printf("Lexical error(s) found in %s:\n", argv[1]);
-        for (auto& e : lex_errors) {
-            printf("  %s\n", e.c_str());
+    writeLexerLog(argv[1], diagnostics);
+
+    if (hasErrors()) {
+        fprintf(stderr, "Lexical analysis failed: %zu error(s) found in '%s'.\n",
+                diagnostics.size(), argv[1]);
+        for (const auto &d : diagnostics) {
+            fprintf(stderr, "Line %d: %s (near '%s')\n",
+                    d.line, d.message.c_str(), d.lexeme.c_str());
         }
         return 1;
     }
 
     printf("%-30s %-20s\n", "Lexeme", "Token");
     printf("%-30s %-20s\n", "------", "-----");
-    for (auto& t : tokens) {
-        printf("%-30s %-20s\n", t.first.c_str(), t.second.c_str());
+
+    for (const auto &t : tokens) {
+        printf("%-30s %-20s\n",
+               t.lexeme.c_str(),
+               t.type.c_str());
     }
+
     return 0;
 }
