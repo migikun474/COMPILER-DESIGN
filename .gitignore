@@ -1,0 +1,17 @@
+# build artifacts
+*.o
+*.out
+lex.yy.c
+lex.yy.cc
+*.tab.c
+*.tab.h
+phase1-lexer/lexer
+phase2-parser/parser
+phase3-ir/ir
+phase4-codegen/codegen
+
+# editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
