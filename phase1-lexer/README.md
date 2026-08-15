@@ -66,6 +66,15 @@ Notes:
 - Unterminated char literals
 - Unterminated block comments
 - Malformed numeric literals (e.g. `12abc`, `3.14x`)
+- Invalid escape sequences in strings/chars (e.g. `\q`, `\xz`, `\89` —
+  digits 8/9 aren't valid octal digits). Valid escapes: `\n \t \r \\ \'
+  \" \a \b \f \v \?`, octal `\ddd` (1–3 digits, 0–7), and hex `\xH+`
+  (one or more hex digits).
+- Empty character literals (`''`) — this language requires exactly one
+  character (or one escape) inside `'...'`, unlike real C which permits
+  multi-character constants as an implementation-defined extension; here
+  `'AB'` is a lexical error, not just a compiler warning.
+- Char literals with more than one character (`'AB'`) — see above.
 
 ## Test cases (`test/`)
 
@@ -76,5 +85,5 @@ Notes:
 | `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
-| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above |
+| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, unterminated comment) |
 | `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |

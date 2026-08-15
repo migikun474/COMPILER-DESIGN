@@ -50,6 +50,17 @@
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
 static int tokStartLine;
+static bool litHadError;
+static int chrCharCount;   /* how many actual characters seen in the
+                               current char literal (an escape counts
+                               as ONE character, e.g. '\n' has 1) */
+
+static const char* SIMPLE_ESCAPES = "ntr\\'\"abfv?";
+
+static void invalidEscape(const char* text, int line) {
+    reportError(line, text, "Invalid escape sequence");
+    litHadError = true;
+}
 %}
 
 DIGIT       [0-9]
@@ -104,20 +115,45 @@ HEXDIGIT    [0-9a-fA-F]
 "malloc"|"free"|"calloc"|"realloc"                                        { addToken("memory_keyword", yytext); }
 
  /* ---- string literals ---- */
-\"                                { strbuf = "\""; tokStartLine = yylineno; BEGIN(STRSTATE); }
-<STRSTATE>\\.                     { strbuf += yytext; }
-<STRSTATE>\"                      { strbuf += "\""; addToken("string_literal", strbuf.c_str()); BEGIN(INITIAL); }
+\"                                { strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }
+
+ /* ---- char literals ---- */
+'                                  { strbuf = "'"; tokStartLine = yylineno; litHadError = false; chrCharCount = 0; BEGIN(CHRSTATE); }
+
+ /* ---- escape sequences: rules shared by strings and char literals.
+    Ordered most-specific first so maximal munch does the right thing:
+    a well-formed "\x41" or "\101" is consumed whole by the valid rules
+    below; a malformed "\xz" or "\89" falls through to the 2-char
+    "\x"/"\8"/"\9" rules instead, which flag it precisely. ---- */
+<STRSTATE,CHRSTATE>\\[0-7]{1,3}     { strbuf += yytext; chrCharCount++; }
+<STRSTATE,CHRSTATE>\\x{HEXDIGIT}+   { strbuf += yytext; chrCharCount++; }
+<STRSTATE,CHRSTATE>\\x              { invalidEscape(yytext, yylineno); strbuf += yytext; chrCharCount++; }
+<STRSTATE,CHRSTATE>\\[89]           { invalidEscape(yytext, yylineno); strbuf += yytext; chrCharCount++; }
+<STRSTATE,CHRSTATE>\\.              {
+                                        if (strchr(SIMPLE_ESCAPES, yytext[1]) == nullptr) invalidEscape(yytext, yylineno);
+                                        strbuf += yytext;
+                                        chrCharCount++;
+                                     }
+
+<STRSTATE>\"                      { strbuf += "\""; if (!litHadError) addToken("string_literal", strbuf.c_str()); BEGIN(INITIAL); }
 <STRSTATE>\n                      {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
 <STRSTATE><<EOF>>                 {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
 <STRSTATE>.                       { strbuf += yytext; }
 
- /* ---- char literals ---- */
-'                                  { strbuf = "'"; tokStartLine = yylineno; BEGIN(CHRSTATE); }
-<CHRSTATE>\\.                     { strbuf += yytext; }
-<CHRSTATE>'                       { strbuf += "'"; addToken("char_constant", strbuf.c_str()); BEGIN(INITIAL); }
+<CHRSTATE>'                       {
+                                       strbuf += "'";
+                                       if (chrCharCount == 0) {
+                                           reportError(tokStartLine, strbuf, "Empty character literal");
+                                       } else if (chrCharCount > 1) {
+                                           reportError(tokStartLine, strbuf, "Too many characters in character literal");
+                                       } else if (!litHadError) {
+                                           addToken("char_constant", strbuf.c_str());
+                                       }
+                                       BEGIN(INITIAL);
+                                   }
 <CHRSTATE>\n                      { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
 <CHRSTATE><<EOF>>                 { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
-<CHRSTATE>.                       { strbuf += yytext; }
+<CHRSTATE>.                       { strbuf += yytext; chrCharCount++; }
 
  /* ---- numeric constants ---- */
 0[xX]{HEXDIGIT}+                                          { addToken("integer_constant", yytext); }
