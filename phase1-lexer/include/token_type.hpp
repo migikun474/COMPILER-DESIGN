@@ -42,6 +42,7 @@ enum class TokenType {
     // ---- storage-class keywords ----
     STATIC,
     TYPEDEF,
+    AUTO,
 
     // ---- control-flow keywords ----
     IF,
@@ -135,12 +136,7 @@ enum class TokenType {
     OPEN_BRACE_OP,
     CLOSE_BRACE_OP,
     OPEN_BRACKET_OP,
-    CLOSE_BRACKET_OP,
-
-    // ---- reserved for lambda support -- enum slot only, no flex rule
-    // wired up yet, pending a decision on syntax (C has no native lambda
-    // form to fall back on) ----
-    LAMBDA
+    CLOSE_BRACKET_OP
 };
 
 std::string to_string(TokenType type);

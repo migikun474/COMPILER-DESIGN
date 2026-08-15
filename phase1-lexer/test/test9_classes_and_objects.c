@@ -17,6 +17,10 @@ class Animal {
             return this->age;
         }
 
+        auto ageGetter() {
+            return [this]() { return this->age; };
+        }
+
     private:
         int secretId;
 

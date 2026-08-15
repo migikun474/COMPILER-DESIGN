@@ -31,6 +31,7 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     // storage class
     {"static", TokenType::STATIC},
     {"typedef", TokenType::TYPEDEF},
+    {"auto", TokenType::AUTO},
 
     // control flow
     {"if", TokenType::IF},
@@ -165,6 +166,7 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
 
     {TokenType::STATIC, "static"},
     {TokenType::TYPEDEF, "typedef"},
+    {TokenType::AUTO, "auto"},
 
     {TokenType::IF, "if"},
     {TokenType::ELSE, "else"},
@@ -253,8 +255,6 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::CLOSE_BRACE_OP, "close_brace_op"},
     {TokenType::OPEN_BRACKET_OP, "open_bracket_op"},
     {TokenType::CLOSE_BRACKET_OP, "close_bracket_op"},
-
-    {TokenType::LAMBDA, "lambda"},
 };
 
 std::string to_string(TokenType type) {

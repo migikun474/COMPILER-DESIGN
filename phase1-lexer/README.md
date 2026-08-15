@@ -134,7 +134,7 @@ make clean      # remove build artifacts
   | composite types | `struct enum union class` |
   | access modifiers | `public private protected` |
   | object-oriented | `this` |
-  | storage class | `static typedef` |
+  | storage class | `static typedef auto` |
   | control flow | `if else for while do until switch case default break continue goto return` |
   | I/O (custom) | `printf scanf` |
   | dynamic memory (custom) | `malloc free calloc realloc` |
@@ -157,6 +157,20 @@ make clean      # remove build artifacts
 * **Not supported: boolean *type*.** There is no `bool` type keyword to
   declare a variable of that type — you can currently only assign
   `true`/`false` to an `int`. Flag it if you want a `bool` type added.
+* **Lambda functions need no new tokens at all.** This language uses
+  C++-style lambda syntax — `[capture](params) { body }`, optionally
+  with a trailing `-> returnType` — and every piece of that already
+  decomposes into existing tokens: `[`/`]` (already used for arrays),
+  `(`/`)`, `{`/`}`, `->` (already used for pointer member access), plus
+  ordinary operators/identifiers inside the capture list (`&`, `=`,
+  `,`, and even `this` for capturing the enclosing object). Verified by
+  running every capture form (empty, `&`, `=`, mixed named captures,
+  explicit return type, capturing `this`) through the lexer — nothing
+  needed to change in `lexer.l`. The one real gap this exposed: `auto`
+  wasn't a keyword, which matters specifically for lambdas since
+  `auto f = [](...){...};` is the only sensible way to hold a lambda's
+  value in this language — fixed alongside this (`AUTO` is now a
+  storage-class-style keyword, see above).
 * **Not supported yet: `new`/`delete`/operator overloading.** Only
   `class`/access-modifiers/`this`/scope-resolution were built — real
   C++-style object construction/destruction keywords weren't requested,
@@ -263,4 +277,5 @@ make clean      # remove build artifacts
 | `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid binary literal, unterminated comment) |
 | `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal/binary literals, integer suffixes (`U`/`L`/`LL` combinations), leading/trailing-dot floats (`.5`/`5.`), boolean literals (`true`/`false`), and this language's custom I/O and memory-allocation reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
 | `test8_file_manipulation.c` | this language's custom file-manipulation reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
-| `test9_classes_and_objects.c` | object-oriented keywords/operators: `class`, access modifiers (`public`/`private`/`protected`), `this`, scope resolution (`::`) |
+| `test9_classes_and_objects.c` | object-oriented keywords/operators: `class`, access modifiers (`public`/`private`/`protected`), `this`, scope resolution (`::`), and a lambda capturing `this` |
+| `test10_lambda_functions.c` | C++-style lambda expressions: empty/`&`/`=`/mixed capture lists, trailing return type (`-> int`), `auto` |
