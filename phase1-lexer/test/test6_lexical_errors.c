@@ -7,5 +7,6 @@ int main() {
     char *badhex = "\xz";
     char *badoct = "\89";
     int badoctnum = 089;
+    int badbinnum = 0b1102;
     /* this comment never closes
     int z = 1;

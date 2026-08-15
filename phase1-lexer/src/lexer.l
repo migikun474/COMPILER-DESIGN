@@ -70,16 +70,22 @@ LETTER      [a-zA-Z_]
 ID          {LETTER}({LETTER}|{DIGIT})*
 HEXDIGIT    [0-9a-fA-F]
 OCTDIGIT    [0-7]
+BINDIGIT    [01]
 
  /* integer suffixes: u/U (unsigned), l/L (long), ll/LL (long long),
     in either order, matching the real-C grammar -- ll/LL must be the
-    SAME case (lL / Ll are not valid and fall through to the malformed-
-    literal catch-all below via maximal munch, since they're left
-    unconsumed here and that rule greedily eats all trailing letters) */
+    SAME case (lL / Ll are not valid; see the design-decision note in
+    the numeric-constants rules below for what happens to those now) */
 LSUF        (l|L)
 LLSUF       (ll|LL)
 USUF        (u|U)
 INT_SUFFIX  ({USUF}({LLSUF}|{LSUF})?|({LLSUF}|{LSUF}){USUF}?)
+
+ /* fractional part of a float: digits on EITHER side of the dot are
+    optional, but not both -- covers 5.5, 5., and .5. A lone "." (no
+    digit on either side) matches neither alternative and correctly
+    falls through to the "." operator rule further down. */
+FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 %x STRSTATE
 %x CHRSTATE
@@ -136,6 +142,15 @@ INT_SUFFIX  ({USUF}({LLSUF}|{LSUF})?|({LLSUF}|{LSUF}){USUF}?)
     identifiers, not reserved words) */
 "FILE"|"fopen"|"fclose"|"fread"|"fwrite"|"fprintf"|"fscanf"|"fgets"|"fputs"|"feof"   { addToken("file_keyword", yytext); }
 
+ /* boolean literals -- categorized as a LITERAL (like integer_constant,
+    string_literal), not a "_keyword" category, since true/false denote
+    values rather than structural roles. Real C has no true/false
+    keywords at all (that's C++ or C23's stdbool.h); reserving them here
+    is a deliberate language-design choice, same pattern as printf/
+    malloc/etc. above. Note: there is currently no "bool" TYPE keyword
+    to declare a variable of -- only these two literals exist so far. */
+"true"|"false"                                                            { addToken("bool_literal", yytext); }
+
  /* ---- string literals ---- */
 \"                                { strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }
 
@@ -179,9 +194,11 @@ INT_SUFFIX  ({USUF}({LLSUF}|{LSUF})?|({LLSUF}|{LSUF}){USUF}?)
 
  /* ---- numeric constants ---- */
 0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken("integer_constant", yytext); }
+0[bB]{BINDIGIT}+{INT_SUFFIX}?                               { addToken("integer_constant", yytext); }
+0[bB][0-9]*[2-9][0-9]*                                      { reportError(yylineno, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
 0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken("integer_constant", yytext); }
 0[0-9]*[89][0-9]*                                           { reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
-{DIGIT}+\.{DIGIT}+([eE][+-]?{DIGIT}+)?[fF]?               { addToken("float_constant", yytext); }
+{FRAC}([eE][+-]?{DIGIT}+)?[fF]?                             { addToken("float_constant", yytext); }
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken("float_constant", yytext); }
 {DIGIT}+{INT_SUFFIX}?                                       { addToken("integer_constant", yytext); }
 

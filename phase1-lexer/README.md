@@ -67,9 +67,9 @@ make clean      # remove build artifacts
      (`Invalid octal literal`), matching real C's octal-constant
      grammar.
    * Hexadecimal: `0x1F` / `0X1F`
-* **Not supported: binary literals** (`0b1101`). A reference lexer we
-  compared against has these; ours doesn't yet — flag it if you want
-  this added.
+   * Binary: `0b1101` / `0B1101` — validated: a `0b`/`0B` literal
+     containing a digit `2`–`9` (e.g. `0b1102`) is a lexical error
+     (`Invalid binary literal`).
 * Integer suffixes are supported and combinable: `u`/`U` (unsigned),
   `l`/`L` (long), `ll`/`LL` (long long), in either order —
   `45U`, `45L`, `45UL`, `45LU`, `45LL`, `45ULL`, `45LLU` all lex as one
@@ -89,17 +89,14 @@ make clean      # remove build artifacts
 
 * Supported formats:
    * Standard decimal notation: `123.456`
+   * Leading or trailing dot: `.5`, `5.` (a digit is required on at
+     least one side of the `.`, but not both — a lone `.` with no digit
+     either side stays the `.` operator, unaffected)
    * Scientific notation: `1.23e4` / `1.23E4`, `1.23e-4` / `1.23E-4`
    * Optional trailing `f`/`F` suffix: `3.14f`
 
 > **Note**
-> Float literals do **not** support patterns like `.123` or `123.`
-> (a digit required on *both* sides of the `.`) — this is a known,
-> unfixed gap, not a deliberate design choice. `.5` currently lexes as
-> `.` (operator) then `5` (integer_constant); `5.` lexes as `5`
-> (integer_constant) then `.` (operator). Flag it if you want this
-> fixed.
-> Also not supported: an `l`/`L` (long double) suffix on floats — only
+> Not supported: an `l`/`L` (long double) suffix on floats — only
 > `f`/`F` is recognized.
 
 ## Reserved Keywords and Identifiers
@@ -133,9 +130,15 @@ make clean      # remove build artifacts
   identifiers as in real C — they can never be used as a variable or
   function name in this language. `until` is also reserved; real C has
   no until loop.
-* **Not supported: boolean literals** (`true`/`false`). A reference
-  lexer we compared against recognizes these as a `BOOL_LITERAL` token;
-  ours has no boolean keyword at all currently.
+* `true`/`false` are reserved words too, but categorized as their own
+  literal type, `bool_literal` — not lumped into the table above,
+  since (like `integer_constant`/`string_literal`) they denote a value
+  rather than a structural role. Real C has no `true`/`false` keywords
+  at all (that's C++ or C23's `<stdbool.h>`); reserving them is another
+  deliberate deviation, same pattern as the keywords above.
+* **Not supported: boolean *type*.** There is no `bool` type keyword to
+  declare a variable of that type — you can currently only assign
+  `true`/`false` to an `int`. Flag it if you want a `bool` type added.
 * `sizeof` is currently an ordinary `identifier`, not a keyword.
 * To add a new reserved keyword in this codebase: add it to the
   relevant category's literal alternation in `src/lexer.l` — that's the
@@ -214,6 +217,6 @@ make clean      # remove build artifacts
 | `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums, unions |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
-| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (9 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, unterminated comment) |
-| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal literals, integer suffixes (`U`/`L`/`LL` combinations), and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
+| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid binary literal, unterminated comment) |
+| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal/binary literals, integer suffixes (`U`/`L`/`LL` combinations), leading/trailing-dot floats (`.5`/`5.`), boolean literals (`true`/`false`), and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
 | `test8_file_manipulation.c` | this language's custom `file_keyword` reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
