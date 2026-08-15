@@ -1,17 +1,28 @@
 /*
  * lexer.l
- * Lexical analyzer for the C-like source language.
+ * Lexical analyzer for this project's custom C-like source language.
  *
  * Covers:
  *  - basic features: all arithmetic/logical operators, if-else, for, while,
  *    do-while, switch-case, int/char arrays, pointers, structures, printf/
- *    scanf (as ordinary identifiers), function calls with arguments, goto,
- *    break, continue, static
+ *    scanf, function calls with arguments, goto, break, continue, static
  *  - advanced features: variable-argument calls (...), dynamic memory
- *    allocation (malloc/free are identifiers, keyword 'typedef' supported),
- *    command line input (argc/argv are identifiers, no new tokens needed),
- *    reference (&), until loop, multi-level pointers (*), multi-dimensional
- *    arrays ([ ][ ]).
+ *    allocation (malloc/free/calloc/realloc), command line input (argc/argv
+ *    are identifiers, no new tokens needed), reference (&), until loop,
+ *    multi-level pointers (*), multi-dimensional arrays ([ ][ ]), and the
+ *    short/long/signed/unsigned type modifiers.
+ *
+ * Keyword categories (see the "keywords" rules below): this language
+ * deliberately diverges from real C in two places:
+ *   1. printf, scanf, malloc, free, calloc, realloc are RESERVED KEYWORDS,
+ *      not ordinary identifiers as they are in real C. Using any of these
+ *      names as a variable/function name is therefore a syntax error in
+ *      this language, unlike in standard C.
+ *   2. until is a reserved keyword (standard C has no until loop).
+ * Keywords are tagged with a specific category (type_keyword,
+ * struct_keyword, storage_keyword, control_keyword, io_keyword,
+ * memory_keyword) instead of one flat "keyword" token, so a later
+ * symbol-table / semantic-analysis phase doesn't have to re-classify them.
  *
  * Behaviour:
  *  - If the whole input is lexically clean, prints a Lexeme/Token table.
@@ -64,8 +75,33 @@ HEXDIGIT    [0-9a-fA-F]
 
 "//"[^\n]*                       { /* line comment, skip */ }
 
- /* ---- keywords ---- */
-"int"|"char"|"float"|"double"|"void"|"struct"|"typedef"|"static"|"if"|"else"|"for"|"while"|"do"|"until"|"switch"|"case"|"default"|"break"|"continue"|"goto"|"return"   { addToken("keyword", yytext); }
+ /* ---- keywords, split by category so the parser/symbol-table phase
+    doesn't have to re-classify a flat "keyword" bucket later ----
+    NOTE: this language intentionally diverges from real C on two points:
+      1. printf/scanf/malloc/free/calloc/realloc are RESERVED KEYWORDS
+         here (io_keyword / memory_keyword), not ordinary identifiers.
+         This is a deliberate language-design choice, unlike real C
+         where they're just <stdio.h>/<stdlib.h> library functions.
+      2. until is a reserved keyword (real C has no until loop). */
+
+ /* type keywords: primitive types + size/sign modifiers */
+"int"|"char"|"float"|"double"|"void"|"short"|"long"|"signed"|"unsigned"    { addToken("type_keyword", yytext); }
+
+ /* struct: kept separate from type_keyword since it introduces a
+    user-defined composite type (member list), not a primitive one */
+"struct"                                                                   { addToken("struct_keyword", yytext); }
+
+ /* storage-class keywords */
+"static"|"typedef"                                                        { addToken("storage_keyword", yytext); }
+
+ /* control-flow keywords */
+"if"|"else"|"for"|"while"|"do"|"until"|"switch"|"case"|"default"|"break"|"continue"|"goto"|"return"   { addToken("control_keyword", yytext); }
+
+ /* I/O keywords (custom to this language, see note above) */
+"printf"|"scanf"                                                          { addToken("io_keyword", yytext); }
+
+ /* dynamic-memory keywords (custom to this language, see note above) */
+"malloc"|"free"|"calloc"|"realloc"                                        { addToken("memory_keyword", yytext); }
 
  /* ---- string literals ---- */
 \"                                { strbuf = "\""; tokStartLine = yylineno; BEGIN(STRSTATE); }
