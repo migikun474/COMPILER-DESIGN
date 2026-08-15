@@ -9,22 +9,38 @@
  *  - advanced features: variable-argument calls (...), dynamic memory
  *    allocation (malloc/free/calloc/realloc), command line input (argc/argv
  *    are identifiers, no new tokens needed), reference (&), until loop,
- *    multi-level pointers (*), multi-dimensional arrays ([ ][ ]), and the
- *    short/long/signed/unsigned type modifiers.
+ *    multi-level pointers (*), multi-dimensional arrays ([ ][ ]), the
+ *    short/long/signed/unsigned type modifiers, binary/octal/hex literals,
+ *    boolean literals (true/false)
+ *  - object-oriented features: class, access modifiers (public/private/
+ *    protected), this, scope resolution (::)
  *
- * Keyword categories (see the "keywords" rules below): this language
- * deliberately diverges from real C in these places:
+ * Token classification architecture: every keyword and every operator/
+ * punctuation mark gets its OWN distinct TokenType (see token_type.hpp),
+ * not a shared category string. This mirrors a reference lexer's
+ * keyword_map / operator_map / token_to_string_map design:
+ *   - Identifiers and keywords share ONE flex rule ({ID} below); the
+ *     matched text is looked up in reserved_word() (a keyword_map), and
+ *     if found, the SPECIFIC keyword's TokenType is used instead of
+ *     IDENTIFIER. Adding a new keyword means adding one line to
+ *     keyword_map in token_type.cpp, not writing a new flex rule.
+ *   - Multi-character operators each keep their own flex pattern (flex's
+ *     built-in longest-match already disambiguates these declaratively,
+ *     so no manual lookahead/operator_map lookup is needed there), but
+ *     now each assigns its own precise TokenType directly.
+ *   - Single-character operators/punctuation share ONE flex rule; since
+ *     multiple different characters match that one pattern, the specific
+ *     TokenType is resolved via operator_token() (an operator_map) at
+ *     match time.
+ *
+ * This language intentionally diverges from real C in these places:
  *   1. printf, scanf, malloc, free, calloc, realloc, FILE, fopen, fclose,
  *      fread, fwrite, fprintf, fscanf, fgets, fputs, feof are RESERVED
- *      KEYWORDS, not ordinary identifiers as they are in real C. Using
- *      any of these names as a variable/function name is therefore a
- *      syntax error in this language, unlike in standard C.
+ *      KEYWORDS, not ordinary identifiers as they are in real C.
  *   2. until is a reserved keyword (standard C has no until loop).
- * Keywords are tagged with a specific category (type_keyword,
- * struct_keyword, enum_keyword, union_keyword, storage_keyword,
- * control_keyword, io_keyword, memory_keyword, file_keyword) instead of
- * one flat "keyword" token, so a later symbol-table / semantic-analysis
- * phase doesn't have to re-classify them.
+ *   3. true/false are reserved literals (that's C++/C23, not C).
+ *   4. class/public/private/protected/this are reserved for this
+ *      language's object-oriented features (real C has none of these).
  *
  * Behaviour:
  *  - If the whole input is lexically clean, prints a Lexeme/Token table.
@@ -48,6 +64,7 @@
 #include "diagnostics.h"
 #include "logger.h"
 #include "token.h"
+#include "token_type.hpp"
 
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
@@ -105,51 +122,19 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*                       { /* line comment, skip */ }
 
- /* ---- keywords, split by category so the parser/symbol-table phase
-    doesn't have to re-classify a flat "keyword" bucket later ----
-    NOTE: this language intentionally diverges from real C on two points:
-      1. printf/scanf/malloc/free/calloc/realloc are RESERVED KEYWORDS
-         here (io_keyword / memory_keyword), not ordinary identifiers.
-         This is a deliberate language-design choice, unlike real C
-         where they're just <stdio.h>/<stdlib.h> library functions.
-      2. until is a reserved keyword (real C has no until loop). */
-
- /* type keywords: primitive types + size/sign modifiers */
-"int"|"char"|"float"|"double"|"void"|"short"|"long"|"signed"|"unsigned"    { addToken("type_keyword", yytext); }
-
- /* struct/enum/union: kept separate from type_keyword since all three
-    introduce a user-defined composite type (member list / enumerator
-    list), not a primitive one -- symbol-table handling for these differs
-    from handling a plain int/char/etc. */
-"struct"                                                                   { addToken("struct_keyword", yytext); }
-"enum"                                                                     { addToken("enum_keyword", yytext); }
-"union"                                                                    { addToken("union_keyword", yytext); }
-
- /* storage-class keywords */
-"static"|"typedef"                                                        { addToken("storage_keyword", yytext); }
-
- /* control-flow keywords */
-"if"|"else"|"for"|"while"|"do"|"until"|"switch"|"case"|"default"|"break"|"continue"|"goto"|"return"   { addToken("control_keyword", yytext); }
-
- /* I/O keywords (custom to this language, see note above) */
-"printf"|"scanf"                                                          { addToken("io_keyword", yytext); }
-
- /* dynamic-memory keywords (custom to this language, see note above) */
-"malloc"|"free"|"calloc"|"realloc"                                        { addToken("memory_keyword", yytext); }
-
- /* file-manipulation keywords (custom to this language, see note above --
-    real C treats FILE/fopen/fclose/etc. as ordinary <stdio.h> library
-    identifiers, not reserved words) */
-"FILE"|"fopen"|"fclose"|"fread"|"fwrite"|"fprintf"|"fscanf"|"fgets"|"fputs"|"feof"   { addToken("file_keyword", yytext); }
-
- /* boolean literals -- categorized as a LITERAL (like integer_constant,
-    string_literal), not a "_keyword" category, since true/false denote
-    values rather than structural roles. Real C has no true/false
-    keywords at all (that's C++ or C23's stdbool.h); reserving them here
-    is a deliberate language-design choice, same pattern as printf/
-    malloc/etc. above. Note: there is currently no "bool" TYPE keyword
-    to declare a variable of -- only these two literals exist so far. */
-"true"|"false"                                                            { addToken("bool_literal", yytext); }
+ /* ---- identifiers AND keywords share one rule: the matched text is
+    looked up in reserved_word() (keyword_map in token_type.cpp); if
+    found, that keyword's specific TokenType is used, otherwise it's a
+    plain IDENTIFIER. See the file header for why this replaces the
+    old per-category flex-alternation rules. ---- */
+{ID}                              {
+                                       auto kw = reserved_word(yytext);
+                                       if (kw.has_value()) {
+                                           addToken(kw.value(), yytext);
+                                       } else {
+                                           addToken(TokenType::IDENTIFIER, yytext);
+                                       }
+                                   }
 
  /* ---- string literals ---- */
 \"                                { strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }
@@ -172,7 +157,7 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                         chrCharCount++;
                                      }
 
-<STRSTATE>\"                      { strbuf += "\""; if (!litHadError) addToken("string_literal", strbuf.c_str()); BEGIN(INITIAL); }
+<STRSTATE>\"                      { strbuf += "\""; if (!litHadError) addToken(TokenType::STRING_LITERAL, strbuf); BEGIN(INITIAL); }
 <STRSTATE>\n                      {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
 <STRSTATE><<EOF>>                 {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
 <STRSTATE>.                       { strbuf += yytext; }
@@ -184,7 +169,7 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                        } else if (chrCharCount > 1) {
                                            reportError(tokStartLine, strbuf, "Too many characters in character literal");
                                        } else if (!litHadError) {
-                                           addToken("char_constant", strbuf.c_str());
+                                           addToken(TokenType::CHAR_LITERAL, strbuf);
                                        }
                                        BEGIN(INITIAL);
                                    }
@@ -193,47 +178,57 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 <CHRSTATE>.                       { strbuf += yytext; chrCharCount++; }
 
  /* ---- numeric constants ---- */
-0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken("integer_constant", yytext); }
-0[bB]{BINDIGIT}+{INT_SUFFIX}?                               { addToken("integer_constant", yytext); }
+0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken(TokenType::INT_LITERAL, yytext); }
+0[bB]{BINDIGIT}+{INT_SUFFIX}?                               { addToken(TokenType::INT_LITERAL, yytext); }
 0[bB][0-9]*[2-9][0-9]*                                      { reportError(yylineno, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
-0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken("integer_constant", yytext); }
+0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken(TokenType::INT_LITERAL, yytext); }
 0[0-9]*[89][0-9]*                                           { reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
-{FRAC}([eE][+-]?{DIGIT}+)?[fF]?                             { addToken("float_constant", yytext); }
-{DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken("float_constant", yytext); }
-{DIGIT}+{INT_SUFFIX}?                                       { addToken("integer_constant", yytext); }
+{FRAC}([eE][+-]?{DIGIT}+)?[fF]?                             { addToken(TokenType::FLOAT_LITERAL, yytext); }
+{DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken(TokenType::FLOAT_LITERAL, yytext); }
+{DIGIT}+{INT_SUFFIX}?                                       { addToken(TokenType::INT_LITERAL, yytext); }
 
- /* ---- identifiers ---- */
-{ID}                              { addToken("identifier", yytext); }
+ /* ---- multi-character operators (longest first). Flex's longest-match
+    already disambiguates these declaratively -- e.g. "<<=" always wins
+    over "<<" over "<" whenever the longer form is actually present --
+    so order here is for readability, not correctness. Each assigns its
+    own precise TokenType directly (no table lookup needed, since the
+    pattern itself already identifies exactly which operator matched). ---- */
+"..."                              { addToken(TokenType::ELLIPSIS_OP, yytext); }
+"::"                               { addToken(TokenType::SCOPE_RESOLUTION_OP, yytext); }
+"->"                               { addToken(TokenType::ARROW_OP, yytext); }
+"++"                               { addToken(TokenType::INCREMENT_OP, yytext); }
+"--"                               { addToken(TokenType::DECREMENT_OP, yytext); }
+"<<="                              { addToken(TokenType::LSHIFT_ASSIGN_OP, yytext); }
+">>="                              { addToken(TokenType::RSHIFT_ASSIGN_OP, yytext); }
+"<<"                               { addToken(TokenType::LSHIFT_OP, yytext); }
+">>"                               { addToken(TokenType::RSHIFT_OP, yytext); }
+"<="                               { addToken(TokenType::LE_OP, yytext); }
+">="                               { addToken(TokenType::GE_OP, yytext); }
+"=="                               { addToken(TokenType::EQ_OP, yytext); }
+"!="                               { addToken(TokenType::NE_OP, yytext); }
+"&&"                               { addToken(TokenType::LOGICAL_AND_OP, yytext); }
+"||"                               { addToken(TokenType::LOGICAL_OR_OP, yytext); }
+"+="                               { addToken(TokenType::PLUS_ASSIGN_OP, yytext); }
+"-="                               { addToken(TokenType::MINUS_ASSIGN_OP, yytext); }
+"*="                               { addToken(TokenType::STAR_ASSIGN_OP, yytext); }
+"/="                               { addToken(TokenType::DIVIDE_ASSIGN_OP, yytext); }
+"%="                               { addToken(TokenType::MOD_ASSIGN_OP, yytext); }
+"&="                               { addToken(TokenType::AMPERSAND_ASSIGN_OP, yytext); }
+"|="                               { addToken(TokenType::PIPE_ASSIGN_OP, yytext); }
+"^="                               { addToken(TokenType::CARET_ASSIGN_OP, yytext); }
 
- /* ---- multi-character operators (longest first) ---- */
-"..."                              { addToken("ellipsis", yytext); }
-"->"                               { addToken("operator", yytext); }
-"++"                               { addToken("operator", yytext); }
-"--"                               { addToken("operator", yytext); }
-"<<="                              { addToken("operator", yytext); }
-">>="                              { addToken("operator", yytext); }
-"<<"                               { addToken("operator", yytext); }
-">>"                               { addToken("operator", yytext); }
-"<="                               { addToken("operator", yytext); }
-">="                               { addToken("operator", yytext); }
-"=="                               { addToken("operator", yytext); }
-"!="                               { addToken("operator", yytext); }
-"&&"                               { addToken("operator", yytext); }
-"||"                               { addToken("operator", yytext); }
-"+="                               { addToken("operator", yytext); }
-"-="                               { addToken("operator", yytext); }
-"*="                               { addToken("operator", yytext); }
-"/="                               { addToken("operator", yytext); }
-"%="                               { addToken("operator", yytext); }
-"&="                               { addToken("operator", yytext); }
-"|="                               { addToken("operator", yytext); }
-"^="                               { addToken("operator", yytext); }
-
- /* ---- single-character operators ---- */
-[+\-*/%=<>!&|^~.,?:]              { addToken("operator", yytext); }
-
- /* ---- punctuation ---- */
-[(){}\[\];]                       { addToken("punctuation", yytext); }
+ /* ---- single-character operators AND punctuation, in one rule: since
+    several different characters share this one pattern, the specific
+    TokenType is resolved via operator_token() (operator_map) at match
+    time, mirroring how the reference handles this. ---- */
+[+\-*/%=<>!&|^~.,?:(){}\[\]\;]    {
+                                        auto op = operator_token(yytext);
+                                        if (op.has_value()) {
+                                            addToken(op.value(), yytext);
+                                        } else {
+                                            reportError(yylineno, yytext, "Illegal character");
+                                        }
+                                   }
 
 [ \t\r]+                          { /* skip whitespace */ }
 \n                                 { /* newline: yylineno auto-increments */ }
@@ -273,7 +268,7 @@ int main(int argc, char** argv) {
     for (const auto &t : tokens) {
         printf("%-30s %-20s\n",
                t.lexeme.c_str(),
-               t.type.c_str());
+               to_string(t.type).c_str());
     }
 
     return 0;

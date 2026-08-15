@@ -3,7 +3,7 @@
 std::vector<Token> tokens;
 
 void addToken(
-    const std::string &type,
+    TokenType type,
     const std::string &lexeme)
 {
     tokens.push_back(

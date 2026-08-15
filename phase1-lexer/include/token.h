@@ -4,16 +4,18 @@
 #include <string>
 #include <vector>
 
+#include "token_type.hpp"
+
 struct Token
 {
     std::string lexeme;
-    std::string type;
+    TokenType type;
 };
 
 extern std::vector<Token> tokens;
 
 void addToken(
-    const std::string &type,
+    TokenType type,
     const std::string &lexeme);
 
 #endif

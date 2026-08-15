@@ -13,10 +13,28 @@ make clean      # remove build artifacts
 
 ## General
 
-* All tokens produced by the lexer carry a **token category** as a plain
-  string (e.g. `identifier`, `type_keyword`, `operator`) rather than an
-  enum from a separate `token_type.hpp`-style file. The category *is*
-  the type — there's no extra `to_string` conversion step needed.
+* Every token carries a **`TokenType`** — a C++ `enum class` (in
+  `include/token_type.hpp`) with one distinct value per keyword and per
+  operator/punctuation mark (e.g. `TokenType::IF`, `TokenType::ARROW_OP`,
+  `TokenType::OPEN_PAREN_OP`), not a shared category string. This
+  replaced an earlier design that used ~9 broad category strings
+  (`type_keyword`, `control_keyword`, ...); the switch was made
+  specifically to prepare for a parser phase, which generally wants one
+  terminal symbol per keyword rather than a shared bucket.
+* `to_string(TokenType)` (in `src/token_type.cpp`) converts a `TokenType`
+  back to its printable name (e.g. `TokenType::ARROW_OP` → `"arrow_op"`)
+  for the table printed at the end.
+* Identifiers and keywords share **one** flex rule. The matched text is
+  looked up via `reserved_word()` (a `keyword_map`, string → `TokenType`,
+  in `src/token_type.cpp`); if found, that keyword's specific
+  `TokenType` is used, otherwise it's a plain `IDENTIFIER`. This means
+  the flex rules no longer encode keywords directly — adding a keyword
+  is a one-line change to `keyword_map`, not a new flex pattern.
+* Single-character operators/punctuation similarly share one flex rule
+  and resolve their specific `TokenType` via `operator_token()` (an
+  `operator_map`) — multi-character operators keep individual flex
+  patterns (flex's own longest-match already disambiguates `<<=` vs
+  `<<` vs `<` declaratively, so no manual lookahead is needed there).
 * The lexer uses **flex**, compiled as C++. Rules are defined in
   `src/lexer.l`.
 * For finding the line number, the `yylineno` feature is used.
@@ -73,7 +91,7 @@ make clean      # remove build artifacts
 * Integer suffixes are supported and combinable: `u`/`U` (unsigned),
   `l`/`L` (long), `ll`/`LL` (long long), in either order —
   `45U`, `45L`, `45UL`, `45LU`, `45LL`, `45ULL`, `45LLU` all lex as one
-  `integer_constant`. Mixed-case `long long` (`45lL`) is **not** valid
+  `int_literal`. Mixed-case `long long` (`45lL`) is **not** valid
   (real C requires `ll` or `LL` consistently, never `lL`/`Ll`) — see the
   note on malformed literals below for what happens to it now.
 * Char literals are enclosed in single quotes `'` and may contain a
@@ -101,63 +119,85 @@ make clean      # remove build artifacts
 
 ## Reserved Keywords and Identifiers
 
-* There's no separate `reserved_words` map checked at runtime — each
-  keyword category is its own flex rule, matched directly against
-  literal alternations (e.g. `"int"|"char"|"float"|...`) as part of the
-  generated scanner itself. A word either matches one of these literal
-  alternations (and becomes that keyword's category) or falls through
-  to the generic identifier pattern `{LETTER}({LETTER}|{DIGIT})*`.
-* Keywords are split into **nine categories** instead of one flat
-  `keyword` token, so a later symbol-table/parser phase can act on a
-  token's role directly:
+* Keywords are stored in `keyword_map` (`src/token_type.cpp`) — a
+  `std::unordered_map<std::string, TokenType>`. A word either matches an
+  entry in this map (and becomes that specific keyword's `TokenType`) or
+  falls through to the generic identifier pattern
+  `{LETTER}({LETTER}|{DIGIT})*`.
+* Every keyword gets its **own** `TokenType` — `IF`, `WHILE`, `INT`,
+  `CLASS`, `PUBLIC`, and so on are all distinct values, not grouped
+  under a shared category the way an earlier version of this lexer did:
 
-  | Category | Keywords |
+  | Group | Keywords |
   |---|---|
-  | `type_keyword` | `int char float double void short long signed unsigned` |
-  | `struct_keyword` | `struct` |
-  | `enum_keyword` | `enum` |
-  | `union_keyword` | `union` |
-  | `storage_keyword` | `static typedef` |
-  | `control_keyword` | `if else for while do until switch case default break continue goto return` |
-  | `io_keyword` | `printf scanf` |
-  | `memory_keyword` | `malloc free calloc realloc` |
-  | `file_keyword` | `FILE fopen fclose fread fwrite fprintf fscanf fgets fputs feof` |
+  | primitive types | `int char float double void short long signed unsigned` |
+  | composite types | `struct enum union class` |
+  | access modifiers | `public private protected` |
+  | object-oriented | `this` |
+  | storage class | `static typedef` |
+  | control flow | `if else for while do until switch case default break continue goto return` |
+  | I/O (custom) | `printf scanf` |
+  | dynamic memory (custom) | `malloc free calloc realloc` |
+  | file manipulation (custom) | `FILE fopen fclose fread fwrite fprintf fscanf fgets fputs feof` |
 
-* **This language intentionally diverges from real C**: `printf`,
-  `scanf`, `malloc`, `free`, `calloc`, `realloc`, `FILE`, `fopen`,
-  `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`,
-  `feof` are reserved keywords here, not ordinary library-function
-  identifiers as in real C — they can never be used as a variable or
-  function name in this language. `until` is also reserved; real C has
-  no until loop.
-* `true`/`false` are reserved words too, but categorized as their own
-  literal type, `bool_literal` — not lumped into the table above,
-  since (like `integer_constant`/`string_literal`) they denote a value
-  rather than a structural role. Real C has no `true`/`false` keywords
-  at all (that's C++ or C23's `<stdbool.h>`); reserving them is another
-  deliberate deviation, same pattern as the keywords above.
+* **This language intentionally diverges from real C** in several
+  places:
+   * `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`, `FILE`,
+     `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`,
+     `fputs`, `feof` are reserved keywords here, not ordinary
+     library-function identifiers as in real C.
+   * `until` is reserved; real C has no until loop.
+   * `true`/`false` are reserved (that's C++ or C23's `<stdbool.h>`, not
+     C). Categorized as `BOOL_LITERAL`, not a keyword `TokenType`, since
+     (like `INT_LITERAL`/`STRING_LITERAL`) they denote a value rather
+     than a structural role — but they're still looked up via
+     `keyword_map` like any other reserved word.
+   * `class`, `public`, `private`, `protected`, `this` are reserved for
+     this language's object-oriented features; real C has none of them.
 * **Not supported: boolean *type*.** There is no `bool` type keyword to
   declare a variable of that type — you can currently only assign
   `true`/`false` to an `int`. Flag it if you want a `bool` type added.
+* **Not supported yet: `new`/`delete`/operator overloading.** Only
+  `class`/access-modifiers/`this`/scope-resolution were built — real
+  C++-style object construction/destruction keywords weren't requested,
+  flagging in case they're wanted too.
+* **Not supported yet: typedef-name tracking.** Real C-style grammars
+  need the lexer to remember that a name was `typedef`'d so it can be
+  classified as a type (not a plain identifier) on later use — this
+  lexer doesn't track that yet; every identifier, `typedef`'d or not, is
+  just `IDENTIFIER`.
 * `sizeof` is currently an ordinary `identifier`, not a keyword.
-* To add a new reserved keyword in this codebase: add it to the
-  relevant category's literal alternation in `src/lexer.l` — that's the
-  only file that needs changing (no separate enum/map files to keep in
-  sync).
+* To add a new reserved keyword: add one line to `keyword_map` in
+  `src/token_type.cpp` (and its `TokenType` enum value in
+  `token_type.hpp`, and its printable name in `token_to_string_map`) —
+  `src/lexer.l` itself needs no changes.
 
 ## Operators
 
-* Operators are matched via **explicit flex rules**, one pattern per
-  operator (or a `|`-separated group for same-length ones), ordered
-  longest-first (`<<=` before `<<` before `<`, etc.) so flex's built-in
-  maximal-munch resolves ambiguity automatically — no manual
-  character-by-character lookahead (`yyinput`/`unput`) is needed the
-  way a runtime operator-table approach would require.
+* Every operator/punctuation mark gets its own `TokenType` too (e.g.
+  `PLUS_OP`, `ARROW_OP`, `OPEN_PAREN_OP`, `SEMICOLON_OP`) — punctuation
+  isn't a separate category from "operators" here, it's just more
+  entries in the same scheme (matching a reference lexer's convention of
+  suffixing everything, including parens/braces/semicolons, with `_OP`).
+* Multi-character operators (`<<=`, `->`, `::`, `...`, etc.) each keep
+  their own flex pattern, ordered longest-first for readability — flex's
+  built-in longest-match resolves ambiguity (`<<=` beats `<<` beats `<`
+  whenever the longer form is actually present) regardless of rule
+  order, so this is about clarity, not correctness. Each rule assigns
+  its specific `TokenType` directly.
+* Single-character operators/punctuation share one flex rule; since many
+  different characters match that one pattern, the specific `TokenType`
+  is resolved via `operator_token()` (`operator_map` in
+  `src/token_type.cpp`) at match time.
 * Full set: `+ - * / % = == != < > <= >= && || ! & | ^ ~ << >> ++ -- +=
-  -= *= /= %= &= |= ^= -> . , ? :`, plus `...` as its own `ellipsis`
-  token (variable-argument functions).
-* Adding a new operator: add one flex rule line to `src/lexer.l`, placed
-  above any shorter operator it could be confused with.
+  -= *= /= %= &= |= ^= -> . , ? : ::`, plus `...` (`ELLIPSIS_OP`, for
+  variable-argument functions) and `::` (`SCOPE_RESOLUTION_OP`, for
+  `ClassName::member`).
+* Adding a new operator: add its `TokenType` to `token_type.hpp`, an
+  entry to `operator_map`/`token_to_string_map` in `token_type.cpp`,
+  and — only if it's multi-character — one flex rule in `src/lexer.l`
+  (single-character operators need no `lexer.l` change at all, since
+  they already fall through to the table-lookup rule).
 
 ## Error Handling
 
@@ -180,19 +220,20 @@ make clean      # remove build artifacts
 > actually do diagnose this at the lexical level (gcc's `invalid
 > suffix "abc" on integer constant`). This lexer only recognizes valid
 > token shapes and does no such pre-validation: `12abc` lexes as two
-> separate valid tokens — `integer_constant "12"` then `identifier
+> separate valid tokens — `int_literal "12"` then `identifier
 > "abc"` — and a future parser is expected to reject the resulting
 > nonsensical token sequence as a syntax error instead. The same
 > applies to `3.14x` and to the invalid-suffix case `45lL` mentioned
-> above (→ `integer_constant "45l"` + `identifier "L"`).
+> above (→ `int_literal "45l"` + `identifier "L"`).
 > The narrower `089`-style invalid-octal-digit check is a *separate*
 > rule and is unaffected by this — it still errors.
 
 ## Conclusion
 
 * The current lexer prints a two-column table of every token's
-  **lexeme** (raw source text) and **category** — it does not decode
-  escape sequences or numeric literals into actual runtime values (e.g.
+  **lexeme** (raw source text) and **`TokenType`** (converted to a
+  printable name via `to_string()`) — it does not decode escape
+  sequences or numeric literals into actual runtime values (e.g.
   `\x41` is stored as the 4-character source string `\x41`, not decoded
   to the byte `0x41`). A reference lexer we compared against does
   decode into real semantic values via Bison's `yylval`; that's a
@@ -204,9 +245,11 @@ make clean      # remove build artifacts
   would. This is the right shape for Phase 1's own deliverable (a
   printed table / error report) but will need refactoring before
   Phase 2's parser can drive it directly.
-* Extensible in the areas this phase cares about: new keywords, new
-  operators, and new error categories are all single, localized changes
-  in `src/lexer.l` (see the relevant sections above for exactly where).
+* Extensible in the areas this phase cares about: new keywords are a
+  one-line addition to `keyword_map`, new operators are a `TokenType` +
+  map entries (+ a flex rule if multi-character), and new error
+  categories are a localized change in `src/lexer.l` (see the relevant
+  sections above for exactly where).
 
 ## Test cases (`test/`)
 
@@ -218,5 +261,6 @@ make clean      # remove build artifacts
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
 | `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid binary literal, unterminated comment) |
-| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal/binary literals, integer suffixes (`U`/`L`/`LL` combinations), leading/trailing-dot floats (`.5`/`5.`), boolean literals (`true`/`false`), and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
-| `test8_file_manipulation.c` | this language's custom `file_keyword` reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
+| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal/binary literals, integer suffixes (`U`/`L`/`LL` combinations), leading/trailing-dot floats (`.5`/`5.`), boolean literals (`true`/`false`), and this language's custom I/O and memory-allocation reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
+| `test8_file_manipulation.c` | this language's custom file-manipulation reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
+| `test9_classes_and_objects.c` | object-oriented keywords/operators: `class`, access modifiers (`public`/`private`/`protected`), `this`, scope resolution (`::`) |
