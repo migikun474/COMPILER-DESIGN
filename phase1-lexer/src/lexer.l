@@ -13,16 +13,18 @@
  *    short/long/signed/unsigned type modifiers.
  *
  * Keyword categories (see the "keywords" rules below): this language
- * deliberately diverges from real C in two places:
- *   1. printf, scanf, malloc, free, calloc, realloc are RESERVED KEYWORDS,
- *      not ordinary identifiers as they are in real C. Using any of these
- *      names as a variable/function name is therefore a syntax error in
- *      this language, unlike in standard C.
+ * deliberately diverges from real C in these places:
+ *   1. printf, scanf, malloc, free, calloc, realloc, FILE, fopen, fclose,
+ *      fread, fwrite, fprintf, fscanf, fgets, fputs, feof are RESERVED
+ *      KEYWORDS, not ordinary identifiers as they are in real C. Using
+ *      any of these names as a variable/function name is therefore a
+ *      syntax error in this language, unlike in standard C.
  *   2. until is a reserved keyword (standard C has no until loop).
  * Keywords are tagged with a specific category (type_keyword,
- * struct_keyword, storage_keyword, control_keyword, io_keyword,
- * memory_keyword) instead of one flat "keyword" token, so a later
- * symbol-table / semantic-analysis phase doesn't have to re-classify them.
+ * struct_keyword, enum_keyword, union_keyword, storage_keyword,
+ * control_keyword, io_keyword, memory_keyword, file_keyword) instead of
+ * one flat "keyword" token, so a later symbol-table / semantic-analysis
+ * phase doesn't have to re-classify them.
  *
  * Behaviour:
  *  - If the whole input is lexically clean, prints a Lexeme/Token table.
@@ -98,12 +100,13 @@ HEXDIGIT    [0-9a-fA-F]
  /* type keywords: primitive types + size/sign modifiers */
 "int"|"char"|"float"|"double"|"void"|"short"|"long"|"signed"|"unsigned"    { addToken("type_keyword", yytext); }
 
- /* struct/enum: kept separate from type_keyword since both introduce a
-    user-defined composite type (member list / enumerator list), not a
-    primitive one -- symbol-table handling for these differs from
-    handling a plain int/char/etc. */
+ /* struct/enum/union: kept separate from type_keyword since all three
+    introduce a user-defined composite type (member list / enumerator
+    list), not a primitive one -- symbol-table handling for these differs
+    from handling a plain int/char/etc. */
 "struct"                                                                   { addToken("struct_keyword", yytext); }
 "enum"                                                                     { addToken("enum_keyword", yytext); }
+"union"                                                                    { addToken("union_keyword", yytext); }
 
  /* storage-class keywords */
 "static"|"typedef"                                                        { addToken("storage_keyword", yytext); }
@@ -116,6 +119,11 @@ HEXDIGIT    [0-9a-fA-F]
 
  /* dynamic-memory keywords (custom to this language, see note above) */
 "malloc"|"free"|"calloc"|"realloc"                                        { addToken("memory_keyword", yytext); }
+
+ /* file-manipulation keywords (custom to this language, see note above --
+    real C treats FILE/fopen/fclose/etc. as ordinary <stdio.h> library
+    identifiers, not reserved words) */
+"FILE"|"fopen"|"fclose"|"fread"|"fwrite"|"fprintf"|"fscanf"|"fgets"|"fputs"|"feof"   { addToken("file_keyword", yytext); }
 
  /* ---- string literals ---- */
 \"                                { strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }

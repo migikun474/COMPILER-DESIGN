@@ -24,10 +24,12 @@ make clean      # remove build artifacts
 | `type_keyword`       | `int char float double void short long signed unsigned` |
 | `struct_keyword`     | `struct` |
 | `enum_keyword`        | `enum` |
+| `union_keyword`       | `union` |
 | `storage_keyword`    | `static typedef` |
 | `control_keyword`    | `if else for while do until switch case default break continue goto return` |
 | `io_keyword`         | `printf scanf` |
 | `memory_keyword`     | `malloc free calloc realloc` |
+| `file_keyword`       | `FILE fopen fclose fread fwrite fprintf fscanf fgets fputs feof` |
 | `identifier`         | `foo`, `_count`, `main` |
 | `integer_constant`   | `42`, `0x1F` |
 | `float_constant`     | `3.14`, `3.14159f`, `1.5e-3` |
@@ -39,12 +41,13 @@ make clean      # remove build artifacts
 
 Notes:
 - **This language intentionally diverges from real C** on which words are
-  reserved: `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc` are
-  keywords here, not ordinary library-function identifiers as in real C.
-  That means (unlike real C) they can never be used as a variable or
-  function name in this language.
+  reserved: `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`,
+  `FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`,
+  `fgets`, `fputs`, `feof` are keywords here, not ordinary library
+  identifiers as in real C. That means (unlike real C) they can never be
+  used as a variable or function name in this language.
 - `until` is also a reserved keyword; real C has no until loop.
-- Keywords are split into six specific categories (above) instead of one
+- Keywords are split into nine specific categories (above) instead of one
   flat `keyword` token, so the parser/symbol-table phase can act on a
   token's role directly instead of re-classifying every keyword string
   again.
@@ -83,8 +86,9 @@ Notes:
 |---|---|
 | `test1_arithmetic_logical.c` | all arithmetic, relational, logical, bitwise, assignment operators |
 | `test2_control_flow.c` | if-else, for, while, do-while, switch-case, goto, break, continue, static, until |
-| `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums |
+| `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums, unions |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
 | `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, unterminated comment) |
 | `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
+| `test8_file_manipulation.c` | this language's custom `file_keyword` reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |

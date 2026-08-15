@@ -9,6 +9,12 @@ enum Color {
     BLUE
 };
 
+union Data {
+    int i;
+    float f;
+    char str[20];
+};
+
 typedef struct Point Point2D;
 
 int main() {
@@ -24,6 +30,7 @@ int main() {
     struct Point origin;
     struct Point *ptr;
     enum Color favorite;
+    union Data data;
 
     nums[0] = 1;
     letters[0] = 'a';
@@ -41,6 +48,7 @@ int main() {
     ptr->y = 4;
 
     favorite = GREEN;
+    data.i = 5;
 
     printf("%d %d\n", ptr->x, ptr->y);
     scanf("%d", &nums[1]);
