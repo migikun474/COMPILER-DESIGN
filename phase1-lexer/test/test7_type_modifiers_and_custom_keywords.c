@@ -3,6 +3,8 @@
  *  - this language's custom reserved keywords that real C treats as
  *    ordinary library identifiers: printf, scanf, malloc, free, calloc,
  *    realloc
+ *  - numeric literal forms: hex (0x1F), octal (017), integer suffixes
+ *    (U, L, LL and their combinations), float suffix (f)
  */
 
 int main() {
@@ -12,6 +14,17 @@ int main() {
     signed int si = -3;
     unsigned int ui = 3;
     unsigned long ul = 4000000000;
+
+    int hex = 0x1F;
+    int oct = 017;
+    unsigned int u1 = 45U;
+    unsigned int u2 = 45u;
+    long l1 = 45L;
+    unsigned long ul1 = 45UL;
+    long long ll1 = 45LL;
+    unsigned long long ull1 = 45ULL;
+    unsigned long long ull2 = 45LLU;
+    float f = 3.14f;
 
     int *heap = (int *) malloc(10 * sizeof(int));
     int *more = (int *) calloc(5, sizeof(int));

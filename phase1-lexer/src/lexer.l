@@ -69,6 +69,17 @@ DIGIT       [0-9]
 LETTER      [a-zA-Z_]
 ID          {LETTER}({LETTER}|{DIGIT})*
 HEXDIGIT    [0-9a-fA-F]
+OCTDIGIT    [0-7]
+
+ /* integer suffixes: u/U (unsigned), l/L (long), ll/LL (long long),
+    in either order, matching the real-C grammar -- ll/LL must be the
+    SAME case (lL / Ll are not valid and fall through to the malformed-
+    literal catch-all below via maximal munch, since they're left
+    unconsumed here and that rule greedily eats all trailing letters) */
+LSUF        (l|L)
+LLSUF       (ll|LL)
+USUF        (u|U)
+INT_SUFFIX  ({USUF}({LLSUF}|{LSUF})?|({LLSUF}|{LSUF}){USUF}?)
 
 %x STRSTATE
 %x CHRSTATE
@@ -167,10 +178,12 @@ HEXDIGIT    [0-9a-fA-F]
 <CHRSTATE>.                       { strbuf += yytext; chrCharCount++; }
 
  /* ---- numeric constants ---- */
-0[xX]{HEXDIGIT}+                                          { addToken("integer_constant", yytext); }
+0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken("integer_constant", yytext); }
+0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken("integer_constant", yytext); }
+0[0-9]*[89][0-9]*                                           { reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
 {DIGIT}+\.{DIGIT}+([eE][+-]?{DIGIT}+)?[fF]?               { addToken("float_constant", yytext); }
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken("float_constant", yytext); }
-{DIGIT}+                                                   { addToken("integer_constant", yytext); }
+{DIGIT}+{INT_SUFFIX}?                                       { addToken("integer_constant", yytext); }
 {DIGIT}+{LETTER}({LETTER}|{DIGIT})*                        {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
 {DIGIT}+\.{DIGIT}*{LETTER}({LETTER}|{DIGIT})*              {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
 

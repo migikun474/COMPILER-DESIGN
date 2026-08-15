@@ -31,7 +31,7 @@ make clean      # remove build artifacts
 | `memory_keyword`     | `malloc free calloc realloc` |
 | `file_keyword`       | `FILE fopen fclose fread fwrite fprintf fscanf fgets fputs feof` |
 | `identifier`         | `foo`, `_count`, `main` |
-| `integer_constant`   | `42`, `0x1F` |
+| `integer_constant`   | `42`, `0x1F` (hex), `017` (octal), `45U`, `45UL`, `45LL`, `45ULL` (integer suffixes: unsigned/long/long-long, any valid order/case) |
 | `float_constant`     | `3.14`, `3.14159f`, `1.5e-3` |
 | `char_constant`      | `'a'`, `'\n'` |
 | `string_literal`     | `"hello, world\n"` |
@@ -69,7 +69,10 @@ Notes:
 - Unterminated string literals
 - Unterminated char literals
 - Unterminated block comments
-- Malformed numeric literals (e.g. `12abc`, `3.14x`)
+- Malformed numeric literals (e.g. `12abc`, `3.14x`, `45lL` — mixed-case
+  `long long` suffix isn't valid, must be `ll`/`LL` consistently)
+- Invalid octal literals — a leading-zero literal containing digit `8`
+  or `9` (e.g. `089`), matching real C's octal-constant grammar
 - Invalid escape sequences in strings/chars (e.g. `\q`, `\xz`, `\89` —
   digits 8/9 aren't valid octal digits). Valid escapes: `\n \t \r \\ \'
   \" \a \b \f \v \?`, octal `\ddd` (1–3 digits, 0–7), and hex `\xH+`
@@ -89,6 +92,6 @@ Notes:
 | `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums, unions |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
-| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, unterminated comment) |
-| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
+| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (12 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid integer suffix, unterminated comment) |
+| `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal literals, integer suffixes (`U`/`L`/`LL` combinations), and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
 | `test8_file_manipulation.c` | this language's custom `file_keyword` reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |

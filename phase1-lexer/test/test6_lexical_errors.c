@@ -8,5 +8,7 @@ int main() {
     char badesc = '\q';
     char *badhex = "\xz";
     char *badoct = "\89";
+    int badoctnum = 089;
+    int badsuffix = 45lL;
     /* this comment never closes
     int z = 1;
