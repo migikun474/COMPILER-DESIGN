@@ -23,6 +23,7 @@ make clean      # remove build artifacts
 |---|---|
 | `type_keyword`       | `int char float double void short long signed unsigned` |
 | `struct_keyword`     | `struct` |
+| `enum_keyword`        | `enum` |
 | `storage_keyword`    | `static typedef` |
 | `control_keyword`    | `if else for while do until switch case default break continue goto return` |
 | `io_keyword`         | `printf scanf` |
@@ -82,7 +83,7 @@ Notes:
 |---|---|
 | `test1_arithmetic_logical.c` | all arithmetic, relational, logical, bitwise, assignment operators |
 | `test2_control_flow.c` | if-else, for, while, do-while, switch-case, goto, break, continue, static, until |
-| `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs |
+| `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
 | `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, unterminated comment) |

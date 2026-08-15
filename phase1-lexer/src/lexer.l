@@ -98,9 +98,12 @@ HEXDIGIT    [0-9a-fA-F]
  /* type keywords: primitive types + size/sign modifiers */
 "int"|"char"|"float"|"double"|"void"|"short"|"long"|"signed"|"unsigned"    { addToken("type_keyword", yytext); }
 
- /* struct: kept separate from type_keyword since it introduces a
-    user-defined composite type (member list), not a primitive one */
+ /* struct/enum: kept separate from type_keyword since both introduce a
+    user-defined composite type (member list / enumerator list), not a
+    primitive one -- symbol-table handling for these differs from
+    handling a plain int/char/etc. */
 "struct"                                                                   { addToken("struct_keyword", yytext); }
+"enum"                                                                     { addToken("enum_keyword", yytext); }
 
  /* storage-class keywords */
 "static"|"typedef"                                                        { addToken("storage_keyword", yytext); }

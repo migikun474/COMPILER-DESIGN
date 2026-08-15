@@ -3,6 +3,12 @@ struct Point {
     int y;
 };
 
+enum Color {
+    RED,
+    GREEN,
+    BLUE
+};
+
 typedef struct Point Point2D;
 
 int main() {
@@ -17,6 +23,7 @@ int main() {
 
     struct Point origin;
     struct Point *ptr;
+    enum Color favorite;
 
     nums[0] = 1;
     letters[0] = 'a';
@@ -32,6 +39,8 @@ int main() {
     ptr = &origin;
     ptr->x = 3;
     ptr->y = 4;
+
+    favorite = GREEN;
 
     printf("%d %d\n", ptr->x, ptr->y);
     scanf("%d", &nums[1]);
