@@ -184,8 +184,6 @@ INT_SUFFIX  ({USUF}({LLSUF}|{LSUF})?|({LLSUF}|{LSUF}){USUF}?)
 {DIGIT}+\.{DIGIT}+([eE][+-]?{DIGIT}+)?[fF]?               { addToken("float_constant", yytext); }
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken("float_constant", yytext); }
 {DIGIT}+{INT_SUFFIX}?                                       { addToken("integer_constant", yytext); }
-{DIGIT}+{LETTER}({LETTER}|{DIGIT})*                        {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
-{DIGIT}+\.{DIGIT}*{LETTER}({LETTER}|{DIGIT})*              {reportError(  yylineno,  yytext, "Invalid numeric literal"); }
 
  /* ---- identifiers ---- */
 {ID}                              { addToken("identifier", yytext); }

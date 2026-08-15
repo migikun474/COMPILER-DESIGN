@@ -62,6 +62,23 @@ Notes:
 - `sizeof` is currently an ordinary `identifier`, same as in the original
   build — it isn't in the project's required feature list, so it hasn't
   been made a keyword. Flag it if you want it reserved too.
+- **Design decision: a digit followed directly by letters is NOT a
+  lexical error here.** `12abc` lexes as two separate valid tokens —
+  `integer_constant "12"` then `identifier "abc"` — with no error
+  raised. Real C/C++ actually treat this as a single invalid
+  "preprocessing number" token and diagnose it right there (that's what
+  gcc's `invalid suffix "abc" on integer constant` error is), which
+  is arguably the more standard-compliant behavior. This project
+  deliberately diverges from that: the lexer only recognizes valid
+  token shapes and does no numeric-literal-specific pre-validation
+  beyond that; a malformed sequence like `12abc` is left to produce a
+  nonsensical token stream that the (future) parser will reject as a
+  syntax error, instead of the lexer catching it. The same applies to
+  `3.14x` (→ `float_constant "3.14"` + `identifier "x"`) and `45lL`
+  (→ `integer_constant "45l"` + `identifier "L"`, since the mixed-case
+  suffix stops early instead of being flagged). Note this means Phase 1
+  alone will print a "clean" table for these inputs — the error only
+  surfaces once Phase 2's parser exists.
 
 ## Detected lexical errors
 
@@ -69,10 +86,12 @@ Notes:
 - Unterminated string literals
 - Unterminated char literals
 - Unterminated block comments
-- Malformed numeric literals (e.g. `12abc`, `3.14x`, `45lL` — mixed-case
-  `long long` suffix isn't valid, must be `ll`/`LL` consistently)
 - Invalid octal literals — a leading-zero literal containing digit `8`
-  or `9` (e.g. `089`), matching real C's octal-constant grammar
+  or `9` (e.g. `089`), matching real C's octal-constant grammar. Note:
+  this one is still caught here even though `12abc`-style malformed
+  literals are not (see design decision above) — it's a separate,
+  narrower rule that specifically validates octal digit range, not a
+  general "digits followed by garbage" catch-all.
 - Invalid escape sequences in strings/chars (e.g. `\q`, `\xz`, `\89` —
   digits 8/9 aren't valid octal digits). Valid escapes: `\n \t \r \\ \'
   \" \a \b \f \v \?`, octal `\ddd` (1–3 digits, 0–7), and hex `\xH+`
@@ -92,6 +111,6 @@ Notes:
 | `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums, unions |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
-| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (12 errors: bad numeric literal, unterminated char, unterminated string, illegal char, malformed float, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid integer suffix, unterminated comment) |
+| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (9 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, unterminated comment) |
 | `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal literals, integer suffixes (`U`/`L`/`LL` combinations), and this language's custom `io_keyword`/`memory_keyword` reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
 | `test8_file_manipulation.c` | this language's custom `file_keyword` reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
