@@ -26,7 +26,7 @@ of scattered across the sections below where they're easy to miss.
 | `class`, `public`, `private`, `protected`, `this`, `::` are **reserved** | None of these exist in C at all | Added to support this language's object-oriented features (classes, access control, scope resolution) — a deliberate extension toward C++-style OOP on top of the C-like base. |
 | C++-style lambda syntax `[capture](params) { body }` is supported, using **existing tokens only** | C has no lambda syntax at all | Chosen (among several possible syntaxes) specifically because it needed **zero new lexer tokens** — every piece already existed (`[`/`]` from arrays, `->` from pointer access, etc.), verified by testing every capture form. The one real consequence: `auto` had to become a keyword too, since it's the only way to hold a lambda's value here. |
 | A digit followed directly by letters (`12abc`, `0x` with no hex digits, `45lL`) is **not a lexical error** — it lexes as two separate valid tokens instead | Real C/C++ lock this into a single "preprocessing number" token via maximal munch *before* any validity check happens, so `12abc` can never split apart — it's diagnosed immediately as one malformed token (gcc: `invalid suffix "abc" on integer constant`) | **Explicit, considered reversal** of this lexer's original behavior (which *did* match real C here), made after comparing against a reference lexer that takes this approach. The lexer now only recognizes valid token shapes and does no such pre-validation; a future parser is expected to reject the resulting nonsensical token sequence instead. Trade-off, accepted deliberately: Phase 1 alone gives no diagnostic for this case — the error only becomes visible once Phase 2's parser exists, and the eventual message (a generic syntax error) will be less specific than the lexical diagnostic this project used to give. |
-| Digit-range checks *within* a stated base (`089`, `0b1102`) **are still lexical errors** | Also flagged by real compilers, though via the same preprocessing-number mechanism as the row above | Deliberately **not** covered by the reversal above — validating a digit against its own declared base (is `8` a legal octal digit?) is a narrower, self-contained check, not the "digit + arbitrary trailing garbage" pattern that row is about. Kept because it's cheap, precise, and doesn't conflict with the split-and-defer philosophy. |
+| Digit-range checks *within* a stated base (`089`, `0b1102`, and the zero-digit boundary case `0x`/`0b` with nothing valid after) **are still lexical errors** | Also flagged by real compilers, though via the same preprocessing-number mechanism as the row above | Deliberately **not** covered by the reversal above — validating a digit against its own declared base (is `8` a legal octal digit? did `0x` get *any* hex digit at all?) is a narrower, self-contained check, not the "digit + arbitrary trailing garbage" pattern that row is about. The key distinction from `12abc`: `12` is already a complete, valid, self-sufficient number on its own — splitting there just defers "what comes after"; `0x` alone was never a complete number to begin with, there's no valid prefix to split off. `0x1g`/`0b1x` (a valid digit *then* invalid trailing letters) still split-and-defer as `0x1`+`g` — only the genuinely digit-less case (`0x`, `0b`, or `0x`/`0b` followed straight by non-hex/non-binary letters like `0xzz`) is caught eagerly. |
 
 ## General
 
@@ -101,10 +101,17 @@ of scattered across the sections below where they're easy to miss.
      `8` or `9` (e.g. `089`) is a lexical error
      (`Invalid octal literal`), matching real C's octal-constant
      grammar.
-   * Hexadecimal: `0x1F` / `0X1F`
+   * Hexadecimal: `0x1F` / `0X1F` — validated: `0x`/`0X` with no hex
+     digit at all after it (e.g. bare `0x`, or `0xzz`) is a lexical
+     error (`Invalid hex literal`). `0x1g` (a valid hex digit *then*
+     an invalid trailing letter) is unaffected by this — it still
+     splits into `0x1` + `g` per the malformed-literal design decision
+     below, since `0x1` is already a complete valid number.
    * Binary: `0b1101` / `0B1101` — validated: a `0b`/`0B` literal
      containing a digit `2`–`9` (e.g. `0b1102`) is a lexical error
-     (`Invalid binary literal`).
+     (`Invalid binary literal`), and so is `0b`/`0B` with no binary
+     digit at all after it (bare `0b`, or `0bxy`), same reasoning as
+     the hex case above.
 * Integer suffixes are supported and combinable: `u`/`U` (unsigned),
   `l`/`L` (long), `ll`/`LL` (long long), in either order —
   `45U`, `45L`, `45UL`, `45LU`, `45LL`, `45ULL`, `45LLU` all lex as one
@@ -282,6 +289,21 @@ of scattered across the sections below where they're easy to miss.
   categories are a localized change in `src/lexer.l` (see the relevant
   sections above for exactly where).
 
+## Resources
+
+- **[Lex & Yacc Tutorial](https://www.epaperpress.com/lexandyacc/download/LexAndYacc.pdf)**
+  by Tom Niemann (epaperpress.com) — the classic short introduction to
+  building a compiler with lex/yacc (flex/bison are their modern GNU
+  clones, what this project actually uses). Directly useful for this
+  phase: the *Lex* section (theory of regular expressions → finite
+  state automata, the `%{ }%%%%` file structure, `yytext`/`yyleng`,
+  start conditions for string scanning) covers exactly the mechanics
+  `src/lexer.l` is built on. The *Yacc* section, the worked calculator
+  example (interpreter + stack-machine compiler + syntax-tree dump),
+  and *More Yacc* (recursion, if-else ambiguity, `%prec`, error
+  recovery) are the natural next read once `phase2-parser/` starts —
+  same author, same running example, builds directly on the lex half.
+
 ## Test cases (`test/`)
 
 | File | Covers |
@@ -291,7 +313,7 @@ of scattered across the sections below where they're easy to miss.
 | `test3_arrays_pointers_structs.c` | int/char arrays, multi-dim arrays, pointers, multi-level pointers, structs, enums, unions |
 | `test4_functions_advanced.c` | function calls with arguments, varargs (`...`), dynamic memory allocation, argc/argv, typedef, reference |
 | `test5_until_loop.c` | until loop, float/hex/char/string constants |
-| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (10 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid binary literal, unterminated comment) |
+| `test6_lexical_errors.c` | intentionally broken input to exercise every error type above (12 errors: unterminated char, unterminated string, illegal char, multi-char literal, invalid escape, bad hex escape, bad octal escape, invalid octal literal, invalid binary literal, bare `0x`, bare `0b`, unterminated comment) |
 | `test7_type_modifiers_and_custom_keywords.c` | `short`/`long`/`long long`/`signed`/`unsigned` type modifiers, hex/octal/binary literals, integer suffixes (`U`/`L`/`LL` combinations), leading/trailing-dot floats (`.5`/`5.`), boolean literals (`true`/`false`), and this language's custom I/O and memory-allocation reserved words (`printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`) |
 | `test8_file_manipulation.c` | this language's custom file-manipulation reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
 | `test9_classes_and_objects.c` | object-oriented keywords/operators: `class`, access modifiers (`public`/`private`/`protected`), `this`, scope resolution (`::`), and a lambda capturing `this` |
