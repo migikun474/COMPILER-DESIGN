@@ -129,8 +129,10 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
  /* ---- numeric constants ---- */
 0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken(TokenType::INT_LITERAL, yytext); }
+0[xX]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, yytext, "Invalid hex literal: expected at least one hex digit after 0x"); }
 0[bB]{BINDIGIT}+{INT_SUFFIX}?                               { addToken(TokenType::INT_LITERAL, yytext); }
 0[bB][0-9]*[2-9][0-9]*                                      { reportError(yylineno, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
+0[bB]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, yytext, "Invalid binary literal: expected at least one binary digit after 0b"); }
 0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken(TokenType::INT_LITERAL, yytext); }
 0[0-9]*[89][0-9]*                                           { reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
 {FRAC}([eE][+-]?{DIGIT}+)?[fF]?                             { addToken(TokenType::FLOAT_LITERAL, yytext); }
