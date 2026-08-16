@@ -1,5 +1,6 @@
 # Phase 1 — Lexical Analyzer
 
+Built with **flex**, compiled as C++.
 
 ## Build & run
 
@@ -295,3 +296,28 @@ of scattered across the sections below where they're easy to miss.
 | `test8_file_manipulation.c` | this language's custom file-manipulation reserved words (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`) |
 | `test9_classes_and_objects.c` | object-oriented keywords/operators: `class`, access modifiers (`public`/`private`/`protected`), `this`, scope resolution (`::`), and a lambda capturing `this` |
 | `test10_lambda_functions.c` | C++-style lambda expressions: empty/`&`/`=`/mixed capture lists, trailing return type (`-> int`), `auto` |
+
+## Resources
+
+- **[Lex & Yacc Tutorial](https://epaperpress.com/lexandyacc/) by Tom
+  Niemann** ([direct PDF](https://epaperpress.com/lexandyacc/download/LexAndYacc.pdf)) —
+  a compact, practical introduction to building a lexer and parser
+  together with lex/flex and yacc/bison. Covers exactly the pattern this
+  project follows: a `%{ }%`/definitions/rules/subroutines-structured
+  `.l` file, exclusive start conditions for strings (its "More Lex →
+  Strings" section is close to how this lexer's `STRSTATE`/`CHRSTATE`
+  work), and — relevant for whenever Phase 2 starts — how `yylex()`
+  hands tokens to a bison-generated parser one at a time via `yylval`.
+- **[The flex manual](https://westes.github.io/flex/manual/)** (official,
+  [source on GitHub](https://github.com/westes/flex)) — the authoritative
+  reference for flex's pattern syntax, start conditions, and the
+  `%option` directives used in `src/lexer.l` (`noyywrap`, `yylineno`,
+  `nounput`, `noinput`).
+- **[The Bison manual](https://www.gnu.org/software/bison/manual/html_node/index.html)**
+  (official) — for whenever `phase2-parser/` starts consuming this
+  lexer's token stream.
+- **Compilers: Principles, Techniques, and Tools** (Aho, Sethi, Ullman —
+  "the Dragon Book") — the source of the classic
+  lexer/parser/symbol-table interaction diagram (`getNextToken()`) this
+  project has referenced when discussing what changes before Phase 2
+  can drive this lexer directly.
