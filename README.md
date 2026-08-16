@@ -13,7 +13,7 @@ A compiler for a C-like source language, built in phases.
 
 ```
 compiler-project/
-├── phase1-lexer/     Lexical analyzer (flex + C++)     -- done
+├── phase1-lexer/     Lexical analyzer     -- done
 ├── phase2-parser/    Syntax analyzer / parser           -- not started
 ├── phase3-ir/        Three Address Code generation      -- not started
 ├── phase4-codegen/   MIPS code generation                -- not started
