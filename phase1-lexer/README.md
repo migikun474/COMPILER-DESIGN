@@ -25,7 +25,7 @@ of scattered across the sections below where they're easy to miss.
 | Char literals must contain **exactly one character** — `''` and `'AB'` are lexical errors | C permits multi-character constants (`'AB'`) as a legal, if unusual, implementation-defined extension — gcc/clang only warn, never error | Multi-character constants are a genuinely obscure C feature whose numeric value is implementation-defined and rarely intentional — treating them as an error catches likely mistakes instead of silently accepting ambiguous input. |
 | `class`, `public`, `private`, `protected`, `this`, `::` are **reserved** | None of these exist in C at all | Added to support this language's object-oriented features (classes, access control, scope resolution) — a deliberate extension toward C++-style OOP on top of the C-like base. |
 | C++-style lambda syntax `[capture](params) { body }` is supported, using **existing tokens only** | C has no lambda syntax at all | Chosen (among several possible syntaxes) specifically because it needed **zero new lexer tokens** — every piece already existed (`[`/`]` from arrays, `->` from pointer access, etc.), verified by testing every capture form. The one real consequence: `auto` had to become a keyword too, since it's the only way to hold a lambda's value here. |
-| A digit followed directly by letters (`12abc`,`45lL`) is **not a lexical error** — it lexes as two separate valid tokens instead | Real C/C++ lock this into a single "preprocessing number" token via maximal munch *before* any validity check happens, so `12abc` can never split apart — it's diagnosed immediately as one malformed token (gcc: `invalid suffix "abc" on integer constant`) | **Explicit, considered reversal** of this lexer's original behavior (which *did* match real C here), made after comparing against a reference lexer that takes this approach. The lexer now only recognizes valid token shapes and does no such pre-validation; a future parser is expected to reject the resulting nonsensical token sequence instead. Trade-off, accepted deliberately: Phase 1 alone gives no diagnostic for this case — the error only becomes visible once Phase 2's parser exists, and the eventual message (a generic syntax error) will be less specific than the lexical diagnostic this project used to give. |
+| A digit followed directly by letters (`12abc`, `0x` with no hex digits, `45lL`) is **not a lexical error** — it lexes as two separate valid tokens instead | Real C/C++ lock this into a single "preprocessing number" token via maximal munch *before* any validity check happens, so `12abc` can never split apart — it's diagnosed immediately as one malformed token (gcc: `invalid suffix "abc" on integer constant`) | **Explicit, considered reversal** of this lexer's original behavior (which *did* match real C here), made after comparing against a reference lexer that takes this approach. The lexer now only recognizes valid token shapes and does no such pre-validation; a future parser is expected to reject the resulting nonsensical token sequence instead. Trade-off, accepted deliberately: Phase 1 alone gives no diagnostic for this case — the error only becomes visible once Phase 2's parser exists, and the eventual message (a generic syntax error) will be less specific than the lexical diagnostic this project used to give. |
 | Digit-range checks *within* a stated base (`089`, `0b1102`, and the zero-digit boundary case `0x`/`0b` with nothing valid after) **are still lexical errors** | Also flagged by real compilers, though via the same preprocessing-number mechanism as the row above | Deliberately **not** covered by the reversal above — validating a digit against its own declared base (is `8` a legal octal digit? did `0x` get *any* hex digit at all?) is a narrower, self-contained check, not the "digit + arbitrary trailing garbage" pattern that row is about. The key distinction from `12abc`: `12` is already a complete, valid, self-sufficient number on its own — splitting there just defers "what comes after"; `0x` alone was never a complete number to begin with, there's no valid prefix to split off. `0x1g`/`0b1x` (a valid digit *then* invalid trailing letters) still split-and-defer as `0x1`+`g` — only the genuinely digit-less case (`0x`, `0b`, or `0x`/`0b` followed straight by non-hex/non-binary letters like `0xzz`) is caught eagerly. |
 
 ## General
@@ -248,7 +248,8 @@ of scattered across the sections below where they're easy to miss.
   program").
 * If any errors were found: the table is **not** printed. Instead every
   error is printed to stderr (`Line <n>: <message> (near '<lexeme>')`),
-  and a full report is written to `logs/<source-file-stem>.log`.
+  and a full report is written to a log file — see
+  [Logging](#logging) below for the exact format.
 * If the file is completely clean: the two-column `Lexeme` / `Token`
   table is printed instead.
 
@@ -265,6 +266,52 @@ of scattered across the sections below where they're easy to miss.
 > above (→ `int_literal "45l"` + `identifier "L"`).
 > The narrower `089`-style invalid-octal-digit check is a *separate*
 > rule and is unaffected by this — it still errors.
+
+## Logging
+
+* Every run of `./lexer <file>` writes a log file to
+  `logs/<file-stem>.log` (the `logs/` directory is created automatically
+  if it doesn't exist) — **on every run, not just runs with errors.**
+* On a **clean** run: the log just says `No lexical errors found.` —
+  and nothing is printed to the console about this happening. It's
+  silent; you'd only know it's there if you looked in `logs/`.
+* On a run **with errors**: each error gets a numbered entry (line,
+  offending lexeme, message), followed by a total count at the bottom.
+  The console additionally prints `Lexical errors found.` and
+  `Report written to <path>` so it's obvious there's something to check
+  — unlike the clean-run case.
+* Example log content for a broken file:
+  ```
+  =========================================
+          LEXICAL ERROR REPORT
+  =========================================
+
+  Source File : test/test6_lexical_errors.c
+
+  [1]
+  Line    : 2
+  Lexeme  : 'a;
+  Message : Unterminated character literal
+
+  [2]
+  Line    : 3
+  Lexeme  : "oops;
+  Message : Unterminated string literal
+
+  ...
+
+  -----------------------------------------
+  Total Errors : 12
+  ```
+* The log filename is derived from the **input file's stem**, not its
+  content (e.g. `test6_lexical_errors.c` → `test6_lexical_errors.log`)
+  — running the lexer twice on the same source file overwrites the
+  previous log for that file.
+* Implemented in `src/logger.h`/`src/logger.cpp` (`writeLexerLog()`),
+  called unconditionally near the top of `main()` in `src/lexer.l`,
+  before the clean/error branch is even decided.
+* `logs/` is `.gitignore`'d — it's regenerated build output, not
+  tracked in the repo.
 
 ## Conclusion
 
