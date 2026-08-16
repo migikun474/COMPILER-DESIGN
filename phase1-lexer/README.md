@@ -1,6 +1,5 @@
 # Phase 1 — Lexical Analyzer
 
-Built with **flex**, compiled as C++.
 
 ## Build & run
 
@@ -10,6 +9,23 @@ make            # generates lex.yy.c and builds ./lexer
 ./lexer <file>  # run on a single source file
 make clean      # remove build artifacts
 ```
+
+## Deviations from Real C (and Why)
+
+Every place this language's lexer behaves differently from a real C
+compiler, gathered in one place with the reasoning behind each, instead
+of scattered across the sections below where they're easy to miss.
+
+| Deviation | What real C does instead | Why this language does it differently |
+|---|---|---|
+| `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc`, `FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`, `feof` are **reserved keywords** | These are ordinary `<stdio.h>`/`<stdlib.h>` library functions — just identifiers, usable as variable names (`int malloc = 5;` is legal C) | This is a custom language, not a strict C clone. Reserving the core I/O and memory-management vocabulary as keywords means the parser/symbol-table phase never has to special-case "well-known library names" — it can treat them as structural tokens from the start, the same way `if`/`while` are. Trade-off, accepted deliberately: these names can never be reused as variables here, unlike real C. |
+| `until` is a **reserved keyword** | No such keyword exists | Directly requested by this project's own spec (an intentional extra loop construct), not a deviation from *this* project's requirements — only from real C. |
+| `true`/`false` are **reserved literals** | No boolean keywords exist in C89–C17 (that's C++, or C23's `<stdbool.h>`) | Adopted for more ergonomic boolean literal support. Note there's still no `bool` *type* keyword — only the two literals exist so far. |
+| Char literals must contain **exactly one character** — `''` and `'AB'` are lexical errors | C permits multi-character constants (`'AB'`) as a legal, if unusual, implementation-defined extension — gcc/clang only warn, never error | Multi-character constants are a genuinely obscure C feature whose numeric value is implementation-defined and rarely intentional — treating them as an error catches likely mistakes instead of silently accepting ambiguous input. |
+| `class`, `public`, `private`, `protected`, `this`, `::` are **reserved** | None of these exist in C at all | Added to support this language's object-oriented features (classes, access control, scope resolution) — a deliberate extension toward C++-style OOP on top of the C-like base. |
+| C++-style lambda syntax `[capture](params) { body }` is supported, using **existing tokens only** | C has no lambda syntax at all | Chosen (among several possible syntaxes) specifically because it needed **zero new lexer tokens** — every piece already existed (`[`/`]` from arrays, `->` from pointer access, etc.), verified by testing every capture form. The one real consequence: `auto` had to become a keyword too, since it's the only way to hold a lambda's value here. |
+| A digit followed directly by letters (`12abc`, `0x` with no hex digits, `45lL`) is **not a lexical error** — it lexes as two separate valid tokens instead | Real C/C++ lock this into a single "preprocessing number" token via maximal munch *before* any validity check happens, so `12abc` can never split apart — it's diagnosed immediately as one malformed token (gcc: `invalid suffix "abc" on integer constant`) | **Explicit, considered reversal** of this lexer's original behavior (which *did* match real C here), made after comparing against a reference lexer that takes this approach. The lexer now only recognizes valid token shapes and does no such pre-validation; a future parser is expected to reject the resulting nonsensical token sequence instead. Trade-off, accepted deliberately: Phase 1 alone gives no diagnostic for this case — the error only becomes visible once Phase 2's parser exists, and the eventual message (a generic syntax error) will be less specific than the lexical diagnostic this project used to give. |
+| Digit-range checks *within* a stated base (`089`, `0b1102`) **are still lexical errors** | Also flagged by real compilers, though via the same preprocessing-number mechanism as the row above | Deliberately **not** covered by the reversal above — validating a digit against its own declared base (is `8` a legal octal digit?) is a narrower, self-contained check, not the "digit + arbitrary trailing garbage" pattern that row is about. Kept because it's cheap, precise, and doesn't conflict with the split-and-defer philosophy. |
 
 ## General
 
