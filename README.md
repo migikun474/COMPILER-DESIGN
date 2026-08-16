@@ -39,7 +39,9 @@ make            # builds ./lexer
 ./lexer test/test1_arithmetic_logical.c   # run on a single file
 ```
 
-See `phase1-lexer/README.md` for the full token/keyword reference.
+See [`phase1-lexer/README.md`](phase1-lexer/README.md) for the full
+token/keyword reference and [`docs/project_description.md`](docs/project_description.md)
+for the full feature/design-decision history.
 
 ## Features implemented (per project spec)
 
@@ -50,3 +52,25 @@ function calls with arguments, goto/break/continue, static.
 **Advanced:** variable-argument function calls, dynamic memory allocation,
 command-line input (argc/argv), typedef, reference, until loop,
 multi-level pointers, multi-dimensional arrays.
+
+## Features added beyond the original spec
+
+Requested and implemented after the initial spec — see
+[`docs/project_description.md`](docs/project_description.md#features-added-beyond-the-original-spec)
+for the full writeup of each:
+
+- **enum, union** — composite-type keywords, same treatment as `struct`
+- **Boolean literals** — `true`/`false` (no `bool` type keyword yet)
+- **File manipulation** — `FILE`, `fopen`, `fclose`, `fread`, `fwrite`,
+  `fprintf`, `fscanf`, `fgets`, `fputs`, `feof`, all reserved as keywords
+- **Object-oriented features** — `class`, access modifiers
+  (`public`/`private`/`protected`), `this`, scope resolution (`::`)
+- **Lambda functions** — C++-style `[capture](params) { body }` syntax
+- **Numeric literal completeness** — binary literals (`0b1101`), octal
+  literals with digit validation, combinable integer suffixes
+  (`u`/`l`/`ll`), leading/trailing-dot floats (`.5`, `5.`)
+
+This language also deliberately diverges from real C in several places
+(custom reserved keywords, stricter char literals, and more) — see
+[Deviations from Real C (and Why)](phase1-lexer/README.md#deviations-from-real-c-and-why)
+for the full list with justifications.
