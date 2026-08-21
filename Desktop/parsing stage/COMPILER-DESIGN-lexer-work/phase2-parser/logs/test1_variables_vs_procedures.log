@@ -1,0 +1,42 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test1_variables_vs_procedures.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "a : _Z1aii"
+|   |-- ParamDecl "b : INT"
+|   |-- ParamDecl "c : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "b"
+|               `-- Identifier "c"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "a : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "result : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "1"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+a                    procedure      9      PROCEDURE                                 0         INT (INT, INT)         _Z1aii
+b                    parameter      9      INT                                       1                                
+c                    parameter      9      INT                                       1                                
+main                 procedure      13     PROCEDURE                                 0         INT ()                 _Z4mainv
+a                    variable       14     INT                                       2                                
+result               variable       16     INT                                       0                                
