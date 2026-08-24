@@ -24,7 +24,7 @@ static std::string qualifiersFor(const SymbolTableEntry &e) {
 }
 
 static std::string signatureFor(const SymbolTableEntry &e) {
-    if (e.kind != SymKind::PROCEDURE) return "";
+    if (e.kind != SymKind::PROCEDURE && e.returnType.empty()) return "";
     std::string sig = e.returnType.empty() ? "?" : e.returnType;
     sig += " (";
     for (size_t i = 0; i < e.paramTypes.size(); ++i) {

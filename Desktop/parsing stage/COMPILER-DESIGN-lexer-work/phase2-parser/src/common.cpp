@@ -96,8 +96,13 @@ std::string computeTypeStr(const TypeSpec &ts, int pointerLevel, int arrayLevel)
             base += ts.parts[i];
         }
     }
-    if (pointerLevel > 0) base += "_POINTER";
-    if (arrayLevel > 0) base += "_ARRAY";
+    /* one "_POINTER" per level, so char* and char** are distinguishable
+       (CHAR_POINTER vs CHAR_POINTER_POINTER) rather than collapsing to
+       the same classification regardless of depth. */
+    for (int i = 0; i < pointerLevel; ++i) base += "_POINTER";
+    /* likewise one "_ARRAY" per dimension, so int[3] and int[2][2] are
+       distinguishable. */
+    for (int i = 0; i < arrayLevel; ++i) base += "_ARRAY";
     return base;
 }
 
@@ -192,6 +197,27 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
         g_typedefNames.insert(d.name);
         setCategory(d.nameIdx, "TYPEDEF");
         return mkNode(ASTKind::TypedefDecl, d.name + " = " + typeStr);
+    } else if (d.isFunctionPointer) {
+        /* `int (*fp)(int, int);` -- fp is a VARIABLE whose type is
+           "pointer to function returning X taking (...)", not a
+           function declaration. d.pointerLevel counts the star(s)
+           inside the parens, e.g. 1 for `(*fp)`, 2 for `(**fpp)`. */
+        std::vector<std::string> paramTypes;
+        for (auto &p : d.params) paramTypes.push_back(p.typeStr);
+        std::string returnType = computeTypeStr(ts, d.pointerLevel - 1, 0);
+        std::string typeStr = returnType + "_FUNCTION_POINTER";
+
+        SymbolDeclInfo extra;
+        extra.tokenIdx = d.nameIdx;
+        extra.isStatic = ts.isStatic;
+        extra.isConst = ts.isConst;
+        extra.isVolatile = ts.isVolatile;
+        extra.pointerLevel = d.pointerLevel;
+        extra.returnType = returnType;
+        extra.paramTypes = paramTypes;
+        declareSymbol(d.name, SymKind::VARIABLE, typeStr, extra);
+        setCategory(d.nameIdx, typeStr);
+        return mkNode(ASTKind::VarDecl, d.name + " : " + typeStr);
     } else if (d.isFunction) {
         std::vector<std::string> paramTypes;
         for (auto &p : d.params) paramTypes.push_back(p.typeStr);

@@ -25,12 +25,12 @@
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
 %token FILE_KW FOPEN FCLOSE FREAD FWRITE FPRINTF FSCANF FGETS FPUTS FEOF
-%token TRUE_TOK FALSE_TOK BOOL
+%token BOOL
 %token NEW DELETE SIZEOF
 
 /* ---- literals / names ---- */
 %token IDENTIFIER TYPE_NAME
-%token INT_LITERAL FLOAT_LITERAL CHAR_LITERAL STRING_LITERAL
+%token INT_LITERAL FLOAT_LITERAL CHAR_LITERAL STRING_LITERAL BOOL_LITERAL
 
 /* ---- multi-character operators ---- */
 %token ARROW ELLIPSIS SCOPE_RES
@@ -409,7 +409,7 @@ initializer_list
 pointer
     : '*'         { $$.decl.pointerLevel = 1; }
     | '&'         { $$.decl.pointerLevel = 1; }
-    | '*' pointer { $$.decl.pointerLevel = $2.decl.pointerLevel + 1; }
+    | pointer '*' { $$ = $1; $$.decl.pointerLevel++; }
     ;
 
 pointer_opt
@@ -449,10 +449,17 @@ direct_declarator
           $$.decl.nameIdx = $3.idx;
           $$.decl.className = $1.str;
       }
-    | '(' declarator ')' { $$ = $2; }
+    | '(' declarator ')' { $$ = $2; $$.decl.wasParenGrouped = true; }
     | direct_declarator '(' { pushScope(); } parameter_list_opt ')' {
           $$ = $1;
-          $$.decl.isFunction = true;
+          if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) {
+              /* `int (*fp)(int, int)` -- fp is a VARIABLE of function-
+                 pointer type, not a function declaration. */
+              $$.decl.isFunctionPointer = true;
+          } else {
+              $$.decl.isFunction = true;
+          }
+          $$.decl.wasParenGrouped = false; /* consumed */
           $$.decl.params = $4.paramList;
           popScope(); /* only used to keep param names out of the
                          enclosing scope while scanning the list; the
@@ -862,8 +869,7 @@ primary_expr
     | FLOAT_LITERAL  { $$.node = mkNode(ASTKind::FloatLiteral, $1.str); }
     | CHAR_LITERAL   { $$.node = mkNode(ASTKind::CharLiteral, $1.str); }
     | STRING_LITERAL { $$.node = mkNode(ASTKind::StringLiteral, $1.str); }
-    | TRUE_TOK  { $$.node = mkNode(ASTKind::BoolLiteral, "true"); }
-    | FALSE_TOK { $$.node = mkNode(ASTKind::BoolLiteral, "false"); }
+    | BOOL_LITERAL { $$.node = mkNode(ASTKind::BoolLiteral, $1.str); }
     | THIS { $$.node = mkNode(ASTKind::ThisExpr); }
     | '(' expr ')' { $$.node = $2.node; }
     | lambda_expr { $$.node = $1.node; }

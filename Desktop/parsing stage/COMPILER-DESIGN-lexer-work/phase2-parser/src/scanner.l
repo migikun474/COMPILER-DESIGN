@@ -8,10 +8,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include <unordered_map>
 
 #include "common.h"
 #include "parser.tab.hpp"
+#include "token_type.hpp"
+#include "token_converter.hpp"
 
 static std::string strbuf;
 static int litStartLine;
@@ -27,12 +28,6 @@ static int emit(int tokcode, const std::string &defaultCategory) {
     return tokcode;
 }
 
-/* Punctuation/operator tokens are logged too (so they still show up in
-   the final token table) but never get their category patched later. */
-static int emitOp(int tokcode, const std::string &name) {
-    return emit(tokcode, name);
-}
-
 /* Like emit(), but for tokens (strings/char literals) whose full text
    was accumulated into strbuf rather than sitting in yytext. */
 static int emitText(int tokcode, const std::string &text, const std::string &category) {
@@ -43,37 +38,14 @@ static int emitText(int tokcode, const std::string &text, const std::string &cat
     return tokcode;
 }
 
-static const std::unordered_map<std::string, int> keyword_map = {
-    {"int", INT}, {"char", CHAR}, {"float", FLOAT}, {"double", DOUBLE},
-    {"void", VOID}, {"short", SHORT}, {"long", LONG}, {"signed", SIGNED},
-    {"unsigned", UNSIGNED},
-    {"struct", STRUCT}, {"enum", ENUM}, {"union", UNION}, {"class", CLASS},
-    {"public", PUBLIC}, {"private", PRIVATE}, {"protected", PROTECTED},
-    {"this", THIS},
-    {"static", STATIC}, {"typedef", TYPEDEF}, {"auto", AUTO},
-    {"if", IF}, {"else", ELSE}, {"for", FOR}, {"while", WHILE}, {"do", DO},
-    {"until", UNTIL}, {"switch", SWITCH}, {"case", CASE}, {"default", DEFAULT},
-    {"break", BREAK}, {"continue", CONTINUE}, {"goto", GOTO}, {"return", RETURN},
-    {"printf", PRINTF}, {"scanf", SCANF},
-    {"malloc", MALLOC}, {"free", FREE}, {"calloc", CALLOC}, {"realloc", REALLOC},
-    {"FILE", FILE_KW}, {"fopen", FOPEN}, {"fclose", FCLOSE}, {"fread", FREAD},
-    {"fwrite", FWRITE}, {"fprintf", FPRINTF}, {"fscanf", FSCANF},
-    {"fgets", FGETS}, {"fputs", FPUTS}, {"feof", FEOF},
-    {"true", TRUE_TOK}, {"false", FALSE_TOK},
-    {"bool", BOOL}, {"const", CONST}, {"volatile", VOLATILE},
-    {"sizeof", SIZEOF}, {"new", NEW}, {"delete", DELETE},
-};
-static const std::unordered_map<std::string, std::string> single_char_names = {
-    {"+", "plus_op"}, {"-", "minus_op"}, {"*", "star_op"}, {"/", "divide_op"},
-    {"%", "mod_op"}, {"=", "assign_op"}, {"<", "lt_op"}, {">", "gt_op"},
-    {"!", "logical_not_op"}, {"&", "ampersand_op"}, {"|", "pipe_op"},
-    {"^", "caret_op"}, {"~", "tilde_op"}, {".", "dot_op"}, {",", "comma_op"},
-    {"?", "question_op"}, {":", "colon_op"},
-    {"(", "open_paren_op"}, {")", "close_paren_op"},
-    {"{", "open_brace_op"}, {"}", "close_brace_op"},
-    {"[", "open_bracket_op"}, {"]", "close_bracket_op"},
-    {";", "semicolon_op"},
-};
+/* Looks a matched keyword or operator up in the SHARED tables (see
+   shared/include/token_type.hpp) and emits it -- this is what lets
+   phase1-lexer and phase2-parser agree on both "is this a keyword"
+   and "what do we call it" without either one hand-maintaining its
+   own copy of that list. */
+static int emitShared(TokenType t) {
+    return emit(to_bison_token(t), to_string(t));
+}
 %}
 
 DIGIT       [0-9]
@@ -100,10 +72,15 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*             { }
 
+ /* identifiers AND keywords share one rule, exactly like phase1-lexer:
+    the matched text is looked up in the shared reserved_word() table;
+    if it's not a keyword, it's either a previously-seen typedef/class
+    name (the lexer hack -- phase1 has no equivalent, since it has no
+    parser feeding scope information back) or a plain identifier. */
 {ID} {
-    auto it = keyword_map.find(yytext);
-    if (it != keyword_map.end()) {
-        return emit(it->second, yytext);
+    auto kw = reserved_word(yytext);
+    if (kw.has_value()) {
+        return emitShared(kw.value());
     }
     if (g_typedefNames.count(yytext)) {
         return emit(TYPE_NAME, "TYPEDEF");
@@ -132,34 +109,43 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?         { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 {DIGIT}+{INT_SUFFIX}?                  { return emit(INT_LITERAL, "INT_LITERAL"); }
 
-"..."   { return emitOp(ELLIPSIS, "ellipsis_op"); }
-"::"    { return emitOp(SCOPE_RES, "scope_resolution_op"); }
-"->"    { return emitOp(ARROW, "arrow_op"); }
-"++"    { return emitOp(INC, "increment_op"); }
-"--"    { return emitOp(DEC, "decrement_op"); }
-"<<="   { return emitOp(SHL_ASSIGN, "lshift_assign_op"); }
-">>="   { return emitOp(SHR_ASSIGN, "rshift_assign_op"); }
-"<<"    { return emitOp(SHL, "lshift_op"); }
-">>"    { return emitOp(SHR, "rshift_op"); }
-"<="    { return emitOp(LE_OP, "le_op"); }
-">="    { return emitOp(GE_OP, "ge_op"); }
-"=="    { return emitOp(EQ_OP, "eq_op"); }
-"!="    { return emitOp(NE_OP, "ne_op"); }
-"&&"    { return emitOp(AND_OP, "logical_and_op"); }
-"||"    { return emitOp(OR_OP, "logical_or_op"); }
-"+="    { return emitOp(PLUS_ASSIGN, "plus_assign_op"); }
-"-="    { return emitOp(MINUS_ASSIGN, "minus_assign_op"); }
-"*="    { return emitOp(MUL_ASSIGN, "star_assign_op"); }
-"/="    { return emitOp(DIV_ASSIGN, "divide_assign_op"); }
-"%="    { return emitOp(MOD_ASSIGN, "mod_assign_op"); }
-"&="    { return emitOp(AND_ASSIGN, "ampersand_assign_op"); }
-"|="    { return emitOp(OR_ASSIGN, "pipe_assign_op"); }
-"^="    { return emitOp(XOR_ASSIGN, "caret_assign_op"); }
-
+ /* Every operator -- multi- and single-character alike -- funnels
+    through one lookup against the shared operator_map via
+    operator_token(), exactly like phase1-lexer's single consolidated
+    operator rule. Flex's own longest-match rule already guarantees
+    "<<=" wins over "<<" over "<" whenever the longer form is actually
+    present, regardless of how many separate patterns are listed here
+    or that they all share one action (chained via "|" fall-through);
+    listing them longest-first below is for readability only. */
+"..."   |
+"::"    |
+"->"    |
+"++"    |
+"--"    |
+"<<="   |
+">>="   |
+"<<"    |
+">>"    |
+"<="    |
+">="    |
+"=="    |
+"!="    |
+"&&"    |
+"||"    |
+"+="    |
+"-="    |
+"*="    |
+"/="    |
+"%="    |
+"&="    |
+"|="    |
+"^="    |
 [+\-*/%=<>!&|^~.,?:(){}\[\]\;] {
-    auto it = single_char_names.find(yytext);
-    std::string name = (it != single_char_names.end()) ? it->second : std::string(yytext);
-    return emitOp((unsigned char)yytext[0], name);
+    auto op = operator_token(yytext);
+    if (op.has_value()) {
+        return emitShared(op.value());
+    }
+    reportDiagnostic(yylineno, yytext, "Illegal character", "Lexical error");
 }
 
 [ \t\r]+  { }

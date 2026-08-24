@@ -198,6 +198,17 @@ struct DeclInfo {
     ASTNodePtr initExpr;          /* `= expr` initializer, if any */
     std::string className;        /* set for `Class::member(...)` out-of-class
                                       definitions, empty otherwise */
+    bool wasParenGrouped = false; /* set by direct_declarator: '(' declarator ')' --
+                                      distinguishes `int (*fp)(...)` (a function-
+                                      POINTER VARIABLE, whose pointer sits inside the
+                                      parens) from `int *f(...)` (a function whose
+                                      RETURN TYPE is a pointer, where the pointer is
+                                      outside/before the whole declarator). Without
+                                      this, both looked identical (isFunction=true,
+                                      pointerLevel>0) and the former was wrongly
+                                      classified as a PROCEDURE instead of a
+                                      variable. */
+    bool isFunctionPointer = false;
 };
 
 std::string computeTypeStr(const TypeSpec &ts, int pointerLevel, int arrayLevel);
