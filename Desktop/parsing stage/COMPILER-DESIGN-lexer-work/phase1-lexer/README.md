@@ -31,19 +31,19 @@ of scattered across the sections below where they're easy to miss.
 ## General
 
 * Every token carries a **`TokenType`** — a C++ `enum class` (in
-  `include/token_type.hpp`) with one distinct value per keyword and per
+  `../shared/include/token_type.hpp`) with one distinct value per keyword and per
   operator/punctuation mark (e.g. `TokenType::IF`, `TokenType::ARROW_OP`,
   `TokenType::OPEN_PAREN_OP`), not a shared category string. This
   replaced an earlier design that used ~9 broad category strings
   (`type_keyword`, `control_keyword`, ...); the switch was made
   specifically to prepare for a parser phase, which generally wants one
   terminal symbol per keyword rather than a shared bucket.
-* `to_string(TokenType)` (in `src/token_type.cpp`) converts a `TokenType`
+* `to_string(TokenType)` (in `../shared/src/token_type.cpp`) converts a `TokenType`
   back to its printable name (e.g. `TokenType::ARROW_OP` → `"arrow_op"`)
   for the table printed at the end.
 * Identifiers and keywords share **one** flex rule. The matched text is
   looked up via `reserved_word()` (a `keyword_map`, string → `TokenType`,
-  in `src/token_type.cpp`); if found, that keyword's specific
+  in `../shared/src/token_type.cpp`); if found, that keyword's specific
   `TokenType` is used, otherwise it's a plain `IDENTIFIER`. This means
   the flex rules no longer encode keywords directly — adding a keyword
   is a one-line change to `keyword_map`, not a new flex pattern.
@@ -143,7 +143,7 @@ of scattered across the sections below where they're easy to miss.
 
 ## Reserved Keywords and Identifiers
 
-* Keywords are stored in `keyword_map` (`src/token_type.cpp`) — a
+* Keywords are stored in `keyword_map` (`../shared/src/token_type.cpp`) — a
   `std::unordered_map<std::string, TokenType>`. A word either matches an
   entry in this map (and becomes that specific keyword's `TokenType`) or
   falls through to the generic identifier pattern
@@ -206,8 +206,8 @@ of scattered across the sections below where they're easy to miss.
   just `IDENTIFIER`.
 * `sizeof` is currently an ordinary `identifier`, not a keyword.
 * To add a new reserved keyword: add one line to `keyword_map` in
-  `src/token_type.cpp` (and its `TokenType` enum value in
-  `token_type.hpp`, and its printable name in `token_to_string_map`) —
+  `../shared/src/token_type.cpp` (and its `TokenType` enum value in
+  `../shared/include/token_type.hpp`, and its printable name in `token_to_string_map`) —
   `src/lexer.l` itself needs no changes.
 
 ## Operators
@@ -226,16 +226,20 @@ of scattered across the sections below where they're easy to miss.
 * Single-character operators/punctuation share one flex rule; since many
   different characters match that one pattern, the specific `TokenType`
   is resolved via `operator_token()` (`operator_map` in
-  `src/token_type.cpp`) at match time.
+  `../shared/src/token_type.cpp`) at match time.
 * Full set: `+ - * / % = == != < > <= >= && || ! & | ^ ~ << >> ++ -- +=
   -= *= /= %= &= |= ^= -> . , ? : ::`, plus `...` (`ELLIPSIS_OP`, for
   variable-argument functions) and `::` (`SCOPE_RESOLUTION_OP`, for
   `ClassName::member`).
-* Adding a new operator: add its `TokenType` to `token_type.hpp`, an
-  entry to `operator_map`/`token_to_string_map` in `token_type.cpp`,
+* Adding a new operator: add its `TokenType` to `../shared/include/token_type.hpp`, an
+  entry to `operator_map`/`token_to_string_map` in `../shared/src/token_type.cpp`,
   and — only if it's multi-character — one flex rule in `src/lexer.l`
   (single-character operators need no `lexer.l` change at all, since
-  they already fall through to the table-lookup rule).
+  they already fall through to the table-lookup rule). This same
+  table is shared with phase2-parser, so the change is picked up by
+  both phases automatically — see `../README.md` and
+  `../phase2-parser/README.md` for why the *tables* are shared but
+  each phase keeps its own scanner.
 
 ## Error Handling
 

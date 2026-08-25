@@ -13,6 +13,11 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     {"long", TokenType::LONG},
     {"signed", TokenType::SIGNED},
     {"unsigned", TokenType::UNSIGNED},
+    {"bool", TokenType::BOOL},
+
+    // type qualifiers
+    {"const", TokenType::CONST},
+    {"volatile", TokenType::VOLATILE},
 
     // composite types
     {"struct", TokenType::STRUCT},
@@ -27,6 +32,8 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
 
     // object-oriented
     {"this", TokenType::THIS},
+    {"new", TokenType::NEW},
+    {"delete", TokenType::DELETE},
 
     // storage class
     {"static", TokenType::STATIC},
@@ -47,6 +54,9 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     {"continue", TokenType::CONTINUE},
     {"goto", TokenType::GOTO},
     {"return", TokenType::RETURN},
+
+    // misc operator-like keyword
+    {"sizeof", TokenType::SIZEOF},
 
     // I/O (custom reserved words -- see token_type.hpp)
     {"printf", TokenType::PRINTF},
@@ -152,6 +162,10 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::LONG, "long"},
     {TokenType::SIGNED, "signed"},
     {TokenType::UNSIGNED, "unsigned"},
+    {TokenType::BOOL, "bool"},
+
+    {TokenType::CONST, "const"},
+    {TokenType::VOLATILE, "volatile"},
 
     {TokenType::STRUCT, "struct"},
     {TokenType::ENUM, "enum"},
@@ -163,6 +177,8 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::PROTECTED, "protected"},
 
     {TokenType::THIS, "this"},
+    {TokenType::NEW, "new"},
+    {TokenType::DELETE, "delete"},
 
     {TokenType::STATIC, "static"},
     {TokenType::TYPEDEF, "typedef"},
@@ -181,6 +197,8 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::CONTINUE, "continue"},
     {TokenType::GOTO, "goto"},
     {TokenType::RETURN, "return"},
+
+    {TokenType::SIZEOF, "sizeof"},
 
     {TokenType::PRINTF, "printf"},
     {TokenType::SCANF, "scanf"},

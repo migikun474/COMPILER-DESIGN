@@ -4,6 +4,22 @@
 #include <optional>
 #include <string>
 
+/* This enum, and the tables below it, are the single source of truth
+ * for "what are this language's keywords and operators" -- used by
+ * BOTH phase1-lexer (which classifies a whole file up front into a
+ * Lexeme/Token table) and phase2-parser (whose scanner classifies
+ * tokens on demand, on Bison's request, and additionally maps each
+ * TokenType to Bison's own generated token codes via
+ * phase2-parser/include/token_converter.hpp).
+ *
+ * Previously these tables were duplicated by hand in
+ * phase2-parser/src/scanner.l, which meant the two phases' notion of
+ * "what counts as a keyword" or "what to call the '{' operator" could
+ * silently drift apart -- and did, at least once. Sharing this file
+ * makes that class of bug structurally impossible: there is exactly
+ * one keyword_map, one operator_map, one to_string(), and both phases
+ * link against the same compiled object.
+ */
 enum class TokenType {
     // ---- literals / values (not "keywords" -- these denote a value,
     // not a structural role) ----
@@ -24,6 +40,11 @@ enum class TokenType {
     LONG,
     SIGNED,
     UNSIGNED,
+    BOOL,
+
+    // ---- type qualifiers ----
+    CONST,
+    VOLATILE,
 
     // ---- composite-type keywords (introduce a user-defined type) ----
     STRUCT,
@@ -38,6 +59,8 @@ enum class TokenType {
 
     // ---- object-oriented ----
     THIS,
+    NEW,
+    DELETE,
 
     // ---- storage-class keywords ----
     STATIC,
@@ -58,6 +81,9 @@ enum class TokenType {
     CONTINUE,
     GOTO,
     RETURN,
+
+    // ---- misc operator-like keyword ----
+    SIZEOF,
 
     // ---- I/O keywords (custom to this language -- real C treats these
     // as ordinary <stdio.h> library identifiers, not reserved words) ----

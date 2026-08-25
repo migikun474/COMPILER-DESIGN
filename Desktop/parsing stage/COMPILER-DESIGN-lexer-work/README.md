@@ -13,6 +13,7 @@ A compiler for a C-like source language, built in phases.
 
 ```
 compiler-project/
+├── shared/            Shared vocabulary: keyword/operator tables (see below)
 ├── phase1-lexer/     Lexical analyzer     -- done
 ├── phase2-parser/    Syntax analyzer / parser           -- done
 ├── phase3-ir/        Three Address Code generation      -- not started
@@ -20,11 +21,30 @@ compiler-project/
 └── docs/             Project spec and design notes
 ```
 
-Each phase directory is self-contained: `src/` (source), `test/` (test
+Each phase directory holds its own `src/` (source), `test/` (test
 cases), `makefile` (build recipe), and `run.sh` (runs the built executable
-over every test case). Build a phase with `make` inside its directory, then
-`./run.sh` to run all tests, or `./run.sh /path/to/other/executable` to run
-a specific binary.
+over every test case) -- with one shared dependency, `shared/` (see
+below), that phase1-lexer and phase2-parser both build against. Build a
+phase with `make` inside its directory, then `./run.sh` to run all
+tests, or `./run.sh /path/to/other/executable` to run a specific binary.
+
+## Shared vocabulary (`shared/`)
+
+`shared/include/token_type.hpp` and `shared/src/token_type.cpp` are the
+single source of truth for "what are this language's keywords and
+operators, and what do we call each one" (`TokenType` enum,
+`keyword_map`, `operator_map`, `to_string()`). Both phase1-lexer and
+phase2-parser link against the exact same compiled object, rather than
+each maintaining their own copy — which they briefly did, and which
+let their operator-naming conventions silently drift apart (phase2 was
+printing raw `{`/`(` instead of `open_brace_op`/`open_paren_op` until
+this was unified). Phase2 additionally has
+`phase2-parser/include/token_converter.hpp`, a small adapter mapping
+`TokenType` to Bison's own generated token codes — the one piece that
+genuinely can't be shared, since it depends on that phase's specific
+grammar. See `phase2-parser/README.md` for the fuller writeup of why
+phase1's lexer itself (as opposed to just its tables) can't be reused
+directly to drive phase2's parser.
 
 ## Phase 1 — Lexical Analyzer
 

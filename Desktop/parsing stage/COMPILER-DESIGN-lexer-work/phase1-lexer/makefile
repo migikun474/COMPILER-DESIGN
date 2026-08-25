@@ -1,5 +1,5 @@
 CC      = g++
-CFLAGS  = -std=c++17 -Wall -O2 -Iinclude
+CFLAGS  = -std=c++17 -Wall -O2 -Iinclude -I../shared/include
 
 LEX     = flex
 
@@ -10,7 +10,7 @@ TARGET  = lexer
 
 LOGGER       = src/logger.cpp
 TOKEN        = src/token.cpp
-TOKEN_TYPE   = src/token_type.cpp
+TOKEN_TYPE   = ../shared/src/token_type.cpp
 DIAGNOSTICS  = src/diagnostics.cpp
 
 .PHONY: all clean
