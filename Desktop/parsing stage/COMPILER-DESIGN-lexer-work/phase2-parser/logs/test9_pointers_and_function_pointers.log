@@ -8,279 +8,37 @@ No errors found.
 
 --- Abstract Syntax Tree ---
 Program "translation_unit"
-|-- FunctionDef "modify_int : _Z10modify_intPii"
-|   |-- ParamDecl "ptr : INT_POINTER"
-|   |-- ParamDecl "value : INT"
-|   `-- CompoundStmt
-|       `-- ExprStmt
-|           `-- AssignExpr "="
-|               |-- UnaryExpr "*"
-|               |   `-- Identifier "ptr"
-|               `-- Identifier "value"
-|-- FunctionDef "read_through_pointer : _Z20read_through_pointerPi"
-|   |-- ParamDecl "ptr : INT_POINTER"
+|-- FunctionDef "func_mixed : _Z10func_mixedAiPi"
+|   |-- ParamDecl "exact : INT_ARRAY"
+|   |-- ParamDecl "decayed : INT_POINTER"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
-|           `-- UnaryExpr "*"
-|               `-- Identifier "ptr"
-|-- FunctionDef "swap_ints : _Z9swap_intsPiPi"
-|   |-- ParamDecl "a : INT_POINTER"
-|   |-- ParamDecl "b : INT_POINTER"
-|   `-- CompoundStmt
-|       |-- VarDecl "temp : INT"
-|       |-- ExprStmt
-|       |   `-- AssignExpr "="
-|       |       |-- Identifier "temp"
-|       |       `-- UnaryExpr "*"
-|       |           `-- Identifier "a"
-|       |-- ExprStmt
-|       |   `-- AssignExpr "="
-|       |       |-- UnaryExpr "*"
-|       |       |   `-- Identifier "a"
-|       |       `-- UnaryExpr "*"
-|       |           `-- Identifier "b"
-|       `-- ExprStmt
-|           `-- AssignExpr "="
-|               |-- UnaryExpr "*"
-|               |   `-- Identifier "b"
-|               `-- Identifier "temp"
-|-- FunctionDef "increment_value : _Z15increment_valuePi"
-|   |-- ParamDecl "ptr : INT_POINTER"
-|   `-- CompoundStmt
-|       `-- ExprStmt
-|           `-- AssignExpr "="
-|               |-- UnaryExpr "*"
-|               |   `-- Identifier "ptr"
-|               `-- BinaryExpr "+"
-|                   |-- UnaryExpr "*"
-|                   |   `-- Identifier "ptr"
-|                   `-- IntLiteral "1"
-|-- FunctionDef "add_dereferenced : _Z16add_dereferencedPiPi"
-|   |-- ParamDecl "p1 : INT_POINTER"
-|   |-- ParamDecl "p2 : INT_POINTER"
+|-- FunctionDef "func_exact : _Z10func_exactAAi"
+|   |-- ParamDecl "arr : INT_ARRAY_ARRAY"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
-|           `-- BinaryExpr "+"
-|               |-- UnaryExpr "*"
-|               |   `-- Identifier "p1"
-|               `-- UnaryExpr "*"
-|                   `-- Identifier "p2"
-|-- FunctionDef "set_pointer : _Z11set_pointerPPiPi"
-|   |-- ParamDecl "ptr_ptr : INT_POINTER_POINTER"
-|   |-- ParamDecl "value : INT_POINTER"
-|   `-- CompoundStmt
-|       `-- ExprStmt
-|           `-- AssignExpr "="
-|               |-- UnaryExpr "*"
-|               |   `-- Identifier "ptr_ptr"
-|               `-- Identifier "value"
-|-- StructDecl "Point"
-|   |-- VarDecl "x : INT"
-|   `-- VarDecl "y : INT"
-|-- FunctionDef "set_point : _Z9set_pointP3Strii"
-|   |-- ParamDecl "p : STRUCT_POINTER"
-|   |-- ParamDecl "x_val : INT"
-|   |-- ParamDecl "y_val : INT"
-|   `-- CompoundStmt
-|       |-- ExprStmt
-|       |   `-- AssignExpr "="
-|       |       |-- ArrowExpr "x"
-|       |       |   `-- Identifier "p"
-|       |       `-- Identifier "x_val"
-|       `-- ExprStmt
-|           `-- AssignExpr "="
-|               |-- ArrowExpr "y"
-|               |   `-- Identifier "p"
-|               `-- Identifier "y_val"
-|-- FunctionDef "get_point_sum : _Z13get_point_sumP3Str"
-|   |-- ParamDecl "p : STRUCT_POINTER"
+|-- FunctionDef "func_ptr : _Z8func_ptrPPi"
+|   |-- ParamDecl "ptr : INT_POINTER_POINTER"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
-|           `-- BinaryExpr "+"
-|               |-- ArrowExpr "x"
-|               |   `-- Identifier "p"
-|               `-- ArrowExpr "y"
-|                   `-- Identifier "p"
 `-- FunctionDef "main : _Z4mainv"
     `-- CompoundStmt
-        |-- VarDecl "x : INT"
-        |-- VarDecl "y : INT"
-        |-- VarDecl "sum : INT"
-        |-- VarDecl "ptr : INT_POINTER"
-        |-- VarDecl "ptr_to_ptr : INT_POINTER_POINTER"
-        |-- VarDecl "pt : STRUCT"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "x"
-        |       `-- IntLiteral "10"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "y"
-        |       `-- IntLiteral "20"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- MemberExpr "x"
-        |       |   `-- Identifier "pt"
-        |       `-- IntLiteral "0"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- MemberExpr "y"
-        |       |   `-- Identifier "pt"
-        |       `-- IntLiteral "0"
+        |-- VarDecl "arr10 : INT_ARRAY"
+        |-- VarDecl "arr20 : INT_ARRAY"
+        |-- VarDecl "arr2d : INT_ARRAY_ARRAY"
         |-- ExprStmt
         |   `-- CallExpr
-        |       |-- Identifier "modify_int"
-        |       |-- UnaryExpr "&"
-        |       |   `-- Identifier "x"
-        |       `-- IntLiteral "42"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "x"
-        |   |   `-- IntLiteral "42"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "1"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "y"
-        |       `-- CallExpr
-        |           |-- Identifier "read_through_pointer"
-        |           `-- UnaryExpr "&"
-        |               `-- Identifier "x"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "y"
-        |   |   `-- IntLiteral "42"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "2"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "x"
-        |       `-- IntLiteral "100"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "y"
-        |       `-- IntLiteral "200"
+        |       |-- Identifier "func_mixed"
+        |       |-- Identifier "arr10"
+        |       `-- Identifier "arr20"
         |-- ExprStmt
         |   `-- CallExpr
-        |       |-- Identifier "swap_ints"
-        |       |-- UnaryExpr "&"
-        |       |   `-- Identifier "x"
-        |       `-- UnaryExpr "&"
-        |           `-- Identifier "y"
-        |-- IfStmt
-        |   |-- BinaryExpr "||"
-        |   |   |-- BinaryExpr "!="
-        |   |   |   |-- Identifier "x"
-        |   |   |   `-- IntLiteral "200"
-        |   |   `-- BinaryExpr "!="
-        |   |       |-- Identifier "y"
-        |   |       `-- IntLiteral "100"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "3"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "x"
-        |       `-- IntLiteral "5"
+        |       |-- Identifier "func_exact"
+        |       `-- Identifier "arr2d"
         |-- ExprStmt
         |   `-- CallExpr
-        |       |-- Identifier "increment_value"
-        |       `-- UnaryExpr "&"
-        |           `-- Identifier "x"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "x"
-        |   |   `-- IntLiteral "6"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "4"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "x"
-        |       `-- IntLiteral "10"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "y"
-        |       `-- IntLiteral "20"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "sum"
-        |       `-- CallExpr
-        |           |-- Identifier "add_dereferenced"
-        |           |-- UnaryExpr "&"
-        |           |   `-- Identifier "x"
-        |           `-- UnaryExpr "&"
-        |               `-- Identifier "y"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "sum"
-        |   |   `-- IntLiteral "30"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "5"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "x"
-        |       `-- IntLiteral "999"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "ptr_to_ptr"
-        |       `-- UnaryExpr "&"
-        |           `-- Identifier "ptr"
-        |-- ExprStmt
-        |   `-- CallExpr
-        |       |-- Identifier "set_pointer"
-        |       |-- Identifier "ptr_to_ptr"
-        |       `-- UnaryExpr "&"
-        |           `-- Identifier "x"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "y"
-        |       `-- UnaryExpr "*"
-        |           `-- Identifier "ptr"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "y"
-        |   |   `-- IntLiteral "999"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "6"
-        |-- ExprStmt
-        |   `-- CallExpr
-        |       |-- Identifier "set_point"
-        |       |-- UnaryExpr "&"
-        |       |   `-- Identifier "pt"
-        |       |-- IntLiteral "10"
-        |       `-- IntLiteral "20"
-        |-- IfStmt
-        |   |-- BinaryExpr "||"
-        |   |   |-- BinaryExpr "!="
-        |   |   |   |-- MemberExpr "x"
-        |   |   |   |   `-- Identifier "pt"
-        |   |   |   `-- IntLiteral "10"
-        |   |   `-- BinaryExpr "!="
-        |   |       |-- MemberExpr "y"
-        |   |       |   `-- Identifier "pt"
-        |   |       `-- IntLiteral "20"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "7"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "sum"
-        |       `-- CallExpr
-        |           |-- Identifier "get_point_sum"
-        |           `-- UnaryExpr "&"
-        |               `-- Identifier "pt"
-        |-- IfStmt
-        |   |-- BinaryExpr "!="
-        |   |   |-- Identifier "sum"
-        |   |   `-- IntLiteral "30"
-        |   `-- CompoundStmt
-        |       `-- ReturnStmt
-        |           `-- IntLiteral "8"
+        |       |-- Identifier "func_ptr"
+        |       `-- Identifier "arr2d"
         `-- ReturnStmt
             `-- IntLiteral "0"
 
@@ -288,36 +46,14 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   ----             ----------               ----      ---------              ------------
-modify_int           procedure      2      PROCEDURE                                 1         VOID (INT_POINTER, INT) _Z10modify_intPii
-ptr                  parameter      2      INT_POINTER                               1                                
-value                parameter      2      INT                                       1                                
-read_through_pointer procedure      6      PROCEDURE                                 1         INT (INT_POINTER)      _Z20read_through_pointerPi
-ptr                  parameter      6      INT_POINTER                               1                                
-swap_ints            procedure      10     PROCEDURE                                 1         VOID (INT_POINTER, INT_POINTER) _Z9swap_intsPiPi
-a                    parameter      10     INT_POINTER                               2                                
-b                    parameter      10     INT_POINTER                               2                                
-temp                 variable       11     INT                                       2                                
-increment_value      procedure      17     PROCEDURE                                 1         VOID (INT_POINTER)     _Z15increment_valuePi
-ptr                  parameter      17     INT_POINTER                               2                                
-add_dereferenced     procedure      21     PROCEDURE                                 1         INT (INT_POINTER, INT_POINTER) _Z16add_dereferencedPiPi
-p1                   parameter      21     INT_POINTER                               1                                
-p2                   parameter      21     INT_POINTER                               1                                
-set_pointer          procedure      25     PROCEDURE                                 1         VOID (INT_POINTER_POINTER, INT_POINTER) _Z11set_pointerPPiPi
-ptr_ptr              parameter      25     INT_POINTER_POINTER                          1                                
-value                parameter      25     INT_POINTER                               1                                
-Point                struct_tag     30     STRUCT                                    0                                
-Point::x             variable       31     INT                                       0                                
-Point::y             variable       32     INT                                       0                                
-set_point            procedure      35     PROCEDURE                                 1         VOID (STRUCT_POINTER, INT, INT) _Z9set_pointP3Strii
-p                    parameter      35     STRUCT_POINTER                            2                                
-x_val                parameter      35     INT                                       1                                
-y_val                parameter      35     INT                                       1                                
-get_point_sum        procedure      40     PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z13get_point_sumP3Str
-p                    parameter      40     STRUCT_POINTER                            2                                
-main                 procedure      44     PROCEDURE                                 0         INT ()                 _Z4mainv
-x                    variable       45     INT                                       14                               
-y                    variable       46     INT                                       10                               
-sum                  variable       47     INT                                       4                                
-ptr                  variable       48     INT_POINTER      *                        2                                
-ptr_to_ptr           variable       49     INT_POINTER_POINTER **                       2                                
-pt                   variable       50     STRUCT                                    6                                
+func_mixed           procedure      5      PROCEDURE                                 1         VOID (INT_ARRAY, INT_POINTER) _Z10func_mixedAiPi
+exact                parameter      5      INT_ARRAY                                 0                                
+decayed              parameter      5      INT_POINTER                               0                                
+func_exact           procedure      9      PROCEDURE                                 1         VOID (INT_ARRAY_ARRAY) _Z10func_exactAAi
+arr                  parameter      9      INT_ARRAY_ARRAY                           0                                
+func_ptr             procedure      13     PROCEDURE                                 1         VOID (INT_POINTER_POINTER) _Z8func_ptrPPi
+ptr                  parameter      13     INT_POINTER_POINTER                          0                                
+main                 procedure      17     PROCEDURE                                 0         INT ()                 _Z4mainv
+arr10                variable       18     INT_ARRAY        []                       1                                
+arr20                variable       19     INT_ARRAY        []                       1                                
+arr2d                variable       20     INT_ARRAY_ARRAY  []2                      2                                

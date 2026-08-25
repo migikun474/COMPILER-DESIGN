@@ -1,0 +1,32 @@
+// Test: Array parameters with selective decay
+// Function can have array parameters that match exactly,
+// while other array arguments decay to pointers
+
+void func_mixed(int exact[10], int *decayed) {
+    return;
+}
+
+void func_exact(int arr[5][10]) {
+    return;
+}
+
+void func_ptr(int **ptr) {
+    return;
+}
+
+int main() {
+    int arr10[10];
+    int arr20[20];
+    int arr2d[5][10];
+
+    // First param matches exactly (int[10]), second decays (int[20] -> int*)
+    func_mixed(arr10, arr20);
+
+    // Exact match: int[5][10] -> int[5][10]
+    func_exact(arr2d);
+
+    // Full decay: int[5][10] -> int**
+    func_ptr(arr2d);
+
+    return 0;
+}
