@@ -558,6 +558,7 @@ statement
     | labeled_stmt { $$.node = $1.node; }
     | declaration { $$.node = $1.node; }
     | error ';' { yyerrok; }
+    | error '}' { yyerrok; }
     ;
 
 compound_stmt

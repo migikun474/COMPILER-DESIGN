@@ -313,44 +313,6 @@ also left out as further optional additions, not because they're hard
 to add but to keep this pass focused on syntax rather than growing
 into a full semantic analyzer.
 
-## Bugs found via a feature-checklist audit (fixed)
-
-Two real bugs surfaced from methodically testing every item on the
-project's feature checklist rather than trusting earlier claims of
-"covered":
-
-- **Multi-level pointers were silently capped at one level.**
-  `pointer: '*' | '&' | '*' pointer` was right-recursive, and because
-  `'*'` already carries arithmetic precedence (`%left '*' '/' '%'`)
-  from its use as the multiplication operator elsewhere in the
-  grammar, that precedence leaked into this rule and made Bison
-  *reduce* after the first `*` instead of *shifting* the second one --
-  so `char **argv` and `char **p` both failed to parse. Rewritten as
-  left-recursive (`pointer '*'` instead of `'*' pointer`) rather than
-  patched with a `%prec` override, since left recursion is the
-  structurally correct fix for this class of conflict (the same
-  reason every list in this grammar is already left-recursive) and
-  doesn't risk fighting the precedence table again later. Multi-level
-  arrays had the same "collapses to one level" issue in
-  `computeTypeStr()` for a different reason (only ever appending
-  `_ARRAY`/`_POINTER` once, regardless of depth) and got the matching
-  fix -- `int[2][2]` and `char**` now correctly show
-  `INT_ARRAY_ARRAY` / `CHAR_POINTER_POINTER`, and mangle correctly
-  (`char **argv` mangles as `PPc`).
-- **Function pointer *variables* were misclassified as function
-  *declarations*.** `int (*fp)(int, int);` and `int add(int, int);`
-  produced structurally identical `DeclInfo` (`isFunction=true`,
-  `pointerLevel>0`), because the flat declarator model didn't track
-  *where* the pointer came from. `DeclInfo` now carries
-  `wasParenGrouped`/`isFunctionPointer` flags, set when a `'(' *name
-  ')'` grouping is immediately followed by a parameter list, so `fp`
-  is now correctly classified as a `variable` of type
-  `INT_FUNCTION_POINTER` -- while `int *makeInt()` (a function that
-  legitimately *returns* a pointer) still correctly classifies as a
-  `procedure`. See `test9_pointers_and_function_pointers.c`, which
-  exercises both alongside genuine multi-level pointers and
-  `char **argv`.
-
 ## Known limitations (by design, for a course-scope parser)
 
 - **Single pass, so forward references print as `IDENTIFIER`.** A
@@ -378,16 +340,22 @@ project's feature checklist rather than trusting earlier claims of
 
 ```
 phase2-parser/
+├── docs/
+│   └── GRAMMAR_DESIGN.md      full production-by-production grammar walkthrough
 ├── include/
-│   ├── common.h       symbol table, token log, diagnostics, parser value type, mangling
-│   └── ast.h          AST node kind/shape, node constructors, tree printer
+│   ├── common.h               symbol table, token log, diagnostics, parser value type, mangling
+│   ├── ast.h                  AST node kind/shape, node constructors, tree printer
+│   └── token_converter.hpp    TokenType -> this grammar's Bison token codes
 ├── src/
-│   ├── common.cpp      their implementations
-│   ├── ast.cpp          AST implementation
-│   ├── scanner.l          flex scanner (token classification + typedef hack)
-│   ├── parser.y           bison grammar (declarations, statements, expressions, AST)
-│   └── main.cpp           driver: parses a file, prints the table/AST/symbols or the errors
-├── test/                       9 test cases (8 valid, 1 deliberately broken)
+│   ├── common.cpp              their implementations
+│   ├── ast.cpp                  AST implementation
+│   ├── token_converter.cpp      TokenType -> Bison token code (needs parser.tab.hpp)
+│   ├── scanner.l                 flex scanner (shared keyword/operator tables + typedef hack)
+│   ├── parser.y                  bison grammar (declarations, statements, expressions, AST)
+│   └── main.cpp                  driver: parses a file, prints the table/AST/symbols or the errors
+├── test/                         9 test cases (8 valid, 1 deliberately broken)
 ├── makefile
 └── run.sh
+
+../shared/                        keyword/operator tables, shared with phase1-lexer (see top-level README)
 ```
