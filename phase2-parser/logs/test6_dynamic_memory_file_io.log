@@ -1,0 +1,178 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test6_dynamic_memory_file_io.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+*                              star_op             
+heap                           INT_POINTER         
+;                              semicolon_op        
+heap                           INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+malloc                         malloc              
+(                              open_paren_op       
+10                             INT_LITERAL         
+*                              star_op             
+4                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+heap                           INT_POINTER         
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+42                             INT_LITERAL         
+;                              semicolon_op        
+free                           free                
+(                              open_paren_op       
+heap                           INT_POINTER         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+more                           INT_POINTER         
+;                              semicolon_op        
+more                           INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+calloc                         calloc              
+(                              open_paren_op       
+5                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+more                           INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+realloc                        realloc             
+(                              open_paren_op       
+more                           INT_POINTER         
+,                              comma_op            
+20                             INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+free                           free                
+(                              open_paren_op       
+more                           INT_POINTER         
+)                              close_paren_op      
+;                              semicolon_op        
+FILE                           file                
+*                              star_op             
+f                              FILE_POINTER        
+;                              semicolon_op        
+f                              FILE_POINTER        
+=                              assign_op           
+fopen                          fopen               
+(                              open_paren_op       
+"data.txt"                     STRING_LITERAL      
+,                              comma_op            
+"r"                            STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+fprintf                        fprintf             
+(                              open_paren_op       
+f                              FILE_POINTER        
+,                              comma_op            
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+42                             INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+fclose                         fclose              
+(                              open_paren_op       
+f                              FILE_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "heap : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "heap"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "malloc"
+        |               `-- BinaryExpr "*"
+        |                   |-- IntLiteral "10"
+        |                   `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "heap"
+        |       |   `-- IntLiteral "0"
+        |       `-- IntLiteral "42"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "heap"
+        |-- VarDecl "more : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "more"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "calloc"
+        |               |-- IntLiteral "5"
+        |               `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "more"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "realloc"
+        |               |-- Identifier "more"
+        |               `-- IntLiteral "20"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "more"
+        |-- VarDecl "f : FILE_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "f"
+        |       `-- BuiltinCallExpr "fopen"
+        |           |-- StringLiteral ""data.txt""
+        |           `-- StringLiteral ""r""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fprintf"
+        |       |-- Identifier "f"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- IntLiteral "42"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "f"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      8      global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+heap                 variable       9      global > main()              INT_POINTER      *                        3                                
+more                 variable       14     global > main()              INT_POINTER      *                        4                                
+f                    variable       19     global > main()              FILE_POINTER     *                        3                                

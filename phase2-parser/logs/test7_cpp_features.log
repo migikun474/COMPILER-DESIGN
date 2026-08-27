@@ -1,0 +1,221 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test7_cpp_features.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+class                          class               
+Animal                         CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+legs                           INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+Dog                            CLASS               
+:                              colon_op            
+public                         public              
+Animal                         CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+Dog                            CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+legs                           IDENTIFIER          
+=                              assign_op           
+n                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+~                              tilde_op            
+Dog                            DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+bark                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+legs                           IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+bool                           bool                
+flag                           BOOL                
+;                              semicolon_op        
+flag                           BOOL                
+=                              assign_op           
+true                           bool_literal        
+;                              semicolon_op        
+const                          const               
+int                            int                 
+limit                          INT                 
+=                              assign_op           
+10                             INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+p                              INT_POINTER         
+=                              assign_op           
+new                            new                 
+int                            int                 
+;                              semicolon_op        
+delete                         delete              
+p                              INT_POINTER         
+;                              semicolon_op        
+int                            int                 
+arr                            INT_ARRAY           
+[                              open_bracket_op     
+5                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+sz                             INT                 
+;                              semicolon_op        
+sz                             INT                 
+=                              assign_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+arr                            INT_ARRAY           
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+sz2                            INT                 
+;                              semicolon_op        
+sz2                            INT                 
+=                              assign_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+Dog                            CLASS               
+d                              CLASS               
+;                              semicolon_op        
+d                              CLASS               
+.                              dot_op              
+legs                           IDENTIFIER          
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+legs                           INT                 
+;                              semicolon_op        
+legs                           INT                 
+=                              assign_op           
+d                              CLASS               
+.                              dot_op              
+bark                           IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Animal"
+|   `-- VarDecl "legs : INT"
+|-- ClassDecl "Dog : Animal"
+|   |-- ConstructorDef "Dog : _ZN3Dog3DogEi"
+|   |   |-- ParamDecl "n : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "legs"
+|   |               `-- Identifier "n"
+|   |-- DestructorDef "Dog : _ZN3Dog4~DogEv"
+|   |   `-- CompoundStmt
+|   `-- FunctionDef "bark : _ZN3Dog4barkEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "legs"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "flag : BOOL"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "flag"
+        |       `-- BoolLiteral "true"
+        |-- VarDecl "limit : INT"
+        |   `-- IntLiteral "10"
+        |-- VarDecl "p : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "p"
+        |       `-- NewExpr "INT"
+        |-- ExprStmt
+        |   `-- DeleteExpr
+        |       `-- Identifier "p"
+        |-- VarDecl "arr : INT_ARRAY"
+        |-- VarDecl "sz : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "sz"
+        |       `-- SizeofExpr
+        |           `-- Identifier "arr"
+        |-- VarDecl "sz2 : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "sz2"
+        |       `-- SizeofExpr "INT"
+        |-- VarDecl "d : CLASS"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "legs"
+        |       |   `-- Identifier "d"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "legs : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "legs"
+        |       `-- CallExpr
+        |           `-- MemberExpr "bark"
+        |               `-- Identifier "d"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Animal               class_tag      6      global                       CLASS                                     0                                
+Animal::legs         variable       8      global > class Animal        INT                                       0                                
+Dog                  class_tag      11     global                       CLASS                                     0                                
+Dog::n               parameter      13     global > class Dog > Dog::Dog() INT                                       1                                
+Dog::Dog             procedure      13     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3Dog3DogEi
+Dog::~Dog            procedure      16     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3Dog4~DogEv
+Dog::bark            procedure      18     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      23     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+flag                 variable       24     global > main()              BOOL                                      1                                
+limit                variable       26     global > main()              INT              const                    0                                
+p                    variable       28     global > main()              INT_POINTER      *                        2                                
+arr                  variable       32     global > main()              INT_ARRAY        []                       1                                
+sz                   variable       33     global > main()              INT                                       1                                
+sz2                  variable       35     global > main()              INT                                       1                                
+d                    variable       38     global > main()              CLASS                                     2                                
+legs                 variable       40     global > main()              INT                                       1                                

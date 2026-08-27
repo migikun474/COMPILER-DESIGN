@@ -1,0 +1,183 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test9_pointers_and_function_pointers.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+*                              star_op             
+makeInt                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+p                              INT_POINTER         
+=                              assign_op           
+new                            new                 
+int                            int                 
+;                              semicolon_op        
+*                              star_op             
+p                              INT_POINTER         
+=                              assign_op           
+42                             INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+p                              INT_POINTER         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+argc                           INT                 
+,                              comma_op            
+char                           char                
+*                              star_op             
+*                              star_op             
+argv                           CHAR_POINTER_POINTER
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+fp                             INT_FUNCTION_POINTER
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+fp                             INT_FUNCTION_POINTER
+=                              assign_op           
+add                            PROCEDURE           
+;                              semicolon_op        
+int                            int                 
+result                         INT                 
+;                              semicolon_op        
+result                         INT                 
+=                              assign_op           
+fp                             INT_FUNCTION_POINTER
+(                              open_paren_op       
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+val                            INT_POINTER         
+;                              semicolon_op        
+val                            INT_POINTER         
+=                              assign_op           
+makeInt                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+x                              INT                 
+=                              assign_op           
+argc                           INT                 
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- FunctionDef "makeInt : _Z7makeIntv"
+|   `-- CompoundStmt
+|       |-- VarDecl "p : INT_POINTER"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "p"
+|       |       `-- NewExpr "INT"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- UnaryExpr "*"
+|       |       |   `-- Identifier "p"
+|       |       `-- IntLiteral "42"
+|       `-- ReturnStmt
+|           `-- Identifier "p"
+`-- FunctionDef "main : _Z4mainiPPc"
+    |-- ParamDecl "argc : INT"
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"
+    `-- CompoundStmt
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "fp"
+        |       `-- Identifier "add"
+        |-- VarDecl "result : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "result"
+        |       `-- CallExpr
+        |           |-- Identifier "fp"
+        |           |-- IntLiteral "2"
+        |           `-- IntLiteral "3"
+        |-- VarDecl "val : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "val"
+        |       `-- CallExpr
+        |           `-- Identifier "makeInt"
+        |-- VarDecl "x : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "x"
+        |       `-- Identifier "argc"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+add                  procedure      13     global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      13     global > add()               INT                                       1                                
+b                    parameter      13     global > add()               INT                                       1                                
+makeInt              procedure      17     global                       PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
+p                    variable       18     global > makeInt()           INT_POINTER      *                        3                                
+main                 procedure      24     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) _Z4mainiPPc
+argc                 parameter      24     global > main()              INT                                       1                                
+argv                 parameter      24     global > main()              CHAR_POINTER_POINTER                          0                                
+fp                   variable       25     global > main()              INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
+result               variable       27     global > main()              INT                                       1                                
+val                  variable       30     global > main()              INT_POINTER      *                        1                                
+x                    variable       33     global > main()              INT                                       1                                

@@ -1,0 +1,239 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test3_classes_enums_lambda.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+enum                           enum                
+Color                          ENUM                
+{                              open_brace_op       
+RED                            ENUM_CONSTANT       
+,                              comma_op            
+GREEN                          ENUM_CONSTANT       
+,                              comma_op            
+BLUE                           ENUM_CONSTANT       
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+Shape                          CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+sides                          INT                 
+;                              semicolon_op        
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+sides                          INT                 
+*                              star_op             
+sides                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+private                        private             
+:                              colon_op            
+int                            int                 
+secret                         INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+enum                           enum                
+Color                          ENUM                
+c                              ENUM                
+;                              semicolon_op        
+c                              ENUM                
+=                              assign_op           
+RED                            ENUM_CONSTANT       
+;                              semicolon_op        
+class                          class               
+Shape                          CLASS               
+s                              CLASS               
+;                              semicolon_op        
+s                              CLASS               
+.                              dot_op              
+sides                          IDENTIFIER          
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+fp                             INT_FUNCTION_POINTER
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+=                              assign_op           
+10                             INT_LITERAL         
+;                              semicolon_op        
+auto                           auto                
+adder                          INT                 
+=                              assign_op           
+[                              open_bracket_op     
+x                              IDENTIFIER          
+,                              comma_op            
+&                              ampersand_op        
+y                              IDENTIFIER          
+]                              close_bracket_op    
+(                              open_paren_op       
+int                            int                 
+z                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
++                              plus_op             
+y                              INT                 
++                              plus_op             
+z                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+until                          until               
+(                              open_paren_op       
+x                              INT                 
+<=                             le_op               
+0                              INT_LITERAL         
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
+=                              assign_op           
+x                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+do                             do                  
+{                              open_brace_op       
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+}                              close_brace_op      
+while                          while               
+(                              open_paren_op       
+x                              INT                 
+<                              lt_op               
+5                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+goto                           goto                
+done                           IDENTIFIER          
+;                              semicolon_op        
+done                           LABEL               
+:                              colon_op            
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- EnumDecl "Color"
+|   |-- Enumerator "RED"
+|   |-- Enumerator "GREEN"
+|   `-- Enumerator "BLUE"
+|-- ClassDecl "Shape"
+|   |-- VarDecl "sides : INT"
+|   |-- FunctionDef "area : _ZN5Shape4areaEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"
+|   |               |-- Identifier "sides"
+|   |               `-- Identifier "sides"
+|   `-- VarDecl "secret : INT"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "c : ENUM"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "c"
+        |       `-- Identifier "RED"
+        |-- VarDecl "s : CLASS"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "sides"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"
+        |-- VarDecl "x : INT"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "y : INT"
+        |   `-- IntLiteral "10"
+        |-- VarDecl "adder : INT"
+        |   `-- LambdaExpr "x, &y"
+        |       |-- ParamDecl "z : INT"
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- BinaryExpr "+"
+        |                   |-- BinaryExpr "+"
+        |                   |   |-- Identifier "x"
+        |                   |   `-- Identifier "y"
+        |                   `-- Identifier "z"
+        |-- UntilStmt
+        |   |-- BinaryExpr "<="
+        |   |   |-- Identifier "x"
+        |   |   `-- IntLiteral "0"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "x"
+        |               `-- BinaryExpr "-"
+        |                   |-- Identifier "x"
+        |                   `-- IntLiteral "1"
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"
+        |   |           `-- Identifier "x"
+        |   `-- BinaryExpr "<"
+        |       |-- Identifier "x"
+        |       `-- IntLiteral "5"
+        |-- GotoStmt "done"
+        `-- LabeledStmt "done"
+            `-- ReturnStmt
+                `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Color                enum_tag       1      global                       ENUM                                      0                                
+RED                  enum_constant  1      global                       ENUM_CONSTANT                             1                                
+GREEN                enum_constant  1      global                       ENUM_CONSTANT                             0                                
+BLUE                 enum_constant  1      global                       ENUM_CONSTANT                             0                                
+Shape                class_tag      3      global                       CLASS                                     0                                
+Shape::sides         variable       5      global > class Shape         INT                                       2                                
+Shape::area          procedure      6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::secret        variable       10     global > class Shape         INT                                       0                                
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+c                    variable       14     global > main()              ENUM                                      1                                
+s                    variable       16     global > main()              CLASS                                     1                                
+fp                   variable       19     global > main()              INT_FUNCTION_POINTER *                        0         INT (INT, INT)         
+x                    variable       21     global > main()              INT                                       6                                
+y                    variable       22     global > main()              INT                                       1                                
+z                    parameter      23     global > main() > lambda     INT                                       1                                
+adder                variable       23     global > main()              INT                                       0                                
+done                 label          36     global > main()              LABEL                                     0                                

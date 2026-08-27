@@ -1,0 +1,39 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c
+
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:9:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 9 |     a = 5;
+   |     ^
+   | note: insert ';' here
+
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:11:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 11 |     if (a > 0 {
+    |               ^
+
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:15:13: syntax error: syntax error, unexpected ';'
+ 15 |     int b = ;
+    |             ^
+
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:16:5: syntax error: syntax error, unexpected RETURN
+ 16 |     return 0;
+    |     ^
+
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:17:1: syntax error: syntax error, unexpected '}'
+ 17 | }
+    | ^
+
+-----------------------------------------
+Total Errors : 5
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "main : _Z4mainv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 9: near 'a'"
+|       `-- ErrorNode "line 11: near '{'"
+|-- ErrorNode "line 15: near ';'"
+|-- ErrorNode "line 16: near 'return'"
+`-- ErrorNode "line 17: near '}'"
