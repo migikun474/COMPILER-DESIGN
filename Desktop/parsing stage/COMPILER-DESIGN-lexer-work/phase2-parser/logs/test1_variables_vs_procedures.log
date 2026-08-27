@@ -6,6 +6,49 @@ Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-le
 
 No errors found.
 
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+a                              PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+b                              INT                 
+,                              comma_op            
+int                            int                 
+c                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+b                              INT                 
++                              plus_op             
+c                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+;                              semicolon_op        
+a                              INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+result                         INT                 
+=                              assign_op           
+a                              INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
 --- Abstract Syntax Tree ---
 Program "translation_unit"
 |-- FunctionDef "a : _Z1aii"

@@ -34,7 +34,20 @@ static std::string signatureFor(const SymbolTableEntry &e) {
     sig += ")";
     return sig;
 }
-
+/* Shared by both the stdout report and the on-disk log, so the two
+   never drift apart. */
+static void printTokenTable(std::ostream &out) {
+    char header[64];
+    snprintf(header, sizeof(header), "%-30s %-20s\n", "Token", "Token_Type");
+    out << header;
+    snprintf(header, sizeof(header), "%-30s %-20s\n", "-----", "----------");
+    out << header;
+    for (const auto &t : g_tokens) {
+        char line[128];
+        snprintf(line, sizeof(line), "%-30s %-20s\n", t.lexeme.c_str(), t.category.c_str());
+        out << line;
+    }
+}
 /* Shared by both the stdout report and the on-disk log, so the two
    never drift apart. */
 static void printSymbolTable(std::ostream &out) {
@@ -56,6 +69,7 @@ static void printSymbolTable(std::ostream &out) {
     }
 }
 
+
 static void writeLog(const std::string &sourceFile) {
     fs::create_directories("logs");
     std::string logfile = "logs/" + fs::path(sourceFile).stem().string() + ".log";
@@ -68,15 +82,19 @@ static void writeLog(const std::string &sourceFile) {
     fprintf(log, "Source File : %s\n\n", sourceFile.c_str());
 
     if (g_diagnostics.empty()) {
-        fprintf(log, "No errors found.\n\n");
+      fprintf(log, "No errors found.\n\n");
 
-        std::ostringstream ast;
-        printAST(g_astRoot, ast);
-        fprintf(log, "--- Abstract Syntax Tree ---\n%s\n", ast.str().c_str());
+std::ostringstream tokens;
+printTokenTable(tokens);
+fprintf(log, "--- Token / Token_Type ---\n%s\n", tokens.str().c_str());
 
-        std::ostringstream syms;
-        printSymbolTable(syms);
-        fprintf(log, "%s", syms.str().c_str());
+std::ostringstream ast;
+printAST(g_astRoot, ast);
+fprintf(log, "--- Abstract Syntax Tree ---\n%s\n", ast.str().c_str());
+
+std::ostringstream syms;
+printSymbolTable(syms);
+fprintf(log, "%s", syms.str().c_str());
     } else {
         int count = 1;
         for (const auto &d : g_diagnostics) {
@@ -124,12 +142,7 @@ int main(int argc, char **argv) {
     }
 
     printf("Syntax analysis successful: no errors found in '%s'.\n\n", argv[1]);
-
-    printf("%-30s %-20s\n", "Token", "Token_Type");
-    printf("%-30s %-20s\n", "-----", "----------");
-    for (const auto &t : g_tokens) {
-        printf("%-30s %-20s\n", t.lexeme.c_str(), t.category.c_str());
-    }
+printTokenTable(std::cout);
 
     printf("\n=== Abstract Syntax Tree ===\n");
     printAST(g_astRoot, std::cout);
