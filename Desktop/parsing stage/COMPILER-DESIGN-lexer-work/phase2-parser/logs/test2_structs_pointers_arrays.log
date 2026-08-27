@@ -1,0 +1,113 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test2_structs_pointers_arrays.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- TypedefDecl "MyInt = INT"
+|-- StructDecl "Point"
+|   |-- VarDecl "x : INT"
+|   `-- VarDecl "y : INT"
+|-- FunctionDef "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "p : STRUCT"
+        |-- VarDecl "x : INT"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "ptr : INT_POINTER"
+        |-- VarDecl "arr : INT_ARRAY"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "ptr"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- Identifier "p"
+        |       `-- IntLiteral "1"
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"
+        |   |   `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "10"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- IndexExpr
+        |               |   |-- Identifier "arr"
+        |               |   `-- Identifier "i"
+        |               `-- Identifier "i"
+        |-- IfStmt
+        |   |-- BinaryExpr ">"
+        |   |   |-- Identifier "x"
+        |   |   `-- IntLiteral "0"
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- BuiltinCallExpr "printf"
+        |   |           `-- StringLiteral ""positive\n""
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- BuiltinCallExpr "printf"
+        |               `-- StringLiteral ""non-positive\n""
+        |-- WhileStmt
+        |   |-- BinaryExpr ">"
+        |   |   |-- Identifier "x"
+        |   |   `-- IntLiteral "0"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "x"
+        |               `-- BinaryExpr "-"
+        |                   |-- Identifier "x"
+        |                   `-- IntLiteral "1"
+        |-- SwitchStmt
+        |   |-- Identifier "x"
+        |   `-- CompoundStmt
+        |       |-- CaseStmt
+        |       |   |-- IntLiteral "0"
+        |       |   `-- BreakStmt
+        |       `-- DefaultStmt
+        |           `-- BreakStmt
+        |-- VarDecl "result : INT"
+        |   `-- CallExpr
+        |       |-- Identifier "add"
+        |       |-- Identifier "x"
+        |       `-- UnaryExpr "*"
+        |           `-- Identifier "ptr"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+MyInt                typedef        1      INT                                       0                                
+Point                struct_tag     3      STRUCT                                    0                                
+Point::x             variable       4      INT                                       0                                
+Point::y             variable       5      INT                                       0                                
+add                  procedure      8      PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      8      INT                                       1                                
+b                    parameter      8      INT                                       1                                
+main                 procedure      12     PROCEDURE                                 0         INT ()                 _Z4mainv
+p                    variable       13     STRUCT                                    1                                
+x                    variable       14     INT                                       7                                
+ptr                  variable       15     INT_POINTER      *                        2                                
+arr                  variable       16     INT_ARRAY        []                       1                                
+i                    variable       19     INT                                       4                                
+result               variable       36     INT                                       0                                

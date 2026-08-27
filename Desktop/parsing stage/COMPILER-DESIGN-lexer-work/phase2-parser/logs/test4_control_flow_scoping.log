@@ -1,0 +1,101 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test4_control_flow_scoping.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "sum_to : _Z6sum_toi"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "total : INT"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "total"
+|       |       `-- IntLiteral "0"
+|       |-- ForStmt
+|       |   |-- VarDecl "i : INT"
+|       |   |   `-- IntLiteral "1"
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<="
+|       |   |       |-- Identifier "i"
+|       |   |       `-- Identifier "n"
+|       |   |-- AssignExpr "="
+|       |   |   |-- Identifier "i"
+|       |   |   `-- BinaryExpr "+"
+|       |   |       |-- Identifier "i"
+|       |   |       `-- IntLiteral "1"
+|       |   `-- CompoundStmt
+|       |       `-- ExprStmt
+|       |           `-- AssignExpr "="
+|       |               |-- Identifier "total"
+|       |               `-- BinaryExpr "+"
+|       |                   |-- Identifier "total"
+|       |                   `-- Identifier "i"
+|       `-- ReturnStmt
+|           `-- Identifier "total"
+|-- FunctionDef "classify : _Z8classifyi"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       |-- SwitchStmt
+|       |   |-- Identifier "n"
+|       |   `-- CompoundStmt
+|       |       |-- CaseStmt
+|       |       |   |-- IntLiteral "0"
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "0"
+|       |       |-- CaseStmt
+|       |       |   |-- IntLiteral "1"
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "1"
+|       |       `-- DefaultStmt
+|       |           `-- BreakStmt
+|       `-- ReturnStmt
+|           `-- UnaryExpr "-"
+|               `-- IntLiteral "1"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "n : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "n"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "s : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "s"
+        |       `-- CallExpr
+        |           |-- Identifier "sum_to"
+        |           `-- Identifier "n"
+        |-- VarDecl "c : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "c"
+        |       `-- CallExpr
+        |           |-- Identifier "classify"
+        |           `-- Identifier "n"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d %d\n""
+        |       |-- Identifier "s"
+        |       `-- Identifier "c"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+sum_to               procedure      7      PROCEDURE                                 1         INT (INT)              _Z6sum_toi
+n                    parameter      7      INT                                       1                                
+total                variable       8      INT                                       4                                
+i                    variable       10     INT                                       4                                
+classify             procedure      16     PROCEDURE                                 1         INT (INT)              _Z8classifyi
+n                    parameter      16     INT                                       1                                
+main                 procedure      28     PROCEDURE                                 0         INT ()                 _Z4mainv
+n                    variable       29     INT                                       3                                
+s                    variable       31     INT                                       2                                
+c                    variable       33     INT                                       2                                

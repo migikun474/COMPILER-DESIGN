@@ -1,0 +1,79 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test9_pointers_and_function_pointers.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- FunctionDef "makeInt : _Z7makeIntv"
+|   `-- CompoundStmt
+|       |-- VarDecl "p : INT_POINTER"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "p"
+|       |       `-- NewExpr "INT"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- UnaryExpr "*"
+|       |       |   `-- Identifier "p"
+|       |       `-- IntLiteral "42"
+|       `-- ReturnStmt
+|           `-- Identifier "p"
+`-- FunctionDef "main : _Z4mainiPPc"
+    |-- ParamDecl "argc : INT"
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"
+    `-- CompoundStmt
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "fp"
+        |       `-- Identifier "add"
+        |-- VarDecl "result : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "result"
+        |       `-- CallExpr
+        |           |-- Identifier "fp"
+        |           |-- IntLiteral "2"
+        |           `-- IntLiteral "3"
+        |-- VarDecl "val : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "val"
+        |       `-- CallExpr
+        |           `-- Identifier "makeInt"
+        |-- VarDecl "x : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "x"
+        |       `-- Identifier "argc"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+add                  procedure      13     PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      13     INT                                       1                                
+b                    parameter      13     INT                                       1                                
+makeInt              procedure      17     PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
+p                    variable       18     INT_POINTER      *                        3                                
+main                 procedure      24     PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) _Z4mainiPPc
+argc                 parameter      24     INT                                       1                                
+argv                 parameter      24     CHAR_POINTER_POINTER                          0                                
+fp                   variable       25     INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
+result               variable       27     INT                                       1                                
+val                  variable       30     INT_POINTER      *                        1                                
+x                    variable       33     INT                                       1                                

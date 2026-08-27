@@ -1,0 +1,41 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test8_out_of_class_methods.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Dog"
+|   |-- VarDecl "legs : INT"
+|   `-- FunctionDecl "bark : _ZN3Dog4barkEv"
+|-- FunctionDef "bark : _ZN3Dog4barkEv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "legs"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "d : CLASS"
+        |-- VarDecl "b : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "b"
+        |       `-- CallExpr
+        |           `-- MemberExpr "bark"
+        |               `-- Identifier "d"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+Dog                  class_tag      5      CLASS                                     0                                
+Dog::legs            variable       7      INT                                       0                                
+Dog::bark            procedure      8      PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+Dog::bark            procedure      11     PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      15     PROCEDURE                                 0         INT ()                 _Z4mainv
+d                    variable       16     CLASS                                     1                                
+b                    variable       17     INT                                       1                                

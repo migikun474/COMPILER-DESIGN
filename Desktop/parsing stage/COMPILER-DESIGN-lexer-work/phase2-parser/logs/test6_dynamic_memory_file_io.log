@@ -1,0 +1,74 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test6_dynamic_memory_file_io.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "heap : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "heap"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "malloc"
+        |               `-- BinaryExpr "*"
+        |                   |-- IntLiteral "10"
+        |                   `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "heap"
+        |       |   `-- IntLiteral "0"
+        |       `-- IntLiteral "42"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "heap"
+        |-- VarDecl "more : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "more"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "calloc"
+        |               |-- IntLiteral "5"
+        |               `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "more"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "realloc"
+        |               |-- Identifier "more"
+        |               `-- IntLiteral "20"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "more"
+        |-- VarDecl "f : FILE_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "f"
+        |       `-- BuiltinCallExpr "fopen"
+        |           |-- StringLiteral ""data.txt""
+        |           `-- StringLiteral ""r""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fprintf"
+        |       |-- Identifier "f"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- IntLiteral "42"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "f"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+main                 procedure      8      PROCEDURE                                 0         INT ()                 _Z4mainv
+heap                 variable       9      INT_POINTER      *                        3                                
+more                 variable       14     INT_POINTER      *                        4                                
+f                    variable       19     FILE_POINTER     *                        3                                

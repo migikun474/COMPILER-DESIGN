@@ -1,0 +1,91 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test7_cpp_features.c
+
+No errors found.
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Animal"
+|   `-- VarDecl "legs : INT"
+|-- ClassDecl "Dog : Animal"
+|   |-- ConstructorDef "Dog : _ZN3Dog3DogEi"
+|   |   |-- ParamDecl "n : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "legs"
+|   |               `-- Identifier "n"
+|   |-- DestructorDef "Dog : _ZN3Dog4~DogEv"
+|   |   `-- CompoundStmt
+|   `-- FunctionDef "bark : _ZN3Dog4barkEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "legs"
+`-- FunctionDef "main : _Z4mainv"
+    `-- CompoundStmt
+        |-- VarDecl "flag : BOOL"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "flag"
+        |       `-- BoolLiteral "true"
+        |-- VarDecl "limit : INT"
+        |   `-- IntLiteral "10"
+        |-- VarDecl "p : INT_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "p"
+        |       `-- NewExpr "INT"
+        |-- ExprStmt
+        |   `-- DeleteExpr
+        |       `-- Identifier "p"
+        |-- VarDecl "arr : INT_ARRAY"
+        |-- VarDecl "sz : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "sz"
+        |       `-- SizeofExpr
+        |           `-- Identifier "arr"
+        |-- VarDecl "sz2 : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "sz2"
+        |       `-- SizeofExpr "INT"
+        |-- VarDecl "d : CLASS"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "legs"
+        |       |   `-- Identifier "d"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "legs : INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "legs"
+        |       `-- CallExpr
+        |           `-- MemberExpr "bark"
+        |               `-- Identifier "d"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   ----             ----------               ----      ---------              ------------
+Animal               class_tag      6      CLASS                                     0                                
+Animal::legs         variable       8      INT                                       0                                
+Dog                  class_tag      11     CLASS                                     0                                
+Dog::n               parameter      13     INT                                       1                                
+Dog::Dog             procedure      13     CONSTRUCTOR                               0         VOID (INT)             _ZN3Dog3DogEi
+Dog::~Dog            procedure      16     DESTRUCTOR                                0         VOID ()                _ZN3Dog4~DogEv
+Dog::bark            procedure      18     PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      23     PROCEDURE                                 0         INT ()                 _Z4mainv
+flag                 variable       24     BOOL                                      1                                
+limit                variable       26     INT              const                    0                                
+p                    variable       28     INT_POINTER      *                        2                                
+arr                  variable       32     INT_ARRAY        []                       1                                
+sz                   variable       33     INT                                       1                                
+sz2                  variable       35     INT                                       1                                
+d                    variable       38     CLASS                                     2                                
+legs                 variable       40     INT                                       1                                

@@ -1,0 +1,38 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test5_syntax_errors.c
+
+[1]
+Kind    : Syntax error
+Line    : 9
+Near    : a
+Message : syntax error, unexpected IDENTIFIER, expecting ';'
+
+[2]
+Kind    : Syntax error
+Line    : 11
+Near    : {
+Message : syntax error, unexpected '{', expecting ',' or ')'
+
+[3]
+Kind    : Syntax error
+Line    : 15
+Near    : ;
+Message : syntax error, unexpected ';'
+
+[4]
+Kind    : Syntax error
+Line    : 16
+Near    : return
+Message : syntax error, unexpected RETURN
+
+[5]
+Kind    : Syntax error
+Line    : 17
+Near    : }
+Message : syntax error, unexpected '}'
+
+-----------------------------------------
+Total Errors : 5
