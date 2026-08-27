@@ -10,9 +10,13 @@ std::vector<SymbolTableEntry> g_symbolTable;
 ASTNodePtr g_astRoot;
 
 int g_currentLine = 1;
+int g_currentColumn = 1;
 std::string g_lastText;
+std::vector<std::string> g_sourceLines;
 
 static std::vector<std::unordered_map<std::string, Symbol>> g_scopes;
+static std::vector<std::string> g_scopeLabels; /* parallel to g_scopes */
+static std::string g_pendingScopeLabel;
 static std::string g_currentClassName;
 
 int addTokenRecord(const std::string &lexeme, const std::string &category) {
@@ -26,17 +30,47 @@ void setCategory(int idx, const std::string &category) {
     }
 }
 
-void reportDiagnostic(int line, const std::string &near_text,
+void reportDiagnostic(int line, int column, const std::string &near_text,
                        const std::string &message, const std::string &kind) {
-    g_diagnostics.push_back({line, near_text, message, kind});
+    g_diagnostics.push_back({line, column, near_text, message, kind});
 }
 
 bool hasErrors() { return !g_diagnostics.empty(); }
 
-void pushScope() { g_scopes.emplace_back(); }
+std::string lastErrorLabel() {
+    if (g_diagnostics.empty()) return "";
+    const auto &d = g_diagnostics.back();
+    return "line " + std::to_string(d.line) + ": near '" + d.near_text + "'";
+}
+
+void pushScope(const std::string &label) {
+    g_scopes.emplace_back();
+    std::string useLabel = label;
+    if (useLabel.empty()) {
+        if (!g_pendingScopeLabel.empty()) {
+            useLabel = g_pendingScopeLabel;
+            g_pendingScopeLabel.clear();
+        } else {
+            useLabel = "block";
+        }
+    }
+    g_scopeLabels.push_back(useLabel);
+}
 
 void popScope() {
     if (!g_scopes.empty()) g_scopes.pop_back();
+    if (!g_scopeLabels.empty()) g_scopeLabels.pop_back();
+}
+
+void hintScope(const std::string &label) { g_pendingScopeLabel = label; }
+
+std::string currentScopePath() {
+    std::string path;
+    for (size_t i = 0; i < g_scopeLabels.size(); ++i) {
+        if (i) path += " > ";
+        path += g_scopeLabels[i];
+    }
+    return path;
 }
 
 void enterClass(const std::string &className) { g_currentClassName = className; }
@@ -54,6 +88,7 @@ void declareSymbol(const std::string &name, SymKind kind, const std::string &typ
     e.typeStr = typeStr;
     e.mangledName = extra.mangledName;
     e.scopeDepth = static_cast<int>(g_scopes.size());
+    e.scopePath = currentScopePath();
     e.declLine = (extra.tokenIdx >= 0 && extra.tokenIdx < static_cast<int>(g_tokens.size()))
                      ? g_tokens[extra.tokenIdx].line
                      : g_currentLine;
@@ -80,7 +115,10 @@ const Symbol *lookupSymbol(const std::string &name) {
 }
 
 void recordUsage(const std::string &name) {
-    const Symbol *s = lookupSymbol(name);
+    recordUsage(lookupSymbol(name));
+}
+
+void recordUsage(const Symbol *s) {
     if (s && s->flatIndex >= 0 && s->flatIndex < static_cast<int>(g_symbolTable.size())) {
         g_symbolTable[s->flatIndex].useCount++;
     }

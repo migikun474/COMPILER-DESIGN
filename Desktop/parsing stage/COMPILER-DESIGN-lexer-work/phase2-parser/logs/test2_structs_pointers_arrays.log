@@ -253,19 +253,19 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-MyInt                typedef        1      INT                                       0                                
-Point                struct_tag     3      STRUCT                                    0                                
-Point::x             variable       4      INT                                       0                                
-Point::y             variable       5      INT                                       0                                
-add                  procedure      8      PROCEDURE                                 1         INT (INT, INT)         _Z3addii
-a                    parameter      8      INT                                       1                                
-b                    parameter      8      INT                                       1                                
-main                 procedure      12     PROCEDURE                                 0         INT ()                 _Z4mainv
-p                    variable       13     STRUCT                                    1                                
-x                    variable       14     INT                                       7                                
-ptr                  variable       15     INT_POINTER      *                        2                                
-arr                  variable       16     INT_ARRAY        []                       1                                
-i                    variable       19     INT                                       4                                
-result               variable       36     INT                                       0                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+MyInt                typedef        1      global                       INT                                       0                                
+Point                struct_tag     3      global                       STRUCT                                    0                                
+Point::x             variable       4      global > struct Point        INT                                       0                                
+Point::y             variable       5      global > struct Point        INT                                       0                                
+add                  procedure      8      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      8      global > add()               INT                                       1                                
+b                    parameter      8      global > add()               INT                                       1                                
+main                 procedure      12     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+p                    variable       13     global > main()              STRUCT                                    1                                
+x                    variable       14     global > main()              INT                                       7                                
+ptr                  variable       15     global > main()              INT_POINTER      *                        2                                
+arr                  variable       16     global > main()              INT_ARRAY        []                       1                                
+i                    variable       19     global > main() > for        INT                                       4                                
+result               variable       36     global > main()              INT                                       0                                

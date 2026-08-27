@@ -75,11 +75,11 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-a                    procedure      9      PROCEDURE                                 0         INT (INT, INT)         _Z1aii
-b                    parameter      9      INT                                       1                                
-c                    parameter      9      INT                                       1                                
-main                 procedure      13     PROCEDURE                                 0         INT ()                 _Z4mainv
-a                    variable       14     INT                                       2                                
-result               variable       16     INT                                       0                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+a                    procedure      9      global                       PROCEDURE                                 0         INT (INT, INT)         _Z1aii
+b                    parameter      9      global > a()                 INT                                       1                                
+c                    parameter      9      global > a()                 INT                                       1                                
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+a                    variable       14     global > main()              INT                                       2                                
+result               variable       16     global > main()              INT                                       0                                

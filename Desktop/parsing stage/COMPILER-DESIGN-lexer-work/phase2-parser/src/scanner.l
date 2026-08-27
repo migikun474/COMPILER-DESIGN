@@ -16,12 +16,24 @@
 
 static std::string strbuf;
 static int litStartLine;
+static int litStartCol;
+
+/* Column tracking: flex has no built-in notion of column, so this is
+   the standard trick -- YY_USER_ACTION is a hook flex calls
+   automatically right before every single matched rule's action runs,
+   with no need to touch each rule individually. g_col tracks where
+   the NEXT unmatched character sits; g_tokStartCol captures where the
+   token that was JUST matched began, before g_col advances past it. */
+static int g_col = 1;
+static int g_tokStartCol = 1;
+#define YY_USER_ACTION { g_tokStartCol = g_col; g_col += yyleng; }
 
 /* Record + classify a token in one step, keep the scanner-side globals
    (used by yyerror for accurate positions) in sync, and hand the
    lexeme/index pair to the parser via yylval. */
 static int emit(int tokcode, const std::string &defaultCategory) {
     g_currentLine = yylineno;
+    g_currentColumn = g_tokStartCol;
     g_lastText = yytext;
     yylval.str = yytext;
     yylval.idx = addTokenRecord(yytext, defaultCategory);
@@ -32,6 +44,7 @@ static int emit(int tokcode, const std::string &defaultCategory) {
    was accumulated into strbuf rather than sitting in yytext. */
 static int emitText(int tokcode, const std::string &text, const std::string &category) {
     g_currentLine = yylineno;
+    g_currentColumn = litStartCol; /* the opening quote's column, not the closing one */
     g_lastText = text;
     yylval.str = text;
     yylval.idx = addTokenRecord(text, category);
@@ -64,10 +77,10 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 %%
 
-"/*"                  { litStartLine = yylineno; BEGIN(COMMENTSTATE); }
+"/*"                  { litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(COMMENTSTATE); }
 <COMMENTSTATE>"*/"     { BEGIN(INITIAL); }
-<COMMENTSTATE>\n       { }
-<COMMENTSTATE><<EOF>>  { reportDiagnostic(litStartLine, "/*", "Unterminated block comment", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
+<COMMENTSTATE>\n       { g_col = 1; }
+<COMMENTSTATE><<EOF>>  { reportDiagnostic(litStartLine, litStartCol, "/*", "Unterminated block comment", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 <COMMENTSTATE>.        { }
 
 "//"[^\n]*             { }
@@ -88,18 +101,18 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
     return emit(IDENTIFIER, "IDENTIFIER");
 }
 
-\"                     { strbuf = "\""; litStartLine = yylineno; BEGIN(STRSTATE); }
+\"                     { strbuf = "\""; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(STRSTATE); }
 <STRSTATE>\\.          { strbuf += yytext; }
 <STRSTATE>\"           { strbuf += "\""; BEGIN(INITIAL); return emitText(STRING_LITERAL, strbuf, "STRING_LITERAL"); }
-<STRSTATE>\n           { reportDiagnostic(litStartLine, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
-<STRSTATE><<EOF>>      { reportDiagnostic(litStartLine, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
+<STRSTATE>\n           { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
+<STRSTATE><<EOF>>      { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 <STRSTATE>.            { strbuf += yytext; }
 
-'                      { strbuf = "'"; litStartLine = yylineno; BEGIN(CHRSTATE); }
+'                      { strbuf = "'"; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(CHRSTATE); }
 <CHRSTATE>\\.          { strbuf += yytext; }
 <CHRSTATE>'            { strbuf += "'"; BEGIN(INITIAL); return emitText(CHAR_LITERAL, strbuf, "CHAR_LITERAL"); }
-<CHRSTATE>\n           { reportDiagnostic(litStartLine, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
-<CHRSTATE><<EOF>>      { reportDiagnostic(litStartLine, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
+<CHRSTATE>\n           { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
+<CHRSTATE><<EOF>>      { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 <CHRSTATE>.            { strbuf += yytext; }
 
 0[xX]{HEXDIGIT}+{INT_SUFFIX}?          { return emit(INT_LITERAL, "INT_LITERAL"); }
@@ -145,12 +158,12 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
     if (op.has_value()) {
         return emitShared(op.value());
     }
-    reportDiagnostic(yylineno, yytext, "Illegal character", "Lexical error");
+    reportDiagnostic(yylineno, g_tokStartCol, yytext, "Illegal character", "Lexical error");
 }
 
 [ \t\r]+  { }
-\n        { }
+\n        { g_col = 1; }
 
-.  { reportDiagnostic(yylineno, yytext, "Illegal character", "Lexical error"); }
+.  { reportDiagnostic(yylineno, g_tokStartCol, yytext, "Illegal character", "Lexical error"); }
 
 %%

@@ -28,7 +28,12 @@ enum class ASTKind {
     CastExpr, SizeofExpr, NewExpr, DeleteExpr, LambdaExpr, CommaExpr,
 
     IntLiteral, FloatLiteral, CharLiteral, StringLiteral, BoolLiteral,
-    Identifier, ThisExpr, TypeNameNode
+    Identifier, ThisExpr, TypeNameNode,
+
+    ErrorNode /* placeholder for a statement/declaration that failed to
+                 parse -- keeps the AST complete around a mistake
+                 instead of leaving a silent hole, the way Roslyn/
+                 rust-analyzer-style "resilient" parsers do */
 };
 
 struct ASTNode {

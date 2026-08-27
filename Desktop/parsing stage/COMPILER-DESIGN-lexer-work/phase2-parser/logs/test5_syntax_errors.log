@@ -4,35 +4,36 @@
 
 Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c
 
-[1]
-Kind    : Syntax error
-Line    : 9
-Near    : a
-Message : syntax error, unexpected IDENTIFIER, expecting ';'
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:9:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 9 |     a = 5;
+   |     ^
+   | note: insert ';' here
 
-[2]
-Kind    : Syntax error
-Line    : 11
-Near    : {
-Message : syntax error, unexpected '{', expecting ',' or ')'
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:11:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 11 |     if (a > 0 {
+    |               ^
 
-[3]
-Kind    : Syntax error
-Line    : 15
-Near    : ;
-Message : syntax error, unexpected ';'
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:15:13: syntax error: syntax error, unexpected ';'
+ 15 |     int b = ;
+    |             ^
 
-[4]
-Kind    : Syntax error
-Line    : 16
-Near    : return
-Message : syntax error, unexpected RETURN
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:16:5: syntax error: syntax error, unexpected RETURN
+ 16 |     return 0;
+    |     ^
 
-[5]
-Kind    : Syntax error
-Line    : 17
-Near    : }
-Message : syntax error, unexpected '}'
+/mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test5_syntax_errors.c:17:1: syntax error: syntax error, unexpected '}'
+ 17 | }
+    | ^
 
 -----------------------------------------
 Total Errors : 5
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "main : _Z4mainv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 9: near 'a'"
+|       `-- ErrorNode "line 11: near '{'"
+|-- ErrorNode "line 15: near ';'"
+|-- ErrorNode "line 16: near 'return'"
+`-- ErrorNode "line 17: near '}'"

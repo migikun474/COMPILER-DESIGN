@@ -201,21 +201,21 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-Animal               class_tag      6      CLASS                                     0                                
-Animal::legs         variable       8      INT                                       0                                
-Dog                  class_tag      11     CLASS                                     0                                
-Dog::n               parameter      13     INT                                       1                                
-Dog::Dog             procedure      13     CONSTRUCTOR                               0         VOID (INT)             _ZN3Dog3DogEi
-Dog::~Dog            procedure      16     DESTRUCTOR                                0         VOID ()                _ZN3Dog4~DogEv
-Dog::bark            procedure      18     PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-main                 procedure      23     PROCEDURE                                 0         INT ()                 _Z4mainv
-flag                 variable       24     BOOL                                      1                                
-limit                variable       26     INT              const                    0                                
-p                    variable       28     INT_POINTER      *                        2                                
-arr                  variable       32     INT_ARRAY        []                       1                                
-sz                   variable       33     INT                                       1                                
-sz2                  variable       35     INT                                       1                                
-d                    variable       38     CLASS                                     2                                
-legs                 variable       40     INT                                       1                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Animal               class_tag      6      global                       CLASS                                     0                                
+Animal::legs         variable       8      global > class Animal        INT                                       0                                
+Dog                  class_tag      11     global                       CLASS                                     0                                
+Dog::n               parameter      13     global > class Dog > Dog::Dog() INT                                       1                                
+Dog::Dog             procedure      13     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3Dog3DogEi
+Dog::~Dog            procedure      16     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3Dog4~DogEv
+Dog::bark            procedure      18     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      23     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+flag                 variable       24     global > main()              BOOL                                      1                                
+limit                variable       26     global > main()              INT              const                    0                                
+p                    variable       28     global > main()              INT_POINTER      *                        2                                
+arr                  variable       32     global > main()              INT_ARRAY        []                       1                                
+sz                   variable       33     global > main()              INT                                       1                                
+sz2                  variable       35     global > main()              INT                                       1                                
+d                    variable       38     global > main()              CLASS                                     2                                
+legs                 variable       40     global > main()              INT                                       1                                

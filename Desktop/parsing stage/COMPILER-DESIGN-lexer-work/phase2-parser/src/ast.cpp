@@ -81,6 +81,7 @@ const char *astKindName(ASTKind k) {
         case ASTKind::Identifier: return "Identifier";
         case ASTKind::ThisExpr: return "ThisExpr";
         case ASTKind::TypeNameNode: return "TypeName";
+        case ASTKind::ErrorNode: return "ErrorNode";
     }
     return "?";
 }

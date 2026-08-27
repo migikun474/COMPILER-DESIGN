@@ -213,15 +213,15 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-sum_to               procedure      7      PROCEDURE                                 1         INT (INT)              _Z6sum_toi
-n                    parameter      7      INT                                       1                                
-total                variable       8      INT                                       4                                
-i                    variable       10     INT                                       4                                
-classify             procedure      16     PROCEDURE                                 1         INT (INT)              _Z8classifyi
-n                    parameter      16     INT                                       1                                
-main                 procedure      28     PROCEDURE                                 0         INT ()                 _Z4mainv
-n                    variable       29     INT                                       3                                
-s                    variable       31     INT                                       2                                
-c                    variable       33     INT                                       2                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+sum_to               procedure      7      global                       PROCEDURE                                 1         INT (INT)              _Z6sum_toi
+n                    parameter      7      global > sum_to()            INT                                       1                                
+total                variable       8      global > sum_to()            INT                                       4                                
+i                    variable       10     global > sum_to() > for      INT                                       4                                
+classify             procedure      16     global                       PROCEDURE                                 1         INT (INT)              _Z8classifyi
+n                    parameter      16     global > classify()          INT                                       1                                
+main                 procedure      28     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+n                    variable       29     global > main()              INT                                       3                                
+s                    variable       31     global > main()              INT                                       2                                
+c                    variable       33     global > main()              INT                                       2                                

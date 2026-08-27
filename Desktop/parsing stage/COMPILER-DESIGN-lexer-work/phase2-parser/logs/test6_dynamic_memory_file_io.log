@@ -170,9 +170,9 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-main                 procedure      8      PROCEDURE                                 0         INT ()                 _Z4mainv
-heap                 variable       9      INT_POINTER      *                        3                                
-more                 variable       14     INT_POINTER      *                        4                                
-f                    variable       19     FILE_POINTER     *                        3                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      8      global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+heap                 variable       9      global > main()              INT_POINTER      *                        3                                
+more                 variable       14     global > main()              INT_POINTER      *                        4                                
+f                    variable       19     global > main()              FILE_POINTER     *                        3                                

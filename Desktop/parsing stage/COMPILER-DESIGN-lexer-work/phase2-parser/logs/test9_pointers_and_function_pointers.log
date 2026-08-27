@@ -167,17 +167,17 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-add                  procedure      13     PROCEDURE                                 1         INT (INT, INT)         _Z3addii
-a                    parameter      13     INT                                       1                                
-b                    parameter      13     INT                                       1                                
-makeInt              procedure      17     PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
-p                    variable       18     INT_POINTER      *                        3                                
-main                 procedure      24     PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) _Z4mainiPPc
-argc                 parameter      24     INT                                       1                                
-argv                 parameter      24     CHAR_POINTER_POINTER                          0                                
-fp                   variable       25     INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
-result               variable       27     INT                                       1                                
-val                  variable       30     INT_POINTER      *                        1                                
-x                    variable       33     INT                                       1                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+add                  procedure      13     global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      13     global > add()               INT                                       1                                
+b                    parameter      13     global > add()               INT                                       1                                
+makeInt              procedure      17     global                       PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
+p                    variable       18     global > makeInt()           INT_POINTER      *                        3                                
+main                 procedure      24     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) _Z4mainiPPc
+argc                 parameter      24     global > main()              INT                                       1                                
+argv                 parameter      24     global > main()              CHAR_POINTER_POINTER                          0                                
+fp                   variable       25     global > main()              INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
+result               variable       27     global > main()              INT                                       1                                
+val                  variable       30     global > main()              INT_POINTER      *                        1                                
+x                    variable       33     global > main()              INT                                       1                                

@@ -218,22 +218,22 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-Color                enum_tag       1      ENUM                                      0                                
-RED                  enum_constant  1      ENUM_CONSTANT                             1                                
-GREEN                enum_constant  1      ENUM_CONSTANT                             0                                
-BLUE                 enum_constant  1      ENUM_CONSTANT                             0                                
-Shape                class_tag      3      CLASS                                     0                                
-Shape::sides         variable       5      INT                                       2                                
-Shape::area          procedure      6      PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
-Shape::secret        variable       10     INT                                       0                                
-main                 procedure      13     PROCEDURE                                 0         INT ()                 _Z4mainv
-c                    variable       14     ENUM                                      1                                
-s                    variable       16     CLASS                                     1                                
-fp                   variable       19     INT_FUNCTION_POINTER *                        0         INT (INT, INT)         
-x                    variable       21     INT                                       6                                
-y                    variable       22     INT                                       1                                
-z                    parameter      23     INT                                       1                                
-adder                variable       23     INT                                       0                                
-done                 label          36     LABEL                                     0                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Color                enum_tag       1      global                       ENUM                                      0                                
+RED                  enum_constant  1      global                       ENUM_CONSTANT                             1                                
+GREEN                enum_constant  1      global                       ENUM_CONSTANT                             0                                
+BLUE                 enum_constant  1      global                       ENUM_CONSTANT                             0                                
+Shape                class_tag      3      global                       CLASS                                     0                                
+Shape::sides         variable       5      global > class Shape         INT                                       2                                
+Shape::area          procedure      6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::secret        variable       10     global > class Shape         INT                                       0                                
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+c                    variable       14     global > main()              ENUM                                      1                                
+s                    variable       16     global > main()              CLASS                                     1                                
+fp                   variable       19     global > main()              INT_FUNCTION_POINTER *                        0         INT (INT, INT)         
+x                    variable       21     global > main()              INT                                       6                                
+y                    variable       22     global > main()              INT                                       1                                
+z                    parameter      23     global > main() > lambda     INT                                       1                                
+adder                variable       23     global > main()              INT                                       0                                
+done                 label          36     global > main()              LABEL                                     0                                

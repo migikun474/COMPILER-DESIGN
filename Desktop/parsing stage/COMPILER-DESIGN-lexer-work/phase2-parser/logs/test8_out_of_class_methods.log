@@ -83,12 +83,12 @@ Program "translation_unit"
 
 
 === Symbol Table ===
-Name                 Kind           Line   Type             Qualifiers               Uses      Signature              Mangled Name
-----                 ----           ----   ----             ----------               ----      ---------              ------------
-Dog                  class_tag      5      CLASS                                     0                                
-Dog::legs            variable       7      INT                                       0                                
-Dog::bark            procedure      8      PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-Dog::bark            procedure      11     PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-main                 procedure      15     PROCEDURE                                 0         INT ()                 _Z4mainv
-d                    variable       16     CLASS                                     1                                
-b                    variable       17     INT                                       1                                
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Dog                  class_tag      5      global                       CLASS                                     0                                
+Dog::legs            variable       7      global > class Dog           INT                                       0                                
+Dog::bark            procedure      8      global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+Dog::bark            procedure      11     global                       PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      15     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+d                    variable       16     global > main()              CLASS                                     1                                
+b                    variable       17     global > main()              INT                                       1                                

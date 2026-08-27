@@ -109,7 +109,10 @@ boundary and keep going instead of aborting on the first mistake, so a
 file with several unrelated mistakes gets several diagnostics in one
 run (see `test5_syntax_errors.c`). Every diagnostic (line, the text
 near the error, and the message) is collected in `g_diagnostics` and
-also written to `logs/<file>.log`, mirroring Phase 1's log format.
+also written to `logs/<file>.log`. On success, the log file contains
+the same three sections stdout does -- Token/Token_Type table,
+Abstract Syntax Tree, Symbol Table -- via shared print functions in
+`main.cpp` so the two outputs can't drift apart from each other.
 
 ## AST and symbol table (no semantic checks)
 
@@ -138,13 +141,14 @@ Program "translation_unit"
 ...
 
 === Symbol Table ===
-Name                     Kind           Type             Mangled Name
-----                     ----           ----             ------------
-a                        procedure      PROCEDURE        _Z1aii
-b                        parameter      INT
-c                        parameter      INT
-main                     procedure      PROCEDURE        _Z4mainv
-a                        variable       INT
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+a                    procedure      9      global                       PROCEDURE                                 0         INT (INT, INT)         _Z1aii
+b                    parameter      9      global > a()                 INT                                       1
+c                    parameter      9      global > a()                 INT                                       1
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+a                    variable       14     global > main()              INT                                       2
+result               variable       16     global > main()              INT                                       0
 ```
 
 **AST.** One generic node shape (`ASTKind kind; std::string label;
@@ -182,6 +186,35 @@ using a single-slot "current class" tracked via `enterClass()`/
 `leaveClass()`, entered right after a class/struct/union tag is
 declared and left once its closing `}` is reached.
 
+Concretely, that's **two different structs** carrying different
+subsets of the same information, on purpose:
+```cpp
+struct Symbol {                          // lives inside g_scopes, for lookup
+    SymKind kind;
+    std::string typeStr;
+    std::string mangledName;
+    int flatIndex = -1;                  // this symbol's slot in g_symbolTable
+};
+
+struct SymbolTableEntry {                // lives in g_symbolTable, for reporting
+    std::string name, qualifiedName, typeStr, mangledName, scopePath, ...;
+    int declLine; bool isStatic, isConst, isVolatile; int useCount; ...
+};
+```
+`Symbol` stays deliberately lean -- it's only ever consulted mid-parse
+to classify a token or resolve a type, so it carries just enough to do
+that. `SymbolTableEntry` carries everything else (declaration line,
+qualifiers, usage count, ...), since it only exists for the final
+report and there's no cost to it being bigger. `flatIndex` is the
+bridge between them: an **index**, not a pointer, specifically because
+`g_symbolTable` is a `std::vector` that can reallocate as it grows --
+storing a raw pointer into it anywhere would be a live dangling-pointer
+bug waiting for the vector to resize. An index stays valid across any
+number of reallocations, so `recordUsage()` can cheaply bump a usage
+count in the flat table (`g_symbolTable[s->flatIndex].useCount++`)
+from a `Symbol*` obtained during parsing, without either struct
+needing to know more about the other than it has to.
+
 Beyond name/kind/type, each entry also carries what a real compiler's
 symbol table typically accumulates before code generation, all still
 purely structural (nothing here validates or flags anything):
@@ -191,6 +224,34 @@ purely structural (nothing here validates or flags anything):
   through `g_tokens` for an accurate line even when the declaring
   action doesn't fire until several tokens later (e.g. after a long
   initializer expression has already advanced the scanner).
+- **Scope, as a readable owner path rather than a bare number.**
+  Every `pushScope()` call now takes a label describing what the scope
+  actually *is* -- `"main()"`, `"class Dog"`, `"Dog::Dog()"`,
+  `"switch"`, `"for"` -- and `currentScopePath()` joins every
+  currently-open scope's label in nesting order
+  (`"global > main() > for"`), captured once per symbol at declaration
+  time into `SymbolTableEntry::scopePath`. Function bodies,
+  constructors/destructors, struct/union/class bodies, lambdas, and a
+  `for`-loop's own init-scope all get a specific label taken straight
+  from context already available at that point in the grammar (the
+  declarator's name, the enclosing class, etc.) -- no renumbering
+  needed, since the label is just one more line inside an action block
+  that already existed.
+
+  `if`/`while`/`do`/`until` bodies are the one place this stops short
+  and falls back to a generic `"block"` label instead of `"if"`/
+  `"while"`/etc, and that's a deliberate, tested decision, not an
+  oversight: those all route their body through the same generic
+  `statement` nonterminal that also handles the dangling-else case,
+  and inserting a mid-rule action there to hint the label turned out
+  to badly break the `%prec IFX`/`ELSE` precedence mechanism the
+  dangling-else fix depends on -- conflict count jumped from the usual
+  7 to 78, and the rule became unreachable. Reverted immediately, and
+  left alone rather than risk reintroducing exactly the class of
+  silent grammar bug the pointer-recursion issue earlier in this
+  project already was. `switch`, structurally unrelated to that
+  precedence machinery, got the same treatment and *is* safe (tested:
+  conflict count stayed at 7), so its body correctly shows `"switch"`.
 - **Storage class and qualifiers** (`static`, `const`, `volatile`) --
   previously parsed and silently discarded; `TypeSpec` now actually
   carries `isConst`/`isVolatile` alongside the `isStatic` it already
@@ -201,11 +262,21 @@ purely structural (nothing here validates or flags anything):
   shown as `Signature` (e.g. `INT (INT, INT)`) -- separate from the
   generic `PROCEDURE`/`CONSTRUCTOR`/`DESTRUCTOR` kind label and
   distinct from (but consistent with) the encoded mangled name.
-- **A usage count.** `recordUsage()` walks the same scope chain
-  `lookupSymbol()` uses, and bumps a counter on every *use* of a name
-  (an identifier in an expression, a `goto`'s target label) as
-  distinct from every *declaration* of one. This is the one piece of
-  bookkeeping actually worth calling out: it's the raw ingredient an
+- **A usage count.** `recordUsage()` bumps a counter on every *use* of
+  a name (an identifier in an expression, a `goto`'s target label) as
+  distinct from every *declaration* of one. It has two overloads --
+  `recordUsage(const Symbol *s)`, used when the caller has already
+  called `lookupSymbol()` itself moments earlier (true at both call
+  sites), and a `recordUsage(const std::string &name)` convenience
+  wrapper that just calls `lookupSymbol()` and forwards. The
+  `Symbol*` overload exists specifically because the original
+  string-only version was silently walking the scope chain and
+  re-hashing the same name a second time on every single identifier
+  occurrence in a program, right after the caller had *already* done
+  that exact walk to classify the token -- a real, measurable
+  inefficiency (see "A real inefficiency, found and fixed" below), not
+  just a style choice. This is the one piece of bookkeeping actually
+  worth calling out for what it enables: it's the raw ingredient an
   "unused variable" warning would need, but computing that warning is
   a judgment call about control flow and intent that belongs to
   semantic analysis -- here it's just an honest count of textual
@@ -313,6 +384,94 @@ also left out as further optional additions, not because they're hard
 to add but to keep this pass focused on syntax rather than growing
 into a full semantic analyzer.
 
+## A real inefficiency, found and fixed
+
+`recordUsage(const std::string &name)` used to call `lookupSymbol(name)`
+internally -- but its only two call sites (`primary_expr`'s
+`IDENTIFIER` handling, and `GOTO`'s label resolution) had *already*
+called `lookupSymbol()` themselves a line earlier, to classify the
+token. That meant every single identifier occurrence in a program was
+walking the scope chain and re-hashing the same name **twice**, back
+to back, for no reason. Fixed by adding a `recordUsage(const Symbol
+*s)` overload that reuses the already-found result, and updating both
+call sites to pass it instead of re-deriving it from the name string.
+Verified behavior-preserving (identical usage counts before/after) and
+re-ran the full test suite before and after to confirm no regression.
+
+`lookupSymbol()`'s own `O(scope depth)` walk-the-stack-of-maps design
+was considered and deliberately left alone -- real high-throughput
+compilers use a single global map with a per-name binding stack
+instead (`O(1)` lookup regardless of nesting depth), but that's a
+genuine architecture change for a performance gain that wouldn't be
+measurable at this project's realistic file sizes and nesting depths;
+not worth the risk without a profiler actually showing it matters.
+
+## Programmer-friendly diagnostics and a resilient AST
+
+Three additions on top of the base error-reporting mechanism, aimed
+specifically at making failures easier to actually read and act on.
+
+**GCC/Clang-style diagnostics**, with an exact source snippet and
+caret instead of just a line number:
+```
+test.c:3:5: syntax error: syntax error, unexpected RETURN, expecting ';'
+ 3 |     return 0;
+   |     ^
+```
+Column tracking is added via Flex's `YY_USER_ACTION` hook, which fires
+automatically before every matched token, so it didn't need touching
+every single rule in `scanner.l` by hand. `main.cpp` reads the whole
+source file into `g_sourceLines` up front purely to print this
+snippet. Color (bold location, red "syntax error"/"lexical error",
+bold message) is applied only when `isatty(fileno(stderr))` is true —
+piped output and the on-disk log file both stay plain text, so nothing
+saved to a file ends up full of escape-code noise.
+
+**Clang-style fix-it hints.** When Bison's verbose error message names
+*exactly one* unambiguous literal token it was expecting (e.g.
+`"expecting ';'"`), an extra line suggests the fix, in green:
+```
+test.c:3:5: syntax error: syntax error, unexpected RETURN, expecting ';'
+ 3 |     return 0;
+   |     ^
+   | note: insert ';' here
+```
+`singleExpectedLiteral()` deliberately does **not** guess when Bison's
+message lists more than one option (`"expecting ',' or ')'"`) or names
+an abstract, non-literal token (`"expecting IDENTIFIER"`, which has no
+single canonical piece of text to suggest) — a wrong suggestion is
+worse than no suggestion, so those cases just get the plain caret with
+no fix-it line, rather than the tool bluffing.
+
+**A resilient AST — `ErrorNode`.** Previously, a statement or
+declaration that failed to parse just left a silent hole in the tree:
+panic-mode recovery (`error ';'`/`error '}'`) discarded it and moved
+on, with no visible trace once parsing continued. Now the recovery
+actions insert an explicit `ErrorNode` exactly where the broken
+construct would have been, labeled with what actually went wrong
+(`ErrorNode "line 3: near 'return'"`) via a small `lastErrorLabel()`
+helper that reads back the diagnostic `yyerror()` just recorded. This
+borrows the "always produce a complete tree" philosophy real IDE-grade
+tooling (Roslyn's red-green trees, rust-analyzer's `rowan`) uses,
+without needing a different parsing algorithm or a rewrite — it's a
+small, contained change on top of the same Bison/LALR grammar.
+
+Since the AST used to only ever get printed on a *successful* parse,
+adding `ErrorNode` alone wouldn't have been visible to anyone —
+`main.cpp` and the log file now also print a `--- Partial AST
+(best-effort) ---` section on the failure path, so a file with several
+scattered mistakes shows exactly which constructs broke and where they
+sit relative to the parts that parsed fine:
+```
+Program "translation_unit"
+|-- FunctionDef "main : _Z4mainv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 9: near 'a'"
+|       `-- ErrorNode "line 11: near '{'"
+|-- ErrorNode "line 15: near ';'"
+...
+```
+
 ## Known limitations (by design, for a course-scope parser)
 
 - **Single pass, so forward references print as `IDENTIFIER`.** A
@@ -340,22 +499,16 @@ into a full semantic analyzer.
 
 ```
 phase2-parser/
-├── docs/
-│   └── GRAMMAR_DESIGN.md      full production-by-production grammar walkthrough
 ├── include/
-│   ├── common.h               symbol table, token log, diagnostics, parser value type, mangling
-│   ├── ast.h                  AST node kind/shape, node constructors, tree printer
-│   └── token_converter.hpp    TokenType -> this grammar's Bison token codes
+│   ├── common.h       symbol table, token log, diagnostics, parser value type, mangling
+│   └── ast.h          AST node kind/shape, node constructors, tree printer
 ├── src/
-│   ├── common.cpp              their implementations
-│   ├── ast.cpp                  AST implementation
-│   ├── token_converter.cpp      TokenType -> Bison token code (needs parser.tab.hpp)
-│   ├── scanner.l                 flex scanner (shared keyword/operator tables + typedef hack)
-│   ├── parser.y                  bison grammar (declarations, statements, expressions, AST)
-│   └── main.cpp                  driver: parses a file, prints the table/AST/symbols or the errors
-├── test/                         9 test cases (8 valid, 1 deliberately broken)
+│   ├── common.cpp      their implementations
+│   ├── ast.cpp          AST implementation
+│   ├── scanner.l          flex scanner (token classification + typedef hack)
+│   ├── parser.y           bison grammar (declarations, statements, expressions, AST)
+│   └── main.cpp           driver: parses a file, prints the table/AST/symbols or the errors
+├── test/                  8 test cases (7 valid, 1 deliberately broken)
 ├── makefile
 └── run.sh
-
-../shared/                        keyword/operator tables, shared with phase1-lexer (see top-level README)
 ```

@@ -37,6 +37,7 @@ void setCategory(int idx, const std::string &category);
    ===================================================================== */
 struct Diagnostic {
     int line;
+    int column;
     std::string near_text;
     std::string message;
     std::string kind; /* "Lexical error" | "Syntax error" */
@@ -44,9 +45,21 @@ struct Diagnostic {
 
 extern std::vector<Diagnostic> g_diagnostics;
 
-void reportDiagnostic(int line, const std::string &near_text,
+/* The source file's lines, 0-indexed (g_sourceLines[0] is line 1), used
+   to print a GCC/Clang-style snippet + caret under each diagnostic.
+   Populated once in main() before parsing starts. */
+extern std::vector<std::string> g_sourceLines;
+
+void reportDiagnostic(int line, int column, const std::string &near_text,
                        const std::string &message, const std::string &kind);
 bool hasErrors();
+
+/* A short, human-readable label for the ErrorNode placed in the AST at
+   a recovery point -- built from whichever diagnostic was just
+   recorded (the one that triggered this recovery), so the tree shows
+   *what* went wrong right where the broken construct would have been,
+   not just the token recovery happened to resynchronize on. */
+std::string lastErrorLabel();
 
 /* =====================================================================
    3. SYMBOL TABLE
@@ -100,8 +113,31 @@ struct SymbolDeclInfo {
     std::string mangledName;
 };
 
-void pushScope();
+/* Pushes a new scope. `label` names what this scope actually *is* --
+   "main()", "if", "while", "class Dog" -- so a symbol's location can
+   be reported as a readable path (see currentScopePath()) rather than
+   a bare nesting-depth number. If label is empty, pushScope() first
+   checks for a pending hint set by hintScope() (used by callers that
+   push the scope one grammar rule away from where they know what
+   it's for, e.g. selection_stmt hinting "if" right before the
+   generic `statement` nonterminal reduces into compound_stmt's own
+   pushScope()); if there's no hint either, it falls back to the
+   generic label "block". */
+void pushScope(const std::string &label = "");
 void popScope();
+
+/* Sets the label the *next* pushScope() call (that doesn't get an
+   explicit one of its own) should use. Exists so a parent construct
+   (if/while/for/switch) can label the scope that compound_stmt is
+   about to push on its behalf, without threading an inherited
+   attribute through the grammar. */
+void hintScope(const std::string &label);
+
+/* "global > main() > if > while" -- every currently-open scope's
+   label, joined in nesting order. Captured once per symbol at
+   declaration time into SymbolTableEntry::scopePath. */
+std::string currentScopePath();
+
 void declareSymbol(const std::string &name, SymKind kind, const std::string &typeStr,
                     const SymbolDeclInfo &extra = SymbolDeclInfo());
 const Symbol *lookupSymbol(const std::string &name);
@@ -112,8 +148,15 @@ const Symbol *lookupSymbol(const std::string &name);
    *declared* (a reference in an expression, a goto's target label).
    This only counts textual references -- it is not control-flow or
    reachability analysis, so it can't tell a live use from a dead one;
-   it's bookkeeping, not a semantic check. */
+   it's bookkeeping, not a semantic check.
+
+   Prefer the Symbol* overload when the caller has already called
+   lookupSymbol() itself (almost always true -- the same identifier
+   typically needs classifying via lookupSymbol() right before
+   recording its use) so the scope chain isn't walked twice for the
+   same name. */
 void recordUsage(const std::string &name);
+void recordUsage(const Symbol *s);
 
 /* Enters/leaves a class body, so members declared inside it can be
    reported with a qualified "ClassName::member" name and so function
@@ -140,6 +183,7 @@ struct SymbolTableEntry {
     std::string typeStr;
     std::string mangledName; /* empty unless kind is a callable */
     int scopeDepth;
+    std::string scopePath; /* "global > main() > if" -- see currentScopePath() */
     int declLine = 0;
     bool isStatic = false;
     bool isConst = false;
@@ -249,9 +293,11 @@ struct ParserValue {
    translation_unit finishes reducing. */
 extern ASTNodePtr g_astRoot;
 
-/* current line / lexeme, updated by the scanner on every token, so
-   yyerror() can report an accurate location for syntax errors. */
+/* current line / column / lexeme, updated by the scanner on every
+   token, so yyerror() can report an accurate location for syntax
+   errors -- column is the 1-based column the token STARTS at. */
 extern int g_currentLine;
+extern int g_currentColumn;
 extern std::string g_lastText;
 
 #endif

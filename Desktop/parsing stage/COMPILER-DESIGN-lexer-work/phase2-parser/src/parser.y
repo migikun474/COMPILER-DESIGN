@@ -81,8 +81,8 @@ translation_unit
 external_decl
     : function_definition { $$.node = $1.node; }
     | declaration { $$.node = $1.node; }
-    | error ';'  { yyerrok; }
-    | error '}'  { yyerrok; }
+    | error ';'  { yyerrok; $$.node = mkNode(ASTKind::ErrorNode, lastErrorLabel()); }
+    | error '}'  { yyerrok; $$.node = mkNode(ASTKind::ErrorNode, lastErrorLabel()); }
     ;
 
 /* ======================================================================
@@ -155,7 +155,7 @@ struct_or_class_specifier
           declareSymbol($2.str, SymKind::STRUCT_TAG, "STRUCT", SymbolDeclInfo{$2.idx});
           setCategory($2.idx, "STRUCT");
           enterClass($2.str);
-      } '{' { pushScope(); } member_decl_list_opt '}' {
+      } '{' { pushScope("struct " + $2.str); } member_decl_list_opt '}' {
           popScope(); leaveClass();
           $$.typeSpec.parts.push_back("STRUCT");
           g_typedefNames.insert($2.str); /* usable as a type from here on, but
@@ -181,7 +181,7 @@ struct_or_class_specifier
           declareSymbol($2.str, SymKind::UNION_TAG, "UNION", SymbolDeclInfo{$2.idx});
           setCategory($2.idx, "UNION");
           enterClass($2.str);
-      } '{' { pushScope(); } member_decl_list_opt '}' {
+      } '{' { pushScope("union " + $2.str); } member_decl_list_opt '}' {
           popScope(); leaveClass();
           $$.typeSpec.parts.push_back("UNION");
           g_typedefNames.insert($2.str);
@@ -203,7 +203,7 @@ struct_or_class_specifier
           declareSymbol($2.str, SymKind::CLASS_TAG, "CLASS", SymbolDeclInfo{$2.idx});
           setCategory($2.idx, "CLASS");
           enterClass($2.str);
-      } inheritance_opt '{' { pushScope(); } member_decl_list_opt '}' {
+      } inheritance_opt '{' { pushScope("class " + $2.str); } member_decl_list_opt '}' {
           popScope(); leaveClass();
           $$.typeSpec.parts.push_back("CLASS");
           g_typedefNames.insert($2.str);
@@ -297,7 +297,7 @@ member_item
     ;
 
 constructor_def
-    : IDENTIFIER '(' { pushScope(); } parameter_list_opt ')' {
+    : IDENTIFIER '(' { pushScope(currentClassName() + "::" + $1.str + "()"); } parameter_list_opt ')' {
           setCategory($1.idx, "CONSTRUCTOR");
           for (auto &p : $4.paramList) {
               if (p.nameIdx >= 0) {
@@ -330,7 +330,7 @@ constructor_def
 destructor_def
     : '~' IDENTIFIER '(' ')' {
           setCategory($2.idx, "DESTRUCTOR");
-          pushScope();
+          pushScope(currentClassName() + "::~" + $2.str + "()");
       } compound_stmt {
           popScope();
           std::string mangled = mangle("~" + $2.str, {}, currentClassName());
@@ -518,7 +518,7 @@ function_definition
           declareSymbol($2.decl.name, SymKind::PROCEDURE, "PROCEDURE", extra);
           setCategory($2.decl.nameIdx, "PROCEDURE");
           if (outOfClass) leaveClass();
-          pushScope();
+          pushScope($2.decl.name + "()");
           for (auto &p : $2.decl.params) {
               if (p.nameIdx >= 0) {
                   SymbolDeclInfo pex;
@@ -557,8 +557,8 @@ statement
     | jump_stmt { $$.node = $1.node; }
     | labeled_stmt { $$.node = $1.node; }
     | declaration { $$.node = $1.node; }
-    | error ';' { yyerrok; }
-    | error '}' { yyerrok; }
+    | error ';' { yyerrok; $$.node = mkNode(ASTKind::ErrorNode, lastErrorLabel()); }
+    | error '}' { yyerrok; $$.node = mkNode(ASTKind::ErrorNode, lastErrorLabel()); }
     ;
 
 compound_stmt
@@ -592,8 +592,8 @@ selection_stmt
     | IF '(' expr ')' statement ELSE statement {
           $$.node = mkNode(ASTKind::IfStmt, "", {$3.node, $5.node, $7.node});
       }
-    | SWITCH '(' expr ')' compound_stmt {
-          $$.node = mkNode(ASTKind::SwitchStmt, "", {$3.node, $5.node});
+    | SWITCH '(' expr ')' { hintScope("switch"); } compound_stmt {
+          $$.node = mkNode(ASTKind::SwitchStmt, "", {$3.node, $6.node});
       }
     ;
 
@@ -624,7 +624,7 @@ iteration_stmt
     | FOR '(' expr_stmt expr_stmt for_incr_opt ')' statement {
           $$.node = mkNode(ASTKind::ForStmt, "", {$3.node, $4.node, $5.node, $7.node});
       }
-    | FOR '(' { pushScope(); } declaration expr_stmt for_incr_opt ')' statement {
+    | FOR '(' { hintScope("for"); pushScope(); } declaration expr_stmt for_incr_opt ')' statement {
           popScope();
           $$.node = mkNode(ASTKind::ForStmt, "", {$4.node, $5.node, $6.node, $8.node});
       }
@@ -643,7 +643,7 @@ jump_stmt
     | GOTO IDENTIFIER ';' {
           const Symbol *s = lookupSymbol($2.str);
           if (s) setCategory($2.idx, "LABEL");
-          recordUsage($2.str);
+          recordUsage(s);
           $$.node = mkNode(ASTKind::GotoStmt, $2.str);
       }
     ;
@@ -863,7 +863,7 @@ primary_expr
     : IDENTIFIER {
           const Symbol *s = lookupSymbol($1.str);
           if (s) setCategory($1.idx, s->typeStr);
-          recordUsage($1.str);
+          recordUsage(s);
           $$.node = mkNode(ASTKind::Identifier, $1.str);
       }
     | INT_LITERAL    { $$.node = mkNode(ASTKind::IntLiteral, $1.str); }
@@ -877,7 +877,7 @@ primary_expr
     ;
 
 lambda_expr
-    : '[' capture_list_opt ']' '(' { pushScope(); } parameter_list_opt ')' {
+    : '[' capture_list_opt ']' '(' { pushScope("lambda"); } parameter_list_opt ')' {
           for (auto &p : $6.paramList) {
               if (p.nameIdx >= 0) {
                   declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, SymbolDeclInfo{p.nameIdx});
@@ -915,5 +915,5 @@ capture
 %%
 
 void yyerror(const char *s) {
-    reportDiagnostic(g_currentLine, g_lastText, s, "Syntax error");
+    reportDiagnostic(g_currentLine, g_currentColumn, g_lastText, s, "Syntax error");
 }
