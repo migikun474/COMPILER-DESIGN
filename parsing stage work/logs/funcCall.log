@@ -1,0 +1,168 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/funcCall.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+foo                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+,                              comma_op            
+int                            int                 
+c                              INT                 
+,                              comma_op            
+int                            int                 
+d                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+-                              minus_op            
+a                              INT                 
++                              plus_op             
+b                              INT                 
+-                              minus_op            
+c                              INT                 
+*                              star_op             
+d                              INT                 
+/                              divide_op           
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+=                              assign_op           
+10                             INT_LITERAL         
+,                              comma_op            
+b                              INT                 
+=                              assign_op           
+20                             INT_LITERAL         
+,                              comma_op            
+*                              star_op             
+c                              INT_POINTER         
+,                              comma_op            
+d                              INT                 
+=                              assign_op           
+30                             INT_LITERAL         
+;                              semicolon_op        
+c                              INT_POINTER         
+=                              assign_op           
+&                              ampersand_op        
+d                              INT                 
+;                              semicolon_op        
+b                              INT                 
+=                              assign_op           
+foo                            PROCEDURE           
+(                              open_paren_op       
+a                              INT                 
+--                             decrement_op        
+,                              comma_op            
+--                             decrement_op        
+a                              INT                 
+,                              comma_op            
+a                              INT                 
++                              plus_op             
+b                              INT                 
+,                              comma_op            
+a                              INT                 
++                              plus_op             
+*                              star_op             
+c                              INT_POINTER         
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+b                              INT                 
+%                              mod_op              
+d                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "foo : _Z3fooiiii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   |-- ParamDecl "c : INT"
+|   |-- ParamDecl "d : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "-"
+|               |-- BinaryExpr "+"
+|               |   |-- UnaryExpr "-"
+|               |   |   `-- Identifier "a"
+|               |   `-- Identifier "b"
+|               `-- BinaryExpr "/"
+|                   |-- BinaryExpr "*"
+|                   |   |-- Identifier "c"
+|                   |   `-- Identifier "d"
+|                   `-- Identifier "a"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"
+        |   |   `-- IntLiteral "10"
+        |   |-- VarDecl "b : INT"
+        |   |   `-- IntLiteral "20"
+        |   |-- VarDecl "c : INT_POINTER"
+        |   `-- VarDecl "d : INT"
+        |       `-- IntLiteral "30"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "c"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "d"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "b"
+        |       `-- CallExpr
+        |           |-- Identifier "foo"
+        |           |-- PostfixOpExpr "--"
+        |           |   `-- Identifier "a"
+        |           |-- UnaryExpr "--(pre)"
+        |           |   `-- Identifier "a"
+        |           |-- BinaryExpr "+"
+        |           |   |-- Identifier "a"
+        |           |   `-- Identifier "b"
+        |           `-- BinaryExpr "+"
+        |               |-- Identifier "a"
+        |               `-- UnaryExpr "*"
+        |                   `-- Identifier "c"
+        `-- ExprStmt
+            `-- BuiltinCallExpr "printf"
+                |-- StringLiteral ""%d\n""
+                `-- BinaryExpr "%"
+                    |-- Identifier "b"
+                    `-- Identifier "d"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+foo                  procedure      2      global                       PROCEDURE                                 1         INT (INT, INT, INT, INT) _Z3fooiiii
+a                    parameter      2      global > foo()               INT                                       2                                
+b                    parameter      2      global > foo()               INT                                       1                                
+c                    parameter      2      global > foo()               INT                                       1                                
+d                    parameter      2      global > foo()               INT                                       1                                
+main                 procedure      6      global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       7      global > main()              INT                                       4                                
+b                    variable       7      global > main()              INT                                       3                                
+c                    variable       7      global > main()              INT_POINTER      *                        2                                
+d                    variable       7      global > main()              INT                                       2                                

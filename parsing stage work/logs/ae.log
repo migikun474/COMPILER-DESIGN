@@ -1,0 +1,40 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c
+
+Semantic analysis failed: 8 error(s), 0 warning(s) in '/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c'.
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:1:33: semantic error: duplicate member 'i' in struct 'Dup' (previous declaration at line 1) [duplicate-member]
+ 1 | struct Dup { int i; union { int i; float f; }; };
+   |                                 ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:2:47: semantic error: duplicate member 'k' in struct 'Dup2' (previous declaration at line 2) [duplicate-member]
+ 2 | struct Dup2 { union { int k; }; struct { char k; }; };
+   |                                               ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:12:7: semantic error: unknown member 'z': no member named 'z' in 'Pt' [unknown-member]
+ 12 |     p.z = 1;
+    |       ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:13:9: semantic error: type mismatch: cannot assign 'int' to 'Pt' [type-mismatch]
+ 13 |     p = 5;
+    |         ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:14:7: semantic error: unknown member 'b': no member named 'b' in 'struct (unnamed at 5:1)' [unknown-member]
+ 14 |     g.b = 2;
+    |       ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:15:15: semantic error: type mismatch: cannot initialize variable 'ip' of type 'int *' with a value of type 'Pt *' (incompatible pointer types) [type-mismatch]
+ 15 |     int *ip = &p;
+    |               ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:16:7: semantic error: 'secret' is a private member of 'class Box' and is not accessible outside the class [access]
+ 16 |     b.secret = 3;
+    |       ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/ae.c:20:23: semantic error: unknown member 'w': no member named 'w' in 'Pt' [unknown-member]
+ 20 |     Pt q = { .x = 1, .w = 2 };
+    |                       ^
+

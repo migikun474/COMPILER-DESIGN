@@ -1,0 +1,16 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/anon.c
+
+Syntax analysis failed: 2 error(s); semantic analysis was not run.
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/anon.c:1:16: syntax error: syntax error, unexpected '{', expecting IDENTIFIER or TYPE_NAME
+ 1 | typedef struct { int x; } Pt;
+   |                ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/anon.c:3:11: syntax error: syntax error, unexpected IDENTIFIER, expecting ',' or ')'
+ 3 | void f(Pt p) {}
+   |           ^
+

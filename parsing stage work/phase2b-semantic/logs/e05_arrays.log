@@ -1,0 +1,72 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e05_arrays.c
+
+Semantic analysis failed: 16 error(s), 0 warning(s) in 'test/invalid/e05_arrays.c'.
+
+test/invalid/e05_arrays.c:3:9: semantic error: array size must be an integer constant expression (variable-length arrays are not supported) [array-size]
+ 3 | int vla[n];                       // error: array size must be an integer constant expression
+   |         ^
+
+test/invalid/e05_arrays.c:4:10: semantic error: array size must be greater than zero ('0' given) [array-size]
+ 4 | int zero[0];                      // error: array size must be greater than zero
+   |          ^
+
+test/invalid/e05_arrays.c:5:14: semantic error: array size must be greater than zero ('-2' given) [array-size]
+ 5 | int negative[-2];                 // error: array size must be greater than zero ('-2' given)
+   |              ^
+
+test/invalid/e05_arrays.c:6:16: semantic error: array size must be an integer constant expression (variable-length arrays are not supported) [array-size]
+ 6 | int fractional[2.5];              // error: array size must be an integer constant expression
+   |                ^
+
+test/invalid/e05_arrays.c:7:5: semantic error: only the first dimension of array 'bad_dims' may be left unspecified [array-size]
+ 7 | int bad_dims[][];                 // error: only the first dimension of array 'bad_dims' may be left unspecified
+   |     ^
+
+test/invalid/e05_arrays.c:8:26: semantic error: excess elements in array initializer (variable 'too_many' has 2 elements) [initializer]
+ 8 | int too_many[2] = {1, 2, 3};      // error: excess elements in array initializer
+   |                          ^
+
+test/invalid/e05_arrays.c:9:17: semantic error: initializer-string for char array is too long (3 characters for 'char[2]') [initializer]
+ 9 | char small[2] = "abc";            // error: initializer-string for char array is too long
+   |                 ^
+
+test/invalid/e05_arrays.c:10:22: semantic error: array variable 'from_string' must be initialized with a brace-enclosed list [initializer]
+ 10 | int from_string[4] = "abc";       // error: must be initialized with a brace-enclosed list
+    |                      ^
+
+test/invalid/e05_arrays.c:11:6: semantic error: array 'holes' has incomplete element type 'void' [incomplete-type]
+ 11 | void holes[3];                    // error: has incomplete element type 'void'
+    |      ^
+
+test/invalid/e05_arrays.c:17:6: semantic error: subscripted value is not an array or pointer (it has type 'int') [subscript]
+ 17 |     x[0] = 1;                     // error: subscripted value is not an array or pointer
+    |      ^
+
+test/invalid/e05_arrays.c:18:7: semantic error: array subscript is not an integer (it has type 'double') [subscript]
+ 18 |     a[d] = 1;                     // error: array subscript is not an integer
+    |       ^
+
+test/invalid/e05_arrays.c:19:15: semantic error: subscripted value is not an array or pointer (it has type 'int') [subscript]
+ 19 |     grid[0][1][2] = 3;            // error: subscripted value is not an array or pointer
+    |               ^
+
+test/invalid/e05_arrays.c:20:5: semantic error: array type 'int[3]' is not assignable [lvalue]
+ 20 |     a = b;                        // error: array type 'int[3]' is not assignable
+    |     ^
+
+test/invalid/e05_arrays.c:21:9: semantic error: array type 'int[2]' is not assignable [lvalue]
+ 21 |     grid[0] = a;                  // error: array type 'int[2]' is not assignable
+    |         ^
+
+test/invalid/e05_arrays.c:22:16: semantic error: array variable 'c' must be initialized with a brace-enclosed list [initializer]
+ 22 |     int c[2] = 5;                 // error: must be initialized with a brace-enclosed list
+    |                ^
+
+test/invalid/e05_arrays.c:23:17: semantic error: excess elements in scalar initializer [initializer]
+ 23 |     int s = {1, 2};               // error: excess elements in scalar initializer
+    |                 ^
+

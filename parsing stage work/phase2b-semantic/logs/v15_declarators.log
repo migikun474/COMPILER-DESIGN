@@ -1,0 +1,189 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v15_declarators.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v15_declarators.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"  <int (int, int)>  -> _Z3addii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|-- FunctionDef "first : _Z5firstPi"  <int *(int *)>  -> _Z5firstPi (function)
+|   |-- ParamDecl "p : INT_POINTER"  <int *>  -> p.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "p"  <int *> lvalue  -> p.3 (parameter, param)
+|-- TypedefDecl "BinOp = INT_POINTER"  <int (*)(int, int)>  -> BinOp (typedef)
+|-- TypedefDecl "Vec = INT_ARRAY"  <int[3]>  -> Vec (typedef)
+|-- StructDecl "Ops"  <struct Ops>  -> Ops (tag)
+|   |-- VarDecl "fn : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> Ops::fn (field, member)
+|   `-- VarDecl "data : INT_ARRAY"  <int[2]>  -> Ops::data (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"  <int[3]>  -> a.4 (variable, local)
+        |   `-- InitializerList  <int[3]>
+        |       |-- IntLiteral "1"  <int> =1
+        |       |-- IntLiteral "2"  <int> =2
+        |       `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "pa : INT_POINTER_ARRAY"  <int (*)[3]>  -> pa.5 (variable, local)
+        |   `-- UnaryExpr "&"  <int (*)[3]>
+        |       `-- Identifier "a"  <int[3]> lvalue  -> a.4 (variable, local)
+        |-- VarDecl "ap : INT_POINTER_ARRAY"  <int *[3]>  -> ap.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- IndexExpr  <int *> lvalue
+        |       |   |-- Identifier "ap"  <int *[3]> lvalue  -> ap.6 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- UnaryExpr "&"  <int *>
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- Identifier "a"  <int[3]> lvalue  -> a.4 (variable, local)
+        |               `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "pick : INT_POINTER_FUNCTION_POINTER"  <int *(*)(int *)>  -> pick.7 (variable, local)
+        |   `-- Identifier "first"  <int *(int *)>  -> _Z5firstPi (function)
+        |-- VarDecl "one : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> one.8 (variable, local)
+        |   `-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |-- VarDecl "handle : INT_POINTER_FUNCTION_POINTER"  <int (**)(int, int)>  -> handle.9 (variable, local)
+        |   `-- UnaryExpr "&"  <int (**)(int, int)>
+        |       `-- Identifier "one"  <int (*)(int, int)> lvalue  -> one.8 (variable, local)
+        |-- VarDecl "table : INT_FUNCTION_POINTER"  <int (*[2])(int, int)>  -> table.10 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int (*)(int, int)>
+        |       |-- IndexExpr  <int (*)(int, int)> lvalue
+        |       |   |-- Identifier "table"  <int (*[2])(int, int)> lvalue  -> table.10 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int (*)(int, int)>
+        |       |-- IndexExpr  <int (*)(int, int)> lvalue
+        |       |   |-- Identifier "table"  <int (*[2])(int, int)> lvalue  -> table.10 (variable, local)
+        |       |   `-- IntLiteral "1"  <int> =1
+        |       `-- UnaryExpr "*"  <int (*)(int, int)> lvalue
+        |           `-- Identifier "handle"  <int (**)(int, int)> lvalue  -> handle.9 (variable, local)
+        |-- VarDecl "op : INT_POINTER"  <int (*)(int, int)>  -> op.11 (variable, local)
+        |   `-- IndexExpr  <int (*)(int, int)> lvalue
+        |       |-- Identifier "table"  <int (*[2])(int, int)> lvalue  -> table.10 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "v : INT_ARRAY"  <int[3]>  -> v.12 (variable, local)
+        |   `-- InitializerList  <int[3]>
+        |       |-- IntLiteral "4"  <int> =4
+        |       |-- IntLiteral "5"  <int> =5
+        |       `-- IntLiteral "6"  <int> =6
+        |-- VarDecl "ops : STRUCT"  <struct Ops>  -> ops.13 (variable, local)
+        |   `-- InitializerList  <struct Ops>
+        |       |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |       `-- InitializerList  <int[2]>
+        |           |-- IntLiteral "7"  <int> =7
+        |           `-- IntLiteral "8"  <int> =8
+        |-- VarDecl "many : STRUCT_ARRAY"  <struct Ops[2]>  -> many.14 (variable, local)
+        |   `-- InitializerList  <struct Ops[2]>
+        |       |-- InitializerList  <struct Ops>
+        |       |   |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |       |   `-- InitializerList  <int[2]>
+        |       |       |-- IntLiteral "1"  <int> =1
+        |       |       `-- IntLiteral "2"  <int> =2
+        |       `-- InitializerList  <struct Ops>
+        |           |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |           `-- InitializerList  <int[2]>
+        |               |-- IntLiteral "3"  <int> =3
+        |               `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "r : INT"  <int>  -> r.15 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- BinaryExpr "+"  <int>
+        |       |   |-- BinaryExpr "+"  <int>
+        |       |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |   |-- IndexExpr  <int> lvalue
+        |       |   |   |   |   |   |-- UnaryExpr "*"  <int[3]> lvalue
+        |       |   |   |   |   |   |   `-- Identifier "pa"  <int (*)[3]> lvalue  -> pa.5 (variable, local)
+        |       |   |   |   |   |   `-- IntLiteral "1"  <int> =1
+        |       |   |   |   |   `-- UnaryExpr "*"  <int> lvalue
+        |       |   |   |   |       `-- IndexExpr  <int *> lvalue
+        |       |   |   |   |           |-- Identifier "ap"  <int *[3]> lvalue  -> ap.6 (variable, local)
+        |       |   |   |   |           `-- IntLiteral "0"  <int> =0
+        |       |   |   |   `-- UnaryExpr "*"  <int> lvalue
+        |       |   |   |       `-- CallExpr  <int *>
+        |       |   |   |           |-- Identifier "pick"  <int *(*)(int *)> lvalue  -> pick.7 (variable, local)
+        |       |   |   |           `-- Identifier "a"  <int[3]> lvalue  -> a.4 (variable, local)
+        |       |   |   `-- CallExpr  <int>
+        |       |   |       |-- UnaryExpr "*"  <int (*)(int, int)> lvalue
+        |       |   |       |   `-- Identifier "handle"  <int (**)(int, int)> lvalue  -> handle.9 (variable, local)
+        |       |   |       |-- IntLiteral "1"  <int> =1
+        |       |   |       `-- IntLiteral "2"  <int> =2
+        |       |   `-- CallExpr  <int>
+        |       |       |-- IndexExpr  <int (*)(int, int)> lvalue
+        |       |       |   |-- Identifier "table"  <int (*[2])(int, int)> lvalue  -> table.10 (variable, local)
+        |       |       |   `-- IntLiteral "1"  <int> =1
+        |       |       |-- IntLiteral "3"  <int> =3
+        |       |       `-- IntLiteral "4"  <int> =4
+        |       `-- CallExpr  <int>
+        |           |-- Identifier "op"  <int (*)(int, int)> lvalue  -> op.11 (variable, local)
+        |           |-- IntLiteral "5"  <int> =5
+        |           `-- IntLiteral "6"  <int> =6
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- BinaryExpr "+"  <int>
+        |           |   |-- BinaryExpr "+"  <int>
+        |           |   |   |-- BinaryExpr "+"  <int>
+        |           |   |   |   |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |           |   |   |   `-- IndexExpr  <int> lvalue
+        |           |   |   |       |-- Identifier "v"  <int[3]> lvalue  -> v.12 (variable, local)
+        |           |   |   |       `-- IntLiteral "2"  <int> =2
+        |           |   |   `-- CallExpr  <int>
+        |           |   |       |-- MemberExpr "fn"  <int (*)(int, int)> lvalue  -> Ops::fn (field, member)
+        |           |   |       |   `-- Identifier "ops"  <struct Ops> lvalue  -> ops.13 (variable, local)
+        |           |   |       |-- IntLiteral "1"  <int> =1
+        |           |   |       `-- IntLiteral "1"  <int> =1
+        |           |   `-- IndexExpr  <int> lvalue
+        |           |       |-- MemberExpr "data"  <int[2]> lvalue  -> Ops::data (field, member)
+        |           |       |   `-- Identifier "ops"  <struct Ops> lvalue  -> ops.13 (variable, local)
+        |           |       `-- IntLiteral "1"  <int> =1
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- MemberExpr "data"  <int[2]> lvalue  -> Ops::data (field, member)
+        |               |   `-- IndexExpr  <struct Ops> lvalue
+        |               |       |-- Identifier "many"  <struct Ops[2]> lvalue  -> many.14 (variable, local)
+        |               |       `-- IntLiteral "1"  <int> =1
+        |               `-- IntLiteral "0"  <int> =0
+        `-- ReturnStmt
+            `-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+add                function       int (int, int)             -        global                         3     -     5     _Z3addii             _Z3addii                 defined
+a                  parameter      int                        param    global > add()                 3     4     1     a.1                  -                        
+b                  parameter      int                        param    global > add()                 3     4     1     b.2                  -                        
+first              function       int *(int *)               -        global                         4     -     1     _Z5firstPi           _Z5firstPi               defined
+p                  parameter      int *                      param    global > first()               4     4     1     p.3                  -                        
+BinOp              typedef        int (*)(int, int)          -        global                         5     -     0     BinOp                -                        
+Vec                typedef        int[3]                     -        global                         6     -     0     Vec                  -                        
+Ops                struct_tag     struct Ops                 -        global                         7     -     0     Ops                  -                        size 12
+Ops::fn            field          int (*)(int, int)          member   global > struct Ops            7     4     1     Ops::fn              -                        public, offset 0
+Ops::data          field          int[2]                     member   global > struct Ops            7     8     2     Ops::data            -                        public, offset 4
+main               function       int (void)                 -        global                         9     -     0     main                 main                     defined
+a                  variable       int[3]                     local    global > main()                10    12    3     a.4                  -                        
+pa                 variable       int (*)[3]                 local    global > main()                11    4     1     pa.5                 -                        
+ap                 variable       int *[3]                   local    global > main()                12    12    2     ap.6                 -                        
+pick               variable       int *(*)(int *)            local    global > main()                14    4     1     pick.7               -                        
+one                variable       int (*)(int, int)          local    global > main()                15    4     1     one.8                -                        
+handle             variable       int (**)(int, int)         local    global > main()                16    4     2     handle.9             -                        
+table              variable       int (*[2])(int, int)       local    global > main()                17    8     4     table.10             -                        
+op                 variable       int (*)(int, int)          local    global > main()                20    4     1     op.11                -                        
+v                  variable       int[3]                     local    global > main()                21    12    1     v.12                 -                        
+ops                variable       struct Ops                 local    global > main()                22    12    2     ops.13               -                        
+many               variable       struct Ops[2]              local    global > main()                23    24    1     many.14              -                        
+r                  variable       int                        local    global > main()                24    4     3     r.15                 -                        
+
+=== Record Layouts (MIPS32) ===
+struct Ops: size 12, align 4
+    +0  int (*)(int, int) fn  [public]
+    +4  int[2] data  [public]

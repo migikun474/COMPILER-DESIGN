@@ -1,0 +1,490 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v16_name_resolution.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+g                              PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+g                              PROCEDURE           
+(                              open_paren_op       
+const                          const               
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+2                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+f                              PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+f                              PROCEDURE           
+(                              open_paren_op       
+const                          const               
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+static                         static              
+int                            int                 
+helper                         PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+class                          class               
+A                              CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+get                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+k                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
++                              plus_op             
+k                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+twice                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+get                            PROCEDURE           
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+later                          IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+fact                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+n                              INT                 
+<=                             le_op               
+1                              INT_LITERAL         
+?                              question_op         
+1                              INT_LITERAL         
+:                              colon_op            
+n                              INT                 
+*                              star_op             
+fact                           PROCEDURE           
+(                              open_paren_op       
+n                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+viaLambda                      PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+auto                           auto                
+f                              INT                 
+=                              assign_op           
+[                              open_bracket_op     
+=                              assign_op           
+]                              close_bracket_op    
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
++                              plus_op             
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+return                         return              
+f                              INT                 
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+later                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+const                          const               
+int                            int                 
+cx                             INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+r                              INT                 
+=                              assign_op           
+g                              PROCEDURE           
+(                              open_paren_op       
+&                              ampersand_op        
+x                              INT                 
+)                              close_paren_op      
++                              plus_op             
+g                              PROCEDURE           
+(                              open_paren_op       
+&                              ampersand_op        
+cx                             INT                 
+)                              close_paren_op      
++                              plus_op             
+f                              PROCEDURE           
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+proto                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+r                              INT                 
++                              plus_op             
+proto                          PROCEDURE           
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+helper                         PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+A                              CLASS               
+obj                            CLASS               
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+r                              INT                 
++                              plus_op             
+obj                            CLASS               
+.                              dot_op              
+twice                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+obj                            CLASS               
+.                              dot_op              
+fact                           PROCEDURE           
+(                              open_paren_op       
+4                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+obj                            CLASS               
+.                              dot_op              
+viaLambda                      PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+{                              open_brace_op       
+int                            int                 
+r                              INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+x                              INT                 
+=                              assign_op           
+r                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+return                         return              
+r                              INT                 
++                              plus_op             
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+proto                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+static                         static              
+int                            int                 
+helper                         PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
+*                              star_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "g : _Z1gPi"
+|   |-- ParamDecl "p : INT_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "1"
+|-- FunctionDef "g : _Z1gPKi"
+|   |-- ParamDecl "p : INT_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "2"
+|-- FunctionDecl "f : _Z1fi"
+|   `-- ParamDecl "a : INT"
+|-- FunctionDef "f : _Z1fi"
+|   |-- ParamDecl "a : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"
+|-- FunctionDecl "helper : _Z6helperi"
+|   `-- ParamDecl "a : INT"
+|-- ClassDecl "A"
+|   |-- VarDecl "x : INT"
+|   |-- FunctionDef "get : _ZN1A3getEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "x"
+|   |-- FunctionDef "get : _ZN1A3getEi"
+|   |   |-- ParamDecl "k : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "+"
+|   |               |-- Identifier "x"
+|   |               `-- Identifier "k"
+|   |-- FunctionDef "twice : _ZN1A5twiceEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "+"
+|   |               |-- BinaryExpr "+"
+|   |               |   |-- CallExpr "_ZN1A3getEv"
+|   |               |   |   `-- Identifier "get"
+|   |               |   `-- CallExpr "_ZN1A3getEi"
+|   |               |       |-- Identifier "get"
+|   |               |       `-- IntLiteral "2"
+|   |               `-- CallExpr
+|   |                   `-- Identifier "later"
+|   |-- FunctionDef "fact : _ZN1A4factEi"
+|   |   |-- ParamDecl "n : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- TernaryExpr
+|   |               |-- BinaryExpr "<="
+|   |               |   |-- Identifier "n"
+|   |               |   `-- IntLiteral "1"
+|   |               |-- IntLiteral "1"
+|   |               `-- BinaryExpr "*"
+|   |                   |-- Identifier "n"
+|   |                   `-- CallExpr
+|   |                       |-- Identifier "fact"
+|   |                       `-- BinaryExpr "-"
+|   |                           |-- Identifier "n"
+|   |                           `-- IntLiteral "1"
+|   |-- FunctionDef "viaLambda : _ZN1A9viaLambdaEv"
+|   |   `-- CompoundStmt
+|   |       |-- VarDecl "f : INT"
+|   |       |   `-- LambdaExpr "="
+|   |       |       `-- CompoundStmt
+|   |       |           `-- ReturnStmt
+|   |       |               `-- BinaryExpr "+"
+|   |       |                   |-- Identifier "x"
+|   |       |                   `-- CallExpr "_ZN1A3getEv"
+|   |       |                       `-- Identifier "get"
+|   |       `-- ReturnStmt
+|   |           `-- CallExpr
+|   |               `-- Identifier "f"
+|   `-- FunctionDef "later : _ZN1A5laterEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "1"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "0"
+|       |-- VarDecl "cx : INT"
+|       |   `-- IntLiteral "1"
+|       |-- VarDecl "r : INT"
+|       |   `-- BinaryExpr "+"
+|       |       |-- BinaryExpr "+"
+|       |       |   |-- CallExpr
+|       |       |   |   |-- Identifier "g"
+|       |       |   |   `-- UnaryExpr "&"
+|       |       |   |       `-- Identifier "x"
+|       |       |   `-- CallExpr
+|       |       |       |-- Identifier "g"
+|       |       |       `-- UnaryExpr "&"
+|       |       |           `-- Identifier "cx"
+|       |       `-- CallExpr "_Z1fi"
+|       |           |-- Identifier "f"
+|       |           `-- IntLiteral "2"
+|       |-- FunctionDecl "proto : _Z5protoi"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- BinaryExpr "+"
+|       |           |-- BinaryExpr "+"
+|       |           |   |-- Identifier "r"
+|       |           |   `-- CallExpr
+|       |           |       |-- Identifier "proto"
+|       |           |       `-- IntLiteral "2"
+|       |           `-- CallExpr
+|       |               |-- Identifier "helper"
+|       |               `-- IntLiteral "1"
+|       |-- VarDecl "obj : CLASS"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- BinaryExpr "+"
+|       |           |-- BinaryExpr "+"
+|       |           |   |-- BinaryExpr "+"
+|       |           |   |   |-- Identifier "r"
+|       |           |   |   `-- CallExpr
+|       |           |   |       `-- MemberExpr "twice"
+|       |           |   |           `-- Identifier "obj"
+|       |           |   `-- CallExpr
+|       |           |       |-- MemberExpr "fact"
+|       |           |       |   `-- Identifier "obj"
+|       |           |       `-- IntLiteral "4"
+|       |           `-- CallExpr
+|       |               `-- MemberExpr "viaLambda"
+|       |                   `-- Identifier "obj"
+|       |-- CompoundStmt
+|       |   |-- VarDecl "r : INT"
+|       |   |   `-- IntLiteral "5"
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "="
+|       |           |-- Identifier "x"
+|       |           `-- Identifier "r"
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "r"
+|               `-- Identifier "x"
+|-- FunctionDef "proto : _Z5protoi"
+|   |-- ParamDecl "a : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"
+`-- FunctionDef "helper : _Z6helperi"
+    |-- ParamDecl "a : INT"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "*"
+                |-- Identifier "a"
+                `-- IntLiteral "2"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+g                    procedure      2      global                       PROCEDURE                                 0         INT (INT_POINTER)      _Z1gPi
+p                    parameter      2      global > g()                 INT_POINTER                               0                                
+g                    procedure      3      global                       PROCEDURE                                 2         INT (INT_POINTER)      _Z1gPKi
+p                    parameter      3      global > g()                 INT_POINTER                               0                                
+f                    procedure      4      global                       PROCEDURE                                 1         INT (INT)              _Z1fi
+f                    procedure      5      global                       PROCEDURE                                 0         INT (INT)              _Z1fi
+a                    parameter      5      global > f()                 INT                                       1                                
+helper               procedure      6      global                       PROCEDURE        static                   1         INT (INT)              _Z6helperi
+A                    class_tag      8      global                       CLASS                                     0                                
+A::x                 class_member   10     global > class A             INT                                       3                                
+A::get               class_method   11     global > class A             PROCEDURE                                 2         INT ()                 _ZN1A3getEv
+A::get               class_method   12     global > class A             PROCEDURE                                 1         INT (INT)              _ZN1A3getEi
+A::k                 parameter      12     global > class A > get()     INT                                       1                                
+A::twice             class_method   13     global > class A             PROCEDURE                                 0         INT ()                 _ZN1A5twiceEv
+A::fact              class_method   14     global > class A             PROCEDURE                                 1         INT (INT)              _ZN1A4factEi
+A::n                 parameter      14     global > class A > fact()    INT                                       3                                
+A::viaLambda         class_method   15     global > class A             PROCEDURE                                 0         INT ()                 _ZN1A9viaLambdaEv
+A::f                 variable       15     global > class A > viaLambda() INT                                       1                                
+A::later             class_method   16     global > class A             PROCEDURE                                 0         INT ()                 _ZN1A5laterEv
+main                 procedure      19     global                       PROCEDURE                                 0         INT ()                 main
+x                    variable       20     global > main()              INT                                       3                                
+cx                   variable       21     global > main()              INT              const                    1                                
+r                    variable       22     global > main()              INT                                       5                                
+proto                procedure      23     global > main()              PROCEDURE                                 1         INT (INT)              _Z5protoi
+obj                  variable       25     global > main()              CLASS                                     3                                
+r                    variable       28     global > main() > block      INT                                       1                                
+proto                procedure      33     global                       PROCEDURE                                 0         INT (INT)              _Z5protoi
+a                    parameter      33     global > proto()             INT                                       1                                
+helper               procedure      34     global                       PROCEDURE        static                   0         INT (INT)              _Z6helperi
+a                    parameter      34     global > helper()            INT                                       1                                

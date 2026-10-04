@@ -1,0 +1,184 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v08_control_flow.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v08_control_flow.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- EnumDecl "Color"  <enum Color>  -> Color (tag)
+|   |-- Enumerator "RED"  <int> =0  -> RED (enum_constant)
+|   |-- Enumerator "GREEN"  <int> =5  -> GREEN (enum_constant)
+|   |   `-- IntLiteral "5"  <int> =5
+|   `-- Enumerator "BLUE"  <int> =6  -> BLUE (enum_constant)
+|-- FunctionDef "classify : _Z8classify5Color"  <int (enum Color)>  -> _Z8classify5Color (function)
+|   |-- ParamDecl "c : ENUM"  <enum Color>  -> c.1 (parameter, param)
+|   `-- CompoundStmt
+|       |-- SwitchStmt
+|       |   |-- Identifier "c"  <enum Color> lvalue  -> c.1 (parameter, param)
+|       |   `-- CompoundStmt
+|       |       |-- CaseStmt
+|       |       |   |-- Identifier "RED"  <int> =0  -> RED (enum_constant)
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "0"  <int> =0
+|       |       |-- CaseStmt
+|       |       |   |-- Identifier "GREEN"  <int> =5  -> GREEN (enum_constant)
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "1"  <int> =1
+|       |       `-- CaseStmt
+|       |           |-- Identifier "BLUE"  <int> =6  -> BLUE (enum_constant)
+|       |           `-- DefaultStmt
+|       |               `-- BreakStmt
+|       `-- ReturnStmt
+|           `-- UnaryExpr "-"  <int> =-1
+|               `-- IntLiteral "1"  <int> =1
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "i : INT"  <int>  -> i.2 (variable, local)
+        |   `-- VarDecl "total : INT"  <int>  -> total.3 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   |       `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   |       `-- IntLiteral "10"  <int> =10
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   `-- CompoundStmt
+        |       |-- IfStmt
+        |       |   |-- BinaryExpr "=="  <int>
+        |       |   |   |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       |   |   `-- IntLiteral "2"  <int> =2
+        |       |   `-- ContinueStmt
+        |       |-- IfStmt
+        |       |   |-- BinaryExpr "=="  <int>
+        |       |   |   |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       |   |   `-- IntLiteral "8"  <int> =8
+        |       |   `-- BreakStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="  <int>
+        |               |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |               `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |-- WhileStmt
+        |   |-- BinaryExpr ">"  <int>
+        |   |   |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |   |   `-- IntLiteral "100"  <int> =100
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "--"  <int>
+        |           `-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"  <int>
+        |   |           `-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |   `-- BinaryExpr "<"  <int>
+        |       |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- UntilStmt
+        |   |-- BinaryExpr ">="  <int>
+        |   |   |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |   |   `-- IntLiteral "50"  <int> =50
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="  <int>
+        |               |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |               `-- IntLiteral "7"  <int> =7
+        |-- SwitchStmt
+        |   |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |   `-- CompoundStmt
+        |       |-- CaseStmt
+        |       |   |-- IntLiteral "1"  <int> =1
+        |       |   `-- CaseStmt
+        |       |       |-- IntLiteral "2"  <int> =2
+        |       |       `-- ExprStmt
+        |       |           `-- AssignExpr "="  <int>
+        |       |               |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       |               `-- IntLiteral "0"  <int> =0
+        |       |-- BreakStmt
+        |       |-- CaseStmt
+        |       |   |-- CharLiteral "'A'"  <char> =65
+        |       |   `-- ExprStmt
+        |       |       `-- AssignExpr "="  <int>
+        |       |           |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       |           `-- IntLiteral "65"  <int> =65
+        |       |-- BreakStmt
+        |       |-- CaseStmt
+        |       |   |-- BinaryExpr "+"  <int> =7
+        |       |   |   |-- IntLiteral "3"  <int> =3
+        |       |   |   `-- IntLiteral "4"  <int> =4
+        |       |   `-- ExprStmt
+        |       |       `-- AssignExpr "="  <int>
+        |       |           |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       |           `-- IntLiteral "7"  <int> =7
+        |       |-- BreakStmt
+        |       `-- DefaultStmt
+        |           `-- ExprStmt
+        |               `-- AssignExpr "="  <int>
+        |                   |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |                   `-- UnaryExpr "-"  <int>
+        |                       `-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |-- ForStmt
+        |   |-- EmptyStmt
+        |   |-- EmptyStmt
+        |   `-- CompoundStmt
+        |       |-- SwitchStmt
+        |       |   |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       |   `-- CompoundStmt
+        |       |       |-- CaseStmt
+        |       |       |   |-- IntLiteral "0"  <int> =0
+        |       |       |   `-- ContinueStmt
+        |       |       `-- DefaultStmt
+        |       |           `-- BreakStmt
+        |       `-- BreakStmt
+        |-- GotoStmt "end"  -> main.end (label)
+        |-- LabeledStmt "again"  -> main.again (label)
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "++"  <int>
+        |           `-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |-- IfStmt
+        |   |-- BinaryExpr "<"  <int>
+        |   |   |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |   |   `-- IntLiteral "3"  <int> =3
+        |   `-- GotoStmt "again"  -> main.again (label)
+        |-- LabeledStmt "end"  -> main.end (label)
+        |   `-- IfStmt
+        |       |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="  <int>
+        |       |       |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |       |       `-- CallExpr  <int>  -> _Z8classify5Color (function)
+        |       |           |-- Identifier "classify"  <int (enum Color)>  -> _Z8classify5Color (function)
+        |       |           `-- Identifier "BLUE"  <int> =6  -> BLUE (enum_constant)
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="  <int>
+        |               |-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+        |               `-- CallExpr  <int>  -> _Z8classify5Color (function)
+        |                   |-- Identifier "classify"  <int (enum Color)>  -> _Z8classify5Color (function)
+        |                   `-- Identifier "RED"  <int> =0  -> RED (enum_constant)
+        `-- ReturnStmt
+            `-- Identifier "total"  <int> lvalue  -> total.3 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Color              enum_tag       enum Color                 -        global                         3     -     0     Color                -                        
+RED                enum_constant  int                        -        global                         3     -     2     RED                  -                        value 0
+GREEN              enum_constant  int                        -        global                         3     -     1     GREEN                -                        value 5
+BLUE               enum_constant  int                        -        global                         3     -     2     BLUE                 -                        value 6
+classify           function       int (enum Color)           -        global                         5     -     2     _Z8classify5Color    _Z8classify5Color        defined
+c                  parameter      enum Color                 param    global > classify()            5     4     1     c.1                  -                        
+main               function       int (void)                 -        global                         15    -     0     main                 main                     defined
+again              label          -                          -        global > main()                39    -     1     main.again           -                        
+end                label          -                          -        global > main()                42    -     1     main.end             -                        
+i                  variable       int                        local    global > main()                16    4     7     i.2                  -                        
+total              variable       int                        local    global > main()                16    4     19    total.3              -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

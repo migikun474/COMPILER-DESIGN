@@ -1,0 +1,295 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v02_expressions.c
+
+Semantic analysis successful: 0 error(s), 2 warning(s) in 'test/valid/v02_expressions.c'.
+
+test/valid/v02_expressions.c:20:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 20 |     r = a++ + ++a - b-- - --b;      // warning: operation on 'a' may be undefined  // warning: operation on 'b' may be undefined
+    |               ^
+
+test/valid/v02_expressions.c:20:27: semantic warning: operation on 'b' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 20 |     r = a++ + ++a - b-- - --b;      // warning: operation on 'a' may be undefined  // warning: operation on 'b' may be undefined
+    |                           ^
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"  <int>  -> a.1 (variable, local)
+        |   |   `-- IntLiteral "7"  <int> =7
+        |   |-- VarDecl "b : INT"  <int>  -> b.2 (variable, local)
+        |   |   `-- IntLiteral "2"  <int> =2
+        |   `-- VarDecl "r : INT"  <int>  -> r.3 (variable, local)
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.4 (variable, local)
+        |   `-- FloatLiteral "3.0"  <double>
+        |-- VarDecl "ch : CHAR"  <char>  -> ch.5 (variable, local)
+        |   `-- CharLiteral "'a'"  <char> =97
+        |-- VarDecl "u : UNSIGNED_INT"  <unsigned int>  -> u.6 (variable, local)
+        |   `-- IntLiteral "5"  <int> =5
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "-"  <int>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "*"  <int>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "/"  <int>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "%"  <int>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <double>
+        |       |-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |       `-- BinaryExpr "/"  <double>
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <double>
+        |       |-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |       `-- BinaryExpr "+"  <double>
+        |           |-- Identifier "ch"  <char> lvalue  -> ch.5 (variable, local)
+        |           `-- FloatLiteral "1.5"  <double>
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- Identifier "ch"  <char> lvalue  -> ch.5 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <char>
+        |       |-- Identifier "ch"  <char> lvalue  -> ch.5 (variable, local)
+        |       `-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- BinaryExpr "+"  <int>
+        |           |   |-- BinaryExpr "+"  <int>
+        |           |   |   |-- BinaryExpr "+"  <int>
+        |           |   |   |   |-- BinaryExpr "+"  <int>
+        |           |   |   |   |   |-- BinaryExpr "<"  <int>
+        |           |   |   |   |   |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   |   |   |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   |   |   |   `-- BinaryExpr "<="  <int>
+        |           |   |   |   |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   |   |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   |   |   `-- BinaryExpr ">"  <int>
+        |           |   |   |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   |   `-- BinaryExpr ">="  <int>
+        |           |   |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   `-- BinaryExpr "=="  <int>
+        |           |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           `-- BinaryExpr "!="  <int>
+        |               |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |               `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "||"  <int>
+        |           |-- BinaryExpr "&&"  <int>
+        |           |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           `-- UnaryExpr "!"  <int>
+        |               `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "|"  <int>
+        |           |-- BinaryExpr "|"  <int>
+        |           |   |-- BinaryExpr "|"  <int>
+        |           |   |   |-- BinaryExpr "|"  <int>
+        |           |   |   |   |-- BinaryExpr "&"  <int>
+        |           |   |   |   |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   |   |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   |   |   `-- BinaryExpr "^"  <int>
+        |           |   |   |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |   |   `-- UnaryExpr "~"  <int>
+        |           |   |       `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   `-- BinaryExpr "<<"  <int>
+        |           |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |       `-- IntLiteral "2"  <int> =2
+        |           `-- BinaryExpr ">>"  <int>
+        |               |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |               `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "+="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "-="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "*="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "/="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "%="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "<<="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr ">>="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "&="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- ExprStmt
+        |   `-- AssignExpr "|="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "^="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "+="  <double>
+        |       |-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- ExprStmt
+        |   `-- AssignExpr "*="  <double>
+        |       |-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |       `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "-"  <int>
+        |           |-- BinaryExpr "-"  <int>
+        |           |   |-- BinaryExpr "+"  <int>
+        |           |   |   |-- PostfixOpExpr "++"  <int>
+        |           |   |   |   `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   `-- UnaryExpr "++(pre)"  <int>
+        |           |   |       `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   `-- PostfixOpExpr "--"  <int>
+        |           |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           `-- UnaryExpr "--(pre)"  <int>
+        |               `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- UnaryExpr "-"  <int>
+        |           |   `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- UnaryExpr "+"  <int>
+        |               `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- TernaryExpr  <int>
+        |           |-- BinaryExpr ">"  <int>
+        |           |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <double>
+        |       |-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |       `-- TernaryExpr  <double>
+        |           |-- BinaryExpr ">"  <int>
+        |           |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- CommaExpr  <int>
+        |           |-- CommaExpr  <int>
+        |           |   |-- AssignExpr "="  <int>
+        |           |   |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |           |   |   `-- IntLiteral "3"  <int> =3
+        |           |   `-- AssignExpr "="  <int>
+        |           |       |-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |           |       `-- IntLiteral "4"  <int> =4
+        |           `-- BinaryExpr "+"  <int>
+        |               |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |               `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- CastExpr "INT"  <int>
+        |           |   `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |           `-- CastExpr "INT"  <int> =120
+        |               `-- CharLiteral "'x'"  <char> =120
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <unsigned int>
+        |       |-- Identifier "u"  <unsigned int> lvalue  -> u.6 (variable, local)
+        |       `-- BinaryExpr "+"  <unsigned int>
+        |           |-- Identifier "u"  <unsigned int> lvalue  -> u.6 (variable, local)
+        |           `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- BinaryExpr "+"  <unsigned int> =16
+        |           |-- BinaryExpr "+"  <unsigned int> =12
+        |           |   |-- SizeofExpr "INT"  <unsigned int> =4
+        |           |   `-- SizeofExpr  <unsigned int> =8
+        |           |       `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        |           `-- SizeofExpr "CHAR_POINTER"  <unsigned int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+        |       `-- TernaryExpr  <int> =2
+        |           |-- IntLiteral "1"  <int> =1
+        |           |-- IntLiteral "2"  <int> =2
+        |           `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "flag : BOOL"  <bool>  -> flag.7 (variable, local)
+        |   `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <bool>
+        |       |-- Identifier "flag"  <bool> lvalue  -> flag.7 (variable, local)
+        |       `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
+                `-- Identifier "flag"  <bool> lvalue  -> flag.7 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         3     -     0     main                 main                     defined
+a                  variable       int                        local    global > main()                4     4     41    a.1                  -                        
+b                  variable       int                        local    global > main()                4     4     27    b.2                  -                        
+r                  variable       int                        local    global > main()                4     4     18    r.3                  -                        
+d                  variable       double                     local    global > main()                5     8     10    d.4                  -                        
+ch                 variable       char                       local    global > main()                6     1     3     ch.5                 -                        
+u                  variable       unsigned int               local    global > main()                7     4     2     u.6                  -                        
+flag               variable       bool                       local    global > main()                29    1     2     flag.7               -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

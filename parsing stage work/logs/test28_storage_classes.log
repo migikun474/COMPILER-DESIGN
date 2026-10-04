@@ -1,0 +1,226 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/test28_storage_classes.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+extern                         extern              
+int                            int                 
+limit                          INT                 
+;                              semicolon_op        
+extern                         extern              
+int                            int                 
+lookup                         INT_ARRAY           
+[                              open_bracket_op     
+]                              close_bracket_op    
+;                              semicolon_op        
+extern                         extern              
+int                            int                 
+scale                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+factor                         IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+lookup                         INT_ARRAY           
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+limit                          INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+scale                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+factor                         INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+extern                         extern              
+int                            int                 
+limit                          INT                 
+;                              semicolon_op        
+register                       register            
+int                            int                 
+k                              INT                 
+;                              semicolon_op        
+int                            int                 
+sum                            INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+k                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+k                              INT                 
+<                              lt_op               
+limit                          INT                 
+;                              semicolon_op        
+k                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+sum                            INT                 
++=                             plus_assign_op      
+lookup                         INT_ARRAY           
+[                              open_bracket_op     
+k                              INT                 
+]                              close_bracket_op    
+*                              star_op             
+factor                         INT                 
+;                              semicolon_op        
+return                         return              
+sum                            INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+static                         static              
+int                            int                 
+calls                          INT                 
+;                              semicolon_op        
+typedef                        typedef             
+unsigned                       unsigned            
+long                           long                
+counter_t                      TYPEDEF             
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+counter_t                      TYPEDEF             
+n                              UNSIGNED_LONG       
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+register                       register            
+int                            int                 
+r                              INT                 
+=                              assign_op           
+scale                          PROCEDURE           
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+calls                          INT                 
+++                             increment_op        
+;                              semicolon_op        
+n                              UNSIGNED_LONG       
+=                              assign_op           
+n                              UNSIGNED_LONG       
++                              plus_op             
+r                              INT                 
++                              plus_op             
+calls                          INT                 
+;                              semicolon_op        
+return                         return              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+n                              UNSIGNED_LONG       
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- VarDecl "limit : INT"
+|-- VarDecl "lookup : INT_ARRAY"
+|-- FunctionDecl "scale : _Z5scalei"
+|   `-- ParamDecl "factor : INT"
+|-- VarDecl "lookup : INT_ARRAY"
+|   `-- InitializerList
+|       |-- IntLiteral "1"
+|       |-- IntLiteral "2"
+|       `-- IntLiteral "4"
+|-- VarDecl "limit : INT"
+|   `-- IntLiteral "3"
+|-- FunctionDef "scale : _Z5scalei"
+|   |-- ParamDecl "factor : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "limit : INT"
+|       |-- VarDecl "k : INT"
+|       |-- VarDecl "sum : INT"
+|       |   `-- IntLiteral "0"
+|       |-- ForStmt
+|       |   |-- ExprStmt
+|       |   |   `-- AssignExpr "="
+|       |   |       |-- Identifier "k"
+|       |   |       `-- IntLiteral "0"
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<"
+|       |   |       |-- Identifier "k"
+|       |   |       `-- Identifier "limit"
+|       |   |-- PostfixOpExpr "++"
+|       |   |   `-- Identifier "k"
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "+="
+|       |           |-- Identifier "sum"
+|       |           `-- BinaryExpr "*"
+|       |               |-- IndexExpr
+|       |               |   |-- Identifier "lookup"
+|       |               |   `-- Identifier "k"
+|       |               `-- Identifier "factor"
+|       `-- ReturnStmt
+|           `-- Identifier "sum"
+|-- VarDecl "calls : INT"
+|-- TypedefDecl "counter_t = UNSIGNED_LONG"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "n : UNSIGNED_LONG"
+        |   `-- IntLiteral "0"
+        |-- VarDecl "r : INT"
+        |   `-- CallExpr "_Z5scalei"
+        |       |-- Identifier "scale"
+        |       `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- PostfixOpExpr "++"
+        |       `-- Identifier "calls"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "n"
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- Identifier "n"
+        |           |   `-- Identifier "r"
+        |           `-- Identifier "calls"
+        `-- ReturnStmt
+            `-- CastExpr "INT"
+                `-- Identifier "n"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+limit                variable       3      global                       INT                                       0                                
+lookup               variable       4      global                       INT_ARRAY        []                       0                                
+scale                procedure      5      global                       PROCEDURE                                 1         INT (INT)              _Z5scalei
+lookup               variable       6      global                       INT_ARRAY        []                       1                                
+limit                variable       7      global                       INT                                       0                                
+scale                procedure      9      global                       PROCEDURE                                 0         INT (INT)              _Z5scalei
+factor               parameter      9      global > scale()             INT                                       1                                
+limit                variable       10     global > scale()             INT                                       1                                
+k                    variable       11     global > scale()             INT                                       4                                
+sum                  variable       12     global > scale()             INT                                       2                                
+calls                variable       17     global                       INT              static                   2                                
+counter_t            typedef        18     global                       UNSIGNED_LONG                             0                                
+main                 procedure      20     global                       PROCEDURE                                 0         INT ()                 main
+n                    variable       21     global > main()              UNSIGNED_LONG                             3                                
+r                    variable       22     global > main()              INT                                       1                                

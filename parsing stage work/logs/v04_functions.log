@@ -1,0 +1,488 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v04_functions.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              IDENTIFIER          
+,                              comma_op            
+int                            int                 
+b                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+factorial                      PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+if                             if                  
+(                              open_paren_op       
+n                              INT                 
+<=                             le_op               
+1                              INT_LITERAL         
+)                              close_paren_op      
+return                         return              
+1                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+n                              INT                 
+*                              star_op             
+factorial                      PROCEDURE           
+(                              open_paren_op       
+n                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+is_even                        PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+is_odd                         PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+n                              INT                 
+==                             eq_op               
+0                              INT_LITERAL         
+?                              question_op         
+0                              INT_LITERAL         
+:                              colon_op            
+is_even                        PROCEDURE           
+(                              open_paren_op       
+n                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+is_even                        PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+n                              INT                 
+==                             eq_op               
+0                              INT_LITERAL         
+?                              question_op         
+1                              INT_LITERAL         
+:                              colon_op            
+is_odd                         PROCEDURE           
+(                              open_paren_op       
+n                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+void                           void                
+log_value                      PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+if                             if                  
+(                              open_paren_op       
+v                              INT                 
+<                              lt_op               
+0                              INT_LITERAL         
+)                              close_paren_op      
+return                         return              
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+v                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+double                         double              
+average                        PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+(                              open_paren_op       
+a                              INT                 
++                              plus_op             
+b                              INT                 
+)                              close_paren_op      
+/                              divide_op           
+2.0                            FLOAT_LITERAL       
+;                              semicolon_op        
+}                              close_brace_op      
+char                           char                
+first                          PROCEDURE           
+(                              open_paren_op       
+char                           char                
+*                              star_op             
+s                              CHAR_POINTER        
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+s                              CHAR_POINTER        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+sum                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+count                          INT                 
+,                              comma_op            
+...                            ellipsis_op         
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+count                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+r                              INT                 
+=                              assign_op           
+add                            PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+add                            PROCEDURE           
+(                              open_paren_op       
+'a'                            CHAR_LITERAL        
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+double                         double              
+avg                            DOUBLE              
+=                              assign_op           
+average                        PROCEDURE           
+(                              open_paren_op       
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+log_value                      PROCEDURE           
+(                              open_paren_op       
+r                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+factorial                      PROCEDURE           
+(                              open_paren_op       
+5                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+is_odd                         PROCEDURE           
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+first                          PROCEDURE           
+(                              open_paren_op       
+"abc"                          STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+sum                            PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+sum                            PROCEDURE           
+(                              open_paren_op       
+3                              INT_LITERAL         
+,                              comma_op            
+1                              INT_LITERAL         
+,                              comma_op            
+2.0                            FLOAT_LITERAL       
+,                              comma_op            
+"x"                            STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+later                          PROCEDURE           
+(                              open_paren_op       
+r                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+r                              INT                 
++                              plus_op             
+avg                            DOUBLE              
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+later                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+v                              INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDecl "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   `-- ParamDecl "b : INT"
+|-- FunctionDef "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- FunctionDecl "add : _Z3addii"
+|-- FunctionDef "factorial : _Z9factoriali"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       |-- IfStmt
+|       |   |-- BinaryExpr "<="
+|       |   |   |-- Identifier "n"
+|       |   |   `-- IntLiteral "1"
+|       |   `-- ReturnStmt
+|       |       `-- IntLiteral "1"
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "n"
+|               `-- CallExpr
+|                   |-- Identifier "factorial"
+|                   `-- BinaryExpr "-"
+|                       |-- Identifier "n"
+|                       `-- IntLiteral "1"
+|-- FunctionDecl "is_even : _Z7is_eveni"
+|   `-- ParamDecl "n : INT"
+|-- FunctionDef "is_odd : _Z6is_oddi"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr
+|               |-- BinaryExpr "=="
+|               |   |-- Identifier "n"
+|               |   `-- IntLiteral "0"
+|               |-- IntLiteral "0"
+|               `-- CallExpr
+|                   |-- Identifier "is_even"
+|                   `-- BinaryExpr "-"
+|                       |-- Identifier "n"
+|                       `-- IntLiteral "1"
+|-- FunctionDef "is_even : _Z7is_eveni"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr
+|               |-- BinaryExpr "=="
+|               |   |-- Identifier "n"
+|               |   `-- IntLiteral "0"
+|               |-- IntLiteral "1"
+|               `-- CallExpr
+|                   |-- Identifier "is_odd"
+|                   `-- BinaryExpr "-"
+|                       |-- Identifier "n"
+|                       `-- IntLiteral "1"
+|-- FunctionDef "log_value : _Z9log_valuei"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       |-- IfStmt
+|       |   |-- BinaryExpr "<"
+|       |   |   |-- Identifier "v"
+|       |   |   `-- IntLiteral "0"
+|       |   `-- ReturnStmt
+|       `-- ExprStmt
+|           `-- BuiltinCallExpr "printf"
+|               |-- StringLiteral ""%d\n""
+|               `-- Identifier "v"
+|-- FunctionDef "average : _Z7averageii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "/"
+|               |-- BinaryExpr "+"
+|               |   |-- Identifier "a"
+|               |   `-- Identifier "b"
+|               `-- FloatLiteral "2.0"
+|-- FunctionDef "first : _Z5firstPc"
+|   |-- ParamDecl "s : CHAR_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IndexExpr
+|               |-- Identifier "s"
+|               `-- IntLiteral "0"
+|-- FunctionDef "sum : _Z3sumiz"
+|   |-- ParamDecl "count : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "count"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- VarDecl "r : INT"
+|       |   `-- CallExpr "_Z3addii"
+|       |       |-- Identifier "add"
+|       |       |-- IntLiteral "1"
+|       |       `-- IntLiteral "2"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- CallExpr "_Z3addii"
+|       |           |-- Identifier "add"
+|       |           |-- CharLiteral "'a'"
+|       |           `-- IntLiteral "2"
+|       |-- VarDecl "avg : DOUBLE"
+|       |   `-- CallExpr
+|       |       |-- Identifier "average"
+|       |       |-- IntLiteral "3"
+|       |       `-- IntLiteral "4"
+|       |-- ExprStmt
+|       |   `-- CallExpr
+|       |       |-- Identifier "log_value"
+|       |       `-- Identifier "r"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- BinaryExpr "+"
+|       |           |-- BinaryExpr "+"
+|       |           |   |-- CallExpr
+|       |           |   |   |-- Identifier "factorial"
+|       |           |   |   `-- IntLiteral "5"
+|       |           |   `-- CallExpr
+|       |           |       |-- Identifier "is_odd"
+|       |           |       `-- IntLiteral "3"
+|       |           `-- CallExpr
+|       |               |-- Identifier "first"
+|       |               `-- StringLiteral ""abc""
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- BinaryExpr "+"
+|       |           |-- CallExpr
+|       |           |   |-- Identifier "sum"
+|       |           |   `-- IntLiteral "1"
+|       |           `-- CallExpr
+|       |               |-- Identifier "sum"
+|       |               |-- IntLiteral "3"
+|       |               |-- IntLiteral "1"
+|       |               |-- FloatLiteral "2.0"
+|       |               `-- StringLiteral ""x""
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "r"
+|       |       `-- CallExpr
+|       |           |-- Identifier "later"
+|       |           `-- Identifier "r"
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "r"
+|               `-- Identifier "avg"
+`-- FunctionDef "later : _Z5lateri"
+    |-- ParamDecl "v : INT"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- Identifier "v"
+                `-- IntLiteral "1"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+add                  procedure      3      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+add                  procedure      4      global                       PROCEDURE                                 0         INT (INT, INT)         _Z3addii
+a                    parameter      4      global > add()               INT                                       1                                
+b                    parameter      4      global > add()               INT                                       1                                
+add                  procedure      7      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+factorial            procedure      9      global                       PROCEDURE                                 2         INT (INT)              _Z9factoriali
+n                    parameter      9      global > factorial()         INT                                       3                                
+is_even              procedure      14     global                       PROCEDURE                                 1         INT (INT)              _Z7is_eveni
+is_odd               procedure      15     global                       PROCEDURE                                 2         INT (INT)              _Z6is_oddi
+n                    parameter      15     global > is_odd()            INT                                       2                                
+is_even              procedure      16     global                       PROCEDURE                                 0         INT (INT)              _Z7is_eveni
+n                    parameter      16     global > is_even()           INT                                       2                                
+log_value            procedure      18     global                       PROCEDURE                                 1         VOID (INT)             _Z9log_valuei
+v                    parameter      18     global > log_value()         INT                                       2                                
+average              procedure      23     global                       PROCEDURE                                 1         DOUBLE (INT, INT)      _Z7averageii
+a                    parameter      23     global > average()           INT                                       1                                
+b                    parameter      23     global > average()           INT                                       1                                
+first                procedure      24     global                       PROCEDURE                                 1         CHAR (CHAR_POINTER)    _Z5firstPc
+s                    parameter      24     global > first()             CHAR_POINTER                              1                                
+sum                  procedure      25     global                       PROCEDURE                                 2         INT (INT)              _Z3sumiz
+count                parameter      25     global > sum()               INT                                       1                                
+main                 procedure      27     global                       PROCEDURE                                 0         INT ()                 main
+r                    variable       28     global > main()              INT                                       7                                
+avg                  variable       30     global > main()              DOUBLE                                    1                                
+later                procedure      38     global                       PROCEDURE                                 0         INT (INT)              _Z5lateri
+v                    parameter      38     global > later()             INT                                       1                                

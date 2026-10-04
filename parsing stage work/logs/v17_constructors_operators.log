@@ -1,0 +1,806 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v17_constructors_operators.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+class                          class               
+Vec                            CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+;                              semicolon_op        
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
+=                              assign_op           
+a                              INT                 
+;                              semicolon_op        
+y                              INT                 
+=                              assign_op           
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+y                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+~                              tilde_op            
+Vec                            DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CLASS               
+operator                       PROCEDURE           
++                              plus_op             
+(                              open_paren_op       
+Vec                            CLASS               
+o                              CLASS               
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+x                              INT                 
++                              plus_op             
+o                              CLASS               
+.                              dot_op              
+x                              IDENTIFIER          
+,                              comma_op            
+y                              INT                 
++                              plus_op             
+o                              CLASS               
+.                              dot_op              
+y                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+operator                       PROCEDURE           
+-                              minus_op            
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+-                              minus_op            
+x                              INT                 
+,                              comma_op            
+-                              minus_op            
+y                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+operator                       PROCEDURE           
+==                             eq_op               
+(                              open_paren_op       
+Vec                            CLASS               
+o                              CLASS               
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
+==                             eq_op               
+o                              CLASS               
+.                              dot_op              
+x                              IDENTIFIER          
+&&                             logical_and_op      
+y                              INT                 
+==                             eq_op               
+o                              CLASS               
+.                              dot_op              
+y                              IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+operator                       PROCEDURE           
+[                              open_bracket_op     
+]                              close_bracket_op    
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+i                              INT                 
+==                             eq_op               
+0                              INT_LITERAL         
+?                              question_op         
+x                              INT                 
+:                              colon_op            
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+&                              ampersand_op        
+operator                       PROCEDURE           
++=                             plus_assign_op      
+(                              open_paren_op       
+Vec                            CLASS               
+o                              CLASS               
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
++=                             plus_assign_op      
+o                              CLASS               
+.                              dot_op              
+x                              IDENTIFIER          
+;                              semicolon_op        
+y                              INT                 
++=                             plus_assign_op      
+o                              CLASS               
+.                              dot_op              
+y                              IDENTIFIER          
+;                              semicolon_op        
+return                         return              
+*                              star_op             
+this                           this                
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+&                              ampersand_op        
+operator                       PROCEDURE           
+++                             increment_op        
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+return                         return              
+*                              star_op             
+this                           this                
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+operator                       PROCEDURE           
+++                             increment_op        
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+{                              open_brace_op       
+Vec                            CLASS               
+old                            CLASS               
+=                              assign_op           
+*                              star_op             
+this                           this                
+;                              semicolon_op        
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+return                         return              
+old                            CLASS               
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+operator                       PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+k                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
+*                              star_op             
+k                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+static                         static              
+int                            int                 
+dims                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CLASS               
+*                              star_op             
+self                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+Vec                            CLASS               
+*                              star_op             
+p                              CLASS_POINTER       
+=                              assign_op           
+this                           this                
+;                              semicolon_op        
+return                         return              
+p                              CLASS_POINTER       
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+Vec                            CLASS               
+::                             scope_resolution_op 
+Vec                            CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+x                              IDENTIFIER          
+=                              assign_op           
+a                              INT                 
+;                              semicolon_op        
+y                              IDENTIFIER          
+=                              assign_op           
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+::                             scope_resolution_op 
+~                              tilde_op            
+Vec                            DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+Vec                            CLASS               
+::                             scope_resolution_op 
+dims                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+2                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+Vec                            CLASS               
+operator                       PROCEDURE           
+*                              star_op             
+(                              open_paren_op       
+Vec                            CLASS               
+v                              CLASS               
+,                              comma_op            
+int                            int                 
+k                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+Vec                            CLASS               
+(                              open_paren_op       
+v                              CLASS               
+.                              dot_op              
+x                              IDENTIFIER          
+*                              star_op             
+k                              INT                 
+,                              comma_op            
+v                              CLASS               
+.                              dot_op              
+y                              IDENTIFIER          
+*                              star_op             
+k                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+argc                           INT                 
+,                              comma_op            
+char                           char                
+*                              star_op             
+*                              star_op             
+argv                           CHAR_POINTER_POINTER
+)                              close_paren_op      
+{                              open_brace_op       
+Vec                            CLASS               
+a                              CLASS               
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CLASS               
+b                              CLASS               
+=                              assign_op           
+Vec                            CLASS               
+(                              open_paren_op       
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CLASS               
+e                              CLASS               
+;                              semicolon_op        
+Vec                            CLASS               
+f                              CLASS               
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+Vec                            CLASS               
+c                              CLASS               
+=                              assign_op           
+a                              CLASS               
++                              plus_op             
+b                              CLASS               
+;                              semicolon_op        
+Vec                            CLASS               
+d                              CLASS               
+=                              assign_op           
+-                              minus_op            
+c                              CLASS               
+;                              semicolon_op        
+Vec                            CLASS               
+g                              CLASS               
+=                              assign_op           
+a                              CLASS               
+*                              star_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+a                              CLASS               
++=                             plus_assign_op      
+b                              CLASS               
+;                              semicolon_op        
+++                             increment_op        
+a                              CLASS               
+;                              semicolon_op        
+a                              CLASS               
+++                             increment_op        
+;                              semicolon_op        
+g                              CLASS               
+=                              assign_op           
+d                              CLASS               
+;                              semicolon_op        
+int                            int                 
+same                           INT                 
+=                              assign_op           
+(                              open_paren_op       
+a                              CLASS               
+==                             eq_op               
+b                              CLASS               
+)                              close_paren_op      
++                              plus_op             
+a                              CLASS               
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+a                              CLASS               
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+Vec                            CLASS               
+::                             scope_resolution_op 
+dims                           IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+c                              CLASS               
+.                              dot_op              
+self                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+->                             arrow_op            
+y                              IDENTIFIER          
+;                              semicolon_op        
+Vec                            CLASS               
+*                              star_op             
+h                              CLASS_POINTER       
+=                              assign_op           
+new                            new                 
+Vec                            CLASS               
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+Vec                            CLASS               
+*                              star_op             
+row                            CLASS_POINTER       
+=                              assign_op           
+new                            new                 
+Vec                            CLASS               
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+nums                           INT_POINTER         
+=                              assign_op           
+new                            new                 
+int                            int                 
+[                              open_bracket_op     
+argc                           INT                 
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+w                              INT                 
+(                              open_paren_op       
+7                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+double                         double              
+half                           DOUBLE              
+=                              assign_op           
+(                              open_paren_op       
+double                         double              
+)                              close_paren_op      
+w                              INT                 
+/                              divide_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+delete                         delete              
+h                              CLASS_POINTER       
+;                              semicolon_op        
+delete[]                       delete_array        
+row                            CLASS_POINTER       
+;                              semicolon_op        
+delete[]                       delete_array        
+nums                           INT_POINTER         
+;                              semicolon_op        
+return                         return              
+same                           INT                 
++                              plus_op             
+g                              CLASS               
+.                              dot_op              
+x                              INT                 
++                              plus_op             
+w                              INT                 
++                              plus_op             
+half                           DOUBLE              
++                              plus_op             
+e                              CLASS               
+.                              dot_op              
+x                              INT                 
++                              plus_op             
+f                              CLASS               
+.                              dot_op              
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Vec"
+|   |-- VarDecl "x : INT"
+|   |-- VarDecl "y : INT"
+|   |-- ConstructorDef "Vec : _ZN3VecC1Eii"
+|   |   |-- ParamDecl "a : INT"
+|   |   |-- ParamDecl "b : INT"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- Identifier "x"
+|   |       |       `-- Identifier "a"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "y"
+|   |               `-- Identifier "b"
+|   |-- ConstructorDef "Vec : _ZN3VecC1Ei"
+|   |   `-- ParamDecl "a : INT"
+|   |-- ConstructorDef "Vec : _ZN3VecC1Ev"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- Identifier "x"
+|   |       |       `-- IntLiteral "0"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "y"
+|   |               `-- IntLiteral "0"
+|   |-- DestructorDef "Vec : _ZN3VecD1Ev"
+|   |-- FunctionDef "operator+ : _ZN3VecplES_"
+|   |   |-- ParamDecl "o : CLASS"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- CallExpr
+|   |               |-- Identifier "Vec"
+|   |               |-- BinaryExpr "+"
+|   |               |   |-- Identifier "x"
+|   |               |   `-- MemberExpr "x"
+|   |               |       `-- Identifier "o"
+|   |               `-- BinaryExpr "+"
+|   |                   |-- Identifier "y"
+|   |                   `-- MemberExpr "y"
+|   |                       `-- Identifier "o"
+|   |-- FunctionDef "operator- : _ZN3VecmiEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- CallExpr
+|   |               |-- Identifier "Vec"
+|   |               |-- UnaryExpr "-"
+|   |               |   `-- Identifier "x"
+|   |               `-- UnaryExpr "-"
+|   |                   `-- Identifier "y"
+|   |-- FunctionDef "operator== : _ZN3VeceqES_"
+|   |   |-- ParamDecl "o : CLASS"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "&&"
+|   |               |-- BinaryExpr "=="
+|   |               |   |-- Identifier "x"
+|   |               |   `-- MemberExpr "x"
+|   |               |       `-- Identifier "o"
+|   |               `-- BinaryExpr "=="
+|   |                   |-- Identifier "y"
+|   |                   `-- MemberExpr "y"
+|   |                       `-- Identifier "o"
+|   |-- FunctionDef "operator[] : _ZN3VecixEi"
+|   |   |-- ParamDecl "i : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- TernaryExpr
+|   |               |-- BinaryExpr "=="
+|   |               |   |-- Identifier "i"
+|   |               |   `-- IntLiteral "0"
+|   |               |-- Identifier "x"
+|   |               `-- Identifier "y"
+|   |-- FunctionDef "operator+= : _ZN3VecpLES_"
+|   |   |-- ParamDecl "o : CLASS"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "+="
+|   |       |       |-- Identifier "x"
+|   |       |       `-- MemberExpr "x"
+|   |       |           `-- Identifier "o"
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "+="
+|   |       |       |-- Identifier "y"
+|   |       |       `-- MemberExpr "y"
+|   |       |           `-- Identifier "o"
+|   |       `-- ReturnStmt
+|   |           `-- UnaryExpr "*"
+|   |               `-- ThisExpr
+|   |-- FunctionDef "operator++ : _ZN3VecppEv"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- PostfixOpExpr "++"
+|   |       |       `-- Identifier "x"
+|   |       `-- ReturnStmt
+|   |           `-- UnaryExpr "*"
+|   |               `-- ThisExpr
+|   |-- FunctionDef "operator++ : _ZN3VecppEi"
+|   |   `-- CompoundStmt
+|   |       |-- VarDecl "old : CLASS"
+|   |       |   `-- UnaryExpr "*"
+|   |       |       `-- ThisExpr
+|   |       |-- ExprStmt
+|   |       |   `-- PostfixOpExpr "++"
+|   |       |       `-- Identifier "x"
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "old"
+|   |-- FunctionDef "operator() : _ZN3VecclEi"
+|   |   |-- ParamDecl "k : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"
+|   |               |-- Identifier "x"
+|   |               `-- Identifier "k"
+|   |-- FunctionDecl "dims : _ZN3Vec4dimsEv"
+|   `-- FunctionDef "self : _ZN3Vec4selfEv"
+|       `-- CompoundStmt
+|           |-- VarDecl "p : CLASS_POINTER"
+|           |   `-- ThisExpr
+|           `-- ReturnStmt
+|               `-- Identifier "p"
+|-- ConstructorDef "Vec : _ZN3VecC1Ei"
+|   |-- ParamDecl "a : INT"
+|   `-- CompoundStmt
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "x"
+|       |       `-- Identifier "a"
+|       `-- ExprStmt
+|           `-- AssignExpr "="
+|               |-- Identifier "y"
+|               `-- Identifier "a"
+|-- DestructorDef "Vec : _ZN3VecD1Ev"
+|   `-- CompoundStmt
+|-- FunctionDef "dims : _ZN3Vec4dimsEv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "2"
+|-- FunctionDef "operator* : _Zml3Veci"
+|   |-- ParamDecl "v : CLASS"
+|   |-- ParamDecl "k : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- ConstructExpr "Vec"
+|               |-- BinaryExpr "*"
+|               |   |-- MemberExpr "x"
+|               |   |   `-- Identifier "v"
+|               |   `-- Identifier "k"
+|               `-- BinaryExpr "*"
+|                   |-- MemberExpr "y"
+|                   |   `-- Identifier "v"
+|                   `-- Identifier "k"
+`-- FunctionDef "main : main"
+    |-- ParamDecl "argc : INT"
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"
+    `-- CompoundStmt
+        |-- VarDecl "a : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       |-- IntLiteral "1"
+        |       `-- IntLiteral "2"
+        |-- VarDecl "b : CLASS"
+        |   `-- ConstructExpr "Vec"
+        |       |-- IntLiteral "3"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "e : CLASS"
+        |-- VarDecl "f : CLASS"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "c : CLASS"
+        |   `-- BinaryExpr "+"
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- VarDecl "d : CLASS"
+        |   `-- UnaryExpr "-"
+        |       `-- Identifier "c"
+        |-- VarDecl "g : CLASS"
+        |   `-- BinaryExpr "*"
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- AssignExpr "+="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- UnaryExpr "++(pre)"
+        |       `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- PostfixOpExpr "++"
+        |       `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "g"
+        |       `-- Identifier "d"
+        |-- VarDecl "same : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- BinaryExpr "+"
+        |       |   |-- BinaryExpr "+"
+        |       |   |   |-- BinaryExpr "+"
+        |       |   |   |   |-- BinaryExpr "=="
+        |       |   |   |   |   |-- Identifier "a"
+        |       |   |   |   |   `-- Identifier "b"
+        |       |   |   |   `-- IndexExpr
+        |       |   |   |       |-- Identifier "a"
+        |       |   |   |       `-- IntLiteral "0"
+        |       |   |   `-- CallExpr
+        |       |   |       |-- Identifier "a"
+        |       |   |       `-- IntLiteral "3"
+        |       |   `-- CallExpr
+        |       |       `-- ScopeExpr "dims"
+        |       |           `-- Identifier "Vec"
+        |       `-- ArrowExpr "y"
+        |           `-- CallExpr
+        |               `-- MemberExpr "self"
+        |                   `-- Identifier "c"
+        |-- VarDecl "h : CLASS_POINTER"
+        |   `-- NewExpr "CLASS"
+        |       `-- ConstructExpr "CLASS"
+        |           |-- IntLiteral "1"
+        |           `-- IntLiteral "1"
+        |-- VarDecl "row : CLASS_POINTER"
+        |   `-- NewExpr "CLASS_ARRAY"
+        |-- VarDecl "nums : INT_POINTER"
+        |   `-- NewExpr "INT_ARRAY"
+        |-- VarDecl "w : INT"
+        |   `-- ConstructExpr "INT"
+        |       `-- IntLiteral "7"
+        |-- VarDecl "half : DOUBLE"
+        |   `-- BinaryExpr "/"
+        |       |-- CastExpr "DOUBLE"
+        |       |   `-- Identifier "w"
+        |       `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- DeleteExpr
+        |       `-- Identifier "h"
+        |-- ExprStmt
+        |   `-- DeleteExpr "[]"
+        |       `-- Identifier "row"
+        |-- ExprStmt
+        |   `-- DeleteExpr "[]"
+        |       `-- Identifier "nums"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |-- Identifier "same"
+                |   |   |   |   `-- MemberExpr "x"
+                |   |   |   |       `-- Identifier "g"
+                |   |   |   `-- Identifier "w"
+                |   |   `-- Identifier "half"
+                |   `-- MemberExpr "x"
+                |       `-- Identifier "e"
+                `-- MemberExpr "y"
+                    `-- Identifier "f"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Vec                  class_tag      3      global                       CLASS                                     0                                
+Vec::x               class_member   5      global > class Vec           INT                                       10                               
+Vec::y               class_member   6      global > class Vec           INT                                       7                                
+Vec::a               parameter      7      global > class Vec > Vec::Vec() INT                                       1                                
+Vec::b               parameter      7      global > class Vec > Vec::Vec() INT                                       1                                
+Vec::Vec             class_method   7      global > class Vec           CONSTRUCTOR                               0         VOID (INT, INT)        _ZN3VecC1Eii
+Vec::a               parameter      8      global > class Vec > Vec::Vec() INT                                       0                                
+Vec::Vec             class_method   8      global > class Vec           CONSTRUCTOR                               0         VOID (INT)             _ZN3VecC1Ei
+Vec::Vec             class_method   9      global > class Vec           CONSTRUCTOR                               2         VOID ()                _ZN3VecC1Ev
+Vec::~Vec            class_method   10     global > class Vec           DESTRUCTOR                                0         VOID ()                _ZN3VecD1Ev
+Vec::operator+       class_method   11     global > class Vec           PROCEDURE                                 0         CLASS (CLASS)          _ZN3VecplES_
+Vec::o               parameter      11     global > class Vec > operator+() CLASS                                     2                                
+Vec::operator-       class_method   12     global > class Vec           PROCEDURE                                 0         CLASS ()               _ZN3VecmiEv
+Vec::operator==      class_method   13     global > class Vec           PROCEDURE                                 0         INT (CLASS)            _ZN3VeceqES_
+Vec::o               parameter      13     global > class Vec > operator==() CLASS                                     2                                
+Vec::operator[]      class_method   14     global > class Vec           PROCEDURE                                 0         INT (INT)              _ZN3VecixEi
+Vec::i               parameter      14     global > class Vec > operator[]() INT                                       1                                
+Vec::operator+=      class_method   15     global > class Vec           PROCEDURE        *                        0         CLASS_POINTER (CLASS)  _ZN3VecpLES_
+Vec::o               parameter      15     global > class Vec > operator+=() CLASS                                     2                                
+Vec::operator++      class_method   16     global > class Vec           PROCEDURE        *                        0         CLASS_POINTER ()       _ZN3VecppEv
+Vec::operator++      class_method   17     global > class Vec           PROCEDURE                                 0         CLASS (INT)            _ZN3VecppEi
+Vec::old             variable       17     global > class Vec > operator++() CLASS                                     1                                
+Vec::operator()      class_method   18     global > class Vec           PROCEDURE                                 0         INT (INT)              _ZN3VecclEi
+Vec::k               parameter      18     global > class Vec > operator()() INT                                       1                                
+Vec::dims            class_method   19     global > class Vec           PROCEDURE        static                   0         INT ()                 _ZN3Vec4dimsEv
+Vec::self            class_method   20     global > class Vec           PROCEDURE        *                        0         CLASS_POINTER ()       _ZN3Vec4selfEv
+Vec::p               variable       20     global > class Vec > self()  CLASS_POINTER    *                        1                                
+Vec::a               parameter      22     global > Vec::Vec()          INT                                       2                                
+Vec::Vec             procedure      22     global                       CONSTRUCTOR                               0         VOID (INT)             _ZN3VecC1Ei
+Vec::~Vec            procedure      23     global                       DESTRUCTOR                                0         VOID ()                _ZN3VecD1Ev
+Vec::dims            procedure      24     global                       PROCEDURE                                 0         INT ()                 _ZN3Vec4dimsEv
+operator*            procedure      25     global                       PROCEDURE                                 0         CLASS (CLASS, INT)     _Zml3Veci
+v                    parameter      25     global > operator*()         CLASS                                     2                                
+k                    parameter      25     global > operator*()         INT                                       2                                
+main                 procedure      27     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) main
+argc                 parameter      27     global > main()              INT                                       1                                
+argv                 parameter      27     global > main()              CHAR_POINTER_POINTER                          0                                
+a                    variable       28     global > main()              CLASS                                     8                                
+b                    variable       29     global > main()              CLASS                                     3                                
+e                    variable       30     global > main()              CLASS                                     1                                
+f                    variable       31     global > main()              CLASS                                     1                                
+c                    variable       32     global > main()              CLASS                                     2                                
+d                    variable       33     global > main()              CLASS                                     1                                
+g                    variable       34     global > main()              CLASS                                     2                                
+same                 variable       39     global > main()              INT                                       1                                
+h                    variable       40     global > main()              CLASS_POINTER    *                        1                                
+row                  variable       41     global > main()              CLASS_POINTER    *                        1                                
+nums                 variable       42     global > main()              INT_POINTER      *                        1                                
+w                    variable       43     global > main()              INT                                       2                                
+half                 variable       44     global > main()              DOUBLE                                    1                                

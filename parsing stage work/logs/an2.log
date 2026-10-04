@@ -1,0 +1,346 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/an2.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+struct                         struct              
+S                              STRUCT              
+{                              open_brace_op       
+union                          union               
+{                              open_brace_op       
+int                            int                 
+i                              INT                 
+;                              semicolon_op        
+float                          float               
+f                              FLOAT               
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+lo                             INT                 
+,                              comma_op            
+hi                             INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+tag                            INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+typedef                        typedef             
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+,                              comma_op            
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Pt                             TYPEDEF             
+,                              comma_op            
+Pt2                            TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+enum                           enum                
+{                              open_brace_op       
+LOW                            ENUM_CONSTANT       
+,                              comma_op            
+HIGH                           ENUM_CONSTANT       
+}                              close_brace_op      
+Level                          TYPEDEF             
+;                              semicolon_op        
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+g1                             STRUCT              
+,                              comma_op            
+g2                             STRUCT              
+;                              semicolon_op        
+enum                           enum                
+{                              open_brace_op       
+K1                             ENUM_CONSTANT       
+=                              assign_op           
+5                              INT_LITERAL         
+,                              comma_op            
+K2                             ENUM_CONSTANT       
+}                              close_brace_op      
+;                              semicolon_op        
+void                           void                
+fp                             PROCEDURE           
+(                              open_paren_op       
+Pt                             TYPEDEF             
+p                              STRUCT              
+,                              comma_op            
+Level                          TYPEDEF             
+l                              ENUM                
+,                              comma_op            
+Pt2                            TYPEDEF             
+*                              star_op             
+q                              STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+struct                         struct              
+S                              STRUCT              
+s                              STRUCT              
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+i                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+f                              FLOAT               
+=                              assign_op           
+2.0f                           FLOAT_LITERAL       
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+lo                             INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+hi                             INT                 
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+tag                            INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+struct                         struct              
+S                              STRUCT              
+t                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+{                              open_brace_op       
+1                              INT_LITERAL         
+}                              close_brace_op      
+,                              comma_op            
+{                              open_brace_op       
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+}                              close_brace_op      
+,                              comma_op            
+4                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+S                              STRUCT              
+u                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+.                              dot_op              
+i                              IDENTIFIER          
+=                              assign_op           
+1                              INT_LITERAL         
+,                              comma_op            
+.                              dot_op              
+lo                             IDENTIFIER          
+=                              assign_op           
+2                              INT_LITERAL         
+,                              comma_op            
+.                              dot_op              
+tag                            IDENTIFIER          
+=                              assign_op           
+3                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+Pt                             TYPEDEF             
+p                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+return                         return              
+s                              STRUCT              
+.                              dot_op              
+i                              INT                 
++                              plus_op             
+p                              STRUCT              
+.                              dot_op              
+x                              INT                 
++                              plus_op             
+K2                             ENUM_CONSTANT       
++                              plus_op             
+g1                             STRUCT              
+.                              dot_op              
+a                              INT                 
++                              plus_op             
+u                              STRUCT              
+.                              dot_op              
+tag                            INT                 
++                              plus_op             
+t                              STRUCT              
+.                              dot_op              
+tag                            INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- StructDecl "S"
+|   |-- UnionDecl "(unnamed at 1:12)"
+|   |   |-- VarDecl "i : INT"
+|   |   `-- VarDecl "f : FLOAT"
+|   |-- StructDecl "(unnamed at 1:39)"
+|   |   `-- DeclGroup
+|   |       |-- VarDecl "lo : INT"
+|   |       `-- VarDecl "hi : INT"
+|   `-- VarDecl "tag : INT"
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 2:9)"
+|   |   `-- DeclGroup
+|   |       |-- VarDecl "x : INT"
+|   |       `-- VarDecl "y : INT"
+|   |-- TypedefDecl "Pt = STRUCT"
+|   `-- TypedefDecl "Pt2 = STRUCT"
+|-- DeclGroup
+|   |-- EnumDecl "(unnamed at 3:9)"
+|   |   |-- Enumerator "LOW"
+|   |   `-- Enumerator "HIGH"
+|   `-- TypedefDecl "Level = ENUM"
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 4:1)"
+|   |   `-- VarDecl "a : INT"
+|   |-- VarDecl "g1 : STRUCT"
+|   `-- VarDecl "g2 : STRUCT"
+|-- EnumDecl "(unnamed at 5:1)"
+|   |-- Enumerator "K1"
+|   |   `-- IntLiteral "5"
+|   `-- Enumerator "K2"
+|-- FunctionDef "fp : _Z2fp2Pt5LevelPS_"
+|   |-- ParamDecl "p : STRUCT"
+|   |-- ParamDecl "l : ENUM"
+|   |-- ParamDecl "q : STRUCT_POINTER"
+|   `-- CompoundStmt
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "s : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "i"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "f"
+        |       |   `-- Identifier "s"
+        |       `-- FloatLiteral "2.0f"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "lo"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "hi"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "tag"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "t : STRUCT"
+        |   `-- InitializerList
+        |       |-- InitializerList
+        |       |   `-- IntLiteral "1"
+        |       |-- InitializerList
+        |       |   |-- IntLiteral "2"
+        |       |   `-- IntLiteral "3"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "u : STRUCT"
+        |   `-- InitializerList
+        |       |-- DesignatedInit ".i"
+        |       |   `-- IntLiteral "1"
+        |       |-- DesignatedInit ".lo"
+        |       |   `-- IntLiteral "2"
+        |       `-- DesignatedInit ".tag"
+        |           `-- IntLiteral "3"
+        |-- VarDecl "p : STRUCT"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       `-- IntLiteral "2"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |-- MemberExpr "i"
+                |   |   |   |   |   `-- Identifier "s"
+                |   |   |   |   `-- MemberExpr "x"
+                |   |   |   |       `-- Identifier "p"
+                |   |   |   `-- Identifier "K2"
+                |   |   `-- MemberExpr "a"
+                |   |       `-- Identifier "g1"
+                |   `-- MemberExpr "tag"
+                |       `-- Identifier "u"
+                `-- MemberExpr "tag"
+                    `-- Identifier "t"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+S                    struct_tag     1      global                       STRUCT                                    0                                
+S::(unnamed at 1:12) union_tag      1      global > struct S            UNION                                     0                                
+(unnamed at 1:12)::i union_member   1      global > struct S > union (unnamed at 1:12) INT                                       0                                
+(unnamed at 1:12)::f union_member   1      global > struct S > union (unnamed at 1:12) FLOAT                                     0                                
+S::(unnamed at 1:39) struct_tag     1      global > struct S            STRUCT                                    0                                
+(unnamed at 1:39)::lo struct_member  1      global > struct S > struct (unnamed at 1:39) INT                                       0                                
+(unnamed at 1:39)::hi struct_member  1      global > struct S > struct (unnamed at 1:39) INT                                       0                                
+S::tag               struct_member  1      global > struct S            INT                                       0                                
+(unnamed at 2:9)     struct_tag     2      global                       STRUCT                                    0                                
+(unnamed at 2:9)::x  struct_member  2      global > struct (unnamed at 2:9) INT                                       0                                
+(unnamed at 2:9)::y  struct_member  2      global > struct (unnamed at 2:9) INT                                       0                                
+Pt                   typedef        2      global                       STRUCT                                    0                                
+Pt2                  typedef        2      global                       STRUCT                                    0                                
+(unnamed at 3:9)     enum_tag       3      global                       ENUM                                      0                                
+LOW                  enum_constant  3      global                       ENUM_CONSTANT                             0                                
+HIGH                 enum_constant  3      global                       ENUM_CONSTANT                             0                                
+Level                typedef        3      global                       ENUM                                      0                                
+(unnamed at 4:1)     struct_tag     4      global                       STRUCT                                    0                                
+(unnamed at 4:1)::a  struct_member  4      global > struct (unnamed at 4:1) INT                                       0                                
+g1                   variable       4      global                       STRUCT                                    1                                
+g2                   variable       4      global                       STRUCT                                    0                                
+(unnamed at 5:1)     enum_tag       5      global                       ENUM                                      0                                
+K1                   enum_constant  5      global                       ENUM_CONSTANT                             0                                
+K2                   enum_constant  5      global                       ENUM_CONSTANT                             1                                
+fp                   procedure      6      global                       PROCEDURE                                 0         VOID (STRUCT, ENUM, STRUCT_POINTER) _Z2fp2Pt5LevelPS_
+p                    parameter      6      global > fp()                STRUCT                                    0                                
+l                    parameter      6      global > fp()                ENUM                                      0                                
+q                    parameter      6      global > fp()                STRUCT_POINTER                            0                                
+main                 procedure      7      global                       PROCEDURE                                 0         INT ()                 main
+s                    variable       8      global > main()              STRUCT                                    6                                
+t                    variable       9      global > main()              STRUCT                                    1                                
+u                    variable       10     global > main()              STRUCT                                    1                                
+p                    variable       11     global > main()              STRUCT                                    1                                

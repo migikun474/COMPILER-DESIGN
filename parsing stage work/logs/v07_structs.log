@@ -1,0 +1,534 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v07_structs.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+struct                         struct              
+Point                          STRUCT              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Student                        STRUCT              
+{                              open_brace_op       
+int                            int                 
+age                            INT                 
+;                              semicolon_op        
+char                           char                
+grade                          CHAR                
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+home                           STRUCT              
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Node                           STRUCT              
+{                              open_brace_op       
+int                            int                 
+value                          INT                 
+;                              semicolon_op        
+struct                         struct              
+Node                           STRUCT              
+*                              star_op             
+next                           STRUCT_POINTER      
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+union                          union               
+Number                         UNION               
+{                              open_brace_op       
+int                            int                 
+i                              INT                 
+;                              semicolon_op        
+double                         double              
+d                              DOUBLE              
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+typedef                        typedef             
+struct                         struct              
+Point                          STRUCT              
+PointT                         TYPEDEF             
+;                              semicolon_op        
+int                            int                 
+length                         PROCEDURE           
+(                              open_paren_op       
+struct                         struct              
+Node                           STRUCT              
+*                              star_op             
+head                           STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+n                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+while                          while               
+(                              open_paren_op       
+head                           STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+n                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+head                           STRUCT_POINTER      
+=                              assign_op           
+head                           STRUCT_POINTER      
+->                             arrow_op            
+next                           IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+return                         return              
+n                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+struct                         struct              
+Point                          STRUCT              
+make                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+x                              INT                 
+,                              comma_op            
+int                            int                 
+y                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+struct                         struct              
+Point                          STRUCT              
+p                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+x                              INT                 
+,                              comma_op            
+y                              INT                 
+}                              close_brace_op      
+;                              semicolon_op        
+return                         return              
+p                              STRUCT              
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+struct                         struct              
+Student                        STRUCT              
+s                              STRUCT              
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+age                            INT                 
+=                              assign_op           
+20                             INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+grade                          CHAR                
+=                              assign_op           
+'A'                            CHAR_LITERAL        
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+home                           STRUCT              
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+home                           STRUCT              
+.                              dot_op              
+y                              IDENTIFIER          
+=                              assign_op           
+s                              STRUCT              
+.                              dot_op              
+home                           STRUCT              
+.                              dot_op              
+x                              IDENTIFIER          
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+struct                         struct              
+Student                        STRUCT              
+*                              star_op             
+sp                             STRUCT_POINTER      
+=                              assign_op           
+&                              ampersand_op        
+s                              STRUCT              
+;                              semicolon_op        
+sp                             STRUCT_POINTER      
+->                             arrow_op            
+age                            INT                 
+=                              assign_op           
+sp                             STRUCT_POINTER      
+->                             arrow_op            
+age                            INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+sp                             STRUCT_POINTER      
+->                             arrow_op            
+home                           STRUCT              
+.                              dot_op              
+y                              IDENTIFIER          
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+a                              STRUCT              
+=                              assign_op           
+make                           PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+b                              STRUCT              
+;                              semicolon_op        
+b                              STRUCT              
+=                              assign_op           
+a                              STRUCT              
+;                              semicolon_op        
+PointT                         TYPEDEF             
+c                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+5                              INT_LITERAL         
+,                              comma_op            
+6                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+c                              STRUCT              
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+b                              STRUCT              
+.                              dot_op              
+y                              INT                 
+;                              semicolon_op        
+struct                         struct              
+Node                           STRUCT              
+n1                             STRUCT              
+,                              comma_op            
+n2                             STRUCT              
+;                              semicolon_op        
+n1                             STRUCT              
+.                              dot_op              
+next                           STRUCT_POINTER      
+=                              assign_op           
+&                              ampersand_op        
+n2                             STRUCT              
+;                              semicolon_op        
+n2                             STRUCT              
+.                              dot_op              
+next                           STRUCT_POINTER      
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+union                          union               
+Number                         UNION               
+num                            UNION               
+;                              semicolon_op        
+num                            UNION               
+.                              dot_op              
+i                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+num                            UNION               
+.                              dot_op              
+d                              DOUBLE              
+=                              assign_op           
+2.5                            FLOAT_LITERAL       
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+pts                            STRUCT_ARRAY        
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+pts                            STRUCT_ARRAY        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+(                              open_paren_op       
+&                              ampersand_op        
+pts                            STRUCT_ARRAY        
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+->                             arrow_op            
+y                              IDENTIFIER          
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+s                              STRUCT              
+.                              dot_op              
+age                            INT                 
++                              plus_op             
+length                         PROCEDURE           
+(                              open_paren_op       
+&                              ampersand_op        
+n1                             STRUCT              
+)                              close_paren_op      
++                              plus_op             
+c                              STRUCT              
+.                              dot_op              
+x                              IDENTIFIER          
++                              plus_op             
+pts                            STRUCT_ARRAY        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+.                              dot_op              
+x                              IDENTIFIER          
++                              plus_op             
+make                           PROCEDURE           
+(                              open_paren_op       
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+)                              close_paren_op      
+.                              dot_op              
+y                              IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- StructDecl "Point"
+|   |-- VarDecl "x : INT"
+|   `-- VarDecl "y : INT"
+|-- StructDecl "Student"
+|   |-- VarDecl "age : INT"
+|   |-- VarDecl "grade : CHAR"
+|   `-- VarDecl "home : STRUCT"
+|-- StructDecl "Node"
+|   |-- VarDecl "value : INT"
+|   `-- VarDecl "next : STRUCT_POINTER"
+|-- UnionDecl "Number"
+|   |-- VarDecl "i : INT"
+|   `-- VarDecl "d : DOUBLE"
+|-- TypedefDecl "PointT = STRUCT"
+|-- FunctionDef "length : _Z6lengthP4Node"
+|   |-- ParamDecl "head : STRUCT_POINTER"
+|   `-- CompoundStmt
+|       |-- VarDecl "n : INT"
+|       |   `-- IntLiteral "0"
+|       |-- WhileStmt
+|       |   |-- Identifier "head"
+|       |   `-- CompoundStmt
+|       |       |-- ExprStmt
+|       |       |   `-- PostfixOpExpr "++"
+|       |       |       `-- Identifier "n"
+|       |       `-- ExprStmt
+|       |           `-- AssignExpr "="
+|       |               |-- Identifier "head"
+|       |               `-- ArrowExpr "next"
+|       |                   `-- Identifier "head"
+|       `-- ReturnStmt
+|           `-- Identifier "n"
+|-- FunctionDef "make : _Z4makeii"
+|   |-- ParamDecl "x : INT"
+|   |-- ParamDecl "y : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "p : STRUCT"
+|       |   `-- InitializerList
+|       |       |-- Identifier "x"
+|       |       `-- Identifier "y"
+|       `-- ReturnStmt
+|           `-- Identifier "p"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "s : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "age"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "20"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "grade"
+        |       |   `-- Identifier "s"
+        |       `-- CharLiteral "'A'"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- MemberExpr "home"
+        |       |       `-- Identifier "s"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "y"
+        |       |   `-- MemberExpr "home"
+        |       |       `-- Identifier "s"
+        |       `-- BinaryExpr "+"
+        |           |-- MemberExpr "x"
+        |           |   `-- MemberExpr "home"
+        |           |       `-- Identifier "s"
+        |           `-- IntLiteral "1"
+        |-- VarDecl "sp : STRUCT_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "s"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- ArrowExpr "age"
+        |       |   `-- Identifier "sp"
+        |       `-- BinaryExpr "+"
+        |           |-- ArrowExpr "age"
+        |           |   `-- Identifier "sp"
+        |           `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "y"
+        |       |   `-- ArrowExpr "home"
+        |       |       `-- Identifier "sp"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "a : STRUCT"
+        |   `-- CallExpr
+        |       |-- Identifier "make"
+        |       |-- IntLiteral "1"
+        |       `-- IntLiteral "2"
+        |-- VarDecl "b : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "b"
+        |       `-- Identifier "a"
+        |-- VarDecl "c : STRUCT"
+        |   `-- InitializerList
+        |       |-- IntLiteral "5"
+        |       `-- IntLiteral "6"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- Identifier "c"
+        |       `-- MemberExpr "y"
+        |           `-- Identifier "b"
+        |-- DeclGroup
+        |   |-- VarDecl "n1 : STRUCT"
+        |   `-- VarDecl "n2 : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "next"
+        |       |   `-- Identifier "n1"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "n2"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "next"
+        |       |   `-- Identifier "n2"
+        |       `-- IntLiteral "0"
+        |-- VarDecl "num : UNION"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "i"
+        |       |   `-- Identifier "num"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "d"
+        |       |   `-- Identifier "num"
+        |       `-- FloatLiteral "2.5"
+        |-- VarDecl "pts : STRUCT_ARRAY"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- IndexExpr
+        |       |       |-- Identifier "pts"
+        |       |       `-- IntLiteral "0"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- ArrowExpr "y"
+        |       |   `-- UnaryExpr "&"
+        |       |       `-- IndexExpr
+        |       |           |-- Identifier "pts"
+        |       |           `-- IntLiteral "1"
+        |       `-- IntLiteral "2"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- MemberExpr "age"
+                |   |   |   |   `-- Identifier "s"
+                |   |   |   `-- CallExpr
+                |   |   |       |-- Identifier "length"
+                |   |   |       `-- UnaryExpr "&"
+                |   |   |           `-- Identifier "n1"
+                |   |   `-- MemberExpr "x"
+                |   |       `-- Identifier "c"
+                |   `-- MemberExpr "x"
+                |       `-- IndexExpr
+                |           |-- Identifier "pts"
+                |           `-- IntLiteral "0"
+                `-- MemberExpr "y"
+                    `-- CallExpr
+                        |-- Identifier "make"
+                        |-- IntLiteral "3"
+                        `-- IntLiteral "4"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Point                struct_tag     3      global                       STRUCT                                    0                                
+Point::x             struct_member  4      global > struct Point        INT                                       0                                
+Point::y             struct_member  5      global > struct Point        INT                                       0                                
+Student              struct_tag     8      global                       STRUCT                                    0                                
+Student::age         struct_member  9      global > struct Student      INT                                       0                                
+Student::grade       struct_member  10     global > struct Student      CHAR                                      0                                
+Student::home        struct_member  11     global > struct Student      STRUCT                                    0                                
+Node                 struct_tag     14     global                       STRUCT                                    0                                
+Node::value          struct_member  15     global > struct Node         INT                                       0                                
+Node::next           struct_member  16     global > struct Node         STRUCT_POINTER   *                        0                                
+Number               union_tag      19     global                       UNION                                     0                                
+Number::i            union_member   20     global > union Number        INT                                       0                                
+Number::d            union_member   21     global > union Number        DOUBLE                                    0                                
+PointT               typedef        24     global                       STRUCT                                    0                                
+length               procedure      26     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z6lengthP4Node
+head                 parameter      26     global > length()            STRUCT_POINTER                            3                                
+n                    variable       27     global > length()            INT                                       2                                
+make                 procedure      35     global                       PROCEDURE                                 2         STRUCT (INT, INT)      _Z4makeii
+x                    parameter      35     global > make()              INT                                       1                                
+y                    parameter      35     global > make()              INT                                       1                                
+p                    variable       36     global > make()              STRUCT                                    1                                
+main                 procedure      40     global                       PROCEDURE                                 0         INT ()                 main
+s                    variable       41     global > main()              STRUCT                                    7                                
+sp                   variable       46     global > main()              STRUCT_POINTER   *                        3                                
+a                    variable       49     global > main()              STRUCT                                    1                                
+b                    variable       50     global > main()              STRUCT                                    2                                
+c                    variable       52     global > main()              STRUCT                                    2                                
+n1                   variable       54     global > main()              STRUCT                                    2                                
+n2                   variable       54     global > main()              STRUCT                                    2                                
+num                  variable       57     global > main()              UNION                                     2                                
+pts                  variable       60     global > main()              STRUCT_ARRAY     []                       3                                

@@ -1,0 +1,249 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v11_lambdas_overloads.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v11_lambdas_overloads.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "combine : _Z7combineii"  <int (int, int)>  -> _Z7combineii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|-- FunctionDef "combine : _Z7combinecc"  <int (char, char)>  -> _Z7combinecc (function)
+|   |-- ParamDecl "a : CHAR"  <char>  -> a.3 (parameter, param)
+|   |-- ParamDecl "b : CHAR"  <char>  -> b.4 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "-"  <int>
+|               |-- Identifier "a"  <char> lvalue  -> a.3 (parameter, param)
+|               `-- Identifier "b"  <char> lvalue  -> b.4 (parameter, param)
+|-- FunctionDef "combine : _Z7combinedd"  <double (double, double)>  -> _Z7combinedd (function)
+|   |-- ParamDecl "a : DOUBLE"  <double>  -> a.5 (parameter, param)
+|   |-- ParamDecl "b : DOUBLE"  <double>  -> b.6 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <double>
+|               |-- Identifier "a"  <double> lvalue  -> a.5 (parameter, param)
+|               `-- Identifier "b"  <double> lvalue  -> b.6 (parameter, param)
+|-- FunctionDef "combine : _Z7combineiii"  <int (int, int, int)>  -> _Z7combineiii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.7 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.8 (parameter, param)
+|   |-- ParamDecl "c : INT"  <int>  -> c.9 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- Identifier "a"  <int> lvalue  -> a.7 (parameter, param)
+|               |   `-- Identifier "b"  <int> lvalue  -> b.8 (parameter, param)
+|               `-- Identifier "c"  <int> lvalue  -> c.9 (parameter, param)
+|-- FunctionDef "pick : _Z4picki"  <int (int)>  -> _Z4picki (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.10 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"  <int> lvalue  -> a.10 (parameter, param)
+|-- FunctionDef "pick : _Z4pickd"  <int (double)>  -> _Z4pickd (function)
+|   |-- ParamDecl "a : DOUBLE"  <double>  -> a.11 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "2"  <int> =2
+|-- FunctionDef "bump : _Z4bumpRi"  <void (int &)>  -> _Z4bumpRi (function)
+|   |-- ParamDecl "r : INT_POINTER"  <int &>  -> r.12 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ExprStmt
+|           `-- AssignExpr "="  <int>
+|               |-- Identifier "r"  <int> lvalue  -> r.12 (parameter, param)
+|               `-- BinaryExpr "+"  <int>
+|                   |-- Identifier "r"  <int> lvalue  -> r.12 (parameter, param)
+|                   `-- IntLiteral "1"  <int> =1
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"  <int>  -> x.13 (variable, local)
+        |   |   `-- IntLiteral "5"  <int> =5
+        |   `-- VarDecl "y : INT"  <int>  -> y.14 (variable, local)
+        |       `-- IntLiteral "10"  <int> =10
+        |-- VarDecl "r : INT"  <int>  -> r.15 (variable, local)
+        |   `-- CallExpr "_Z7combineii"  <int>  -> _Z7combineii (function)
+        |       |-- Identifier "combine"  <int (int, int)>  -> _Z7combineii (function)
+        |       |-- IntLiteral "1"  <int> =1
+        |       `-- IntLiteral "2"  <int> =2
+        |-- DeclGroup
+        |   |-- VarDecl "p : CHAR"  <char>  -> p.16 (variable, local)
+        |   |   `-- CharLiteral "'p'"  <char> =112
+        |   `-- VarDecl "q : CHAR"  <char>  -> q.17 (variable, local)
+        |       `-- CharLiteral "'q'"  <char> =113
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- CallExpr "_Z7combinecc"  <int>  -> _Z7combinecc (function)
+        |           |-- Identifier "combine"  <int (char, char)>  -> _Z7combinecc (function)
+        |           |-- Identifier "p"  <char> lvalue  -> p.16 (variable, local)
+        |           `-- Identifier "q"  <char> lvalue  -> q.17 (variable, local)
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.18 (variable, local)
+        |   `-- CallExpr "_Z7combineiii"  <double>  -> _Z7combinedd (function)
+        |       |-- Identifier "combine"  <double (double, double)>  -> _Z7combinedd (function)
+        |       |-- FloatLiteral "1.5"  <double>
+        |       `-- FloatLiteral "2.5"  <double>
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- CallExpr "_Z7combineiii"  <int>  -> _Z7combineiii (function)
+        |           |-- Identifier "combine"  <int (int, int, int)>  -> _Z7combineiii (function)
+        |           |-- IntLiteral "1"  <int> =1
+        |           |-- IntLiteral "2"  <int> =2
+        |           `-- IntLiteral "3"  <int> =3
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- CallExpr "_Z4pickd"  <int>  -> _Z4picki (function)
+        |           |-- Identifier "pick"  <int (int)>  -> _Z4picki (function)
+        |           `-- CharLiteral "'c'"  <char> =99
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- CallExpr "_Z4pickd"  <int>  -> _Z4pickd (function)
+        |           |-- Identifier "pick"  <int (double)>  -> _Z4pickd (function)
+        |           `-- FloatLiteral "2.5f"  <float>
+        |-- VarDecl "alias : INT_POINTER"  <int &>  -> alias.19 (variable, local)
+        |   `-- Identifier "x"  <int> lvalue  -> x.13 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "alias"  <int> lvalue  -> alias.19 (variable, local)
+        |       `-- IntLiteral "7"  <int> =7
+        |-- ExprStmt
+        |   `-- CallExpr  <void>  -> _Z4bumpRi (function)
+        |       |-- Identifier "bump"  <void (int &)>  -> _Z4bumpRi (function)
+        |       `-- Identifier "x"  <int> lvalue  -> x.13 (variable, local)
+        |-- VarDecl "adder : INT"  <(lambda at line 25:18)>  -> adder.21 (variable, local)
+        |   `-- LambdaExpr "x, &y"  <(lambda at line 25:18)>
+        |       |-- ParamDecl "z : INT"  <int>  -> z.20 (parameter, param)
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- BinaryExpr "+"  <int>
+        |                   |-- BinaryExpr "+"  <int>
+        |                   |   |-- Identifier "x"  <const int> lvalue  -> x.13 (variable, local)
+        |                   |   `-- Identifier "y"  <int> lvalue  -> y.14 (variable, local)
+        |                   `-- Identifier "z"  <int> lvalue  -> z.20 (parameter, param)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+        |       `-- CallExpr  <int>
+        |           |-- Identifier "adder"  <(lambda at line 25:18)> lvalue  -> adder.21 (variable, local)
+        |           `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "all : INT"  <(lambda at line 27:16)>  -> all.22 (variable, local)
+        |   `-- LambdaExpr "="  <(lambda at line 27:16)>
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- BinaryExpr "*"  <int>
+        |                   |-- Identifier "x"  <const int> lvalue  -> x.13 (variable, local)
+        |                   `-- Identifier "y"  <const int> lvalue  -> y.14 (variable, local)
+        |-- VarDecl "byRef : INT"  <(lambda at line 28:18)>  -> byRef.23 (variable, local)
+        |   `-- LambdaExpr "&"  <(lambda at line 28:18)>
+        |       `-- CompoundStmt
+        |           |-- ExprStmt
+        |           |   `-- AssignExpr "="  <int>
+        |           |       |-- Identifier "y"  <int> lvalue  -> y.14 (variable, local)
+        |           |       `-- BinaryExpr "+"  <int>
+        |           |           |-- Identifier "y"  <int> lvalue  -> y.14 (variable, local)
+        |           |           `-- IntLiteral "1"  <int> =1
+        |           `-- ReturnStmt
+        |               `-- Identifier "y"  <int> lvalue  -> y.14 (variable, local)
+        |-- VarDecl "noCapture : INT"  <(lambda at line 29:22)>  -> noCapture.26 (variable, local)
+        |   `-- LambdaExpr  <(lambda at line 29:22)>
+        |       |-- ParamDecl "a : INT"  <int>  -> a.24 (parameter, param)
+        |       |-- ParamDecl "b : INT"  <int>  -> b.25 (parameter, param)
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- TernaryExpr  <int>
+        |                   |-- BinaryExpr "<"  <int>
+        |                   |   |-- Identifier "a"  <int> lvalue  -> a.24 (parameter, param)
+        |                   |   `-- Identifier "b"  <int> lvalue  -> b.25 (parameter, param)
+        |                   |-- Identifier "b"  <int> lvalue  -> b.25 (parameter, param)
+        |                   `-- Identifier "a"  <int> lvalue  -> a.24 (parameter, param)
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> fp.27 (variable, local)
+        |   `-- Identifier "noCapture"  <(lambda at line 29:22)> lvalue  -> noCapture.26 (variable, local)
+        |-- VarDecl "nested : INT"  <(lambda at line 31:19)>  -> nested.30 (variable, local)
+        |   `-- LambdaExpr "&"  <(lambda at line 31:19)>
+        |       |-- ParamDecl "k : INT"  <int>  -> k.28 (parameter, param)
+        |       `-- CompoundStmt
+        |           |-- VarDecl "inner : INT"  <(lambda at line 31:45)>  -> inner.29 (variable, local)
+        |           |   `-- LambdaExpr "k"  <(lambda at line 31:45)>
+        |           |       `-- CompoundStmt
+        |           |           `-- ReturnStmt
+        |           |               `-- BinaryExpr "*"  <int>
+        |           |                   |-- Identifier "k"  <const int> lvalue  -> k.28 (parameter, param)
+        |           |                   `-- IntLiteral "2"  <int> =2
+        |           `-- ReturnStmt
+        |               `-- CallExpr  <int>
+        |                   `-- Identifier "inner"  <(lambda at line 31:45)> lvalue  -> inner.29 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <double>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- Identifier "r"  <int> lvalue  -> r.15 (variable, local)
+                |   |   |   |   `-- CallExpr  <int>
+                |   |   |   |       `-- Identifier "all"  <(lambda at line 27:16)> lvalue  -> all.22 (variable, local)
+                |   |   |   `-- CallExpr  <int>
+                |   |   |       `-- Identifier "byRef"  <(lambda at line 28:18)> lvalue  -> byRef.23 (variable, local)
+                |   |   `-- CallExpr  <int>
+                |   |       |-- Identifier "fp"  <int (*)(int, int)> lvalue  -> fp.27 (variable, local)
+                |   |       |-- IntLiteral "1"  <int> =1
+                |   |       `-- IntLiteral "2"  <int> =2
+                |   `-- CallExpr  <int>
+                |       |-- Identifier "nested"  <(lambda at line 31:19)> lvalue  -> nested.30 (variable, local)
+                |       `-- IntLiteral "4"  <int> =4
+                `-- Identifier "d"  <double> lvalue  -> d.18 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+combine            function       int (int, int)             -        global                         2     -     1     _Z7combineii         _Z7combineii             defined
+a                  parameter      int                        param    global > combine()             2     4     1     a.1                  -                        
+b                  parameter      int                        param    global > combine()             2     4     1     b.2                  -                        
+combine            function       int (char, char)           -        global                         3     -     1     _Z7combinecc         _Z7combinecc             defined
+a                  parameter      char                       param    global > combine()             3     1     1     a.3                  -                        
+b                  parameter      char                       param    global > combine()             3     1     1     b.4                  -                        
+combine            function       double (double, double)    -        global                         4     -     1     _Z7combinedd         _Z7combinedd             defined
+a                  parameter      double                     param    global > combine()             4     8     1     a.5                  -                        
+b                  parameter      double                     param    global > combine()             4     8     1     b.6                  -                        
+combine            function       int (int, int, int)        -        global                         5     -     1     _Z7combineiii        _Z7combineiii            defined
+a                  parameter      int                        param    global > combine()             5     4     1     a.7                  -                        
+b                  parameter      int                        param    global > combine()             5     4     1     b.8                  -                        
+c                  parameter      int                        param    global > combine()             5     4     1     c.9                  -                        
+pick               function       int (int)                  -        global                         6     -     1     _Z4picki             _Z4picki                 defined
+a                  parameter      int                        param    global > pick()                6     4     1     a.10                 -                        
+pick               function       int (double)               -        global                         7     -     1     _Z4pickd             _Z4pickd                 defined
+a                  parameter      double                     param    global > pick()                7     8     0     a.11                 -                        
+bump               function       void (int &)               -        global                         9     -     1     _Z4bumpRi            _Z4bumpRi                defined
+r                  parameter      int &                      param    global > bump()                9     4     2     r.12                 -                        
+main               function       int (void)                 -        global                         11    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                12    4     5     x.13                 -                        
+y                  variable       int                        local    global > main()                12    4     6     y.14                 -                        
+r                  variable       int                        local    global > main()                13    4     6     r.15                 -                        
+p                  variable       char                       local    global > main()                14    1     1     p.16                 -                        
+q                  variable       char                       local    global > main()                14    1     1     q.17                 -                        
+d                  variable       double                     local    global > main()                16    8     1     d.18                 -                        
+alias              variable       int &                      local    global > main()                21    4     1     alias.19             -                        
+z                  parameter      int                        param    global > main() > lambda       25    4     1     z.20                 -                        
+adder              variable       (lambda at line 25:18)     local    global > main()                25    4     1     adder.21             -                        
+all                variable       (lambda at line 27:16)     local    global > main()                27    4     1     all.22               -                        
+byRef              variable       (lambda at line 28:18)     local    global > main()                28    4     1     byRef.23             -                        
+a                  parameter      int                        param    global > main() > lambda       29    4     2     a.24                 -                        
+b                  parameter      int                        param    global > main() > lambda       29    4     2     b.25                 -                        
+noCapture          variable       (lambda at line 29:22)     local    global > main()                29    4     1     noCapture.26         -                        
+fp                 variable       int (*)(int, int)          local    global > main()                30    4     1     fp.27                -                        
+k                  parameter      int                        param    global > main() > lambda       31    4     2     k.28                 -                        
+inner              variable       (lambda at line 31:45)     local    global > main() > lambda       31    4     1     inner.29             -                        
+nested             variable       (lambda at line 31:19)     local    global > main()                31    4     1     nested.30            -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

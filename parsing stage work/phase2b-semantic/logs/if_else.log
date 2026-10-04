@@ -1,0 +1,93 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/if_else.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/if_else.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"  <int>  -> x.1 (variable, local)
+        |   |   `-- IntLiteral "1"  <int> =1
+        |   |-- VarDecl "y : INT"  <int>  -> y.2 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   `-- VarDecl "z : INT"  <int>  -> z.3 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- IfStmt
+        |   |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+        |   `-- IfStmt
+        |       |-- Identifier "y"  <int> lvalue  -> y.2 (variable, local)
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="  <int>
+        |       |       |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |       |       `-- IntLiteral "1"  <int> =1
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="  <int>
+        |               |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |               `-- IntLiteral "2"  <int> =2
+        |-- IfStmt
+        |   |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+        |   |-- CompoundStmt
+        |   |   `-- IfStmt
+        |   |       |-- Identifier "y"  <int> lvalue  -> y.2 (variable, local)
+        |   |       `-- ExprStmt
+        |   |           `-- AssignExpr "="  <int>
+        |   |               |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |   |               `-- IntLiteral "1"  <int> =1
+        |   `-- ExprStmt
+        |       `-- AssignExpr "="  <int>
+        |           |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |           `-- IntLiteral "3"  <int> =3
+        |-- IfStmt
+        |   |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |   |       `-- IntLiteral "1"  <int> =1
+        |   `-- IfStmt
+        |       |-- Identifier "y"  <int> lvalue  -> y.2 (variable, local)
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="  <int>
+        |       |       |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |       |       `-- IntLiteral "2"  <int> =2
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="  <int>
+        |               |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |               `-- IntLiteral "3"  <int> =3
+        |-- DeclGroup
+        |   |-- VarDecl "iffy : INT"  <int>  -> iffy.4 (variable, local)
+        |   |   `-- IntLiteral "1"  <int> =1
+        |   |-- VarDecl "elsewhere : INT"  <int>  -> elsewhere.5 (variable, local)
+        |   |   `-- IntLiteral "2"  <int> =2
+        |   `-- VarDecl "ifelse : INT"  <int>  -> ifelse.6 (variable, local)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d""  <char[3]> lvalue
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- BinaryExpr "+"  <int>
+        |           |   |-- BinaryExpr "+"  <int>
+        |           |   |   |-- Identifier "z"  <int> lvalue  -> z.3 (variable, local)
+        |           |   |   `-- Identifier "iffy"  <int> lvalue  -> iffy.4 (variable, local)
+        |           |   `-- Identifier "elsewhere"  <int> lvalue  -> elsewhere.5 (variable, local)
+        |           `-- Identifier "ifelse"  <int> lvalue  -> ifelse.6 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         1     -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                2     4     3     x.1                  -                        
+y                  variable       int                        local    global > main()                2     4     3     y.2                  -                        
+z                  variable       int                        local    global > main()                2     4     8     z.3                  -                        
+iffy               variable       int                        local    global > main()                6     4     1     iffy.4               -                        
+elsewhere          variable       int                        local    global > main()                6     4     1     elsewhere.5          -                        
+ifelse             variable       int                        local    global > main()                6     4     1     ifelse.6             -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

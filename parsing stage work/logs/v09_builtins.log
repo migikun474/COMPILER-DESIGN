@@ -1,0 +1,445 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v09_builtins.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+,                              comma_op            
+n                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+char                           char                
+buf                            CHAR_ARRAY          
+[                              open_bracket_op     
+32                             INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+double                         double              
+d                              DOUBLE              
+=                              assign_op           
+1.5                            FLOAT_LITERAL       
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d %s %c %5.2f %% %x\n"       STRING_LITERAL      
+,                              comma_op            
+x                              INT                 
+,                              comma_op            
+"str"                          STRING_LITERAL      
+,                              comma_op            
+'c'                            CHAR_LITERAL        
+,                              comma_op            
+d                              DOUBLE              
+,                              comma_op            
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"no arguments\n"               STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%*d\n"                        STRING_LITERAL      
+,                              comma_op            
+5                              INT_LITERAL         
+,                              comma_op            
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+scanf                          scanf               
+(                              open_paren_op       
+"%d"                           STRING_LITERAL      
+,                              comma_op            
+&                              ampersand_op        
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+scanf                          scanf               
+(                              open_paren_op       
+"%31s"                         STRING_LITERAL      
+,                              comma_op            
+buf                            CHAR_ARRAY          
+)                              close_paren_op      
+;                              semicolon_op        
+scanf                          scanf               
+(                              open_paren_op       
+"%d %lf"                       STRING_LITERAL      
+,                              comma_op            
+&                              ampersand_op        
+n                              INT                 
+,                              comma_op            
+&                              ampersand_op        
+d                              DOUBLE              
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+heap                           INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+malloc                         malloc              
+(                              open_paren_op       
+n                              INT                 
+*                              star_op             
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
+;                              semicolon_op        
+heap                           INT_POINTER         
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+42                             INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+zeroed                         INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+calloc                         calloc              
+(                              open_paren_op       
+n                              INT                 
+,                              comma_op            
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
+;                              semicolon_op        
+zeroed                         INT_POINTER         
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+)                              close_paren_op      
+realloc                        realloc             
+(                              open_paren_op       
+zeroed                         INT_POINTER         
+,                              comma_op            
+2                              INT_LITERAL         
+*                              star_op             
+n                              INT                 
+*                              star_op             
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
+;                              semicolon_op        
+char                           char                
+*                              star_op             
+text                           CHAR_POINTER        
+=                              assign_op           
+malloc                         malloc              
+(                              open_paren_op       
+16                             INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+free                           free                
+(                              open_paren_op       
+heap                           INT_POINTER         
+)                              close_paren_op      
+;                              semicolon_op        
+free                           free                
+(                              open_paren_op       
+zeroed                         INT_POINTER         
+)                              close_paren_op      
+;                              semicolon_op        
+free                           free                
+(                              open_paren_op       
+text                           CHAR_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+FILE                           file                
+*                              star_op             
+f                              FILE_POINTER        
+=                              assign_op           
+fopen                          fopen               
+(                              open_paren_op       
+"data.txt"                     STRING_LITERAL      
+,                              comma_op            
+"w"                            STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+fprintf                        fprintf             
+(                              open_paren_op       
+f                              FILE_POINTER        
+,                              comma_op            
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+fputs                          fputs               
+(                              open_paren_op       
+"line\n"                       STRING_LITERAL      
+,                              comma_op            
+f                              FILE_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+fclose                         fclose              
+(                              open_paren_op       
+f                              FILE_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+f                              FILE_POINTER        
+=                              assign_op           
+fopen                          fopen               
+(                              open_paren_op       
+"data.txt"                     STRING_LITERAL      
+,                              comma_op            
+"r"                            STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+fscanf                         fscanf              
+(                              open_paren_op       
+f                              FILE_POINTER        
+,                              comma_op            
+"%d"                           STRING_LITERAL      
+,                              comma_op            
+&                              ampersand_op        
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+fgets                          fgets               
+(                              open_paren_op       
+buf                            CHAR_ARRAY          
+,                              comma_op            
+32                             INT_LITERAL         
+,                              comma_op            
+f                              FILE_POINTER        
+)                              close_paren_op      
+)                              close_paren_op      
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+int                            int                 
+items                          INT                 
+=                              assign_op           
+fread                          fread               
+(                              open_paren_op       
+buf                            CHAR_ARRAY          
+,                              comma_op            
+1                              INT_LITERAL         
+,                              comma_op            
+32                             INT_LITERAL         
+,                              comma_op            
+f                              FILE_POINTER        
+)                              close_paren_op      
++                              plus_op             
+fwrite                         fwrite              
+(                              open_paren_op       
+buf                            CHAR_ARRAY          
+,                              comma_op            
+1                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+,                              comma_op            
+f                              FILE_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+while                          while               
+(                              open_paren_op       
+!                              logical_not_op      
+feof                           feof                
+(                              open_paren_op       
+f                              FILE_POINTER        
+)                              close_paren_op      
+)                              close_paren_op      
+break                          break               
+;                              semicolon_op        
+fclose                         fclose              
+(                              open_paren_op       
+f                              FILE_POINTER        
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+items                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"
+        |   |   `-- IntLiteral "0"
+        |   `-- VarDecl "n : INT"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "buf : CHAR_ARRAY"
+        |-- VarDecl "d : DOUBLE"
+        |   `-- FloatLiteral "1.5"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d %s %c %5.2f %% %x\n""
+        |       |-- Identifier "x"
+        |       |-- StringLiteral ""str""
+        |       |-- CharLiteral "'c'"
+        |       |-- Identifier "d"
+        |       `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""no arguments\n""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%*d\n""
+        |       |-- IntLiteral "5"
+        |       `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"
+        |       |-- StringLiteral ""%d""
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"
+        |       |-- StringLiteral ""%31s""
+        |       `-- Identifier "buf"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"
+        |       |-- StringLiteral ""%d %lf""
+        |       |-- UnaryExpr "&"
+        |       |   `-- Identifier "n"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "d"
+        |-- VarDecl "heap : INT_POINTER"
+        |   `-- CastExpr "INT_POINTER"
+        |       `-- BuiltinCallExpr "malloc"
+        |           `-- BinaryExpr "*"
+        |               |-- Identifier "n"
+        |               `-- SizeofExpr "INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "heap"
+        |       |   `-- IntLiteral "0"
+        |       `-- IntLiteral "42"
+        |-- VarDecl "zeroed : INT_POINTER"
+        |   `-- CastExpr "INT_POINTER"
+        |       `-- BuiltinCallExpr "calloc"
+        |           |-- Identifier "n"
+        |           `-- SizeofExpr "INT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "zeroed"
+        |       `-- CastExpr "INT_POINTER"
+        |           `-- BuiltinCallExpr "realloc"
+        |               |-- Identifier "zeroed"
+        |               `-- BinaryExpr "*"
+        |                   |-- BinaryExpr "*"
+        |                   |   |-- IntLiteral "2"
+        |                   |   `-- Identifier "n"
+        |                   `-- SizeofExpr "INT"
+        |-- VarDecl "text : CHAR_POINTER"
+        |   `-- BuiltinCallExpr "malloc"
+        |       `-- IntLiteral "16"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "heap"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "zeroed"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"
+        |       `-- Identifier "text"
+        |-- VarDecl "f : FILE_POINTER"
+        |   `-- BuiltinCallExpr "fopen"
+        |       |-- StringLiteral ""data.txt""
+        |       `-- StringLiteral ""w""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fprintf"
+        |       |-- Identifier "f"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fputs"
+        |       |-- StringLiteral ""line\n""
+        |       `-- Identifier "f"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "f"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "f"
+        |       `-- BuiltinCallExpr "fopen"
+        |           |-- StringLiteral ""data.txt""
+        |           `-- StringLiteral ""r""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fscanf"
+        |       |-- Identifier "f"
+        |       |-- StringLiteral ""%d""
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "x"
+        |-- IfStmt
+        |   |-- BuiltinCallExpr "fgets"
+        |   |   |-- Identifier "buf"
+        |   |   |-- IntLiteral "32"
+        |   |   `-- Identifier "f"
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "++"
+        |           `-- Identifier "x"
+        |-- VarDecl "items : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- BuiltinCallExpr "fread"
+        |       |   |-- Identifier "buf"
+        |       |   |-- IntLiteral "1"
+        |       |   |-- IntLiteral "32"
+        |       |   `-- Identifier "f"
+        |       `-- BuiltinCallExpr "fwrite"
+        |           |-- Identifier "buf"
+        |           |-- IntLiteral "1"
+        |           |-- IntLiteral "4"
+        |           `-- Identifier "f"
+        |-- WhileStmt
+        |   |-- UnaryExpr "!"
+        |   |   `-- BuiltinCallExpr "feof"
+        |   |       `-- Identifier "f"
+        |   `-- BreakStmt
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "f"
+        `-- ReturnStmt
+            `-- Identifier "items"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      2      global                       PROCEDURE                                 0         INT ()                 main
+x                    variable       3      global > main()              INT                                       7                                
+n                    variable       3      global > main()              INT                                       4                                
+buf                  variable       4      global > main()              CHAR_ARRAY       []                       4                                
+d                    variable       5      global > main()              DOUBLE                                    2                                
+heap                 variable       13     global > main()              INT_POINTER      *                        2                                
+zeroed               variable       15     global > main()              INT_POINTER      *                        3                                
+text                 variable       17     global > main()              CHAR_POINTER     *                        1                                
+f                    variable       22     global > main()              FILE_POINTER     *                        10                               
+items                variable       29     global > main()              INT                                       1                                

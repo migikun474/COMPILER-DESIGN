@@ -1,0 +1,174 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v01_declarations.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v01_declarations.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- TypedefDecl "Number = INT"  <int>  -> Number (typedef)
+|-- TypedefDecl "String = CHAR_POINTER"  <char *>  -> String (typedef)
+|-- TypedefDecl "Size = UNSIGNED_LONG"  <unsigned long>  -> Size (typedef)
+|-- VarDecl "counter : INT"  <int>  -> counter (variable, global)
+|   `-- IntLiteral "0"  <int> =0
+|-- VarDecl "limit : INT"  <int>  -> limit (variable, global)
+|   `-- BinaryExpr "+"  <int> =42
+|       |-- BinaryExpr "*"  <int> =40
+|       |   |-- IntLiteral "10"  <int> =10
+|       |   `-- IntLiteral "4"  <int> =4
+|       `-- IntLiteral "2"  <int> =2
+|-- VarDecl "hidden : INT"  <int>  -> hidden (variable, global)
+|   `-- UnaryExpr "-"  <int> =-1
+|       `-- IntLiteral "1"  <int> =1
+|-- VarDecl "MAX : INT"  <const int>  -> MAX (variable, global)
+|   `-- IntLiteral "100"  <int> =100
+|-- VarDecl "letter : CHAR"  <char>  -> letter (variable, global)
+|   `-- CharLiteral "'z'"  <char> =122
+|-- VarDecl "ratio : DOUBLE"  <double>  -> ratio (variable, global)
+|   `-- BinaryExpr "*"  <double>
+|       |-- FloatLiteral "1.5"  <double>
+|       `-- IntLiteral "2"  <int> =2
+|-- VarDecl "table : INT_ARRAY"  <int[100]>  -> table (variable, global)
+|-- VarDecl "where : INT_POINTER"  <int *>  -> where (variable, global)
+|   `-- UnaryExpr "&"  <int *>
+|       `-- Identifier "counter"  <int> lvalue  -> counter (variable, global)
+|-- VarDecl "greeting : CHAR_ARRAY"  <char[6]>  -> greeting (variable, global)
+|   `-- StringLiteral ""hello""  <char[6]> lvalue
+|-- VarDecl "primes : INT_ARRAY"  <int[4]>  -> primes (variable, global)
+|   `-- InitializerList  <int[4]>
+|       |-- IntLiteral "2"  <int> =2
+|       |-- IntLiteral "3"  <int> =3
+|       |-- IntLiteral "5"  <int> =5
+|       `-- IntLiteral "7"  <int> =7
+|-- VarDecl "big : UNSIGNED_LONG"  <unsigned long>  -> big (variable, global)
+|   `-- IntLiteral "4000000000u"  <unsigned int> =4000000000
+|-- FunctionDef "next_id : _Z7next_idv"  <int (void)>  -> _Z7next_idv (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "id : INT"  <int>  -> id.1 (variable, static)
+|       |   `-- IntLiteral "0"  <int> =0
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "id"  <int> lvalue  -> id.1 (variable, static)
+|       |       `-- BinaryExpr "+"  <int>
+|       |           |-- Identifier "id"  <int> lvalue  -> id.1 (variable, static)
+|       |           `-- IntLiteral "1"  <int> =1
+|       `-- ReturnStmt
+|           `-- Identifier "id"  <int> lvalue  -> id.1 (variable, static)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "n : INT"  <int>  -> n.2 (variable, local)
+        |   `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "s : CHAR_POINTER"  <char *>  -> s.3 (variable, local)
+        |   `-- Identifier "greeting"  <char[6]> lvalue  -> greeting (variable, global)
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"  <int>  -> a.4 (variable, local)
+        |   |   `-- IntLiteral "1"  <int> =1
+        |   |-- VarDecl "b : INT"  <int>  -> b.5 (variable, local)
+        |   |   `-- IntLiteral "2"  <int> =2
+        |   `-- VarDecl "c : INT"  <int>  -> c.6 (variable, local)
+        |-- VarDecl "u : UNSIGNED_INT"  <unsigned int>  -> u.7 (variable, local)
+        |   `-- IntLiteral "3u"  <unsigned int> =3
+        |-- VarDecl "sh : SHORT"  <short>  -> sh.8 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "l : LONG"  <long>  -> l.9 (variable, local)
+        |   `-- IntLiteral "7"  <int> =7
+        |-- VarDecl "sc : SIGNED_CHAR"  <char>  -> sc.10 (variable, local)
+        |   `-- UnaryExpr "-"  <int> =-1
+        |       `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "wide : LONG_LONG"  <long long>  -> wide.11 (variable, local)
+        |   `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "f : FLOAT"  <float>  -> f.12 (variable, local)
+        |   `-- FloatLiteral "2.5f"  <float>
+        |-- VarDecl "done : BOOL"  <bool>  -> done.13 (variable, local)
+        |   `-- BoolLiteral "false"  <bool> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "c"  <int> lvalue  -> c.6 (variable, local)
+        |       `-- BinaryExpr "+"  <float>
+        |           |-- BinaryExpr "+"  <float>
+        |           |   |-- BinaryExpr "+"  <long long>
+        |           |   |   |-- BinaryExpr "+"  <unsigned long>
+        |           |   |   |   |-- BinaryExpr "+"  <unsigned long>
+        |           |   |   |   |   |-- BinaryExpr "+"  <unsigned int>
+        |           |   |   |   |   |   |-- BinaryExpr "+"  <unsigned int>
+        |           |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+        |           |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+        |           |   |   |   |   |   |   |   |   |-- Identifier "a"  <int> lvalue  -> a.4 (variable, local)
+        |           |   |   |   |   |   |   |   |   `-- Identifier "b"  <int> lvalue  -> b.5 (variable, local)
+        |           |   |   |   |   |   |   |   `-- Identifier "n"  <int> lvalue  -> n.2 (variable, local)
+        |           |   |   |   |   |   |   `-- Identifier "u"  <unsigned int> lvalue  -> u.7 (variable, local)
+        |           |   |   |   |   |   `-- Identifier "sh"  <short> lvalue  -> sh.8 (variable, local)
+        |           |   |   |   |   `-- Identifier "l"  <long> lvalue  -> l.9 (variable, local)
+        |           |   |   |   `-- Identifier "sc"  <char> lvalue  -> sc.10 (variable, local)
+        |           |   |   `-- Identifier "wide"  <long long> lvalue  -> wide.11 (variable, local)
+        |           |   `-- Identifier "f"  <float> lvalue  -> f.12 (variable, local)
+        |           `-- Identifier "done"  <bool> lvalue  -> done.13 (variable, local)
+        |-- VarDecl "local : INT"  <int>  -> local.14 (variable, local)
+        |   `-- BinaryExpr "/"  <unsigned int> =100
+        |       |-- SizeofExpr  <unsigned int> =400
+        |       |   `-- Identifier "table"  <int[100]> lvalue  -> table (variable, global)
+        |       `-- SizeofExpr  <unsigned int> =4
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- Identifier "table"  <int[100]> lvalue  -> table (variable, global)
+        |               `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "t : CHAR"  <char>  -> t.15 (variable, local)
+        |   `-- IndexExpr  <char> lvalue
+        |       |-- Identifier "s"  <char *> lvalue  -> s.3 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- Identifier "c"  <int> lvalue  -> c.6 (variable, local)
+                |   |   |   |   |   `-- Identifier "local"  <int> lvalue  -> local.14 (variable, local)
+                |   |   |   |   `-- Identifier "t"  <char> lvalue  -> t.15 (variable, local)
+                |   |   |   `-- CallExpr  <int>  -> _Z7next_idv (function)
+                |   |   |       `-- Identifier "next_id"  <int (void)>  -> _Z7next_idv (function)
+                |   |   `-- Identifier "hidden"  <int> lvalue  -> hidden (variable, global)
+                |   `-- Identifier "letter"  <char> lvalue  -> letter (variable, global)
+                `-- IndexExpr  <int> lvalue
+                    |-- Identifier "primes"  <int[4]> lvalue  -> primes (variable, global)
+                    `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Number             typedef        int                        -        global                         3     -     0     Number               -                        
+String             typedef        char *                     -        global                         4     -     0     String               -                        
+Size               typedef        unsigned long              -        global                         5     -     0     Size                 -                        
+counter            variable       int                        global   global                         7     4     1     counter              -                        
+limit              variable       int                        global   global                         8     4     0     limit                -                        
+hidden             variable       int                        global   global                         9     4     1     hidden               -                        static
+MAX                variable       const int                  global   global                         10    4     1     MAX                  -                        value 100
+letter             variable       char                       global   global                         11    1     1     letter               -                        
+ratio              variable       double                     global   global                         12    8     0     ratio                -                        
+table              variable       int[100]                   global   global                         13    400   2     table                -                        
+where              variable       int *                      global   global                         14    4     0     where                -                        
+greeting           variable       char[6]                    global   global                         15    6     1     greeting             -                        
+primes             variable       int[4]                     global   global                         16    16    1     primes               -                        
+big                variable       unsigned long              global   global                         17    4     0     big                  -                        
+next_id            function       int (void)                 -        global                         19    -     1     _Z7next_idv          _Z7next_idv              defined
+id                 variable       int                        static   global > next_id()             20    4     3     id.1                 -                        static
+main               function       int (void)                 -        global                         25    -     0     main                 main                     defined
+n                  variable       int                        local    global > main()                26    4     1     n.2                  -                        
+s                  variable       char *                     local    global > main()                27    4     1     s.3                  -                        
+a                  variable       int                        local    global > main()                28    4     1     a.4                  -                        
+b                  variable       int                        local    global > main()                28    4     1     b.5                  -                        
+c                  variable       int                        local    global > main()                28    4     2     c.6                  -                        
+u                  variable       unsigned int               local    global > main()                29    4     1     u.7                  -                        
+sh                 variable       short                      local    global > main()                30    2     1     sh.8                 -                        
+l                  variable       long                       local    global > main()                31    4     1     l.9                  -                        
+sc                 variable       char                       local    global > main()                32    1     1     sc.10                -                        
+wide               variable       long long                  local    global > main()                33    8     1     wide.11              -                        
+f                  variable       float                      local    global > main()                34    4     1     f.12                 -                        
+done               variable       bool                       local    global > main()                35    1     1     done.13              -                        
+local              variable       int                        local    global > main()                37    4     1     local.14             -                        
+t                  variable       char                       local    global > main()                38    1     1     t.15                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

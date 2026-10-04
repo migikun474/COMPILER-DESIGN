@@ -1,0 +1,88 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/negative.c
+
+phase2-parser/test/negative.c:6:17: syntax error: syntax error, unexpected FLOAT_LITERAL, expecting ';'
+ 6 |     float d = 3..14;   
+   |                 ^
+   | note: insert ';' here
+
+phase2-parser/test/negative.c:8:14: lexical error: Unterminated character literal
+ 8 |     char f = 'ab;
+   |              ^
+
+phase2-parser/test/negative.c:9:10: syntax error: syntax error, unexpected '*', expecting '('
+ 9 |     char *g = "hello world;
+   |          ^
+   | note: insert '(' here
+
+phase2-parser/test/negative.c:9:15: lexical error: Unterminated string literal
+ 9 |     char *g = "hello world;
+   |               ^
+
+phase2-parser/test/negative.c:10:16: lexical error: Illegal character
+ 10 |     int h = 10 @ 2;
+    |                ^
+
+phase2-parser/test/negative.c:11:10: lexical error: Illegal character
+ 11 |     int i$ = 5;
+    |          ^
+
+phase2-parser/test/negative.c:12:13: lexical error: Illegal character
+ 12 |     int j = `5 + 3`;
+    |             ^
+
+phase2-parser/test/negative.c:12:19: lexical error: Illegal character
+ 12 |     int j = `5 + 3`;
+    |                   ^
+
+phase2-parser/test/negative.c:14:14: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 14 |     int l = 0x;
+    |              ^
+    | note: insert ';' here
+
+phase2-parser/test/negative.c:16:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 16 |     int n = 123abc;
+    |                ^
+    | note: insert ';' here
+
+-----------------------------------------
+Total Errors : 10
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "a : INT"
+        |   `-- IntLiteral "4"
+        |-- VarDecl "b : INT"
+        |   `-- IntLiteral "7"
+        |-- ErrorNode "line 6: near '.14'"
+        |-- VarDecl "e : CHAR"
+        |   `-- CharLiteral "'\q'"
+        |-- ErrorNode "line 10: near '@'"
+        |-- VarDecl "i : INT"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "j : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- IntLiteral "5"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "k : INT"
+        |   `-- IntLiteral "20"
+        |-- ErrorNode "line 14: near 'x'"
+        |-- VarDecl "m : INT"
+        |   `-- BinaryExpr "*"
+        |       |-- IntLiteral "2"
+        |       `-- UnaryExpr "*"
+        |           `-- IntLiteral "3"
+        |-- ErrorNode "line 16: near 'abc'"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- BinaryExpr "+"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        `-- ReturnStmt
+            `-- IntLiteral "0"

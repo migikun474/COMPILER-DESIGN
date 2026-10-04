@@ -1,0 +1,428 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v08_control_flow.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+enum                           enum                
+Color                          ENUM                
+{                              open_brace_op       
+RED                            ENUM_CONSTANT       
+,                              comma_op            
+GREEN                          ENUM_CONSTANT       
+=                              assign_op           
+5                              INT_LITERAL         
+,                              comma_op            
+BLUE                           ENUM_CONSTANT       
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+classify                       PROCEDURE           
+(                              open_paren_op       
+enum                           enum                
+Color                          ENUM                
+c                              ENUM                
+)                              close_paren_op      
+{                              open_brace_op       
+switch                         switch              
+(                              open_paren_op       
+c                              ENUM                
+)                              close_paren_op      
+{                              open_brace_op       
+case                           case                
+RED                            ENUM_CONSTANT       
+:                              colon_op            
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+case                           case                
+GREEN                          ENUM_CONSTANT       
+:                              colon_op            
+return                         return              
+1                              INT_LITERAL         
+;                              semicolon_op        
+case                           case                
+BLUE                           ENUM_CONSTANT       
+:                              colon_op            
+default                        default             
+:                              colon_op            
+break                          break               
+;                              semicolon_op        
+}                              close_brace_op      
+return                         return              
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+i                              INT                 
+,                              comma_op            
+total                          INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+10                             INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+{                              open_brace_op       
+if                             if                  
+(                              open_paren_op       
+i                              INT                 
+==                             eq_op               
+2                              INT_LITERAL         
+)                              close_paren_op      
+continue                       continue            
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+i                              INT                 
+==                             eq_op               
+8                              INT_LITERAL         
+)                              close_paren_op      
+break                          break               
+;                              semicolon_op        
+total                          INT                 
++=                             plus_assign_op      
+i                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+while                          while               
+(                              open_paren_op       
+total                          INT                 
+>                              gt_op               
+100                            INT_LITERAL         
+)                              close_paren_op      
+total                          INT                 
+--                             decrement_op        
+;                              semicolon_op        
+do                             do                  
+{                              open_brace_op       
+total                          INT                 
+++                             increment_op        
+;                              semicolon_op        
+}                              close_brace_op      
+while                          while               
+(                              open_paren_op       
+total                          INT                 
+<                              lt_op               
+5                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+until                          until               
+(                              open_paren_op       
+total                          INT                 
+>=                             ge_op               
+50                             INT_LITERAL         
+)                              close_paren_op      
+{                              open_brace_op       
+total                          INT                 
++=                             plus_assign_op      
+7                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+switch                         switch              
+(                              open_paren_op       
+total                          INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+case                           case                
+1                              INT_LITERAL         
+:                              colon_op            
+case                           case                
+2                              INT_LITERAL         
+:                              colon_op            
+total                          INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+break                          break               
+;                              semicolon_op        
+case                           case                
+'A'                            CHAR_LITERAL        
+:                              colon_op            
+total                          INT                 
+=                              assign_op           
+65                             INT_LITERAL         
+;                              semicolon_op        
+break                          break               
+;                              semicolon_op        
+case                           case                
+3                              INT_LITERAL         
++                              plus_op             
+4                              INT_LITERAL         
+:                              colon_op            
+total                          INT                 
+=                              assign_op           
+7                              INT_LITERAL         
+;                              semicolon_op        
+break                          break               
+;                              semicolon_op        
+default                        default             
+:                              colon_op            
+total                          INT                 
+=                              assign_op           
+-                              minus_op            
+total                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+for                            for                 
+(                              open_paren_op       
+;                              semicolon_op        
+;                              semicolon_op        
+)                              close_paren_op      
+{                              open_brace_op       
+switch                         switch              
+(                              open_paren_op       
+i                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+case                           case                
+0                              INT_LITERAL         
+:                              colon_op            
+continue                       continue            
+;                              semicolon_op        
+default                        default             
+:                              colon_op            
+break                          break               
+;                              semicolon_op        
+}                              close_brace_op      
+break                          break               
+;                              semicolon_op        
+}                              close_brace_op      
+goto                           goto                
+end                            LABEL               
+;                              semicolon_op        
+again                          LABEL               
+:                              colon_op            
+total                          INT                 
+++                             increment_op        
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+total                          INT                 
+<                              lt_op               
+3                              INT_LITERAL         
+)                              close_paren_op      
+goto                           goto                
+again                          LABEL               
+;                              semicolon_op        
+end                            LABEL               
+:                              colon_op            
+if                             if                  
+(                              open_paren_op       
+total                          INT                 
+)                              close_paren_op      
+total                          INT                 
+=                              assign_op           
+classify                       PROCEDURE           
+(                              open_paren_op       
+BLUE                           ENUM_CONSTANT       
+)                              close_paren_op      
+;                              semicolon_op        
+else                           else                
+total                          INT                 
+=                              assign_op           
+classify                       PROCEDURE           
+(                              open_paren_op       
+RED                            ENUM_CONSTANT       
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+total                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- EnumDecl "Color"
+|   |-- Enumerator "RED"
+|   |-- Enumerator "GREEN"
+|   |   `-- IntLiteral "5"
+|   `-- Enumerator "BLUE"
+|-- FunctionDef "classify : _Z8classify5Color"
+|   |-- ParamDecl "c : ENUM"
+|   `-- CompoundStmt
+|       |-- SwitchStmt
+|       |   |-- Identifier "c"
+|       |   `-- CompoundStmt
+|       |       |-- CaseStmt
+|       |       |   |-- Identifier "RED"
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "0"
+|       |       |-- CaseStmt
+|       |       |   |-- Identifier "GREEN"
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "1"
+|       |       `-- CaseStmt
+|       |           |-- Identifier "BLUE"
+|       |           `-- DefaultStmt
+|       |               `-- BreakStmt
+|       `-- ReturnStmt
+|           `-- UnaryExpr "-"
+|               `-- IntLiteral "1"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "i : INT"
+        |   `-- VarDecl "total : INT"
+        |       `-- IntLiteral "0"
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "10"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       |-- IfStmt
+        |       |   |-- BinaryExpr "=="
+        |       |   |   |-- Identifier "i"
+        |       |   |   `-- IntLiteral "2"
+        |       |   `-- ContinueStmt
+        |       |-- IfStmt
+        |       |   |-- BinaryExpr "=="
+        |       |   |   |-- Identifier "i"
+        |       |   |   `-- IntLiteral "8"
+        |       |   `-- BreakStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="
+        |               |-- Identifier "total"
+        |               `-- Identifier "i"
+        |-- WhileStmt
+        |   |-- BinaryExpr ">"
+        |   |   |-- Identifier "total"
+        |   |   `-- IntLiteral "100"
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "--"
+        |           `-- Identifier "total"
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"
+        |   |           `-- Identifier "total"
+        |   `-- BinaryExpr "<"
+        |       |-- Identifier "total"
+        |       `-- IntLiteral "5"
+        |-- UntilStmt
+        |   |-- BinaryExpr ">="
+        |   |   |-- Identifier "total"
+        |   |   `-- IntLiteral "50"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="
+        |               |-- Identifier "total"
+        |               `-- IntLiteral "7"
+        |-- SwitchStmt
+        |   |-- Identifier "total"
+        |   `-- CompoundStmt
+        |       |-- CaseStmt
+        |       |   |-- IntLiteral "1"
+        |       |   `-- CaseStmt
+        |       |       |-- IntLiteral "2"
+        |       |       `-- ExprStmt
+        |       |           `-- AssignExpr "="
+        |       |               |-- Identifier "total"
+        |       |               `-- IntLiteral "0"
+        |       |-- BreakStmt
+        |       |-- CaseStmt
+        |       |   |-- CharLiteral "'A'"
+        |       |   `-- ExprStmt
+        |       |       `-- AssignExpr "="
+        |       |           |-- Identifier "total"
+        |       |           `-- IntLiteral "65"
+        |       |-- BreakStmt
+        |       |-- CaseStmt
+        |       |   |-- BinaryExpr "+"
+        |       |   |   |-- IntLiteral "3"
+        |       |   |   `-- IntLiteral "4"
+        |       |   `-- ExprStmt
+        |       |       `-- AssignExpr "="
+        |       |           |-- Identifier "total"
+        |       |           `-- IntLiteral "7"
+        |       |-- BreakStmt
+        |       `-- DefaultStmt
+        |           `-- ExprStmt
+        |               `-- AssignExpr "="
+        |                   |-- Identifier "total"
+        |                   `-- UnaryExpr "-"
+        |                       `-- Identifier "total"
+        |-- ForStmt
+        |   |-- EmptyStmt
+        |   |-- EmptyStmt
+        |   `-- CompoundStmt
+        |       |-- SwitchStmt
+        |       |   |-- Identifier "i"
+        |       |   `-- CompoundStmt
+        |       |       |-- CaseStmt
+        |       |       |   |-- IntLiteral "0"
+        |       |       |   `-- ContinueStmt
+        |       |       `-- DefaultStmt
+        |       |           `-- BreakStmt
+        |       `-- BreakStmt
+        |-- GotoStmt "end"
+        |-- LabeledStmt "again"
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "++"
+        |           `-- Identifier "total"
+        |-- IfStmt
+        |   |-- BinaryExpr "<"
+        |   |   |-- Identifier "total"
+        |   |   `-- IntLiteral "3"
+        |   `-- GotoStmt "again"
+        |-- LabeledStmt "end"
+        |   `-- IfStmt
+        |       |-- Identifier "total"
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="
+        |       |       |-- Identifier "total"
+        |       |       `-- CallExpr
+        |       |           |-- Identifier "classify"
+        |       |           `-- Identifier "BLUE"
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "total"
+        |               `-- CallExpr
+        |                   |-- Identifier "classify"
+        |                   `-- Identifier "RED"
+        `-- ReturnStmt
+            `-- Identifier "total"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Color                enum_tag       3      global                       ENUM                                      0                                
+RED                  enum_constant  3      global                       ENUM_CONSTANT                             2                                
+GREEN                enum_constant  3      global                       ENUM_CONSTANT                             1                                
+BLUE                 enum_constant  3      global                       ENUM_CONSTANT                             2                                
+classify             procedure      5      global                       PROCEDURE                                 2         INT (ENUM)             _Z8classify5Color
+c                    parameter      5      global > classify()          ENUM                                      1                                
+main                 procedure      15     global                       PROCEDURE                                 0         INT ()                 main
+i                    variable       16     global > main()              INT                                       7                                
+total                variable       16     global > main()              INT                                       19                               
+again                label          39     global > main()              LABEL                                     1                                
+end                  label          42     global > main()              LABEL                                     0                                

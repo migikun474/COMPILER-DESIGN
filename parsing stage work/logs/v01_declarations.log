@@ -1,0 +1,422 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v01_declarations.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+typedef                        typedef             
+int                            int                 
+Number                         TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+char                           char                
+*                              star_op             
+String                         TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+unsigned                       unsigned            
+long                           long                
+Size                           TYPEDEF             
+;                              semicolon_op        
+int                            int                 
+counter                        INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+limit                          INT                 
+=                              assign_op           
+10                             INT_LITERAL         
+*                              star_op             
+4                              INT_LITERAL         
++                              plus_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+static                         static              
+int                            int                 
+hidden                         INT                 
+=                              assign_op           
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+const                          const               
+int                            int                 
+MAX                            INT                 
+=                              assign_op           
+100                            INT_LITERAL         
+;                              semicolon_op        
+char                           char                
+letter                         CHAR                
+=                              assign_op           
+'z'                            CHAR_LITERAL        
+;                              semicolon_op        
+double                         double              
+ratio                          DOUBLE              
+=                              assign_op           
+1.5                            FLOAT_LITERAL       
+*                              star_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+table                          INT_ARRAY           
+[                              open_bracket_op     
+MAX                            INT                 
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+where                          INT_POINTER         
+=                              assign_op           
+&                              ampersand_op        
+counter                        INT                 
+;                              semicolon_op        
+char                           char                
+greeting                       CHAR_ARRAY          
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+"hello"                        STRING_LITERAL      
+;                              semicolon_op        
+int                            int                 
+primes                         INT_ARRAY           
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+,                              comma_op            
+5                              INT_LITERAL         
+,                              comma_op            
+7                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+Size                           TYPEDEF             
+big                            UNSIGNED_LONG       
+=                              assign_op           
+4000000000u                    INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+next_id                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+static                         static              
+int                            int                 
+id                             INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+id                             INT                 
+=                              assign_op           
+id                             INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+id                             INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+Number                         TYPEDEF             
+n                              INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+String                         TYPEDEF             
+s                              CHAR_POINTER        
+=                              assign_op           
+greeting                       CHAR_ARRAY          
+;                              semicolon_op        
+int                            int                 
+a                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+,                              comma_op            
+b                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+,                              comma_op            
+c                              INT                 
+;                              semicolon_op        
+unsigned                       unsigned            
+int                            int                 
+u                              UNSIGNED_INT        
+=                              assign_op           
+3u                             INT_LITERAL         
+;                              semicolon_op        
+short                          short               
+sh                             SHORT               
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+long                           long                
+l                              LONG                
+=                              assign_op           
+7                              INT_LITERAL         
+;                              semicolon_op        
+signed                         signed              
+char                           char                
+sc                             SIGNED_CHAR         
+=                              assign_op           
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+long                           long                
+long                           long                
+wide                           LONG_LONG           
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+float                          float               
+f                              FLOAT               
+=                              assign_op           
+2.5f                           FLOAT_LITERAL       
+;                              semicolon_op        
+bool                           bool                
+done                           BOOL                
+=                              assign_op           
+false                          bool_literal        
+;                              semicolon_op        
+c                              INT                 
+=                              assign_op           
+a                              INT                 
++                              plus_op             
+b                              INT                 
++                              plus_op             
+n                              INT                 
++                              plus_op             
+u                              UNSIGNED_INT        
++                              plus_op             
+sh                             SHORT               
++                              plus_op             
+l                              LONG                
++                              plus_op             
+sc                             SIGNED_CHAR         
++                              plus_op             
+wide                           LONG_LONG           
++                              plus_op             
+f                              FLOAT               
++                              plus_op             
+done                           BOOL                
+;                              semicolon_op        
+int                            int                 
+local                          INT                 
+=                              assign_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+table                          INT_ARRAY           
+)                              close_paren_op      
+/                              divide_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+table                          INT_ARRAY           
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+;                              semicolon_op        
+char                           char                
+t                              CHAR                
+=                              assign_op           
+s                              CHAR_POINTER        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+return                         return              
+c                              INT                 
++                              plus_op             
+local                          INT                 
++                              plus_op             
+t                              CHAR                
++                              plus_op             
+next_id                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+hidden                         INT                 
++                              plus_op             
+letter                         CHAR                
++                              plus_op             
+primes                         INT_ARRAY           
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- TypedefDecl "Number = INT"
+|-- TypedefDecl "String = CHAR_POINTER"
+|-- TypedefDecl "Size = UNSIGNED_LONG"
+|-- VarDecl "counter : INT"
+|   `-- IntLiteral "0"
+|-- VarDecl "limit : INT"
+|   `-- BinaryExpr "+"
+|       |-- BinaryExpr "*"
+|       |   |-- IntLiteral "10"
+|       |   `-- IntLiteral "4"
+|       `-- IntLiteral "2"
+|-- VarDecl "hidden : INT"
+|   `-- UnaryExpr "-"
+|       `-- IntLiteral "1"
+|-- VarDecl "MAX : INT"
+|   `-- IntLiteral "100"
+|-- VarDecl "letter : CHAR"
+|   `-- CharLiteral "'z'"
+|-- VarDecl "ratio : DOUBLE"
+|   `-- BinaryExpr "*"
+|       |-- FloatLiteral "1.5"
+|       `-- IntLiteral "2"
+|-- VarDecl "table : INT_ARRAY"
+|-- VarDecl "where : INT_POINTER"
+|   `-- UnaryExpr "&"
+|       `-- Identifier "counter"
+|-- VarDecl "greeting : CHAR_ARRAY"
+|   `-- StringLiteral ""hello""
+|-- VarDecl "primes : INT_ARRAY"
+|   `-- InitializerList
+|       |-- IntLiteral "2"
+|       |-- IntLiteral "3"
+|       |-- IntLiteral "5"
+|       `-- IntLiteral "7"
+|-- VarDecl "big : UNSIGNED_LONG"
+|   `-- IntLiteral "4000000000u"
+|-- FunctionDef "next_id : _Z7next_idv"
+|   `-- CompoundStmt
+|       |-- VarDecl "id : INT"
+|       |   `-- IntLiteral "0"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "id"
+|       |       `-- BinaryExpr "+"
+|       |           |-- Identifier "id"
+|       |           `-- IntLiteral "1"
+|       `-- ReturnStmt
+|           `-- Identifier "id"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "n : INT"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "s : CHAR_POINTER"
+        |   `-- Identifier "greeting"
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"
+        |   |   `-- IntLiteral "1"
+        |   |-- VarDecl "b : INT"
+        |   |   `-- IntLiteral "2"
+        |   `-- VarDecl "c : INT"
+        |-- VarDecl "u : UNSIGNED_INT"
+        |   `-- IntLiteral "3u"
+        |-- VarDecl "sh : SHORT"
+        |   `-- IntLiteral "2"
+        |-- VarDecl "l : LONG"
+        |   `-- IntLiteral "7"
+        |-- VarDecl "sc : SIGNED_CHAR"
+        |   `-- UnaryExpr "-"
+        |       `-- IntLiteral "1"
+        |-- VarDecl "wide : LONG_LONG"
+        |   `-- IntLiteral "1"
+        |-- VarDecl "f : FLOAT"
+        |   `-- FloatLiteral "2.5f"
+        |-- VarDecl "done : BOOL"
+        |   `-- BoolLiteral "false"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "c"
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- BinaryExpr "+"
+        |           |   |   |-- BinaryExpr "+"
+        |           |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |   |   |   |   |-- Identifier "a"
+        |           |   |   |   |   |   |   |   |   `-- Identifier "b"
+        |           |   |   |   |   |   |   |   `-- Identifier "n"
+        |           |   |   |   |   |   |   `-- Identifier "u"
+        |           |   |   |   |   |   `-- Identifier "sh"
+        |           |   |   |   |   `-- Identifier "l"
+        |           |   |   |   `-- Identifier "sc"
+        |           |   |   `-- Identifier "wide"
+        |           |   `-- Identifier "f"
+        |           `-- Identifier "done"
+        |-- VarDecl "local : INT"
+        |   `-- BinaryExpr "/"
+        |       |-- SizeofExpr
+        |       |   `-- Identifier "table"
+        |       `-- SizeofExpr
+        |           `-- IndexExpr
+        |               |-- Identifier "table"
+        |               `-- IntLiteral "0"
+        |-- VarDecl "t : CHAR"
+        |   `-- IndexExpr
+        |       |-- Identifier "s"
+        |       `-- IntLiteral "0"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |-- Identifier "c"
+                |   |   |   |   |   `-- Identifier "local"
+                |   |   |   |   `-- Identifier "t"
+                |   |   |   `-- CallExpr
+                |   |   |       `-- Identifier "next_id"
+                |   |   `-- Identifier "hidden"
+                |   `-- Identifier "letter"
+                `-- IndexExpr
+                    |-- Identifier "primes"
+                    `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Number               typedef        3      global                       INT                                       0                                
+String               typedef        4      global                       CHAR_POINTER     *                        0                                
+Size                 typedef        5      global                       UNSIGNED_LONG                             0                                
+counter              variable       7      global                       INT                                       1                                
+limit                variable       8      global                       INT                                       0                                
+hidden               variable       9      global                       INT              static                   1                                
+MAX                  variable       10     global                       INT              const                    1                                
+letter               variable       11     global                       CHAR                                      1                                
+ratio                variable       12     global                       DOUBLE                                    0                                
+table                variable       13     global                       INT_ARRAY        []                       2                                
+where                variable       14     global                       INT_POINTER      *                        0                                
+greeting             variable       15     global                       CHAR_ARRAY       []                       1                                
+primes               variable       16     global                       INT_ARRAY        []                       1                                
+big                  variable       17     global                       UNSIGNED_LONG                             0                                
+next_id              procedure      19     global                       PROCEDURE                                 1         INT ()                 _Z7next_idv
+id                   variable       20     global > next_id()           INT              static                   3                                
+main                 procedure      25     global                       PROCEDURE                                 0         INT ()                 main
+n                    variable       26     global > main()              INT                                       1                                
+s                    variable       27     global > main()              CHAR_POINTER                              1                                
+a                    variable       28     global > main()              INT                                       1                                
+b                    variable       28     global > main()              INT                                       1                                
+c                    variable       28     global > main()              INT                                       2                                
+u                    variable       29     global > main()              UNSIGNED_INT                              1                                
+sh                   variable       30     global > main()              SHORT                                     1                                
+l                    variable       31     global > main()              LONG                                      1                                
+sc                   variable       32     global > main()              SIGNED_CHAR                               1                                
+wide                 variable       33     global > main()              LONG_LONG                                 1                                
+f                    variable       34     global > main()              FLOAT                                     1                                
+done                 variable       35     global > main()              BOOL                                      1                                
+local                variable       37     global > main()              INT                                       1                                
+t                    variable       38     global > main()              CHAR                                      1                                

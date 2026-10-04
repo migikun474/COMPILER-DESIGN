@@ -1,0 +1,28 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c
+
+Semantic analysis failed: 5 error(s), 0 warning(s) in '/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c'.
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c:1:1: semantic error: anonymous union at file scope must be declared 'static' [anonymous-union]
+ 1 | union { int g1; float g2; };
+   | ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c:6:17: semantic error: duplicate declaration of 'x' in the same scope (previous declaration at line 4) [redeclaration]
+ 6 |     union { int x; };
+   |                 ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c:7:25: semantic error: member function 'f()' is not allowed in an anonymous union: it may only have public non-static data members [anonymous-union]
+ 7 |     union { int m; void f(); };
+   |                         ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c:8:26: semantic error: private member 'p' is not allowed in an anonymous union: it may only have public non-static data members [anonymous-union]
+ 8 |     union { private: int p; };
+   |                          ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/bu.c:11:17: semantic error: duplicate declaration of 'a' in the same scope (previous declaration at line 5) [redeclaration]
+ 11 |     union { int a; };
+    |                 ^
+

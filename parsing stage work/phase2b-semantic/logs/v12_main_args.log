@@ -1,0 +1,70 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v12_main_args.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v12_main_args.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (int, char **)>  -> main (function)
+    |-- ParamDecl "argc : INT"  <int>  -> argc.1 (parameter, param)
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"  <char **>  -> argv.2 (parameter, param)
+    `-- CompoundStmt
+        |-- VarDecl "i : INT"  <int>  -> i.3 (variable, local)
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |   |       `-- IntLiteral "1"  <int> =1
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |   |       `-- Identifier "argc"  <int> lvalue  -> argc.1 (parameter, param)
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |   `-- CompoundStmt
+        |       |-- ExprStmt
+        |       |   `-- BuiltinCallExpr "printf"  <int>
+        |       |       |-- StringLiteral ""%s\n""  <char[4]> lvalue
+        |       |       `-- IndexExpr  <char *> lvalue
+        |       |           |-- Identifier "argv"  <char **> lvalue  -> argv.2 (parameter, param)
+        |       |           `-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |       |-- VarDecl "first : CHAR"  <char>  -> first.4 (variable, local)
+        |       |   `-- IndexExpr  <char> lvalue
+        |       |       |-- IndexExpr  <char *> lvalue
+        |       |       |   |-- Identifier "argv"  <char **> lvalue  -> argv.2 (parameter, param)
+        |       |       |   `-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |       |       `-- IntLiteral "0"  <int> =0
+        |       `-- IfStmt
+        |           |-- BinaryExpr "=="  <int>
+        |           |   |-- Identifier "first"  <char> lvalue  -> first.4 (variable, local)
+        |           |   `-- CharLiteral "'-'"  <char> =45
+        |           `-- ExprStmt
+        |               `-- BuiltinCallExpr "printf"  <int>
+        |                   |-- StringLiteral ""option %c\n""  <char[11]> lvalue
+        |                   `-- IndexExpr  <char> lvalue
+        |                       |-- IndexExpr  <char *> lvalue
+        |                       |   |-- Identifier "argv"  <char **> lvalue  -> argv.2 (parameter, param)
+        |                       |   `-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+        |                       `-- IntLiteral "1"  <int> =1
+        `-- ReturnStmt
+            `-- TernaryExpr  <int>
+                |-- BinaryExpr ">"  <int>
+                |   |-- Identifier "argc"  <int> lvalue  -> argc.1 (parameter, param)
+                |   `-- IntLiteral "1"  <int> =1
+                |-- IntLiteral "0"  <int> =0
+                `-- IntLiteral "1"  <int> =1
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (int, char **)         -        global                         2     -     0     main                 main                     defined
+argc               parameter      int                        param    global > main()                2     4     2     argc.1               -                        
+argv               parameter      char **                    param    global > main()                2     4     3     argv.2               -                        
+i                  variable       int                        local    global > main()                3     4     6     i.3                  -                        
+first              variable       char                       local    global > main() > for > for body 6     1     1     first.4              -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

@@ -1,0 +1,111 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test12_function_overloading.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test12_function_overloading.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"  <int (int, int)>  -> _Z3addii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|-- FunctionDef "add : _Z3addiii"  <int (int, int, int)>  -> _Z3addiii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.3 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.4 (parameter, param)
+|   |-- ParamDecl "c : INT"  <int>  -> c.5 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- Identifier "a"  <int> lvalue  -> a.3 (parameter, param)
+|               |   `-- Identifier "b"  <int> lvalue  -> b.4 (parameter, param)
+|               `-- Identifier "c"  <int> lvalue  -> c.5 (parameter, param)
+|-- FunctionDef "combine : _Z7combineii"  <int (int, int)>  -> _Z7combineii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.6 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.7 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.6 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.7 (parameter, param)
+|-- FunctionDef "combine : _Z7combinecc"  <int (char, char)>  -> _Z7combinecc (function)
+|   |-- ParamDecl "a : CHAR"  <char>  -> a.8 (parameter, param)
+|   |-- ParamDecl "b : CHAR"  <char>  -> b.9 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <char> lvalue  -> a.8 (parameter, param)
+|               `-- Identifier "b"  <char> lvalue  -> b.9 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "r1 : INT"  <int>  -> r1.10 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r1"  <int> lvalue  -> r1.10 (variable, local)
+        |       `-- CallExpr "_Z3addii"  <int>  -> _Z3addii (function)
+        |           |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |           |-- IntLiteral "1"  <int> =1
+        |           `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "r2 : INT"  <int>  -> r2.11 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r2"  <int> lvalue  -> r2.11 (variable, local)
+        |       `-- CallExpr "_Z3addiii"  <int>  -> _Z3addiii (function)
+        |           |-- Identifier "add"  <int (int, int, int)>  -> _Z3addiii (function)
+        |           |-- IntLiteral "1"  <int> =1
+        |           |-- IntLiteral "2"  <int> =2
+        |           `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "r3 : INT"  <int>  -> r3.12 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r3"  <int> lvalue  -> r3.12 (variable, local)
+        |       `-- CallExpr "_Z7combineii"  <int>  -> _Z7combineii (function)
+        |           |-- Identifier "combine"  <int (int, int)>  -> _Z7combineii (function)
+        |           |-- IntLiteral "1"  <int> =1
+        |           `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "x : CHAR"  <char>  -> x.13 (variable, local)
+        |-- VarDecl "y : CHAR"  <char>  -> y.14 (variable, local)
+        |-- VarDecl "r4 : INT"  <int>  -> r4.15 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r4"  <int> lvalue  -> r4.15 (variable, local)
+        |       `-- CallExpr "_Z7combinecc"  <int>  -> _Z7combinecc (function)
+        |           |-- Identifier "combine"  <int (char, char)>  -> _Z7combinecc (function)
+        |           |-- Identifier "x"  <char> lvalue  -> x.13 (variable, local)
+        |           `-- Identifier "y"  <char> lvalue  -> y.14 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+add                function       int (int, int)             -        global                         3     -     1     _Z3addii             _Z3addii                 defined
+a                  parameter      int                        param    global > add()                 3     4     1     a.1                  -                        
+b                  parameter      int                        param    global > add()                 3     4     1     b.2                  -                        
+add                function       int (int, int, int)        -        global                         6     -     1     _Z3addiii            _Z3addiii                defined
+a                  parameter      int                        param    global > add()                 6     4     1     a.3                  -                        
+b                  parameter      int                        param    global > add()                 6     4     1     b.4                  -                        
+c                  parameter      int                        param    global > add()                 6     4     1     c.5                  -                        
+combine            function       int (int, int)             -        global                         10    -     1     _Z7combineii         _Z7combineii             defined
+a                  parameter      int                        param    global > combine()             10    4     1     a.6                  -                        
+b                  parameter      int                        param    global > combine()             10    4     1     b.7                  -                        
+combine            function       int (char, char)           -        global                         13    -     1     _Z7combinecc         _Z7combinecc             defined
+a                  parameter      char                       param    global > combine()             13    1     1     a.8                  -                        
+b                  parameter      char                       param    global > combine()             13    1     1     b.9                  -                        
+main               function       int (void)                 -        global                         17    -     0     main                 main                     defined
+r1                 variable       int                        local    global > main()                18    4     1     r1.10                -                        
+r2                 variable       int                        local    global > main()                20    4     1     r2.11                -                        
+r3                 variable       int                        local    global > main()                23    4     1     r3.12                -                        
+x                  variable       char                       local    global > main()                25    1     1     x.13                 -                        
+y                  variable       char                       local    global > main()                26    1     1     y.14                 -                        
+r4                 variable       int                        local    global > main()                27    4     1     r4.15                -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

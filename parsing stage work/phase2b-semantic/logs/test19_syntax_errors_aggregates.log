@@ -1,0 +1,48 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test19_syntax_errors_aggregates.c
+
+Syntax analysis failed: 9 error(s); semantic analysis was not run.
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:12:1: syntax error: syntax error, unexpected ';', expecting '}'
+ 12 | ;
+    | ^
+    | note: insert '}' here
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:17:5: syntax error: syntax error, unexpected INT, expecting ';'
+ 17 |     int y1;
+    |     ^
+    | note: insert ';' here
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:21:29: syntax error: syntax error, unexpected IDENTIFIER, expecting '}' or ','
+ 21 | enum T03_Color { RED, GREEN BLUE };
+    |                             ^
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:26:5: syntax error: syntax error, unexpected FLOAT, expecting ';'
+ 26 |     float f;
+    |     ^
+    | note: insert ';' here
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:30:17: syntax error: syntax error, unexpected '{'
+ 30 | class T05_Bad : {
+    |                 ^
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:35:25: syntax error: syntax error, unexpected '{', expecting IDENTIFIER or TYPE_NAME
+ 35 | class T06_Bad2 : public {
+    |                         ^
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:42:1: syntax error: syntax error, unexpected PUBLIC
+ 42 | public:
+    | ^
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:48:29: syntax error: syntax error, unexpected '{', expecting ')'
+ 48 |     T08_Widget(int w, int h {
+    |                             ^
+    | note: insert ')' here
+
+../phase2-parser/test/test19_syntax_errors_aggregates.c:56:6: syntax error: syntax error, unexpected '(', expecting IDENTIFIER
+ 56 |     ~() {
+    |      ^
+

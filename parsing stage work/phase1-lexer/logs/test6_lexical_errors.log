@@ -1,0 +1,66 @@
+=========================================
+        LEXICAL ERROR REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase1-lexer/test/test6_lexical_errors.c
+
+[1]
+Line    : 2
+Lexeme  : 'a;
+Message : Unterminated character literal
+
+[2]
+Line    : 3
+Lexeme  : "oops;
+Message : Unterminated string literal
+
+[3]
+Line    : 4
+Lexeme  : @
+Message : Illegal character
+
+[4]
+Line    : 6
+Lexeme  : \q
+Message : Invalid escape sequence
+
+[5]
+Line    : 7
+Lexeme  : \x
+Message : Invalid escape sequence
+
+[6]
+Line    : 8
+Lexeme  : \8
+Message : Invalid escape sequence
+
+[7]
+Line    : 9
+Lexeme  : 089
+Message : Invalid octal literal: digits 8/9 not allowed after a leading 0
+
+[8]
+Line    : 10
+Lexeme  : 0b1102
+Message : Invalid binary literal: only digits 0/1 allowed after 0b
+
+[9]
+Line    : 11
+Lexeme  : 0x
+Message : Invalid hex literal: expected at least one hex digit after 0x
+
+[10]
+Line    : 12
+Lexeme  : 0b
+Message : Invalid binary literal: expected at least one binary digit after 0b
+
+[11]
+Line    : 13
+Lexeme  : /*
+Message : Unterminated block comment
+
+-----------------------------------------
+Total Errors : 11
+
+Warnings:
+Line 5: Multi-character character constant (has type int) (near ''AB'')

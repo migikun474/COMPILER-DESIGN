@@ -1,0 +1,88 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e08_control_flow.c
+
+Semantic analysis failed: 20 error(s), 0 warning(s) in 'test/invalid/e08_control_flow.c'.
+
+test/invalid/e08_control_flow.c:5:5: semantic error: 'break' statement not within a loop or switch [misplaced-break]
+ 5 |     break;                        // error: 'break' statement not within a loop or switch
+   |     ^
+
+test/invalid/e08_control_flow.c:6:5: semantic error: 'continue' statement not within a loop [misplaced-continue]
+ 6 |     continue;                     // error: 'continue' statement not within a loop
+   |     ^
+
+test/invalid/e08_control_flow.c:7:5: semantic error: 'case' label not within a switch statement [misplaced-case]
+ 7 |     case 1: ;                     // error: 'case' label not within a switch statement
+   |     ^
+
+test/invalid/e08_control_flow.c:8:5: semantic error: 'default' label not within a switch statement [misplaced-default]
+ 8 |     default: ;                    // error: 'default' label not within a switch statement
+   |     ^
+
+test/invalid/e08_control_flow.c:18:14: semantic error: duplicate case value '1' (previously used at line 17) [duplicate-case]
+ 18 |         case 1: break;            // error: duplicate case value '1' (previously used at line 17)
+    |              ^
+
+test/invalid/e08_control_flow.c:19:16: semantic error: duplicate case value '1' (previously used at line 17) [duplicate-case]
+ 19 |         case 2 - 1: break;        // error: duplicate case value '1'
+    |                ^
+
+test/invalid/e08_control_flow.c:20:14: semantic error: case label does not reduce to an integer constant [non-constant-case]
+ 20 |         case x: break;            // error: case label does not reduce to an integer constant
+    |              ^
+
+test/invalid/e08_control_flow.c:22:9: semantic error: multiple default labels in one switch (previous default at line 21) [duplicate-default]
+ 22 |         default: break;           // error: multiple default labels in one switch
+    |         ^
+
+test/invalid/e08_control_flow.c:26:13: semantic error: 'continue' statement not within a loop [misplaced-continue]
+ 26 |             continue;             // error: 'continue' statement not within a loop
+    |             ^
+
+test/invalid/e08_control_flow.c:28:13: semantic error: switch quantity must have an integer type, not 'double' [invalid-switch]
+ 28 |     switch (d) { default: break; }   // error: switch quantity must have an integer type, not 'double'
+    |             ^
+
+test/invalid/e08_control_flow.c:29:13: semantic error: switch quantity must have an integer type, not 'int *' [invalid-switch]
+ 29 |     switch (p) { default: break; }   // error: switch quantity must have an integer type
+    |             ^
+
+test/invalid/e08_control_flow.c:30:9: semantic error: condition of 'if' must have a scalar (arithmetic or pointer) type, not 'struct S' [invalid-condition]
+ 30 |     if (s) x = 1;                 // error: condition of 'if' must have a scalar
+    |         ^
+
+test/invalid/e08_control_flow.c:31:12: semantic error: condition of 'while' must have a scalar (arithmetic or pointer) type, not 'struct S' [invalid-condition]
+ 31 |     while (s) { }                 // error: condition of 'while' must have a scalar
+    |            ^
+
+test/invalid/e08_control_flow.c:32:12: semantic error: condition of 'for' must have a scalar (arithmetic or pointer) type, not 'struct S' [invalid-condition]
+ 32 |     for (; s; ) { }               // error: condition of 'for' must have a scalar
+    |            ^
+
+test/invalid/e08_control_flow.c:33:19: semantic error: condition of 'do-while' must have a scalar (arithmetic or pointer) type, not 'struct S' [invalid-condition]
+ 33 |     do { } while (s);             // error: condition of 'do-while' must have a scalar
+    |                   ^
+
+test/invalid/e08_control_flow.c:34:12: semantic error: condition of 'until' must have a scalar (arithmetic or pointer) type, not 'struct S' [invalid-condition]
+ 34 |     until (s) { }                 // error: condition of 'until' must have a scalar
+    |            ^
+
+test/invalid/e08_control_flow.c:35:10: semantic error: use of undeclared label 'nowhere' (labels are local to their function) [label]
+ 35 |     goto nowhere;                 // error: use of undeclared label 'nowhere'
+    |          ^
+
+test/invalid/e08_control_flow.c:38:1: semantic error: redefinition of label 'twice' (previous definition at line 36) [label]
+ 38 | twice:                            // error: redefinition of label 'twice'
+    | ^
+
+test/invalid/e08_control_flow.c:40:30: semantic error: 'break' statement not within a loop or switch [misplaced-break]
+ 40 |         auto inner = [&]() { break; };   // error: 'break' statement not within a loop or switch
+    |                              ^
+
+test/invalid/e08_control_flow.c:47:10: semantic error: use of undeclared label 'twice' (labels are local to their function) [label]
+ 47 |     goto twice;                   // error: use of undeclared label 'twice' (labels are local to their function)
+    |          ^
+

@@ -1,0 +1,45 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test1_variables_vs_procedures.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test1_variables_vs_procedures.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "a : _Z1aii"  <int (int, int)>  -> _Z1aii (function)
+|   |-- ParamDecl "b : INT"  <int>  -> b.1 (parameter, param)
+|   |-- ParamDecl "c : INT"  <int>  -> c.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "b"  <int> lvalue  -> b.1 (parameter, param)
+|               `-- Identifier "c"  <int> lvalue  -> c.2 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "a : INT"  <int>  -> a.3 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.3 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "result : INT"  <int>  -> result.4 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.3 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- EmptyStmt
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+a                  function       int (int, int)             -        global                         3     -     0     _Z1aii               _Z1aii                   defined
+b                  parameter      int                        param    global > a()                   3     4     1     b.1                  -                        
+c                  parameter      int                        param    global > a()                   3     4     1     c.2                  -                        
+main               function       int (void)                 -        global                         7     -     0     main                 main                     defined
+a                  variable       int                        local    global > main()                8     4     2     a.3                  -                        
+result             variable       int                        local    global > main()                10    4     0     result.4             -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

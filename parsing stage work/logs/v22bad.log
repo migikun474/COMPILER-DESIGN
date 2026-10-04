@@ -1,0 +1,12 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/v22bad.c
+
+Semantic analysis failed: 1 error(s), 0 warning(s) in '/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/v22bad.c'.
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/v22bad.c:17:46: semantic error: array size must be greater than zero ('-1' given) [array-size]
+ 17 | int value_size_ok[sizeof(struct Value) == 16 ? 1 : -1];
+    |                                              ^
+

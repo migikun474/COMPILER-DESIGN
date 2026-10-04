@@ -1,0 +1,816 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/test24_cpp_and_c99_syntax.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+typedef                        typedef             
+int                            int                 
+T                              TYPEDEF             
+;                              semicolon_op        
+class                          class               
+Node                           CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+value                          INT                 
+;                              semicolon_op        
+Node                           CLASS               
+*                              star_op             
+next                           CLASS_POINTER       
+;                              semicolon_op        
+Node                           CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+Node                           CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+,                              comma_op            
+Node                           CLASS               
+*                              star_op             
+n                              CLASS_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+value                          INT                 
+=                              assign_op           
+v                              INT                 
+;                              semicolon_op        
+next                           CLASS_POINTER       
+=                              assign_op           
+n                              CLASS_POINTER       
+;                              semicolon_op        
+}                              close_brace_op      
+~                              tilde_op            
+Node                           DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+static                         static              
+int                            int                 
+count                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+Node                           CLASS               
+operator                       PROCEDURE           
++                              plus_op             
+(                              open_paren_op       
+Node                           CLASS               
+o                              CLASS               
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+Node                           CONSTRUCTOR         
+(                              open_paren_op       
+value                          INT                 
++                              plus_op             
+o                              CLASS               
+.                              dot_op              
+value                          IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+auto                           auto                
+f                              INT                 
+=                              assign_op           
+[                              open_bracket_op     
+this                           this                
+]                              close_bracket_op    
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+value                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+return                         return              
+f                              INT                 
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+Node                           CLASS               
+::                             scope_resolution_op 
+Node                           CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+value                          IDENTIFIER          
+=                              assign_op           
+v                              INT                 
+;                              semicolon_op        
+next                           IDENTIFIER          
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+Node                           CLASS               
+::                             scope_resolution_op 
+~                              tilde_op            
+Node                           DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+Node                           CLASS               
+::                             scope_resolution_op 
+count                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+struct                         struct              
+Pt                             STRUCT              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+sum                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+,                              comma_op            
+...                            ellipsis_op         
+)                              close_paren_op      
+{                              open_brace_op       
+va_list                        va_list             
+ap                             VA_LIST             
+;                              semicolon_op        
+va_start                       va_start            
+(                              open_paren_op       
+ap                             VA_LIST             
+,                              comma_op            
+n                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+s                              INT                 
+=                              assign_op           
+va_arg                         va_arg              
+(                              open_paren_op       
+ap                             VA_LIST             
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+va_end                         va_end              
+(                              open_paren_op       
+ap                             VA_LIST             
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+s                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+apply                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+apply                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+f                              INT_POINTER         
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+,                              comma_op            
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+f                              INT_POINTER         
+(                              open_paren_op       
+v                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+twice                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+v                              INT                 
+*                              star_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+Node                           CLASS               
+a                              CLASS               
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+Node                           CLASS               
+b                              CLASS               
+(                              open_paren_op       
+2                              INT_LITERAL         
+,                              comma_op            
+&                              ampersand_op        
+a                              CLASS               
+)                              close_paren_op      
+;                              semicolon_op        
+Node                           CLASS               
+c                              CLASS               
+=                              assign_op           
+a                              CLASS               
++                              plus_op             
+b                              CLASS               
+;                              semicolon_op        
+Node                           CLASS               
+*                              star_op             
+heap                           CLASS_POINTER       
+=                              assign_op           
+new                            new                 
+Node                           CLASS               
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+many                           INT_POINTER         
+=                              assign_op           
+new                            new                 
+int                            int                 
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+(                              open_paren_op       
+5                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+const                          const               
+cp                             INT_POINTER         
+=                              assign_op           
+&                              ampersand_op        
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+&                              ampersand_op        
+rp                             INT_POINTER_POINTER 
+=                              assign_op           
+many                           INT_POINTER         
+;                              semicolon_op        
+auto                           auto                
+counter                        INT                 
+=                              assign_op           
+[                              open_bracket_op     
+x                              INT                 
+]                              close_bracket_op    
+(                              open_paren_op       
+)                              close_paren_op      
+mutable                        mutable             
+{                              open_brace_op       
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+return                         return              
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+auto                           auto                
+typed                          INT                 
+=                              assign_op           
+[                              open_bracket_op     
+]                              close_bracket_op    
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+->                             arrow_op            
+double                         double              
+{                              open_brace_op       
+return                         return              
+v                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+auto                           auto                
+bare                           INT                 
+=                              assign_op           
+[                              open_bracket_op     
+&                              ampersand_op        
+]                              close_bracket_op    
+{                              open_brace_op       
+return                         return              
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Pt                             STRUCT              
+p                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+.                              dot_op              
+y                              IDENTIFIER          
+=                              assign_op           
+2                              INT_LITERAL         
+,                              comma_op            
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+1                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+arr                            INT_ARRAY           
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+7                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+zeros                          INT_ARRAY           
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+}                              close_brace_op      
+;                              semicolon_op        
+char                           char                
+*                              star_op             
+s                              CHAR_POINTER        
+=                              assign_op           
+"adj"                          STRING_LITERAL      
+"acent"                        STRING_LITERAL      
+;                              semicolon_op        
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+fn                             INT_FUNCTION_POINTER
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
+twice                          PROCEDURE           
+;                              semicolon_op        
+{                              open_brace_op       
+struct                         struct              
+Local                          STRUCT              
+{                              open_brace_op       
+int                            int                 
+k                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+Local                          INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+T                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+delete                         delete              
+heap                           CLASS_POINTER       
+;                              semicolon_op        
+delete[]                       delete_array        
+many                           INT_POINTER         
+;                              semicolon_op        
+return                         return              
+Node                           CLASS               
+::                             scope_resolution_op 
+count                          IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+sum                            PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+*                              star_op             
+cp                             INT_POINTER         
++                              plus_op             
+*                              star_op             
+rp                             INT_POINTER_POINTER 
++                              plus_op             
+counter                        INT                 
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+typed                          INT                 
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+bare                           INT                 
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+p                              STRUCT              
+.                              dot_op              
+x                              INT                 
++                              plus_op             
+arr                            INT_ARRAY           
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+zeros                          INT_ARRAY           
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+s                              CHAR_POINTER        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+fn                             INT_FUNCTION_POINTER
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+apply                          PROCEDURE           
+(                              open_paren_op       
+twice                          PROCEDURE           
+,                              comma_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+Local                          INT                 
++                              plus_op             
+T                              INT                 
++                              plus_op             
+c                              CLASS               
+.                              dot_op              
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- TypedefDecl "T = INT"
+|-- ClassDecl "Node"
+|   |-- VarDecl "value : INT"
+|   |-- VarDecl "next : CLASS_POINTER"
+|   |-- ConstructorDef "Node : _ZN4NodeC1Ei"
+|   |   `-- ParamDecl "v : INT"
+|   |-- ConstructorDef "Node : _ZN4NodeC1EiPS_"
+|   |   |-- ParamDecl "v : INT"
+|   |   |-- ParamDecl "n : CLASS_POINTER"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- Identifier "value"
+|   |       |       `-- Identifier "v"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "next"
+|   |               `-- Identifier "n"
+|   |-- DestructorDef "Node : _ZN4NodeD1Ev"
+|   |-- FunctionDecl "count : _ZN4Node5countEv"
+|   |-- FunctionDef "operator+ : _ZN4NodeplES_"
+|   |   |-- ParamDecl "o : CLASS"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- CallExpr
+|   |               |-- Identifier "Node"
+|   |               `-- BinaryExpr "+"
+|   |                   |-- Identifier "value"
+|   |                   `-- MemberExpr "value"
+|   |                       `-- Identifier "o"
+|   `-- FunctionDef "get : _ZN4Node3getEv"
+|       `-- CompoundStmt
+|           |-- VarDecl "f : INT"
+|           |   `-- LambdaExpr "this"
+|           |       `-- CompoundStmt
+|           |           `-- ReturnStmt
+|           |               `-- Identifier "value"
+|           `-- ReturnStmt
+|               `-- CallExpr
+|                   `-- Identifier "f"
+|-- ConstructorDef "Node : _ZN4NodeC1Ei"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "value"
+|       |       `-- Identifier "v"
+|       `-- ExprStmt
+|           `-- AssignExpr "="
+|               |-- Identifier "next"
+|               `-- IntLiteral "0"
+|-- DestructorDef "Node : _ZN4NodeD1Ev"
+|   `-- CompoundStmt
+|-- FunctionDef "count : _ZN4Node5countEv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "1"
+|-- StructDecl "Pt"
+|   |-- VarDecl "x : INT"
+|   `-- VarDecl "y : INT"
+|-- FunctionDef "sum : _Z3sumiz"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "ap : VA_LIST"
+|       |-- ExprStmt
+|       |   `-- BuiltinCallExpr "va_start"
+|       |       |-- Identifier "ap"
+|       |       `-- Identifier "n"
+|       |-- VarDecl "s : INT"
+|       |   `-- BuiltinCallExpr "va_arg"
+|       |       |-- Identifier "ap"
+|       |       `-- TypeName "INT"
+|       |-- ExprStmt
+|       |   `-- BuiltinCallExpr "va_end"
+|       |       `-- Identifier "ap"
+|       `-- ReturnStmt
+|           `-- Identifier "s"
+|-- FunctionDecl "apply : _Z5applyPFiiEi"
+|-- FunctionDef "apply : _Z5applyPFiiEi"
+|   |-- ParamDecl "f : INT_POINTER"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- CallExpr
+|               |-- Identifier "f"
+|               `-- Identifier "v"
+|-- FunctionDef "twice : _Z5twicei"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "v"
+|               `-- IntLiteral "2"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "a : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       `-- IntLiteral "1"
+        |-- VarDecl "b : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       |-- IntLiteral "2"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "a"
+        |-- VarDecl "c : CLASS"
+        |   `-- BinaryExpr "+"
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- VarDecl "heap : CLASS_POINTER"
+        |   `-- NewExpr "CLASS"
+        |       `-- ConstructExpr "CLASS"
+        |           `-- IntLiteral "3"
+        |-- VarDecl "many : INT_POINTER"
+        |   `-- NewExpr "INT_ARRAY"
+        |-- VarDecl "x : INT"
+        |   `-- ConstructExpr "INT"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "cp : INT_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "x"
+        |-- VarDecl "rp : INT_POINTER_POINTER"
+        |   `-- Identifier "many"
+        |-- VarDecl "counter : INT"
+        |   `-- LambdaExpr "x"
+        |       `-- CompoundStmt
+        |           |-- ExprStmt
+        |           |   `-- PostfixOpExpr "++"
+        |           |       `-- Identifier "x"
+        |           `-- ReturnStmt
+        |               `-- Identifier "x"
+        |-- VarDecl "typed : INT"
+        |   `-- LambdaExpr
+        |       |-- ParamDecl "v : INT"
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- Identifier "v"
+        |-- VarDecl "bare : INT"
+        |   `-- LambdaExpr "&"
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- Identifier "x"
+        |-- VarDecl "p : STRUCT"
+        |   `-- InitializerList
+        |       |-- DesignatedInit ".y"
+        |       |   `-- IntLiteral "2"
+        |       `-- DesignatedInit ".x"
+        |           `-- IntLiteral "1"
+        |-- VarDecl "arr : INT_ARRAY"
+        |   `-- InitializerList
+        |       `-- DesignatedInit "[]"
+        |           |-- IntLiteral "1"
+        |           `-- IntLiteral "7"
+        |-- VarDecl "zeros : INT_ARRAY"
+        |   `-- InitializerList
+        |-- VarDecl "s : CHAR_POINTER"
+        |   `-- StringLiteral ""adjacent""
+        |-- VarDecl "fn : INT_FUNCTION_POINTER"
+        |   `-- CastExpr "INT_POINTER"
+        |       `-- Identifier "twice"
+        |-- CompoundStmt
+        |   `-- StructDecl "Local"
+        |       `-- VarDecl "k : INT"
+        |-- VarDecl "Local : INT"
+        |   `-- IntLiteral "0"
+        |-- VarDecl "T : INT"
+        |   `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- DeleteExpr
+        |       `-- Identifier "heap"
+        |-- ExprStmt
+        |   `-- DeleteExpr "[]"
+        |       `-- Identifier "many"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- CallExpr
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- ScopeExpr "count"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "Node"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |       |-- Identifier "sum"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |       |-- IntLiteral "1"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "2"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
+                |   |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "cp"
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
+                |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "rp"
+                |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "counter"
+                |   |   |   |   |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |   |   |   |   |       |-- Identifier "typed"
+                |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "1"
+                |   |   |   |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |   |   |   |       `-- Identifier "bare"
+                |   |   |   |   |   |   |   |   `-- MemberExpr "x"
+                |   |   |   |   |   |   |   |       `-- Identifier "p"
+                |   |   |   |   |   |   |   `-- IndexExpr
+                |   |   |   |   |   |   |       |-- Identifier "arr"
+                |   |   |   |   |   |   |       `-- IntLiteral "1"
+                |   |   |   |   |   |   `-- IndexExpr
+                |   |   |   |   |   |       |-- Identifier "zeros"
+                |   |   |   |   |   |       `-- IntLiteral "0"
+                |   |   |   |   |   `-- IndexExpr
+                |   |   |   |   |       |-- Identifier "s"
+                |   |   |   |   |       `-- IntLiteral "0"
+                |   |   |   |   `-- CallExpr
+                |   |   |   |       |-- Identifier "fn"
+                |   |   |   |       `-- IntLiteral "1"
+                |   |   |   `-- CallExpr "_Z5applyPFiiEi"
+                |   |   |       |-- Identifier "apply"
+                |   |   |       |-- Identifier "twice"
+                |   |   |       `-- IntLiteral "1"
+                |   |   `-- Identifier "Local"
+                |   `-- Identifier "T"
+                `-- CallExpr
+                    `-- MemberExpr "get"
+                        `-- Identifier "c"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+T                    typedef        11     global                       INT                                       0                                
+Node                 class_tag      12     global                       CLASS                                     0                                
+Node::value          class_member   14     global > class Node          INT                                       3                                
+Node::next           class_member   15     global > class Node          CLASS_POINTER    *                        1                                
+Node::v              parameter      16     global > class Node > Node::Node() INT                                       0                                
+Node::Node           class_method   16     global > class Node          CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
+Node::v              parameter      17     global > class Node > Node::Node() INT                                       1                                
+Node::n              parameter      17     global > class Node > Node::Node() CLASS_POINTER                             1                                
+Node::Node           class_method   17     global > class Node          CONSTRUCTOR                               1         VOID (INT, CLASS_POINTER) _ZN4NodeC1EiPS_
+Node::~Node          class_method   18     global > class Node          DESTRUCTOR                                0         VOID ()                _ZN4NodeD1Ev
+Node::count          class_method   19     global > class Node          PROCEDURE        static                   0         INT ()                 _ZN4Node5countEv
+Node::operator+      class_method   20     global > class Node          PROCEDURE                                 0         CLASS (CLASS)          _ZN4NodeplES_
+Node::o              parameter      20     global > class Node > operator+() CLASS                                     1                                
+Node::get            class_method   21     global > class Node          PROCEDURE                                 0         INT ()                 _ZN4Node3getEv
+Node::f              variable       21     global > class Node > get()  INT                                       1                                
+Node::v              parameter      23     global > Node::Node()        INT                                       1                                
+Node::Node           procedure      23     global                       CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
+Node::~Node          procedure      24     global                       DESTRUCTOR                                0         VOID ()                _ZN4NodeD1Ev
+Node::count          procedure      25     global                       PROCEDURE                                 0         INT ()                 _ZN4Node5countEv
+Pt                   struct_tag     26     global                       STRUCT                                    0                                
+Pt::x                struct_member  26     global > struct Pt           INT                                       0                                
+Pt::y                struct_member  26     global > struct Pt           INT                                       0                                
+sum                  procedure      27     global                       PROCEDURE                                 1         INT (INT)              _Z3sumiz
+n                    parameter      27     global > sum()               INT                                       1                                
+ap                   variable       28     global > sum()               VA_LIST                                   3                                
+s                    variable       30     global > sum()               INT                                       1                                
+apply                procedure      34     global                       PROCEDURE                                 0         INT (INT_POINTER, INT) _Z5applyPFiiEi
+apply                procedure      35     global                       PROCEDURE                                 1         INT (INT_POINTER, INT) _Z5applyPFiiEi
+f                    parameter      35     global > apply()             INT_POINTER                               1                                
+v                    parameter      35     global > apply()             INT                                       1                                
+twice                procedure      36     global                       PROCEDURE                                 2         INT (INT)              _Z5twicei
+v                    parameter      36     global > twice()             INT                                       1                                
+main                 procedure      37     global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       38     global > main()              CLASS                                     2                                
+b                    variable       39     global > main()              CLASS                                     1                                
+c                    variable       40     global > main()              CLASS                                     1                                
+heap                 variable       41     global > main()              CLASS_POINTER    *                        1                                
+many                 variable       42     global > main()              INT_POINTER      *                        2                                
+x                    variable       43     global > main()              INT                                       5                                
+cp                   variable       44     global > main()              INT_POINTER      *                        1                                
+rp                   variable       45     global > main()              INT_POINTER_POINTER **                       1                                
+counter              variable       46     global > main()              INT                                       1                                
+v                    parameter      47     global > main() > lambda     INT                                       1                                
+typed                variable       47     global > main()              INT                                       1                                
+bare                 variable       48     global > main()              INT                                       1                                
+p                    variable       49     global > main()              STRUCT                                    1                                
+arr                  variable       50     global > main()              INT_ARRAY        []                       1                                
+zeros                variable       51     global > main()              INT_ARRAY        []                       1                                
+s                    variable       52     global > main()              CHAR_POINTER     *                        1                                
+fn                   variable       53     global > main()              INT_FUNCTION_POINTER *                        1         INT (INT)              
+Local                struct_tag     55     global > main() > block      STRUCT                                    0                                
+Local::k             struct_member  55     global > main() > block > struct Local INT                                       0                                
+Local                variable       57     global > main()              INT                                       1                                
+T                    variable       58     global > main()              INT                                       1                                

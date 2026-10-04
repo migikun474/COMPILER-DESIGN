@@ -1,0 +1,225 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v05_arrays.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v05_arrays.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "sum : _Z3sumPii"  <int (int *, int)>  -> _Z3sumPii (function)
+|   |-- ParamDecl "a : INT_ARRAY"  <int *>  -> a.1 (parameter, param)
+|   |-- ParamDecl "n : INT"  <int>  -> n.2 (parameter, param)
+|   `-- CompoundStmt
+|       |-- VarDecl "s : INT"  <int>  -> s.3 (variable, local)
+|       |   `-- IntLiteral "0"  <int> =0
+|       |-- ForStmt
+|       |   |-- VarDecl "i : INT"  <int>  -> i.4 (variable, local)
+|       |   |   `-- IntLiteral "0"  <int> =0
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<"  <int>
+|       |   |       |-- Identifier "i"  <int> lvalue  -> i.4 (variable, local)
+|       |   |       `-- Identifier "n"  <int> lvalue  -> n.2 (parameter, param)
+|       |   |-- PostfixOpExpr "++"  <int>
+|       |   |   `-- Identifier "i"  <int> lvalue  -> i.4 (variable, local)
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "+="  <int>
+|       |           |-- Identifier "s"  <int> lvalue  -> s.3 (variable, local)
+|       |           `-- IndexExpr  <int> lvalue
+|       |               |-- Identifier "a"  <int *> lvalue  -> a.1 (parameter, param)
+|       |               `-- Identifier "i"  <int> lvalue  -> i.4 (variable, local)
+|       `-- ReturnStmt
+|           `-- Identifier "s"  <int> lvalue  -> s.3 (variable, local)
+|-- FunctionDef "trace : _Z5tracePA3_i"  <int (int (*)[3])>  -> _Z5tracePA3_i (function)
+|   |-- ParamDecl "m : INT_ARRAY_ARRAY"  <int (*)[3]>  -> m.5 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- IndexExpr  <int> lvalue
+|               |   |   |-- IndexExpr  <int[3]> lvalue
+|               |   |   |   |-- Identifier "m"  <int (*)[3]> lvalue  -> m.5 (parameter, param)
+|               |   |   |   `-- IntLiteral "0"  <int> =0
+|               |   |   `-- IntLiteral "0"  <int> =0
+|               |   `-- IndexExpr  <int> lvalue
+|               |       |-- IndexExpr  <int[3]> lvalue
+|               |       |   |-- Identifier "m"  <int (*)[3]> lvalue  -> m.5 (parameter, param)
+|               |       |   `-- IntLiteral "1"  <int> =1
+|               |       `-- IntLiteral "1"  <int> =1
+|               `-- IndexExpr  <int> lvalue
+|                   |-- IndexExpr  <int[3]> lvalue
+|                   |   |-- Identifier "m"  <int (*)[3]> lvalue  -> m.5 (parameter, param)
+|                   |   `-- IntLiteral "2"  <int> =2
+|                   `-- IntLiteral "2"  <int> =2
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"  <int[5]>  -> a.6 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       |-- IntLiteral "1"  <int> =1
+        |       |-- IntLiteral "2"  <int> =2
+        |       |-- IntLiteral "3"  <int> =3
+        |       |-- IntLiteral "4"  <int> =4
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "z : INT_ARRAY"  <int[5]>  -> z.7 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "name : CHAR_ARRAY"  <char[10]>  -> name.8 (variable, local)
+        |   `-- StringLiteral ""abc""  <char[4]> lvalue
+        |-- VarDecl "exact : CHAR_ARRAY"  <char[3]>  -> exact.9 (variable, local)
+        |   `-- StringLiteral ""abc""  <char[4]> lvalue
+        |-- VarDecl "chars : CHAR_ARRAY"  <char[4]>  -> chars.10 (variable, local)
+        |   `-- InitializerList  <char[4]>
+        |       |-- CharLiteral "'a'"  <char> =97
+        |       |-- CharLiteral "'b'"  <char> =98
+        |       |-- CharLiteral "'c'"  <char> =99
+        |       `-- CharLiteral "'\0'"  <char> =0
+        |-- VarDecl "grid : INT_ARRAY_ARRAY"  <int[3][3]>  -> grid.11 (variable, local)
+        |   `-- InitializerList  <int[3][3]>
+        |       |-- InitializerList  <int[3]>
+        |       |   |-- IntLiteral "1"  <int> =1
+        |       |   |-- IntLiteral "0"  <int> =0
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       |-- InitializerList  <int[3]>
+        |       |   |-- IntLiteral "0"  <int> =0
+        |       |   |-- IntLiteral "1"  <int> =1
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- InitializerList  <int[3]>
+        |           |-- IntLiteral "0"  <int> =0
+        |           |-- IntLiteral "0"  <int> =0
+        |           `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "flat : INT_ARRAY_ARRAY"  <int[2][2]>  -> flat.12 (variable, local)
+        |   `-- InitializerList  <int[2][2]>
+        |       |-- IntLiteral "1"  <int> =1
+        |       |-- IntLiteral "2"  <int> =2
+        |       |-- IntLiteral "3"  <int> =3
+        |       `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "cube : INT_ARRAY_ARRAY_ARRAY"  <int[2][3][4]>  -> cube.13 (variable, local)
+        |-- VarDecl "i : INT"  <int>  -> i.14 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- IntLiteral "10"  <int> =10
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |       |   `-- Identifier "i"  <int> lvalue  -> i.14 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- IndexExpr  <int> lvalue
+        |           |   |-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |           |   `-- BinaryExpr "-"  <int>
+        |           |       |-- Identifier "i"  <int> lvalue  -> i.14 (variable, local)
+        |           |       `-- IntLiteral "1"  <int> =1
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |               `-- BinaryExpr "+"  <int>
+        |                   |-- Identifier "i"  <int> lvalue  -> i.14 (variable, local)
+        |                   `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- IndexExpr  <int[3]> lvalue
+        |       |   |   |-- Identifier "grid"  <int[3][3]> lvalue  -> grid.11 (variable, local)
+        |       |   |   `-- IntLiteral "1"  <int> =1
+        |       |   `-- IntLiteral "2"  <int> =2
+        |       `-- IndexExpr  <int> lvalue
+        |           |-- IndexExpr  <int[3]> lvalue
+        |           |   |-- Identifier "grid"  <int[3][3]> lvalue  -> grid.11 (variable, local)
+        |           |   `-- IntLiteral "2"  <int> =2
+        |           `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- IndexExpr  <int[4]> lvalue
+        |       |   |   |-- IndexExpr  <int[3][4]> lvalue
+        |       |   |   |   |-- Identifier "cube"  <int[2][3][4]> lvalue  -> cube.13 (variable, local)
+        |       |   |   |   `-- IntLiteral "1"  <int> =1
+        |       |   |   `-- IntLiteral "2"  <int> =2
+        |       |   `-- IntLiteral "3"  <int> =3
+        |       `-- IntLiteral "7"  <int> =7
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <char>
+        |       |-- IndexExpr  <char> lvalue
+        |       |   |-- Identifier "name"  <char[10]> lvalue  -> name.8 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- CharLiteral "'A'"  <char> =65
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.14 (variable, local)
+        |       `-- IndexExpr  <int> lvalue
+        |           |-- IntLiteral "1"  <int> =1
+        |           `-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |-- VarDecl "c : CHAR"  <char>  -> c.15 (variable, local)
+        |   `-- IndexExpr  <char> lvalue
+        |       |-- StringLiteral ""literal""  <char[8]> lvalue
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.16 (variable, local)
+        |   `-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "p"  <int *> lvalue  -> p.16 (variable, local)
+        |       `-- IndexExpr  <int[3]> lvalue
+        |           |-- Identifier "grid"  <int[3][3]> lvalue  -> grid.11 (variable, local)
+        |           `-- IntLiteral "1"  <int> =1
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |-- CallExpr  <int>  -> _Z3sumPii (function)
+                |   |   |   |   |   |   |   |-- Identifier "sum"  <int (int *, int)>  -> _Z3sumPii (function)
+                |   |   |   |   |   |   |   |-- Identifier "a"  <int[5]> lvalue  -> a.6 (variable, local)
+                |   |   |   |   |   |   |   `-- IntLiteral "5"  <int> =5
+                |   |   |   |   |   |   `-- CallExpr  <int>  -> _Z5tracePA3_i (function)
+                |   |   |   |   |   |       |-- Identifier "trace"  <int (int (*)[3])>  -> _Z5tracePA3_i (function)
+                |   |   |   |   |   |       `-- Identifier "grid"  <int[3][3]> lvalue  -> grid.11 (variable, local)
+                |   |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |   |       |-- Identifier "z"  <int[5]> lvalue  -> z.7 (variable, local)
+                |   |   |   |   |       `-- IntLiteral "1"  <int> =1
+                |   |   |   |   `-- IndexExpr  <char> lvalue
+                |   |   |   |       |-- Identifier "chars"  <char[4]> lvalue  -> chars.10 (variable, local)
+                |   |   |   |       `-- IntLiteral "0"  <int> =0
+                |   |   |   `-- IndexExpr  <char> lvalue
+                |   |   |       |-- Identifier "exact"  <char[3]> lvalue  -> exact.9 (variable, local)
+                |   |   |       `-- IntLiteral "2"  <int> =2
+                |   |   `-- IndexExpr  <int> lvalue
+                |   |       |-- IndexExpr  <int[2]> lvalue
+                |   |       |   |-- Identifier "flat"  <int[2][2]> lvalue  -> flat.12 (variable, local)
+                |   |       |   `-- IntLiteral "1"  <int> =1
+                |   |       `-- IntLiteral "1"  <int> =1
+                |   `-- Identifier "c"  <char> lvalue  -> c.15 (variable, local)
+                `-- UnaryExpr "*"  <int> lvalue
+                    `-- Identifier "p"  <int *> lvalue  -> p.16 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+sum                function       int (int *, int)           -        global                         3     -     1     _Z3sumPii            _Z3sumPii                defined
+a                  parameter      int *                      param    global > sum()                 3     4     1     a.1                  -                        
+n                  parameter      int                        param    global > sum()                 3     4     1     n.2                  -                        
+s                  variable       int                        local    global > sum()                 4     4     2     s.3                  -                        
+i                  variable       int                        local    global > sum() > for           5     4     3     i.4                  -                        
+trace              function       int (int (*)[3])           -        global                         9     -     1     _Z5tracePA3_i        _Z5tracePA3_i            defined
+m                  parameter      int (*)[3]                 param    global > trace()               9     4     3     m.5                  -                        
+main               function       int (void)                 -        global                         11    -     0     main                 main                     defined
+a                  variable       int[5]                     local    global > main()                12    20    7     a.6                  -                        
+z                  variable       int[5]                     local    global > main()                13    20    1     z.7                  -                        
+name               variable       char[10]                   local    global > main()                14    10    1     name.8               -                        
+exact              variable       char[3]                    local    global > main()                15    3     1     exact.9              -                        
+chars              variable       char[4]                    local    global > main()                16    4     1     chars.10             -                        
+grid               variable       int[3][3]                  local    global > main()                17    36    4     grid.11              -                        
+flat               variable       int[2][2]                  local    global > main()                18    16    1     flat.12              -                        
+cube               variable       int[2][3][4]               local    global > main()                19    96    1     cube.13              -                        
+i                  variable       int                        local    global > main()                20    4     4     i.14                 -                        
+c                  variable       char                       local    global > main()                28    1     1     c.15                 -                        
+p                  variable       int *                      local    global > main()                29    4     2     p.16                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

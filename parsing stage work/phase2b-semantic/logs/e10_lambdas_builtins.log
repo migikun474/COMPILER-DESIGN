@@ -1,0 +1,80 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e10_lambdas_builtins.c
+
+Semantic analysis failed: 17 error(s), 1 warning(s) in 'test/invalid/e10_lambdas_builtins.c'.
+
+test/invalid/e10_lambdas_builtins.c:3:23: semantic error: value of enumerator 'ON' is not an integer constant expression [enum]
+ 3 | enum Mode { OFF, ON = global_value };   // error: value of enumerator 'ON' is not an integer constant expression
+   |                       ^
+
+test/invalid/e10_lambdas_builtins.c:5:5: semantic error: redefinition of 'RED' as a different kind of symbol (previously declared as an enumerator at line 4) [redeclaration]
+ 5 | int RED = 3;                      // error: redefinition of 'RED'
+   |     ^
+
+test/invalid/e10_lambdas_builtins.c:12:32: semantic error: variable 'x' cannot be used in the lambda: it is not captured and the lambda has no capture-default [capture]
+ 12 |     auto noCap = []() { return x; };              // error: variable 'x' cannot be used in the lambda: it is not captured
+    |                                ^
+
+test/invalid/e10_lambdas_builtins.c:13:27: semantic error: cannot modify 'x': it is captured by copy in a non-mutable lambda [const]
+ 13 |     auto byCopy = [x]() { x = 5; return x; };      // error: captured by copy in a non-mutable lambda
+    |                           ^
+
+test/invalid/e10_lambdas_builtins.c:14:17: semantic error: 'global_value' cannot be captured because it does not have automatic storage duration [capture]
+ 14 |     auto glob = [global_value]() { return 0; };   // error: 'global_value' cannot be captured because it does not have automatic storage duration
+    |                 ^
+
+test/invalid/e10_lambdas_builtins.c:15:18: semantic error: 'x' can appear only once in a capture list [capture]
+ 15 |     auto twice = [x, x]() { return 0; };          // error: 'x' can appear only once in a capture list
+    |                  ^
+
+test/invalid/e10_lambdas_builtins.c:16:54: semantic error: return type 'char *' must match the previous return type 'int' (the lambda's return type is deduced) [return-type]
+ 16 |     auto mixed = [](int a) { if (a) return 1; return "one"; };   // error: must match the previous return type 'int'
+    |                                                      ^
+
+test/invalid/e10_lambdas_builtins.c:17:13: semantic error: function 'noCap' expects 0 arguments but 1 was provided [argument-count]
+ 17 |     int r = noCap(1);             // error: function 'noCap' expects 0 arguments but 1 was provided
+    |             ^
+
+test/invalid/e10_lambdas_builtins.c:18:17: semantic error: argument 2 of 'scanf' must be a pointer to the object to store into, not 'int' (did you forget '&'?) [scanf-argument]
+ 18 |     scanf("%d", x);               // error: argument 2 of 'scanf' must be a pointer
+    |                 ^
+
+test/invalid/e10_lambdas_builtins.c:19:20: semantic warning: format '%d' expects 'int *', but argument 2 has type 'double *' [format]
+ 19 |     scanf("%d %s", &d, ro);       // error: argument 3 of 'scanf' points to read-only storage  // warning: format '%d' expects 'int *', but argument 2 has type 'double *'
+    |                    ^
+
+test/invalid/e10_lambdas_builtins.c:19:24: semantic error: argument 3 of 'scanf' points to read-only storage 'const char *' [scanf-argument]
+ 19 |     scanf("%d %s", &d, ro);       // error: argument 3 of 'scanf' points to read-only storage  // warning: format '%d' expects 'int *', but argument 2 has type 'double *'
+    |                        ^
+
+test/invalid/e10_lambdas_builtins.c:20:12: semantic error: type mismatch: argument 1 of 'printf' expects 'const char *' but got 'int' (incompatible integer to pointer conversion) [argument-type]
+ 20 |     printf(5);                    // error: argument 1 of 'printf' expects 'const char *' but got 'int'
+    |            ^
+
+test/invalid/e10_lambdas_builtins.c:21:10: semantic error: type mismatch: argument 1 of 'free' expects 'void *' but got 'int' (incompatible integer to pointer conversion) [argument-type]
+ 21 |     free(x);                      // error: argument 1 of 'free' expects 'void *' but got 'int'
+    |          ^
+
+test/invalid/e10_lambdas_builtins.c:22:21: semantic error: type mismatch: argument 1 of 'malloc' expects 'int' but got 'char *' (incompatible pointer to integer conversion) [argument-type]
+ 22 |     int *m = malloc("big");       // error: argument 1 of 'malloc' expects 'int' but got 'char *'
+    |                     ^
+
+test/invalid/e10_lambdas_builtins.c:23:12: semantic error: type mismatch: argument 1 of 'fclose' expects 'FILE *' but got 'char *' (incompatible pointer types) [argument-type]
+ 23 |     fclose(buf);                  // error: argument 1 of 'fclose' expects 'FILE *' but got 'char *'
+    |            ^
+
+test/invalid/e10_lambdas_builtins.c:24:15: semantic error: function 'fopen' expects 2 arguments but 1 was provided [argument-count]
+ 24 |     FILE *f = fopen("a.txt");     // error: function 'fopen' expects 2 arguments but 1 was provided
+    |               ^
+
+test/invalid/e10_lambdas_builtins.c:25:16: semantic error: non-const reference of type 'int &' cannot bind to a temporary of type 'int' [reference]
+ 25 |     int &ref = 5;                 // error: non-const reference of type 'int &' cannot bind to a temporary of type 'int'
+    |                ^
+
+test/invalid/e10_lambdas_builtins.c:26:18: semantic error: non-const reference of type 'char &' cannot bind to an lvalue of type 'int' [reference]
+ 26 |     char &cref = x;               // error: cannot bind to an lvalue of type 'int'
+    |                  ^
+

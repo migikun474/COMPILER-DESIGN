@@ -1,0 +1,360 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v23_anonymous_unions.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+static                         static              
+union                          union               
+{                              open_brace_op       
+int                            int                 
+bits                           INT                 
+;                              semicolon_op        
+float                          float               
+real                           FLOAT               
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+classify                       PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+v                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+union                          union               
+{                              open_brace_op       
+int                            int                 
+word                           INT                 
+;                              semicolon_op        
+char                           char                
+bytes                          CHAR_ARRAY          
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+union                          union               
+{                              open_brace_op       
+short                          short               
+half                           SHORT               
+;                              semicolon_op        
+char                           char                
+first                          CHAR                
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+word                           INT                 
+=                              assign_op           
+v                              INT                 
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+bytes                          CHAR_ARRAY          
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+==                             eq_op               
+0                              INT_LITERAL         
+)                              close_paren_op      
+return                         return              
+half                           SHORT               
+;                              semicolon_op        
+return                         return              
+first                          CHAR                
++                              plus_op             
+word                           INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+counter                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+static                         static              
+union                          union               
+{                              open_brace_op       
+int                            int                 
+calls                          INT                 
+;                              semicolon_op        
+unsigned                       unsigned            
+u                              UNSIGNED            
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+calls                          INT                 
+=                              assign_op           
+calls                          INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+calls                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+bits                           INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+real                           FLOAT               
+=                              assign_op           
+1.5f                           FLOAT_LITERAL       
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+=                              assign_op           
+&                              ampersand_op        
+bits                           INT                 
+;                              semicolon_op        
+int                            int                 
+n                              INT                 
+=                              assign_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+real                           FLOAT               
+)                              close_paren_op      
++                              plus_op             
+sizeof                         sizeof              
+bits                           INT                 
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+3                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+{                              open_brace_op       
+union                          union               
+{                              open_brace_op       
+int                            int                 
+k                              INT                 
+;                              semicolon_op        
+float                          float               
+kf                             FLOAT               
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+k                              INT                 
+=                              assign_op           
+i                              INT                 
+;                              semicolon_op        
+n                              INT                 
+=                              assign_op           
+n                              INT                 
++                              plus_op             
+k                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+union                          union               
+{                              open_brace_op       
+long                           long                
+total                          LONG                
+;                              semicolon_op        
+char                           char                
+tag                            CHAR                
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+total                          LONG                
+=                              assign_op           
+classify                       PROCEDURE           
+(                              open_paren_op       
+n                              INT                 
+)                              close_paren_op      
++                              plus_op             
+counter                        PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+tag                            CHAR                
+=                              assign_op           
+'z'                            CHAR_LITERAL        
+;                              semicolon_op        
+return                         return              
+*                              star_op             
+p                              INT_POINTER         
++                              plus_op             
+n                              INT                 
++                              plus_op             
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+total                          LONG                
++                              plus_op             
+tag                            CHAR                
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- UnionDecl "(unnamed at 5:8)"
+|   |-- VarDecl "bits : INT"
+|   `-- VarDecl "real : FLOAT"
+|-- FunctionDef "classify : _Z8classifyi"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       |-- UnionDecl "(unnamed at 8:5)"
+|       |   |-- VarDecl "word : INT"
+|       |   |-- VarDecl "bytes : CHAR_ARRAY"
+|       |   `-- UnionDecl "(unnamed at 11:9)"
+|       |       |-- VarDecl "half : SHORT"
+|       |       `-- VarDecl "first : CHAR"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "word"
+|       |       `-- Identifier "v"
+|       |-- IfStmt
+|       |   |-- BinaryExpr "=="
+|       |   |   |-- IndexExpr
+|       |   |   |   |-- Identifier "bytes"
+|       |   |   |   `-- IntLiteral "0"
+|       |   |   `-- IntLiteral "0"
+|       |   `-- ReturnStmt
+|       |       `-- Identifier "half"
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "first"
+|               `-- Identifier "word"
+|-- FunctionDef "counter : _Z7counterv"
+|   `-- CompoundStmt
+|       |-- UnionDecl "(unnamed at 19:12)"
+|       |   |-- VarDecl "calls : INT"
+|       |   `-- VarDecl "u : UNSIGNED"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "calls"
+|       |       `-- BinaryExpr "+"
+|       |           |-- Identifier "calls"
+|       |           `-- IntLiteral "1"
+|       `-- ReturnStmt
+|           `-- Identifier "calls"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "bits"
+        |       `-- IntLiteral "0"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "real"
+        |       `-- FloatLiteral "1.5f"
+        |-- VarDecl "p : INT_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "bits"
+        |-- VarDecl "n : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- SizeofExpr
+        |       |   `-- Identifier "real"
+        |       `-- SizeofExpr
+        |           `-- Identifier "bits"
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"
+        |   |   `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "3"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       |-- UnionDecl "(unnamed at 30:9)"
+        |       |   |-- VarDecl "k : INT"
+        |       |   `-- VarDecl "kf : FLOAT"
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="
+        |       |       |-- Identifier "k"
+        |       |       `-- Identifier "i"
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "n"
+        |               `-- BinaryExpr "+"
+        |                   |-- Identifier "n"
+        |                   `-- Identifier "k"
+        |-- UnionDecl "(unnamed at 34:5)"
+        |   |-- VarDecl "total : LONG"
+        |   `-- VarDecl "tag : CHAR"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "total"
+        |       `-- BinaryExpr "+"
+        |           |-- CallExpr
+        |           |   |-- Identifier "classify"
+        |           |   `-- Identifier "n"
+        |           `-- CallExpr
+        |               `-- Identifier "counter"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "tag"
+        |       `-- CharLiteral "'z'"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- UnaryExpr "*"
+                |   |   |   `-- Identifier "p"
+                |   |   `-- Identifier "n"
+                |   `-- CastExpr "INT"
+                |       `-- Identifier "total"
+                `-- Identifier "tag"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+(unnamed at 5:8)     union_tag      5      global                       UNION                                     0                                
+(unnamed at 5:8)::bits union_member   5      global > union (unnamed at 5:8) INT                                       0                                
+(unnamed at 5:8)::real union_member   5      global > union (unnamed at 5:8) FLOAT                                     0                                
+bits                 variable       5      global                       INT                                       3                                
+real                 variable       5      global                       FLOAT                                     2                                
+classify             procedure      7      global                       PROCEDURE                                 1         INT (INT)              _Z8classifyi
+v                    parameter      7      global > classify()          INT                                       1                                
+(unnamed at 8:5)     union_tag      8      global > classify()          UNION                                     0                                
+(unnamed at 8:5)::word union_member   9      global > classify() > union (unnamed at 8:5) INT                                       0                                
+(unnamed at 8:5)::bytes union_member   10     global > classify() > union (unnamed at 8:5) CHAR_ARRAY       []                       0                                
+(unnamed at 8:5)::(unnamed at 11:9) union_tag      11     global > classify() > union (unnamed at 8:5) UNION                                     0                                
+(unnamed at 11:9)::half union_member   11     global > classify() > union (unnamed at 8:5) > union (unnamed at 11:9) SHORT                                     0                                
+(unnamed at 11:9)::first union_member   11     global > classify() > union (unnamed at 8:5) > union (unnamed at 11:9) CHAR                                      0                                
+word                 variable       12     global > classify()          INT                                       2                                
+bytes                variable       12     global > classify()          CHAR_ARRAY                                1                                
+half                 variable       12     global > classify()          SHORT                                     1                                
+first                variable       12     global > classify()          CHAR                                      1                                
+counter              procedure      18     global                       PROCEDURE                                 1         INT ()                 _Z7counterv
+(unnamed at 19:12)   union_tag      19     global > counter()           UNION                                     0                                
+(unnamed at 19:12)::calls union_member   19     global > counter() > union (unnamed at 19:12) INT                                       0                                
+(unnamed at 19:12)::u union_member   19     global > counter() > union (unnamed at 19:12) UNSIGNED                                  0                                
+calls                variable       19     global > counter()           INT                                       3                                
+u                    variable       19     global > counter()           UNSIGNED                                  0                                
+main                 procedure      24     global                       PROCEDURE                                 0         INT ()                 main
+p                    variable       27     global > main()              INT_POINTER      *                        1                                
+n                    variable       28     global > main()              INT                                       4                                
+i                    variable       29     global > main() > for        INT                                       3                                
+(unnamed at 30:9)    union_tag      30     global > main() > for > block UNION                                     0                                
+(unnamed at 30:9)::k union_member   30     global > main() > for > block > union (unnamed at 30:9) INT                                       0                                
+(unnamed at 30:9)::kf union_member   30     global > main() > for > block > union (unnamed at 30:9) FLOAT                                     0                                
+k                    variable       30     global > main() > for > block INT                                       2                                
+kf                   variable       30     global > main() > for > block FLOAT                                     0                                
+(unnamed at 34:5)    union_tag      34     global > main()              UNION                                     0                                
+(unnamed at 34:5)::total union_member   34     global > main() > union (unnamed at 34:5) LONG                                      0                                
+(unnamed at 34:5)::tag union_member   34     global > main() > union (unnamed at 34:5) CHAR                                      0                                
+total                variable       34     global > main()              LONG                                      2                                
+tag                  variable       34     global > main()              CHAR                                      2                                

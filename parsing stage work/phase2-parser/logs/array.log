@@ -1,0 +1,271 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/array.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT_ARRAY           
+[                              open_bracket_op     
+5                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+,                              comma_op            
+5                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+z                              INT_ARRAY           
+[                              open_bracket_op     
+5                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+char                           char                
+b                              CHAR_ARRAY          
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+'a'                            CHAR_LITERAL        
+,                              comma_op            
+'b'                            CHAR_LITERAL        
+,                              comma_op            
+'c'                            CHAR_LITERAL        
+,                              comma_op            
+'\0'                           CHAR_LITERAL        
+}                              close_brace_op      
+;                              semicolon_op        
+char                           char                
+c                              CHAR_ARRAY          
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+"abc"                          STRING_LITERAL      
+;                              semicolon_op        
+char                           char                
+d                              CHAR                
+=                              assign_op           
+'a'                            CHAR_LITERAL        
+;                              semicolon_op        
+int                            int                 
+e                              INT                 
+=                              assign_op           
+'ab'                           CHAR_LITERAL        
+;                              semicolon_op        
+char                           char                
+g                              CHAR_ARRAY          
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+"a\"b\\c"                      STRING_LITERAL      
+;                              semicolon_op        
+char                           char                
+h                              CHAR_ARRAY          
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+"a/*not a comment*/b // nor this" STRING_LITERAL      
+;                              semicolon_op        
+char                           char                
+i                              CHAR_ARRAY          
+[                              open_bracket_op     
+]                              close_bracket_op    
+=                              assign_op           
+"adj"                          STRING_LITERAL      
+"acent"                        STRING_LITERAL      
+;                              semicolon_op        
+int                            int                 
+j                              INT                 
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"a       = "                   STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+j                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+j                              INT                 
+<                              lt_op               
+5                              INT_LITERAL         
+;                              semicolon_op        
+j                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+printf                         printf              
+(                              open_paren_op       
+"%d "                          STRING_LITERAL      
+,                              comma_op            
+a                              INT_ARRAY           
+[                              open_bracket_op     
+j                              INT                 
+]                              close_bracket_op    
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"\n"                           STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"z       = "                   STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+j                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+j                              INT                 
+<                              lt_op               
+5                              INT_LITERAL         
+;                              semicolon_op        
+j                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+printf                         printf              
+(                              open_paren_op       
+"%d "                          STRING_LITERAL      
+,                              comma_op            
+z                              INT_ARRAY           
+[                              open_bracket_op     
+j                              INT                 
+]                              close_bracket_op    
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"\n"                           STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       |-- IntLiteral "3"
+        |       |-- IntLiteral "4"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "z : INT_ARRAY"
+        |   `-- InitializerList
+        |       `-- IntLiteral "1"
+        |-- VarDecl "b : CHAR_ARRAY"
+        |   `-- InitializerList
+        |       |-- CharLiteral "'a'"
+        |       |-- CharLiteral "'b'"
+        |       |-- CharLiteral "'c'"
+        |       `-- CharLiteral "'\0'"
+        |-- VarDecl "c : CHAR_ARRAY"
+        |   `-- StringLiteral ""abc""
+        |-- VarDecl "d : CHAR"
+        |   `-- CharLiteral "'a'"
+        |-- VarDecl "e : INT"
+        |   `-- CharLiteral "'ab'"
+        |-- VarDecl "g : CHAR_ARRAY"
+        |   `-- StringLiteral ""a\"b\\c""
+        |-- VarDecl "h : CHAR_ARRAY"
+        |   `-- StringLiteral ""a/*not a comment*/b // nor this""
+        |-- VarDecl "i : CHAR_ARRAY"
+        |   `-- StringLiteral ""adjacent""
+        |-- VarDecl "j : INT"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""a       = ""
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="
+        |   |       |-- Identifier "j"
+        |   |       `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "j"
+        |   |       `-- IntLiteral "5"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "j"
+        |   `-- ExprStmt
+        |       `-- BuiltinCallExpr "printf"
+        |           |-- StringLiteral ""%d ""
+        |           `-- IndexExpr
+        |               |-- Identifier "a"
+        |               `-- Identifier "j"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""\n""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""z       = ""
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="
+        |   |       |-- Identifier "j"
+        |   |       `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "j"
+        |   |       `-- IntLiteral "5"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "j"
+        |   `-- ExprStmt
+        |       `-- BuiltinCallExpr "printf"
+        |           |-- StringLiteral ""%d ""
+        |           `-- IndexExpr
+        |               |-- Identifier "z"
+        |               `-- Identifier "j"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""\n""
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      1      global                       PROCEDURE                                 0         INT (VOID)             main
+a                    variable       2      global > main()              INT_ARRAY        []                       1                                
+z                    variable       3      global > main()              INT_ARRAY        []                       1                                
+b                    variable       4      global > main()              CHAR_ARRAY       []                       0                                
+c                    variable       5      global > main()              CHAR_ARRAY       []                       0                                
+d                    variable       6      global > main()              CHAR                                      0                                
+e                    variable       7      global > main()              INT                                       0                                
+g                    variable       8      global > main()              CHAR_ARRAY       []                       0                                
+h                    variable       9      global > main()              CHAR_ARRAY       []                       0                                
+i                    variable       10     global > main()              CHAR_ARRAY       []                       0                                
+j                    variable       11     global > main()              INT                                       8                                

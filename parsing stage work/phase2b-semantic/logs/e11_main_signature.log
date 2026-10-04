@@ -1,0 +1,16 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e11_main_signature.c
+
+Semantic analysis failed: 2 error(s), 0 warning(s) in 'test/invalid/e11_main_signature.c'.
+
+test/invalid/e11_main_signature.c:2:6: semantic error: 'main' must return 'int' (declared to return 'void') [main]
+ 2 | void main(double argc) {          // error: 'main' must return 'int'  // error: invalid parameter list for 'main'
+   |      ^
+
+test/invalid/e11_main_signature.c:2:6: semantic error: invalid parameter list for 'main': expected '()' or '(int argc, char **argv)' [main]
+ 2 | void main(double argc) {          // error: 'main' must return 'int'  // error: invalid parameter list for 'main'
+   |      ^
+

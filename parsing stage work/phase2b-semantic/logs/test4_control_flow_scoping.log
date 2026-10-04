@@ -1,0 +1,103 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test4_control_flow_scoping.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test4_control_flow_scoping.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "sum_to : _Z6sum_toi"  <int (int)>  -> _Z6sum_toi (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.1 (parameter, param)
+|   `-- CompoundStmt
+|       |-- VarDecl "total : INT"  <int>  -> total.2 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "total"  <int> lvalue  -> total.2 (variable, local)
+|       |       `-- IntLiteral "0"  <int> =0
+|       |-- ForStmt
+|       |   |-- VarDecl "i : INT"  <int>  -> i.3 (variable, local)
+|       |   |   `-- IntLiteral "1"  <int> =1
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<="  <int>
+|       |   |       |-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+|       |   |       `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
+|       |   |-- AssignExpr "="  <int>
+|       |   |   |-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+|       |   |   `-- BinaryExpr "+"  <int>
+|       |   |       |-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+|       |   |       `-- IntLiteral "1"  <int> =1
+|       |   `-- CompoundStmt
+|       |       `-- ExprStmt
+|       |           `-- AssignExpr "="  <int>
+|       |               |-- Identifier "total"  <int> lvalue  -> total.2 (variable, local)
+|       |               `-- BinaryExpr "+"  <int>
+|       |                   |-- Identifier "total"  <int> lvalue  -> total.2 (variable, local)
+|       |                   `-- Identifier "i"  <int> lvalue  -> i.3 (variable, local)
+|       `-- ReturnStmt
+|           `-- Identifier "total"  <int> lvalue  -> total.2 (variable, local)
+|-- FunctionDef "classify : _Z8classifyi"  <int (int)>  -> _Z8classifyi (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.4 (parameter, param)
+|   `-- CompoundStmt
+|       |-- SwitchStmt
+|       |   |-- Identifier "n"  <int> lvalue  -> n.4 (parameter, param)
+|       |   `-- CompoundStmt
+|       |       |-- CaseStmt
+|       |       |   |-- IntLiteral "0"  <int> =0
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "0"  <int> =0
+|       |       |-- CaseStmt
+|       |       |   |-- IntLiteral "1"  <int> =1
+|       |       |   `-- ReturnStmt
+|       |       |       `-- IntLiteral "1"  <int> =1
+|       |       `-- DefaultStmt
+|       |           `-- BreakStmt
+|       `-- ReturnStmt
+|           `-- UnaryExpr "-"  <int> =-1
+|               `-- IntLiteral "1"  <int> =1
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "n : INT"  <int>  -> n.5 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "n"  <int> lvalue  -> n.5 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "s : INT"  <int>  -> s.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "s"  <int> lvalue  -> s.6 (variable, local)
+        |       `-- CallExpr  <int>  -> _Z6sum_toi (function)
+        |           |-- Identifier "sum_to"  <int (int)>  -> _Z6sum_toi (function)
+        |           `-- Identifier "n"  <int> lvalue  -> n.5 (variable, local)
+        |-- VarDecl "c : INT"  <int>  -> c.7 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "c"  <int> lvalue  -> c.7 (variable, local)
+        |       `-- CallExpr  <int>  -> _Z8classifyi (function)
+        |           |-- Identifier "classify"  <int (int)>  -> _Z8classifyi (function)
+        |           `-- Identifier "n"  <int> lvalue  -> n.5 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d %d\n""  <char[7]> lvalue
+        |       |-- Identifier "s"  <int> lvalue  -> s.6 (variable, local)
+        |       `-- Identifier "c"  <int> lvalue  -> c.7 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+sum_to             function       int (int)                  -        global                         3     -     1     _Z6sum_toi           _Z6sum_toi               defined
+n                  parameter      int                        param    global > sum_to()              3     4     1     n.1                  -                        
+total              variable       int                        local    global > sum_to()              4     4     4     total.2              -                        
+i                  variable       int                        local    global > sum_to() > for        6     4     4     i.3                  -                        
+classify           function       int (int)                  -        global                         12    -     1     _Z8classifyi         _Z8classifyi             defined
+n                  parameter      int                        param    global > classify()            12    4     1     n.4                  -                        
+main               function       int (void)                 -        global                         24    -     0     main                 main                     defined
+n                  variable       int                        local    global > main()                25    4     3     n.5                  -                        
+s                  variable       int                        local    global > main()                27    4     2     s.6                  -                        
+c                  variable       int                        local    global > main()                29    4     2     c.7                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

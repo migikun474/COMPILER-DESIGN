@@ -1,0 +1,612 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v02_expressions.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+=                              assign_op           
+7                              INT_LITERAL         
+,                              comma_op            
+b                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+,                              comma_op            
+r                              INT                 
+;                              semicolon_op        
+double                         double              
+d                              DOUBLE              
+=                              assign_op           
+3.0                            FLOAT_LITERAL       
+;                              semicolon_op        
+char                           char                
+ch                             CHAR                
+=                              assign_op           
+'a'                            CHAR_LITERAL        
+;                              semicolon_op        
+unsigned                       unsigned            
+int                            int                 
+u                              UNSIGNED_INT        
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+-                              minus_op            
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+*                              star_op             
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+/                              divide_op           
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+%                              mod_op              
+b                              INT                 
+;                              semicolon_op        
+d                              DOUBLE              
+=                              assign_op           
+a                              INT                 
+/                              divide_op           
+d                              DOUBLE              
+;                              semicolon_op        
+d                              DOUBLE              
+=                              assign_op           
+ch                             CHAR                
++                              plus_op             
+1.5                            FLOAT_LITERAL       
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+ch                             CHAR                
+;                              semicolon_op        
+ch                             CHAR                
+=                              assign_op           
+r                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+(                              open_paren_op       
+a                              INT                 
+<                              lt_op               
+b                              INT                 
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+a                              INT                 
+<=                             le_op               
+b                              INT                 
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+a                              INT                 
+>                              gt_op               
+b                              INT                 
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+a                              INT                 
+>=                             ge_op               
+b                              INT                 
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+a                              INT                 
+==                             eq_op               
+b                              INT                 
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+a                              INT                 
+!=                             ne_op               
+b                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+(                              open_paren_op       
+a                              INT                 
+&&                             logical_and_op      
+b                              INT                 
+)                              close_paren_op      
+||                             logical_or_op       
+!                              logical_not_op      
+a                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+(                              open_paren_op       
+a                              INT                 
+&                              ampersand_op        
+b                              INT                 
+)                              close_paren_op      
+|                              pipe_op             
+(                              open_paren_op       
+a                              INT                 
+^                              caret_op            
+b                              INT                 
+)                              close_paren_op      
+|                              pipe_op             
+~                              tilde_op            
+a                              INT                 
+|                              pipe_op             
+(                              open_paren_op       
+a                              INT                 
+<<                             lshift_op           
+2                              INT_LITERAL         
+)                              close_paren_op      
+|                              pipe_op             
+(                              open_paren_op       
+a                              INT                 
+>>                             rshift_op           
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+a                              INT                 
++=                             plus_assign_op      
+b                              INT                 
+;                              semicolon_op        
+a                              INT                 
+-=                             minus_assign_op     
+b                              INT                 
+;                              semicolon_op        
+a                              INT                 
+*=                             star_assign_op      
+b                              INT                 
+;                              semicolon_op        
+a                              INT                 
+/=                             divide_assign_op    
+b                              INT                 
+;                              semicolon_op        
+a                              INT                 
+%=                             mod_assign_op       
+b                              INT                 
+;                              semicolon_op        
+a                              INT                 
+<<=                            lshift_assign_op    
+1                              INT_LITERAL         
+;                              semicolon_op        
+a                              INT                 
+>>=                            rshift_assign_op    
+1                              INT_LITERAL         
+;                              semicolon_op        
+a                              INT                 
+&=                             ampersand_assign_op 
+3                              INT_LITERAL         
+;                              semicolon_op        
+a                              INT                 
+|=                             pipe_assign_op      
+4                              INT_LITERAL         
+;                              semicolon_op        
+a                              INT                 
+^=                             caret_assign_op     
+1                              INT_LITERAL         
+;                              semicolon_op        
+d                              DOUBLE              
++=                             plus_assign_op      
+2                              INT_LITERAL         
+;                              semicolon_op        
+d                              DOUBLE              
+*=                             star_assign_op      
+a                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+++                             increment_op        
++                              plus_op             
+++                             increment_op        
+a                              INT                 
+-                              minus_op            
+b                              INT                 
+--                             decrement_op        
+-                              minus_op            
+--                             decrement_op        
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+-                              minus_op            
+a                              INT                 
++                              plus_op             
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+a                              INT                 
+>                              gt_op               
+b                              INT                 
+?                              question_op         
+a                              INT                 
+:                              colon_op            
+b                              INT                 
+;                              semicolon_op        
+d                              DOUBLE              
+=                              assign_op           
+a                              INT                 
+>                              gt_op               
+b                              INT                 
+?                              question_op         
+a                              INT                 
+:                              colon_op            
+d                              DOUBLE              
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+(                              open_paren_op       
+a                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+,                              comma_op            
+b                              INT                 
+=                              assign_op           
+4                              INT_LITERAL         
+,                              comma_op            
+a                              INT                 
++                              plus_op             
+b                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+d                              DOUBLE              
++                              plus_op             
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+'x'                            CHAR_LITERAL        
+;                              semicolon_op        
+u                              UNSIGNED_INT        
+=                              assign_op           
+u                              UNSIGNED_INT        
++                              plus_op             
+a                              INT                 
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
++                              plus_op             
+sizeof                         sizeof              
+d                              DOUBLE              
++                              plus_op             
+sizeof                         sizeof              
+(                              open_paren_op       
+char                           char                
+*                              star_op             
+)                              close_paren_op      
+;                              semicolon_op        
+r                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+?                              question_op         
+2                              INT_LITERAL         
+:                              colon_op            
+3                              INT_LITERAL         
+;                              semicolon_op        
+bool                           bool                
+flag                           BOOL                
+=                              assign_op           
+a                              INT                 
+;                              semicolon_op        
+flag                           BOOL                
+=                              assign_op           
+d                              DOUBLE              
+;                              semicolon_op        
+return                         return              
+r                              INT                 
++                              plus_op             
+flag                           BOOL                
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"
+        |   |   `-- IntLiteral "7"
+        |   |-- VarDecl "b : INT"
+        |   |   `-- IntLiteral "2"
+        |   `-- VarDecl "r : INT"
+        |-- VarDecl "d : DOUBLE"
+        |   `-- FloatLiteral "3.0"
+        |-- VarDecl "ch : CHAR"
+        |   `-- CharLiteral "'a'"
+        |-- VarDecl "u : UNSIGNED_INT"
+        |   `-- IntLiteral "5"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "+"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "-"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "*"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "/"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "%"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "d"
+        |       `-- BinaryExpr "/"
+        |           |-- Identifier "a"
+        |           `-- Identifier "d"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "d"
+        |       `-- BinaryExpr "+"
+        |           |-- Identifier "ch"
+        |           `-- FloatLiteral "1.5"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- Identifier "ch"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "ch"
+        |       `-- Identifier "r"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- BinaryExpr "+"
+        |           |   |   |-- BinaryExpr "+"
+        |           |   |   |   |-- BinaryExpr "+"
+        |           |   |   |   |   |-- BinaryExpr "<"
+        |           |   |   |   |   |   |-- Identifier "a"
+        |           |   |   |   |   |   `-- Identifier "b"
+        |           |   |   |   |   `-- BinaryExpr "<="
+        |           |   |   |   |       |-- Identifier "a"
+        |           |   |   |   |       `-- Identifier "b"
+        |           |   |   |   `-- BinaryExpr ">"
+        |           |   |   |       |-- Identifier "a"
+        |           |   |   |       `-- Identifier "b"
+        |           |   |   `-- BinaryExpr ">="
+        |           |   |       |-- Identifier "a"
+        |           |   |       `-- Identifier "b"
+        |           |   `-- BinaryExpr "=="
+        |           |       |-- Identifier "a"
+        |           |       `-- Identifier "b"
+        |           `-- BinaryExpr "!="
+        |               |-- Identifier "a"
+        |               `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "||"
+        |           |-- BinaryExpr "&&"
+        |           |   |-- Identifier "a"
+        |           |   `-- Identifier "b"
+        |           `-- UnaryExpr "!"
+        |               `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "|"
+        |           |-- BinaryExpr "|"
+        |           |   |-- BinaryExpr "|"
+        |           |   |   |-- BinaryExpr "|"
+        |           |   |   |   |-- BinaryExpr "&"
+        |           |   |   |   |   |-- Identifier "a"
+        |           |   |   |   |   `-- Identifier "b"
+        |           |   |   |   `-- BinaryExpr "^"
+        |           |   |   |       |-- Identifier "a"
+        |           |   |   |       `-- Identifier "b"
+        |           |   |   `-- UnaryExpr "~"
+        |           |   |       `-- Identifier "a"
+        |           |   `-- BinaryExpr "<<"
+        |           |       |-- Identifier "a"
+        |           |       `-- IntLiteral "2"
+        |           `-- BinaryExpr ">>"
+        |               |-- Identifier "a"
+        |               `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "+="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "-="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "*="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "/="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "%="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "<<="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr ">>="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "&="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- AssignExpr "|="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "4"
+        |-- ExprStmt
+        |   `-- AssignExpr "^="
+        |       |-- Identifier "a"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "+="
+        |       |-- Identifier "d"
+        |       `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- AssignExpr "*="
+        |       |-- Identifier "d"
+        |       `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "-"
+        |           |-- BinaryExpr "-"
+        |           |   |-- BinaryExpr "+"
+        |           |   |   |-- PostfixOpExpr "++"
+        |           |   |   |   `-- Identifier "a"
+        |           |   |   `-- UnaryExpr "++(pre)"
+        |           |   |       `-- Identifier "a"
+        |           |   `-- PostfixOpExpr "--"
+        |           |       `-- Identifier "b"
+        |           `-- UnaryExpr "--(pre)"
+        |               `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "+"
+        |           |-- UnaryExpr "-"
+        |           |   `-- Identifier "a"
+        |           `-- UnaryExpr "+"
+        |               `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- TernaryExpr
+        |           |-- BinaryExpr ">"
+        |           |   |-- Identifier "a"
+        |           |   `-- Identifier "b"
+        |           |-- Identifier "a"
+        |           `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "d"
+        |       `-- TernaryExpr
+        |           |-- BinaryExpr ">"
+        |           |   |-- Identifier "a"
+        |           |   `-- Identifier "b"
+        |           |-- Identifier "a"
+        |           `-- Identifier "d"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- CommaExpr
+        |           |-- CommaExpr
+        |           |   |-- AssignExpr "="
+        |           |   |   |-- Identifier "a"
+        |           |   |   `-- IntLiteral "3"
+        |           |   `-- AssignExpr "="
+        |           |       |-- Identifier "b"
+        |           |       `-- IntLiteral "4"
+        |           `-- BinaryExpr "+"
+        |               |-- Identifier "a"
+        |               `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "+"
+        |           |-- CastExpr "INT"
+        |           |   `-- Identifier "d"
+        |           `-- CastExpr "INT"
+        |               `-- CharLiteral "'x'"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "u"
+        |       `-- BinaryExpr "+"
+        |           |-- Identifier "u"
+        |           `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- SizeofExpr "INT"
+        |           |   `-- SizeofExpr
+        |           |       `-- Identifier "d"
+        |           `-- SizeofExpr "CHAR_POINTER"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "r"
+        |       `-- TernaryExpr
+        |           |-- IntLiteral "1"
+        |           |-- IntLiteral "2"
+        |           `-- IntLiteral "3"
+        |-- VarDecl "flag : BOOL"
+        |   `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "flag"
+        |       `-- Identifier "d"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- Identifier "r"
+                `-- Identifier "flag"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      3      global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       4      global > main()              INT                                       41                               
+b                    variable       4      global > main()              INT                                       27                               
+r                    variable       4      global > main()              INT                                       18                               
+d                    variable       5      global > main()              DOUBLE                                    10                               
+ch                   variable       6      global > main()              CHAR                                      3                                
+u                    variable       7      global > main()              UNSIGNED_INT                              2                                
+flag                 variable       29     global > main()              BOOL                                      2                                

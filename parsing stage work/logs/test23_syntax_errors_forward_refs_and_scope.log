@@ -1,0 +1,130 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:23:1: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 23 | later:
+    | ^
+    | note: insert ';' here
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:29:10: syntax error: syntax error, unexpected INT, expecting IDENTIFIER
+ 29 |     goto int;
+    |          ^
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:37:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 37 |     a = a + 1;
+    |     ^
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:44:34: syntax error: syntax error, unexpected ';', expecting ')'
+ 44 |     int r = later_defined_fn(1, 2;
+    |                                  ^
+    | note: insert ')' here
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:59:1: syntax error: syntax error, unexpected IDENTIFIER
+ 59 | T05_Cta feed(int amount) {
+    | ^
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:69:14: syntax error: syntax error, unexpected '(', expecting OPERATOR or IDENTIFIER
+ 69 | int T06_Dog::(int volume) {
+    |              ^
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:79:29: syntax error: syntax error, unexpected '{', expecting ')'
+ 79 | int T07_Bird::fly(int speed {
+    |                             ^
+    | note: insert ')' here
+
+phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:90:23: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
+ 90 |     int v = T08_Util::;
+    |                       ^
+
+-----------------------------------------
+Total Errors : 8
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- FunctionDef "t01_goto_missing_semicolon : _Z26t01_goto_missing_semicolonv"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 23: near 'later'"
+|-- FunctionDef "t02_goto_target_is_a_keyword : _Z28t02_goto_target_is_a_keywordv"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 29: near 'int'"
+|-- FunctionDef "t03_label_missing_colon : _Z23t03_label_missing_colonv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       |-- GotoStmt "skip"
+|       `-- ErrorNode "line 37: near 'a'"
+|-- FunctionDef "t04_forward_call_missing_close_paren : _Z36t04_forward_call_missing_close_parenv"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 44: near ';'"
+|-- FunctionDef "later_defined_fn : _Z16later_defined_fnii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- ClassDecl "T05_Cat"
+|   `-- FunctionDecl "feed : _ZN7T05_Cat4feedEi"
+|       `-- ParamDecl "amount : INT"
+|-- ErrorNode "line 59: near 'T05_Cta'"
+|-- ErrorNode "line 59: near 'T05_Cta'"
+|-- ClassDecl "T06_Dog"
+|   `-- FunctionDecl "bark : _ZN7T06_Dog4barkEv"
+|-- ErrorNode "line 69: near '('"
+|-- ErrorNode "line 69: near '('"
+|-- ClassDecl "T07_Bird"
+|   `-- FunctionDecl "fly : _ZN8T07_Bird3flyEi"
+|       `-- ParamDecl "speed : INT"
+|-- ErrorNode "line 79: near '{'"
+|-- ErrorNode "line 79: near '{'"
+|-- ClassDecl "T08_Util"
+|   `-- FunctionDecl "value : _ZN8T08_Util5valueEv"
+|-- FunctionDef "t08_scope_res_expr_missing_identifier : _Z37t08_scope_res_expr_missing_identifierv"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 90: near ';'"
+|-- VarDecl "boundaryA_forward_tag_reference_is_fine : STRUCT_POINTER"
+|-- ClassDecl "T11_Fish"
+|   `-- FunctionDecl "jump : _ZN8T11_Fish4jumpEi"
+|       `-- ParamDecl "height : INT"
+|-- FunctionDef "jump : _Z4jumpi"
+|   |-- ParamDecl "height : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "height"
+|-- ClassDecl "T10_Ok"
+|   `-- FunctionDecl "compute : _ZN6T10_Ok7computeEi"
+|       `-- ParamDecl "x : INT"
+|-- FunctionDef "compute : _ZN6T10_Ok7computeEi"
+|   |-- ParamDecl "x : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "x"
+|               `-- IntLiteral "2"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- GotoStmt "done"
+|       |-- VarDecl "unused : INT"
+|       |   `-- CallExpr
+|       |       |-- Identifier "compute_later"
+|       |       `-- IntLiteral "3"
+|       |-- LabeledStmt "done"
+|       |   `-- VarDecl "obj : CLASS"
+|       `-- ReturnStmt
+|           `-- CallExpr
+|               |-- MemberExpr "compute"
+|               |   `-- Identifier "obj"
+|               `-- Identifier "unused"
+`-- FunctionDef "compute_later : _Z13compute_lateri"
+    |-- ParamDecl "x : INT"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- Identifier "x"
+                `-- IntLiteral "1"

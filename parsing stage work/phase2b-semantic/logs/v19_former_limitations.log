@@ -1,0 +1,244 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v19_former_limitations.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v19_former_limitations.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- TypedefDecl "T = INT"  <int>  -> T (typedef)
+|-- TypedefDecl "U = INT"  <int>  -> U (typedef)
+|-- EnumDecl "Slot"  <enum Slot>  -> Slot (tag)
+|   |-- Enumerator "FIRST"  <int> =0  -> FIRST (enum_constant)
+|   |-- Enumerator "SECOND"  <int> =1  -> SECOND (enum_constant)
+|   `-- Enumerator "THIRD"  <int> =2  -> THIRD (enum_constant)
+|-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
+|   |-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ei"  -> _ZN3DogC1Ei (function)
+|   |   |-- ParamDecl "n : INT"  <int>  -> n.1 (parameter, param)
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="  <int>
+|   |               |-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
+|   |               `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ev"  -> _ZN3DogC1Ev (function)
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="  <int>
+|   |               |-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
+|   |               `-- IntLiteral "4"  <int> =4
+|   `-- FunctionDef "bark : _ZN3Dog4barkEv"  <int (void)>  -> _ZN3Dog4barkEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
+|-- FunctionDef "take : _Z4take3Dog"  <int (class Dog)>  -> _Z4take3Dog (function)
+|   |-- ParamDecl "d : CLASS"  <class Dog>  -> d.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|               `-- Identifier "d"  <class Dog> lvalue  -> d.2 (parameter, param)
+|-- FunctionDef "twice : _Z5twicei"  <int (int)>  -> _Z5twicei (function)
+|   |-- ParamDecl "v : INT"  <int>  -> v.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- Identifier "v"  <int> lvalue  -> v.3 (parameter, param)
+|               `-- IntLiteral "2"  <int> =2
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "x : INT"  <int>  -> x.4 (variable, local)
+        |   `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.5 (variable, local)
+        |   `-- BinaryExpr "/"  <double>
+        |       |-- ConstructExpr "double"  <double>
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "i : INT"  <int>  -> i.6 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- ConstructExpr "int"  <int>
+        |       |   `-- Identifier "d"  <double> lvalue  -> d.5 (variable, local)
+        |       `-- ConstructExpr "int"  <int>
+        |           `-- FloatLiteral "2.5"  <double>
+        |-- VarDecl "c : CHAR"  <char>  -> c.7 (variable, local)
+        |   `-- ConstructExpr "char"  <char> =65
+        |       `-- IntLiteral "65"  <int> =65
+        |-- VarDecl "big : LONG"  <long>  -> big.8 (variable, local)
+        |   `-- BinaryExpr "*"  <long>
+        |       |-- ConstructExpr "long"  <long>
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- ExprStmt
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- ConstructExpr "int"  <int>
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
+        |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
+        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
+        |               `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
+        |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
+        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ev (function)
+        |-- ExprStmt
+        |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
+        |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
+        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
+        |               `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |-- VarDecl "y : INT"  <int>  -> y.9 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- CallExpr  <int>  -> _Z4take3Dog (function)
+        |       |   |-- Identifier "take"  <int (class Dog)>  -> _Z4take3Dog (function)
+        |       |   `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
+        |       |       `-- IntLiteral "5"  <int> =5
+        |       `-- CallExpr  <int>  -> _Z4take3Dog (function)
+        |           |-- Identifier "take"  <int (class Dog)>  -> _Z4take3Dog (function)
+        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
+        |               `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |-- VarDecl "spot : CLASS"  <class Dog>  -> spot.10 (variable, local)
+        |-- VarDecl "rex : CLASS"  <class Dog>  -> rex.11 (variable, local)
+        |   `-- ConstructExpr "CLASS"  <class Dog>  -> _ZN3DogC1Ei (function)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"  <int>  -> a.12 (variable, local)
+        |   `-- VarDecl "T : INT"  <int>  -> T.13 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- DeclGroup
+        |   |-- VarDecl "k : INT"  <int>  -> k.14 (variable, local)
+        |   |   `-- IntLiteral "2"  <int> =2
+        |   |-- VarDecl "U : INT"  <int>  -> U.15 (variable, local)
+        |   |   `-- BinaryExpr "+"  <int>
+        |   |       |-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
+        |   |       `-- IntLiteral "1"  <int> =1
+        |   `-- VarDecl "m : INT"  <int>  -> m.16 (variable, local)
+        |-- VarDecl "N : INT"  <const int>  -> N.17 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.18 (variable, local)
+        |   `-- InitializerList  <int[4]>
+        |       |-- DesignatedInit "[]"  <int>
+        |       |   |-- Identifier "N"  <const int> lvalue =2  -> N.17 (variable, local)
+        |       |   `-- IntLiteral "7"  <int> =7
+        |       |-- DesignatedInit "[]"  <int>
+        |       |   |-- Identifier "FIRST"  <int> =0  -> FIRST (enum_constant)
+        |       |   `-- IntLiteral "1"  <int> =1
+        |       `-- DesignatedInit "[]"  <int>
+        |           |-- BinaryExpr "+"  <int> =3
+        |           |   |-- Identifier "THIRD"  <int> =2  -> THIRD (enum_constant)
+        |           |   `-- IntLiteral "1"  <int> =1
+        |           `-- IntLiteral "9"  <int> =9
+        |-- VarDecl "f : INT"  <(lambda at line 34:14)>  -> f.20 (variable, local)
+        |   `-- LambdaExpr "x"  <(lambda at line 34:14)>
+        |       |-- ParamDecl "q : INT"  <int>  -> q.19 (parameter, param)
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- BinaryExpr "+"  <int>
+        |                   |-- Identifier "q"  <int> lvalue  -> q.19 (parameter, param)
+        |                   `-- Identifier "x"  <const int> lvalue  -> x.4 (variable, local)
+        |-- VarDecl "g : INT"  <int>  -> g.21 (variable, local)
+        |   `-- CallExpr  <int>
+        |       |-- Identifier "f"  <(lambda at line 34:14)> lvalue  -> f.20 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"  <int (*)(int)>  -> fp.22 (variable, local)
+        |   `-- CastExpr "INT_POINTER"  <int (*)(int)>
+        |       `-- Identifier "twice"  <int (int)>  -> _Z5twicei (function)
+        |-- VarDecl "ip : INT_POINTER"  <int *>  -> ip.23 (variable, local)
+        |   `-- CastExpr "INT_POINTER"  <int *>
+        |       `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "s : INT"  <int>  -> s.24 (variable, local)
+        |   `-- BinaryExpr "+"  <unsigned int> =12
+        |       |-- BinaryExpr "*"  <unsigned int> =8
+        |       |   |-- SizeofExpr "INT"  <unsigned int> =4
+        |       |   `-- IntLiteral "2"  <int> =2
+        |       `-- SizeofExpr "INT_POINTER"  <unsigned int> =4
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <double>
+                |-- BinaryExpr "+"  <long>
+                |   |-- BinaryExpr "+"  <long>
+                |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "i"  <int> lvalue  -> i.6 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "c"  <char> lvalue  -> c.7 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "big"  <long> lvalue  -> big.8 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "y"  <int> lvalue  -> y.9 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "spot"  <class Dog> lvalue  -> spot.10 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+                |   |   |   |   |   |   |   |   |   |       `-- Identifier "rex"  <class Dog> lvalue  -> rex.11 (variable, local)
+                |   |   |   |   |   |   |   |   |   `-- Identifier "a"  <int> lvalue  -> a.12 (variable, local)
+                |   |   |   |   |   |   |   |   `-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
+                |   |   |   |   |   |   |   `-- Identifier "k"  <int> lvalue  -> k.14 (variable, local)
+                |   |   |   |   |   |   `-- Identifier "U"  <int> lvalue  -> U.15 (variable, local)
+                |   |   |   |   |   `-- Identifier "m"  <int> lvalue  -> m.16 (variable, local)
+                |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.18 (variable, local)
+                |   |   |   |       `-- IntLiteral "3"  <int> =3
+                |   |   |   `-- Identifier "g"  <int> lvalue  -> g.21 (variable, local)
+                |   |   `-- CallExpr  <int>
+                |   |       |-- Identifier "fp"  <int (*)(int)> lvalue  -> fp.22 (variable, local)
+                |   |       `-- IntLiteral "1"  <int> =1
+                |   `-- Identifier "s"  <int> lvalue  -> s.24 (variable, local)
+                `-- Identifier "d"  <double> lvalue  -> d.5 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+T                  typedef        int                        -        global                         4     -     0     T                    -                        
+U                  typedef        int                        -        global                         5     -     0     U                    -                        
+Slot               enum_tag       enum Slot                  -        global                         6     -     0     Slot                 -                        
+FIRST              enum_constant  int                        -        global                         6     -     1     FIRST                -                        value 0
+SECOND             enum_constant  int                        -        global                         6     -     0     SECOND               -                        value 1
+THIRD              enum_constant  int                        -        global                         6     -     1     THIRD                -                        value 2
+Dog                class_tag      class Dog                  -        global                         7     -     0     Dog                  -                        size 4
+Dog::legs          field          int                        member   global > class Dog             9     4     6     Dog::legs            -                        public, offset 0
+Dog::Dog           constructor    void (int)                 -        global > class Dog             10    -     5     _ZN3DogC1Ei          _ZN3DogC1Ei              public
+Dog::Dog           constructor    void (void)                -        global > class Dog             11    -     2     _ZN3DogC1Ev          _ZN3DogC1Ev              public
+Dog::bark          method         int (void)                 -        global > class Dog             12    -     3     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
+n                  parameter      int                        param    global > class Dog > Dog()     10    4     1     n.1                  -                        
+take               function       int (class Dog)            -        global                         14    -     2     _Z4take3Dog          _Z4take3Dog              defined
+d                  parameter      class Dog                  param    global > take()                14    4     1     d.2                  -                        
+twice              function       int (int)                  -        global                         15    -     1     _Z5twicei            _Z5twicei                defined
+v                  parameter      int                        param    global > twice()               15    4     1     v.3                  -                        
+main               function       int (void)                 -        global                         16    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                17    4     8     x.4                  -                        
+d                  variable       double                     local    global > main()                18    8     2     d.5                  -                        
+i                  variable       int                        local    global > main()                19    4     1     i.6                  -                        
+c                  variable       char                       local    global > main()                20    1     1     c.7                  -                        
+big                variable       long                       local    global > main()                21    4     1     big.8                -                        
+y                  variable       int                        local    global > main()                26    4     1     y.9                  -                        
+spot               variable       class Dog                  local    global > main()                27    4     1     spot.10              -                        
+rex                variable       class Dog                  local    global > main()                28    4     1     rex.11               -                        
+a                  variable       int                        local    global > main()                29    4     1     a.12                 -                        
+T                  variable       int                        local    global > main()                29    4     3     T.13                 -                        
+k                  variable       int                        local    global > main()                31    4     1     k.14                 -                        
+U                  variable       int                        local    global > main()                31    4     1     U.15                 -                        
+m                  variable       int                        local    global > main()                31    4     1     m.16                 -                        
+N                  variable       const int                  local    global > main()                32    4     1     N.17                 -                        value 2
+arr                variable       int[4]                     local    global > main()                33    16    1     arr.18               -                        
+q                  parameter      int                        param    global > main() > lambda       34    4     1     q.19                 -                        
+f                  variable       (lambda at line 34:14)     local    global > main()                34    4     1     f.20                 -                        
+g                  variable       int                        local    global > main()                35    4     1     g.21                 -                        
+fp                 variable       int (*)(int)               local    global > main()                36    4     1     fp.22                -                        
+ip                 variable       int *                      local    global > main()                37    4     0     ip.23                -                        
+s                  variable       int                        local    global > main()                38    4     1     s.24                 -                        
+
+=== Record Layouts (MIPS32) ===
+class Dog: size 4, align 4
+    +0  int legs  [public]

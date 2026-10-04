@@ -1,0 +1,36 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e14_references_inheritance.c
+
+Semantic analysis failed: 6 error(s), 1 warning(s) in 'test/invalid/e14_references_inheritance.c'.
+
+test/invalid/e14_references_inheritance.c:10:40: semantic error: 'p' is a protected member of 'class Prot' and is not accessible from class 'Kid' [access]
+ 10 |     int bad(class Prot *o) { return o->p; }   // error: 'p' is a protected member of 'class Prot' and is not accessible from class 'Kid'
+    |                                        ^
+
+test/invalid/e14_references_inheritance.c:15:25: semantic error: non-const reference of type 'int &' cannot bind to a temporary of type 'int' [reference]
+ 15 | int &bad_ref() { return 5; }      // error: non-const reference of type 'int &' cannot bind to a temporary of type 'int'
+    |                         ^
+
+test/invalid/e14_references_inheritance.c:21:15: semantic error: member 'v' is found in more than one base class of 'Both' [ambiguous-member]
+ 21 |     int v = b.v;                  // error: member 'v' is found in more than one base class of 'Both'
+    |               ^
+
+test/invalid/e14_references_inheritance.c:28:10: semantic error: type mismatch: argument 1 of 'bump' expects 'int &' but got 'int' (a non-const reference needs an lvalue of exactly type 'int') [argument-type]
+ 28 |     bump(5);                      // error: argument 1 of 'bump' expects 'int &' but got 'int'
+    |          ^
+
+test/invalid/e14_references_inheritance.c:32:20: semantic error: type mismatch: cannot initialize variable 'pp' of type 'struct P *' with a value of type 'const struct P *' (conversion discards 'const' qualifier) [type-mismatch]
+ 32 |     struct P *pp = &cp;           // error: conversion discards 'const' qualifier
+    |                    ^
+
+test/invalid/e14_references_inheritance.c:34:10: semantic error: cannot assign to a read-only location of type 'const int' [const]
+ 34 |     cpp->x = 3;                   // error: cannot assign to a read-only location of type 'const int'
+    |          ^
+
+test/invalid/e14_references_inheritance.c:36:20: semantic warning: format '%d' expects an integer, but argument 2 has type 'struct P' [format]
+ 36 |     printf("%d\n", cp);           // warning: format '%d' expects an integer, but argument 2 has type 'struct P'
+    |                    ^
+

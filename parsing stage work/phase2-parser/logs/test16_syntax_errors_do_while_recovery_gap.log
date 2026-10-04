@@ -1,0 +1,23 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test16_syntax_errors_do_while_recovery_gap.c
+
+test/test16_syntax_errors_do_while_recovery_gap.c:57:5: syntax error: syntax error, unexpected RETURN, expecting ';'
+ 57 |     return a;
+    |     ^
+    | note: insert ';' here
+
+-----------------------------------------
+Total Errors : 1
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+`-- FunctionDef "this_function_never_gets_analyzed_because_of_the_bug_above : _Z58this_function_never_gets_analyzed_because_of_the_bug_abovev"
+    `-- CompoundStmt
+        |-- VarDecl "a : INT"
+        |   `-- IntLiteral "1"
+        |-- ErrorNode "line 57: near 'return'"
+        `-- ReturnStmt
+            `-- Identifier "a"

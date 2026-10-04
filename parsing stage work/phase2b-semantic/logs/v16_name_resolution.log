@@ -1,0 +1,196 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v16_name_resolution.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v16_name_resolution.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "g : _Z1gPi"  <int (int *)>  -> _Z1gPi (function)
+|   |-- ParamDecl "p : INT_POINTER"  <int *>  -> p.1 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "g : _Z1gPKi"  <int (const int *)>  -> _Z1gPKi (function)
+|   |-- ParamDecl "p : INT_POINTER"  <const int *>  -> p.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "2"  <int> =2
+|-- FunctionDecl "f : _Z1fi"  <int (int)>  -> _Z1fi (function)
+|   `-- ParamDecl "a : INT"
+|-- FunctionDef "f : _Z1fi"  -> _Z1fi (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"  <int> lvalue  -> a.3 (parameter, param)
+|-- FunctionDecl "helper : _Z6helperi"  <int (int)>  -> _Z6helperi (function)
+|   `-- ParamDecl "a : INT"
+|-- ClassDecl "A"  <class A>  -> A (tag)
+|   |-- VarDecl "x : INT"  <int>  -> A::x (field, member)
+|   |-- FunctionDef "get : _ZN1A3getEv"  <int (void)>  -> _ZN1A3getEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "x"  <int> lvalue  -> A::x (field, member)
+|   |-- FunctionDef "get : _ZN1A3getEi"  <int (int)>  -> _ZN1A3getEi (function)
+|   |   |-- ParamDecl "k : INT"  <int>  -> k.4 (parameter, param)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "+"  <int>
+|   |               |-- Identifier "x"  <int> lvalue  -> A::x (field, member)
+|   |               `-- Identifier "k"  <int> lvalue  -> k.4 (parameter, param)
+|   |-- FunctionDef "twice : _ZN1A5twiceEv"  <int (void)>  -> _ZN1A5twiceEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "+"  <int>
+|   |               |-- BinaryExpr "+"  <int>
+|   |               |   |-- CallExpr "_ZN1A3getEv"  <int>  -> _ZN1A3getEv (function)
+|   |               |   |   `-- Identifier "get"  <int (void)>  -> _ZN1A3getEv (function)
+|   |               |   `-- CallExpr "_ZN1A3getEi"  <int>  -> _ZN1A3getEi (function)
+|   |               |       |-- Identifier "get"  <int (int)>  -> _ZN1A3getEi (function)
+|   |               |       `-- IntLiteral "2"  <int> =2
+|   |               `-- CallExpr  <int>  -> _ZN1A5laterEv (function)
+|   |                   `-- Identifier "later"  <int (void)>  -> _ZN1A5laterEv (function)
+|   |-- FunctionDef "fact : _ZN1A4factEi"  <int (int)>  -> _ZN1A4factEi (function)
+|   |   |-- ParamDecl "n : INT"  <int>  -> n.5 (parameter, param)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- TernaryExpr  <int>
+|   |               |-- BinaryExpr "<="  <int>
+|   |               |   |-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
+|   |               |   `-- IntLiteral "1"  <int> =1
+|   |               |-- IntLiteral "1"  <int> =1
+|   |               `-- BinaryExpr "*"  <int>
+|   |                   |-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
+|   |                   `-- CallExpr  <int>  -> _ZN1A4factEi (function)
+|   |                       |-- Identifier "fact"  <int (int)>  -> _ZN1A4factEi (function)
+|   |                       `-- BinaryExpr "-"  <int>
+|   |                           |-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
+|   |                           `-- IntLiteral "1"  <int> =1
+|   |-- FunctionDef "viaLambda : _ZN1A9viaLambdaEv"  <int (void)>  -> _ZN1A9viaLambdaEv (function)
+|   |   `-- CompoundStmt
+|   |       |-- VarDecl "f : INT"  <(lambda at line 15:32)>  -> f.6 (variable, local)
+|   |       |   `-- LambdaExpr "="  <(lambda at line 15:32)>
+|   |       |       `-- CompoundStmt
+|   |       |           `-- ReturnStmt
+|   |       |               `-- BinaryExpr "+"  <int>
+|   |       |                   |-- Identifier "x"  <int> lvalue  -> A::x (field, member)
+|   |       |                   `-- CallExpr "_ZN1A3getEv"  <int>  -> _ZN1A3getEv (function)
+|   |       |                       `-- Identifier "get"  <int (void)>  -> _ZN1A3getEv (function)
+|   |       `-- ReturnStmt
+|   |           `-- CallExpr  <int>
+|   |               `-- Identifier "f"  <(lambda at line 15:32)> lvalue  -> f.6 (variable, local)
+|   `-- FunctionDef "later : _ZN1A5laterEv"  <int (void)>  -> _ZN1A5laterEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "main : main"  <int (void)>  -> main (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"  <int>  -> x.7 (variable, local)
+|       |   `-- IntLiteral "0"  <int> =0
+|       |-- VarDecl "cx : INT"  <const int>  -> cx.8 (variable, local)
+|       |   `-- IntLiteral "1"  <int> =1
+|       |-- VarDecl "r : INT"  <int>  -> r.9 (variable, local)
+|       |   `-- BinaryExpr "+"  <int>
+|       |       |-- BinaryExpr "+"  <int>
+|       |       |   |-- CallExpr  <int>  -> _Z1gPi (function)
+|       |       |   |   |-- Identifier "g"  <int (int *)>  -> _Z1gPi (function)
+|       |       |   |   `-- UnaryExpr "&"  <int *>
+|       |       |   |       `-- Identifier "x"  <int> lvalue  -> x.7 (variable, local)
+|       |       |   `-- CallExpr  <int>  -> _Z1gPKi (function)
+|       |       |       |-- Identifier "g"  <int (const int *)>  -> _Z1gPKi (function)
+|       |       |       `-- UnaryExpr "&"  <const int *>
+|       |       |           `-- Identifier "cx"  <const int> lvalue =1  -> cx.8 (variable, local)
+|       |       `-- CallExpr "_Z1fi"  <int>  -> _Z1fi (function)
+|       |           |-- Identifier "f"  <int (int)>  -> _Z1fi (function)
+|       |           `-- IntLiteral "2"  <int> =2
+|       |-- FunctionDecl "proto : _Z5protoi"  -> _Z5protoi (function)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.9 (variable, local)
+|       |       `-- BinaryExpr "+"  <int>
+|       |           |-- BinaryExpr "+"  <int>
+|       |           |   |-- Identifier "r"  <int> lvalue  -> r.9 (variable, local)
+|       |           |   `-- CallExpr  <int>  -> _Z5protoi (function)
+|       |           |       |-- Identifier "proto"  <int (int)>  -> _Z5protoi (function)
+|       |           |       `-- IntLiteral "2"  <int> =2
+|       |           `-- CallExpr  <int>  -> _Z6helperi (function)
+|       |               |-- Identifier "helper"  <int (int)>  -> _Z6helperi (function)
+|       |               `-- IntLiteral "1"  <int> =1
+|       |-- VarDecl "obj : CLASS"  <class A>  -> obj.10 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.9 (variable, local)
+|       |       `-- BinaryExpr "+"  <int>
+|       |           |-- BinaryExpr "+"  <int>
+|       |           |   |-- BinaryExpr "+"  <int>
+|       |           |   |   |-- Identifier "r"  <int> lvalue  -> r.9 (variable, local)
+|       |           |   |   `-- CallExpr  <int>  -> _ZN1A5twiceEv (function)
+|       |           |   |       `-- MemberExpr "twice"  <int (void)>  -> _ZN1A5twiceEv (function)
+|       |           |   |           `-- Identifier "obj"  <class A> lvalue  -> obj.10 (variable, local)
+|       |           |   `-- CallExpr  <int>  -> _ZN1A4factEi (function)
+|       |           |       |-- MemberExpr "fact"  <int (int)>  -> _ZN1A4factEi (function)
+|       |           |       |   `-- Identifier "obj"  <class A> lvalue  -> obj.10 (variable, local)
+|       |           |       `-- IntLiteral "4"  <int> =4
+|       |           `-- CallExpr  <int>  -> _ZN1A9viaLambdaEv (function)
+|       |               `-- MemberExpr "viaLambda"  <int (void)>  -> _ZN1A9viaLambdaEv (function)
+|       |                   `-- Identifier "obj"  <class A> lvalue  -> obj.10 (variable, local)
+|       |-- CompoundStmt
+|       |   |-- VarDecl "r : INT"  <int>  -> r.11 (variable, local)
+|       |   |   `-- IntLiteral "5"  <int> =5
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "="  <int>
+|       |           |-- Identifier "x"  <int> lvalue  -> x.7 (variable, local)
+|       |           `-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "r"  <int> lvalue  -> r.9 (variable, local)
+|               `-- Identifier "x"  <int> lvalue  -> x.7 (variable, local)
+|-- FunctionDef "proto : _Z5protoi"  <int (int)>  -> _Z5protoi (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.12 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"  <int> lvalue  -> a.12 (parameter, param)
+`-- FunctionDef "helper : _Z6helperi"  -> _Z6helperi (function)
+    |-- ParamDecl "a : INT"  <int>  -> a.13 (parameter, param)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "*"  <int>
+                |-- Identifier "a"  <int> lvalue  -> a.13 (parameter, param)
+                `-- IntLiteral "2"  <int> =2
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+g                  function       int (int *)                -        global                         2     -     1     _Z1gPi               _Z1gPi                   defined
+p                  parameter      int *                      param    global > g()                   2     4     0     p.1                  -                        
+g                  function       int (const int *)          -        global                         3     -     1     _Z1gPKi              _Z1gPKi                  defined
+p                  parameter      const int *                param    global > g()                   3     4     0     p.2                  -                        
+f                  function       int (int)                  -        global                         4     -     1     _Z1fi                _Z1fi                    defined
+a                  parameter      int                        param    global > f()                   5     4     1     a.3                  -                        
+helper             function       int (int)                  -        global                         6     -     1     _Z6helperi           _Z6helperi               static, defined
+A                  class_tag      class A                    -        global                         8     -     0     A                    -                        size 4
+A::x               field          int                        member   global > class A               10    4     3     A::x                 -                        public, offset 0
+A::get             method         int (void)                 -        global > class A               11    -     2     _ZN1A3getEv          _ZN1A3getEv              public, defined
+A::get             method         int (int)                  -        global > class A               12    -     1     _ZN1A3getEi          _ZN1A3getEi              public, defined
+A::twice           method         int (void)                 -        global > class A               13    -     1     _ZN1A5twiceEv        _ZN1A5twiceEv            public, defined
+A::fact            method         int (int)                  -        global > class A               14    -     2     _ZN1A4factEi         _ZN1A4factEi             public, defined
+A::viaLambda       method         int (void)                 -        global > class A               15    -     1     _ZN1A9viaLambdaEv    _ZN1A9viaLambdaEv        public, defined
+A::later           method         int (void)                 -        global > class A               16    -     1     _ZN1A5laterEv        _ZN1A5laterEv            public, defined
+k                  parameter      int                        param    global > class A > get()       12    4     1     k.4                  -                        
+n                  parameter      int                        param    global > class A > fact()      14    4     3     n.5                  -                        
+f                  variable       (lambda at line 15:32)     local    global > class A > viaLambda() 15    4     1     f.6                  -                        
+main               function       int (void)                 -        global                         19    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                20    4     3     x.7                  -                        
+cx                 variable       const int                  local    global > main()                21    4     1     cx.8                 -                        value 1
+r                  variable       int                        local    global > main()                22    4     5     r.9                  -                        
+proto              function       int (int)                  -        global                         33    -     1     _Z5protoi            _Z5protoi                defined
+obj                variable       class A                    local    global > main()                25    4     3     obj.10               -                        
+r                  variable       int                        local    global > main() > block        28    4     1     r.11                 -                        
+a                  parameter      int                        param    global > proto()               33    4     1     a.12                 -                        
+a                  parameter      int                        param    global > helper()              34    4     1     a.13                 -                        
+
+=== Record Layouts (MIPS32) ===
+class A: size 4, align 4
+    +0  int x  [public]

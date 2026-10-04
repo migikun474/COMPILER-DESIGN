@@ -1,0 +1,152 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v12_main_args.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+argc                           INT                 
+,                              comma_op            
+char                           char                
+*                              star_op             
+*                              star_op             
+argv                           CHAR_POINTER_POINTER
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+i                              INT                 
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+i                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+argc                           INT                 
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+{                              open_brace_op       
+printf                         printf              
+(                              open_paren_op       
+"%s\n"                         STRING_LITERAL      
+,                              comma_op            
+argv                           CHAR_POINTER_POINTER
+[                              open_bracket_op     
+i                              INT                 
+]                              close_bracket_op    
+)                              close_paren_op      
+;                              semicolon_op        
+char                           char                
+first                          CHAR                
+=                              assign_op           
+argv                           CHAR_POINTER_POINTER
+[                              open_bracket_op     
+i                              INT                 
+]                              close_bracket_op    
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+first                          CHAR                
+==                             eq_op               
+'-'                            CHAR_LITERAL        
+)                              close_paren_op      
+printf                         printf              
+(                              open_paren_op       
+"option %c\n"                  STRING_LITERAL      
+,                              comma_op            
+argv                           CHAR_POINTER_POINTER
+[                              open_bracket_op     
+i                              INT                 
+]                              close_bracket_op    
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+return                         return              
+argc                           INT                 
+>                              gt_op               
+1                              INT_LITERAL         
+?                              question_op         
+0                              INT_LITERAL         
+:                              colon_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    |-- ParamDecl "argc : INT"
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"
+    `-- CompoundStmt
+        |-- VarDecl "i : INT"
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "1"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- Identifier "argc"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       |-- ExprStmt
+        |       |   `-- BuiltinCallExpr "printf"
+        |       |       |-- StringLiteral ""%s\n""
+        |       |       `-- IndexExpr
+        |       |           |-- Identifier "argv"
+        |       |           `-- Identifier "i"
+        |       |-- VarDecl "first : CHAR"
+        |       |   `-- IndexExpr
+        |       |       |-- IndexExpr
+        |       |       |   |-- Identifier "argv"
+        |       |       |   `-- Identifier "i"
+        |       |       `-- IntLiteral "0"
+        |       `-- IfStmt
+        |           |-- BinaryExpr "=="
+        |           |   |-- Identifier "first"
+        |           |   `-- CharLiteral "'-'"
+        |           `-- ExprStmt
+        |               `-- BuiltinCallExpr "printf"
+        |                   |-- StringLiteral ""option %c\n""
+        |                   `-- IndexExpr
+        |                       |-- IndexExpr
+        |                       |   |-- Identifier "argv"
+        |                       |   `-- Identifier "i"
+        |                       `-- IntLiteral "1"
+        `-- ReturnStmt
+            `-- TernaryExpr
+                |-- BinaryExpr ">"
+                |   |-- Identifier "argc"
+                |   `-- IntLiteral "1"
+                |-- IntLiteral "0"
+                `-- IntLiteral "1"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      2      global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) main
+argc                 parameter      2      global > main()              INT                                       2                                
+argv                 parameter      2      global > main()              CHAR_POINTER_POINTER                          3                                
+i                    variable       3      global > main()              INT                                       6                                
+first                variable       6      global > main() > for > block CHAR                                      1                                

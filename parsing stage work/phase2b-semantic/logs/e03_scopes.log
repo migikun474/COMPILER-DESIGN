@@ -1,0 +1,28 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e03_scopes.c
+
+Semantic analysis failed: 5 error(s), 0 warning(s) in 'test/invalid/e03_scopes.c'.
+
+test/invalid/e03_scopes.c:4:12: semantic error: undeclared identifier 'later_global' (it is declared later, at line 23; variables must be declared before use) [undeclared]
+ 4 |     return later_global;          // error: it is declared later, at line 23
+   |            ^
+
+test/invalid/e03_scopes.c:11:5: semantic error: undeclared identifier 'inner' [undeclared]
+ 11 |     inner = 2;                    // error: undeclared identifier 'inner'
+    |     ^
+
+test/invalid/e03_scopes.c:13:5: semantic error: undeclared identifier 'i' [undeclared]
+ 13 |     i = 5;                        // error: undeclared identifier 'i'
+    |     ^
+
+test/invalid/e03_scopes.c:17:9: semantic error: undeclared identifier 'deeper' [undeclared]
+ 17 |         deeper = 4;               // error: undeclared identifier 'deeper'
+    |         ^
+
+test/invalid/e03_scopes.c:20:12: semantic error: undeclared identifier 'helper_local' [undeclared]
+ 20 |     return helper_local;          // error: undeclared identifier 'helper_local'
+    |            ^
+

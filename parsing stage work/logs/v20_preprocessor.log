@@ -1,0 +1,218 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v20_preprocessor.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+w                              IDENTIFIER          
+,                              comma_op            
+int                            int                 
+h                              IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+debugOn                        INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+w                              INT                 
+,                              comma_op            
+int                            int                 
+h                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+w                              INT                 
+*                              star_op             
+h                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+myvar                          INT                 
+=                              assign_op           
+(                              open_paren_op       
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
+>                              gt_op               
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
+?                              question_op         
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
+:                              colon_op            
+(                              open_paren_op       
+2                              INT_LITERAL         
+)                              close_paren_op      
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+(                              open_paren_op       
+3                              INT_LITERAL         
++                              plus_op             
+1                              INT_LITERAL         
+)                              close_paren_op      
+*                              star_op             
+(                              open_paren_op       
+3                              INT_LITERAL         
++                              plus_op             
+1                              INT_LITERAL         
+)                              close_paren_op      
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+=                              assign_op           
+-                              minus_op            
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+char                           char                
+*                              star_op             
+s                              CHAR_POINTER        
+=                              assign_op           
+"hello world"                  STRING_LITERAL      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d %d\n"                      STRING_LITERAL      
+,                              comma_op            
+x                              INT                 
+,                              comma_op            
+myvar                          INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+line                           INT                 
+=                              assign_op           
+34                             INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+a                              INT_ARRAY           
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+return                         return              
+a                              INT_ARRAY           
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+area                           PROCEDURE           
+(                              open_paren_op       
+4                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+line                           INT                 
++                              plus_op             
+debugOn                        INT                 
++                              plus_op             
+s                              CHAR_POINTER        
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDecl "area : _Z4areaii"
+|   |-- ParamDecl "w : INT"
+|   `-- ParamDecl "h : INT"
+|-- VarDecl "debugOn : INT"
+|   `-- IntLiteral "1"
+|-- FunctionDef "area : _Z4areaii"
+|   |-- ParamDecl "w : INT"
+|   |-- ParamDecl "h : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "w"
+|               `-- Identifier "h"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "myvar : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- TernaryExpr
+        |       |   |-- BinaryExpr ">"
+        |       |   |   |-- IntLiteral "3"
+        |       |   |   `-- IntLiteral "2"
+        |       |   |-- IntLiteral "3"
+        |       |   `-- IntLiteral "2"
+        |       `-- BinaryExpr "*"
+        |           |-- BinaryExpr "+"
+        |           |   |-- IntLiteral "3"
+        |           |   `-- IntLiteral "1"
+        |           `-- BinaryExpr "+"
+        |               |-- IntLiteral "3"
+        |               `-- IntLiteral "1"
+        |-- VarDecl "x : INT"
+        |   `-- UnaryExpr "-"
+        |       `-- UnaryExpr "-"
+        |           `-- IntLiteral "1"
+        |-- VarDecl "s : CHAR_POINTER"
+        |   `-- StringLiteral ""hello world""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d %d\n""
+        |       |-- Identifier "x"
+        |       `-- Identifier "myvar"
+        |-- VarDecl "line : INT"
+        |   `-- IntLiteral "34"
+        |-- VarDecl "a : INT_ARRAY"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- IndexExpr
+                |   |   |   |   |-- Identifier "a"
+                |   |   |   |   `-- IntLiteral "0"
+                |   |   |   `-- CallExpr "_Z4areaii"
+                |   |   |       |-- Identifier "area"
+                |   |   |       |-- IntLiteral "4"
+                |   |   |       `-- IntLiteral "2"
+                |   |   `-- Identifier "line"
+                |   `-- Identifier "debugOn"
+                `-- IndexExpr
+                    |-- Identifier "s"
+                    `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+area                 procedure      phase2b-semantic/test/valid/headers/geometry.h:5 global                       PROCEDURE                                 1         INT (INT, INT)         _Z4areaii
+debugOn              variable       19     global                       INT                                       1                                
+area                 procedure      28     global                       PROCEDURE                                 0         INT (INT, INT)         _Z4areaii
+w                    parameter      28     global > area()              INT                                       1                                
+h                    parameter      28     global > area()              INT                                       1                                
+main                 procedure      29     global                       PROCEDURE                                 0         INT ()                 main
+myvar                variable       30     global > main()              INT                                       1                                
+x                    variable       31     global > main()              INT                                       1                                
+s                    variable       32     global > main()              CHAR_POINTER     *                        1                                
+line                 variable       34     global > main()              INT                                       1                                
+a                    variable       35     global > main()              INT_ARRAY        []                       1                                

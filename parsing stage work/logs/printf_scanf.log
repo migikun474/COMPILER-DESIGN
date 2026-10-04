@@ -1,0 +1,140 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/printf_scanf.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+char                           char                
+buf                            CHAR_ARRAY          
+[                              open_bracket_op     
+32                             INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+1                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%s %c %5.2f %%\n"             STRING_LITERAL      
+,                              comma_op            
+"s"                            STRING_LITERAL      
+,                              comma_op            
+'c'                            CHAR_LITERAL        
+,                              comma_op            
+1.5                            FLOAT_LITERAL       
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"tab\there\nnewline\n"         STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"brace { and } and /* and */ and \" \n" STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+""                             STRING_LITERAL      
+)                              close_paren_op      
+;                              semicolon_op        
+scanf                          scanf               
+(                              open_paren_op       
+"%d"                           STRING_LITERAL      
+,                              comma_op            
+&                              ampersand_op        
+x                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+scanf                          scanf               
+(                              open_paren_op       
+"%31s"                         STRING_LITERAL      
+,                              comma_op            
+buf                            CHAR_ARRAY          
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d %s\n"                      STRING_LITERAL      
+,                              comma_op            
+x                              INT                 
+,                              comma_op            
+buf                            CHAR_ARRAY          
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "x : INT"
+        |   `-- IntLiteral "0"
+        |-- VarDecl "buf : CHAR_ARRAY"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%s %c %5.2f %%\n""
+        |       |-- StringLiteral ""s""
+        |       |-- CharLiteral "'c'"
+        |       `-- FloatLiteral "1.5"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""tab\there\nnewline\n""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral ""brace { and } and /* and */ and \" \n""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       `-- StringLiteral """"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"
+        |       |-- StringLiteral ""%d""
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"
+        |       |-- StringLiteral ""%31s""
+        |       `-- Identifier "buf"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d %s\n""
+        |       |-- Identifier "x"
+        |       `-- Identifier "buf"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      2      global                       PROCEDURE                                 0         INT (VOID)             main
+x                    variable       3      global > main()              INT                                       2                                
+buf                  variable       3      global > main()              CHAR_ARRAY       []                       2                                

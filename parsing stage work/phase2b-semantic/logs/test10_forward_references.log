@@ -1,0 +1,45 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test10_forward_references.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test10_forward_references.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "main : main"  <int (void)>  -> main (function)
+|   `-- CompoundStmt
+|       |-- GotoStmt "done"  -> main.done (label)
+|       |-- VarDecl "x : INT"  <int>  -> x.1 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+|       |       `-- IntLiteral "1"  <int> =1
+|       `-- LabeledStmt "done"  -> main.done (label)
+|           `-- ReturnStmt
+|               `-- CallExpr  <int>  -> _Z3addii (function)
+|                   |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+|                   |-- IntLiteral "1"  <int> =1
+|                   `-- IntLiteral "2"  <int> =2
+`-- FunctionDef "add : _Z3addii"  <int (int, int)>  -> _Z3addii (function)
+    |-- ParamDecl "a : INT"  <int>  -> a.2 (parameter, param)
+    |-- ParamDecl "b : INT"  <int>  -> b.3 (parameter, param)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- Identifier "a"  <int> lvalue  -> a.2 (parameter, param)
+                `-- Identifier "b"  <int> lvalue  -> b.3 (parameter, param)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         3     -     0     main                 main                     defined
+done               label          -                          -        global > main()                7     -     1     main.done            -                        
+x                  variable       int                        local    global > main()                5     4     1     x.1                  -                        
+add                function       int (int, int)             -        global                         11    -     1     _Z3addii             _Z3addii                 defined
+a                  parameter      int                        param    global > add()                 11    4     1     a.2                  -                        
+b                  parameter      int                        param    global > add()                 11    4     1     b.3                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

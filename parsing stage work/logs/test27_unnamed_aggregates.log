@@ -1,0 +1,374 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/test27_unnamed_aggregates.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+struct                         struct              
+Shape                          STRUCT              
+{                              open_brace_op       
+int                            int                 
+kind                           INT                 
+;                              semicolon_op        
+union                          union               
+{                              open_brace_op       
+int                            int                 
+side                           INT                 
+;                              semicolon_op        
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+w                              INT                 
+,                              comma_op            
+h                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Pos                            STRUCT              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+,                              comma_op            
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+at                             STRUCT              
+;                              semicolon_op        
+int                            int                 
+color                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+typedef                        typedef             
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+r                              INT                 
+,                              comma_op            
+g                              INT                 
+,                              comma_op            
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Rgb                            TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+enum                           enum                
+{                              open_brace_op       
+SMALL                          ENUM_CONSTANT       
+,                              comma_op            
+LARGE                          ENUM_CONSTANT       
+}                              close_brace_op      
+Size                           TYPEDEF             
+;                              semicolon_op        
+struct                         struct              
+{                              open_brace_op       
+int                            int                 
+count                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+totals                         STRUCT              
+;                              semicolon_op        
+enum                           enum                
+{                              open_brace_op       
+LIMIT                          ENUM_CONSTANT       
+=                              assign_op           
+4                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+id                             INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+anonymous_object               CLASS               
+;                              semicolon_op        
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+struct                         struct              
+Shape                          STRUCT              
+*                              star_op             
+s                              STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+s                              STRUCT_POINTER      
+->                             arrow_op            
+kind                           IDENTIFIER          
+==                             eq_op               
+0                              INT_LITERAL         
+?                              question_op         
+s                              STRUCT_POINTER      
+->                             arrow_op            
+side                           IDENTIFIER          
+*                              star_op             
+s                              STRUCT_POINTER      
+->                             arrow_op            
+side                           IDENTIFIER          
+:                              colon_op            
+s                              STRUCT_POINTER      
+->                             arrow_op            
+w                              IDENTIFIER          
+*                              star_op             
+s                              STRUCT_POINTER      
+->                             arrow_op            
+h                              IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+struct                         struct              
+Shape                          STRUCT              
+s                              STRUCT              
+;                              semicolon_op        
+Rgb                            TYPEDEF             
+c                              STRUCT              
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+Size                           TYPEDEF             
+z                              ENUM                
+=                              assign_op           
+LARGE                          ENUM_CONSTANT       
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+kind                           INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+w                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+h                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+at                             STRUCT              
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+s                              STRUCT              
+.                              dot_op              
+color                          INT                 
+=                              assign_op           
+c                              STRUCT              
+.                              dot_op              
+g                              INT                 
+;                              semicolon_op        
+totals                         STRUCT              
+.                              dot_op              
+count                          INT                 
+=                              assign_op           
+LIMIT                          ENUM_CONSTANT       
+;                              semicolon_op        
+anonymous_object               CLASS               
+.                              dot_op              
+id                             INT                 
+=                              assign_op           
+z                              ENUM                
+;                              semicolon_op        
+return                         return              
+area                           PROCEDURE           
+(                              open_paren_op       
+&                              ampersand_op        
+s                              STRUCT              
+)                              close_paren_op      
++                              plus_op             
+totals                         STRUCT              
+.                              dot_op              
+count                          INT                 
++                              plus_op             
+anonymous_object               CLASS               
+.                              dot_op              
+id                             INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- StructDecl "Shape"
+|   |-- VarDecl "kind : INT"
+|   |-- UnionDecl "(unnamed at 6:5)"
+|   |   |-- VarDecl "side : INT"
+|   |   `-- StructDecl "(unnamed at 6:23)"
+|   |       `-- DeclGroup
+|   |           |-- VarDecl "w : INT"
+|   |           `-- VarDecl "h : INT"
+|   |-- DeclGroup
+|   |   |-- StructDecl "Pos"
+|   |   |   `-- DeclGroup
+|   |   |       |-- VarDecl "x : INT"
+|   |   |       `-- VarDecl "y : INT"
+|   |   `-- VarDecl "at : STRUCT"
+|   `-- VarDecl "color : INT"
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 10:9)"
+|   |   `-- DeclGroup
+|   |       |-- VarDecl "r : INT"
+|   |       |-- VarDecl "g : INT"
+|   |       `-- VarDecl "b : INT"
+|   `-- TypedefDecl "Rgb = STRUCT"
+|-- DeclGroup
+|   |-- EnumDecl "(unnamed at 11:9)"
+|   |   |-- Enumerator "SMALL"
+|   |   `-- Enumerator "LARGE"
+|   `-- TypedefDecl "Size = ENUM"
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 12:1)"
+|   |   `-- VarDecl "count : INT"
+|   `-- VarDecl "totals : STRUCT"
+|-- EnumDecl "(unnamed at 13:1)"
+|   `-- Enumerator "LIMIT"
+|       `-- IntLiteral "4"
+|-- DeclGroup
+|   |-- ClassDecl "(unnamed at 14:1)"
+|   |   `-- VarDecl "id : INT"
+|   `-- VarDecl "anonymous_object : CLASS"
+|-- FunctionDef "area : _Z4areaP5Shape"
+|   |-- ParamDecl "s : STRUCT_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr
+|               |-- BinaryExpr "=="
+|               |   |-- ArrowExpr "kind"
+|               |   |   `-- Identifier "s"
+|               |   `-- IntLiteral "0"
+|               |-- BinaryExpr "*"
+|               |   |-- ArrowExpr "side"
+|               |   |   `-- Identifier "s"
+|               |   `-- ArrowExpr "side"
+|               |       `-- Identifier "s"
+|               `-- BinaryExpr "*"
+|                   |-- ArrowExpr "w"
+|                   |   `-- Identifier "s"
+|                   `-- ArrowExpr "h"
+|                       `-- Identifier "s"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "s : STRUCT"
+        |-- VarDecl "c : STRUCT"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "z : ENUM"
+        |   `-- Identifier "LARGE"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "kind"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "w"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "h"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- MemberExpr "at"
+        |       |       `-- Identifier "s"
+        |       `-- IntLiteral "0"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "color"
+        |       |   `-- Identifier "s"
+        |       `-- MemberExpr "g"
+        |           `-- Identifier "c"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "count"
+        |       |   `-- Identifier "totals"
+        |       `-- Identifier "LIMIT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "id"
+        |       |   `-- Identifier "anonymous_object"
+        |       `-- Identifier "z"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- CallExpr
+                |   |   |-- Identifier "area"
+                |   |   `-- UnaryExpr "&"
+                |   |       `-- Identifier "s"
+                |   `-- MemberExpr "count"
+                |       `-- Identifier "totals"
+                `-- MemberExpr "id"
+                    `-- Identifier "anonymous_object"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Shape                struct_tag     4      global                       STRUCT                                    0                                
+Shape::kind          struct_member  5      global > struct Shape        INT                                       0                                
+Shape::(unnamed at 6:5) union_tag      6      global > struct Shape        UNION                                     0                                
+(unnamed at 6:5)::side union_member   6      global > struct Shape > union (unnamed at 6:5) INT                                       0                                
+(unnamed at 6:5)::(unnamed at 6:23) struct_tag     6      global > struct Shape > union (unnamed at 6:5) STRUCT                                    0                                
+(unnamed at 6:23)::w struct_member  6      global > struct Shape > union (unnamed at 6:5) > struct (unnamed at 6:23) INT                                       0                                
+(unnamed at 6:23)::h struct_member  6      global > struct Shape > union (unnamed at 6:5) > struct (unnamed at 6:23) INT                                       0                                
+Shape::Pos           struct_tag     7      global > struct Shape        STRUCT                                    0                                
+Pos::x               struct_member  7      global > struct Shape > struct Pos INT                                       0                                
+Pos::y               struct_member  7      global > struct Shape > struct Pos INT                                       0                                
+Shape::at            struct_member  7      global > struct Shape        STRUCT                                    0                                
+Shape::color         struct_member  8      global > struct Shape        INT                                       0                                
+(unnamed at 10:9)    struct_tag     10     global                       STRUCT                                    0                                
+(unnamed at 10:9)::r struct_member  10     global > struct (unnamed at 10:9) INT                                       0                                
+(unnamed at 10:9)::g struct_member  10     global > struct (unnamed at 10:9) INT                                       0                                
+(unnamed at 10:9)::b struct_member  10     global > struct (unnamed at 10:9) INT                                       0                                
+Rgb                  typedef        10     global                       STRUCT                                    0                                
+(unnamed at 11:9)    enum_tag       11     global                       ENUM                                      0                                
+SMALL                enum_constant  11     global                       ENUM_CONSTANT                             0                                
+LARGE                enum_constant  11     global                       ENUM_CONSTANT                             1                                
+Size                 typedef        11     global                       ENUM                                      0                                
+(unnamed at 12:1)    struct_tag     12     global                       STRUCT                                    0                                
+(unnamed at 12:1)::count struct_member  12     global > struct (unnamed at 12:1) INT                                       0                                
+totals               variable       12     global                       STRUCT                                    2                                
+(unnamed at 13:1)    enum_tag       13     global                       ENUM                                      0                                
+LIMIT                enum_constant  13     global                       ENUM_CONSTANT                             1                                
+(unnamed at 14:1)    class_tag      14     global                       CLASS                                     0                                
+(unnamed at 14:1)::id class_member   14     global > class (unnamed at 14:1) INT                                       0                                
+anonymous_object     variable       14     global                       CLASS                                     2                                
+area                 procedure      16     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z4areaP5Shape
+s                    parameter      16     global > area()              STRUCT_POINTER                            5                                
+main                 procedure      18     global                       PROCEDURE                                 0         INT ()                 main
+s                    variable       19     global > main()              STRUCT                                    6                                
+c                    variable       20     global > main()              STRUCT                                    1                                
+z                    variable       21     global > main()              ENUM                                      1                                

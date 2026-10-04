@@ -1,0 +1,576 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v05_arrays.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+sum                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT_ARRAY           
+[                              open_bracket_op     
+]                              close_bracket_op    
+,                              comma_op            
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+s                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+n                              INT                 
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+s                              INT                 
++=                             plus_assign_op      
+a                              INT_ARRAY           
+[                              open_bracket_op     
+i                              INT                 
+]                              close_bracket_op    
+;                              semicolon_op        
+return                         return              
+s                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+trace                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+m                              INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+m                              INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+m                              INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+m                              INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT_ARRAY           
+[                              open_bracket_op     
+5                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+,                              comma_op            
+5                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+z                              INT_ARRAY           
+[                              open_bracket_op     
+5                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+char                           char                
+name                           CHAR_ARRAY          
+[                              open_bracket_op     
+10                             INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+"abc"                          STRING_LITERAL      
+;                              semicolon_op        
+char                           char                
+exact                          CHAR_ARRAY          
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+"abc"                          STRING_LITERAL      
+;                              semicolon_op        
+char                           char                
+chars                          CHAR_ARRAY          
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+'a'                            CHAR_LITERAL        
+,                              comma_op            
+'b'                            CHAR_LITERAL        
+,                              comma_op            
+'c'                            CHAR_LITERAL        
+,                              comma_op            
+'\0'                           CHAR_LITERAL        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+grid                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+0                              INT_LITERAL         
+,                              comma_op            
+0                              INT_LITERAL         
+}                              close_brace_op      
+,                              comma_op            
+{                              open_brace_op       
+0                              INT_LITERAL         
+,                              comma_op            
+1                              INT_LITERAL         
+,                              comma_op            
+0                              INT_LITERAL         
+}                              close_brace_op      
+,                              comma_op            
+{                              open_brace_op       
+0                              INT_LITERAL         
+,                              comma_op            
+0                              INT_LITERAL         
+,                              comma_op            
+1                              INT_LITERAL         
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+flat                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+{                              open_brace_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+,                              comma_op            
+4                              INT_LITERAL         
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+cube                           INT_ARRAY_ARRAY_ARRAY
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+i                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+a                              INT_ARRAY           
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+10                             INT_LITERAL         
+;                              semicolon_op        
+a                              INT_ARRAY           
+[                              open_bracket_op     
+i                              INT                 
+]                              close_bracket_op    
+=                              assign_op           
+a                              INT_ARRAY           
+[                              open_bracket_op     
+i                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+a                              INT_ARRAY           
+[                              open_bracket_op     
+i                              INT                 
++                              plus_op             
+1                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+grid                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+grid                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+cube                           INT_ARRAY_ARRAY_ARRAY
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+7                              INT_LITERAL         
+;                              semicolon_op        
+name                           CHAR_ARRAY          
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+'A'                            CHAR_LITERAL        
+;                              semicolon_op        
+i                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+[                              open_bracket_op     
+a                              INT_ARRAY           
+]                              close_bracket_op    
+;                              semicolon_op        
+char                           char                
+c                              CHAR                
+=                              assign_op           
+"literal"                      STRING_LITERAL      
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+=                              assign_op           
+a                              INT_ARRAY           
+;                              semicolon_op        
+p                              INT_POINTER         
+=                              assign_op           
+grid                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+return                         return              
+sum                            PROCEDURE           
+(                              open_paren_op       
+a                              INT_ARRAY           
+,                              comma_op            
+5                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+trace                          PROCEDURE           
+(                              open_paren_op       
+grid                           INT_ARRAY_ARRAY     
+)                              close_paren_op      
++                              plus_op             
+z                              INT_ARRAY           
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+chars                          CHAR_ARRAY          
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+exact                          CHAR_ARRAY          
+[                              open_bracket_op     
+2                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+flat                           INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
++                              plus_op             
+c                              CHAR                
++                              plus_op             
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "sum : _Z3sumPii"
+|   |-- ParamDecl "a : INT_ARRAY"
+|   |-- ParamDecl "n : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "s : INT"
+|       |   `-- IntLiteral "0"
+|       |-- ForStmt
+|       |   |-- VarDecl "i : INT"
+|       |   |   `-- IntLiteral "0"
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<"
+|       |   |       |-- Identifier "i"
+|       |   |       `-- Identifier "n"
+|       |   |-- PostfixOpExpr "++"
+|       |   |   `-- Identifier "i"
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "+="
+|       |           |-- Identifier "s"
+|       |           `-- IndexExpr
+|       |               |-- Identifier "a"
+|       |               `-- Identifier "i"
+|       `-- ReturnStmt
+|           `-- Identifier "s"
+|-- FunctionDef "trace : _Z5tracePA3_i"
+|   |-- ParamDecl "m : INT_ARRAY_ARRAY"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- BinaryExpr "+"
+|               |   |-- IndexExpr
+|               |   |   |-- IndexExpr
+|               |   |   |   |-- Identifier "m"
+|               |   |   |   `-- IntLiteral "0"
+|               |   |   `-- IntLiteral "0"
+|               |   `-- IndexExpr
+|               |       |-- IndexExpr
+|               |       |   |-- Identifier "m"
+|               |       |   `-- IntLiteral "1"
+|               |       `-- IntLiteral "1"
+|               `-- IndexExpr
+|                   |-- IndexExpr
+|                   |   |-- Identifier "m"
+|                   |   `-- IntLiteral "2"
+|                   `-- IntLiteral "2"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       |-- IntLiteral "3"
+        |       |-- IntLiteral "4"
+        |       `-- IntLiteral "5"
+        |-- VarDecl "z : INT_ARRAY"
+        |   `-- InitializerList
+        |       `-- IntLiteral "1"
+        |-- VarDecl "name : CHAR_ARRAY"
+        |   `-- StringLiteral ""abc""
+        |-- VarDecl "exact : CHAR_ARRAY"
+        |   `-- StringLiteral ""abc""
+        |-- VarDecl "chars : CHAR_ARRAY"
+        |   `-- InitializerList
+        |       |-- CharLiteral "'a'"
+        |       |-- CharLiteral "'b'"
+        |       |-- CharLiteral "'c'"
+        |       `-- CharLiteral "'\0'"
+        |-- VarDecl "grid : INT_ARRAY_ARRAY"
+        |   `-- InitializerList
+        |       |-- InitializerList
+        |       |   |-- IntLiteral "1"
+        |       |   |-- IntLiteral "0"
+        |       |   `-- IntLiteral "0"
+        |       |-- InitializerList
+        |       |   |-- IntLiteral "0"
+        |       |   |-- IntLiteral "1"
+        |       |   `-- IntLiteral "0"
+        |       `-- InitializerList
+        |           |-- IntLiteral "0"
+        |           |-- IntLiteral "0"
+        |           `-- IntLiteral "1"
+        |-- VarDecl "flat : INT_ARRAY_ARRAY"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       |-- IntLiteral "3"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "cube : INT_ARRAY_ARRAY_ARRAY"
+        |-- VarDecl "i : INT"
+        |   `-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "a"
+        |       |   `-- IntLiteral "0"
+        |       `-- IntLiteral "10"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "a"
+        |       |   `-- Identifier "i"
+        |       `-- BinaryExpr "+"
+        |           |-- IndexExpr
+        |           |   |-- Identifier "a"
+        |           |   `-- BinaryExpr "-"
+        |           |       |-- Identifier "i"
+        |           |       `-- IntLiteral "1"
+        |           `-- IndexExpr
+        |               |-- Identifier "a"
+        |               `-- BinaryExpr "+"
+        |                   |-- Identifier "i"
+        |                   `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- IndexExpr
+        |       |   |   |-- Identifier "grid"
+        |       |   |   `-- IntLiteral "1"
+        |       |   `-- IntLiteral "2"
+        |       `-- IndexExpr
+        |           |-- IndexExpr
+        |           |   |-- Identifier "grid"
+        |           |   `-- IntLiteral "2"
+        |           `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- IndexExpr
+        |       |   |   |-- IndexExpr
+        |       |   |   |   |-- Identifier "cube"
+        |       |   |   |   `-- IntLiteral "1"
+        |       |   |   `-- IntLiteral "2"
+        |       |   `-- IntLiteral "3"
+        |       `-- IntLiteral "7"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- Identifier "name"
+        |       |   `-- IntLiteral "0"
+        |       `-- CharLiteral "'A'"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "i"
+        |       `-- IndexExpr
+        |           |-- IntLiteral "1"
+        |           `-- Identifier "a"
+        |-- VarDecl "c : CHAR"
+        |   `-- IndexExpr
+        |       |-- StringLiteral ""literal""
+        |       `-- IntLiteral "2"
+        |-- VarDecl "p : INT_POINTER"
+        |   `-- Identifier "a"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "p"
+        |       `-- IndexExpr
+        |           |-- Identifier "grid"
+        |           `-- IntLiteral "1"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |-- BinaryExpr "+"
+                |   |   |   |   |   |   |-- CallExpr
+                |   |   |   |   |   |   |   |-- Identifier "sum"
+                |   |   |   |   |   |   |   |-- Identifier "a"
+                |   |   |   |   |   |   |   `-- IntLiteral "5"
+                |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |       |-- Identifier "trace"
+                |   |   |   |   |   |       `-- Identifier "grid"
+                |   |   |   |   |   `-- IndexExpr
+                |   |   |   |   |       |-- Identifier "z"
+                |   |   |   |   |       `-- IntLiteral "1"
+                |   |   |   |   `-- IndexExpr
+                |   |   |   |       |-- Identifier "chars"
+                |   |   |   |       `-- IntLiteral "0"
+                |   |   |   `-- IndexExpr
+                |   |   |       |-- Identifier "exact"
+                |   |   |       `-- IntLiteral "2"
+                |   |   `-- IndexExpr
+                |   |       |-- IndexExpr
+                |   |       |   |-- Identifier "flat"
+                |   |       |   `-- IntLiteral "1"
+                |   |       `-- IntLiteral "1"
+                |   `-- Identifier "c"
+                `-- UnaryExpr "*"
+                    `-- Identifier "p"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+sum                  procedure      3      global                       PROCEDURE                                 1         INT (INT_ARRAY, INT)   _Z3sumPii
+a                    parameter      3      global > sum()               INT_ARRAY                                 1                                
+n                    parameter      3      global > sum()               INT                                       1                                
+s                    variable       4      global > sum()               INT                                       2                                
+i                    variable       5      global > sum() > for         INT                                       3                                
+trace                procedure      9      global                       PROCEDURE                                 1         INT (INT_ARRAY_ARRAY)  _Z5tracePA3_i
+m                    parameter      9      global > trace()             INT_ARRAY_ARRAY                           3                                
+main                 procedure      11     global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       12     global > main()              INT_ARRAY        []                       7                                
+z                    variable       13     global > main()              INT_ARRAY        []                       1                                
+name                 variable       14     global > main()              CHAR_ARRAY       []                       1                                
+exact                variable       15     global > main()              CHAR_ARRAY       []                       1                                
+chars                variable       16     global > main()              CHAR_ARRAY       []                       1                                
+grid                 variable       17     global > main()              INT_ARRAY_ARRAY  []2                      4                                
+flat                 variable       18     global > main()              INT_ARRAY_ARRAY  []2                      1                                
+cube                 variable       19     global > main()              INT_ARRAY_ARRAY_ARRAY []3                      1                                
+i                    variable       20     global > main()              INT                                       4                                
+c                    variable       28     global > main()              CHAR                                      1                                
+p                    variable       29     global > main()              INT_POINTER      *                        2                                

@@ -1,0 +1,59 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v13_main_array_form.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+argc                           INT                 
+,                              comma_op            
+char                           char                
+*                              star_op             
+argv                           CHAR_POINTER_ARRAY  
+[                              open_bracket_op     
+]                              close_bracket_op    
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+argv                           CHAR_POINTER_ARRAY  
+[                              open_bracket_op     
+argc                           INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+]                              close_bracket_op    
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    |-- ParamDecl "argc : INT"
+    |-- ParamDecl "argv : CHAR_POINTER_ARRAY"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- IndexExpr
+                |-- IndexExpr
+                |   |-- Identifier "argv"
+                |   `-- BinaryExpr "-"
+                |       |-- Identifier "argc"
+                |       `-- IntLiteral "1"
+                `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      2      global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_ARRAY) main
+argc                 parameter      2      global > main()              INT                                       1                                
+argv                 parameter      2      global > main()              CHAR_POINTER_ARRAY                          1                                

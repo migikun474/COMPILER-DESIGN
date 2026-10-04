@@ -1,0 +1,76 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test6_dynamic_memory_file_io.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test6_dynamic_memory_file_io.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "heap : INT_POINTER"  <int *>  -> heap.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "heap"  <int *> lvalue  -> heap.1 (variable, local)
+        |       `-- CastExpr "INT_POINTER"  <int *>
+        |           `-- BuiltinCallExpr "malloc"  <void *>
+        |               `-- BinaryExpr "*"  <int> =40
+        |                   |-- IntLiteral "10"  <int> =10
+        |                   `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "heap"  <int *> lvalue  -> heap.1 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- IntLiteral "42"  <int> =42
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"  <void>
+        |       `-- Identifier "heap"  <int *> lvalue  -> heap.1 (variable, local)
+        |-- VarDecl "more : INT_POINTER"  <int *>  -> more.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "more"  <int *> lvalue  -> more.2 (variable, local)
+        |       `-- CastExpr "INT_POINTER"  <int *>
+        |           `-- BuiltinCallExpr "calloc"  <void *>
+        |               |-- IntLiteral "5"  <int> =5
+        |               `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "more"  <int *> lvalue  -> more.2 (variable, local)
+        |       `-- CastExpr "INT_POINTER"  <int *>
+        |           `-- BuiltinCallExpr "realloc"  <void *>
+        |               |-- Identifier "more"  <int *> lvalue  -> more.2 (variable, local)
+        |               `-- IntLiteral "20"  <int> =20
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"  <void>
+        |       `-- Identifier "more"  <int *> lvalue  -> more.2 (variable, local)
+        |-- VarDecl "f : FILE_POINTER"  <FILE *>  -> f.3 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <FILE *>
+        |       |-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
+        |       `-- BuiltinCallExpr "fopen"  <FILE *>
+        |           |-- StringLiteral ""data.txt""  <char[9]> lvalue
+        |           `-- StringLiteral ""r""  <char[2]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fprintf"  <int>
+        |       |-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
+        |       |-- StringLiteral ""%d\n""  <char[4]> lvalue
+        |       `-- IntLiteral "42"  <int> =42
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"  <int>
+        |       `-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         3     -     0     main                 main                     defined
+heap               variable       int *                      local    global > main()                4     4     3     heap.1               -                        
+more               variable       int *                      local    global > main()                9     4     4     more.2               -                        
+f                  variable       FILE *                     local    global > main()                14    4     3     f.3                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

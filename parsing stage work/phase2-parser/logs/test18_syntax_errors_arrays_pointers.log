@@ -1,0 +1,131 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test18_syntax_errors_arrays_pointers.c
+
+test/test18_syntax_errors_arrays_pointers.c:8:14: syntax error: syntax error, unexpected ';', expecting ']'
+ 8 |     int arr[5;
+   |              ^
+   | note: insert ']' here
+
+test/test18_syntax_errors_arrays_pointers.c:14:15: syntax error: syntax error, unexpected ';', expecting ']'
+ 14 |     int m[2][3;
+    |               ^
+    | note: insert ']' here
+
+test/test18_syntax_errors_arrays_pointers.c:21:14: syntax error: syntax error, unexpected ';', expecting ',' or ']'
+ 21 |     arr[2 = 9;
+    |              ^
+
+test/test18_syntax_errors_arrays_pointers.c:27:15: syntax error: syntax error, unexpected ';'
+ 27 |     int *p = &;
+    |               ^
+
+test/test18_syntax_errors_arrays_pointers.c:34:10: syntax error: syntax error, unexpected ';'
+ 34 |     *p = ;
+    |          ^
+
+test/test18_syntax_errors_arrays_pointers.c:40:23: syntax error: syntax error, unexpected ';', expecting ')'
+ 40 |     int (*fp(int, int);
+    |                       ^
+    | note: insert ')' here
+
+test/test18_syntax_errors_arrays_pointers.c:47:27: syntax error: syntax error, unexpected ';', expecting ')'
+ 47 |     int (*fp)(int a, int b;
+    |                           ^
+    | note: insert ')' here
+
+test/test18_syntax_errors_arrays_pointers.c:55:7: syntax error: syntax error, unexpected '='
+ 55 |     * = x;
+    |       ^
+
+test/test18_syntax_errors_arrays_pointers.c:62:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
+ 62 |     x;
+    |     ^
+    | note: insert ')' here
+
+test/test18_syntax_errors_arrays_pointers.c:67:20: syntax error: syntax error, unexpected ')'
+ 67 |     int s = sizeof();
+    |                    ^
+
+-----------------------------------------
+Total Errors : 10
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- FunctionDef "t01_array_decl_missing_close_bracket : _Z36t01_array_decl_missing_close_bracketv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 8: near ';'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t02_multidim_array_missing_bracket : _Z34t02_multidim_array_missing_bracketv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 14: near ';'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t03_array_access_missing_close_bracket : _Z38t03_array_access_missing_close_bracketv"
+|   `-- CompoundStmt
+|       |-- VarDecl "arr : INT_ARRAY"
+|       `-- ErrorNode "line 21: near ';'"
+|-- FunctionDef "t04_addressof_missing_operand : _Z29t04_addressof_missing_operandv"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 27: near ';'"
+|-- FunctionDef "t05_deref_missing_rhs : _Z21t05_deref_missing_rhsv"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       |-- VarDecl "p : INT_POINTER"
+|       |   `-- UnaryExpr "&"
+|       |       `-- Identifier "x"
+|       `-- ErrorNode "line 34: near ';'"
+|-- FunctionDef "t06_function_pointer_missing_close_paren : _Z40t06_function_pointer_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 40: near ';'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t07_function_pointer_params_missing_close_paren : _Z47t07_function_pointer_params_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 47: near ';'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t08_stray_pointer_star_in_statement : _Z35t08_stray_pointer_star_in_statementv"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 55: near '='"
+|-- FunctionDef "t09_cast_missing_type_name : _Z26t09_cast_missing_type_namev"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "5"
+|       `-- ErrorNode "line 62: near 'x'"
+|-- FunctionDef "t10_sizeof_missing_type : _Z23t10_sizeof_missing_typev"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 67: near ')'"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "arr : INT_ARRAY"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "p : INT_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- IndexExpr
+        |           |-- Identifier "arr"
+        |           `-- IntLiteral "0"
+        |-- VarDecl "pp : INT_POINTER_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "p"
+        `-- ReturnStmt
+            `-- UnaryExpr "*"
+                `-- UnaryExpr "*"
+                    `-- Identifier "pp"

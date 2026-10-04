@@ -1,0 +1,67 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test11_member_access.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test11_member_access.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- StructDecl "Point"  <struct Point>  -> Point (tag)
+|   |-- VarDecl "x : INT"  <int>  -> Point::x (field, member)
+|   `-- VarDecl "y : INT"  <int>  -> Point::y (field, member)
+|-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
+|   `-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "p : STRUCT"  <struct Point>  -> p.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "x"  <int> lvalue  -> Point::x (field, member)
+        |       |   `-- Identifier "p"  <struct Point> lvalue  -> p.1 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "y"  <int> lvalue  -> Point::y (field, member)
+        |       |   `-- Identifier "p"  <struct Point> lvalue  -> p.1 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "pp : STRUCT_POINTER"  <struct Point *>  -> pp.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <struct Point *>
+        |       |-- Identifier "pp"  <struct Point *> lvalue  -> pp.2 (variable, local)
+        |       `-- UnaryExpr "&"  <struct Point *>
+        |           `-- Identifier "p"  <struct Point> lvalue  -> p.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- ArrowExpr "x"  <int> lvalue  -> Point::x (field, member)
+        |       |   `-- Identifier "pp"  <struct Point *> lvalue  -> pp.2 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "d : CLASS"  <class Dog>  -> d.3 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+        |       |   `-- Identifier "d"  <class Dog> lvalue  -> d.3 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Point              struct_tag     struct Point               -        global                         3     -     0     Point                -                        size 8
+Point::x           field          int                        member   global > struct Point          4     4     2     Point::x             -                        public, offset 0
+Point::y           field          int                        member   global > struct Point          5     4     1     Point::y             -                        public, offset 4
+Dog                class_tag      class Dog                  -        global                         8     -     0     Dog                  -                        size 4
+Dog::legs          field          int                        member   global > class Dog             10    4     1     Dog::legs            -                        public, offset 0
+main               function       int (void)                 -        global                         13    -     0     main                 main                     defined
+p                  variable       struct Point               local    global > main()                14    8     3     p.1                  -                        
+pp                 variable       struct Point *             local    global > main()                18    4     2     pp.2                 -                        
+d                  variable       class Dog                  local    global > main()                22    4     1     d.3                  -                        
+
+=== Record Layouts (MIPS32) ===
+struct Point: size 8, align 4
+    +0  int x  [public]
+    +4  int y  [public]
+class Dog: size 4, align 4
+    +0  int legs  [public]

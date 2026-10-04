@@ -1,0 +1,1232 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v21_mangling.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+enum                           enum                
+Color                          ENUM                
+{                              open_brace_op       
+RED                            ENUM_CONSTANT       
+,                              comma_op            
+GREEN                          ENUM_CONSTANT       
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+union                          union               
+U                              UNION               
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+;                              semicolon_op        
+float                          float               
+b                              FLOAT               
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+Dog                            CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+age                            INT                 
+;                              semicolon_op        
+Dog                            CONSTRUCTOR         
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+age                            INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+Dog                            CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+age                            INT                 
+=                              assign_op           
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Dog                            CONSTRUCTOR         
+(                              open_paren_op       
+const                          const               
+Dog                            CLASS               
+&                              ampersand_op        
+o                              CLASS_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+age                            INT                 
+=                              assign_op           
+o                              CLASS_POINTER       
+.                              dot_op              
+age                            IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+~                              tilde_op            
+Dog                            DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+bark                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+static                         static              
+int                            int                 
+count                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+n                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+n                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+Dog                            CLASS               
+&                              ampersand_op        
+operator                       PROCEDURE           
+=                              assign_op           
+(                              open_paren_op       
+const                          const               
+Dog                            CLASS               
+&                              ampersand_op        
+o                              CLASS_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+age                            INT                 
+=                              assign_op           
+o                              CLASS_POINTER       
+.                              dot_op              
+age                            IDENTIFIER          
+;                              semicolon_op        
+return                         return              
+*                              star_op             
+this                           this                
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+operator                       PROCEDURE           
+[                              open_bracket_op     
+]                              close_bracket_op    
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+i                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+bool                           bool                
+operator                       PROCEDURE           
+==                             eq_op               
+(                              open_paren_op       
+const                          const               
+Dog                            CLASS               
+&                              ampersand_op        
+o                              CLASS_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+age                            INT                 
+==                             eq_op               
+o                              CLASS_POINTER       
+.                              dot_op              
+age                            IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+operator                       PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+Cat                            CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+Cat                            CONSTRUCTOR         
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+p                              STRUCT              
+)                              close_paren_op      
+;                              semicolon_op        
+void                           void                
+meow                           PROCEDURE           
+(                              open_paren_op       
+Cat                            CLASS               
+*                              star_op             
+other                          IDENTIFIER          
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+where                          IDENTIFIER          
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+Cat                            CLASS               
+::                             scope_resolution_op 
+Cat                            CONSTRUCTOR         
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+p                              STRUCT              
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+Cat                            CLASS               
+::                             scope_resolution_op 
+meow                           PROCEDURE           
+(                              open_paren_op       
+Cat                            CLASS               
+*                              star_op             
+other                          CLASS_POINTER       
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+where                          STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+typedef                        typedef             
+unsigned                       unsigned            
+int                            int                 
+uint                           TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+struct                         struct              
+Point                          STRUCT              
+Pt                             TYPEDEF             
+;                              semicolon_op        
+typedef                        typedef             
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+BinOp                          TYPEDEF             
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+;                              semicolon_op        
+typedef                        typedef             
+int                            int                 
+*                              star_op             
+IntPtr                         TYPEDEF             
+;                              semicolon_op        
+void                           void                
+f0                             PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f1                             PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f2                             PROCEDURE           
+(                              open_paren_op       
+char                           char                
+a                              CHAR                
+,                              comma_op            
+short                          short               
+b                              SHORT               
+,                              comma_op            
+long                           long                
+c                              LONG                
+,                              comma_op            
+long                           long                
+long                           long                
+d                              LONG_LONG           
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f3                             PROCEDURE           
+(                              open_paren_op       
+unsigned                       unsigned            
+a                              UNSIGNED            
+,                              comma_op            
+unsigned                       unsigned            
+char                           char                
+b                              UNSIGNED_CHAR       
+,                              comma_op            
+unsigned                       unsigned            
+short                          short               
+c                              UNSIGNED_SHORT      
+,                              comma_op            
+unsigned                       unsigned            
+long                           long                
+d                              UNSIGNED_LONG       
+,                              comma_op            
+unsigned                       unsigned            
+long                           long                
+long                           long                
+e                              UNSIGNED_LONG_LONG  
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f4                             PROCEDURE           
+(                              open_paren_op       
+float                          float               
+a                              FLOAT               
+,                              comma_op            
+double                         double              
+b                              DOUBLE              
+,                              comma_op            
+bool                           bool                
+c                              BOOL                
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f5                             PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+*                              star_op             
+a                              INT_POINTER         
+,                              comma_op            
+int                            int                 
+*                              star_op             
+*                              star_op             
+b                              INT_POINTER_POINTER 
+,                              comma_op            
+const                          const               
+int                            int                 
+*                              star_op             
+c                              INT_POINTER         
+,                              comma_op            
+int                            int                 
+*                              star_op             
+const                          const               
+d                              INT_POINTER         
+,                              comma_op            
+const                          const               
+char                           char                
+*                              star_op             
+e                              CHAR_POINTER        
+,                              comma_op            
+const                          const               
+char                           char                
+*                              star_op             
+f                              CHAR_POINTER        
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f6                             PROCEDURE           
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+a                              STRUCT              
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+b                              STRUCT_POINTER      
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+&                              ampersand_op        
+c                              STRUCT_POINTER      
+,                              comma_op            
+const                          const               
+struct                         struct              
+Point                          STRUCT              
+&                              ampersand_op        
+d                              STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f7                             PROCEDURE           
+(                              open_paren_op       
+enum                           enum                
+Color                          ENUM                
+a                              ENUM                
+,                              comma_op            
+union                          union               
+U                              UNION               
+b                              UNION               
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f8                             PROCEDURE           
+(                              open_paren_op       
+Dog                            CLASS               
+a                              CLASS               
+,                              comma_op            
+Dog                            CLASS               
+*                              star_op             
+b                              CLASS_POINTER       
+,                              comma_op            
+Dog                            CLASS               
+&                              ampersand_op        
+c                              CLASS_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f9                             PROCEDURE           
+(                              open_paren_op       
+uint                           TYPEDEF             
+a                              UNSIGNED_INT        
+,                              comma_op            
+Pt                             TYPEDEF             
+b                              STRUCT              
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f10                            PROCEDURE           
+(                              open_paren_op       
+BinOp                          TYPEDEF             
+op                             INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f25                            PROCEDURE           
+(                              open_paren_op       
+IntPtr                         TYPEDEF             
+a                              INT_POINTER         
+,                              comma_op            
+IntPtr                         TYPEDEF             
+b                              INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f11                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+g                              INT_POINTER         
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+,                              comma_op            
+void                           void                
+(                              open_paren_op       
+*                              star_op             
+h                              VOID_POINTER        
+)                              close_paren_op      
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f12                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT_ARRAY           
+[                              open_bracket_op     
+]                              close_bracket_op    
+,                              comma_op            
+char                           char                
+*                              star_op             
+argv                           CHAR_POINTER_ARRAY  
+[                              open_bracket_op     
+]                              close_bracket_op    
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f13                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+p                              INT_POINTER_ARRAY   
+)                              close_paren_op      
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f26                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT_ARRAY_ARRAY     
+[                              open_bracket_op     
+]                              close_bracket_op    
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+f20                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+g                              INT_POINTER         
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+,                              comma_op            
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+h                              INT_POINTER         
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+void                           void                
+f14                            PROCEDURE           
+(                              open_paren_op       
+const                          const               
+char                           char                
+*                              star_op             
+fmt                            CHAR_POINTER        
+,                              comma_op            
+...                            ellipsis_op         
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f15                            PROCEDURE           
+(                              open_paren_op       
+FILE                           file                
+*                              star_op             
+fp                             FILE_POINTER        
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f17                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+&                              ampersand_op        
+a                              INT_POINTER         
+,                              comma_op            
+int                            int                 
+&                              ampersand_op        
+b                              INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f18                            PROCEDURE           
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+a                              STRUCT_POINTER      
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+b                              STRUCT_POINTER      
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+c                              STRUCT              
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f19                            PROCEDURE           
+(                              open_paren_op       
+const                          const               
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+a                              STRUCT_POINTER      
+,                              comma_op            
+const                          const               
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+b                              STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f22                            PROCEDURE           
+(                              open_paren_op       
+volatile                       volatile            
+int                            int                 
+*                              star_op             
+a                              INT_POINTER         
+,                              comma_op            
+const                          const               
+volatile                       volatile            
+int                            int                 
+*                              star_op             
+b                              INT_POINTER         
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+void                           void                
+f24                            PROCEDURE           
+(                              open_paren_op       
+void                           void                
+*                              star_op             
+a                              VOID_POINTER        
+,                              comma_op            
+const                          const               
+void                           void                
+*                              star_op             
+b                              VOID_POINTER        
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+struct                         struct              
+Point                          STRUCT              
+operator                       PROCEDURE           
++                              plus_op             
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+a                              STRUCT              
+,                              comma_op            
+struct                         struct              
+Point                          STRUCT              
+b                              STRUCT              
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              STRUCT              
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+over                           PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+over                           PROCEDURE           
+(                              open_paren_op       
+double                         double              
+a                              DOUBLE              
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+over                           PROCEDURE           
+(                              open_paren_op       
+struct                         struct              
+Point                          STRUCT              
+*                              star_op             
+p                              STRUCT_POINTER      
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+over                           PROCEDURE           
+(                              open_paren_op       
+union                          union               
+U                              UNION               
+*                              star_op             
+p                              UNION_POINTER       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+Dog                            CLASS               
+d                              CLASS               
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+Dog                            CLASS               
+z                              CLASS               
+;                              semicolon_op        
+Dog                            CLASS               
+e                              CLASS               
+=                              assign_op           
+d                              CLASS               
+;                              semicolon_op        
+e                              CLASS               
+=                              assign_op           
+d                              CLASS               
+;                              semicolon_op        
+d                              CLASS               
+.                              dot_op              
+bark                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+struct                         struct              
+Point                          STRUCT              
+p                              STRUCT              
+;                              semicolon_op        
+p                              STRUCT              
+.                              dot_op              
+x                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+p                              STRUCT              
+.                              dot_op              
+y                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+Cat                            CLASS               
+c                              CLASS               
+(                              open_paren_op       
+p                              STRUCT              
+)                              close_paren_op      
+;                              semicolon_op        
+c                              CLASS               
+.                              dot_op              
+meow                           PROCEDURE           
+(                              open_paren_op       
+&                              ampersand_op        
+c                              CLASS               
+,                              comma_op            
+&                              ampersand_op        
+p                              STRUCT              
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+over                           PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+over                           PROCEDURE           
+(                              open_paren_op       
+2.0                            FLOAT_LITERAL       
+)                              close_paren_op      
++                              plus_op             
+Dog                            CLASS               
+::                             scope_resolution_op 
+count                          IDENTIFIER          
+(                              open_paren_op       
+e                              CLASS               
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
+)                              close_paren_op      
++                              plus_op             
+d                              CLASS               
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+(                              open_paren_op       
+d                              CLASS               
+==                             eq_op               
+e                              CLASS               
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- EnumDecl "Color"
+|   |-- Enumerator "RED"
+|   `-- Enumerator "GREEN"
+|-- StructDecl "Point"
+|   |-- VarDecl "x : INT"
+|   `-- VarDecl "y : INT"
+|-- UnionDecl "U"
+|   |-- VarDecl "a : INT"
+|   `-- VarDecl "b : FLOAT"
+|-- ClassDecl "Dog"
+|   |-- VarDecl "age : INT"
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ev"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "age"
+|   |               `-- IntLiteral "0"
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ei"
+|   |   |-- ParamDecl "a : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "age"
+|   |               `-- Identifier "a"
+|   |-- ConstructorDef "Dog : _ZN3DogC1ERKS_"
+|   |   |-- ParamDecl "o : CLASS_POINTER"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "age"
+|   |               `-- MemberExpr "age"
+|   |                   `-- Identifier "o"
+|   |-- DestructorDef "Dog : _ZN3DogD1Ev"
+|   |   `-- CompoundStmt
+|   |-- FunctionDef "bark : _ZN3Dog4barkEv"
+|   |   `-- CompoundStmt
+|   |-- FunctionDef "count : _ZN3Dog5countEi"
+|   |   |-- ParamDecl "n : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "n"
+|   |-- FunctionDef "operator= : _ZN3DogaSERKS_"
+|   |   |-- ParamDecl "o : CLASS_POINTER"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- Identifier "age"
+|   |       |       `-- MemberExpr "age"
+|   |       |           `-- Identifier "o"
+|   |       `-- ReturnStmt
+|   |           `-- UnaryExpr "*"
+|   |               `-- ThisExpr
+|   |-- FunctionDef "operator[] : _ZN3DogixEi"
+|   |   |-- ParamDecl "i : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "i"
+|   |-- FunctionDef "operator== : _ZN3DogeqERKS_"
+|   |   |-- ParamDecl "o : CLASS_POINTER"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "=="
+|   |               |-- Identifier "age"
+|   |               `-- MemberExpr "age"
+|   |                   `-- Identifier "o"
+|   `-- FunctionDef "operator() : _ZN3DogclEii"
+|       |-- ParamDecl "a : INT"
+|       |-- ParamDecl "b : INT"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- BinaryExpr "+"
+|                   |-- Identifier "a"
+|                   `-- Identifier "b"
+|-- ClassDecl "Cat"
+|   |-- ConstructorDef "Cat : _ZN3CatC1E5Point"
+|   |   `-- ParamDecl "p : STRUCT"
+|   `-- FunctionDecl "meow : _ZN3Cat4meowEPS_P5Point"
+|       |-- ParamDecl "other : CLASS_POINTER"
+|       `-- ParamDecl "where : STRUCT_POINTER"
+|-- ConstructorDef "Cat : _ZN3CatC1E5Point"
+|   |-- ParamDecl "p : STRUCT"
+|   `-- CompoundStmt
+|-- FunctionDef "meow : _ZN3Cat4meowEPS_P5Point"
+|   |-- ParamDecl "other : CLASS_POINTER"
+|   |-- ParamDecl "where : STRUCT_POINTER"
+|   `-- CompoundStmt
+|-- TypedefDecl "uint = UNSIGNED_INT"
+|-- TypedefDecl "Pt = STRUCT"
+|-- TypedefDecl "BinOp = INT_POINTER"
+|-- TypedefDecl "IntPtr = INT_POINTER"
+|-- FunctionDef "f0 : _Z2f0v"
+|   `-- CompoundStmt
+|-- FunctionDef "f1 : _Z2f1i"
+|   |-- ParamDecl "a : INT"
+|   `-- CompoundStmt
+|-- FunctionDef "f2 : _Z2f2cslx"
+|   |-- ParamDecl "a : CHAR"
+|   |-- ParamDecl "b : SHORT"
+|   |-- ParamDecl "c : LONG"
+|   |-- ParamDecl "d : LONG_LONG"
+|   `-- CompoundStmt
+|-- FunctionDef "f3 : _Z2f3jhtmy"
+|   |-- ParamDecl "a : UNSIGNED"
+|   |-- ParamDecl "b : UNSIGNED_CHAR"
+|   |-- ParamDecl "c : UNSIGNED_SHORT"
+|   |-- ParamDecl "d : UNSIGNED_LONG"
+|   |-- ParamDecl "e : UNSIGNED_LONG_LONG"
+|   `-- CompoundStmt
+|-- FunctionDef "f4 : _Z2f4fdb"
+|   |-- ParamDecl "a : FLOAT"
+|   |-- ParamDecl "b : DOUBLE"
+|   |-- ParamDecl "c : BOOL"
+|   `-- CompoundStmt
+|-- FunctionDef "f5 : _Z2f5PiPS_PKiS_PKcS4_"
+|   |-- ParamDecl "a : INT_POINTER"
+|   |-- ParamDecl "b : INT_POINTER_POINTER"
+|   |-- ParamDecl "c : INT_POINTER"
+|   |-- ParamDecl "d : INT_POINTER"
+|   |-- ParamDecl "e : CHAR_POINTER"
+|   |-- ParamDecl "f : CHAR_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f6 : _Z2f65PointPS_RS_RKS_"
+|   |-- ParamDecl "a : STRUCT"
+|   |-- ParamDecl "b : STRUCT_POINTER"
+|   |-- ParamDecl "c : STRUCT_POINTER"
+|   |-- ParamDecl "d : STRUCT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f7 : _Z2f75Color1U"
+|   |-- ParamDecl "a : ENUM"
+|   |-- ParamDecl "b : UNION"
+|   `-- CompoundStmt
+|-- FunctionDef "f8 : _Z2f83DogPS_RS_"
+|   |-- ParamDecl "a : CLASS"
+|   |-- ParamDecl "b : CLASS_POINTER"
+|   |-- ParamDecl "c : CLASS_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f9 : _Z2f9j5Point"
+|   |-- ParamDecl "a : UNSIGNED_INT"
+|   |-- ParamDecl "b : STRUCT"
+|   `-- CompoundStmt
+|-- FunctionDef "f10 : _Z3f10PFiiiE"
+|   |-- ParamDecl "op : INT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f25 : _Z3f25PiS_"
+|   |-- ParamDecl "a : INT_POINTER"
+|   |-- ParamDecl "b : INT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f11 : _Z3f11PFiiEPFvvE"
+|   |-- ParamDecl "g : INT_POINTER"
+|   |-- ParamDecl "h : VOID_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f12 : _Z3f12PiPPc"
+|   |-- ParamDecl "a : INT_ARRAY"
+|   |-- ParamDecl "argv : CHAR_POINTER_ARRAY"
+|   `-- CompoundStmt
+|-- FunctionDef "f13 : _Z3f13PA3_i"
+|   |-- ParamDecl "p : INT_POINTER_ARRAY"
+|   `-- CompoundStmt
+|-- FunctionDef "f26 : _Z3f26PA4_i"
+|   |-- ParamDecl "a : INT_ARRAY_ARRAY"
+|   `-- CompoundStmt
+|-- FunctionDef "f20 : _Z3f20PFiiES0_"
+|   |-- ParamDecl "g : INT_POINTER"
+|   |-- ParamDecl "h : INT_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "0"
+|-- FunctionDef "f14 : _Z3f14PKcz"
+|   |-- ParamDecl "fmt : CHAR_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f15 : _Z3f15P8_IO_FILE"
+|   |-- ParamDecl "fp : FILE_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f17 : _Z3f17RiS_"
+|   |-- ParamDecl "a : INT_POINTER"
+|   |-- ParamDecl "b : INT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f18 : _Z3f18P5PointS0_S_"
+|   |-- ParamDecl "a : STRUCT_POINTER"
+|   |-- ParamDecl "b : STRUCT_POINTER"
+|   |-- ParamDecl "c : STRUCT"
+|   `-- CompoundStmt
+|-- FunctionDef "f19 : _Z3f19PK5PointS1_"
+|   |-- ParamDecl "a : STRUCT_POINTER"
+|   |-- ParamDecl "b : STRUCT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f22 : _Z3f22PViPVKi"
+|   |-- ParamDecl "a : INT_POINTER"
+|   |-- ParamDecl "b : INT_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "f24 : _Z3f24PvPKv"
+|   |-- ParamDecl "a : VOID_POINTER"
+|   |-- ParamDecl "b : VOID_POINTER"
+|   `-- CompoundStmt
+|-- FunctionDef "operator+ : _Zpl5PointS_"
+|   |-- ParamDecl "a : STRUCT"
+|   |-- ParamDecl "b : STRUCT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"
+|-- FunctionDef "over : _Z4overi"
+|   |-- ParamDecl "a : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "a"
+|-- FunctionDef "over : _Z4overd"
+|   |-- ParamDecl "a : DOUBLE"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "0"
+|-- FunctionDef "over : _Z4overP5Point"
+|   |-- ParamDecl "p : STRUCT_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "0"
+|-- FunctionDef "over : _Z4overP1U"
+|   |-- ParamDecl "p : UNION_POINTER"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "0"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "d : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "z : CLASS"
+        |-- VarDecl "e : CLASS"
+        |   `-- Identifier "d"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "e"
+        |       `-- Identifier "d"
+        |-- ExprStmt
+        |   `-- CallExpr
+        |       `-- MemberExpr "bark"
+        |           `-- Identifier "d"
+        |-- VarDecl "p : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- Identifier "p"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "y"
+        |       |   `-- Identifier "p"
+        |       `-- IntLiteral "2"
+        |-- VarDecl "c : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       `-- Identifier "p"
+        |-- ExprStmt
+        |   `-- CallExpr
+        |       |-- MemberExpr "meow"
+        |       |   `-- Identifier "c"
+        |       |-- UnaryExpr "&"
+        |       |   `-- Identifier "c"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "p"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- BinaryExpr "+"
+                |   |   |-- BinaryExpr "+"
+                |   |   |   |-- CallExpr "_Z4overi"
+                |   |   |   |   |-- Identifier "over"
+                |   |   |   |   `-- IntLiteral "1"
+                |   |   |   `-- CallExpr "_Z4overP1U"
+                |   |   |       |-- Identifier "over"
+                |   |   |       `-- FloatLiteral "2.0"
+                |   |   `-- CallExpr
+                |   |       |-- ScopeExpr "count"
+                |   |       |   `-- Identifier "Dog"
+                |   |       `-- IndexExpr
+                |   |           |-- Identifier "e"
+                |   |           `-- IntLiteral "1"
+                |   `-- CallExpr
+                |       |-- Identifier "d"
+                |       |-- IntLiteral "1"
+                |       `-- IntLiteral "2"
+                `-- BinaryExpr "=="
+                    |-- Identifier "d"
+                    `-- Identifier "e"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Color                enum_tag       8      global                       ENUM                                      0                                
+RED                  enum_constant  8      global                       ENUM_CONSTANT                             0                                
+GREEN                enum_constant  8      global                       ENUM_CONSTANT                             0                                
+Point                struct_tag     9      global                       STRUCT                                    0                                
+Point::x             struct_member  9      global > struct Point        INT                                       0                                
+Point::y             struct_member  9      global > struct Point        INT                                       0                                
+U                    union_tag      10     global                       UNION                                     0                                
+U::a                 union_member   10     global > union U             INT                                       0                                
+U::b                 union_member   10     global > union U             FLOAT                                     0                                
+Dog                  class_tag      12     global                       CLASS                                     0                                
+Dog::age             class_member   14     global > class Dog           INT                                       5                                
+Dog::Dog             class_method   15     global > class Dog           CONSTRUCTOR                               0         VOID ()                _ZN3DogC1Ev
+Dog::a               parameter      16     global > class Dog > Dog::Dog() INT                                       1                                
+Dog::Dog             class_method   16     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3DogC1Ei
+Dog::o               parameter      17     global > class Dog > Dog::Dog() CLASS_POINTER                             1                                
+Dog::Dog             class_method   17     global > class Dog           CONSTRUCTOR                               0         VOID (CLASS_POINTER)   _ZN3DogC1ERKS_
+Dog::~Dog            class_method   18     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3DogD1Ev
+Dog::bark            class_method   19     global > class Dog           PROCEDURE                                 0         VOID ()                _ZN3Dog4barkEv
+Dog::count           class_method   20     global > class Dog           PROCEDURE        static                   0         INT (INT)              _ZN3Dog5countEi
+Dog::n               parameter      20     global > class Dog > count() INT                                       1                                
+Dog::operator=       class_method   21     global > class Dog           PROCEDURE        *                        0         CLASS_POINTER (CLASS_POINTER) _ZN3DogaSERKS_
+Dog::o               parameter      21     global > class Dog > operator=() CLASS_POINTER                             1                                
+Dog::operator[]      class_method   22     global > class Dog           PROCEDURE                                 0         INT (INT)              _ZN3DogixEi
+Dog::i               parameter      22     global > class Dog > operator[]() INT                                       1                                
+Dog::operator==      class_method   23     global > class Dog           PROCEDURE                                 0         BOOL (CLASS_POINTER)   _ZN3DogeqERKS_
+Dog::o               parameter      23     global > class Dog > operator==() CLASS_POINTER                             1                                
+Dog::operator()      class_method   24     global > class Dog           PROCEDURE                                 0         INT (INT, INT)         _ZN3DogclEii
+Dog::a               parameter      24     global > class Dog > operator()() INT                                       1                                
+Dog::b               parameter      24     global > class Dog > operator()() INT                                       1                                
+Cat                  class_tag      27     global                       CLASS                                     0                                
+Cat::p               parameter      29     global > class Cat > Cat::Cat() STRUCT                                    0                                
+Cat::Cat             class_method   29     global > class Cat           CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
+Cat::meow            class_method   30     global > class Cat           PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
+Cat::p               parameter      32     global > Cat::Cat()          STRUCT                                    0                                
+Cat::Cat             procedure      32     global                       CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
+Cat::meow            procedure      33     global                       PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
+Cat::other           parameter      33     global > meow()              CLASS_POINTER                             0                                
+Cat::where           parameter      33     global > meow()              STRUCT_POINTER                            0                                
+uint                 typedef        35     global                       UNSIGNED_INT                              0                                
+Pt                   typedef        36     global                       STRUCT                                    0                                
+BinOp                typedef        37     global                       INT_POINTER      *                        0                                
+IntPtr               typedef        38     global                       INT_POINTER      *                        0                                
+f0                   procedure      41     global                       PROCEDURE                                 0         VOID ()                _Z2f0v
+f1                   procedure      42     global                       PROCEDURE                                 0         VOID (INT)             _Z2f1i
+a                    parameter      42     global > f1()                INT                                       0                                
+f2                   procedure      43     global                       PROCEDURE                                 0         VOID (CHAR, SHORT, LONG, LONG_LONG) _Z2f2cslx
+a                    parameter      43     global > f2()                CHAR                                      0                                
+b                    parameter      43     global > f2()                SHORT                                     0                                
+c                    parameter      43     global > f2()                LONG                                      0                                
+d                    parameter      43     global > f2()                LONG_LONG                                 0                                
+f3                   procedure      44     global                       PROCEDURE                                 0         VOID (UNSIGNED, UNSIGNED_CHAR, UNSIGNED_SHORT, UNSIGNED_LONG, UNSIGNED_LONG_LONG) _Z2f3jhtmy
+a                    parameter      44     global > f3()                UNSIGNED                                  0                                
+b                    parameter      44     global > f3()                UNSIGNED_CHAR                             0                                
+c                    parameter      44     global > f3()                UNSIGNED_SHORT                            0                                
+d                    parameter      44     global > f3()                UNSIGNED_LONG                             0                                
+e                    parameter      44     global > f3()                UNSIGNED_LONG_LONG                          0                                
+f4                   procedure      45     global                       PROCEDURE                                 0         VOID (FLOAT, DOUBLE, BOOL) _Z2f4fdb
+a                    parameter      45     global > f4()                FLOAT                                     0                                
+b                    parameter      45     global > f4()                DOUBLE                                    0                                
+c                    parameter      45     global > f4()                BOOL                                      0                                
+f5                   procedure      47     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER_POINTER, INT_POINTER, INT_POINTER, CHAR_POINTER, CHAR_POINTER) _Z2f5PiPS_PKiS_PKcS4_
+a                    parameter      47     global > f5()                INT_POINTER                               0                                
+b                    parameter      47     global > f5()                INT_POINTER_POINTER                          0                                
+c                    parameter      47     global > f5()                INT_POINTER                               0                                
+d                    parameter      47     global > f5()                INT_POINTER                               0                                
+e                    parameter      47     global > f5()                CHAR_POINTER                              0                                
+f                    parameter      47     global > f5()                CHAR_POINTER                              0                                
+f6                   procedure      48     global                       PROCEDURE                                 0         VOID (STRUCT, STRUCT_POINTER, STRUCT_POINTER, STRUCT_POINTER) _Z2f65PointPS_RS_RKS_
+a                    parameter      48     global > f6()                STRUCT                                    0                                
+b                    parameter      48     global > f6()                STRUCT_POINTER                            0                                
+c                    parameter      48     global > f6()                STRUCT_POINTER                            0                                
+d                    parameter      48     global > f6()                STRUCT_POINTER                            0                                
+f7                   procedure      49     global                       PROCEDURE                                 0         VOID (ENUM, UNION)     _Z2f75Color1U
+a                    parameter      49     global > f7()                ENUM                                      0                                
+b                    parameter      49     global > f7()                UNION                                     0                                
+f8                   procedure      50     global                       PROCEDURE                                 0         VOID (CLASS, CLASS_POINTER, CLASS_POINTER) _Z2f83DogPS_RS_
+a                    parameter      50     global > f8()                CLASS                                     0                                
+b                    parameter      50     global > f8()                CLASS_POINTER                             0                                
+c                    parameter      50     global > f8()                CLASS_POINTER                             0                                
+f9                   procedure      52     global                       PROCEDURE                                 0         VOID (UNSIGNED_INT, STRUCT) _Z2f9j5Point
+a                    parameter      52     global > f9()                UNSIGNED_INT                              0                                
+b                    parameter      52     global > f9()                STRUCT                                    0                                
+f10                  procedure      53     global                       PROCEDURE                                 0         VOID (INT_POINTER)     _Z3f10PFiiiE
+op                   parameter      53     global > f10()               INT_POINTER                               0                                
+f25                  procedure      54     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f25PiS_
+a                    parameter      54     global > f25()               INT_POINTER                               0                                
+b                    parameter      54     global > f25()               INT_POINTER                               0                                
+f11                  procedure      56     global                       PROCEDURE                                 0         VOID (INT_POINTER, VOID_POINTER) _Z3f11PFiiEPFvvE
+g                    parameter      56     global > f11()               INT_POINTER                               0                                
+h                    parameter      56     global > f11()               VOID_POINTER                              0                                
+f12                  procedure      57     global                       PROCEDURE                                 0         VOID (INT_ARRAY, CHAR_POINTER_ARRAY) _Z3f12PiPPc
+a                    parameter      57     global > f12()               INT_ARRAY                                 0                                
+argv                 parameter      57     global > f12()               CHAR_POINTER_ARRAY                          0                                
+f13                  procedure      58     global                       PROCEDURE                                 0         VOID (INT_POINTER_ARRAY) _Z3f13PA3_i
+p                    parameter      58     global > f13()               INT_POINTER_ARRAY                          0                                
+f26                  procedure      59     global                       PROCEDURE                                 0         VOID (INT_ARRAY_ARRAY) _Z3f26PA4_i
+a                    parameter      59     global > f26()               INT_ARRAY_ARRAY                           0                                
+f20                  procedure      60     global                       PROCEDURE                                 0         INT (INT_POINTER, INT_POINTER) _Z3f20PFiiES0_
+g                    parameter      60     global > f20()               INT_POINTER                               0                                
+h                    parameter      60     global > f20()               INT_POINTER                               0                                
+f14                  procedure      62     global                       PROCEDURE                                 0         VOID (CHAR_POINTER)    _Z3f14PKcz
+fmt                  parameter      62     global > f14()               CHAR_POINTER                              0                                
+f15                  procedure      63     global                       PROCEDURE                                 0         VOID (FILE_POINTER)    _Z3f15P8_IO_FILE
+fp                   parameter      63     global > f15()               FILE_POINTER                              0                                
+f17                  procedure      64     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f17RiS_
+a                    parameter      64     global > f17()               INT_POINTER                               0                                
+b                    parameter      64     global > f17()               INT_POINTER                               0                                
+f18                  procedure      65     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER, STRUCT) _Z3f18P5PointS0_S_
+a                    parameter      65     global > f18()               STRUCT_POINTER                            0                                
+b                    parameter      65     global > f18()               STRUCT_POINTER                            0                                
+c                    parameter      65     global > f18()               STRUCT                                    0                                
+f19                  procedure      66     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER) _Z3f19PK5PointS1_
+a                    parameter      66     global > f19()               STRUCT_POINTER                            0                                
+b                    parameter      66     global > f19()               STRUCT_POINTER                            0                                
+f22                  procedure      67     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f22PViPVKi
+a                    parameter      67     global > f22()               INT_POINTER                               0                                
+b                    parameter      67     global > f22()               INT_POINTER                               0                                
+f24                  procedure      68     global                       PROCEDURE                                 0         VOID (VOID_POINTER, VOID_POINTER) _Z3f24PvPKv
+a                    parameter      68     global > f24()               VOID_POINTER                              0                                
+b                    parameter      68     global > f24()               VOID_POINTER                              0                                
+operator+            procedure      70     global                       PROCEDURE                                 0         STRUCT (STRUCT, STRUCT) _Zpl5PointS_
+a                    parameter      70     global > operator+()         STRUCT                                    1                                
+b                    parameter      70     global > operator+()         STRUCT                                    0                                
+over                 procedure      71     global                       PROCEDURE                                 1         INT (INT)              _Z4overi
+a                    parameter      71     global > over()              INT                                       1                                
+over                 procedure      72     global                       PROCEDURE                                 0         INT (DOUBLE)           _Z4overd
+a                    parameter      72     global > over()              DOUBLE                                    0                                
+over                 procedure      73     global                       PROCEDURE                                 0         INT (STRUCT_POINTER)   _Z4overP5Point
+p                    parameter      73     global > over()              STRUCT_POINTER                            0                                
+over                 procedure      74     global                       PROCEDURE                                 1         INT (UNION_POINTER)    _Z4overP1U
+p                    parameter      74     global > over()              UNION_POINTER                             0                                
+main                 procedure      76     global                       PROCEDURE                                 0         INT ()                 main
+d                    variable       77     global > main()              CLASS                                     5                                
+z                    variable       78     global > main()              CLASS                                     0                                
+e                    variable       79     global > main()              CLASS                                     3                                
+p                    variable       82     global > main()              STRUCT                                    4                                
+c                    variable       84     global > main()              CLASS                                     2                                

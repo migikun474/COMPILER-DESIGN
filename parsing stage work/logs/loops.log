@@ -1,0 +1,182 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/loops.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+i                              INT                 
+,                              comma_op            
+s                              INT                 
+,                              comma_op            
+n                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+for                            for                 
+(                              open_paren_op       
+s                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+,                              comma_op            
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+n                              INT                 
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+s                              INT                 
++=                             plus_assign_op      
+i                              INT                 
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"for sum 0..2      = %d\n"     STRING_LITERAL      
+,                              comma_op            
+s                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+s                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+while                          while               
+(                              open_paren_op       
+0                              INT_LITERAL         
+)                              close_paren_op      
+s                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"while(0) body ran = %d times\n" STRING_LITERAL      
+,                              comma_op            
+s                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+s                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+do                             do                  
+s                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+while                          while               
+(                              open_paren_op       
+0                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"do-while(0) ran   = %d time\n" STRING_LITERAL      
+,                              comma_op            
+s                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "i : INT"
+        |   |-- VarDecl "s : INT"
+        |   `-- VarDecl "n : INT"
+        |       `-- IntLiteral "3"
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- CommaExpr
+        |   |       |-- AssignExpr "="
+        |   |       |   |-- Identifier "s"
+        |   |       |   `-- IntLiteral "0"
+        |   |       `-- AssignExpr "="
+        |   |           |-- Identifier "i"
+        |   |           `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- Identifier "n"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- ExprStmt
+        |       `-- AssignExpr "+="
+        |           |-- Identifier "s"
+        |           `-- Identifier "i"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""for sum 0..2      = %d\n""
+        |       `-- Identifier "s"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "i"
+        |       `-- IntLiteral "0"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "s"
+        |       `-- IntLiteral "0"
+        |-- WhileStmt
+        |   |-- IntLiteral "0"
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "++"
+        |           `-- Identifier "s"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""while(0) body ran = %d times\n""
+        |       `-- Identifier "s"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "i"
+        |       `-- IntLiteral "0"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- Identifier "s"
+        |       `-- IntLiteral "0"
+        |-- DoWhileStmt
+        |   |-- ExprStmt
+        |   |   `-- PostfixOpExpr "++"
+        |   |       `-- Identifier "s"
+        |   `-- IntLiteral "0"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""do-while(0) ran   = %d time\n""
+        |       `-- Identifier "s"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      1      global                       PROCEDURE                                 0         INT (VOID)             main
+i                    variable       2      global > main()              INT                                       6                                
+s                    variable       2      global > main()              INT                                       9                                
+n                    variable       2      global > main()              INT                                       1                                

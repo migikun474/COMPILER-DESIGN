@@ -1,0 +1,48 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c
+
+Semantic analysis failed: 7 error(s), 3 warning(s) in '/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c'.
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:4:12: semantic warning: variable 'eb' is declared 'extern' and used but never defined [undefined-variable]
+ 4 | extern int eb[];
+   |            ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:5:11: semantic error: invalid application of 'sizeof' to an incomplete type 'int[]' [sizeof]
+ 5 | int bad = sizeof(eb);                /* 5: incomplete */
+   |           ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:11:15: semantic error: conflicting types for 'x': 'double' does not match the previous declaration 'int' at line 8 [conflicting-types]
+ 11 | extern double x;                     /* 11: conflicting */
+    |               ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:12:12: semantic warning: 'y' initialized and declared 'extern' [storage-class]
+ 12 | extern int y = 4;                    /* 12: warning */
+    |            ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:13:19: semantic error: multiple storage classes in the declaration of 'z' [storage-class]
+ 13 | static extern int z;                 /* 13: multiple storage classes */
+    |                   ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:14:14: semantic error: 'register' is not allowed at file scope (variable 'r0') [storage-class]
+ 14 | register int r0;                     /* 14: file-scope register */
+    |              ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:17:12: semantic warning: variable 'never' is declared 'extern' and used but never defined [undefined-variable]
+ 17 | extern int never;
+    |            ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:20:16: semantic error: 'q' has both 'extern' and an initializer (a block-scope 'extern' only refers to an object defined elsewhere) [storage-class]
+ 20 |     extern int q = 1;                /* 20: error */
+    |                ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:22:14: semantic error: address of register variable 'r' requested [address-of]
+ 22 |     int *p = &r;                     /* 22: error */
+    |              ^
+
+/tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/th/ex.c:23:18: semantic error: conflicting types for 'x2': 'float' does not match the previous declaration 'int' at line 9 [conflicting-types]
+ 23 |     extern float x2;                 /* 23: conflicting */
+    |                  ^
+

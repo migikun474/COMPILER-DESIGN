@@ -1,0 +1,22 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test2_structs_pointers_arrays.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test2_structs_pointers_arrays.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        `-- VarDecl "a : INT_ARRAY"  <int[3]>  -> a.1 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         2     -     0     main                 main                     defined
+a                  variable       int[3]                     local    global > main()                3     12    0     a.1                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

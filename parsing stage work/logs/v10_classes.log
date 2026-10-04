@@ -1,0 +1,416 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v10_classes.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+class                          class               
+Shape                          CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+sides                          INT                 
+;                              semicolon_op        
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+sides                          INT                 
+*                              star_op             
+scale                          IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+perimeter                      PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+static                         static              
+int                            int                 
+count                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+protected                      protected           
+:                              colon_op            
+int                            int                 
+scale                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+factor                         IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+factor                         INT                 
+;                              semicolon_op        
+private                        private             
+:                              colon_op            
+int                            int                 
+secret                         INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+Shape                          CLASS               
+::                             scope_resolution_op 
+perimeter                      PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+this                           this                
+->                             arrow_op            
+sides                          IDENTIFIER          
+*                              star_op             
+factor                         IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+Shape                          CLASS               
+::                             scope_resolution_op 
+count                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+4                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+class                          class               
+Square                         CLASS               
+:                              colon_op            
+public                         public              
+Shape                          CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+Square                         CONSTRUCTOR         
+(                              open_paren_op       
+int                            int                 
+s                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+sides                          IDENTIFIER          
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+factor                         IDENTIFIER          
+=                              assign_op           
+s                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+~                              tilde_op            
+Square                         DESTRUCTOR          
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+side                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+factor                         IDENTIFIER          
++                              plus_op             
+scale                          IDENTIFIER          
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+class                          class               
+Counter                        CLASS               
+{                              open_brace_op       
+int                            int                 
+value                          INT                 
+;                              semicolon_op        
+public                         public              
+:                              colon_op            
+void                           void                
+inc                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+value                          INT                 
+++                             increment_op        
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+value                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+;                              semicolon_op        
+struct                         struct              
+Plain                          STRUCT              
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+Square                         CLASS               
+sq                             CLASS               
+(                              open_paren_op       
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+sq                             CLASS               
+.                              dot_op              
+sides                          IDENTIFIER          
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+Shape                          CLASS               
+*                              star_op             
+base                           CLASS_POINTER       
+=                              assign_op           
+&                              ampersand_op        
+sq                             CLASS               
+;                              semicolon_op        
+Counter                        CLASS               
+c                              CLASS               
+;                              semicolon_op        
+c                              CLASS               
+.                              dot_op              
+inc                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+struct                         struct              
+Plain                          STRUCT              
+pl                             STRUCT              
+;                              semicolon_op        
+pl                             STRUCT              
+.                              dot_op              
+a                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+Shape                          CLASS               
+*                              star_op             
+made                           CLASS_POINTER       
+=                              assign_op           
+new                            new                 
+Shape                          CLASS               
+;                              semicolon_op        
+int                            int                 
+total                          INT                 
+=                              assign_op           
+base                           CLASS_POINTER       
+->                             arrow_op            
+area                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+made                           CLASS_POINTER       
+->                             arrow_op            
+perimeter                      PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+sq                             CLASS               
+.                              dot_op              
+side                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+c                              CLASS               
+.                              dot_op              
+get                            PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
++                              plus_op             
+pl                             STRUCT              
+.                              dot_op              
+a                              INT                 
++                              plus_op             
+base                           CLASS_POINTER       
+->                             arrow_op            
+count                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+delete                         delete              
+made                           CLASS_POINTER       
+;                              semicolon_op        
+return                         return              
+total                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Shape"
+|   |-- VarDecl "sides : INT"
+|   |-- FunctionDef "area : _ZN5Shape4areaEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"
+|   |               |-- Identifier "sides"
+|   |               `-- CallExpr
+|   |                   `-- Identifier "scale"
+|   |-- FunctionDecl "perimeter : _ZN5Shape9perimeterEv"
+|   |-- FunctionDecl "count : _ZN5Shape5countEv"
+|   |-- FunctionDef "scale : _ZN5Shape5scaleEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "factor"
+|   |-- VarDecl "factor : INT"
+|   `-- VarDecl "secret : INT"
+|-- FunctionDef "perimeter : _ZN5Shape9perimeterEv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- ArrowExpr "sides"
+|               |   `-- ThisExpr
+|               `-- Identifier "factor"
+|-- FunctionDef "count : _ZN5Shape5countEv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IntLiteral "4"
+|-- ClassDecl "Square : Shape"
+|   |-- ConstructorDef "Square : _ZN6SquareC1Ei"
+|   |   |-- ParamDecl "s : INT"
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- Identifier "sides"
+|   |       |       `-- IntLiteral "4"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "factor"
+|   |               `-- Identifier "s"
+|   |-- DestructorDef "Square : _ZN6SquareD1Ev"
+|   |   `-- CompoundStmt
+|   `-- FunctionDef "side : _ZN6Square4sideEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- BinaryExpr "+"
+|                   |-- Identifier "factor"
+|                   `-- CallExpr
+|                       `-- Identifier "scale"
+|-- ClassDecl "Counter"
+|   |-- VarDecl "value : INT"
+|   |-- FunctionDef "inc : _ZN7Counter3incEv"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- PostfixOpExpr "++"
+|   |               `-- Identifier "value"
+|   `-- FunctionDef "get : _ZN7Counter3getEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "value"
+|-- StructDecl "Plain"
+|   `-- VarDecl "a : INT"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "sq : CLASS"
+        |   `-- ConstructExpr "CLASS"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "sides"
+        |       |   `-- Identifier "sq"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "base : CLASS_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "sq"
+        |-- VarDecl "c : CLASS"
+        |-- ExprStmt
+        |   `-- CallExpr
+        |       `-- MemberExpr "inc"
+        |           `-- Identifier "c"
+        |-- VarDecl "pl : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "a"
+        |       |   `-- Identifier "pl"
+        |       `-- IntLiteral "1"
+        |-- VarDecl "made : CLASS_POINTER"
+        |   `-- NewExpr "CLASS"
+        |-- VarDecl "total : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- BinaryExpr "+"
+        |       |   |-- BinaryExpr "+"
+        |       |   |   |-- BinaryExpr "+"
+        |       |   |   |   |-- BinaryExpr "+"
+        |       |   |   |   |   |-- CallExpr
+        |       |   |   |   |   |   `-- ArrowExpr "area"
+        |       |   |   |   |   |       `-- Identifier "base"
+        |       |   |   |   |   `-- CallExpr
+        |       |   |   |   |       `-- ArrowExpr "perimeter"
+        |       |   |   |   |           `-- Identifier "made"
+        |       |   |   |   `-- CallExpr
+        |       |   |   |       `-- MemberExpr "side"
+        |       |   |   |           `-- Identifier "sq"
+        |       |   |   `-- CallExpr
+        |       |   |       `-- MemberExpr "get"
+        |       |   |           `-- Identifier "c"
+        |       |   `-- MemberExpr "a"
+        |       |       `-- Identifier "pl"
+        |       `-- CallExpr
+        |           `-- ArrowExpr "count"
+        |               `-- Identifier "base"
+        |-- ExprStmt
+        |   `-- DeleteExpr
+        |       `-- Identifier "made"
+        `-- ReturnStmt
+            `-- Identifier "total"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Shape                class_tag      3      global                       CLASS                                     0                                
+Shape::sides         class_member   5      global > class Shape         INT                                       1                                
+Shape::area          class_method   6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::perimeter     class_method   7      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape9perimeterEv
+Shape::count         class_method   8      global > class Shape         PROCEDURE        static                   0         INT ()                 _ZN5Shape5countEv
+Shape::scale         class_method   10     global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape5scaleEv
+Shape::factor        class_member   11     global > class Shape         INT                                       0                                
+Shape::secret        class_member   13     global > class Shape         INT                                       0                                
+Shape::perimeter     procedure      16     global                       PROCEDURE                                 0         INT ()                 _ZN5Shape9perimeterEv
+Shape::count         procedure      17     global                       PROCEDURE                                 0         INT ()                 _ZN5Shape5countEv
+Square               class_tag      19     global                       CLASS                                     0                                
+Square::s            parameter      21     global > class Square > Square::Square() INT                                       1                                
+Square::Square       class_method   21     global > class Square        CONSTRUCTOR                               0         VOID (INT)             _ZN6SquareC1Ei
+Square::~Square      class_method   22     global > class Square        DESTRUCTOR                                0         VOID ()                _ZN6SquareD1Ev
+Square::side         class_method   23     global > class Square        PROCEDURE                                 0         INT ()                 _ZN6Square4sideEv
+Counter              class_tag      26     global                       CLASS                                     0                                
+Counter::value       class_member   27     global > class Counter       INT                                       2                                
+Counter::inc         class_method   29     global > class Counter       PROCEDURE                                 0         VOID ()                _ZN7Counter3incEv
+Counter::get         class_method   30     global > class Counter       PROCEDURE                                 0         INT ()                 _ZN7Counter3getEv
+Plain                struct_tag     33     global                       STRUCT                                    0                                
+Plain::a             struct_member  33     global > struct Plain        INT                                       0                                
+main                 procedure      35     global                       PROCEDURE                                 0         INT ()                 main
+sq                   variable       36     global > main()              CLASS                                     3                                
+base                 variable       38     global > main()              CLASS_POINTER    *                        2                                
+c                    variable       39     global > main()              CLASS                                     2                                
+pl                   variable       41     global > main()              STRUCT                                    2                                
+made                 variable       43     global > main()              CLASS_POINTER    *                        2                                
+total                variable       44     global > main()              INT                                       1                                

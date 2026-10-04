@@ -1,0 +1,163 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2-parser/test/test15_syntax_errors_control_flow.c
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:32:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 32 |     if (a > 0 {
+    |               ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:40:8: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
+ 40 |     if a > 0) {
+    |        ^
+    | note: insert '(' here
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:48:18: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 48 |     while (a > 0 {
+    |                  ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:56:20: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 56 |     until (a > 100 {
+    |                    ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:64:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 64 |     for (a = 0 a < 10; a++) {
+    |                ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:64:27: syntax error: syntax error, unexpected ')', expecting ';' or ','
+ 64 |     for (a = 0 a < 10; a++) {
+    |                           ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:71:20: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 71 |     for (int i = 0 i < 10; i++) {
+    |                    ^
+    | note: insert ';' here
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:71:31: syntax error: syntax error, unexpected ')', expecting ';' or ','
+ 71 |     for (int i = 0 i < 10; i++) {
+    |                               ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:79:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 79 |     switch (a {
+    |               ^
+
+phase2-parser/test/test15_syntax_errors_control_flow.c:88:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ':'
+ 88 |         case 1 a = 2; break;
+    |                ^
+    | note: insert ':' here
+
+-----------------------------------------
+Total Errors : 10
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- FunctionDef "t01_if_missing_close_paren : _Z26t01_if_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 32: near '{'"
+|-- ErrorNode "line 32: near '{'"
+|-- FunctionDef "t02_if_missing_open_paren : _Z25t02_if_missing_open_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 40: near 'a'"
+|-- ErrorNode "line 40: near 'a'"
+|-- FunctionDef "t03_while_missing_close_paren : _Z29t03_while_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 48: near '{'"
+|-- ErrorNode "line 48: near '{'"
+|-- FunctionDef "t04_until_missing_close_paren : _Z29t04_until_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 56: near '{'"
+|-- ErrorNode "line 56: near '{'"
+|-- FunctionDef "t05_for_missing_first_semicolon : _Z31t05_for_missing_first_semicolonv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |-- ErrorNode "line 64: near 'a'"
+|       `-- ErrorNode "line 64: near ')'"
+|-- ErrorNode "line 64: near ')'"
+|-- FunctionDef "t06_for_decl_missing_second_semicolon : _Z37t06_for_decl_missing_second_semicolonv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 71: near 'i'"
+|       `-- ErrorNode "line 71: near ')'"
+|-- ErrorNode "line 71: near ')'"
+|-- FunctionDef "t07_switch_missing_close_paren : _Z30t07_switch_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 79: near '{'"
+|-- ErrorNode "line 79: near '{'"
+|-- FunctionDef "t08_case_missing_colon : _Z22t08_case_missing_colonv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- SwitchStmt
+|           |-- Identifier "a"
+|           `-- CompoundStmt
+|               |-- ErrorNode "line 88: near 'a'"
+|               `-- BreakStmt
+|-- FunctionDef "t09_break_outside_loop_is_accepted : _Z34t09_break_outside_loop_is_acceptedv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- IfStmt
+|           |-- BinaryExpr ">"
+|           |   |-- Identifier "a"
+|           |   `-- IntLiteral "0"
+|           `-- CompoundStmt
+|               `-- BreakStmt
+|-- FunctionDef "t10_continue_outside_loop_is_accepted : _Z37t10_continue_outside_loop_is_acceptedv"
+|   `-- CompoundStmt
+|       `-- CompoundStmt
+|           `-- ContinueStmt
+|-- FunctionDef "t11_case_outside_switch_is_accepted : _Z35t11_case_outside_switch_is_acceptedv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- CaseStmt
+|           |-- IntLiteral "5"
+|           `-- ExprStmt
+|               `-- AssignExpr "="
+|                   |-- Identifier "a"
+|                   `-- BinaryExpr "+"
+|                       |-- Identifier "a"
+|                       `-- IntLiteral "1"
+|-- FunctionDef "t12_default_outside_switch_is_accepted : _Z38t12_default_outside_switch_is_acceptedv"
+|   `-- CompoundStmt
+|       |-- VarDecl "a : INT"
+|       |   `-- IntLiteral "1"
+|       `-- DefaultStmt
+|           `-- ExprStmt
+|               `-- AssignExpr "="
+|                   |-- Identifier "a"
+|                   `-- BinaryExpr "-"
+|                       |-- Identifier "a"
+|                       `-- IntLiteral "1"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "total : INT"
+        |   `-- IntLiteral "0"
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"
+        |   |   `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "10"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="
+        |               |-- Identifier "total"
+        |               `-- Identifier "i"
+        `-- ReturnStmt
+            `-- Identifier "total"

@@ -1,0 +1,411 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v22_unnamed_aggregates.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'phase2b-semantic/test/valid/v22_unnamed_aggregates.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- StructDecl "Value"  <struct Value>  -> Value (tag)
+|   |-- VarDecl "kind : INT"  <int>  -> Value::kind (field, member)
+|   |-- UnionDecl "(unnamed at 8:5)"  <union (unnamed at 8:5)>  -> (unnamed at 8:5) (tag)
+|   |   |-- VarDecl "i : INT"  <int>  -> (unnamed at 8:5)::i (field, member)
+|   |   |-- VarDecl "f : FLOAT"  <float>  -> (unnamed at 8:5)::f (field, member)
+|   |   `-- VarDecl "c : CHAR"  <char>  -> (unnamed at 8:5)::c (field, member)
+|   `-- StructDecl "(unnamed at 13:5)"  <struct (unnamed at 13:5)>  -> (unnamed at 13:5) (tag)
+|       `-- DeclGroup
+|           |-- VarDecl "lo : SHORT"  <short>  -> (unnamed at 13:5)::lo (field, member)
+|           `-- VarDecl "hi : SHORT"  <short>  -> (unnamed at 13:5)::hi (field, member)
+|-- VarDecl "value_size_ok : INT_ARRAY"  <int[1]>  -> value_size_ok (variable, global)
+|-- StructDecl "Packet"  <struct Packet>  -> Packet (tag)
+|   |-- VarDecl "tag : CHAR"  <char>  -> Packet::tag (field, member)
+|   `-- StructDecl "(unnamed at 22:5)"  <struct (unnamed at 22:5)>  -> (unnamed at 22:5) (tag)
+|       |-- UnionDecl "(unnamed at 23:9)"  <union (unnamed at 23:9)>  -> (unnamed at 23:9) (tag)
+|       |   |-- VarDecl "word : INT"  <int>  -> (unnamed at 23:9)::word (field, member)
+|       |   `-- VarDecl "bytes : CHAR_ARRAY"  <char[4]>  -> (unnamed at 23:9)::bytes (field, member)
+|       `-- VarDecl "crc : INT"  <int>  -> (unnamed at 22:5)::crc (field, member)
+|-- VarDecl "packet_size_ok : INT_ARRAY"  <int[1]>  -> packet_size_ok (variable, global)
+|-- StructDecl "Outer"  <struct Outer>  -> Outer (tag)
+|   |-- DeclGroup
+|   |   |-- StructDecl "Inner"  <struct Inner>  -> Inner (tag)
+|   |   |   `-- VarDecl "x : INT"  <int>  -> Inner::x (field, member)
+|   |   `-- VarDecl "in : STRUCT"  <struct Inner>  -> Outer::in (field, member)
+|   `-- VarDecl "after : INT"  <int>  -> Outer::after (field, member)
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 36:9)"  <Pt>  -> (unnamed at 36:9) (tag)
+|   |   `-- DeclGroup
+|   |       |-- VarDecl "x : INT"  <int>  -> (unnamed at 36:9)::x (field, member)
+|   |       `-- VarDecl "y : INT"  <int>  -> (unnamed at 36:9)::y (field, member)
+|   |-- TypedefDecl "Pt = STRUCT"  <Pt>  -> Pt (typedef)
+|   `-- TypedefDecl "PtAlias = STRUCT"  <Pt>  -> PtAlias (typedef)
+|-- DeclGroup
+|   |-- EnumDecl "(unnamed at 37:9)"  <Level>  -> (unnamed at 37:9) (tag)
+|   |   |-- Enumerator "LOW"  <int> =0  -> LOW (enum_constant)
+|   |   `-- Enumerator "HIGH"  <int> =1  -> HIGH (enum_constant)
+|   `-- TypedefDecl "Level = ENUM"  <Level>  -> Level (typedef)
+|-- DeclGroup
+|   |-- UnionDecl "(unnamed at 38:9)"  <Num>  -> (unnamed at 38:9) (tag)
+|   |   |-- VarDecl "n : INT"  <int>  -> (unnamed at 38:9)::n (field, member)
+|   |   `-- VarDecl "r : FLOAT"  <float>  -> (unnamed at 38:9)::r (field, member)
+|   `-- TypedefDecl "Num = UNION"  <Num>  -> Num (typedef)
+|-- DeclGroup
+|   |-- StructDecl "(unnamed at 41:1)"  <struct (unnamed at 41:1)>  -> (unnamed at 41:1) (tag)
+|   |   `-- DeclGroup
+|   |       |-- VarDecl "hits : INT"  <int>  -> (unnamed at 41:1)::hits (field, member)
+|   |       `-- VarDecl "misses : INT"  <int>  -> (unnamed at 41:1)::misses (field, member)
+|   `-- VarDecl "stats : STRUCT"  <struct (unnamed at 41:1)>  -> stats (variable, global)
+|-- EnumDecl "(unnamed at 42:1)"  <enum (unnamed at 42:1)>  -> (unnamed at 42:1) (tag)
+|   |-- Enumerator "MAX_ITEMS"  <int> =8  -> MAX_ITEMS (enum_constant)
+|   |   `-- IntLiteral "8"  <int> =8
+|   `-- Enumerator "MIN_ITEMS"  <int> =1  -> MIN_ITEMS (enum_constant)
+|       `-- IntLiteral "1"  <int> =1
+|-- DeclGroup
+|   |-- EnumDecl "(unnamed at 43:1)"  <enum (unnamed at 43:1)>  -> (unnamed at 43:1) (tag)
+|   |   |-- Enumerator "OFF"  <int> =0  -> OFF (enum_constant)
+|   |   `-- Enumerator "ON"  <int> =1  -> ON (enum_constant)
+|   `-- VarDecl "power : ENUM"  <enum (unnamed at 43:1)>  -> power (variable, global)
+|-- VarDecl "items : INT_ARRAY"  <int[8]>  -> items (variable, global)
+|-- ClassDecl "Register"  <class Register>  -> Register (tag)
+|   |-- UnionDecl "(unnamed at 49:5)"  <union (unnamed at 49:5)>  -> (unnamed at 49:5) (tag)
+|   |   |-- VarDecl "raw : INT"  <int>  -> (unnamed at 49:5)::raw (field, member)
+|   |   `-- VarDecl "low : CHAR"  <char>  -> (unnamed at 49:5)::low (field, member)
+|   `-- FunctionDef "read : _ZN8Register4readEv"  <int (void)>  -> _ZN8Register4readEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "raw"  <int> lvalue  -> (unnamed at 49:5)::raw (field, member)
+|-- FunctionDef "dist2 : _Z5dist22PtPS_"  <int (Pt, Pt *)>  -> _Z5dist22PtPS_ (function)
+|   |-- ParamDecl "a : STRUCT"  <Pt>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : STRUCT_POINTER"  <Pt *>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       |-- DeclGroup
+|       |   |-- VarDecl "dx : INT"  <int>  -> dx.3 (variable, local)
+|       |   |   `-- BinaryExpr "-"  <int>
+|       |   |       |-- MemberExpr "x"  <int> lvalue  -> (unnamed at 36:9)::x (field, member)
+|       |   |       |   `-- Identifier "a"  <Pt> lvalue  -> a.1 (parameter, param)
+|       |   |       `-- ArrowExpr "x"  <int> lvalue  -> (unnamed at 36:9)::x (field, member)
+|       |   |           `-- Identifier "b"  <Pt *> lvalue  -> b.2 (parameter, param)
+|       |   `-- VarDecl "dy : INT"  <int>  -> dy.4 (variable, local)
+|       |       `-- BinaryExpr "-"  <int>
+|       |           |-- MemberExpr "y"  <int> lvalue  -> (unnamed at 36:9)::y (field, member)
+|       |           |   `-- Identifier "a"  <Pt> lvalue  -> a.1 (parameter, param)
+|       |           `-- ArrowExpr "y"  <int> lvalue  -> (unnamed at 36:9)::y (field, member)
+|       |               `-- Identifier "b"  <Pt *> lvalue  -> b.2 (parameter, param)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "*"  <int>
+|               |   |-- Identifier "dx"  <int> lvalue  -> dx.3 (variable, local)
+|               |   `-- Identifier "dx"  <int> lvalue  -> dx.3 (variable, local)
+|               `-- BinaryExpr "*"  <int>
+|                   |-- Identifier "dy"  <int> lvalue  -> dy.4 (variable, local)
+|                   `-- Identifier "dy"  <int> lvalue  -> dy.4 (variable, local)
+|-- FunctionDef "level_of : _Z8level_ofi"  <Level (int)>  -> _Z8level_ofi (function)
+|   |-- ParamDecl "v : INT"  <int>  -> v.5 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <int>
+|               |-- BinaryExpr ">"  <int>
+|               |   |-- Identifier "v"  <int> lvalue  -> v.5 (parameter, param)
+|               |   `-- IntLiteral "0"  <int> =0
+|               |-- Identifier "HIGH"  <int> =1  -> HIGH (enum_constant)
+|               `-- Identifier "LOW"  <int> =0  -> LOW (enum_constant)
+|-- FunctionDef "as_float : _Z8as_float3Num5Level"  <float (Num, Level)>  -> _Z8as_float3Num5Level (function)
+|   |-- ParamDecl "n : UNION"  <Num>  -> n.6 (parameter, param)
+|   |-- ParamDecl "l : ENUM"  <Level>  -> l.7 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <float>
+|               |-- BinaryExpr "=="  <int>
+|               |   |-- Identifier "l"  <Level> lvalue  -> l.7 (parameter, param)
+|               |   `-- Identifier "HIGH"  <int> =1  -> HIGH (enum_constant)
+|               |-- MemberExpr "r"  <float> lvalue  -> (unnamed at 38:9)::r (field, member)
+|               |   `-- Identifier "n"  <Num> lvalue  -> n.6 (parameter, param)
+|               `-- MemberExpr "n"  <int> lvalue  -> (unnamed at 38:9)::n (field, member)
+|                   `-- Identifier "n"  <Num> lvalue  -> n.6 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "v : STRUCT"  <struct Value>  -> v.8 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "kind"  <int> lvalue  -> Value::kind (field, member)
+        |       |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "i"  <int> lvalue  -> (unnamed at 8:5)::i (field, member)
+        |       |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+        |       `-- IntLiteral "42"  <int> =42
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <float>
+        |       |-- MemberExpr "f"  <float> lvalue  -> (unnamed at 8:5)::f (field, member)
+        |       |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+        |       `-- FloatLiteral "1.5f"  <float>
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <short>
+        |       |-- MemberExpr "lo"  <short> lvalue  -> (unnamed at 13:5)::lo (field, member)
+        |       |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <short>
+        |       |-- MemberExpr "hi"  <short> lvalue  -> (unnamed at 13:5)::hi (field, member)
+        |       |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "w : STRUCT"  <struct Value>  -> w.9 (variable, local)
+        |   `-- InitializerList  <struct Value>
+        |       |-- IntLiteral "2"  <int> =2
+        |       |-- InitializerList  <union (unnamed at 8:5)>
+        |       |   `-- IntLiteral "7"  <int> =7
+        |       `-- InitializerList  <struct (unnamed at 13:5)>
+        |           |-- IntLiteral "1"  <int> =1
+        |           `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "d : STRUCT"  <struct Value>  -> d.10 (variable, local)
+        |   `-- InitializerList  <struct Value>
+        |       |-- DesignatedInit ".kind"  <int>  -> Value::kind (field, member)
+        |       |   `-- IntLiteral "3"  <int> =3
+        |       |-- DesignatedInit ".c"  <char>  -> (unnamed at 8:5)::c (field, member)
+        |       |   `-- CharLiteral "'x'"  <char> =120
+        |       `-- DesignatedInit ".hi"  <short>  -> (unnamed at 13:5)::hi (field, member)
+        |           `-- IntLiteral "9"  <int> =9
+        |-- VarDecl "p : STRUCT"  <struct Packet>  -> p.11 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "word"  <int> lvalue  -> (unnamed at 23:9)::word (field, member)
+        |       |   `-- Identifier "p"  <struct Packet> lvalue  -> p.11 (variable, local)
+        |       `-- IntLiteral "0x01020304"  <int> =16909060
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <char>
+        |       |-- IndexExpr  <char> lvalue
+        |       |   |-- MemberExpr "bytes"  <char[4]> lvalue  -> (unnamed at 23:9)::bytes (field, member)
+        |       |   |   `-- Identifier "p"  <struct Packet> lvalue  -> p.11 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "crc"  <int> lvalue  -> (unnamed at 22:5)::crc (field, member)
+        |       |   `-- Identifier "p"  <struct Packet> lvalue  -> p.11 (variable, local)
+        |       `-- BinaryExpr "^"  <int>
+        |           |-- MemberExpr "word"  <int> lvalue  -> (unnamed at 23:9)::word (field, member)
+        |           |   `-- Identifier "p"  <struct Packet> lvalue  -> p.11 (variable, local)
+        |           `-- IntLiteral "0xff"  <int> =255
+        |-- VarDecl "o : STRUCT"  <struct Outer>  -> o.12 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "x"  <int> lvalue  -> Inner::x (field, member)
+        |       |   `-- MemberExpr "in"  <struct Inner> lvalue  -> Outer::in (field, member)
+        |       |       `-- Identifier "o"  <struct Outer> lvalue  -> o.12 (variable, local)
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "after"  <int> lvalue  -> Outer::after (field, member)
+        |       |   `-- Identifier "o"  <struct Outer> lvalue  -> o.12 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "a : STRUCT"  <Pt>  -> a.13 (variable, local)
+        |   `-- InitializerList  <Pt>
+        |       |-- IntLiteral "1"  <int> =1
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "b : STRUCT"  <Pt>  -> b.14 (variable, local)
+        |   `-- InitializerList  <Pt>
+        |       |-- DesignatedInit ".x"  <int>  -> (unnamed at 36:9)::x (field, member)
+        |       |   `-- IntLiteral "4"  <int> =4
+        |       `-- DesignatedInit ".y"  <int>  -> (unnamed at 36:9)::y (field, member)
+        |           `-- IntLiteral "6"  <int> =6
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "hits"  <int> lvalue  -> (unnamed at 41:1)::hits (field, member)
+        |       |   `-- Identifier "stats"  <struct (unnamed at 41:1)> lvalue  -> stats (variable, global)
+        |       `-- CallExpr  <int>  -> _Z5dist22PtPS_ (function)
+        |           |-- Identifier "dist2"  <int (Pt, Pt *)>  -> _Z5dist22PtPS_ (function)
+        |           |-- Identifier "a"  <Pt> lvalue  -> a.13 (variable, local)
+        |           `-- UnaryExpr "&"  <Pt *>
+        |               `-- Identifier "b"  <Pt> lvalue  -> b.14 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <enum (unnamed at 43:1)>
+        |       |-- Identifier "power"  <enum (unnamed at 43:1)> lvalue  -> power (variable, global)
+        |       `-- Identifier "ON"  <int> =1  -> ON (enum_constant)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "items"  <int[8]> lvalue  -> items (variable, global)
+        |       |   `-- Identifier "MIN_ITEMS"  <int> =1  -> MIN_ITEMS (enum_constant)
+        |       `-- CallExpr  <Level>  -> _Z8level_ofi (function)
+        |           |-- Identifier "level_of"  <Level (int)>  -> _Z8level_ofi (function)
+        |           `-- MemberExpr "hits"  <int> lvalue  -> (unnamed at 41:1)::hits (field, member)
+        |               `-- Identifier "stats"  <struct (unnamed at 41:1)> lvalue  -> stats (variable, global)
+        |-- VarDecl "r : CLASS"  <class Register>  -> r.15 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "raw"  <int> lvalue  -> (unnamed at 49:5)::raw (field, member)
+        |       |   `-- Identifier "r"  <class Register> lvalue  -> r.15 (variable, local)
+        |       `-- IntLiteral "65"  <int> =65
+        |-- VarDecl "n : UNION"  <Num>  -> n.16 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <float>
+        |       |-- MemberExpr "r"  <float> lvalue  -> (unnamed at 38:9)::r (field, member)
+        |       |   `-- Identifier "n"  <Num> lvalue  -> n.16 (variable, local)
+        |       `-- FloatLiteral "2.5f"  <float>
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |-- MemberExpr "i"  <int> lvalue  -> (unnamed at 8:5)::i (field, member)
+                |   |   |   |   |   |   |   |   `-- Identifier "v"  <struct Value> lvalue  -> v.8 (variable, local)
+                |   |   |   |   |   |   |   `-- MemberExpr "i"  <int> lvalue  -> (unnamed at 8:5)::i (field, member)
+                |   |   |   |   |   |   |       `-- Identifier "w"  <struct Value> lvalue  -> w.9 (variable, local)
+                |   |   |   |   |   |   `-- MemberExpr "c"  <char> lvalue  -> (unnamed at 8:5)::c (field, member)
+                |   |   |   |   |   |       `-- Identifier "d"  <struct Value> lvalue  -> d.10 (variable, local)
+                |   |   |   |   |   `-- MemberExpr "crc"  <int> lvalue  -> (unnamed at 22:5)::crc (field, member)
+                |   |   |   |   |       `-- Identifier "p"  <struct Packet> lvalue  -> p.11 (variable, local)
+                |   |   |   |   `-- MemberExpr "after"  <int> lvalue  -> Outer::after (field, member)
+                |   |   |   |       `-- Identifier "o"  <struct Outer> lvalue  -> o.12 (variable, local)
+                |   |   |   `-- CallExpr  <int>  -> _ZN8Register4readEv (function)
+                |   |   |       `-- MemberExpr "read"  <int (void)>  -> _ZN8Register4readEv (function)
+                |   |   |           `-- Identifier "r"  <class Register> lvalue  -> r.15 (variable, local)
+                |   |   `-- MemberExpr "low"  <char> lvalue  -> (unnamed at 49:5)::low (field, member)
+                |   |       `-- Identifier "r"  <class Register> lvalue  -> r.15 (variable, local)
+                |   `-- CastExpr "INT"  <int>
+                |       `-- CallExpr  <float>  -> _Z8as_float3Num5Level (function)
+                |           |-- Identifier "as_float"  <float (Num, Level)>  -> _Z8as_float3Num5Level (function)
+                |           |-- Identifier "n"  <Num> lvalue  -> n.16 (variable, local)
+                |           `-- Identifier "HIGH"  <int> =1  -> HIGH (enum_constant)
+                `-- Identifier "power"  <enum (unnamed at 43:1)> lvalue  -> power (variable, global)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Value              struct_tag     struct Value               -        global                         6     -     0     Value                -                        size 12
+Value::kind        field          int                        member   global > struct Value          7     4     1     Value::kind          -                        public, offset 0
+(unnamed at 8:5)   union_tag      union (unnamed at 8:5)     -        global                         8     -     0     (unnamed at 8:5)     -                        size 4
+(unnamed at 8:5)::i field          int                        member   global > struct Value > union (unnamed at 8:5) 9     4     0     (unnamed at 8:5)::i  -                        public, offset 0
+(unnamed at 8:5)::f field          float                      member   global > struct Value > union (unnamed at 8:5) 10    4     0     (unnamed at 8:5)::f  -                        public, offset 0
+(unnamed at 8:5)::c field          char                       member   global > struct Value > union (unnamed at 8:5) 11    1     0     (unnamed at 8:5)::c  -                        public, offset 0
+(unnamed)          field          union (unnamed at 8:5)     member   global > struct Value          8     4     0     Value::(unnamed at 8:5) -                        public, offset 4
+(unnamed at 13:5)  struct_tag     struct (unnamed at 13:5)   -        global                         13    -     0     (unnamed at 13:5)    -                        size 4
+(unnamed at 13:5)::lo field          short                      member   global > struct Value > struct (unnamed at 13:5) 14    2     0     (unnamed at 13:5)::lo -                        public, offset 0
+(unnamed at 13:5)::hi field          short                      member   global > struct Value > struct (unnamed at 13:5) 14    2     0     (unnamed at 13:5)::hi -                        public, offset 2
+(unnamed)          field          struct (unnamed at 13:5)   member   global > struct Value          13    4     0     Value::(unnamed at 13:5) -                        public, offset 8
+value_size_ok      variable       int[1]                     global   global                         17    4     0     value_size_ok        -                        
+Packet             struct_tag     struct Packet              -        global                         20    -     0     Packet               -                        size 12
+Packet::tag        field          char                       member   global > struct Packet         21    1     0     Packet::tag          -                        public, offset 0
+(unnamed at 22:5)  struct_tag     struct (unnamed at 22:5)   -        global                         22    -     0     (unnamed at 22:5)    -                        size 8
+(unnamed at 23:9)  union_tag      union (unnamed at 23:9)    -        global                         23    -     0     (unnamed at 23:9)    -                        size 4
+(unnamed at 23:9)::word field          int                        member   global > struct Packet > struct (unnamed at 22:5) > union (unnamed at 23:9) 23    4     0     (unnamed at 23:9)::word -                        public, offset 0
+(unnamed at 23:9)::bytes field          char[4]                    member   global > struct Packet > struct (unnamed at 22:5) > union (unnamed at 23:9) 23    4     0     (unnamed at 23:9)::bytes -                        public, offset 0
+(unnamed)          field          union (unnamed at 23:9)    member   global > struct Packet > struct (unnamed at 22:5) 23    4     0     (unnamed at 22:5)::(unnamed at 23:9) -                        public, offset 0
+(unnamed at 22:5)::crc field          int                        member   global > struct Packet > struct (unnamed at 22:5) 24    4     0     (unnamed at 22:5)::crc -                        public, offset 4
+(unnamed)          field          struct (unnamed at 22:5)   member   global > struct Packet         22    8     0     Packet::(unnamed at 22:5) -                        public, offset 4
+packet_size_ok     variable       int[1]                     global   global                         27    4     0     packet_size_ok       -                        
+Outer              struct_tag     struct Outer               -        global                         30    -     0     Outer                -                        size 8
+Inner              struct_tag     struct Inner               -        global                         31    -     0     Inner                -                        size 4
+Inner::x           field          int                        member   global > struct Outer > struct Inner 31    4     1     Inner::x             -                        public, offset 0
+Outer::in          field          struct Inner               member   global > struct Outer          31    4     1     Outer::in            -                        public, offset 0
+Outer::after       field          int                        member   global > struct Outer          32    4     2     Outer::after         -                        public, offset 4
+(unnamed at 36:9)  struct_tag     struct (unnamed at 36:9)   -        global                         36    -     0     (unnamed at 36:9)    -                        size 8
+(unnamed at 36:9)::x field          int                        member   global > struct (unnamed at 36:9) 36    4     2     (unnamed at 36:9)::x -                        public, offset 0
+(unnamed at 36:9)::y field          int                        member   global > struct (unnamed at 36:9) 36    4     2     (unnamed at 36:9)::y -                        public, offset 4
+Pt                 typedef        Pt                         -        global                         36    -     0     Pt                   -                        
+PtAlias            typedef        Pt                         -        global                         36    -     0     PtAlias              -                        
+(unnamed at 37:9)  enum_tag       enum (unnamed at 37:9)     -        global                         37    -     0     (unnamed at 37:9)    -                        
+LOW                enum_constant  int                        -        global                         37    -     1     LOW                  -                        value 0
+HIGH               enum_constant  int                        -        global                         37    -     3     HIGH                 -                        value 1
+Level              typedef        Level                      -        global                         37    -     0     Level                -                        
+(unnamed at 38:9)  union_tag      union (unnamed at 38:9)    -        global                         38    -     0     (unnamed at 38:9)    -                        size 4
+(unnamed at 38:9)::n field          int                        member   global > union (unnamed at 38:9) 38    4     1     (unnamed at 38:9)::n -                        public, offset 0
+(unnamed at 38:9)::r field          float                      member   global > union (unnamed at 38:9) 38    4     2     (unnamed at 38:9)::r -                        public, offset 0
+Num                typedef        Num                        -        global                         38    -     0     Num                  -                        
+(unnamed at 41:1)  struct_tag     struct (unnamed at 41:1)   -        global                         41    -     0     (unnamed at 41:1)    -                        size 8
+(unnamed at 41:1)::hits field          int                        member   global > struct (unnamed at 41:1) 41    4     2     (unnamed at 41:1)::hits -                        public, offset 0
+(unnamed at 41:1)::misses field          int                        member   global > struct (unnamed at 41:1) 41    4     0     (unnamed at 41:1)::misses -                        public, offset 4
+stats              variable       struct (unnamed at 41:1)   global   global                         41    8     2     stats                -                        
+(unnamed at 42:1)  enum_tag       enum (unnamed at 42:1)     -        global                         42    -     0     (unnamed at 42:1)    -                        
+MAX_ITEMS          enum_constant  int                        -        global                         42    -     1     MAX_ITEMS            -                        value 8
+MIN_ITEMS          enum_constant  int                        -        global                         42    -     1     MIN_ITEMS            -                        value 1
+(unnamed at 43:1)  enum_tag       enum (unnamed at 43:1)     -        global                         43    -     0     (unnamed at 43:1)    -                        
+OFF                enum_constant  int                        -        global                         43    -     0     OFF                  -                        value 0
+ON                 enum_constant  int                        -        global                         43    -     1     ON                   -                        value 1
+power              variable       enum (unnamed at 43:1)     global   global                         43    4     2     power                -                        
+items              variable       int[8]                     global   global                         44    32    1     items                -                        
+Register           class_tag      class Register             -        global                         47    -     0     Register             -                        size 4
+(unnamed at 49:5)  union_tag      union (unnamed at 49:5)    -        global                         49    -     0     (unnamed at 49:5)    -                        size 4
+(unnamed at 49:5)::raw field          int                        member   global > class Register > union (unnamed at 49:5) 49    4     0     (unnamed at 49:5)::raw -                        public, offset 0
+(unnamed at 49:5)::low field          char                       member   global > class Register > union (unnamed at 49:5) 49    1     0     (unnamed at 49:5)::low -                        public, offset 0
+(unnamed)          field          union (unnamed at 49:5)    member   global > class Register        49    4     0     Register::(unnamed at 49:5) -                        public, offset 0
+Register::read     method         int (void)                 -        global > class Register        50    -     1     _ZN8Register4readEv  _ZN8Register4readEv      public, defined
+dist2              function       int (Pt, Pt *)             -        global                         53    -     1     _Z5dist22PtPS_       _Z5dist22PtPS_           defined
+a                  parameter      Pt                         param    global > dist2()               53    8     2     a.1                  -                        
+b                  parameter      Pt *                       param    global > dist2()               53    4     2     b.2                  -                        
+dx                 variable       int                        local    global > dist2()               53    4     2     dx.3                 -                        
+dy                 variable       int                        local    global > dist2()               53    4     2     dy.4                 -                        
+level_of           function       Level (int)                -        global                         54    -     1     _Z8level_ofi         _Z8level_ofi             defined
+v                  parameter      int                        param    global > level_of()            54    4     1     v.5                  -                        
+as_float           function       float (Num, Level)         -        global                         55    -     1     _Z8as_float3Num5Level _Z8as_float3Num5Level    defined
+n                  parameter      Num                        param    global > as_float()            55    4     2     n.6                  -                        
+l                  parameter      Level                      param    global > as_float()            55    4     1     l.7                  -                        
+main               function       int (void)                 -        global                         57    -     0     main                 main                     defined
+v                  variable       struct Value               local    global > main()                58    12    6     v.8                  -                        
+w                  variable       struct Value               local    global > main()                65    12    1     w.9                  -                        
+d                  variable       struct Value               local    global > main()                66    12    1     d.10                 -                        
+p                  variable       struct Packet              local    global > main()                68    12    5     p.11                 -                        
+o                  variable       struct Outer               local    global > main()                73    8     3     o.12                 -                        
+a                  variable       Pt                         local    global > main()                77    8     1     a.13                 -                        
+b                  variable       Pt                         local    global > main()                78    8     1     b.14                 -                        
+r                  variable       class Register             local    global > main()                83    4     3     r.15                 -                        
+n                  variable       Num                        local    global > main()                85    4     2     n.16                 -                        
+
+=== Record Layouts (MIPS32) ===
+struct Value: size 12, align 4
+    +0  int kind  [public]
+    +4  union (unnamed at 8:5)   [public]
+    +8  struct (unnamed at 13:5)   [public]
+    +4  int i  [public]  (from the unnamed member)
+    +4  float f  [public]  (from the unnamed member)
+    +4  char c  [public]  (from the unnamed member)
+    +8  short lo  [public]  (from the unnamed member)
+    +10  short hi  [public]  (from the unnamed member)
+union (unnamed at 8:5): size 4, align 4
+    +0  int i  [public]
+    +0  float f  [public]
+    +0  char c  [public]
+struct (unnamed at 13:5): size 4, align 2
+    +0  short lo  [public]
+    +2  short hi  [public]
+struct Packet: size 12, align 4
+    +0  char tag  [public]
+    +4  struct (unnamed at 22:5)   [public]
+    +8  int crc  [public]  (from the unnamed member)
+    +4  int word  [public]  (from the unnamed member)
+    +4  char[4] bytes  [public]  (from the unnamed member)
+struct (unnamed at 22:5): size 8, align 4
+    +0  union (unnamed at 23:9)   [public]
+    +4  int crc  [public]
+    +0  int word  [public]  (from the unnamed member)
+    +0  char[4] bytes  [public]  (from the unnamed member)
+union (unnamed at 23:9): size 4, align 4
+    +0  int word  [public]
+    +0  char[4] bytes  [public]
+struct Outer: size 8, align 4
+    +0  struct Inner in  [public]
+    +4  int after  [public]
+struct Inner: size 4, align 4
+    +0  int x  [public]
+struct (unnamed at 36:9): size 8, align 4
+    +0  int x  [public]
+    +4  int y  [public]
+union (unnamed at 38:9): size 4, align 4
+    +0  int n  [public]
+    +0  float r  [public]
+struct (unnamed at 41:1): size 8, align 4
+    +0  int hits  [public]
+    +4  int misses  [public]
+class Register: size 4, align 4
+    +0  union (unnamed at 49:5)   [public]
+    +0  int raw  [public]  (from the unnamed member)
+    +0  char low  [public]  (from the unnamed member)
+union (unnamed at 49:5): size 4, align 4
+    +0  int raw  [public]
+    +0  char low  [public]

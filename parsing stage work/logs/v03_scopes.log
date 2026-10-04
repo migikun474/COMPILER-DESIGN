@@ -1,0 +1,279 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : phase2b-semantic/test/valid/v03_scopes.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+x                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+shadow                         PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+y                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+y                              INT                 
+*                              star_op             
+2                              INT_LITERAL         
+;                              semicolon_op        
+{                              open_brace_op       
+char                           char                
+x                              CHAR                
+=                              assign_op           
+'q'                            CHAR_LITERAL        
+;                              semicolon_op        
+y                              INT                 
+=                              assign_op           
+x                              CHAR                
+;                              semicolon_op        
+}                              close_brace_op      
+return                         return              
+x                              INT                 
++                              plus_op             
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+x_func                         PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+total                          INT                 
+=                              assign_op           
+x                              INT                 
+;                              semicolon_op        
+{                              open_brace_op       
+int                            int                 
+total2                         INT                 
+=                              assign_op           
+total                          INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+{                              open_brace_op       
+int                            int                 
+total3                         INT                 
+=                              assign_op           
+total2                         INT                 
++                              plus_op             
+1                              INT_LITERAL         
+;                              semicolon_op        
+{                              open_brace_op       
+double                         double              
+x                              DOUBLE              
+=                              assign_op           
+0.5                            FLOAT_LITERAL       
+;                              semicolon_op        
+total                          INT                 
+=                              assign_op           
+total3                         INT                 
++                              plus_op             
+x                              DOUBLE              
+;                              semicolon_op        
+}                              close_brace_op      
+}                              close_brace_op      
+}                              close_brace_op      
+for                            for                 
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+3                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+i                              INT                 
+;                              semicolon_op        
+total                          INT                 
++=                             plus_assign_op      
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+for                            for                 
+(                              open_paren_op       
+int                            int                 
+i                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+<                              lt_op               
+2                              INT_LITERAL         
+;                              semicolon_op        
+i                              INT                 
+++                             increment_op        
+)                              close_paren_op      
+{                              open_brace_op       
+total                          INT                 
++=                             plus_assign_op      
+i                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+y                              INT                 
+=                              assign_op           
+shadow                         PROCEDURE           
+(                              open_paren_op       
+total                          INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+total                          INT                 
++                              plus_op             
+y                              INT                 
++                              plus_op             
+x_func                         PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- VarDecl "x : INT"
+|   `-- IntLiteral "1"
+|-- VarDecl "y : INT"
+|   `-- IntLiteral "2"
+|-- FunctionDef "shadow : _Z6shadowi"
+|   |-- ParamDecl "y : INT"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- BinaryExpr "*"
+|       |       |-- Identifier "y"
+|       |       `-- IntLiteral "2"
+|       |-- CompoundStmt
+|       |   |-- VarDecl "x : CHAR"
+|       |   |   `-- CharLiteral "'q'"
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "="
+|       |           |-- Identifier "y"
+|       |           `-- Identifier "x"
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "x"
+|               `-- Identifier "y"
+|-- FunctionDef "x_func : _Z6x_funcv"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "x"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "total : INT"
+        |   `-- Identifier "x"
+        |-- CompoundStmt
+        |   |-- VarDecl "total2 : INT"
+        |   |   `-- BinaryExpr "+"
+        |   |       |-- Identifier "total"
+        |   |       `-- IntLiteral "1"
+        |   `-- CompoundStmt
+        |       |-- VarDecl "total3 : INT"
+        |       |   `-- BinaryExpr "+"
+        |       |       |-- Identifier "total2"
+        |       |       `-- IntLiteral "1"
+        |       `-- CompoundStmt
+        |           |-- VarDecl "x : DOUBLE"
+        |           |   `-- FloatLiteral "0.5"
+        |           `-- ExprStmt
+        |               `-- AssignExpr "="
+        |                   |-- Identifier "total"
+        |                   `-- BinaryExpr "+"
+        |                       |-- Identifier "total3"
+        |                       `-- Identifier "x"
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"
+        |   |   `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "3"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       |-- VarDecl "x : INT"
+        |       |   `-- Identifier "i"
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="
+        |               |-- Identifier "total"
+        |               `-- Identifier "x"
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"
+        |   |   `-- IntLiteral "0"
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"
+        |   |       |-- Identifier "i"
+        |   |       `-- IntLiteral "2"
+        |   |-- PostfixOpExpr "++"
+        |   |   `-- Identifier "i"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="
+        |               |-- Identifier "total"
+        |               `-- Identifier "i"
+        |-- VarDecl "y : INT"
+        |   `-- CallExpr
+        |       |-- Identifier "shadow"
+        |       `-- Identifier "total"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- BinaryExpr "+"
+                |   |-- Identifier "total"
+                |   `-- Identifier "y"
+                `-- CallExpr
+                    `-- Identifier "x_func"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+x                    variable       3      global                       INT                                       2                                
+y                    variable       4      global                       INT                                       0                                
+shadow               procedure      6      global                       PROCEDURE                                 1         INT (INT)              _Z6shadowi
+y                    parameter      6      global > shadow()            INT                                       3                                
+x                    variable       7      global > shadow()            INT                                       1                                
+x                    variable       9      global > shadow() > block    CHAR                                      1                                
+x_func               procedure      15     global                       PROCEDURE                                 1         INT ()                 _Z6x_funcv
+main                 procedure      17     global                       PROCEDURE                                 0         INT ()                 main
+total                variable       18     global > main()              INT                                       6                                
+total2               variable       20     global > main() > block      INT                                       1                                
+total3               variable       22     global > main() > block > block INT                                       1                                
+x                    variable       24     global > main() > block > block > block DOUBLE                                    1                                
+i                    variable       29     global > main() > for        INT                                       3                                
+x                    variable       30     global > main() > for > block INT                                       1                                
+i                    variable       33     global > main() > for        INT                                       3                                
+y                    variable       34     global > main()              INT                                       1                                

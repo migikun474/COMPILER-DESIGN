@@ -1,0 +1,52 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e13_adversarial.c
+
+Semantic analysis failed: 11 error(s), 0 warning(s) in 'test/invalid/e13_adversarial.c'.
+
+test/invalid/e13_adversarial.c:7:46: semantic error: member 'x' needs 'this', which this lambda does not capture ([this], [=] or [&]) [capture]
+ 7 |     int noCapture() { auto f = []() { return x; }; return f(); }   // error: member 'x' needs 'this'
+   |                                              ^
+
+test/invalid/e13_adversarial.c:8:47: semantic error: calling member function 'get' needs 'this', which a lambda with no capture-default does not capture [capture]
+ 8 |     int noCapture2() { auto f = []() { return get(); }; return f(); }   // error: calling member function 'get' needs 'this'
+   |                                               ^
+
+test/invalid/e13_adversarial.c:14:24: semantic error: reference to non-static member function 'x' must be called [member-access]
+ 14 |     int sum() { return x + 1; }   // error: reference to non-static member function 'x' must be called
+    |                        ^
+
+test/invalid/e13_adversarial.c:25:13: semantic error: type mismatch: cannot initialize variable 'pb' of type 'class B *' with a value of type 'class A *' (incompatible pointer types) [type-mismatch]
+ 25 |     B *pb = &a;                   // error: cannot initialize variable 'pb' of type 'class B *'
+    |             ^
+
+test/invalid/e13_adversarial.c:26:15: semantic error: function 'get' expects 0 arguments but 1 was provided [argument-count]
+ 26 |     int v = a.get(1);             // error: function 'get' expects 0 arguments but 1 was provided
+    |               ^
+
+test/invalid/e13_adversarial.c:27:11: semantic error: 'helper' is a private member of 'class A' and is not accessible outside the class [access]
+ 27 |     v = a.helper();               // error: 'helper' is a private member of 'class A'
+    |           ^
+
+test/invalid/e13_adversarial.c:30:14: semantic error: duplicate case value '97' (previously used at line 29) [duplicate-case]
+ 30 |         case 97: break;           // error: duplicate case value '97'
+    |              ^
+
+test/invalid/e13_adversarial.c:32:14: semantic error: duplicate case value '1' (previously used at line 31) [duplicate-case]
+ 32 |         case 1: break;            // error: duplicate case value '1'
+    |              ^
+
+test/invalid/e13_adversarial.c:34:9: semantic error: call to overloaded function 'h(int)' is ambiguous; candidates are: h(long), h(double) [ambiguous-call]
+ 34 |     v = h(x);                     // error: call to overloaded function 'h(int)' is ambiguous
+    |         ^
+
+test/invalid/e13_adversarial.c:35:7: semantic error: reference to overloaded function 'h' is ambiguous here (call it, so its arguments select an overload) [ambiguous-overload]
+ 35 |     k(h);                         // error: reference to overloaded function 'h' is ambiguous
+    |       ^
+
+test/invalid/e13_adversarial.c:36:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
+ 36 |     int (*pa)[3] = &x;            // error: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *'
+    |                    ^
+

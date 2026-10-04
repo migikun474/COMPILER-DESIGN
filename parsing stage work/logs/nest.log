@@ -1,0 +1,95 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /tmp/claude-1000/-home-amirishetty-parsing-stage/d23148d6-4d07-435e-b985-82ec05b0bcc4/scratchpad/nest.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+struct                         struct              
+A                              STRUCT              
+{                              open_brace_op       
+struct                         struct              
+B                              STRUCT              
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+b                              STRUCT              
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+struct                         struct              
+A                              STRUCT              
+a                              STRUCT              
+;                              semicolon_op        
+a                              STRUCT              
+.                              dot_op              
+y                              IDENTIFIER          
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+a                              STRUCT              
+.                              dot_op              
+b                              IDENTIFIER          
+.                              dot_op              
+x                              IDENTIFIER          
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+return                         return              
+a                              STRUCT              
+.                              dot_op              
+y                              IDENTIFIER          
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- StructDecl "A"
+|   |-- DeclGroup
+|   |   |-- StructDecl "B"
+|   |   |   `-- VarDecl "x : INT"
+|   |   `-- VarDecl "b : STRUCT"
+|   `-- VarDecl "y : INT"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "a : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "y"
+        |       |   `-- Identifier "a"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "x"
+        |       |   `-- MemberExpr "b"
+        |       |       `-- Identifier "a"
+        |       `-- IntLiteral "2"
+        `-- ReturnStmt
+            `-- MemberExpr "y"
+                `-- Identifier "a"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+A                    struct_tag     1      global                       STRUCT                                    0                                
+A::B                 struct_tag     1      global > struct A            STRUCT                                    0                                
+B::x                 struct_member  1      global > struct A > struct B INT                                       0                                
+b                    variable       1      global > struct A            STRUCT                                    0                                
+y                    variable       1      global > struct A            INT                                       0                                
+main                 procedure      2      global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       2      global > main()              STRUCT                                    3                                
