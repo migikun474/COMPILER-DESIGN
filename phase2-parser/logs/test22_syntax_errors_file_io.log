@@ -1,0 +1,183 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test22_syntax_errors_file_io.c
+
+test/test22_syntax_errors_file_io.c:14:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 14 |     f = fopen("data.txt", "r");
+    |     ^
+    | note: insert ';' here
+
+test/test22_syntax_errors_file_io.c:20:30: syntax error: syntax error, unexpected ';', expecting ')'
+ 20 |     f = fopen("data.txt", "r";
+    |                              ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:26:15: syntax error: syntax error, unexpected ',', expecting ')'
+ 26 |     f = fopen(, "r");
+    |               ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:35:12: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
+ 35 |     fclose f;
+    |            ^
+    | note: insert '(' here
+
+test/test22_syntax_errors_file_io.c:42:24: syntax error: syntax error, unexpected ';', expecting ')'
+ 42 |     fread(buf, 4, 10, f;
+    |                        ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:49:27: syntax error: syntax error, unexpected ')'
+ 49 |     fwrite(buf, 4, 10, f, );
+    |                           ^
+
+test/test22_syntax_errors_file_io.c:55:27: syntax error: syntax error, unexpected ';', expecting ')'
+ 55 |     fprintf(f, "x = %d", 3;
+    |                           ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:62:12: syntax error: syntax error, unexpected ',', expecting ')'
+ 62 |     fscanf(, f, "%d", &x);
+    |            ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:69:22: syntax error: syntax error, unexpected ';', expecting ')'
+ 69 |     fgets(buf, 100, f;
+    |                      ^
+    | note: insert ')' here
+
+test/test22_syntax_errors_file_io.c:75:23: syntax error: syntax error, unexpected ')'
+ 75 |     fputs("hello", f, );
+    |                       ^
+
+test/test22_syntax_errors_file_io.c:83:19: syntax error: syntax error, unexpected ')'
+ 83 |     done = feof(f,);
+    |                   ^
+
+test/test22_syntax_errors_file_io.c:92:9: syntax error: syntax error, unexpected FOPEN, expecting ';'
+ 92 |     int fopen;
+    |         ^
+    | note: insert ';' here
+
+-----------------------------------------
+Total Errors : 12
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- FunctionDef "t01_file_decl_missing_semicolon : _Z31t01_file_decl_missing_semicolonv"
+|   `-- CompoundStmt
+|       `-- ErrorNode "line 14: near 'f'"
+|-- FunctionDef "t02_fopen_missing_close_paren : _Z29t02_fopen_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       `-- ErrorNode "line 20: near ';'"
+|-- FunctionDef "t03_fopen_stray_leading_comma : _Z29t03_fopen_stray_leading_commav"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       `-- ErrorNode "line 26: near ','"
+|-- FunctionDef "t04_fclose_missing_parens : _Z25t04_fclose_missing_parensv"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "f"
+|       |       `-- BuiltinCallExpr "fopen"
+|       |           |-- StringLiteral ""data.txt""
+|       |           `-- StringLiteral ""r""
+|       `-- ErrorNode "line 35: near 'f'"
+|-- FunctionDef "t05_fread_missing_close_paren : _Z29t05_fread_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- VarDecl "buf : INT_ARRAY"
+|       `-- ErrorNode "line 42: near ';'"
+|-- FunctionDef "t06_fwrite_dangling_comma : _Z25t06_fwrite_dangling_commav"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- VarDecl "buf : INT_ARRAY"
+|       `-- ErrorNode "line 49: near ')'"
+|-- FunctionDef "t07_fprintf_missing_close_paren : _Z31t07_fprintf_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       `-- ErrorNode "line 55: near ';'"
+|-- FunctionDef "t08_fscanf_stray_comma : _Z22t08_fscanf_stray_commav"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- VarDecl "x : INT"
+|       `-- ErrorNode "line 62: near ','"
+|-- FunctionDef "t09_fgets_missing_close_paren : _Z29t09_fgets_missing_close_parenv"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- VarDecl "buf : CHAR_ARRAY"
+|       `-- ErrorNode "line 69: near ';'"
+|-- FunctionDef "t10_fputs_dangling_comma : _Z24t10_fputs_dangling_commav"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       `-- ErrorNode "line 75: near ')'"
+|-- FunctionDef "t11_feof_dangling_comma : _Z23t11_feof_dangling_commav"
+|   `-- CompoundStmt
+|       |-- VarDecl "f : FILE_POINTER"
+|       |-- VarDecl "done : INT"
+|       `-- ErrorNode "line 83: near ')'"
+|-- FunctionDef "t12_reserved_file_keyword_as_identifier : _Z39t12_reserved_file_keyword_as_identifierv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 92: near 'fopen'"
+|       `-- ErrorNode "line 92: near 'fopen'"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "f : FILE_POINTER"
+        |   `-- BuiltinCallExpr "fopen"
+        |       |-- StringLiteral ""data.txt""
+        |       `-- StringLiteral ""w""
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fprintf"
+        |       |-- Identifier "f"
+        |       |-- StringLiteral ""%d\n""
+        |       `-- IntLiteral "42"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fputs"
+        |       |-- StringLiteral ""hello\n""
+        |       `-- Identifier "f"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "f"
+        |-- VarDecl "g : FILE_POINTER"
+        |   `-- BuiltinCallExpr "fopen"
+        |       |-- StringLiteral ""data.txt""
+        |       `-- StringLiteral ""r""
+        |-- VarDecl "buf : CHAR_ARRAY"
+        |-- VarDecl "x : INT"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fgets"
+        |       |-- Identifier "buf"
+        |       |-- IntLiteral "100"
+        |       `-- Identifier "g"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fscanf"
+        |       |-- Identifier "g"
+        |       |-- StringLiteral ""%d""
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "x"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fread"
+        |       |-- Identifier "buf"
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "100"
+        |       `-- Identifier "g"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fwrite"
+        |       |-- Identifier "buf"
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "100"
+        |       `-- Identifier "g"
+        |-- VarDecl "done : INT"
+        |   `-- BuiltinCallExpr "feof"
+        |       `-- Identifier "g"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "fclose"
+        |       `-- Identifier "g"
+        `-- ReturnStmt
+            `-- Identifier "done"

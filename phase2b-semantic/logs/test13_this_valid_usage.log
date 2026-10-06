@@ -1,0 +1,40 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test13_this_valid_usage.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test13_this_valid_usage.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
+|   |-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
+|   |-- FunctionDef "bark : _ZN3Dog4barkEv"  <int (void)>  -> _ZN3Dog4barkEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- ArrowExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|   |               `-- ThisExpr  <class Dog *>
+|   `-- FunctionDecl "legCount : _ZN3Dog8legCountEv"  <int (void)>  -> _ZN3Dog8legCountEv (function)
+|-- FunctionDef "legCount : _ZN3Dog8legCountEv"  <int (void)>  -> _ZN3Dog8legCountEv (function)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- ArrowExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|               `-- ThisExpr  <class Dog *>
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Dog                class_tag      class Dog                  -        global                         3     -     0     Dog                  -                        size 4
+Dog::legs          field          int                        member   global > class Dog             5     4     2     Dog::legs            -                        public, offset 0
+Dog::bark          method         int (void)                 -        global > class Dog             6     -     0     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
+Dog::legCount      method         int (void)                 -        global > class Dog             9     -     0     _ZN3Dog8legCountEv   _ZN3Dog8legCountEv       public, defined
+main               function       int (void)                 -        global                         16    -     0     main                 main                     defined
+
+=== Record Layouts (MIPS32) ===
+class Dog: size 4, align 4
+    +0  int legs  [public]

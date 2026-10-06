@@ -1,0 +1,234 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v24_thesis_rules.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v24_thesis_rules.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- VarDecl "u1 : INT_ARRAY"  <int[1]>  -> u1 (variable, global)
+|-- VarDecl "u2 : INT_ARRAY"  <int[1]>  -> u2 (variable, global)
+|-- VarDecl "u3 : INT_ARRAY"  <int[1]>  -> u3 (variable, global)
+|-- VarDecl "u4 : INT_ARRAY"  <int[1]>  -> u4 (variable, global)
+|-- VarDecl "u5 : INT_ARRAY"  <int[1]>  -> u5 (variable, global)
+|-- VarDecl "u6 : INT_ARRAY"  <int[1]>  -> u6 (variable, global)
+|-- VarDecl "u7 : INT_ARRAY"  <int[1]>  -> u7 (variable, global)
+|-- VarDecl "u8 : INT_ARRAY"  <int[1]>  -> u8 (variable, global)
+|-- VarDecl "u9 : INT_ARRAY"  <int[1]>  -> u9 (variable, global)
+|-- VarDecl "table : INT_ARRAY"  <int[]>  -> table (variable, global)
+|-- VarDecl "table : INT_ARRAY"  <int[4]>  -> table (variable, global)
+|   `-- InitializerList  <int[4]>
+|       |-- IntLiteral "1"  <int> =1
+|       |-- IntLiteral "2"  <int> =2
+|       |-- IntLiteral "3"  <int> =3
+|       `-- IntLiteral "4"  <int> =4
+|-- VarDecl "table_ok : INT_ARRAY"  <int[1]>  -> table_ok (variable, global)
+|-- VarDecl "counter : INT"  <int>  -> counter (variable, global)
+|-- VarDecl "counter : INT"  <int>  -> counter (variable, global)
+|   `-- IntLiteral "0"  <int> =0
+|-- VarDecl "counter : INT"  <int>  -> counter (variable, global)
+|-- FunctionDef "bump : _Z4bumpv"  <int (void)>  -> _Z4bumpv (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "counter : INT"  <int>  -> counter (variable, global)
+|       `-- ReturnStmt
+|           `-- UnaryExpr "++(pre)"  <int>
+|               `-- Identifier "counter"  <int> lvalue  -> counter (variable, global)
+|-- VarDecl "total : INT"  <int>  -> total (variable, global)
+|   `-- IntLiteral "10"  <int> =10
+|-- FunctionDef "read_total : _Z10read_totalv"  <int (void)>  -> _Z10read_totalv (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "total : INT"  <int>  -> total (variable, global)
+|       `-- ReturnStmt
+|           `-- Identifier "total"  <int> lvalue  -> total (variable, global)
+|-- StructDecl "Mutable"  <struct Mutable>  -> Mutable (tag)
+|   `-- DeclGroup
+|       |-- VarDecl "a : INT"  <int>  -> Mutable::a (field, member)
+|       `-- VarDecl "b : INT"  <int>  -> Mutable::b (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "r : INT"  <int>  -> r.1 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- DeclGroup
+        |   |-- VarDecl "i : INT"  <int>  -> i.2 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- VarDecl "j : INT"  <int>  -> j.3 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   `-- VarDecl "a : INT_ARRAY"  <int[4]>  -> a.4 (variable, local)
+        |       `-- InitializerList  <int[4]>
+        |           `-- IntLiteral "0"  <int> =0
+        |-- DeclGroup
+        |   |-- VarDecl "m1 : STRUCT"  <struct Mutable>  -> m1.5 (variable, local)
+        |   |   `-- InitializerList  <struct Mutable>
+        |   |       |-- IntLiteral "1"  <int> =1
+        |   |       `-- IntLiteral "2"  <int> =2
+        |   `-- VarDecl "m2 : STRUCT"  <struct Mutable>  -> m2.6 (variable, local)
+        |       `-- InitializerList  <struct Mutable>
+        |           |-- IntLiteral "3"  <int> =3
+        |           `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <struct Mutable>
+        |       |-- Identifier "m1"  <struct Mutable> lvalue  -> m1.5 (variable, local)
+        |       `-- Identifier "m2"  <struct Mutable> lvalue  -> m2.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "+="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       `-- CommaExpr  <int>
+        |           |-- PostfixOpExpr "++"  <int>
+        |           |   `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+        |       `-- BinaryExpr "&&"  <int>
+        |           |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           `-- PostfixOpExpr "++"  <int>
+        |               `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+        |       `-- TernaryExpr  <int>
+        |           |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           |-- PostfixOpExpr "++"  <int>
+        |           |   `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           `-- PostfixOpExpr "--"  <int>
+        |               `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "a"  <int[4]> lvalue  -> a.4 (variable, local)
+        |       |   `-- BinaryExpr "%"  <int>
+        |       |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       |       `-- IntLiteral "4"  <int> =4
+        |       `-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   |       `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   |       `-- IntLiteral "3"  <int> =3
+        |   |-- CommaExpr  <int>
+        |   |   |-- PostfixOpExpr "++"  <int>
+        |   |   |   `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |   |   `-- PostfixOpExpr "++"  <int>
+        |   |       `-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+        |   `-- CompoundStmt
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+        |       `-- BinaryExpr "+"  <unsigned int>
+        |           |-- SizeofExpr  <unsigned int> =4
+        |           |   `-- PostfixOpExpr "++"  <int>
+        |           |       `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |           `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |-- VarDecl "c : CHAR"  <char>  -> c.7 (variable, local)
+        |   `-- CharLiteral "'x'"  <char> =120
+        |-- VarDecl "s : SHORT"  <short>  -> s.8 (variable, local)
+        |   `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "f : FLOAT"  <float>  -> f.9 (variable, local)
+        |   `-- FloatLiteral "1.5f"  <float>
+        |-- VarDecl "l : LONG"  <long>  -> l.10 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "ll : LONG_LONG"  <long long>  -> ll.11 (variable, local)
+        |   `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.12 (variable, local)
+        |   `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%c %d %hd %f %ld %lld %zu\n""  <char[27]> lvalue
+        |       |-- Identifier "c"  <char> lvalue  -> c.7 (variable, local)
+        |       |-- Identifier "c"  <char> lvalue  -> c.7 (variable, local)
+        |       |-- Identifier "s"  <short> lvalue  -> s.8 (variable, local)
+        |       |-- Identifier "f"  <float> lvalue  -> f.9 (variable, local)
+        |       |-- Identifier "l"  <long> lvalue  -> l.10 (variable, local)
+        |       |-- Identifier "ll"  <long long> lvalue  -> ll.11 (variable, local)
+        |       `-- SizeofExpr "INT"  <unsigned int> =4
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"  <int>
+        |       |-- StringLiteral ""%d %f %lf %c""  <char[13]> lvalue
+        |       |-- UnaryExpr "&"  <int *>
+        |       |   `-- Identifier "i"  <int> lvalue  -> i.2 (variable, local)
+        |       |-- UnaryExpr "&"  <float *>
+        |       |   `-- Identifier "f"  <float> lvalue  -> f.9 (variable, local)
+        |       |-- UnaryExpr "&"  <double *>
+        |       |   `-- Identifier "d"  <double> lvalue  -> d.12 (variable, local)
+        |       `-- UnaryExpr "&"  <char *>
+        |           `-- Identifier "c"  <char> lvalue  -> c.7 (variable, local)
+        |-- VarDecl "u : UNSIGNED"  <unsigned int>  -> u.13 (variable, local)
+        |   `-- UnaryExpr "-"  <int> =-1
+        |       `-- IntLiteral "1"  <int> =1
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- Identifier "r"  <int> lvalue  -> r.1 (variable, local)
+                |   |   |   |   |   `-- Identifier "j"  <int> lvalue  -> j.3 (variable, local)
+                |   |   |   |   `-- CallExpr  <int>  -> _Z4bumpv (function)
+                |   |   |   |       `-- Identifier "bump"  <int (void)>  -> _Z4bumpv (function)
+                |   |   |   `-- CallExpr  <int>  -> _Z10read_totalv (function)
+                |   |   |       `-- Identifier "read_total"  <int (void)>  -> _Z10read_totalv (function)
+                |   |   `-- IndexExpr  <int> lvalue
+                |   |       |-- Identifier "table"  <int[4]> lvalue  -> table (variable, global)
+                |   |       `-- IntLiteral "0"  <int> =0
+                |   `-- CastExpr "INT"  <int>
+                |       `-- Identifier "u"  <unsigned int> lvalue  -> u.13 (variable, local)
+                `-- MemberExpr "a"  <int> lvalue  -> Mutable::a (field, member)
+                    `-- Identifier "m1"  <struct Mutable> lvalue  -> m1.5 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+u1                 variable       int[1]                     global   global                         6     4     0     u1                   -                        
+u2                 variable       int[1]                     global   global                         7     4     0     u2                   -                        
+u3                 variable       int[1]                     global   global                         8     4     0     u3                   -                        
+u4                 variable       int[1]                     global   global                         9     4     0     u4                   -                        
+u5                 variable       int[1]                     global   global                         10    4     0     u5                   -                        
+u6                 variable       int[1]                     global   global                         11    4     0     u6                   -                        
+u7                 variable       int[1]                     global   global                         12    4     0     u7                   -                        
+u8                 variable       int[1]                     global   global                         13    4     0     u8                   -                        
+u9                 variable       int[1]                     global   global                         14    4     0     u9                   -                        
+table              variable       int[4]                     global   global                         18    16    2     table                -                        
+table_ok           variable       int[1]                     global   global                         19    4     0     table_ok             -                        
+counter            variable       int                        global   global                         21    4     1     counter              -                        
+bump               function       int (void)                 -        global                         23    -     1     _Z4bumpv             _Z4bumpv                 defined
+total              variable       int                        global   global                         24    4     1     total                -                        
+read_total         function       int (void)                 -        global                         25    -     1     _Z10read_totalv      _Z10read_totalv          defined
+Mutable            struct_tag     struct Mutable             -        global                         27    -     0     Mutable              -                        size 8
+Mutable::a         field          int                        member   global > struct Mutable        27    4     1     Mutable::a           -                        public, offset 0
+Mutable::b         field          int                        member   global > struct Mutable        27    4     0     Mutable::b           -                        public, offset 4
+main               function       int (void)                 -        global                         29    -     0     main                 main                     defined
+r                  variable       int                        local    global > main()                30    4     1     r.1                  -                        register
+i                  variable       int                        local    global > main()                31    4     18    i.2                  -                        
+j                  variable       int                        local    global > main()                31    4     6     j.3                  -                        
+a                  variable       int[4]                     local    global > main()                31    16    1     a.4                  -                        
+m1                 variable       struct Mutable             local    global > main()                32    8     2     m1.5                 -                        
+m2                 variable       struct Mutable             local    global > main()                32    8     1     m2.6                 -                        
+c                  variable       char                       local    global > main()                46    1     3     c.7                  -                        
+s                  variable       short                      local    global > main()                46    2     1     s.8                  -                        
+f                  variable       float                      local    global > main()                46    4     2     f.9                  -                        
+l                  variable       long                       local    global > main()                46    4     1     l.10                 -                        
+ll                 variable       long long                  local    global > main()                46    8     1     ll.11                -                        
+d                  variable       double                     local    global > main()                46    8     1     d.12                 -                        
+u                  variable       unsigned int               local    global > main()                49    4     1     u.13                 -                        
+
+=== Record Layouts (MIPS32) ===
+struct Mutable: size 8, align 4
+    +0  int a  [public]
+    +4  int b  [public]

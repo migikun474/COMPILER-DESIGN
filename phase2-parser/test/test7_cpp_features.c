@@ -1,7 +1,4 @@
-/* Newly added features: bool/const/volatile, sizeof/new/delete, class
- * inheritance, constructors/destructors, and class names usable
- * directly as types (the way real C++ works, unlike plain C where you
- * always need the `struct`/`class` keyword repeated). */
+
 
 class Animal {
 public:

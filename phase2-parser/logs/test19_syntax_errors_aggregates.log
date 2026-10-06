@@ -1,0 +1,108 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test19_syntax_errors_aggregates.c
+
+test/test19_syntax_errors_aggregates.c:12:1: syntax error: syntax error, unexpected ';', expecting '}'
+ 12 | ;
+    | ^
+    | note: insert '}' here
+
+test/test19_syntax_errors_aggregates.c:17:5: syntax error: syntax error, unexpected INT, expecting ';'
+ 17 |     int y1;
+    |     ^
+    | note: insert ';' here
+
+test/test19_syntax_errors_aggregates.c:21:29: syntax error: syntax error, unexpected IDENTIFIER, expecting '}' or ','
+ 21 | enum T03_Color { RED, GREEN BLUE };
+    |                             ^
+
+test/test19_syntax_errors_aggregates.c:26:5: syntax error: syntax error, unexpected FLOAT, expecting ';'
+ 26 |     float f;
+    |     ^
+    | note: insert ';' here
+
+test/test19_syntax_errors_aggregates.c:30:17: syntax error: syntax error, unexpected '{'
+ 30 | class T05_Bad : {
+    |                 ^
+
+test/test19_syntax_errors_aggregates.c:35:25: syntax error: syntax error, unexpected '{', expecting IDENTIFIER or TYPE_NAME
+ 35 | class T06_Bad2 : public {
+    |                         ^
+
+test/test19_syntax_errors_aggregates.c:42:1: syntax error: syntax error, unexpected PUBLIC
+ 42 | public:
+    | ^
+
+test/test19_syntax_errors_aggregates.c:48:29: syntax error: syntax error, unexpected '{', expecting ')'
+ 48 |     T08_Widget(int w, int h {
+    |                             ^
+    | note: insert ')' here
+
+test/test19_syntax_errors_aggregates.c:56:6: syntax error: syntax error, unexpected '(', expecting IDENTIFIER
+ 56 |     ~() {
+    |      ^
+
+-----------------------------------------
+Total Errors : 9
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- ErrorNode "line 12: near ';'"
+|-- ErrorNode "line 17: near 'int'"
+|-- ErrorNode "line 17: near 'int'"
+|-- ErrorNode "line 17: near 'int'"
+|-- ErrorNode "line 21: near 'BLUE'"
+|-- ErrorNode "line 21: near 'BLUE'"
+|-- ErrorNode "line 26: near 'float'"
+|-- ErrorNode "line 26: near 'float'"
+|-- ErrorNode "line 26: near 'float'"
+|-- ErrorNode "line 30: near '{'"
+|-- ErrorNode "line 30: near '{'"
+|-- ErrorNode "line 30: near '{'"
+|-- ErrorNode "line 35: near '{'"
+|-- ErrorNode "line 35: near '{'"
+|-- ErrorNode "line 35: near '{'"
+|-- VarDecl "resync_after_6 : INT"
+|-- ErrorNode "line 42: near 'public'"
+|-- ErrorNode "line 48: near '{'"
+|-- ErrorNode "line 48: near '{'"
+|-- ErrorNode "line 48: near '{'"
+|-- ErrorNode "line 48: near '{'"
+|-- ErrorNode "line 56: near '('"
+|-- ErrorNode "line 56: near '('"
+|-- ErrorNode "line 56: near '('"
+|-- ErrorNode "line 56: near '('"
+|-- StructDecl "T10_Ok"
+|   |-- VarDecl "a : INT"
+|   `-- VarDecl "b : INT"
+|-- ClassDecl "T11_Ok"
+|   |-- ConstructorDef "T11_Ok : _ZN6T11_OkC1Ei"
+|   |   |-- ParamDecl "v : INT"
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- CallExpr
+|   |               `-- Identifier "resync_marker"
+|   `-- VarDecl "v : INT"
+`-- FunctionDef "main : _ZN10T09_Gadget4mainEv"
+    `-- CompoundStmt
+        |-- VarDecl "p : STRUCT"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "a"
+        |       |   `-- Identifier "p"
+        |       `-- IntLiteral "1"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "b"
+        |       |   `-- Identifier "p"
+        |       `-- IntLiteral "2"
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- MemberExpr "a"
+                |   `-- Identifier "p"
+                `-- MemberExpr "b"
+                    `-- Identifier "p"

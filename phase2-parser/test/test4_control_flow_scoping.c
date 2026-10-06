@@ -1,8 +1,4 @@
-/* Control flow + nested scoping: a local variable inside the for-loop
- * body shadows nothing here, but note how the loop variable `i` and the
- * outer `total` are both resolved to INT via the scope stack (pushed
- * on '{' and on the for-loop's own declaration, popped on the
- * matching '}'). */
+
 
 int sum_to(int n) {
     int total;

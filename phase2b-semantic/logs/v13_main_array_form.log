@@ -1,0 +1,32 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v13_main_array_form.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v13_main_array_form.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (int, char **)>  -> main (function)
+    |-- ParamDecl "argc : INT"  <int>  -> argc.1 (parameter, param)
+    |-- ParamDecl "argv : CHAR_POINTER_ARRAY"  <char **>  -> argv.2 (parameter, param)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- IndexExpr  <char> lvalue
+                |-- IndexExpr  <char *> lvalue
+                |   |-- Identifier "argv"  <char **> lvalue  -> argv.2 (parameter, param)
+                |   `-- BinaryExpr "-"  <int>
+                |       |-- Identifier "argc"  <int> lvalue  -> argc.1 (parameter, param)
+                |       `-- IntLiteral "1"  <int> =1
+                `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (int, char **)         -        global                         2     -     0     main                 main                     defined
+argc               parameter      int                        param    global > main()                2     4     1     argc.1               -                        
+argv               parameter      char **                    param    global > main()                2     4     1     argv.2               -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

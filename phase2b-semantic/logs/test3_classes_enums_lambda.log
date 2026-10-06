@@ -1,0 +1,100 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test3_classes_enums_lambda.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test3_classes_enums_lambda.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- EnumDecl "Color"  <enum Color>  -> Color (tag)
+|   |-- Enumerator "RED"  <int> =0  -> RED (enum_constant)
+|   |-- Enumerator "GREEN"  <int> =1  -> GREEN (enum_constant)
+|   `-- Enumerator "BLUE"  <int> =2  -> BLUE (enum_constant)
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- VarDecl "sides : INT"  <int>  -> Shape::sides (field, member)
+|   |-- FunctionDef "area : _ZN5Shape4areaEv"  <int (void)>  -> _ZN5Shape4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"  <int>
+|   |               |-- Identifier "sides"  <int> lvalue  -> Shape::sides (field, member)
+|   |               `-- Identifier "sides"  <int> lvalue  -> Shape::sides (field, member)
+|   `-- VarDecl "secret : INT"  <int>  -> Shape::secret (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "c : ENUM"  <enum Color>  -> c.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <enum Color>
+        |       |-- Identifier "c"  <enum Color> lvalue  -> c.1 (variable, local)
+        |       `-- Identifier "RED"  <int> =0  -> RED (enum_constant)
+        |-- VarDecl "s : CLASS"  <class Shape>  -> s.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "sides"  <int> lvalue  -> Shape::sides (field, member)
+        |       |   `-- Identifier "s"  <class Shape> lvalue  -> s.2 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "fp : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> fp.3 (variable, local)
+        |-- VarDecl "x : INT"  <int>  -> x.4 (variable, local)
+        |   `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "y : INT"  <int>  -> y.5 (variable, local)
+        |   `-- IntLiteral "10"  <int> =10
+        |-- VarDecl "adder : INT"  <(lambda at line 23:18)>  -> adder.7 (variable, local)
+        |   `-- LambdaExpr "x, &y"  <(lambda at line 23:18)>
+        |       |-- ParamDecl "z : INT"  <int>  -> z.6 (parameter, param)
+        |       `-- CompoundStmt
+        |           `-- ReturnStmt
+        |               `-- BinaryExpr "+"  <int>
+        |                   |-- BinaryExpr "+"  <int>
+        |                   |   |-- Identifier "x"  <const int> lvalue  -> x.4 (variable, local)
+        |                   |   `-- Identifier "y"  <int> lvalue  -> y.5 (variable, local)
+        |                   `-- Identifier "z"  <int> lvalue  -> z.6 (parameter, param)
+        |-- UntilStmt
+        |   |-- BinaryExpr "<="  <int>
+        |   |   |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="  <int>
+        |               |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |               `-- BinaryExpr "-"  <int>
+        |                   |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |                   `-- IntLiteral "1"  <int> =1
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"  <int>
+        |   |           `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |   `-- BinaryExpr "<"  <int>
+        |       |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- GotoStmt "done"  -> main.done (label)
+        `-- LabeledStmt "done"  -> main.done (label)
+            `-- ReturnStmt
+                `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Color              enum_tag       enum Color                 -        global                         1     -     0     Color                -                        
+RED                enum_constant  int                        -        global                         1     -     1     RED                  -                        value 0
+GREEN              enum_constant  int                        -        global                         1     -     0     GREEN                -                        value 1
+BLUE               enum_constant  int                        -        global                         1     -     0     BLUE                 -                        value 2
+Shape              class_tag      class Shape                -        global                         3     -     0     Shape                -                        size 8
+Shape::sides       field          int                        member   global > class Shape           5     4     3     Shape::sides         -                        public, offset 0
+Shape::area        method         int (void)                 -        global > class Shape           6     -     0     _ZN5Shape4areaEv     _ZN5Shape4areaEv         public, defined
+Shape::secret      field          int                        member   global > class Shape           10    4     0     Shape::secret        -                        private, offset 4
+main               function       int (void)                 -        global                         13    -     0     main                 main                     defined
+done               label          -                          -        global > main()                36    -     1     main.done            -                        
+c                  variable       enum Color                 local    global > main()                14    4     1     c.1                  -                        
+s                  variable       class Shape                local    global > main()                16    8     1     s.2                  -                        
+fp                 variable       int (*)(int, int)          local    global > main()                19    4     0     fp.3                 -                        
+x                  variable       int                        local    global > main()                21    4     7     x.4                  -                        
+y                  variable       int                        local    global > main()                22    4     2     y.5                  -                        
+z                  parameter      int                        param    global > main() > lambda       23    4     1     z.6                  -                        
+adder              variable       (lambda at line 23:18)     local    global > main()                23    4     0     adder.7              -                        
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 8, align 4
+    +0  int sides  [public]
+    +4  int secret  [private]

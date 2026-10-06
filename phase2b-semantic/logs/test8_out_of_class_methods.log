@@ -1,0 +1,43 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/test8_out_of_class_methods.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test8_out_of_class_methods.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
+|   |-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
+|   `-- FunctionDecl "bark : _ZN3Dog4barkEv"  <int (void)>  -> _ZN3Dog4barkEv (function)
+|-- FunctionDef "bark : _ZN3Dog4barkEv"  <int (void)>  -> _ZN3Dog4barkEv (function)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "d : CLASS"  <class Dog>  -> d.1 (variable, local)
+        |-- VarDecl "b : INT"  <int>  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |       `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
+        |           `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
+        |               `-- Identifier "d"  <class Dog> lvalue  -> d.1 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Dog                class_tag      class Dog                  -        global                         3     -     0     Dog                  -                        size 4
+Dog::legs          field          int                        member   global > class Dog             5     4     1     Dog::legs            -                        public, offset 0
+Dog::bark          method         int (void)                 -        global > class Dog             6     -     1     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
+main               function       int (void)                 -        global                         13    -     0     main                 main                     defined
+d                  variable       class Dog                  local    global > main()                14    4     1     d.1                  -                        
+b                  variable       int                        local    global > main()                15    4     1     b.2                  -                        
+
+=== Record Layouts (MIPS32) ===
+class Dog: size 4, align 4
+    +0  int legs  [public]

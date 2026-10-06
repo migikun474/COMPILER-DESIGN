@@ -1,0 +1,123 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v03_scopes.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v03_scopes.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- VarDecl "x : INT"  <int>  -> x (variable, global)
+|   `-- IntLiteral "1"  <int> =1
+|-- VarDecl "y : INT"  <int>  -> y (variable, global)
+|   `-- IntLiteral "2"  <int> =2
+|-- FunctionDef "shadow : _Z6shadowi"  <int (int)>  -> _Z6shadowi (function)
+|   |-- ParamDecl "y : INT"  <int>  -> y.1 (parameter, param)
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"  <int>  -> x.2 (variable, local)
+|       |   `-- BinaryExpr "*"  <int>
+|       |       |-- Identifier "y"  <int> lvalue  -> y.1 (parameter, param)
+|       |       `-- IntLiteral "2"  <int> =2
+|       |-- CompoundStmt
+|       |   |-- VarDecl "x : CHAR"  <char>  -> x.3 (variable, local)
+|       |   |   `-- CharLiteral "'q'"  <char> =113
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "="  <int>
+|       |           |-- Identifier "y"  <int> lvalue  -> y.1 (parameter, param)
+|       |           `-- Identifier "x"  <char> lvalue  -> x.3 (variable, local)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+|               `-- Identifier "y"  <int> lvalue  -> y.1 (parameter, param)
+|-- FunctionDef "x_func : _Z6x_funcv"  <int (void)>  -> _Z6x_funcv (function)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "x"  <int> lvalue  -> x (variable, global)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "total : INT"  <int>  -> total.4 (variable, local)
+        |   `-- Identifier "x"  <int> lvalue  -> x (variable, global)
+        |-- CompoundStmt
+        |   |-- VarDecl "total2 : INT"  <int>  -> total2.5 (variable, local)
+        |   |   `-- BinaryExpr "+"  <int>
+        |   |       |-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+        |   |       `-- IntLiteral "1"  <int> =1
+        |   `-- CompoundStmt
+        |       |-- VarDecl "total3 : INT"  <int>  -> total3.6 (variable, local)
+        |       |   `-- BinaryExpr "+"  <int>
+        |       |       |-- Identifier "total2"  <int> lvalue  -> total2.5 (variable, local)
+        |       |       `-- IntLiteral "1"  <int> =1
+        |       `-- CompoundStmt
+        |           |-- VarDecl "x : DOUBLE"  <double>  -> x.7 (variable, local)
+        |           |   `-- FloatLiteral "0.5"  <double>
+        |           `-- ExprStmt
+        |               `-- AssignExpr "="  <int>
+        |                   |-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+        |                   `-- BinaryExpr "+"  <double>
+        |                       |-- Identifier "total3"  <int> lvalue  -> total3.6 (variable, local)
+        |                       `-- Identifier "x"  <double> lvalue  -> x.7 (variable, local)
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"  <int>  -> i.8 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.8 (variable, local)
+        |   |       `-- IntLiteral "3"  <int> =3
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "i"  <int> lvalue  -> i.8 (variable, local)
+        |   `-- CompoundStmt
+        |       |-- VarDecl "x : INT"  <int>  -> x.9 (variable, local)
+        |       |   `-- Identifier "i"  <int> lvalue  -> i.8 (variable, local)
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="  <int>
+        |               |-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+        |               `-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |-- ForStmt
+        |   |-- VarDecl "i : INT"  <int>  -> i.10 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.10 (variable, local)
+        |   |       `-- IntLiteral "2"  <int> =2
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "i"  <int> lvalue  -> i.10 (variable, local)
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "+="  <int>
+        |               |-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+        |               `-- Identifier "i"  <int> lvalue  -> i.10 (variable, local)
+        |-- VarDecl "y : INT"  <int>  -> y.11 (variable, local)
+        |   `-- CallExpr  <int>  -> _Z6shadowi (function)
+        |       |-- Identifier "shadow"  <int (int)>  -> _Z6shadowi (function)
+        |       `-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- Identifier "total"  <int> lvalue  -> total.4 (variable, local)
+                |   `-- Identifier "y"  <int> lvalue  -> y.11 (variable, local)
+                `-- CallExpr  <int>  -> _Z6x_funcv (function)
+                    `-- Identifier "x_func"  <int (void)>  -> _Z6x_funcv (function)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+x                  variable       int                        global   global                         3     4     2     x                    -                        
+y                  variable       int                        global   global                         4     4     0     y                    -                        
+shadow             function       int (int)                  -        global                         6     -     1     _Z6shadowi           _Z6shadowi               defined
+y                  parameter      int                        param    global > shadow()              6     4     3     y.1                  -                        
+x                  variable       int                        local    global > shadow()              7     4     1     x.2                  -                        
+x                  variable       char                       local    global > shadow() > block      9     1     1     x.3                  -                        
+x_func             function       int (void)                 -        global                         15    -     1     _Z6x_funcv           _Z6x_funcv               defined
+main               function       int (void)                 -        global                         17    -     0     main                 main                     defined
+total              variable       int                        local    global > main()                18    4     6     total.4              -                        
+total2             variable       int                        local    global > main() > block        20    4     1     total2.5             -                        
+total3             variable       int                        local    global > main() > block > block 22    4     1     total3.6             -                        
+x                  variable       double                     local    global > main() > block > block > block 24    8     1     x.7                  -                        
+i                  variable       int                        local    global > main() > for          29    4     3     i.8                  -                        
+x                  variable       int                        local    global > main() > for > for body 30    4     1     x.9                  -                        
+i                  variable       int                        local    global > main() > for          33    4     3     i.10                 -                        
+y                  variable       int                        local    global > main()                34    4     1     y.11                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

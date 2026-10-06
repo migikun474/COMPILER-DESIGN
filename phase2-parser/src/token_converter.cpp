@@ -47,6 +47,8 @@ int to_bison_token(TokenType t) {
         case TokenType::STATIC:  return STATIC;
         case TokenType::TYPEDEF: return TYPEDEF;
         case TokenType::AUTO:    return AUTO;
+        case TokenType::EXTERN:  return EXTERN;
+        case TokenType::REGISTER: return REGISTER;
 
         // ---- control-flow keywords ----
         case TokenType::IF:       return IF;
@@ -87,6 +89,13 @@ int to_bison_token(TokenType t) {
         case TokenType::FGETS:        return FGETS;
         case TokenType::FPUTS:        return FPUTS;
         case TokenType::FEOF:         return FEOF;
+
+        case TokenType::VA_LIST:      return VA_LIST;
+        case TokenType::VA_START:     return VA_START;
+        case TokenType::VA_ARG:       return VA_ARG;
+        case TokenType::VA_END:       return VA_END;
+        case TokenType::MUTABLE:      return MUTABLE;
+        case TokenType::OPERATOR:     return OPERATOR;
 
         // ---- multi-character operators ----
         case TokenType::ARROW_OP:            return ARROW;
@@ -145,8 +154,5 @@ int to_bison_token(TokenType t) {
         case TokenType::OPEN_BRACKET_OP: return '[';
         case TokenType::CLOSE_BRACKET_OP:return ']';
     }
-    return -1; /* unreachable if the switch above is kept exhaustive --
-                  -Wswitch (part of -Wall) warns at compile time if a
-                  new TokenType is added to the shared enum without a
-                  corresponding case here. */
+    return -1; 
 }

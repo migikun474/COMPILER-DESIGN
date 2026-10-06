@@ -1,0 +1,60 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/printf_scanf.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/printf_scanf.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "x : INT"  <int>  -> x.1 (variable, local)
+        |   `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "buf : CHAR_ARRAY"  <char[32]>  -> buf.2 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d\n""  <char[4]> lvalue
+        |       `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%s %c %5.2f %%\n""  <char[16]> lvalue
+        |       |-- StringLiteral ""s""  <char[2]> lvalue
+        |       |-- CharLiteral "'c'"  <char> =99
+        |       `-- FloatLiteral "1.5"  <double>
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""tab\there\nnewline\n""  <char[18]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""brace { and } and /* and */ and \" \n""  <char[36]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral """"  <char[1]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"  <int>
+        |       |-- StringLiteral ""%d""  <char[3]> lvalue
+        |       `-- UnaryExpr "&"  <int *>
+        |           `-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "scanf"  <int>
+        |       |-- StringLiteral ""%31s""  <char[5]> lvalue
+        |       `-- Identifier "buf"  <char[32]> lvalue  -> buf.2 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d %s\n""  <char[7]> lvalue
+        |       |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+        |       `-- Identifier "buf"  <char[32]> lvalue  -> buf.2 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         2     -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                3     4     2     x.1                  -                        
+buf                variable       char[32]                   local    global > main()                3     32    2     buf.2                -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

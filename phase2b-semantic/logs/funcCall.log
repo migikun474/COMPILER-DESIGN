@@ -1,0 +1,85 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/funcCall.c
+
+Semantic analysis successful: 0 error(s), 1 warning(s) in '../phase2-parser/test/funcCall.c'.
+
+../phase2-parser/test/funcCall.c:9:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 9 |   b = foo(a--,--a,a+b,a+*c);
+   |               ^
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "foo : _Z3fooiiii"  <int (int, int, int, int)>  -> _Z3fooiiii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   |-- ParamDecl "c : INT"  <int>  -> c.3 (parameter, param)
+|   |-- ParamDecl "d : INT"  <int>  -> d.4 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "-"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- UnaryExpr "-"  <int>
+|               |   |   `-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               |   `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|               `-- BinaryExpr "/"  <int>
+|                   |-- BinaryExpr "*"  <int>
+|                   |   |-- Identifier "c"  <int> lvalue  -> c.3 (parameter, param)
+|                   |   `-- Identifier "d"  <int> lvalue  -> d.4 (parameter, param)
+|                   `-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"  <int>  -> a.5 (variable, local)
+        |   |   `-- IntLiteral "10"  <int> =10
+        |   |-- VarDecl "b : INT"  <int>  -> b.6 (variable, local)
+        |   |   `-- IntLiteral "20"  <int> =20
+        |   |-- VarDecl "c : INT_POINTER"  <int *>  -> c.7 (variable, local)
+        |   `-- VarDecl "d : INT"  <int>  -> d.8 (variable, local)
+        |       `-- IntLiteral "30"  <int> =30
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "c"  <int *> lvalue  -> c.7 (variable, local)
+        |       `-- UnaryExpr "&"  <int *>
+        |           `-- Identifier "d"  <int> lvalue  -> d.8 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "b"  <int> lvalue  -> b.6 (variable, local)
+        |       `-- CallExpr  <int>  -> _Z3fooiiii (function)
+        |           |-- Identifier "foo"  <int (int, int, int, int)>  -> _Z3fooiiii (function)
+        |           |-- PostfixOpExpr "--"  <int>
+        |           |   `-- Identifier "a"  <int> lvalue  -> a.5 (variable, local)
+        |           |-- UnaryExpr "--(pre)"  <int>
+        |           |   `-- Identifier "a"  <int> lvalue  -> a.5 (variable, local)
+        |           |-- BinaryExpr "+"  <int>
+        |           |   |-- Identifier "a"  <int> lvalue  -> a.5 (variable, local)
+        |           |   `-- Identifier "b"  <int> lvalue  -> b.6 (variable, local)
+        |           `-- BinaryExpr "+"  <int>
+        |               |-- Identifier "a"  <int> lvalue  -> a.5 (variable, local)
+        |               `-- UnaryExpr "*"  <int> lvalue
+        |                   `-- Identifier "c"  <int *> lvalue  -> c.7 (variable, local)
+        `-- ExprStmt
+            `-- BuiltinCallExpr "printf"  <int>
+                |-- StringLiteral ""%d\n""  <char[4]> lvalue
+                `-- BinaryExpr "%"  <int>
+                    |-- Identifier "b"  <int> lvalue  -> b.6 (variable, local)
+                    `-- Identifier "d"  <int> lvalue  -> d.8 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+foo                function       int (int, int, int, int)   -        global                         2     -     1     _Z3fooiiii           _Z3fooiiii               defined
+a                  parameter      int                        param    global > foo()                 2     4     2     a.1                  -                        
+b                  parameter      int                        param    global > foo()                 2     4     1     b.2                  -                        
+c                  parameter      int                        param    global > foo()                 2     4     1     c.3                  -                        
+d                  parameter      int                        param    global > foo()                 2     4     1     d.4                  -                        
+main               function       int (void)                 -        global                         6     -     0     main                 main                     defined
+a                  variable       int                        local    global > main()                7     4     4     a.5                  -                        
+b                  variable       int                        local    global > main()                7     4     3     b.6                  -                        
+c                  variable       int *                      local    global > main()                7     4     2     c.7                  -                        
+d                  variable       int                        local    global > main()                7     4     2     d.8                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

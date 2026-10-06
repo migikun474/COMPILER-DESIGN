@@ -1,11 +1,11 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "diagnostics.h"
 #include <string>
 
-void writeLexerLog(
-    const std::string &sourceFile,
-    const std::vector<Diagnostic> &diagnostics);
+#include "diagnostics/diagnostics.hpp"
+
+/* writes logs/<file>.log from the shared diagnostics list */
+void writeLexerLog(const std::string &sourceFile);
 
 #endif

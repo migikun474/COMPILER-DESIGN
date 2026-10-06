@@ -1,9 +1,4 @@
-/* malloc/free/calloc/realloc and the fopen/fprintf/... family are
- * lexer keywords in this language (see phase1), not ordinary library
- * identifiers -- so they're parsed as builtin calls rather than as
- * IDENTIFIER function calls, and a cast like `(int *) malloc(...)`
- * needs the parser to accept a type-name (not just an expression)
- * inside parentheses right before a unary-expr. */
+
 
 int main() {
     int *heap;

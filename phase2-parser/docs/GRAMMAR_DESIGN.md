@@ -5,6 +5,14 @@ way the `if`/`else` walkthrough did: show the rule, show an example input,
 map `$1`/`$2`/... to what they mean, show what AST gets built, and explain
 any interesting ambiguity/precedence decisions behind the rule's shape.
 
+> **Scope of this document.** It walks through the core productions. The
+> rule excerpts are illustrative and were written before the newest
+> additions (unnamed struct/union/enum bodies, `extern` / `register`,
+> the `NEW_TYPE_END` precedence, typed name mangling), so
+> [`../src/parser.y`](../src/parser.y) is the authority for the exact
+> text of a rule. The current summary of the grammar is in
+> [`../README.md`](../README.md#grammar-overview).
+
 ---
 
 ## 0. How to read every rule in this document
@@ -16,7 +24,7 @@ right-hand side, in order (including literal tokens like `'('`).
 nonterminal being defined.
 
 Every `$N` and `$$` here is one shared struct, `ParserValue` (see
-`include/common.h`), not a Bison `%union`. It carries several fields at
+`include/parser_value.h`), not a Bison `%union`. It carries several fields at
 once; the ones that matter for a given rule are whichever ones that
 rule's action reads or writes — `.str` (raw text), `.idx` (a token's
 position in the token log), `.typeSpec`/`.decl` (type/declarator being
@@ -35,6 +43,328 @@ mkNode(ASTKind::IfStmt, "", {$3.node, $5.node})
 the same `|--`/`` `-- `` branch characters the tool prints, not
 hand-drawn boxes, so what you see here is literally what running the
 tool produces.
+
+---
+
+## Complete worked example: `function_definition`, explained line by line
+
+Every other section in this document explains a rule briefly. This
+one goes all the way through a single rule, `function_definition` —
+chosen because it's the single most instructive rule in the whole
+grammar: in one place, it touches mid-rule actions, scope push/pop,
+symbol table registration, name mangling, out-of-class method
+definitions, parameter handling, and AST construction from
+already-accumulated data. If you understand every line of this one
+rule, you understand most of the mechanisms the rest of this grammar
+is built from.
+
+### The requirement, in plain English
+
+"A function definition is a return type, a name, a parenthesized
+parameter list, and a `{ ... }` body. Register the function (and each
+parameter) in the symbol table as they're seen. Once the body is
+fully parsed, build one AST node representing the whole function."
+
+### The exact rule, as it exists today
+
+```yacc
+function_definition
+    : declaration_specifiers declarator {
+          bool outOfClass = !$2.decl.className.empty();
+          if (outOfClass) enterClass($2.decl.className);
+          std::vector<std::string> paramTypes;
+          for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
+          SymbolDeclInfo extra;
+          extra.tokenIdx = $2.decl.nameIdx;
+          extra.isStatic = $1.typeSpec.isStatic;
+          extra.isConst = $1.typeSpec.isConst;
+          extra.isVolatile = $1.typeSpec.isVolatile;
+          extra.pointerLevel = $2.decl.pointerLevel;
+          extra.arrayLevel = $2.decl.arrayLevel;
+          extra.returnType = returnType;
+          extra.paramTypes = paramTypes;
+          extra.mangledName = mangled;
+          declareSymbol($2.decl.name, SymKind::PROCEDURE, "PROCEDURE", extra);
+          setCategory($2.decl.nameIdx, "PROCEDURE");
+          if (outOfClass) leaveClass();
+          pushScope($2.decl.name + "()");
+          for (auto &p : $2.decl.params) {
+              if (p.nameIdx >= 0) {
+                  SymbolDeclInfo pex;
+                  pex.tokenIdx = p.nameIdx;
+                  declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, pex);
+                  setCategory(p.nameIdx, p.typeStr);
+              }
+          }
+      } '{' block_item_list_opt '}' {
+          popScope();
+          bool outOfClass = !$2.decl.className.empty();
+          if (outOfClass) enterClass($2.decl.className);
+          std::vector<std::string> paramTypes;
+          for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          if (outOfClass) leaveClass();
+          auto node = mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled);
+          for (auto &p : $2.decl.params) {
+              if (!p.name.empty()) addChild(node, mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr));
+          }
+          auto body = mkNode(ASTKind::CompoundStmt);
+          for (auto &s : $5.nodeList) addChild(body, s);
+          addChild(node, body);
+          $$.node = node;
+      }
+    ;
+```
+
+### Step 1: map every symbol to a position number
+
+Bison numbers *every* symbol on the right-hand side left to right,
+including mid-rule actions — a `{ ... }` block embedded partway
+through a rule counts as its own numbered symbol, exactly as if it
+were a nonterminal that always matches the empty string. Miscounting
+this is one of the most common real mistakes when editing a rule like
+this one (it's exactly what happened, and was caught by testing, when
+this project's `if`/`else` dangling-else rule was first written with a
+mid-rule action inserted in the wrong place — see §9 below).
+
+| # | Symbol | What it is |
+|---|---|---|
+| `$1` | `declaration_specifiers` | The return type (`int`, `void`, ...) — already fully reduced, including any `static`/`const`/`volatile` |
+| `$2` | `declarator` | The function's name, pointer/array depth on the return type, **and** its full parameter list (`d.params`) — already fully reduced |
+| `$3` | *(mid-rule action)* | Everything in the first `{ ... }` block above — registers the function itself and its parameters, pushes the function's own scope |
+| `$4` | `'{'` | The literal opening brace of the body |
+| `$5` | `block_item_list_opt` | Every statement inside the body, already reduced into `$5.nodeList` (see §1/§6 for how left-recursive list rules accumulate this) |
+| `$6` | `'}'` | The literal closing brace |
+| `$7` | *(final action)* | Everything in the second `{ ... }` block — builds the actual `FunctionDef` AST node |
+
+Two `{ ... }` action blocks in one rule is deliberate, not incidental:
+the first one needs to run **before** the body is parsed (so parameter
+names are already declared and visible when the body's own statements
+reference them); the second needs to run **after** (so it has the
+fully-built list of body statements to attach). Splitting the rule's
+single conceptual job across two mid-points, rather than doing
+everything at the end, is exactly what makes forward-referencing a
+parameter from inside its own function's body work at all.
+
+### Step 2: what `$2.decl` already contains, and why
+
+By the time this rule's first action runs, `$2` (`declarator`) has
+already been fully reduced — which means everything from `int add(int
+a, int b)`'s parenthesized part has already been walked by `pointer`,
+`direct_declarator`, and `parameter_list` (see §3), and the results are
+sitting in one `DeclInfo` struct:
+
+```cpp
+struct DeclInfo {
+    std::string name;        // "add"
+    int nameIdx;              // token-log index of "add", for setCategory()/line lookup
+    int pointerLevel;         // 0 (no * before "add")
+    int arrayLevel;           // 0
+    bool isFunction;          // true (this declarator has a parameter list)
+    std::vector<DeclInfo> params;  // [{name:"a", typeStr:"INT", nameIdx:...}, {name:"b", ...}]
+    std::string className;    // "" for a plain function; "Dog" for `Dog::bark(...)`
+    ...
+};
+```
+
+This is *why* `function_definition`'s own action code never has to
+parse anything about the parameter list itself — that work already
+happened, several rules earlier, and got handed up as plain data.
+
+### Step 3: the first action, one statement at a time
+
+```cpp
+bool outOfClass = !$2.decl.className.empty();
+if (outOfClass) enterClass($2.decl.className);
+```
+Handles `Dog::bark() { ... }` — an out-of-class method definition.
+`$2.decl.className` only gets set by `direct_declarator`'s
+`IDENTIFIER SCOPE_RES IDENTIFIER` form (see §3c); for an ordinary
+function it's empty, `outOfClass` is `false`, and this whole branch is
+inert. When it *is* a `Class::method` form, `enterClass()` is called
+*temporarily* — just long enough to compute the right mangled name and
+qualified symbol-table entry — mirroring what would already be active
+automatically if this were an *inline* method (where `enterClass()`
+was called back when the enclosing `class { ... }` body started, and
+is still active here).
+
+```cpp
+std::vector<std::string> paramTypes;
+for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
+std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+```
+Hands each parameter's type expression (`paramExprs()`: the
+`ASTTypeExpr` of every parameter) to `mangle()`, which builds the real
+types and encodes them under the Itanium C++ ABI to produce `_Z3addii`
+(`paramTypes`, the flat `"INT"` strings, is still kept for the
+parse-time overload lookup).
+`currentClassName()` — either freshly entered above, or already
+active from an enclosing class body — is what makes `Dog::bark()`
+mangle as `_ZN3Dog4barkEv` instead of a bare `_Z4barkEv`.
+
+```cpp
+std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
+```
+The return type, computed the exact same way any variable's type
+would be (`computeTypeStr()`) — `$1` is the return-type keyword(s),
+`$2.decl.pointerLevel` handles `int *makeInt()` correctly returning
+`INT_POINTER`, not `INT`.
+
+```cpp
+SymbolDeclInfo extra;
+extra.tokenIdx = $2.decl.nameIdx;
+extra.isStatic = $1.typeSpec.isStatic;
+extra.isConst = $1.typeSpec.isConst;
+extra.isVolatile = $1.typeSpec.isVolatile;
+extra.pointerLevel = $2.decl.pointerLevel;
+extra.arrayLevel = $2.decl.arrayLevel;
+extra.returnType = returnType;
+extra.paramTypes = paramTypes;
+extra.mangledName = mangled;
+declareSymbol($2.decl.name, SymKind::PROCEDURE, "PROCEDURE", extra);
+setCategory($2.decl.nameIdx, "PROCEDURE");
+```
+Everything computed above gets bundled into one `SymbolDeclInfo` and
+handed to `declareSymbol()` in a single call — this is the one place
+the function itself actually gets written into both the scoped lookup
+table and the permanent flat symbol table (see the two-structure
+design in §10). `setCategory()` is the separate, simpler act of
+patching *this specific token's* printed classification in the
+Token/Token_Type table — two different jobs, done right next to each
+other because they both need the same inputs.
+
+```cpp
+if (outOfClass) leaveClass();
+```
+Exits the temporary class context entered above — for an ordinary
+function this is inert (never entered in the first place).
+
+```cpp
+pushScope($2.decl.name + "()");
+for (auto &p : $2.decl.params) {
+    if (p.nameIdx >= 0) {
+        SymbolDeclInfo pex;
+        pex.tokenIdx = p.nameIdx;
+        declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, pex);
+        setCategory(p.nameIdx, p.typeStr);
+    }
+}
+```
+A **new** scope opens, labeled `"add()"` — this is the scope every
+local variable and every parameter inside this function will belong
+to, and it's exactly what makes the Scope column read `global >
+add()` for anything declared in this function's body. Each parameter
+gets declared into that brand-new scope, one at a time, so by the
+time the body starts parsing, `a` and `b` are already valid,
+resolvable identifiers.
+
+### Step 4: the body parses — this is where `$5` comes from
+
+Nothing in `function_definition` itself needs to do anything while
+`block_item_list_opt` (position `$5`) is being parsed — every
+statement inside `{ ... }` reduces on its own, through the ordinary
+`statement`/`expr`/etc. machinery described throughout this document,
+accumulating into `$5.nodeList` the same left-recursive way any
+sibling list does (§1). By the time the closing `'}'` is reached,
+`$5.nodeList` already holds one fully-built AST node per statement.
+
+### Step 5: the final action — assembling the actual node
+
+```cpp
+popScope();
+```
+The function's own scope — opened in Step 3 — closes. Every parameter
+and every local variable declared while it was open is now gone from
+the *live* lookup table (though permanently preserved in the flat
+`g_symbolTable`, per the two-structure design).
+
+```cpp
+bool outOfClass = !$2.decl.className.empty();
+if (outOfClass) enterClass($2.decl.className);
+std::vector<std::string> paramTypes;
+for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
+std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+if (outOfClass) leaveClass();
+```
+The exact same mangled-name computation as Step 3, run a second time.
+This *is* genuinely redundant work — `$2.decl` and `$1.typeSpec` are
+still sitting right there on the parser stack, unchanged, so
+recomputing `mangled` from scratch costs nothing incorrect, just a
+few wasted string operations. It's done this way specifically because
+Bison's mid-rule actions don't have a clean built-in way to pass a
+computed *local* value from one action block to a later one in the
+same rule other than recomputing it or writing it into `$$` early —
+and writing intermediate state into `$$` before the rule is fully
+reduced risks exactly the kind of stale-`yyval` bug this project has
+already been bitten by once (§9). Recomputing three cheap string
+operations is the safer trade.
+
+```cpp
+auto node = mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled);
+for (auto &p : $2.decl.params) {
+    if (!p.name.empty()) addChild(node, mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr));
+}
+auto body = mkNode(ASTKind::CompoundStmt);
+for (auto &s : $5.nodeList) addChild(body, s);
+addChild(node, body);
+$$.node = node;
+```
+The actual tree gets built, last: one `FunctionDef` node labeled with
+the name and mangled signature, one `ParamDecl` child per parameter
+(read straight back out of `$2.decl.params` — the exact same data
+Step 3 already used to *declare* them, now reused to *describe* them
+in the tree), and one `CompoundStmt` wrapping every statement already
+sitting in `$5.nodeList`. `$$.node` is set last, handing the finished
+subtree up to whatever rule reduces next (`external_decl`, and from
+there `translation_unit`'s accumulating list, per §1).
+
+### Seeing the whole thing happen
+
+```mermaid
+sequenceDiagram
+    participant P as Parser (bottom-up)
+    participant ST as Symbol Table
+    participant AST as AST
+
+    Note over P: declaration_specifiers, declarator<br/>already reduced ($1, $2)
+    P->>ST: declareSymbol("add", PROCEDURE, mangled)
+    Note over P: first action block ($3)
+    P->>ST: pushScope("add()")
+    P->>ST: declareSymbol("a", PARAMETER)
+    P->>ST: declareSymbol("b", PARAMETER)
+    Note over P: '{' shifted ($4)
+    Note over P: body statements parse,<br/>accumulate into $5.nodeList
+    Note over P: '}' shifted ($6)
+    P->>ST: popScope()
+    Note over P: final action block ($7)
+    P->>AST: mkNode(FunctionDef, "add : _Z3addii")
+    P->>AST: addChild(ParamDecl "a"), addChild(ParamDecl "b")
+    P->>AST: addChild(CompoundStmt wrapping $5.nodeList)
+    Note over P: $$.node set, rule reduced
+```
+
+### Verified against real output
+
+```c
+int add(int a, int b) {
+    return a + b;
+}
+```
+```
+FunctionDef "add : _Z3addii"
+|-- ParamDecl "a : INT"
+|-- ParamDecl "b : INT"
+`-- CompoundStmt
+    `-- ReturnStmt
+        `-- BinaryExpr "+"
+            |-- Identifier "a"
+            `-- Identifier "b"
+```
+and in the symbol table: `add` shows kind `procedure`, scope `global`,
+signature `INT (INT, INT)`, mangled name `_Z3addii`; `a` and `b` each
+show kind `parameter`, scope `global > add()`.
 
 ---
 
@@ -528,11 +858,11 @@ The fix is scanner–parser cooperation:
 
 ```cpp
 // parser side, once a typedef (or a class/struct/enum's closing '}') is seen:
-g_typedefNames.insert(name);
+addTypeName(name);   // scoped -- see the update below
 ```
 ```flex
 // scanner side, for every identifier matched:
-if (g_typedefNames.count(yytext)) return TYPE_NAME;   // not IDENTIFIER
+if (isTypeName(yytext)) return TYPE_NAME;   // not IDENTIFIER
 ```
 
 That one-token difference (`TYPE_NAME` vs. `IDENTIFIER`) is what lets
@@ -541,6 +871,13 @@ any backtracking. It's also why class/struct/enum tags are registered
 into the *same* set right after their closing `}` — so `Dog d;` works
 without repeating the `class` keyword, matching real C++ (unlike
 plain C, which always needs `struct Foo x;`).
+
+*Update:* the set is now scoped (`addTypeName` / `hideTypeName` /
+`isTypeName`, pushed and popped with the symbol table), a typedef'd name
+right after a type keyword is returned as `IDENTIFIER` so it can be
+redeclared, and a class's own name is a type inside its body except
+directly before `(` (a constructor). See the phase 2 README's lexer-hack
+section and "C++ and C99 syntax additions".
 
 ---
 
@@ -573,10 +910,11 @@ structures at once: a scope-stack map (`pushScope()`/`popScope()`)
 used for `lookupSymbol()` during parsing, and a permanent, append-only
 `g_symbolTable` used only for the final printed report (scopes are
 discarded once popped, so nothing would survive to print otherwise).
-`mangle()` turns a name + parameter type list (+ optional enclosing
-class, from `currentClassName()`) into an Itanium-ABI-*inspired*
-string like `_Z3addii` or `_ZN3Dog4barkEv` — see the dedicated mangling
-walkthrough for the full step-by-step trace of `mangleOneType()`.
+`mangle()` turns a name + the parameters' type expressions (+ optional
+enclosing class, from `currentClassName()`) into the Itanium C++ ABI
+link name g++ would emit, like `_Z3addii`, `_ZN3Dog4barkEv` or
+`_ZN3DogC1ERKS_` (see `shared/symbol_table/symbol_table.hpp`, section
+4b).
 
 ---
 
