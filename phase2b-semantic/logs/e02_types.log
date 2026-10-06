@@ -2,115 +2,115 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e02_types.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c
 
-Semantic analysis failed: 27 error(s), 0 warning(s) in 'test/invalid/e02_types.c'.
+Semantic analysis failed: 27 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c'.
 
-test/invalid/e02_types.c:14:9: semantic error: type mismatch: cannot assign 'char' to 'int *' (incompatible integer to pointer conversion) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:14:9: semantic error: type mismatch: cannot assign 'char' to 'int *' (incompatible integer to pointer conversion) [type-mismatch]
  14 |     p = c;                        // error: cannot assign 'char' to 'int *'
     |         ^
 
-test/invalid/e02_types.c:15:9: semantic error: type mismatch: cannot assign 'int *' to 'int' (incompatible pointer to integer conversion) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:15:9: semantic error: type mismatch: cannot assign 'int *' to 'int' (incompatible pointer to integer conversion) [type-mismatch]
  15 |     i = p;                        // error: cannot assign 'int *' to 'int'
     |         ^
 
-test/invalid/e02_types.c:16:16: semantic error: type mismatch: cannot initialize variable 'bad' of type 'int *' with a value of type 'int' (incompatible integer to pointer conversion) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:16:16: semantic error: type mismatch: cannot initialize variable 'bad' of type 'int *' with a value of type 'int' (incompatible integer to pointer conversion) [type-mismatch]
  16 |     int *bad = 5;                 // error: cannot initialize variable 'bad' of type 'int *' with a value of type 'int'
     |                ^
 
-test/invalid/e02_types.c:17:17: semantic error: type mismatch: cannot initialize variable 'str' of type 'char *' with a value of type 'double' (no conversion to a pointer type) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:17:17: semantic error: type mismatch: cannot initialize variable 'str' of type 'char *' with a value of type 'double' (no conversion to a pointer type) [type-mismatch]
  17 |     char *str = d;                // error: with a value of type 'double'
     |                 ^
 
-test/invalid/e02_types.c:18:9: semantic error: type mismatch: cannot assign 'int' to 'struct P' [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:18:9: semantic error: type mismatch: cannot assign 'int' to 'struct P' [type-mismatch]
  18 |     s = 5;                        // error: cannot assign 'int' to 'struct P'
     |         ^
 
-test/invalid/e02_types.c:19:9: semantic error: type mismatch: cannot assign 'struct P' to 'int' [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:19:9: semantic error: type mismatch: cannot assign 'struct P' to 'int' [type-mismatch]
  19 |     i = s;                        // error: cannot assign 'struct P' to 'int'
     |         ^
 
-test/invalid/e02_types.c:20:11: semantic error: invalid operands to binary '+' ('struct P' and 'int'): no 'operator+' is declared for these operands [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:20:11: semantic error: invalid operands to binary '+' ('struct P' and 'int'): no 'operator+' is declared for these operands [invalid-operands]
  20 |     i = s + 1;                    // error: invalid operands to binary '+'
     |           ^
 
-test/invalid/e02_types.c:21:11: semantic error: invalid operands to binary '%' ('double' and 'int'): both operands of '%' must be integers [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:21:11: semantic error: invalid operands to binary '%' ('double' and 'int'): both operands of '%' must be integers [invalid-operands]
  21 |     d = d % 2;                    // error: both operands of '%' must be integers
     |           ^
 
-test/invalid/e02_types.c:22:11: semantic error: invalid operands to binary '*' ('int *' and 'int'): both operands must be arithmetic [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:22:11: semantic error: invalid operands to binary '*' ('int *' and 'int'): both operands must be arithmetic [invalid-operands]
  22 |     i = p * 2;                    // error: invalid operands to binary '*'
     |           ^
 
-test/invalid/e02_types.c:23:11: semantic error: invalid operands to binary '+' ('int *' and 'int *'): two pointers cannot be added [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:23:11: semantic error: invalid operands to binary '+' ('int *' and 'int *'): two pointers cannot be added [invalid-operands]
  23 |     q = p + p;                    // error: two pointers cannot be added
     |           ^
 
-test/invalid/e02_types.c:24:11: semantic error: invalid operands to binary '<<' ('double' and 'int'): both operands of a shift must be integers [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:24:11: semantic error: invalid operands to binary '<<' ('double' and 'int'): both operands of a shift must be integers [invalid-operands]
  24 |     i = d << 1;                   // error: both operands of a shift must be integers
     |           ^
 
-test/invalid/e02_types.c:25:9: semantic error: invalid argument type 'double' to unary '~' (an integer type is required) [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:25:9: semantic error: invalid argument type 'double' to unary '~' (an integer type is required) [invalid-operands]
  25 |     i = ~d;                       // error: to unary '~'
     |         ^
 
-test/invalid/e02_types.c:26:9: semantic error: invalid argument type 'struct P' to unary '-' (an arithmetic type is required) [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:26:9: semantic error: invalid argument type 'struct P' to unary '-' (an arithmetic type is required) [invalid-operands]
  26 |     i = -s;                       // error: to unary '-'
     |         ^
 
-test/invalid/e02_types.c:27:11: semantic error: invalid operands to binary '&&' ('struct P' and 'int'): no 'operator&&' is declared for these operands [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:27:11: semantic error: invalid operands to binary '&&' ('struct P' and 'int'): no 'operator&&' is declared for these operands [invalid-operands]
  27 |     i = s && 1;                   // error: invalid operands to binary '&&' ('struct P' and 'int')
     |           ^
 
-test/invalid/e02_types.c:28:12: semantic error: comparison between pointer and integer ('int *' and 'int') [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:28:12: semantic error: comparison between pointer and integer ('int *' and 'int') [invalid-operands]
  28 |     i = (p == c + 1);             // error: comparison between pointer and integer
     |            ^
 
-test/invalid/e02_types.c:29:5: semantic error: cannot assign to variable 'k' with const-qualified type 'const int' [const]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:29:5: semantic error: cannot assign to variable 'k' with const-qualified type 'const int' [const]
  29 |     k = 4;                        // error: cannot assign to variable 'k' with const-qualified type 'const int'
     |     ^
 
-test/invalid/e02_types.c:30:5: semantic error: cannot assign to a read-only location of type 'const int' [const]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:30:5: semantic error: cannot assign to a read-only location of type 'const int' [const]
  30 |     *ro = 5;                      // error: cannot assign to a read-only location of type 'const int'
     |     ^
 
-test/invalid/e02_types.c:31:9: semantic error: type mismatch: cannot assign 'const int *' to 'int *' (conversion discards 'const' qualifier) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:31:9: semantic error: type mismatch: cannot assign 'const int *' to 'int *' (conversion discards 'const' qualifier) [type-mismatch]
  31 |     q = ro;                       // error: discards 'const' qualifier
     |         ^
 
-test/invalid/e02_types.c:32:5: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:32:5: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
  32 |     5 = i;                        // error: lvalue required as left operand of assignment
     |     ^
 
-test/invalid/e02_types.c:33:6: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:33:6: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
  33 |     i++ = 3;                      // error: lvalue required as left operand of assignment
     |      ^
 
-test/invalid/e02_types.c:34:7: semantic error: lvalue required as increment operand (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:34:7: semantic error: lvalue required as increment operand (this expression is not assignable) [lvalue]
  34 |     ++5;                          // error: lvalue required as increment operand
     |       ^
 
-test/invalid/e02_types.c:35:8: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:35:8: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
  35 |     (i = 1) = 2;                  // error: lvalue required
     |        ^
 
-test/invalid/e02_types.c:36:9: semantic error: invalid cast from 'int' to 'struct P': cannot cast between a struct/class type and another type [invalid-cast]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:36:9: semantic error: invalid cast from 'int' to 'struct P': cannot cast between a struct/class type and another type [invalid-cast]
  36 |     i = (struct P) 3;             // error: invalid cast from 'int' to 'struct P'
     |         ^
 
-test/invalid/e02_types.c:37:9: semantic error: invalid cast from 'struct P' to 'int': cannot cast between a struct/class type and another type [invalid-cast]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:37:9: semantic error: invalid cast from 'struct P' to 'int': cannot cast between a struct/class type and another type [invalid-cast]
  37 |     i = (int) s;                  // error: invalid cast from 'struct P' to 'int'
     |         ^
 
-test/invalid/e02_types.c:38:17: semantic error: incompatible operand types in conditional expression ('int *' and 'double') [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:38:17: semantic error: incompatible operand types in conditional expression ('int *' and 'double') [type-mismatch]
  38 |     i = (d > 0) ? p : d;          // error: incompatible operand types in conditional expression
     |                 ^
 
-test/invalid/e02_types.c:39:7: semantic error: invalid operands to compound assignment '+=' ('int *' and 'double') [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:39:7: semantic error: invalid operands to compound assignment '+=' ('int *' and 'double') [invalid-operands]
  39 |     p += d;                       // error: invalid operands to compound assignment '+='
     |       ^
 
-test/invalid/e02_types.c:40:15: semantic error: incompatible operand types in conditional expression ('struct P' and 'int') [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e02_types.c:40:15: semantic error: incompatible operand types in conditional expression ('struct P' and 'int') [type-mismatch]
  40 |     i = 1 + 1 ? s : i;            // error: incompatible operand types
     |               ^
 

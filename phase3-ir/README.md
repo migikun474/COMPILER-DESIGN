@@ -36,5 +36,6 @@ The agreed order for the back end:
    dead-code removal.
 4. Later: global data-flow and loop optimizations.
 
-Open design questions: closure conversion for lambdas, how `this` is
-passed to methods, `long long` on a 32-bit target.
+Open design questions: how `this` is passed to methods, `long long` on
+a 32-bit target. Design decisions are recorded as they are taken in
+[`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md).

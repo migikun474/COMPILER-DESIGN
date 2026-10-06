@@ -2,20 +2,20 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test27_unnamed_aggregates.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test27_unnamed_aggregates.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test27_unnamed_aggregates.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test27_unnamed_aggregates.c'.
 
 === Annotated AST ===
 Program "translation_unit"
 |-- StructDecl "Shape"  <struct Shape>  -> Shape (tag)
 |   |-- VarDecl "kind : INT"  <int>  -> Shape::kind (field, member)
-|   |-- UnionDecl "(unnamed at 6:5)"  <union (unnamed at 6:5)>  -> (unnamed at 6:5) (tag)
+|   |-- StructDecl "(unnamed at 6:5)"  <struct (unnamed at 6:5)>  -> (unnamed at 6:5) (tag)
 |   |   |-- VarDecl "side : INT"  <int>  -> (unnamed at 6:5)::side (field, member)
-|   |   `-- StructDecl "(unnamed at 6:23)"  <struct (unnamed at 6:23)>  -> (unnamed at 6:23) (tag)
+|   |   `-- StructDecl "(unnamed at 6:24)"  <struct (unnamed at 6:24)>  -> (unnamed at 6:24) (tag)
 |   |       `-- DeclGroup
-|   |           |-- VarDecl "w : INT"  <int>  -> (unnamed at 6:23)::w (field, member)
-|   |           `-- VarDecl "h : INT"  <int>  -> (unnamed at 6:23)::h (field, member)
+|   |           |-- VarDecl "w : INT"  <int>  -> (unnamed at 6:24)::w (field, member)
+|   |           `-- VarDecl "h : INT"  <int>  -> (unnamed at 6:24)::h (field, member)
 |   |-- DeclGroup
 |   |   |-- StructDecl "Pos"  <struct Pos>  -> Pos (tag)
 |   |   |   `-- DeclGroup
@@ -31,21 +31,13 @@ Program "translation_unit"
 |   |       `-- VarDecl "b : INT"  <int>  -> (unnamed at 10:9)::b (field, member)
 |   `-- TypedefDecl "Rgb = STRUCT"  <Rgb>  -> Rgb (typedef)
 |-- DeclGroup
-|   |-- EnumDecl "(unnamed at 11:9)"  <Size>  -> (unnamed at 11:9) (tag)
-|   |   |-- Enumerator "SMALL"  <int> =0  -> SMALL (enum_constant)
-|   |   `-- Enumerator "LARGE"  <int> =1  -> LARGE (enum_constant)
-|   `-- TypedefDecl "Size = ENUM"  <Size>  -> Size (typedef)
+|   |-- StructDecl "(unnamed at 11:1)"  <struct (unnamed at 11:1)>  -> (unnamed at 11:1) (tag)
+|   |   `-- VarDecl "count : INT"  <int>  -> (unnamed at 11:1)::count (field, member)
+|   `-- VarDecl "totals : STRUCT"  <struct (unnamed at 11:1)>  -> totals (variable, global)
 |-- DeclGroup
-|   |-- StructDecl "(unnamed at 12:1)"  <struct (unnamed at 12:1)>  -> (unnamed at 12:1) (tag)
-|   |   `-- VarDecl "count : INT"  <int>  -> (unnamed at 12:1)::count (field, member)
-|   `-- VarDecl "totals : STRUCT"  <struct (unnamed at 12:1)>  -> totals (variable, global)
-|-- EnumDecl "(unnamed at 13:1)"  <enum (unnamed at 13:1)>  -> (unnamed at 13:1) (tag)
-|   `-- Enumerator "LIMIT"  <int> =4  -> LIMIT (enum_constant)
-|       `-- IntLiteral "4"  <int> =4
-|-- DeclGroup
-|   |-- ClassDecl "(unnamed at 14:1)"  <class (unnamed at 14:1)>  -> (unnamed at 14:1) (tag)
-|   |   `-- VarDecl "id : INT"  <int>  -> (unnamed at 14:1)::id (field, member)
-|   `-- VarDecl "anonymous_object : CLASS"  <class (unnamed at 14:1)>  -> anonymous_object (variable, global)
+|   |-- ClassDecl "(unnamed at 12:1)"  <class (unnamed at 12:1)>  -> (unnamed at 12:1) (tag)
+|   |   `-- VarDecl "id : INT"  <int>  -> (unnamed at 12:1)::id (field, member)
+|   `-- VarDecl "anonymous_object : CLASS"  <class (unnamed at 12:1)>  -> anonymous_object (variable, global)
 |-- FunctionDef "area : _Z4areaP5Shape"  <int (struct Shape *)>  -> _Z4areaP5Shape (function)
 |   |-- ParamDecl "s : STRUCT_POINTER"  <struct Shape *>  -> s.1 (parameter, param)
 |   `-- CompoundStmt
@@ -61,9 +53,9 @@ Program "translation_unit"
 |               |   `-- ArrowExpr "side"  <int> lvalue  -> (unnamed at 6:5)::side (field, member)
 |               |       `-- Identifier "s"  <struct Shape *> lvalue  -> s.1 (parameter, param)
 |               `-- BinaryExpr "*"  <int>
-|                   |-- ArrowExpr "w"  <int> lvalue  -> (unnamed at 6:23)::w (field, member)
+|                   |-- ArrowExpr "w"  <int> lvalue  -> (unnamed at 6:24)::w (field, member)
 |                   |   `-- Identifier "s"  <struct Shape *> lvalue  -> s.1 (parameter, param)
-|                   `-- ArrowExpr "h"  <int> lvalue  -> (unnamed at 6:23)::h (field, member)
+|                   `-- ArrowExpr "h"  <int> lvalue  -> (unnamed at 6:24)::h (field, member)
 |                       `-- Identifier "s"  <struct Shape *> lvalue  -> s.1 (parameter, param)
 `-- FunctionDef "main : main"  <int (void)>  -> main (function)
     `-- CompoundStmt
@@ -73,8 +65,6 @@ Program "translation_unit"
         |       |-- IntLiteral "1"  <int> =1
         |       |-- IntLiteral "2"  <int> =2
         |       `-- IntLiteral "3"  <int> =3
-        |-- VarDecl "z : ENUM"  <Size>  -> z.4 (variable, local)
-        |   `-- Identifier "LARGE"  <int> =1  -> LARGE (enum_constant)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- MemberExpr "kind"  <int> lvalue  -> Shape::kind (field, member)
@@ -82,12 +72,12 @@ Program "translation_unit"
         |       `-- IntLiteral "1"  <int> =1
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- MemberExpr "w"  <int> lvalue  -> (unnamed at 6:23)::w (field, member)
+        |       |-- MemberExpr "w"  <int> lvalue  -> (unnamed at 6:24)::w (field, member)
         |       |   `-- Identifier "s"  <struct Shape> lvalue  -> s.2 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- MemberExpr "h"  <int> lvalue  -> (unnamed at 6:23)::h (field, member)
+        |       |-- MemberExpr "h"  <int> lvalue  -> (unnamed at 6:24)::h (field, member)
         |       |   `-- Identifier "s"  <struct Shape> lvalue  -> s.2 (variable, local)
         |       `-- IntLiteral "3"  <int> =3
         |-- ExprStmt
@@ -104,14 +94,15 @@ Program "translation_unit"
         |           `-- Identifier "c"  <Rgb> lvalue  -> c.3 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- MemberExpr "count"  <int> lvalue  -> (unnamed at 12:1)::count (field, member)
-        |       |   `-- Identifier "totals"  <struct (unnamed at 12:1)> lvalue  -> totals (variable, global)
-        |       `-- Identifier "LIMIT"  <int> =4  -> LIMIT (enum_constant)
+        |       |-- MemberExpr "count"  <int> lvalue  -> (unnamed at 11:1)::count (field, member)
+        |       |   `-- Identifier "totals"  <struct (unnamed at 11:1)> lvalue  -> totals (variable, global)
+        |       `-- IntLiteral "4"  <int> =4
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- MemberExpr "id"  <int> lvalue  -> (unnamed at 14:1)::id (field, member)
-        |       |   `-- Identifier "anonymous_object"  <class (unnamed at 14:1)> lvalue  -> anonymous_object (variable, global)
-        |       `-- Identifier "z"  <Size> lvalue  -> z.4 (variable, local)
+        |       |-- MemberExpr "id"  <int> lvalue  -> (unnamed at 12:1)::id (field, member)
+        |       |   `-- Identifier "anonymous_object"  <class (unnamed at 12:1)> lvalue  -> anonymous_object (variable, global)
+        |       `-- MemberExpr "r"  <int> lvalue  -> (unnamed at 10:9)::r (field, member)
+        |           `-- Identifier "c"  <Rgb> lvalue  -> c.3 (variable, local)
         `-- ReturnStmt
             `-- BinaryExpr "+"  <int>
                 |-- BinaryExpr "+"  <int>
@@ -119,67 +110,60 @@ Program "translation_unit"
                 |   |   |-- Identifier "area"  <int (struct Shape *)>  -> _Z4areaP5Shape (function)
                 |   |   `-- UnaryExpr "&"  <struct Shape *>
                 |   |       `-- Identifier "s"  <struct Shape> lvalue  -> s.2 (variable, local)
-                |   `-- MemberExpr "count"  <int> lvalue  -> (unnamed at 12:1)::count (field, member)
-                |       `-- Identifier "totals"  <struct (unnamed at 12:1)> lvalue  -> totals (variable, global)
-                `-- MemberExpr "id"  <int> lvalue  -> (unnamed at 14:1)::id (field, member)
-                    `-- Identifier "anonymous_object"  <class (unnamed at 14:1)> lvalue  -> anonymous_object (variable, global)
+                |   `-- MemberExpr "count"  <int> lvalue  -> (unnamed at 11:1)::count (field, member)
+                |       `-- Identifier "totals"  <struct (unnamed at 11:1)> lvalue  -> totals (variable, global)
+                `-- MemberExpr "id"  <int> lvalue  -> (unnamed at 12:1)::id (field, member)
+                    `-- Identifier "anonymous_object"  <class (unnamed at 12:1)> lvalue  -> anonymous_object (variable, global)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
-Shape              struct_tag     struct Shape               -        global                         4     -     0     Shape                -                        size 24
+Shape              struct_tag     struct Shape               -        global                         4     -     0     Shape                -                        size 28
 Shape::kind        field          int                        member   global > struct Shape          5     4     2     Shape::kind          -                        public, offset 0
-(unnamed at 6:5)   union_tag      union (unnamed at 6:5)     -        global                         6     -     0     (unnamed at 6:5)     -                        size 8
-(unnamed at 6:5)::side field          int                        member   global > struct Shape > union (unnamed at 6:5) 6     4     0     (unnamed at 6:5)::side -                        public, offset 0
-(unnamed at 6:23)  struct_tag     struct (unnamed at 6:23)   -        global                         6     -     0     (unnamed at 6:23)    -                        size 8
-(unnamed at 6:23)::w field          int                        member   global > struct Shape > union (unnamed at 6:5) > struct (unnamed at 6:23) 6     4     0     (unnamed at 6:23)::w -                        public, offset 0
-(unnamed at 6:23)::h field          int                        member   global > struct Shape > union (unnamed at 6:5) > struct (unnamed at 6:23) 6     4     0     (unnamed at 6:23)::h -                        public, offset 4
-(unnamed)          field          struct (unnamed at 6:23)   member   global > struct Shape > union (unnamed at 6:5) 6     8     0     (unnamed at 6:5)::(unnamed at 6:23) -                        public, offset 0
-(unnamed)          field          union (unnamed at 6:5)     member   global > struct Shape          6     8     0     Shape::(unnamed at 6:5) -                        public, offset 4
+(unnamed at 6:5)   struct_tag     struct (unnamed at 6:5)    -        global                         6     -     0     (unnamed at 6:5)     -                        size 12
+(unnamed at 6:5)::side field          int                        member   global > struct Shape > struct (unnamed at 6:5) 6     4     0     (unnamed at 6:5)::side -                        public, offset 0
+(unnamed at 6:24)  struct_tag     struct (unnamed at 6:24)   -        global                         6     -     0     (unnamed at 6:24)    -                        size 8
+(unnamed at 6:24)::w field          int                        member   global > struct Shape > struct (unnamed at 6:5) > struct (unnamed at 6:24) 6     4     0     (unnamed at 6:24)::w -                        public, offset 0
+(unnamed at 6:24)::h field          int                        member   global > struct Shape > struct (unnamed at 6:5) > struct (unnamed at 6:24) 6     4     0     (unnamed at 6:24)::h -                        public, offset 4
+(unnamed)          field          struct (unnamed at 6:24)   member   global > struct Shape > struct (unnamed at 6:5) 6     8     0     (unnamed at 6:5)::(unnamed at 6:24) -                        public, offset 4
+(unnamed)          field          struct (unnamed at 6:5)    member   global > struct Shape          6     12    0     Shape::(unnamed at 6:5) -                        public, offset 4
 Pos                struct_tag     struct Pos                 -        global                         7     -     0     Pos                  -                        size 8
 Pos::x             field          int                        member   global > struct Shape > struct Pos 7     4     1     Pos::x               -                        public, offset 0
 Pos::y             field          int                        member   global > struct Shape > struct Pos 7     4     0     Pos::y               -                        public, offset 4
-Shape::at          field          struct Pos                 member   global > struct Shape          7     8     1     Shape::at            -                        public, offset 12
-Shape::color       field          int                        member   global > struct Shape          8     4     1     Shape::color         -                        public, offset 20
+Shape::at          field          struct Pos                 member   global > struct Shape          7     8     1     Shape::at            -                        public, offset 16
+Shape::color       field          int                        member   global > struct Shape          8     4     1     Shape::color         -                        public, offset 24
 (unnamed at 10:9)  struct_tag     struct (unnamed at 10:9)   -        global                         10    -     0     (unnamed at 10:9)    -                        size 12
-(unnamed at 10:9)::r field          int                        member   global > struct (unnamed at 10:9) 10    4     0     (unnamed at 10:9)::r -                        public, offset 0
+(unnamed at 10:9)::r field          int                        member   global > struct (unnamed at 10:9) 10    4     1     (unnamed at 10:9)::r -                        public, offset 0
 (unnamed at 10:9)::g field          int                        member   global > struct (unnamed at 10:9) 10    4     1     (unnamed at 10:9)::g -                        public, offset 4
 (unnamed at 10:9)::b field          int                        member   global > struct (unnamed at 10:9) 10    4     0     (unnamed at 10:9)::b -                        public, offset 8
 Rgb                typedef        Rgb                        -        global                         10    -     0     Rgb                  -                        
-(unnamed at 11:9)  enum_tag       enum (unnamed at 11:9)     -        global                         11    -     0     (unnamed at 11:9)    -                        
-SMALL              enum_constant  int                        -        global                         11    -     0     SMALL                -                        value 0
-LARGE              enum_constant  int                        -        global                         11    -     1     LARGE                -                        value 1
-Size               typedef        Size                       -        global                         11    -     0     Size                 -                        
-(unnamed at 12:1)  struct_tag     struct (unnamed at 12:1)   -        global                         12    -     0     (unnamed at 12:1)    -                        size 4
-(unnamed at 12:1)::count field          int                        member   global > struct (unnamed at 12:1) 12    4     2     (unnamed at 12:1)::count -                        public, offset 0
-totals             variable       struct (unnamed at 12:1)   global   global                         12    4     2     totals               -                        
-(unnamed at 13:1)  enum_tag       enum (unnamed at 13:1)     -        global                         13    -     0     (unnamed at 13:1)    -                        
-LIMIT              enum_constant  int                        -        global                         13    -     1     LIMIT                -                        value 4
-(unnamed at 14:1)  class_tag      class (unnamed at 14:1)    -        global                         14    -     0     (unnamed at 14:1)    -                        size 4
-(unnamed at 14:1)::id field          int                        member   global > class (unnamed at 14:1) 14    4     2     (unnamed at 14:1)::id -                        public, offset 0
-anonymous_object   variable       class (unnamed at 14:1)    global   global                         14    4     2     anonymous_object     -                        
-area               function       int (struct Shape *)       -        global                         16    -     1     _Z4areaP5Shape       _Z4areaP5Shape           defined
-s                  parameter      struct Shape *             param    global > area()                16    4     5     s.1                  -                        
-main               function       int (void)                 -        global                         18    -     0     main                 main                     defined
-s                  variable       struct Shape               local    global > main()                19    24    6     s.2                  -                        
-c                  variable       Rgb                        local    global > main()                20    12    1     c.3                  -                        
-z                  variable       Size                       local    global > main()                21    4     1     z.4                  -                        
+(unnamed at 11:1)  struct_tag     struct (unnamed at 11:1)   -        global                         11    -     0     (unnamed at 11:1)    -                        size 4
+(unnamed at 11:1)::count field          int                        member   global > struct (unnamed at 11:1) 11    4     2     (unnamed at 11:1)::count -                        public, offset 0
+totals             variable       struct (unnamed at 11:1)   global   global                         11    4     2     totals               -                        
+(unnamed at 12:1)  class_tag      class (unnamed at 12:1)    -        global                         12    -     0     (unnamed at 12:1)    -                        size 4
+(unnamed at 12:1)::id field          int                        member   global > class (unnamed at 12:1) 12    4     2     (unnamed at 12:1)::id -                        public, offset 0
+anonymous_object   variable       class (unnamed at 12:1)    global   global                         12    4     2     anonymous_object     -                        
+area               function       int (struct Shape *)       -        global                         14    -     1     _Z4areaP5Shape       _Z4areaP5Shape           defined
+s                  parameter      struct Shape *             param    global > area()                14    4     5     s.1                  -                        
+main               function       int (void)                 -        global                         16    -     0     main                 main                     defined
+s                  variable       struct Shape               local    global > main()                17    28    6     s.2                  -                        
+c                  variable       Rgb                        local    global > main()                18    12    2     c.3                  -                        
 
 === Record Layouts (MIPS32) ===
-struct Shape: size 24, align 4
+struct Shape: size 28, align 4
     +0  int kind  [public]
-    +4  union (unnamed at 6:5)   [public]
-    +12  struct Pos at  [public]
-    +20  int color  [public]
+    +4  struct (unnamed at 6:5)   [public]
+    +16  struct Pos at  [public]
+    +24  int color  [public]
     +4  int side  [public]  (from the unnamed member)
+    +8  int w  [public]  (from the unnamed member)
+    +12  int h  [public]  (from the unnamed member)
+struct (unnamed at 6:5): size 12, align 4
+    +0  int side  [public]
+    +4  struct (unnamed at 6:24)   [public]
     +4  int w  [public]  (from the unnamed member)
     +8  int h  [public]  (from the unnamed member)
-union (unnamed at 6:5): size 8, align 4
-    +0  int side  [public]
-    +0  struct (unnamed at 6:23)   [public]
-    +0  int w  [public]  (from the unnamed member)
-    +4  int h  [public]  (from the unnamed member)
-struct (unnamed at 6:23): size 8, align 4
+struct (unnamed at 6:24): size 8, align 4
     +0  int w  [public]
     +4  int h  [public]
 struct Pos: size 8, align 4
@@ -189,7 +173,7 @@ struct (unnamed at 10:9): size 12, align 4
     +0  int r  [public]
     +4  int g  [public]
     +8  int b  [public]
-struct (unnamed at 12:1): size 4, align 4
+struct (unnamed at 11:1): size 4, align 4
     +0  int count  [public]
-class (unnamed at 14:1): size 4, align 4
+class (unnamed at 12:1): size 4, align 4
     +0  int id  [public]

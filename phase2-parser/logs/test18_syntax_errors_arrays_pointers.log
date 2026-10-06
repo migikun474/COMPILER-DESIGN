@@ -2,50 +2,50 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test18_syntax_errors_arrays_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c
 
-test/test18_syntax_errors_arrays_pointers.c:8:14: syntax error: syntax error, unexpected ';', expecting ']'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:8:14: syntax error: syntax error, unexpected ';', expecting ']'
  8 |     int arr[5;
    |              ^
    | note: insert ']' here
 
-test/test18_syntax_errors_arrays_pointers.c:14:15: syntax error: syntax error, unexpected ';', expecting ']'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:14:15: syntax error: syntax error, unexpected ';', expecting ']'
  14 |     int m[2][3;
     |               ^
     | note: insert ']' here
 
-test/test18_syntax_errors_arrays_pointers.c:21:14: syntax error: syntax error, unexpected ';', expecting ',' or ']'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:21:14: syntax error: syntax error, unexpected ';', expecting ',' or ']'
  21 |     arr[2 = 9;
     |              ^
 
-test/test18_syntax_errors_arrays_pointers.c:27:15: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:27:15: syntax error: syntax error, unexpected ';'
  27 |     int *p = &;
     |               ^
 
-test/test18_syntax_errors_arrays_pointers.c:34:10: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:34:10: syntax error: syntax error, unexpected ';'
  34 |     *p = ;
     |          ^
 
-test/test18_syntax_errors_arrays_pointers.c:40:23: syntax error: syntax error, unexpected ';', expecting ')'
- 40 |     int (*fp(int, int);
-    |                       ^
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:40:16: syntax error: syntax error, unexpected ';', expecting ')'
+ 40 |     int (*pa[3];
+    |                ^
     | note: insert ')' here
 
-test/test18_syntax_errors_arrays_pointers.c:47:27: syntax error: syntax error, unexpected ';', expecting ')'
- 47 |     int (*fp)(int a, int b;
-    |                           ^
-    | note: insert ')' here
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:47:16: syntax error: syntax error, unexpected ';', expecting ']'
+ 47 |     int (*pa)[3;
+    |                ^
+    | note: insert ']' here
 
-test/test18_syntax_errors_arrays_pointers.c:55:7: syntax error: syntax error, unexpected '='
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:55:7: syntax error: syntax error, unexpected '='
  55 |     * = x;
     |       ^
 
-test/test18_syntax_errors_arrays_pointers.c:62:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:62:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
  62 |     x;
     |     ^
     | note: insert ')' here
 
-test/test18_syntax_errors_arrays_pointers.c:67:20: syntax error: syntax error, unexpected ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test18_syntax_errors_arrays_pointers.c:67:20: syntax error: syntax error, unexpected ')'
  67 |     int s = sizeof();
     |                    ^
 
@@ -85,13 +85,13 @@ Program "translation_unit"
 |       |   `-- UnaryExpr "&"
 |       |       `-- Identifier "x"
 |       `-- ErrorNode "line 34: near ';'"
-|-- FunctionDef "t06_function_pointer_missing_close_paren : _Z40t06_function_pointer_missing_close_parenv"
+|-- FunctionDef "t06_pointer_to_array_missing_close_paren : _Z40t06_pointer_to_array_missing_close_parenv"
 |   `-- CompoundStmt
 |       |-- ErrorNode "line 40: near ';'"
 |       `-- ExprStmt
 |           `-- CallExpr
 |               `-- Identifier "resync_marker"
-|-- FunctionDef "t07_function_pointer_params_missing_close_paren : _Z47t07_function_pointer_params_missing_close_parenv"
+|-- FunctionDef "t07_pointer_to_array_missing_close_bracket : _Z42t07_pointer_to_array_missing_close_bracketv"
 |   `-- CompoundStmt
 |       |-- ErrorNode "line 47: near ';'"
 |       `-- ExprStmt

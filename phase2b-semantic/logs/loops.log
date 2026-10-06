@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/loops.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/loops.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/loops.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/loops.c'.
 
 === Annotated AST ===
 Program "translation_unit"

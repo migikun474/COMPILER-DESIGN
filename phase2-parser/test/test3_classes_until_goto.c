@@ -1,5 +1,3 @@
-enum Color { RED, GREEN, BLUE };
-
 class Shape {
 public:
     int sides;
@@ -11,18 +9,12 @@ private:
 };
 
 int main() {
-    enum Color c;
-    c = RED;
     class Shape s;
     s.sides = 4;
 
-    int (*fp)(int, int);
-
     int x = 5;
     int y = 10;
-    auto adder = [x, &y](int z) {
-        return x + y + z;
-    };
+    auto total = x + y + s.area();
 
     until (x <= 0) {
         x = x - 1;

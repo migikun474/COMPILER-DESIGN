@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v07_structs.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v07_structs.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v07_structs.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v07_structs.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -18,9 +18,6 @@ Program "translation_unit"
 |-- StructDecl "Node"  <struct Node>  -> Node (tag)
 |   |-- VarDecl "value : INT"  <int>  -> Node::value (field, member)
 |   `-- VarDecl "next : STRUCT_POINTER"  <struct Node *>  -> Node::next (field, member)
-|-- UnionDecl "Number"  <union Number>  -> Number (tag)
-|   |-- VarDecl "i : INT"  <int>  -> Number::i (field, member)
-|   `-- VarDecl "d : DOUBLE"  <double>  -> Number::d (field, member)
 |-- TypedefDecl "PointT = STRUCT"  <struct Point>  -> PointT (typedef)
 |-- FunctionDef "length : _Z6lengthP4Node"  <int (struct Node *)>  -> _Z6lengthP4Node (function)
 |   |-- ParamDecl "head : STRUCT_POINTER"  <struct Node *>  -> head.1 (parameter, param)
@@ -130,23 +127,12 @@ Program "translation_unit"
         |       |-- MemberExpr "next"  <struct Node *> lvalue  -> Node::next (field, member)
         |       |   `-- Identifier "n2"  <struct Node> lvalue  -> n2.12 (variable, local)
         |       `-- IntLiteral "0"  <int> =0
-        |-- VarDecl "num : UNION"  <union Number>  -> num.13 (variable, local)
-        |-- ExprStmt
-        |   `-- AssignExpr "="  <int>
-        |       |-- MemberExpr "i"  <int> lvalue  -> Number::i (field, member)
-        |       |   `-- Identifier "num"  <union Number> lvalue  -> num.13 (variable, local)
-        |       `-- IntLiteral "3"  <int> =3
-        |-- ExprStmt
-        |   `-- AssignExpr "="  <double>
-        |       |-- MemberExpr "d"  <double> lvalue  -> Number::d (field, member)
-        |       |   `-- Identifier "num"  <union Number> lvalue  -> num.13 (variable, local)
-        |       `-- FloatLiteral "2.5"  <double>
-        |-- VarDecl "pts : STRUCT_ARRAY"  <struct Point[3]>  -> pts.14 (variable, local)
+        |-- VarDecl "pts : STRUCT_ARRAY"  <struct Point[3]>  -> pts.13 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- MemberExpr "x"  <int> lvalue  -> Point::x (field, member)
         |       |   `-- IndexExpr  <struct Point> lvalue
-        |       |       |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.14 (variable, local)
+        |       |       |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.13 (variable, local)
         |       |       `-- IntLiteral "0"  <int> =0
         |       `-- IntLiteral "1"  <int> =1
         |-- ExprStmt
@@ -154,7 +140,7 @@ Program "translation_unit"
         |       |-- ArrowExpr "y"  <int> lvalue  -> Point::y (field, member)
         |       |   `-- UnaryExpr "&"  <struct Point *>
         |       |       `-- IndexExpr  <struct Point> lvalue
-        |       |           |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.14 (variable, local)
+        |       |           |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.13 (variable, local)
         |       |           `-- IntLiteral "1"  <int> =1
         |       `-- IntLiteral "2"  <int> =2
         `-- ReturnStmt
@@ -172,7 +158,7 @@ Program "translation_unit"
                 |   |       `-- Identifier "c"  <struct Point> lvalue  -> c.10 (variable, local)
                 |   `-- MemberExpr "x"  <int> lvalue  -> Point::x (field, member)
                 |       `-- IndexExpr  <struct Point> lvalue
-                |           |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.14 (variable, local)
+                |           |-- Identifier "pts"  <struct Point[3]> lvalue  -> pts.13 (variable, local)
                 |           `-- IntLiteral "0"  <int> =0
                 `-- MemberExpr "y"  <int>  -> Point::y (field, member)
                     `-- CallExpr  <struct Point>  -> _Z4makeii (function)
@@ -193,27 +179,23 @@ Student::home      field          struct Point               member   global > s
 Node               struct_tag     struct Node                -        global                         14    -     0     Node                 -                        size 8
 Node::value        field          int                        member   global > struct Node           15    4     0     Node::value          -                        public, offset 0
 Node::next         field          struct Node *              member   global > struct Node           16    4     3     Node::next           -                        public, offset 4
-Number             union_tag      union Number               -        global                         19    -     0     Number               -                        size 8
-Number::i          field          int                        member   global > union Number          20    4     1     Number::i            -                        public, offset 0
-Number::d          field          double                     member   global > union Number          21    8     1     Number::d            -                        public, offset 0
-PointT             typedef        struct Point               -        global                         24    -     0     PointT               -                        
-length             function       int (struct Node *)        -        global                         26    -     1     _Z6lengthP4Node      _Z6lengthP4Node          defined
-head               parameter      struct Node *              param    global > length()              26    4     3     head.1               -                        
-n                  variable       int                        local    global > length()              27    4     2     n.2                  -                        
-make               function       struct Point (int, int)    -        global                         35    -     2     _Z4makeii            _Z4makeii                defined
-x                  parameter      int                        param    global > make()                35    4     1     x.3                  -                        
-y                  parameter      int                        param    global > make()                35    4     1     y.4                  -                        
-p                  variable       struct Point               local    global > make()                36    8     1     p.5                  -                        
-main               function       int (void)                 -        global                         40    -     0     main                 main                     defined
-s                  variable       struct Student             local    global > main()                41    16    7     s.6                  -                        
-sp                 variable       struct Student *           local    global > main()                46    4     3     sp.7                 -                        
-a                  variable       struct Point               local    global > main()                49    8     1     a.8                  -                        
-b                  variable       struct Point               local    global > main()                50    8     2     b.9                  -                        
-c                  variable       struct Point               local    global > main()                52    8     2     c.10                 -                        
-n1                 variable       struct Node                local    global > main()                54    8     2     n1.11                -                        
-n2                 variable       struct Node                local    global > main()                54    8     2     n2.12                -                        
-num                variable       union Number               local    global > main()                57    8     2     num.13               -                        
-pts                variable       struct Point[3]            local    global > main()                60    24    3     pts.14               -                        
+PointT             typedef        struct Point               -        global                         19    -     0     PointT               -                        
+length             function       int (struct Node *)        -        global                         21    -     1     _Z6lengthP4Node      _Z6lengthP4Node          defined
+head               parameter      struct Node *              param    global > length()              21    4     3     head.1               -                        
+n                  variable       int                        local    global > length()              22    4     2     n.2                  -                        
+make               function       struct Point (int, int)    -        global                         30    -     2     _Z4makeii            _Z4makeii                defined
+x                  parameter      int                        param    global > make()                30    4     1     x.3                  -                        
+y                  parameter      int                        param    global > make()                30    4     1     y.4                  -                        
+p                  variable       struct Point               local    global > make()                31    8     1     p.5                  -                        
+main               function       int (void)                 -        global                         35    -     0     main                 main                     defined
+s                  variable       struct Student             local    global > main()                36    16    7     s.6                  -                        
+sp                 variable       struct Student *           local    global > main()                41    4     3     sp.7                 -                        
+a                  variable       struct Point               local    global > main()                44    8     1     a.8                  -                        
+b                  variable       struct Point               local    global > main()                45    8     2     b.9                  -                        
+c                  variable       struct Point               local    global > main()                47    8     2     c.10                 -                        
+n1                 variable       struct Node                local    global > main()                49    8     2     n1.11                -                        
+n2                 variable       struct Node                local    global > main()                49    8     2     n2.12                -                        
+pts                variable       struct Point[3]            local    global > main()                52    24    3     pts.13               -                        
 
 === Record Layouts (MIPS32) ===
 struct Point: size 8, align 4
@@ -226,6 +208,3 @@ struct Student: size 16, align 4
 struct Node: size 8, align 4
     +0  int value  [public]
     +4  struct Node * next  [public]
-union Number: size 8, align 8
-    +0  int i  [public]
-    +0  double d  [public]

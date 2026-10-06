@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test28_storage_classes.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test28_storage_classes.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test28_storage_classes.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test28_storage_classes.c'.
 
 === Annotated AST ===
 Program "translation_unit"

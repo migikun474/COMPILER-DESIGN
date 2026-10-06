@@ -1,12 +1,12 @@
 /* test25 -- constructs that need more than one token of lookahead, settled
-   by the scanner (see parenGroupIsExpression / bracketIsDesignator / the
-   declarator-list tracking in scanner_support.cpp): keyword and class functional
+   by the scanner (see parenGroupIsExpression and the declarator-list
+   tracking in scanner_support.cpp): keyword and class functional
    casts, statements starting with a temporary (`Dog(4).bark();`), typedef
    names redeclared after a comma, constant-expression designators, and
    `sizeof(int) * 2` read as (sizeof(int)) * 2. A fully valid program. */
 typedef int T;
 typedef int U;
-enum Slot { FIRST, SECOND, THIRD };
+const int FIRST = 0, THIRD = 2;
 class Dog {
 public:
     int legs;
@@ -34,10 +34,8 @@ int main() {
     int k = 2, U = T + 1, m;
     const int N = 2;
     int arr[4] = {[N] = 7, [FIRST] = 1, [THIRD + 1] = 9};   /* 4: designators by constant expression */
-    auto f = [x](int q) { return q + x; };
-    int g = f(1);
-    int (*fp)(int) = (int (*)(int)) twice;
+    int g = twice(1);
     int *ip = (int *) 0;
-    int s = sizeof(int) * 2 + sizeof(int (*)(int));
-    return x + i + c + big + y + spot.legs + rex.legs + a + T + k + U + m + arr[3] + g + fp(1) + s + d;
+    int s = sizeof(int) * 2 + sizeof(int (*)[4]);
+    return x + i + c + big + y + spot.legs + rex.legs + a + T + k + U + m + arr[3] + g + s + d;
 }

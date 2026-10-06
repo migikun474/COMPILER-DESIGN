@@ -33,23 +33,23 @@ All of these are file-static in `symbol_table.cpp`:
 | `g_typeNameScopes` | `std::vector<std::unordered_map<std::string, bool>>` | parallel to `g_scopes`: is this name a **type** here? (the lexer hack) |
 | `g_symbolTable` (exported) | `std::vector<SymbolTableEntry>` | flat, append-only record of every declaration ever made, kept only for the final report (scopes are destroyed, so nothing else would survive) |
 | `g_pendingReferences` | `std::vector<PendingReference>` | uses of names not yet declared (a `goto` to a later label, a call to a function defined further down), resolved after the parse |
-| `g_classStack` + `g_currentClassName`, `g_currentAggregateKind`, `g_aggregateMemberDepth` | stack of `ClassContext` | which struct/union/class body we are in; nests (`struct A { struct B {…} b; int y; }` — `y` is still `A`'s member) |
+| `g_classStack` + `g_currentClassName`, `g_currentAggregateKind`, `g_aggregateMemberDepth` | stack of `ClassContext` | which struct/class body we are in; nests (`struct A { struct B {…} b; int y; }` — `y` is still `A`'s member) |
 | `g_anonymousTagNames`, `g_anonymousMembers` | `unordered_map` | unnamed aggregates: the typedef that names one; which unnamed members a tag can see through |
 
 One live entry (`::Symbol`, in a scope's map):
 
 | Field | Meaning |
 |---|---|
-| `kind` | `SymKind`: `VARIABLE, PROCEDURE, PARAMETER, STRUCT_TAG, UNION_TAG, ENUM_TAG, CLASS_TAG, TYPEDEF_NAME, ENUM_CONST, LABEL` |
+| `kind` | `SymKind`: `VARIABLE, PROCEDURE, PARAMETER, STRUCT_TAG, CLASS_TAG, TYPEDEF_NAME, LABEL` |
 | `typeStr` | the Token_Type text (`"INT"`, `"CHAR_POINTER"`, `"PROCEDURE"`, `"STRUCT"`) |
 | `mangledName` | Itanium link name, callables only |
-| `aggregateTagName` | for a variable of struct/union/class type: its tag, so `p.x` can find `x` |
+| `aggregateTagName` | for a variable of struct/class type: its tag, so `p.x` can find `x` |
 | `flatIndex` | index of the matching `SymbolTableEntry` in `g_symbolTable` |
 | `typeExpr` | for a `TYPEDEF_NAME`: the aliased declaration (used by mangling and member lookup) |
 
 One report entry (`SymbolTableEntry` in `g_symbolTable`): `name`,
 `qualifiedName` (`"Dog::bark"`), `kind`, `typeStr`, `mangledName`,
-`scopeDepth`, `scopePath`, `ownerAggregateKind` (`"struct"`/`"union"`/
+`scopeDepth`, `scopePath`, `ownerAggregateKind` (`"struct"`/
 `"class"`/`""`), `declLine`, `isStatic`, `isConst`, `isVolatile`,
 `pointerLevel`, `arrayLevel`, `returnType`, `paramTypes`, `useCount`.
 
@@ -57,7 +57,7 @@ One report entry (`SymbolTableEntry` in `g_symbolTable`): `name`,
 
 | Operation | Function | Algorithm | Called from |
 |---|---|---|---|
-| open scope | `pushScope(label)` | push an empty map onto `g_scopes` and `g_typeNameScopes`, push the label (or a pending `hintScope()` label, or `"block"`) | grammar mid-rule actions: `compound_stmt`, `function_definition` (`name()`), `for_open` (`"for"`), struct/union/class bodies, constructors/destructors, lambdas, `param_scope` |
+| open scope | `pushScope(label)` | push an empty map onto `g_scopes` and `g_typeNameScopes`, push the label (or a pending `hintScope()` label, or `"block"`) | grammar mid-rule actions: `compound_stmt`, `function_definition` (`name()`), `for_open` (`"for"`), struct/class bodies, constructors/destructors, `param_scope` |
 | close scope | `popScope()` | pop all three stacks — the scope's symbols are **gone** (only `g_symbolTable` remembers them) | end of the same rules |
 | insert | `declareSymbol(name, kind, typeStr, extra)` | build a `SymbolTableEntry` (qualified name from the class stack, scope path, declaration line from the token log) and append it to `g_symbolTable`; push a `Symbol` onto `g_scopes.back()[name]` | `registerDeclarator()` in `declarators.cpp` for every declarator; tag rules; enumerators; labels; parameters |
 | lookup | `lookupSymbol(name)` | walk `g_scopes` from innermost to outermost; first scope containing the name wins; return its **last** pushed symbol | identifier classification in `primary_expr`, member access, `recordUsage()` |
@@ -91,13 +91,13 @@ A **`Scope`** (`struct Scope`):
 | Field | Meaning |
 |---|---|
 | `id`, `parent`, `depth` | position in the tree (`parent` = the scope active when it was entered) |
-| `kind` | `ScopeKind::Global`, `Function`, `Block`, `Record`, `Lambda` |
-| `label` | `"global"`, `"main()"`, `"block"`, `"for"`, `"if"`, `"struct P"`, `"lambda"` — joined by `pathOf()` into `global > main() > block` |
+| `kind` | `ScopeKind::Global`, `Function`, `Block`, `Record` |
+| `label` | `"global"`, `"main()"`, `"block"`, `"for"`, `"if"`, `"struct P"` — joined by `pathOf()` into `global > main() > block` |
 | `names` | `unordered_map<string, vector<SymbolPtr>>` — **ordinary identifiers**; a vector because overloaded functions share a name |
-| `tags` | `unordered_map<string, SymbolPtr>` — **struct/union/class/enum tags**, a separate name space as in C |
+| `tags` | `unordered_map<string, SymbolPtr>` — **struct/class tags**, a separate name space as in C |
 | `ordered` | every symbol declared here, in order (tags included) |
 | `record` | for a `Record` scope, its `RecordInfo` |
-| `function` | for a `Function`/`Lambda` scope, the owning function symbol |
+| `function` | for a `Function` scope, the owning function symbol |
 
 A **`sem::Symbol`** (every field that exists):
 
@@ -105,18 +105,17 @@ A **`sem::Symbol`** (every field that exists):
 |---|---|
 | `name` | as written |
 | `uniqueName` | program-wide unique name for IR: globals keep their name, functions their mangled name, locals and parameters get `name.N` (`x.4`, `x.5`), fields `Tag::name` |
-| `kind` | `SymbolKind::Variable, Parameter, Function, Field, Typedef, EnumConstant, Label, Tag` |
+| `kind` | `SymbolKind::Variable, Parameter, Function, Field, Typedef, Label, Tag` |
 | `type` | `sem::TypePtr` — the structural type |
 | `storage` | `Storage::None, Global, Static, Local, Param, Member` |
 | `scopeId`, `scopePath`, `line`, `column` | where it was declared |
-| `isConstant`, `constValue` | enum constants and `const` objects with a known integer value |
+| `isConstant`, `constValue` | `const` objects with a known integer value |
 | `hasInitializer`, `useCount`, `evaluatedUses` | bookkeeping (`evaluatedUses` excludes uses inside `sizeof`) |
 | `isDefined` | functions: body seen; objects: defined, not just declared `extern` |
 | `isRegister`, `isStatic` | storage-class keywords |
 | `isMethod`, `isConstructor`, `isDestructor`, `mangledName` | callables |
 | `params`, `locals`, `bodyScopeId` | functions: parameter symbols in order (unnamed ones too), every local, the body scope |
 | `ownerRecord`, `access`, `offset` | members: owning `RecordInfo`, `public`/`protected`/`private`, byte offset (MIPS32 layout) |
-| `anonymousUnion` | a variable that is a member of a block-scope anonymous union: the hidden union object it lives in |
 | `record`, `enumInfo` | tags: the `RecordInfo` / `EnumInfo` |
 | `declNode` | the declaring AST node |
 
@@ -129,10 +128,10 @@ A **`sem::Symbol`** (every field that exists):
 | leave a scope | `exitScope()` | pop `stack_` — the scope and its symbols **stay** in `scopes_` | the same functions |
 | re-activate | `reenterScope(id)` | push an existing scope id | out-of-class member bodies (`void Dog::bark() {…}`) re-enter the class's Record scope so members resolve |
 | insert (visible) | `declare(s)` / `declareIn(id, s)` | `assignNames()` (scope id, path, `uniqueName`), then `names[s->name].push_back(s)`, `ordered`, `all_` | every variable, parameter, function, typedef, enumerator |
-| insert (hidden) | `declareHidden(id, s)` | recorded in `ordered`/`all_` but **not** in `names` — lookup cannot find it | labels, unnamed parameters, constructors, hidden anonymous-union objects |
-| insert a tag | `declareTag` / `declareTagIn(id, s)` | `tags[s->name] = s` | struct/union/class/enum definitions and first mentions (`struct Node *next;`) |
+| insert (hidden) | `declareHidden(id, s)` | recorded in `ordered`/`all_` but **not** in `names` — lookup cannot find it | labels, unnamed parameters, constructors |
+| insert a tag | `declareTag` / `declareTagIn(id, s)` | `tags[s->name] = s` | struct/class definitions and first mentions (`struct Node *next;`) |
 | current-scope lookup | `lookupLocal(name)`, `lookupTagLocal(name)` | only `scopes_[stack_.back()]` | **duplicate detection** in `variable()`, `functionSignature()`, `typedefDecl()`, `enumDefinition()` |
-| full lookup | `lookup(name)` → `Lookup` | walk `stack_` innermost → outermost (algorithm below) | `identifier()`, call resolution, lambda captures |
+| full lookup | `lookup(name)` → `Lookup` | walk `stack_` innermost → outermost (algorithm below) | `identifier()`, call resolution |
 | tag lookup | `lookupTag(name)` | walk `stack_` innermost → outermost over `tags` | `resolveTag()` |
 | file scope only | `saveAndResetToGlobal()` / `restoreStack()` | temporarily make only scope 0 active | `hoistFunction()`: declaring a function that is called before its definition |
 
@@ -183,14 +182,8 @@ for scope in stack_, innermost first:
         continue
     if name in scope.names (non-empty):
         return {scope.names[name], scopeId}     # all overloads of a function name
-    if scope.kind == Lambda:
-        crossedLambda = true                    # remember: the name is outside the lambda
 return {}                                       # not visible
 ```
-
-`Lookup.crossedLambda` lets `identifier()` check captures: a local found
-*outside* the innermost lambda must be in its capture list (or there must
-be a capture-default).
 
 ![Symbol lookup flow](diagrams/symbol-lookup.svg)
 
@@ -206,9 +199,11 @@ be a capture-default).
    otherwise the error `undeclared identifier 'x'` (or `… it is declared
    later, at line N; variables must be declared before use`).
 2. The symbol's kind decides the result: a variable/parameter gives its
-   `type` and marks the node an lvalue; an enum constant gives `int` with
-   a constant value; a typedef or tag is the error `unexpected type name
-   'x' where an expression was expected`.
+   `type` and marks the node an lvalue; a function name is the error
+   `reference to function 'x' must be called` (a function is not a
+   value — there are no function pointers; a callee is resolved by
+   `call()` and never comes through here); a typedef or tag is the error
+   `unexpected type name 'x' where an expression was expected`.
 3. `y` and `z` are looked up the same way; `binary()` applies the usual
    arithmetic conversions (`usualArithmetic()`) to get the type of `y + z`.
 4. `assignment()` calls `checkModifiable(x)` (lvalue, not an array, not
@@ -227,14 +222,14 @@ A symbol's `type` is a `sem::Type` node from
 ```cpp
 struct Type {
     TypeKind kind;               // Error, Void, Bool, Char, Short, Int, Long, LongLong,
-                                 // Float, Double, Enum, Pointer, Reference, Array,
-                                 // Function, Record, Opaque, Closure
+                                 // Float, Double, Pointer, Reference, Array,
+                                 // Function, Record, Opaque
     bool isConst, isVolatile, isUnsigned;
     TypePtr elem;                // Pointer / Reference target, Array element
     long long arraySize;         // Array: element count, -1 for []
-    TypePtr ret; std::vector<TypePtr> params; bool variadic;   // Function / Closure
-    std::shared_ptr<RecordInfo> record;  std::shared_ptr<EnumInfo> enumInfo;
-    std::string name;            // Opaque ("FILE", "va_list"), Closure
+    TypePtr ret; std::vector<TypePtr> params; bool variadic;   // Function
+    std::shared_ptr<RecordInfo> record;
+    std::string name;            // Opaque ("va_list")
 };
 ```
 
@@ -246,16 +241,13 @@ struct Type {
 | `const int *p` / `int *const p` | `Pointer(const Int)` / `const Pointer(Int)`: a qualifier sits on the level it qualifies | 4 |
 | `int a[3][4]` | `Array(3, Array(4, Int))` | 48 |
 | `int (*pa)[3]` | `Pointer(Array(3, Int))` (declarators are read inside-out by `resolveType()`) | 4 |
-| `int f(int, char *)` | `Function(ret = Int, params = [Int, Pointer(Char)])` | — |
-| `int (*fp)(int)` | `Pointer(Function(Int, [Int]))` | 4 |
+| `int f(int, char *)` | `Function(ret = Int, params = [Int, Pointer(Char)])` — only ever the type of a declared function; `Pointer(Function)` is never built | — |
 | `int &r` | `Reference(Int)` | 4 |
-| `struct P`, `union U`, `class C` | `Record` → a shared `RecordInfo` (fields, members, bases, layout) | from `layoutRecord()` |
-| `enum E` | `Enum` → `EnumInfo` (enumerators and values) | 4 |
-| `FILE`, `va_list` | `Opaque` | `va_list` 4 |
-| a lambda | `Closure` (its own type) | — |
+| `struct P`, `class C` | `Record` → a shared `RecordInfo` (fields, members, bases, layout) | from `layoutRecord()` |
+| `va_list` | `Opaque` | 4 |
 
 Type equality is structural for these constructors and **by name** for
-records and enums: two `struct P` types are the same type exactly when
+records: two `struct P` types are the same type exactly when
 they share one `RecordInfo` (`sameType()`).
 
 ```
@@ -345,7 +337,7 @@ from the declarator's pointer operators (`ASTTypeExpr::ptrOps`, e.g.
   the result is an lvalue of `p->elem`.
 - Pointer arithmetic in `binary()`: pointer ± integer, pointer − pointer
   of the same type (result `int`), never pointer + pointer, nothing on
-  `void *` or function pointers.
+  `void *`.
 - Assignment: `implicitConversion()` allows adding qualifiers
   (`int *` → `const int *`), rejects dropping them (`conversion discards
   'const' qualifier`), allows `void *` both ways and null pointer
@@ -375,13 +367,13 @@ struct RecordInfo {
 - Members are declared in the record's own `Record` scope and in
   `members`; a duplicate is `duplicate member 'x' in struct 'P'`.
 - After the body, `layoutRecord()` assigns MIPS32 offsets (bases first,
-  each field aligned, unions all at 0, size rounded to the alignment).
+  each field aligned, size rounded to the alignment).
 - Member bodies are analysed after the class is complete, so every
   member is visible to every method (C++ rule).
 - `p.x` / `p->x` (`member()`) use `lookupMember(record, "x")`, which
   searches the record, then its base classes (ambiguity across two bases
   is an error); `checkAccess()` enforces `private`/`protected`.
-- An unnamed member (`struct S { union { int i; float f; }; };`) becomes
+- An unnamed member (`struct S { struct { int i; float f; }; };`) becomes
   an unnamed field whose fields are copied into `promoted` and `members`
   with offsets relative to `S`.
 
@@ -450,7 +442,7 @@ and in the annotated AST, every use points at the right one:
   (`variable()`, `functionSignature()`, `recordDefinition()` …), and if it
   should be visible, print it in `notes()` in `symbol_table.cpp`.
 - **A new scope kind**: add it to `ScopeKind` and decide in `lookup()`
-  whether the walk treats it specially (as it does `Record` and `Lambda`).
+  whether the walk treats it specially (as it does `Record`).
 - **A new name space** (e.g. namespaces): add a map to `Scope` beside
   `names` and `tags`, with `declare…`/`lookup…` functions mirroring the
   tag ones.

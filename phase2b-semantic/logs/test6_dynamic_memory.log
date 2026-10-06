@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test6_dynamic_memory_file_io.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test6_dynamic_memory.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test6_dynamic_memory_file_io.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test6_dynamic_memory.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -46,21 +46,6 @@ Program "translation_unit"
         |-- ExprStmt
         |   `-- BuiltinCallExpr "free"  <void>
         |       `-- Identifier "more"  <int *> lvalue  -> more.2 (variable, local)
-        |-- VarDecl "f : FILE_POINTER"  <FILE *>  -> f.3 (variable, local)
-        |-- ExprStmt
-        |   `-- AssignExpr "="  <FILE *>
-        |       |-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
-        |       `-- BuiltinCallExpr "fopen"  <FILE *>
-        |           |-- StringLiteral ""data.txt""  <char[9]> lvalue
-        |           `-- StringLiteral ""r""  <char[2]> lvalue
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fprintf"  <int>
-        |       |-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
-        |       |-- StringLiteral ""%d\n""  <char[4]> lvalue
-        |       `-- IntLiteral "42"  <int> =42
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fclose"  <int>
-        |       `-- Identifier "f"  <FILE *> lvalue  -> f.3 (variable, local)
         `-- ReturnStmt
             `-- IntLiteral "0"  <int> =0
 
@@ -70,7 +55,6 @@ Name               Kind           Type                       Storage  Scope     
 main               function       int (void)                 -        global                         3     -     0     main                 main                     defined
 heap               variable       int *                      local    global > main()                4     4     3     heap.1               -                        
 more               variable       int *                      local    global > main()                9     4     4     more.2               -                        
-f                  variable       FILE *                     local    global > main()                14    4     3     f.3                  -                        
 
 === Record Layouts (MIPS32) ===
 (no records)

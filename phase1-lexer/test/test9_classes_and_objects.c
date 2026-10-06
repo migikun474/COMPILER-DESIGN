@@ -18,7 +18,7 @@ class Animal {
         }
 
         auto ageGetter() {
-            return [this]() { return this->age; };
+            return this->age;
         }
 
     private:

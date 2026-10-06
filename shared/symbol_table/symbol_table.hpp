@@ -36,11 +36,8 @@ enum class SymKind {
     PROCEDURE,
     PARAMETER,
     STRUCT_TAG,
-    UNION_TAG,
-    ENUM_TAG,
     CLASS_TAG,
     TYPEDEF_NAME,
-    ENUM_CONST,
     LABEL
 };
 
@@ -66,8 +63,8 @@ struct SymbolDeclInfo {
     std::string returnType;              /* callables only */
     std::vector<std::string> paramTypes; /* callables only */
     std::string mangledName;
-    std::string aggregateTagName; /* set only for a variable of struct/union/
-                                      class type -- see Symbol::aggregateTagName */
+    std::string aggregateTagName; /* set only for a variable of struct/class
+                                      type -- see Symbol::aggregateTagName */
     ASTTypeExprPtr typeExpr;      /* typedefs: the aliased type */
 };
 
@@ -97,7 +94,7 @@ const SymbolTableEntry *findMember(const std::string &tagName, const std::string
 void declareSymbol(const std::string &name, SymKind kind, const std::string &typeStr,
                     const SymbolDeclInfo &extra = SymbolDeclInfo());
 const Symbol *lookupSymbol(const std::string &name);
-/* like lookupSymbol(), but only typedefs and struct/union/class/enum tags
+/* like lookupSymbol(), but only typedefs and struct/class tags
    -- what a TYPE_NAME token means even where a same-named constructor or
    variable is also visible */
 const Symbol *lookupTypeSymbol(const std::string &name);
@@ -136,7 +133,7 @@ const Symbol *lookupOverload(const std::string &name, const std::vector<std::str
 void recordUsage(const std::string &name);
 void recordUsage(const Symbol *s);
 
-/* Enters/leaves an aggregate body (struct/union/class), so members
+/* Enters/leaves an aggregate body (struct/class), so members
    declared inside it can be reported with a qualified
    "ClassName::member" name and so function mangling can nest the
    enclosing class the way real name-mangling schemes do. Aggregates
@@ -144,15 +141,12 @@ void recordUsage(const Symbol *s);
    stack: leaveClass() returns to the enclosing aggregate's context, and
    `y` above is still A's member.
 
-   `kind` is "struct"/"union"/"class" and is what actually lets the
-   symbol table tell a struct member apart from a class member --
-   previously this was called enterClass() and used identically for
-   all three aggregate types, meaning that distinction wasn't tracked
-   anywhere at all. */
+   `kind` is "struct"/"class" and is what lets the symbol table tell a
+   struct member apart from a class member. */
 void enterClass(const std::string &className, const std::string &kind = "class");
 void leaveClass();
-std::string currentClassName(); /* "" when not inside a struct/union/class body */
-std::string currentAggregateKind(); /* "struct"/"union"/"class"/"" */
+std::string currentClassName(); /* "" when not inside a struct/class body */
+std::string currentAggregateKind(); /* "struct"/"class"/"" */
 
 /* Call immediately after pushing an aggregate body's own scope (right
    after enterClass()), so declareSymbol() can tell "declared directly
@@ -168,14 +162,11 @@ bool atAggregateMemberLevel();
 /* Unnamed aggregates (tags made by anonymousTag(), see ast.hpp).
    `typedef struct { ... } Pt;` names the type Pt -- the first typedef
    wins, as in C++ -- which is what mangling uses. An unnamed member
-   (`struct S { union { int i; float f; }; };`) is registered with its
+   (`struct S { struct { int i; float f; }; };`) is registered with its
    enclosing tag so findMember("S", "i") finds `i`. */
 void nameAnonymousTag(const std::string &tag, const std::string &typedefName);
 std::string anonymousTagName(const std::string &tag); /* "" if none */
 void addAnonymousMember(const std::string &outerTag, const std::string &anonTag);
-/* an anonymous union outside any aggregate: declares its members (and
-   those of its own anonymous members) as variables of the current scope */
-void promoteAnonymousMembers(const std::string &anonTag);
 
 /* ---------------------------------------------------------------------
    FLAT SYMBOL TABLE (for reporting)
@@ -194,7 +185,7 @@ struct SymbolTableEntry {
     std::string mangledName; /* empty unless kind is a callable */
     int scopeDepth;
     std::string scopePath; /* "global > main() > if" -- see currentScopePath() */
-    std::string ownerAggregateKind; /* "struct"/"union"/"class"/"" -- which kind
+    std::string ownerAggregateKind; /* "struct"/"class"/"" -- which kind
                                         of aggregate this member belongs to, ""
                                         for anything that isn't a member at all
                                         (a plain local variable, a free function) */
@@ -226,12 +217,11 @@ extern std::vector<SymbolTableEntry> g_symbolTable;
      printf-like f(char const *, ...)  _Z1fPKcz
 
    Parameter types are the real, resolved types: typedefs are replaced by
-   what they name, struct/class/enum types appear by tag, top-level
-   const is dropped and arrays/functions decay to pointers, exactly as
-   the ABI requires. Repeated components use the ABI's substitutions
-   (`S_`, `S0_`, ...: `f(Point *, Point *)` is _Z1fP5PointS0_).
-   Target-specific choices: `FILE` is glibc's `_IO_FILE`, and `va_list`
-   is MIPS o32's `void *`. `main` is never mangled.
+   what they name, struct/class types appear by tag, top-level const is
+   dropped and arrays decay to pointers, exactly as the ABI requires.
+   Repeated components use the ABI's substitutions (`S_`, `S0_`, ...:
+   `f(Point *, Point *)` is _Z1fP5PointS0_). Target-specific choice:
+   `va_list` is MIPS o32's `void *`. `main` is never mangled.
 
    The encoder works on sem::Type. The semantic phase hands it resolved
    types; the parser builds the same types structurally from the
@@ -247,8 +237,8 @@ std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &p
    that is the semantic phase's job. Parameters decay like in C. */
 sem::TypePtr parseTimeType(const ASTTypeExpr &te, bool isParam);
 
-/* Names currently usable as types -- typedefs and struct/union/class/
-   enum tags -- consulted by the scanner so it can hand the parser a
+/* Names currently usable as types -- typedefs and struct/class tags --
+   consulted by the scanner so it can hand the parser a
    TYPE_NAME token instead of a plain IDENTIFIER (the classic "lexer
    hack" needed to parse `MyInt x;` without type inference). Scoped like
    every other declaration: pushed/popped with pushScope()/popScope(), so
@@ -259,9 +249,9 @@ void hideTypeName(const std::string &name); /* declared as a non-type here */
 bool isTypeName(const std::string &name);
 
 /* What to print for a TYPE_NAME token: "TYPEDEF" for a genuine
-   typedef alias, or the tag's own category (CLASS/STRUCT/UNION/ENUM)
-   when the name is really a class/struct/union/enum tag being used
-   directly as a type (as C++ allows, unlike plain C). */
+   typedef alias, or the tag's own category (CLASS/STRUCT) when the name
+   is really a class/struct tag being used directly as a type (as C++
+   allows, unlike plain C). */
 std::string categoryForTypeName(const Symbol *s);
 
 /* Human-readable name for a SymKind, for printing the symbol table. */
@@ -287,7 +277,7 @@ void printSymbolTable(std::ostream &out);
    a member function body is analysed, so members resolve as implicit
    this->member, including members inherited from base classes.
 
-   Ordinary identifiers and struct/union/class/enum tags live in
+   Ordinary identifiers and struct/class tags live in
    separate namespaces per scope, as in C.
    ===================================================================== */
 
@@ -295,10 +285,10 @@ struct ASTNode;
 
 namespace sem {
 
-enum class SymbolKind { Variable, Parameter, Function, Field, Typedef, EnumConstant, Label, Tag };
+enum class SymbolKind { Variable, Parameter, Function, Field, Typedef, Label, Tag };
 
 enum class Storage {
-    None,     /* functions, typedefs, tags, enum constants, labels */
+    None,     /* functions, typedefs, tags, labels */
     Global,   /* file-scope object: lives in .data/.bss */
     Static,   /* `static` local or `static` class member: also .data/.bss */
     Local,    /* automatic: lives in the stack frame */
@@ -320,7 +310,7 @@ struct Symbol {
     int line = 0;
     int column = 0;
 
-    bool isConstant = false;  /* enum constant, or const-qualified object with a known value */
+    bool isConstant = false;  /* const-qualified object with a known value */
     long long constValue = 0;
     bool hasInitializer = false;
     int useCount = 0;
@@ -343,20 +333,14 @@ struct Symbol {
     RecordInfo *ownerRecord = nullptr;
     Access access = Access::Public;
     long long offset = -1;    /* data members: byte offset in the record */
-    /* a member of an anonymous union outside any record (`union { int a;
-       char b; };` in a function, or `static` at file scope): `a` is a
-       variable with no storage of its own -- it lives in this hidden union
-       object, at `offset`. TAC lowers `a` as that object's member. */
-    SymbolPtr anonymousUnion;
 
     /* tags */
     std::shared_ptr<RecordInfo> record;
-    std::shared_ptr<EnumInfo> enumInfo;
 
     const ASTNode *declNode = nullptr;
 };
 
-enum class ScopeKind { Global, Function, Block, Record, Lambda };
+enum class ScopeKind { Global, Function, Block, Record };
 
 struct Scope {
     int id = 0;
@@ -368,7 +352,7 @@ struct Scope {
     std::unordered_map<std::string, SymbolPtr> tags;
     std::vector<SymbolPtr> ordered;  /* declaration order, tags included */
     RecordInfo *record = nullptr;    /* ScopeKind::Record */
-    Symbol *function = nullptr;      /* ScopeKind::Function / Lambda: the owner */
+    Symbol *function = nullptr;      /* ScopeKind::Function: the owner */
 };
 
 struct Lookup {
@@ -376,8 +360,6 @@ struct Lookup {
     int scopeId = -1;                /* where found */
     bool viaRecord = false;          /* found as a member of an enclosing class */
     MemberLookup member;             /* set when viaRecord */
-    bool crossedLambda = false;      /* a lambda scope lies between here and there */
-    int lambdaScopeId = -1;          /* innermost such lambda */
 };
 
 class SymbolTable {
@@ -436,7 +418,7 @@ std::string storageName(Storage s);
 /* every symbol of every scope, with its structural type and storage */
 void printSemanticSymbolTable(const SymbolTable &st, std::ostream &out);
 
-/* MIPS32 size/alignment/field offsets of every complete struct/union/class */
+/* MIPS32 size/alignment/field offsets of every complete struct/class */
 void printRecordLayouts(const SymbolTable &st, std::ostream &out);
 
 } // namespace sem

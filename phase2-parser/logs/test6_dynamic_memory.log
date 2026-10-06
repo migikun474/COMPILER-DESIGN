@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test6_dynamic_memory_file_io.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test6_dynamic_memory.c
 
 No errors found.
 
@@ -78,33 +78,6 @@ free                           free
 more                           INT_POINTER         
 )                              close_paren_op      
 ;                              semicolon_op        
-FILE                           file                
-*                              star_op             
-f                              FILE_POINTER        
-;                              semicolon_op        
-f                              FILE_POINTER        
-=                              assign_op           
-fopen                          fopen               
-(                              open_paren_op       
-"data.txt"                     STRING_LITERAL      
-,                              comma_op            
-"r"                            STRING_LITERAL      
-)                              close_paren_op      
-;                              semicolon_op        
-fprintf                        fprintf             
-(                              open_paren_op       
-f                              FILE_POINTER        
-,                              comma_op            
-"%d\n"                         STRING_LITERAL      
-,                              comma_op            
-42                             INT_LITERAL         
-)                              close_paren_op      
-;                              semicolon_op        
-fclose                         fclose              
-(                              open_paren_op       
-f                              FILE_POINTER        
-)                              close_paren_op      
-;                              semicolon_op        
 return                         return              
 0                              INT_LITERAL         
 ;                              semicolon_op        
@@ -150,21 +123,6 @@ Program "translation_unit"
         |-- ExprStmt
         |   `-- BuiltinCallExpr "free"
         |       `-- Identifier "more"
-        |-- VarDecl "f : FILE_POINTER"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "f"
-        |       `-- BuiltinCallExpr "fopen"
-        |           |-- StringLiteral ""data.txt""
-        |           `-- StringLiteral ""r""
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fprintf"
-        |       |-- Identifier "f"
-        |       |-- StringLiteral ""%d\n""
-        |       `-- IntLiteral "42"
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fclose"
-        |       `-- Identifier "f"
         `-- ReturnStmt
             `-- IntLiteral "0"
 
@@ -175,4 +133,3 @@ Name                 Kind           Line   Scope                        Type    
 main                 procedure      3      global                       PROCEDURE                                 0         INT ()                 main
 heap                 variable       4      global > main()              INT_POINTER      *                        3                                
 more                 variable       9      global > main()              INT_POINTER      *                        4                                
-f                    variable       14     global > main()              FILE_POINTER     *                        3                                

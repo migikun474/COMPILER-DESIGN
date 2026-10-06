@@ -2,43 +2,43 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v14_warnings.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c
 
-Semantic analysis successful: 0 error(s), 9 warning(s) in 'test/valid/v14_warnings.c'.
+Semantic analysis successful: 0 error(s), 9 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c'.
 
-test/valid/v14_warnings.c:2:5: semantic warning: function 'helper' is used but never defined [undefined-function]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:2:5: semantic warning: function 'helper' is used but never defined [undefined-function]
  2 | int helper(int v);                // warning: is used but never defined
    |     ^
 
-test/valid/v14_warnings.c:4:5: semantic warning: non-void function 'compute' has no return statement (declared to return 'int') [missing-return]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:4:5: semantic warning: non-void function 'compute' has no return statement (declared to return 'int') [missing-return]
  4 | int compute(int v) {              // warning: has no return statement
    |     ^
 
-test/valid/v14_warnings.c:11:7: semantic warning: array index 4 is past the end of the array (which has 4 elements) [array-bounds]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:11:7: semantic warning: array index 4 is past the end of the array (which has 4 elements) [array-bounds]
  11 |     a[4] = 0;                     // warning: past the end of the array
     |       ^
 
-test/valid/v14_warnings.c:12:7: semantic warning: array index -1 is before the beginning of the array [array-bounds]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:12:7: semantic warning: array index -1 is before the beginning of the array [array-bounds]
  12 |     a[-1] = 0;                    // warning: before the beginning
     |       ^
 
-test/valid/v14_warnings.c:13:13: semantic warning: division by zero is undefined [division-by-zero]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:13:13: semantic warning: division by zero is undefined [division-by-zero]
  13 |     x = x / 0;                    // warning: division by zero
     |             ^
 
-test/valid/v14_warnings.c:14:5: semantic warning: format string of 'printf' expects 2 arguments after the format, but 1 was provided [format]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:14:5: semantic warning: format string of 'printf' expects 2 arguments after the format, but 1 was provided [format]
  14 |     printf("%d %d\n", x);         // warning: expects 2 arguments after the format, but 1 was provided
     |     ^
 
-test/valid/v14_warnings.c:15:20: semantic warning: format '%s' expects a string (char *), but argument 2 has type 'int' [format]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:15:20: semantic warning: format '%s' expects a string (char *), but argument 2 has type 'int' [format]
  15 |     printf("%s\n", x);            // warning: format '%s' expects a string
     |                    ^
 
-test/valid/v14_warnings.c:16:13: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:16:13: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
  16 |     int m = 'ab';                 // warning: multi-character character constant
     |             ^
 
-test/valid/v14_warnings.c:17:12: semantic warning: type specifier missing, defaults to 'int' [implicit-int]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v14_warnings.c:17:12: semantic warning: type specifier missing, defaults to 'int' [implicit-int]
  17 |     static y;                     // warning: type specifier missing, defaults to 'int'
     |            ^
 

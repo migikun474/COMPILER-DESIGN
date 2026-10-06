@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v22_unnamed_aggregates.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v22_unnamed_aggregates.c
 
 No errors found.
 
@@ -15,7 +15,7 @@ Value                          STRUCT
 int                            int                 
 kind                           INT                 
 ;                              semicolon_op        
-union                          union               
+struct                         struct              
 {                              open_brace_op       
 int                            int                 
 i                              INT                 
@@ -48,7 +48,7 @@ struct                         struct
 Value                          STRUCT              
 )                              close_paren_op      
 ==                             eq_op               
-12                             INT_LITERAL         
+20                             INT_LITERAL         
 ?                              question_op         
 1                              INT_LITERAL         
 :                              colon_op            
@@ -64,7 +64,7 @@ tag                            CHAR
 ;                              semicolon_op        
 struct                         struct              
 {                              open_brace_op       
-union                          union               
+struct                         struct              
 {                              open_brace_op       
 int                            int                 
 word                           INT                 
@@ -93,7 +93,7 @@ struct                         struct
 Packet                         STRUCT              
 )                              close_paren_op      
 ==                             eq_op               
-12                             INT_LITERAL         
+16                             INT_LITERAL         
 ?                              question_op         
 1                              INT_LITERAL         
 :                              colon_op            
@@ -131,27 +131,6 @@ Pt                             TYPEDEF
 ,                              comma_op            
 PtAlias                        TYPEDEF             
 ;                              semicolon_op        
-typedef                        typedef             
-enum                           enum                
-{                              open_brace_op       
-LOW                            ENUM_CONSTANT       
-,                              comma_op            
-HIGH                           ENUM_CONSTANT       
-}                              close_brace_op      
-Level                          TYPEDEF             
-;                              semicolon_op        
-typedef                        typedef             
-union                          union               
-{                              open_brace_op       
-int                            int                 
-n                              INT                 
-;                              semicolon_op        
-float                          float               
-r                              FLOAT               
-;                              semicolon_op        
-}                              close_brace_op      
-Num                            TYPEDEF             
-;                              semicolon_op        
 struct                         struct              
 {                              open_brace_op       
 int                            int                 
@@ -162,37 +141,12 @@ misses                         INT
 }                              close_brace_op      
 stats                          STRUCT              
 ;                              semicolon_op        
-enum                           enum                
-{                              open_brace_op       
-MAX_ITEMS                      ENUM_CONSTANT       
-=                              assign_op           
-8                              INT_LITERAL         
-,                              comma_op            
-MIN_ITEMS                      ENUM_CONSTANT       
-=                              assign_op           
-1                              INT_LITERAL         
-}                              close_brace_op      
-;                              semicolon_op        
-enum                           enum                
-{                              open_brace_op       
-OFF                            ENUM_CONSTANT       
-,                              comma_op            
-ON                             ENUM_CONSTANT       
-}                              close_brace_op      
-power                          ENUM                
-;                              semicolon_op        
-int                            int                 
-items                          INT_ARRAY           
-[                              open_bracket_op     
-MAX_ITEMS                      ENUM_CONSTANT       
-]                              close_bracket_op    
-;                              semicolon_op        
 class                          class               
 Register                       CLASS               
 {                              open_brace_op       
 public                         public              
 :                              colon_op            
-union                          union               
+struct                         struct              
 {                              open_brace_op       
 int                            int                 
 raw                            INT                 
@@ -253,47 +207,6 @@ dx                             INT
 dy                             INT                 
 *                              star_op             
 dy                             INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-Level                          TYPEDEF             
-level_of                       PROCEDURE           
-(                              open_paren_op       
-int                            int                 
-v                              INT                 
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-v                              INT                 
->                              gt_op               
-0                              INT_LITERAL         
-?                              question_op         
-HIGH                           ENUM_CONSTANT       
-:                              colon_op            
-LOW                            ENUM_CONSTANT       
-;                              semicolon_op        
-}                              close_brace_op      
-float                          float               
-as_float                       PROCEDURE           
-(                              open_paren_op       
-Num                            TYPEDEF             
-n                              UNION               
-,                              comma_op            
-Level                          TYPEDEF             
-l                              ENUM                
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-l                              ENUM                
-==                             eq_op               
-HIGH                           ENUM_CONSTANT       
-?                              question_op         
-n                              UNION               
-.                              dot_op              
-r                              IDENTIFIER          
-:                              colon_op            
-n                              UNION               
-.                              dot_op              
-n                              IDENTIFIER          
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
@@ -457,22 +370,6 @@ a                              STRUCT
 b                              STRUCT              
 )                              close_paren_op      
 ;                              semicolon_op        
-power                          ENUM                
-=                              assign_op           
-ON                             ENUM_CONSTANT       
-;                              semicolon_op        
-items                          INT_ARRAY           
-[                              open_bracket_op     
-MIN_ITEMS                      ENUM_CONSTANT       
-]                              close_bracket_op    
-=                              assign_op           
-level_of                       PROCEDURE           
-(                              open_paren_op       
-stats                          STRUCT              
-.                              dot_op              
-hits                           INT                 
-)                              close_paren_op      
-;                              semicolon_op        
 Register                       CLASS               
 r                              CLASS               
 ;                              semicolon_op        
@@ -482,14 +379,11 @@ raw                            INT
 =                              assign_op           
 65                             INT_LITERAL         
 ;                              semicolon_op        
-Num                            TYPEDEF             
-n                              UNION               
-;                              semicolon_op        
-n                              UNION               
+r                              CLASS               
 .                              dot_op              
-r                              FLOAT               
+low                            CHAR                
 =                              assign_op           
-2.5f                           FLOAT_LITERAL       
+'a'                            CHAR_LITERAL        
 ;                              semicolon_op        
 return                         return              
 v                              STRUCT              
@@ -522,17 +416,9 @@ r                              CLASS
 .                              dot_op              
 low                            CHAR                
 +                              plus_op             
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
-as_float                       PROCEDURE           
-(                              open_paren_op       
-n                              UNION               
-,                              comma_op            
-HIGH                           ENUM_CONSTANT       
-)                              close_paren_op      
-+                              plus_op             
-power                          ENUM                
+stats                          STRUCT              
+.                              dot_op              
+hits                           INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 
@@ -540,19 +426,19 @@ power                          ENUM
 Program "translation_unit"
 |-- StructDecl "Value"
 |   |-- VarDecl "kind : INT"
-|   |-- UnionDecl "(unnamed at 8:5)"
+|   |-- StructDecl "(unnamed at 9:5)"
 |   |   |-- VarDecl "i : INT"
 |   |   |-- VarDecl "f : FLOAT"
 |   |   `-- VarDecl "c : CHAR"
-|   `-- StructDecl "(unnamed at 13:5)"
+|   `-- StructDecl "(unnamed at 14:5)"
 |       `-- DeclGroup
 |           |-- VarDecl "lo : SHORT"
 |           `-- VarDecl "hi : SHORT"
 |-- VarDecl "value_size_ok : INT_ARRAY"
 |-- StructDecl "Packet"
 |   |-- VarDecl "tag : CHAR"
-|   `-- StructDecl "(unnamed at 22:5)"
-|       |-- UnionDecl "(unnamed at 23:9)"
+|   `-- StructDecl "(unnamed at 23:5)"
+|       |-- StructDecl "(unnamed at 24:9)"
 |       |   |-- VarDecl "word : INT"
 |       |   `-- VarDecl "bytes : CHAR_ARRAY"
 |       `-- VarDecl "crc : INT"
@@ -564,41 +450,20 @@ Program "translation_unit"
 |   |   `-- VarDecl "in : STRUCT"
 |   `-- VarDecl "after : INT"
 |-- DeclGroup
-|   |-- StructDecl "(unnamed at 36:9)"
+|   |-- StructDecl "(unnamed at 37:9)"
 |   |   `-- DeclGroup
 |   |       |-- VarDecl "x : INT"
 |   |       `-- VarDecl "y : INT"
 |   |-- TypedefDecl "Pt = STRUCT"
 |   `-- TypedefDecl "PtAlias = STRUCT"
 |-- DeclGroup
-|   |-- EnumDecl "(unnamed at 37:9)"
-|   |   |-- Enumerator "LOW"
-|   |   `-- Enumerator "HIGH"
-|   `-- TypedefDecl "Level = ENUM"
-|-- DeclGroup
-|   |-- UnionDecl "(unnamed at 38:9)"
-|   |   |-- VarDecl "n : INT"
-|   |   `-- VarDecl "r : FLOAT"
-|   `-- TypedefDecl "Num = UNION"
-|-- DeclGroup
-|   |-- StructDecl "(unnamed at 41:1)"
+|   |-- StructDecl "(unnamed at 40:1)"
 |   |   `-- DeclGroup
 |   |       |-- VarDecl "hits : INT"
 |   |       `-- VarDecl "misses : INT"
 |   `-- VarDecl "stats : STRUCT"
-|-- EnumDecl "(unnamed at 42:1)"
-|   |-- Enumerator "MAX_ITEMS"
-|   |   `-- IntLiteral "8"
-|   `-- Enumerator "MIN_ITEMS"
-|       `-- IntLiteral "1"
-|-- DeclGroup
-|   |-- EnumDecl "(unnamed at 43:1)"
-|   |   |-- Enumerator "OFF"
-|   |   `-- Enumerator "ON"
-|   `-- VarDecl "power : ENUM"
-|-- VarDecl "items : INT_ARRAY"
 |-- ClassDecl "Register"
-|   |-- UnionDecl "(unnamed at 49:5)"
+|   |-- StructDecl "(unnamed at 45:5)"
 |   |   |-- VarDecl "raw : INT"
 |   |   `-- VarDecl "low : CHAR"
 |   `-- FunctionDef "read : _ZN8Register4readEv"
@@ -630,29 +495,6 @@ Program "translation_unit"
 |               `-- BinaryExpr "*"
 |                   |-- Identifier "dy"
 |                   `-- Identifier "dy"
-|-- FunctionDef "level_of : _Z8level_ofi"
-|   |-- ParamDecl "v : INT"
-|   `-- CompoundStmt
-|       `-- ReturnStmt
-|           `-- TernaryExpr
-|               |-- BinaryExpr ">"
-|               |   |-- Identifier "v"
-|               |   `-- IntLiteral "0"
-|               |-- Identifier "HIGH"
-|               `-- Identifier "LOW"
-|-- FunctionDef "as_float : _Z8as_float3Num5Level"
-|   |-- ParamDecl "n : UNION"
-|   |-- ParamDecl "l : ENUM"
-|   `-- CompoundStmt
-|       `-- ReturnStmt
-|           `-- TernaryExpr
-|               |-- BinaryExpr "=="
-|               |   |-- Identifier "l"
-|               |   `-- Identifier "HIGH"
-|               |-- MemberExpr "r"
-|               |   `-- Identifier "n"
-|               `-- MemberExpr "n"
-|                   `-- Identifier "n"
 `-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "v : STRUCT"
@@ -749,31 +591,17 @@ Program "translation_unit"
         |           |-- Identifier "a"
         |           `-- UnaryExpr "&"
         |               `-- Identifier "b"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "power"
-        |       `-- Identifier "ON"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- IndexExpr
-        |       |   |-- Identifier "items"
-        |       |   `-- Identifier "MIN_ITEMS"
-        |       `-- CallExpr
-        |           |-- Identifier "level_of"
-        |           `-- MemberExpr "hits"
-        |               `-- Identifier "stats"
         |-- VarDecl "r : CLASS"
         |-- ExprStmt
         |   `-- AssignExpr "="
         |       |-- MemberExpr "raw"
         |       |   `-- Identifier "r"
         |       `-- IntLiteral "65"
-        |-- VarDecl "n : UNION"
         |-- ExprStmt
         |   `-- AssignExpr "="
-        |       |-- MemberExpr "r"
-        |       |   `-- Identifier "n"
-        |       `-- FloatLiteral "2.5f"
+        |       |-- MemberExpr "low"
+        |       |   `-- Identifier "r"
+        |       `-- CharLiteral "'a'"
         `-- ReturnStmt
             `-- BinaryExpr "+"
                 |-- BinaryExpr "+"
@@ -782,103 +610,76 @@ Program "translation_unit"
                 |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |-- MemberExpr "i"
-                |   |   |   |   |   |   |   |   `-- Identifier "v"
-                |   |   |   |   |   |   |   `-- MemberExpr "i"
-                |   |   |   |   |   |   |       `-- Identifier "w"
-                |   |   |   |   |   |   `-- MemberExpr "c"
-                |   |   |   |   |   |       `-- Identifier "d"
-                |   |   |   |   |   `-- MemberExpr "crc"
-                |   |   |   |   |       `-- Identifier "p"
-                |   |   |   |   `-- MemberExpr "after"
-                |   |   |   |       `-- Identifier "o"
-                |   |   |   `-- CallExpr
-                |   |   |       `-- MemberExpr "read"
-                |   |   |           `-- Identifier "r"
-                |   |   `-- MemberExpr "low"
-                |   |       `-- Identifier "r"
-                |   `-- CastExpr "INT"
-                |       `-- CallExpr
-                |           |-- Identifier "as_float"
-                |           |-- Identifier "n"
-                |           `-- Identifier "HIGH"
-                `-- Identifier "power"
+                |   |   |   |   |   |   |-- MemberExpr "i"
+                |   |   |   |   |   |   |   `-- Identifier "v"
+                |   |   |   |   |   |   `-- MemberExpr "i"
+                |   |   |   |   |   |       `-- Identifier "w"
+                |   |   |   |   |   `-- MemberExpr "c"
+                |   |   |   |   |       `-- Identifier "d"
+                |   |   |   |   `-- MemberExpr "crc"
+                |   |   |   |       `-- Identifier "p"
+                |   |   |   `-- MemberExpr "after"
+                |   |   |       `-- Identifier "o"
+                |   |   `-- CallExpr
+                |   |       `-- MemberExpr "read"
+                |   |           `-- Identifier "r"
+                |   `-- MemberExpr "low"
+                |       `-- Identifier "r"
+                `-- MemberExpr "hits"
+                    `-- Identifier "stats"
 
 
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Value                struct_tag     6      global                       STRUCT                                    0                                
-Value::kind          struct_member  7      global > struct Value        INT                                       0                                
-Value::(unnamed at 8:5) union_tag      8      global > struct Value        UNION                                     0                                
-(unnamed at 8:5)::i  union_member   9      global > struct Value > union (unnamed at 8:5) INT                                       0                                
-(unnamed at 8:5)::f  union_member   10     global > struct Value > union (unnamed at 8:5) FLOAT                                     0                                
-(unnamed at 8:5)::c  union_member   11     global > struct Value > union (unnamed at 8:5) CHAR                                      0                                
-Value::(unnamed at 13:5) struct_tag     13     global > struct Value        STRUCT                                    0                                
-(unnamed at 13:5)::lo struct_member  14     global > struct Value > struct (unnamed at 13:5) SHORT                                     0                                
-(unnamed at 13:5)::hi struct_member  14     global > struct Value > struct (unnamed at 13:5) SHORT                                     0                                
-value_size_ok        variable       17     global                       INT_ARRAY        []                       0                                
-Packet               struct_tag     20     global                       STRUCT                                    0                                
-Packet::tag          struct_member  21     global > struct Packet       CHAR                                      0                                
-Packet::(unnamed at 22:5) struct_tag     22     global > struct Packet       STRUCT                                    0                                
-(unnamed at 22:5)::(unnamed at 23:9) union_tag      23     global > struct Packet > struct (unnamed at 22:5) UNION                                     0                                
-(unnamed at 23:9)::word union_member   23     global > struct Packet > struct (unnamed at 22:5) > union (unnamed at 23:9) INT                                       0                                
-(unnamed at 23:9)::bytes union_member   23     global > struct Packet > struct (unnamed at 22:5) > union (unnamed at 23:9) CHAR_ARRAY       []                       0                                
-(unnamed at 22:5)::crc struct_member  24     global > struct Packet > struct (unnamed at 22:5) INT                                       0                                
-packet_size_ok       variable       27     global                       INT_ARRAY        []                       0                                
-Outer                struct_tag     30     global                       STRUCT                                    0                                
-Outer::Inner         struct_tag     31     global > struct Outer        STRUCT                                    0                                
-Inner::x             struct_member  31     global > struct Outer > struct Inner INT                                       0                                
-Outer::in            struct_member  31     global > struct Outer        STRUCT                                    0                                
-Outer::after         struct_member  32     global > struct Outer        INT                                       0                                
-(unnamed at 36:9)    struct_tag     36     global                       STRUCT                                    0                                
-(unnamed at 36:9)::x struct_member  36     global > struct (unnamed at 36:9) INT                                       0                                
-(unnamed at 36:9)::y struct_member  36     global > struct (unnamed at 36:9) INT                                       0                                
-Pt                   typedef        36     global                       STRUCT                                    0                                
-PtAlias              typedef        36     global                       STRUCT                                    0                                
-(unnamed at 37:9)    enum_tag       37     global                       ENUM                                      0                                
-LOW                  enum_constant  37     global                       ENUM_CONSTANT                             1                                
-HIGH                 enum_constant  37     global                       ENUM_CONSTANT                             3                                
-Level                typedef        37     global                       ENUM                                      0                                
-(unnamed at 38:9)    union_tag      38     global                       UNION                                     0                                
-(unnamed at 38:9)::n union_member   38     global > union (unnamed at 38:9) INT                                       0                                
-(unnamed at 38:9)::r union_member   38     global > union (unnamed at 38:9) FLOAT                                     0                                
-Num                  typedef        38     global                       UNION                                     0                                
-(unnamed at 41:1)    struct_tag     41     global                       STRUCT                                    0                                
-(unnamed at 41:1)::hits struct_member  41     global > struct (unnamed at 41:1) INT                                       0                                
-(unnamed at 41:1)::misses struct_member  41     global > struct (unnamed at 41:1) INT                                       0                                
-stats                variable       41     global                       STRUCT                                    2                                
-(unnamed at 42:1)    enum_tag       42     global                       ENUM                                      0                                
-MAX_ITEMS            enum_constant  42     global                       ENUM_CONSTANT                             1                                
-MIN_ITEMS            enum_constant  42     global                       ENUM_CONSTANT                             1                                
-(unnamed at 43:1)    enum_tag       43     global                       ENUM                                      0                                
-OFF                  enum_constant  43     global                       ENUM_CONSTANT                             0                                
-ON                   enum_constant  43     global                       ENUM_CONSTANT                             1                                
-power                variable       43     global                       ENUM                                      2                                
-items                variable       44     global                       INT_ARRAY        []                       1                                
-Register             class_tag      47     global                       CLASS                                     0                                
-Register::(unnamed at 49:5) union_tag      49     global > class Register      UNION                                     0                                
-(unnamed at 49:5)::raw union_member   49     global > class Register > union (unnamed at 49:5) INT                                       0                                
-(unnamed at 49:5)::low union_member   49     global > class Register > union (unnamed at 49:5) CHAR                                      0                                
-Register::read       class_method   50     global > class Register      PROCEDURE                                 0         INT ()                 _ZN8Register4readEv
-dist2                procedure      53     global                       PROCEDURE                                 1         INT (STRUCT, STRUCT_POINTER) _Z5dist22PtPS_
-a                    parameter      53     global > dist2()             STRUCT                                    2                                
-b                    parameter      53     global > dist2()             STRUCT_POINTER                            2                                
-dx                   variable       53     global > dist2()             INT                                       2                                
-dy                   variable       53     global > dist2()             INT                                       2                                
-level_of             procedure      54     global                       PROCEDURE                                 1         ENUM (INT)             _Z8level_ofi
-v                    parameter      54     global > level_of()          INT                                       1                                
-as_float             procedure      55     global                       PROCEDURE                                 1         FLOAT (UNION, ENUM)    _Z8as_float3Num5Level
-n                    parameter      55     global > as_float()          UNION                                     2                                
-l                    parameter      55     global > as_float()          ENUM                                      1                                
-main                 procedure      57     global                       PROCEDURE                                 0         INT ()                 main
-v                    variable       58     global > main()              STRUCT                                    6                                
-w                    variable       65     global > main()              STRUCT                                    1                                
-d                    variable       66     global > main()              STRUCT                                    1                                
-p                    variable       68     global > main()              STRUCT                                    5                                
-o                    variable       73     global > main()              STRUCT                                    3                                
-a                    variable       77     global > main()              STRUCT                                    1                                
-b                    variable       78     global > main()              STRUCT                                    1                                
-r                    variable       83     global > main()              CLASS                                     3                                
-n                    variable       85     global > main()              UNION                                     2                                
+Value                struct_tag     7      global                       STRUCT                                    0                                
+Value::kind          struct_member  8      global > struct Value        INT                                       0                                
+Value::(unnamed at 9:5) struct_tag     9      global > struct Value        STRUCT                                    0                                
+(unnamed at 9:5)::i  struct_member  10     global > struct Value > struct (unnamed at 9:5) INT                                       0                                
+(unnamed at 9:5)::f  struct_member  11     global > struct Value > struct (unnamed at 9:5) FLOAT                                     0                                
+(unnamed at 9:5)::c  struct_member  12     global > struct Value > struct (unnamed at 9:5) CHAR                                      0                                
+Value::(unnamed at 14:5) struct_tag     14     global > struct Value        STRUCT                                    0                                
+(unnamed at 14:5)::lo struct_member  15     global > struct Value > struct (unnamed at 14:5) SHORT                                     0                                
+(unnamed at 14:5)::hi struct_member  15     global > struct Value > struct (unnamed at 14:5) SHORT                                     0                                
+value_size_ok        variable       18     global                       INT_ARRAY        []                       0                                
+Packet               struct_tag     21     global                       STRUCT                                    0                                
+Packet::tag          struct_member  22     global > struct Packet       CHAR                                      0                                
+Packet::(unnamed at 23:5) struct_tag     23     global > struct Packet       STRUCT                                    0                                
+(unnamed at 23:5)::(unnamed at 24:9) struct_tag     24     global > struct Packet > struct (unnamed at 23:5) STRUCT                                    0                                
+(unnamed at 24:9)::word struct_member  24     global > struct Packet > struct (unnamed at 23:5) > struct (unnamed at 24:9) INT                                       0                                
+(unnamed at 24:9)::bytes struct_member  24     global > struct Packet > struct (unnamed at 23:5) > struct (unnamed at 24:9) CHAR_ARRAY       []                       0                                
+(unnamed at 23:5)::crc struct_member  25     global > struct Packet > struct (unnamed at 23:5) INT                                       0                                
+packet_size_ok       variable       28     global                       INT_ARRAY        []                       0                                
+Outer                struct_tag     31     global                       STRUCT                                    0                                
+Outer::Inner         struct_tag     32     global > struct Outer        STRUCT                                    0                                
+Inner::x             struct_member  32     global > struct Outer > struct Inner INT                                       0                                
+Outer::in            struct_member  32     global > struct Outer        STRUCT                                    0                                
+Outer::after         struct_member  33     global > struct Outer        INT                                       0                                
+(unnamed at 37:9)    struct_tag     37     global                       STRUCT                                    0                                
+(unnamed at 37:9)::x struct_member  37     global > struct (unnamed at 37:9) INT                                       0                                
+(unnamed at 37:9)::y struct_member  37     global > struct (unnamed at 37:9) INT                                       0                                
+Pt                   typedef        37     global                       STRUCT                                    0                                
+PtAlias              typedef        37     global                       STRUCT                                    0                                
+(unnamed at 40:1)    struct_tag     40     global                       STRUCT                                    0                                
+(unnamed at 40:1)::hits struct_member  40     global > struct (unnamed at 40:1) INT                                       0                                
+(unnamed at 40:1)::misses struct_member  40     global > struct (unnamed at 40:1) INT                                       0                                
+stats                variable       40     global                       STRUCT                                    2                                
+Register             class_tag      43     global                       CLASS                                     0                                
+Register::(unnamed at 45:5) struct_tag     45     global > class Register      STRUCT                                    0                                
+(unnamed at 45:5)::raw struct_member  45     global > class Register > struct (unnamed at 45:5) INT                                       0                                
+(unnamed at 45:5)::low struct_member  45     global > class Register > struct (unnamed at 45:5) CHAR                                      0                                
+Register::read       class_method   46     global > class Register      PROCEDURE                                 0         INT ()                 _ZN8Register4readEv
+dist2                procedure      49     global                       PROCEDURE                                 1         INT (STRUCT, STRUCT_POINTER) _Z5dist22PtPS_
+a                    parameter      49     global > dist2()             STRUCT                                    2                                
+b                    parameter      49     global > dist2()             STRUCT_POINTER                            2                                
+dx                   variable       49     global > dist2()             INT                                       2                                
+dy                   variable       49     global > dist2()             INT                                       2                                
+main                 procedure      51     global                       PROCEDURE                                 0         INT ()                 main
+v                    variable       52     global > main()              STRUCT                                    6                                
+w                    variable       59     global > main()              STRUCT                                    1                                
+d                    variable       60     global > main()              STRUCT                                    1                                
+p                    variable       62     global > main()              STRUCT                                    5                                
+o                    variable       67     global > main()              STRUCT                                    3                                
+a                    variable       71     global > main()              STRUCT                                    1                                
+b                    variable       72     global > main()              STRUCT                                    1                                
+r                    variable       75     global > main()              CLASS                                     4                                

@@ -10,7 +10,7 @@
    assembly with a simple frame layout: every temporary in the stack
    frame, no register allocation.
 2. Run-time support for the language's built-ins (`printf`, `scanf`,
-   `malloc`/`free`, file I/O). How depends on the target, which is not
+   `malloc`/`free`). How depends on the target, which is not
    decided yet:
    - **SPIM / MARS simulator** — built-ins implemented as a small MIPS
      run-time library over the simulator's system calls;

@@ -11,10 +11,12 @@ int *makeInt() {
 }
 
 int main(int argc, char **argv) {
-    int (*fp)(int, int);
-    fp = add;
+    int nums[3];
+    int (*row)[3];
+    row = &nums;
+    (*row)[0] = 1;
     int result;
-    result = fp(2, 3);
+    result = add(2, (*row)[0]);
 
     int *val;
     val = makeInt();

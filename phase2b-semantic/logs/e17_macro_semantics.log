@@ -2,16 +2,16 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e17_macro_semantics.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e17_macro_semantics.c
 
-Semantic analysis failed: 2 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e17_macro_semantics.c'.
+Semantic analysis failed: 2 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e17_macro_semantics.c'.
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e17_macro_semantics.c:7:28: semantic error: type mismatch: cannot initialize variable 'bad' of type 'char *' with a value of type 'int' (incompatible integer to pointer conversion) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e17_macro_semantics.c:7:28: semantic error: type mismatch: cannot initialize variable 'bad' of type 'char *' with a value of type 'int' (incompatible integer to pointer conversion) [type-mismatch]
  7 |     char *bad = ((1) > (2) ? (1) : (2));      // error: cannot initialize variable 'bad' of type 'char *' with a value of type 'int'
    |                            ^
    | note: shown after macro expansion; the source line is: char *bad = MAX(1, 2);      // error: cannot initialize variable 'bad' of type 'char *' with a value of type 'int'
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e17_macro_semantics.c:8:13: semantic error: function 'add' expects 2 arguments but 3 were provided [argument-count]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e17_macro_semantics.c:8:13: semantic error: function 'add' expects 2 arguments but 3 were provided [argument-count]
  8 |     int r = add(1, 2, 3);          // error: function 'add' expects 2 arguments but 3 were provided
    |             ^
    | note: shown after macro expansion; the source line is: int r = CALL(add);          // error: function 'add' expects 2 arguments but 3 were provided

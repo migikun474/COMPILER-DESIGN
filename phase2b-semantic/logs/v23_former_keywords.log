@@ -1,0 +1,113 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v23_former_keywords.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v23_former_keywords.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- StructDecl "FILE"  <struct FILE>  -> FILE (tag)
+|   `-- VarDecl "fd : INT"  <int>  -> FILE::fd (field, member)
+|-- FunctionDef "fopen : _Z5fopeni"  <int (int)>  -> _Z5fopeni (function)
+|   |-- ParamDecl "mode : INT"  <int>  -> mode.1 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "mode"  <int> lvalue  -> mode.1 (parameter, param)
+|               `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "fclose : _Z6fcloseP4FILE"  <int (struct FILE *)>  -> _Z6fcloseP4FILE (function)
+|   |-- ParamDecl "f : STRUCT_POINTER"  <struct FILE *>  -> f.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- ArrowExpr "fd"  <int> lvalue  -> FILE::fd (field, member)
+|               `-- Identifier "f"  <struct FILE *> lvalue  -> f.2 (parameter, param)
+|-- FunctionDef "feof : _Z4feofii"  <int (int, int)>  -> _Z4feofii (function)
+|   |-- ParamDecl "at : INT"  <int>  -> at.3 (parameter, param)
+|   |-- ParamDecl "size : INT"  <int>  -> size.4 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr ">="  <int>
+|               |-- Identifier "at"  <int> lvalue  -> at.3 (parameter, param)
+|               `-- Identifier "size"  <int> lvalue  -> size.4 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "enum : INT"  <int>  -> enum.5 (variable, local)
+        |   `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "union : INT"  <int>  -> union.6 (variable, local)
+        |   `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "mutable : INT"  <int>  -> mutable.7 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- Identifier "enum"  <int> lvalue  -> enum.5 (variable, local)
+        |       `-- Identifier "union"  <int> lvalue  -> union.6 (variable, local)
+        |-- DeclGroup
+        |   |-- VarDecl "fread : INT"  <int>  -> fread.8 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- VarDecl "fwrite : INT"  <int>  -> fwrite.9 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- VarDecl "fgets : INT"  <int>  -> fgets.10 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- VarDecl "fputs : INT"  <int>  -> fputs.11 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   |-- VarDecl "fprintf : INT"  <int>  -> fprintf.12 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   `-- VarDecl "fscanf : INT"  <int>  -> fscanf.13 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "file : STRUCT"  <struct FILE>  -> file.14 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "fd"  <int> lvalue  -> FILE::fd (field, member)
+        |       |   `-- Identifier "file"  <struct FILE> lvalue  -> file.14 (variable, local)
+        |       `-- CallExpr  <int>  -> _Z5fopeni (function)
+        |           |-- Identifier "fopen"  <int (int)>  -> _Z5fopeni (function)
+        |           `-- Identifier "mutable"  <int> lvalue  -> mutable.7 (variable, local)
+        |-- IfStmt
+        |   |-- UnaryExpr "!"  <int>
+        |   |   `-- CallExpr  <int>  -> _Z4feofii (function)
+        |   |       |-- Identifier "feof"  <int (int, int)>  -> _Z4feofii (function)
+        |   |       |-- Identifier "fread"  <int> lvalue  -> fread.8 (variable, local)
+        |   |       `-- Identifier "fwrite"  <int> lvalue  -> fwrite.9 (variable, local)
+        |   `-- ExprStmt
+        |       `-- AssignExpr "="  <int>
+        |           |-- Identifier "fgets"  <int> lvalue  -> fgets.10 (variable, local)
+        |           `-- BinaryExpr "+"  <int>
+        |               |-- BinaryExpr "+"  <int>
+        |               |   |-- Identifier "fputs"  <int> lvalue  -> fputs.11 (variable, local)
+        |               |   `-- Identifier "fprintf"  <int> lvalue  -> fprintf.12 (variable, local)
+        |               `-- Identifier "fscanf"  <int> lvalue  -> fscanf.13 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- CallExpr  <int>  -> _Z6fcloseP4FILE (function)
+                |   |-- Identifier "fclose"  <int (struct FILE *)>  -> _Z6fcloseP4FILE (function)
+                |   `-- UnaryExpr "&"  <struct FILE *>
+                |       `-- Identifier "file"  <struct FILE> lvalue  -> file.14 (variable, local)
+                `-- Identifier "fgets"  <int> lvalue  -> fgets.10 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+FILE               struct_tag     struct FILE                -        global                         5     -     0     FILE                 -                        size 4
+FILE::fd           field          int                        member   global > struct FILE           5     4     2     FILE::fd             -                        public, offset 0
+fopen              function       int (int)                  -        global                         7     -     1     _Z5fopeni            _Z5fopeni                defined
+mode               parameter      int                        param    global > fopen()               7     4     1     mode.1               -                        
+fclose             function       int (struct FILE *)        -        global                         8     -     1     _Z6fcloseP4FILE      _Z6fcloseP4FILE          defined
+f                  parameter      struct FILE *              param    global > fclose()              8     4     1     f.2                  -                        
+feof               function       int (int, int)             -        global                         9     -     1     _Z4feofii            _Z4feofii                defined
+at                 parameter      int                        param    global > feof()                9     4     1     at.3                 -                        
+size               parameter      int                        param    global > feof()                9     4     1     size.4               -                        
+main               function       int (void)                 -        global                         11    -     0     main                 main                     defined
+enum               variable       int                        local    global > main()                12    4     1     enum.5               -                        
+union              variable       int                        local    global > main()                13    4     1     union.6              -                        
+mutable            variable       int                        local    global > main()                14    4     1     mutable.7            -                        
+fread              variable       int                        local    global > main()                15    4     1     fread.8              -                        
+fwrite             variable       int                        local    global > main()                15    4     1     fwrite.9             -                        
+fgets              variable       int                        local    global > main()                15    4     2     fgets.10             -                        
+fputs              variable       int                        local    global > main()                15    4     1     fputs.11             -                        
+fprintf            variable       int                        local    global > main()                15    4     1     fprintf.12           -                        
+fscanf             variable       int                        local    global > main()                15    4     1     fscanf.13            -                        
+file               variable       struct FILE                local    global > main()                16    4     2     file.14              -                        
+
+=== Record Layouts (MIPS32) ===
+struct FILE: size 4, align 4
+    +0  int fd  [public]

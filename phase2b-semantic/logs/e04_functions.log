@@ -2,83 +2,83 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e04_functions.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c
 
-Semantic analysis failed: 19 error(s), 0 warning(s) in 'test/invalid/e04_functions.c'.
+Semantic analysis failed: 19 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c'.
 
-test/invalid/e04_functions.c:8:6: semantic error: conflicting types for 'proto': 'char (int)' does not match the previous declaration 'int (int)' at line 7 (functions cannot be overloaded on return type alone) [conflicting-types]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:8:6: semantic error: conflicting types for 'proto': 'char (int)' does not match the previous declaration 'int (int)' at line 7 (functions cannot be overloaded on return type alone) [conflicting-types]
  8 | char proto(int a);                // error: conflicting types for 'proto'
    |      ^
 
-test/invalid/e04_functions.c:10:5: semantic error: redefinition of function 'defined_twice(int)' (previously defined at line 9) [redefinition]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:10:5: semantic error: redefinition of function 'defined_twice(int)' (previously defined at line 9) [redefinition]
  10 | int defined_twice(int a) { return a + 1; }   // error: redefinition of function 'defined_twice(int)'
     |     ^
 
-test/invalid/e04_functions.c:11:27: semantic error: redefinition of parameter 'a' [redeclaration]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:11:27: semantic error: redefinition of parameter 'a' [redeclaration]
  11 | int dup_params(int a, int a) { return a; }   // error: redefinition of parameter 'a'
     |                           ^
 
-test/invalid/e04_functions.c:12:21: semantic error: parameter 'x' cannot have type 'void' [invalid-parameter]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:12:21: semantic error: parameter 'x' cannot have type 'void' [invalid-parameter]
  12 | void bad_param(void x) { }        // error: parameter 'x' cannot have type 'void'
     |                     ^
 
-test/invalid/e04_functions.c:15:5: semantic error: non-void function 'no_value' should return a value of type 'int' [return-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:15:5: semantic error: non-void function 'no_value' should return a value of type 'int' [return-type]
  15 |     return;                       // error: non-void function 'no_value' should return a value
     |     ^
 
-test/invalid/e04_functions.c:18:12: semantic error: void function 'has_value' should not return a value (returning 'int') [return-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:18:12: semantic error: void function 'has_value' should not return a value (returning 'int') [return-type]
  18 |     return 10;                    // error: void function 'has_value' should not return a value
     |            ^
 
-test/invalid/e04_functions.c:21:12: semantic error: type mismatch: cannot return 'char *' from function 'wrong_type' whose return type is 'int' (incompatible pointer to integer conversion) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:21:12: semantic error: type mismatch: cannot return 'char *' from function 'wrong_type' whose return type is 'int' (incompatible pointer to integer conversion) [type-mismatch]
  21 |     return "text";                // error: cannot return 'char *' from function 'wrong_type' whose return type is 'int'
     |            ^
 
-test/invalid/e04_functions.c:25:12: semantic error: type mismatch: cannot return 'double' from function 'wrong_ptr' whose return type is 'int *' (no conversion to a pointer type) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:25:12: semantic error: type mismatch: cannot return 'double' from function 'wrong_ptr' whose return type is 'int *' (no conversion to a pointer type) [type-mismatch]
  25 |     return d;                     // error: cannot return 'double'
     |            ^
 
-test/invalid/e04_functions.c:37:9: semantic error: function 'add' expects 2 arguments but 1 was provided [argument-count]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:37:9: semantic error: function 'add' expects 2 arguments but 1 was provided [argument-count]
  37 |     x = add(1);                   // error: function 'add' expects 2 arguments but 1 was provided
     |         ^
 
-test/invalid/e04_functions.c:38:9: semantic error: function 'add' expects 2 arguments but 3 were provided [argument-count]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:38:9: semantic error: function 'add' expects 2 arguments but 3 were provided [argument-count]
  38 |     x = add(1, 2, 3);             // error: function 'add' expects 2 arguments but 3 were provided
     |         ^
 
-test/invalid/e04_functions.c:39:13: semantic error: type mismatch: argument 1 of 'add' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:39:13: semantic error: type mismatch: argument 1 of 'add' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
  39 |     x = add(&x, 2);               // error: argument 1 of 'add' expects 'int' but got 'int *'
     |             ^
 
-test/invalid/e04_functions.c:40:19: semantic error: type mismatch: argument 1 of 'takes_ptr' expects 'int *' but got 'char' (incompatible integer to pointer conversion) [argument-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:40:19: semantic error: type mismatch: argument 1 of 'takes_ptr' expects 'int *' but got 'char' (incompatible integer to pointer conversion) [argument-type]
  40 |     x = takes_ptr(c);             // error: argument 1 of 'takes_ptr' expects 'int *' but got 'char'
     |                   ^
 
-test/invalid/e04_functions.c:41:10: semantic error: type mismatch: argument 1 of 'sink' expects 'int *' but got 'double' (no conversion to a pointer type) [argument-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:41:10: semantic error: type mismatch: argument 1 of 'sink' expects 'int *' but got 'double' (no conversion to a pointer type) [argument-type]
  41 |     sink(d);                      // error: argument 1 of 'sink' expects 'int *' but got 'double'
     |          ^
 
-test/invalid/e04_functions.c:42:9: semantic error: called object of type 'int' is not a function, function pointer or lambda [not-callable]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:42:9: semantic error: called object of type 'int' is not a function [not-callable]
  42 |     x = x(3);                     // error: called object of type 'int' is not a function
     |         ^
 
-test/invalid/e04_functions.c:43:9: semantic error: call to undeclared function 'missing' [undeclared]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:43:9: semantic error: call to undeclared function 'missing' [undeclared]
  43 |     x = missing(1);               // error: call to undeclared function 'missing'
     |         ^
 
-test/invalid/e04_functions.c:45:9: semantic error: no matching function for call to 'overloaded(double *)'; candidates are: overloaded(int), overloaded(char *) [no-matching-overload]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:45:9: semantic error: no matching function for call to 'overloaded(double *)'; candidates are: overloaded(int), overloaded(char *) [no-matching-overload]
  45 |     x = overloaded(&d);           // error: no matching function for call to 'overloaded(double *)'
     |         ^
 
-test/invalid/e04_functions.c:46:9: semantic error: call to overloaded function 'amb(char, int)' is ambiguous; candidates are: amb(int, int), amb(char, char) [ambiguous-call]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:46:9: semantic error: call to overloaded function 'amb(char, int)' is ambiguous; candidates are: amb(int, int), amb(char, char) [ambiguous-call]
  46 |     x = amb(c, 2);                // error: call to overloaded function 'amb(char, int)' is ambiguous
     |         ^
 
-test/invalid/e04_functions.c:47:9: semantic error: type mismatch: cannot assign 'double (*)(double)' to 'int' (incompatible pointer to integer conversion) [type-mismatch]
- 47 |     x = half;                     // error: cannot assign 'double (*)(double)' to 'int'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:47:9: semantic error: reference to function 'half' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 47 |     x = half;                     // error: reference to function 'half' must be called
     |         ^
 
-test/invalid/e04_functions.c:48:9: semantic error: type mismatch: cannot assign 'void' to 'int' (a void expression has no value) [type-mismatch]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e04_functions.c:48:9: semantic error: type mismatch: cannot assign 'void' to 'int' (a void expression has no value) [type-mismatch]
  48 |     x = sink(&x);                 // error: a void expression has no value
     |         ^
 

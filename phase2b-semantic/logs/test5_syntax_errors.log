@@ -2,20 +2,20 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test5_syntax_errors.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test5_syntax_errors.c
 
 Syntax analysis failed: 3 error(s); semantic analysis was not run.
 
-../phase2-parser/test/test5_syntax_errors.c:5:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test5_syntax_errors.c:5:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
  5 |     a = 5;
    |     ^
    | note: insert ';' here
 
-../phase2-parser/test/test5_syntax_errors.c:7:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test5_syntax_errors.c:7:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  7 |     if (a > 0 {
    |               ^
 
-../phase2-parser/test/test5_syntax_errors.c:11:13: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test5_syntax_errors.c:11:13: syntax error: syntax error, unexpected ';'
  11 |     int b = ;
     |             ^
 

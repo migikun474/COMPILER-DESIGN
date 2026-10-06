@@ -2,102 +2,102 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test20_syntax_errors_lambdas_and_builtins.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c
 
-test/test20_syntax_errors_lambdas_and_builtins.c:20:17: syntax error: syntax error, unexpected IDENTIFIER, expecting ']'
- 20 |     auto f = [x y](int a) { return a + x + y; };
-    |                 ^
-    | note: insert ']' here
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:11:18: syntax error: syntax error, unexpected ')'
+ 11 |     int y = (x + );
+    |                  ^
 
-test/test20_syntax_errors_lambdas_and_builtins.c:26:25: syntax error: syntax error, unexpected ';', expecting ':' or ','
- 26 |     int b = (a > 0) ? 1 ;
-    |                         ^
-
-test/test20_syntax_errors_lambdas_and_builtins.c:31:10: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
- 31 |     goto ;
-    |          ^
-
-test/test20_syntax_errors_lambdas_and_builtins.c:36:26: syntax error: syntax error, unexpected ';', expecting ')'
- 36 |     printf("hello, %d", 5;
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:18:26: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
+ 18 |     int z = t02_helper(x y);
     |                          ^
     | note: insert ')' here
 
-test/test20_syntax_errors_lambdas_and_builtins.c:42:11: syntax error: syntax error, unexpected ',', expecting ')'
- 42 |     scanf(, &x);
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:24:25: syntax error: syntax error, unexpected ';', expecting ':' or ','
+ 24 |     int b = (a > 0) ? 1 ;
+    |                         ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:29:10: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
+ 29 |     goto ;
+    |          ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:34:26: syntax error: syntax error, unexpected ';', expecting ')'
+ 34 |     printf("hello, %d", 5;
+    |                          ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:40:11: syntax error: syntax error, unexpected ',', expecting ')'
+ 40 |     scanf(, &x);
     |           ^
     | note: insert ')' here
 
-test/test20_syntax_errors_lambdas_and_builtins.c:48:21: syntax error: syntax error, unexpected ',', expecting ')'
- 48 |     int *p = malloc(,);
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:46:21: syntax error: syntax error, unexpected ',', expecting ')'
+ 46 |     int *p = malloc(,);
     |                     ^
     | note: insert ')' here
 
-test/test20_syntax_errors_lambdas_and_builtins.c:53:44: syntax error: syntax error, unexpected ';', expecting ')'
- 53 |     fprintf(stdout_placeholder, "x = %d", 3;
-    |                                            ^
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:52:11: syntax error: syntax error, unexpected ';', expecting ')'
+ 52 |     free(p;
+    |           ^
     | note: insert ')' here
 
-test/test20_syntax_errors_lambdas_and_builtins.c:58:23: syntax error: syntax error, unexpected ';', expecting ')'
- 58 |     int s = sizeof(int;
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:57:23: syntax error: syntax error, unexpected ';', expecting ')'
+ 57 |     int s = sizeof(int;
     |                       ^
     | note: insert ')' here
 
-test/test20_syntax_errors_lambdas_and_builtins.c:64:17: syntax error: syntax error, unexpected ';'
- 64 |     int *p = new;
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:63:17: syntax error: syntax error, unexpected ';'
+ 63 |     int *p = new;
     |                 ^
 
 -----------------------------------------
-Total Errors : 9
+Total Errors : 10
 
 --- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
 Program "translation_unit"
 |-- FunctionDef "resync_marker : _Z13resync_markerv"
 |   `-- CompoundStmt
-|-- FunctionDef "t01_lambda_missing_param_parens : _Z31t01_lambda_missing_param_parensv"
+|-- FunctionDef "t01_binary_missing_operand : _Z26t01_binary_missing_operandv"
 |   `-- CompoundStmt
 |       |-- VarDecl "x : INT"
 |       |   `-- IntLiteral "1"
-|       `-- VarDecl "f : INT_FUNCTION_POINTER"
-|           `-- LambdaExpr "x"
-|               `-- CompoundStmt
-|                   `-- ReturnStmt
-|                       `-- Identifier "x"
-|-- FunctionDef "t02_lambda_capture_missing_comma : _Z32t02_lambda_capture_missing_commav"
+|       `-- ErrorNode "line 11: near ')'"
+|-- FunctionDef "t02_call_args_missing_comma : _Z27t02_call_args_missing_commav"
 |   `-- CompoundStmt
 |       |-- VarDecl "x : INT"
 |       |   `-- IntLiteral "1"
 |       |-- VarDecl "y : INT"
 |       |   `-- IntLiteral "2"
-|       `-- ErrorNode "line 20: near 'y'"
-|-- ErrorNode "line 20: near 'y'"
-|-- ErrorNode "line 20: near 'y'"
+|       `-- ErrorNode "line 18: near 'y'"
 |-- FunctionDef "t03_ternary_missing_colon : _Z25t03_ternary_missing_colonv"
 |   `-- CompoundStmt
 |       |-- VarDecl "a : INT"
 |       |   `-- IntLiteral "1"
-|       `-- ErrorNode "line 26: near ';'"
+|       `-- ErrorNode "line 24: near ';'"
 |-- FunctionDef "t04_goto_missing_label : _Z22t04_goto_missing_labelv"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 31: near ';'"
+|       `-- ErrorNode "line 29: near ';'"
 |-- FunctionDef "t05_printf_missing_close_paren : _Z30t05_printf_missing_close_parenv"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 36: near ';'"
+|       `-- ErrorNode "line 34: near ';'"
 |-- FunctionDef "t06_scanf_stray_comma : _Z21t06_scanf_stray_commav"
 |   `-- CompoundStmt
 |       |-- VarDecl "x : INT"
-|       `-- ErrorNode "line 42: near ','"
+|       `-- ErrorNode "line 40: near ','"
 |-- FunctionDef "t07_malloc_dangling_comma : _Z25t07_malloc_dangling_commav"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 48: near ','"
-|-- FunctionDef "t08_fprintf_missing_close_paren : _Z31t08_fprintf_missing_close_parenv"
+|       `-- ErrorNode "line 46: near ','"
+|-- FunctionDef "t08_free_missing_close_paren : _Z28t08_free_missing_close_parenv"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 53: near ';'"
+|       |-- VarDecl "p : INT_POINTER"
+|       |   `-- IntLiteral "0"
+|       `-- ErrorNode "line 52: near ';'"
 |-- FunctionDef "t09_sizeof_unbalanced_parens : _Z28t09_sizeof_unbalanced_parensv"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 58: near ';'"
+|       `-- ErrorNode "line 57: near ';'"
 |-- FunctionDef "t10_new_missing_type : _Z20t10_new_missing_typev"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 64: near ';'"
+|       `-- ErrorNode "line 63: near ';'"
 `-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- DeclGroup
@@ -105,16 +105,6 @@ Program "translation_unit"
         |   |   `-- IntLiteral "10"
         |   `-- VarDecl "y : INT"
         |       `-- IntLiteral "20"
-        |-- VarDecl "adder : INT"
-        |   `-- LambdaExpr "x, &y"
-        |       |-- ParamDecl "a : INT"
-        |       `-- CompoundStmt
-        |           `-- ReturnStmt
-        |               `-- BinaryExpr "+"
-        |                   |-- BinaryExpr "+"
-        |                   |   |-- Identifier "a"
-        |                   |   `-- Identifier "x"
-        |                   `-- Identifier "y"
         |-- VarDecl "cond : INT"
         |   `-- TernaryExpr
         |       |-- BinaryExpr ">"

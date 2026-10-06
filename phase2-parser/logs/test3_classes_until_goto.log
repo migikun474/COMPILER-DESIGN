@@ -2,23 +2,13 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test3_classes_enums_lambda.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test3_classes_until_goto.c
 
 No errors found.
 
 --- Token / Token_Type ---
 Token                          Token_Type          
 -----                          ----------          
-enum                           enum                
-Color                          ENUM                
-{                              open_brace_op       
-RED                            ENUM_CONSTANT       
-,                              comma_op            
-GREEN                          ENUM_CONSTANT       
-,                              comma_op            
-BLUE                           ENUM_CONSTANT       
-}                              close_brace_op      
-;                              semicolon_op        
 class                          class               
 Shape                          CLASS               
 {                              open_brace_op       
@@ -50,14 +40,6 @@ main                           PROCEDURE
 (                              open_paren_op       
 )                              close_paren_op      
 {                              open_brace_op       
-enum                           enum                
-Color                          ENUM                
-c                              ENUM                
-;                              semicolon_op        
-c                              ENUM                
-=                              assign_op           
-RED                            ENUM_CONSTANT       
-;                              semicolon_op        
 class                          class               
 Shape                          CLASS               
 s                              CLASS               
@@ -67,17 +49,6 @@ s                              CLASS
 sides                          INT                 
 =                              assign_op           
 4                              INT_LITERAL         
-;                              semicolon_op        
-int                            int                 
-(                              open_paren_op       
-*                              star_op             
-fp                             INT_FUNCTION_POINTER
-)                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-,                              comma_op            
-int                            int                 
-)                              close_paren_op      
 ;                              semicolon_op        
 int                            int                 
 x                              INT                 
@@ -90,27 +61,17 @@ y                              INT
 10                             INT_LITERAL         
 ;                              semicolon_op        
 auto                           auto                
-adder                          INT                 
+total                          INT                 
 =                              assign_op           
-[                              open_bracket_op     
 x                              INT                 
-,                              comma_op            
-&                              ampersand_op        
++                              plus_op             
 y                              INT                 
-]                              close_bracket_op    
++                              plus_op             
+s                              CLASS               
+.                              dot_op              
+area                           PROCEDURE           
 (                              open_paren_op       
-int                            int                 
-z                              INT                 
 )                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-x                              INT                 
-+                              plus_op             
-y                              INT                 
-+                              plus_op             
-z                              INT                 
-;                              semicolon_op        
-}                              close_brace_op      
 ;                              semicolon_op        
 until                          until               
 (                              open_paren_op       
@@ -151,10 +112,6 @@ return                         return
 
 --- Abstract Syntax Tree ---
 Program "translation_unit"
-|-- EnumDecl "Color"
-|   |-- Enumerator "RED"
-|   |-- Enumerator "GREEN"
-|   `-- Enumerator "BLUE"
 |-- ClassDecl "Shape"
 |   |-- VarDecl "sides : INT"
 |   |-- FunctionDef "area : _ZN5Shape4areaEv"
@@ -166,32 +123,24 @@ Program "translation_unit"
 |   `-- VarDecl "secret : INT"
 `-- FunctionDef "main : main"
     `-- CompoundStmt
-        |-- VarDecl "c : ENUM"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- Identifier "c"
-        |       `-- Identifier "RED"
         |-- VarDecl "s : CLASS"
         |-- ExprStmt
         |   `-- AssignExpr "="
         |       |-- MemberExpr "sides"
         |       |   `-- Identifier "s"
         |       `-- IntLiteral "4"
-        |-- VarDecl "fp : INT_FUNCTION_POINTER"
         |-- VarDecl "x : INT"
         |   `-- IntLiteral "5"
         |-- VarDecl "y : INT"
         |   `-- IntLiteral "10"
-        |-- VarDecl "adder : INT"
-        |   `-- LambdaExpr "x, &y"
-        |       |-- ParamDecl "z : INT"
-        |       `-- CompoundStmt
-        |           `-- ReturnStmt
-        |               `-- BinaryExpr "+"
-        |                   |-- BinaryExpr "+"
-        |                   |   |-- Identifier "x"
-        |                   |   `-- Identifier "y"
-        |                   `-- Identifier "z"
+        |-- VarDecl "total : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- BinaryExpr "+"
+        |       |   |-- Identifier "x"
+        |       |   `-- Identifier "y"
+        |       `-- CallExpr
+        |           `-- MemberExpr "area"
+        |               `-- Identifier "s"
         |-- UntilStmt
         |   |-- BinaryExpr "<="
         |   |   |-- Identifier "x"
@@ -220,20 +169,13 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Color                enum_tag       1      global                       ENUM                                      0                                
-RED                  enum_constant  1      global                       ENUM_CONSTANT                             1                                
-GREEN                enum_constant  1      global                       ENUM_CONSTANT                             0                                
-BLUE                 enum_constant  1      global                       ENUM_CONSTANT                             0                                
-Shape                class_tag      3      global                       CLASS                                     0                                
-Shape::sides         class_member   5      global > class Shape         INT                                       2                                
-Shape::area          class_method   6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
-Shape::secret        class_member   10     global > class Shape         INT                                       0                                
-main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 main
-c                    variable       14     global > main()              ENUM                                      1                                
-s                    variable       16     global > main()              CLASS                                     1                                
-fp                   variable       19     global > main()              INT_FUNCTION_POINTER *                        0         INT (INT, INT)         
-x                    variable       21     global > main()              INT                                       7                                
-y                    variable       22     global > main()              INT                                       2                                
-z                    parameter      23     global > main() > lambda     INT                                       1                                
-adder                variable       23     global > main()              INT                                       0                                
-done                 label          36     global > main()              LABEL                                     0                                
+Shape                class_tag      1      global                       CLASS                                     0                                
+Shape::sides         class_member   3      global > class Shape         INT                                       2                                
+Shape::area          class_method   4      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::secret        class_member   8      global > class Shape         INT                                       0                                
+main                 procedure      11     global                       PROCEDURE                                 0         INT ()                 main
+s                    variable       12     global > main()              CLASS                                     2                                
+x                    variable       15     global > main()              INT                                       6                                
+y                    variable       16     global > main()              INT                                       1                                
+total                variable       17     global > main()              INT                                       0                                
+done                 label          28     global > main()              LABEL                                     0                                

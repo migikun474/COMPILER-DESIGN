@@ -3,13 +3,7 @@ struct Point {
     int y;
 };
 
-enum Color {
-    RED,
-    GREEN,
-    BLUE
-};
-
-union Data {
+struct Data {
     int i;
     float f;
     char str[20];
@@ -29,8 +23,7 @@ int main() {
 
     struct Point origin;
     struct Point *ptr;
-    enum Color favorite;
-    union Data data;
+    struct Data data;
 
     nums[0] = 1;
     letters[0] = 'a';
@@ -47,7 +40,6 @@ int main() {
     ptr->x = 3;
     ptr->y = 4;
 
-    favorite = GREEN;
     data.i = 5;
 
     printf("%d %d\n", ptr->x, ptr->y);

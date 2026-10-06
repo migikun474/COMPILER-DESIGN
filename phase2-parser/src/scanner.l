@@ -29,7 +29,7 @@ static int g_prevToken = 0; /* the previously returned token code */
 static int emit(int tokcode, const std::string &defaultCategory) {
     if (tokcode != '*' && tokcode != '&' && tokcode != '(' && tokcode != CONST && tokcode != VOLATILE)
         g_afterTypeKeyword = false;
-    if (tokcode == '(' || tokcode == '[' || tokcode == '{' || tokcode == DESIG_LBRACKET || tokcode == ABSTRACT_LPAREN)
+    if (tokcode == '(' || tokcode == '[' || tokcode == '{' || tokcode == ABSTRACT_LPAREN)
         ++g_bracketDepth;
     else if (tokcode == ')' || tokcode == ']' || tokcode == '}') --g_bracketDepth;
     else if (tokcode == ';' && inDeclaratorListAt(g_bracketDepth)) endDeclaratorList();
@@ -57,7 +57,7 @@ static int emitShared(TokenType t) {
     return emit(to_bison_token(t), to_string(t));
 }
 
-/* Inside its own body a class/struct/union name is a type too (`Node
+/* Inside its own body a class/struct name is a type too (`Node
    *next;`), except right before '(' where it names a constructor
    (`Node(int v)`, `~Node()`); everywhere else typedef'd names and
    already-defined tags are TYPE_NAME (the classic lexer hack). */
@@ -66,11 +66,11 @@ static int emitShared(TokenType t) {
    `new Dog(4)`, `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
 static bool typePositionAfter(int tok) {
     switch (tok) {
-        case NEW: case SCOPE_RES: case '~': case STRUCT: case UNION: case CLASS: case ENUM: case OPERATOR:
+        case NEW: case SCOPE_RES: case '~': case STRUCT: case CLASS: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
         case EXTERN: case REGISTER:
-        case VOLATILE: case FILE_KW: case VA_LIST:
+        case VOLATILE: case VA_LIST:
             return true;
         default:
             return false;
@@ -164,19 +164,11 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "(" {
     /* `(*)` / `(&)` right after a type: a nameless declarator, as in
-       `(int (*)(int)) f`, never the argument list of `int(...)` */
+       `sizeof(int (*)[3])`, never the argument list of `int(...)` */
     if ((typePositionAfter(g_prevToken) || g_prevToken == '*' || g_prevToken == '&') && abstractDeclaratorGroup(yylineno, g_col)) {
         return emit(ABSTRACT_LPAREN, to_string(operator_token("(").value()));
     }
     return emitShared(operator_token("(").value());
-}
-
-"[" {
-    /* `[i] = v` in an initializer list: a designator, not a lambda */
-    if ((g_prevToken == '{' || g_prevToken == ',') && bracketIsDesignator(yylineno, g_col)) {
-        return emit(DESIG_LBRACKET, to_string(operator_token("[").value()));
-    }
-    return emitShared(operator_token("[").value());
 }
 
 "..."   |
@@ -202,7 +194,7 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 "&="    |
 "|="    |
 "^="    |
-[+\-*/%=<>!&|^~.,?:(){}\]\;] {
+[+\-*/%=<>!&|^~.,?:(){}\[\]\;] {
     auto op = operator_token(yytext);
     if (op.has_value()) {
         return emitShared(op.value());

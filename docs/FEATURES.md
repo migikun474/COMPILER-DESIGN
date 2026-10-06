@@ -76,19 +76,14 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constructors / destructors (in-class, out-of-class, `new T(args)`) | ✓ | ◐ | ✓ | ✓ | — | — | P:test24, S:v17 e15 | partial: no member-initializer lists |
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | — | — | P:test24, S:v17 e15 | front end complete |
 | Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ◐ | — | — | P:test12, S:v11 v16 e04 | front end complete; converting constructors only in initialization |
-| Lambdas (`[x, &y]`, `[=]`, `[&]`, `[this]`, `mutable`, `-> T`) | ✓ | ✓ | ✓ | ◐ | — | — | L:test10, S:v11 v18 e10 | front end complete; capture rules checked against the innermost lambda only |
-| Function pointers (arrays of, as parameters, typedef'd) | ✓ | ✓ | ✓ | ✓ | — | — | P:funcPtr test9, S:v06 v15 | front end complete |
-| enum | ✓ | ✓ | ✓ | ✓ | — | — | L:test3, S:v08 e10 | front end complete (values folded; C rules: `int` converts to an enum) |
-| union | ✓ | ✓ | ✓ | ✓ | — | — | L:test3, S:v07 e07 | front end complete |
-| File manipulation (`FILE`, `fopen` `fclose` `fread` `fwrite` `fprintf` `fscanf` `fgets` `fputs` `feof`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test8, P:test6 test22, S:v09 e10 | front end complete (reserved words with built-in signatures) |
 | Preprocessor (`#define` object/function-like, `#` `##` `__VA_ARGS__`, `#undef`, `#if/#ifdef/#ifndef/#elif/#else/#endif`, `#include "…"`, `#error`, `#pragma once`) | ✓ | ✓ | — | ✓ | — | — | L:test11, P:test26, S:v20 e16 e17 | front end complete; `#include <…>` system headers are accepted and ignored |
-| `const`, `volatile`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | — | — | S:v01 v18 | front end complete |
+| `const`, `volatile`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | — | — | S:v01 v11 v18 | front end complete |
 | `extern`, `register` | ✓ | ✓ | ✓ | ✓ | — | — | P:test28, S:v24 e20 | front end complete (linkage, composite types) |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | — | — | P:test25, S:v19 | front end complete |
 | `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | — | — | S:v02 v22 v24 | front end complete |
 | Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | — | — | S:v02 | front end complete |
 | Initializer lists, designated `.x = 1`, `[2] = 7`, empty `{}` | ✓ | ✓ | ✓ | ◐ | — | — | P:test24, S:v05 v18 | front end complete; brace elision for arrays only |
-| Unnamed struct/union/enum, anonymous members, anonymous unions | ✓ | ✓ | ✓ | ✓ | — | — | P:test27, S:v22 v23 e18 e19 | front end complete |
+| Unnamed structs/classes, anonymous struct members | ✓ | ✓ | ✓ | ✓ | — | — | P:test27, S:v22 e18 | front end complete |
 | Numeric literals: hex, octal, binary, suffixes `U L LL`, floats `.5` `5.` `1e3f` | ✓ | ✓ | ✓ | ✓ | — | — | L:test5 test7 | front end complete |
 | String/char literals, escapes, adjacent string concatenation | ✓ | ✓ | ✓ | ✓ | — | — | L:test6, P:array | front end complete |
 | `bool`, `true`, `false` | ✓ | ✓ | ✓ | ✓ | — | — | L:test7, S:v01 | front end complete |
@@ -99,9 +94,9 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Capability | Where | Tests |
 |---|---|---|
 | Preprocessing with a line map (errors reported at the original file and line, including headers) | `shared/preprocessor`, `shared/diagnostics` | P:test26, S:v20 e16 e17 |
-| Multiple-error reporting: lexer collects all errors; parser recovers at `;` / `}` (Bison `error` productions); semantic analysis reports every error once (de-duplicated) | `lexer.l`, `parser.y`, `SemanticAnalyzer::error()` | L:test6, P:test14–test23 |
+| Multiple-error reporting: lexer collects all errors; parser recovers at `;` / `}` (Bison `error` productions); semantic analysis reports every error once (de-duplicated) | `lexer.l`, `parser.y`, `SemanticAnalyzer::error()` | L:test6, P:test14–test21, test23, test29 |
 | GCC/Clang-style diagnostics: `file:line:col: kind: message`, source line, caret | `printDiagnostic()` in `shared/diagnostics` | all invalid tests |
-| Partial AST on syntax errors (`ErrorNode`) | `parser.y` | P:test5, test14–test23 |
+| Partial AST on syntax errors (`ErrorNode`) | `parser.y` | P:test5, test14–test21, test23, test29 |
 | Token / Token_Type table with context classification (`a → INT`, `f → PROCEDURE`) | `parser.y` + parse-time symbol table | all P tests |
 | AST construction during parsing, printed as a tree | `shared/ast` | all P tests |
 | Annotated AST: every expression's type, lvalue-ness, folded constant, resolved symbol | `phase2b-semantic/src/report.cpp` | all S valid tests |
@@ -110,7 +105,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 81 test programs |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 80 test programs |
 
 ## Feature catalog
 
@@ -132,11 +127,10 @@ arrays.
 
 Classes/objects/`this`, single and multiple inheritance, access
 modifiers, constructors/destructors, operator overloading, function
-overloading, lambdas, function pointers, enums, unions, file
-manipulation, a C preprocessor, `const`/`volatile`/`auto`,
+overloading, a C preprocessor, `const`/`volatile`/`auto`,
 `extern`/`register`, C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
-aggregates and anonymous unions, hex/octal/binary literals with
+structs and anonymous struct members, hex/octal/binary literals with
 suffixes, `bool`, Itanium name mangling — plus the analysis capabilities
 listed above (sequence-point warnings, typed constant folding, record
 layouts, gcc-style printf/scanf format checking).
@@ -148,7 +142,6 @@ layouts, gcc-style printf/scanf format checking).
 | Classes | constructor member-initializer lists (`Dog() : Animal(4) {}` is a syntax error), `virtual` / polymorphism, `const` member functions, `friend`, `explicit` | grammar (`parser.y`) |
 | Struct initialization | brace elision into struct members: `struct { int a[2]; int b; } s = {1, 2, 3};` is rejected (and the message calls `s` an "array variable") | `checkInitializer()` |
 | Control-flow checks | no flow analysis: "missing return" only when a non-`void` function has no `return` at all; no unreachable-code or uninitialized-use diagnostics; a `goto`/`case` jumping over an initialization is not reported | `statements.cpp` |
-| Lambdas | capture rules are checked against the innermost lambda only | `identifier()` |
 | Overloading | converting constructors are applied in initialization (`Dog d = 4;`) but not to arguments or returns | `argumentConversion()` |
 | Parser member classification | the Token_Type table resolves `p.x` / `p->x` only when the base is a plain identifier (`arr[0].x` stays `IDENTIFIER`); semantic analysis types every form correctly | `parser.y` |
 | Phase-1 lexer positions | line numbers only, no columns (the parser's scanner does report columns) | `lexer.l` |
@@ -171,6 +164,20 @@ semantic phase redoes all name resolution.)
 | MIPS optimizations, register allocation | not started |
 
 ### G. Unsupported (no implementation; rejected as syntax errors)
+
+**Removed on 2026-10-07** (they were implemented in the front end and
+then dropped before the back end was started — see
+[`DESIGN_LOG.md`](DESIGN_LOG.md), decisions D1–D6): `enum`, `union`
+(including anonymous unions), file manipulation (`FILE`, `fopen`,
+`fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`,
+`feof`), lambdas, and function pointers. Their keywords are ordinary
+identifiers again. `enum`/`union` definitions, lambdas and
+function-pointer declarators are syntax errors
+(P:test29); a function name used as a value, a parameter of function
+type and the now-undeclared file names are semantic errors (S:e19);
+S:v23 shows the former keywords used as identifiers.
+
+**Never implemented:**
 
 Bit-fields, default arguments, templates, namespaces, `using` aliases,
 exceptions (`try`/`catch`/`throw`), `inline`, `virtual`, `friend`,

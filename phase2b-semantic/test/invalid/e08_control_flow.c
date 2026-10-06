@@ -37,7 +37,6 @@ twice:
     x++;
 twice:                            // error: redefinition of label 'twice'
     while (x) {
-        auto inner = [&]() { break; };   // error: 'break' statement not within a loop or switch
         break;
     }
     return x;

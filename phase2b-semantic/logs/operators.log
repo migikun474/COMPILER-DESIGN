@@ -2,15 +2,15 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/operators.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/operators.c
 
-Semantic analysis failed: 1 error(s), 1 warning(s) in '../phase2-parser/test/operators.c'.
+Semantic analysis failed: 1 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/operators.c'.
 
-../phase2-parser/test/operators.c:11:10: semantic error: lvalue required as increment operand (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/operators.c:11:10: semantic error: lvalue required as increment operand (this expression is not assignable) [lvalue]
  11 |     c = a+++++b;   
     |          ^
 
-../phase2-parser/test/operators.c:18:18: semantic warning: format '%d' expects an integer, but argument 2 has type 'int *' [format]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/operators.c:18:18: semantic warning: format '%d' expects an integer, but argument 2 has type 'int *' [format]
  18 |     printf("%d", &c);
     |                  ^
 

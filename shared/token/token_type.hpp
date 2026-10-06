@@ -48,8 +48,6 @@ enum class TokenType {
 
     // ---- composite-type keywords (introduce a user-defined type) ----
     STRUCT,
-    ENUM,
-    UNION,
     CLASS,
 
     // ---- access modifiers ----
@@ -98,18 +96,6 @@ enum class TokenType {
     CALLOC,
     REALLOC,
 
-    // ---- file-manipulation keywords (custom to this language) ----
-    FILE_KEYWORD,
-    FOPEN,
-    FCLOSE,
-    FREAD,
-    FWRITE,
-    FPRINTF,
-    FSCANF,
-    FGETS,
-    FPUTS,
-    FEOF,
-
     // ---- variable-argument access (custom reserved words, like the
     // I/O ones: real C gets these from <stdarg.h>) ----
     VA_LIST,
@@ -118,7 +104,6 @@ enum class TokenType {
     VA_END,
 
     // ---- C++-style extensions ----
-    MUTABLE,
     OPERATOR,
 
     // ---- operators ----

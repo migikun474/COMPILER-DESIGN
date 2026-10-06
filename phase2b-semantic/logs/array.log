@@ -2,11 +2,11 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/array.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/array.c
 
-Semantic analysis successful: 0 error(s), 1 warning(s) in '../phase2-parser/test/array.c'.
+Semantic analysis successful: 0 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/array.c'.
 
-../phase2-parser/test/array.c:7:17: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/array.c:7:17: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
  7 |     int  e    = 'ab';               
    |                 ^
 

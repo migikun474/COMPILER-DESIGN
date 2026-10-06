@@ -1,4 +1,4 @@
-/* valid: lambdas and captures, function overloading, references */
+/* valid: function overloading, references */
 int combine(int a, int b) { return a + b; }
 int combine(char a, char b) { return a - b; }
 double combine(double a, double b) { return a * b; }
@@ -22,12 +22,6 @@ int main() {
     alias = 7;
     bump(x);
 
-    auto adder = [x, &y](int z) { return x + y + z; };
-    r = adder(3);
-    auto all = [=]() { return x * y; };
-    auto byRef = [&]() { y = y + 1; return y; };
-    auto noCapture = [](int a, int b) { return a < b ? b : a; };
-    int (*fp)(int, int) = noCapture;   /* a captureless lambda converts to a function pointer */
-    auto nested = [&](int k) { auto inner = [k]() { return k * 2; }; return inner(); };
-    return r + all() + byRef() + fp(1, 2) + nested(4) + d;
+    auto sum = x + y;             /* `auto` deduces int */
+    return r + sum + d;
 }

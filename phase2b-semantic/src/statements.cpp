@@ -12,7 +12,7 @@ static std::string q(const TypePtr &t) { return "'" + typeToString(t) + "'"; }
    ===================================================================== */
 
 void SemanticAnalyzer::collectLabels(const ASTNodePtr &n, FunctionCtx &ctx) {
-    if (!n || n->kind == ASTKind::LambdaExpr) return; /* a lambda has its own labels */
+    if (!n) return;
     if (n->kind == ASTKind::LabeledStmt) {
         auto it = ctx.labels.find(n->label);
         if (it != ctx.labels.end()) {
@@ -179,7 +179,7 @@ void SemanticAnalyzer::statement(const ASTNodePtr &n) {
             break;
         }
         case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::FunctionDecl: case ASTKind::TypedefDecl:
-        case ASTKind::StructDecl: case ASTKind::UnionDecl: case ASTKind::ClassDecl: case ASTKind::EnumDecl:
+        case ASTKind::StructDecl: case ASTKind::ClassDecl:
             declaration(n, DeclCtx::Local);
             break;
         default:
@@ -190,18 +190,6 @@ void SemanticAnalyzer::statement(const ASTNodePtr &n) {
 void SemanticAnalyzer::returnStatement(const ASTNodePtr &n) {
     FunctionCtx *f = fn();
     ASTNodePtr e = n->children.empty() ? nullptr : n->children[0];
-    if (f->isLambda && !f->explicitReturn) {
-        TypePtr t = e ? value(e) : voidType();
-        if (isError(t)) return;
-        if (!f->deducedRet) {
-            f->deducedRet = t;
-        } else if (!sameType(t, f->deducedRet)) {
-            error(e ? e.get() : n.get(), "return type " + q(t) + " must match the previous return type " +
-                                             q(f->deducedRet) + " (the lambda's return type is deduced)",
-                  "return-type");
-        }
-        return;
-    }
     if (f->isConstructorLike) {
         if (e) {
             expr(e);
@@ -234,9 +222,8 @@ void SemanticAnalyzer::returnStatement(const ASTNodePtr &n) {
         return;
     }
     expr(e);
-    convertible(f->ret, e, "type mismatch: cannot return '%F' from " +
-                               (f->isLambda ? std::string("a lambda") : "function '" + f->name + "'") +
-                               " whose return type is '%T'");
+    convertible(f->ret, e, "type mismatch: cannot return '%F' from function '" + f->name +
+                               "' whose return type is '%T'");
 }
 
 } // namespace sem

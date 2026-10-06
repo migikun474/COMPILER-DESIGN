@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test9_pointers_and_function_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test9_pointers.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/test9_pointers_and_function_pointers.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test9_pointers.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -34,29 +34,41 @@ Program "translation_unit"
     |-- ParamDecl "argc : INT"  <int>  -> argc.4 (parameter, param)
     |-- ParamDecl "argv : CHAR_POINTER_POINTER"  <char **>  -> argv.5 (parameter, param)
     `-- CompoundStmt
-        |-- VarDecl "fp : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> fp.6 (variable, local)
+        |-- VarDecl "nums : INT_ARRAY"  <int[3]>  -> nums.6 (variable, local)
+        |-- VarDecl "row : INT_POINTER_ARRAY"  <int (*)[3]>  -> row.7 (variable, local)
         |-- ExprStmt
-        |   `-- AssignExpr "="  <int (*)(int, int)>
-        |       |-- Identifier "fp"  <int (*)(int, int)> lvalue  -> fp.6 (variable, local)
-        |       `-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
-        |-- VarDecl "result : INT"  <int>  -> result.7 (variable, local)
+        |   `-- AssignExpr "="  <int (*)[3]>
+        |       |-- Identifier "row"  <int (*)[3]> lvalue  -> row.7 (variable, local)
+        |       `-- UnaryExpr "&"  <int (*)[3]>
+        |           `-- Identifier "nums"  <int[3]> lvalue  -> nums.6 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- Identifier "result"  <int> lvalue  -> result.7 (variable, local)
-        |       `-- CallExpr  <int>
-        |           |-- Identifier "fp"  <int (*)(int, int)> lvalue  -> fp.6 (variable, local)
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- UnaryExpr "*"  <int[3]> lvalue
+        |       |   |   `-- Identifier "row"  <int (*)[3]> lvalue  -> row.7 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "result : INT"  <int>  -> result.8 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "result"  <int> lvalue  -> result.8 (variable, local)
+        |       `-- CallExpr  <int>  -> _Z3addii (function)
+        |           |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
         |           |-- IntLiteral "2"  <int> =2
-        |           `-- IntLiteral "3"  <int> =3
-        |-- VarDecl "val : INT_POINTER"  <int *>  -> val.8 (variable, local)
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- UnaryExpr "*"  <int[3]> lvalue
+        |               |   `-- Identifier "row"  <int (*)[3]> lvalue  -> row.7 (variable, local)
+        |               `-- IntLiteral "0"  <int> =0
+        |-- VarDecl "val : INT_POINTER"  <int *>  -> val.9 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int *>
-        |       |-- Identifier "val"  <int *> lvalue  -> val.8 (variable, local)
+        |       |-- Identifier "val"  <int *> lvalue  -> val.9 (variable, local)
         |       `-- CallExpr  <int *>  -> _Z7makeIntv (function)
         |           `-- Identifier "makeInt"  <int *(void)>  -> _Z7makeIntv (function)
-        |-- VarDecl "x : INT"  <int>  -> x.9 (variable, local)
+        |-- VarDecl "x : INT"  <int>  -> x.10 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |-- Identifier "x"  <int> lvalue  -> x.10 (variable, local)
         |       `-- Identifier "argc"  <int> lvalue  -> argc.4 (parameter, param)
         `-- ReturnStmt
             `-- IntLiteral "0"  <int> =0
@@ -72,10 +84,11 @@ p                  variable       int *                      local    global > m
 main               function       int (int, char **)         -        global                         13    -     0     main                 main                     defined
 argc               parameter      int                        param    global > main()                13    4     1     argc.4               -                        
 argv               parameter      char **                    param    global > main()                13    4     0     argv.5               -                        
-fp                 variable       int (*)(int, int)          local    global > main()                14    4     2     fp.6                 -                        
-result             variable       int                        local    global > main()                16    4     1     result.7             -                        
-val                variable       int *                      local    global > main()                19    4     1     val.8                -                        
-x                  variable       int                        local    global > main()                22    4     1     x.9                  -                        
+nums               variable       int[3]                     local    global > main()                14    12    1     nums.6               -                        
+row                variable       int (*)[3]                 local    global > main()                15    4     3     row.7                -                        
+result             variable       int                        local    global > main()                18    4     1     result.8             -                        
+val                variable       int *                      local    global > main()                21    4     1     val.9                -                        
+x                  variable       int                        local    global > main()                24    4     1     x.10                 -                        
 
 === Record Layouts (MIPS32) ===
 (no records)

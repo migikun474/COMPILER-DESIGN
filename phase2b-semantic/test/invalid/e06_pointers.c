@@ -20,8 +20,7 @@ int main() {
     p = d;                        // error: cannot assign 'double' to 'int *'
     x = cp - p;                   // error: pointers to different types cannot be subtracted
     delete x;                     // error: cannot delete an expression of type 'int'
-    int (*fp)(int) = f;
-    fp = &x;                      // error: incompatible pointer types
-    int (*g)(char *s) = f;         // error: incompatible pointer types
+    int (*pa)[3] = &x;            // error: incompatible pointer types
+    x = f(*pp);                   // error: argument 1 of 'f' expects 'int' but got 'int *'
     return x;
 }

@@ -44,7 +44,7 @@ int main() {
     x = overloaded(d);            /* double -> int is a standard conversion: picks overloaded(int) */
     x = overloaded(&d);           // error: no matching function for call to 'overloaded(double *)'
     x = amb(c, 2);                // error: call to overloaded function 'amb(char, int)' is ambiguous
-    x = half;                     // error: cannot assign 'double (*)(double)' to 'int'
+    x = half;                     // error: reference to function 'half' must be called
     x = sink(&x);                 // error: a void expression has no value
     return x;
 }

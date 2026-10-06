@@ -2,79 +2,79 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e09_classes.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c
 
-Semantic analysis failed: 18 error(s), 0 warning(s) in 'test/invalid/e09_classes.c'.
+Semantic analysis failed: 18 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c'.
 
-test/invalid/e09_classes.c:7:32: semantic error: 'this' cannot be used in a static member function [this]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:7:32: semantic error: 'this' cannot be used in a static member function [this]
  7 |     static int util() { return this->pub; }   // error: 'this' cannot be used in a static member function
    |                                ^
 
-test/invalid/e09_classes.c:8:33: semantic error: invalid use of non-static member 'pub' in a static member function [this]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:8:33: semantic error: invalid use of non-static member 'pub' in a static member function [this]
  8 |     static int util2() { return pub; }        // error: invalid use of non-static member 'pub' in a static member function
    |                                 ^
 
-test/invalid/e09_classes.c:18:25: semantic error: 'priv' is a private member of 'class Base' and is not accessible from class 'Derived' [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:18:25: semantic error: 'priv' is a private member of 'class Base' and is not accessible from class 'Derived' [access]
  18 |     int peek() { return priv; }   // error: 'priv' is a private member of 'class Base' and is not accessible from class 'Derived'
     |                         ^
 
-test/invalid/e09_classes.c:20:5: semantic error: member function 'foo' must declare a return type (only constructors, named 'Derived', may omit it) [missing-return-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:20:5: semantic error: member function 'foo' must declare a return type (only constructors, named 'Derived', may omit it) [missing-return-type]
  20 |     foo(int x) { }                // error: member function 'foo' must declare a return type
     |     ^
 
-test/invalid/e09_classes.c:21:6: semantic error: destructor name '~Other' does not match the class name 'Derived' [destructor]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:21:6: semantic error: destructor name '~Other' does not match the class name 'Derived' [destructor]
  21 |     ~Other() { }                  // error: destructor name '~Other' does not match the class name 'Derived'
     |      ^
 
-test/invalid/e09_classes.c:29:7: semantic error: 'Loop' cannot inherit from itself [inheritance]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:29:7: semantic error: 'Loop' cannot inherit from itself [inheritance]
  29 | class Loop : public Loop { };     // error: 'Loop' cannot inherit from itself
     |       ^
 
-test/invalid/e09_classes.c:30:7: semantic error: base class 'Ghost' is not a declared class or struct [inheritance]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:30:7: semantic error: base class 'Ghost' is not a declared class or struct [inheritance]
  30 | class FromUnknown : public Ghost { };   // error: base class 'Ghost' is not a declared class or struct
     |       ^
 
-test/invalid/e09_classes.c:32:11: semantic error: out-of-line definition of 'Base::method' with type 'int (int)' does not match any declaration in class 'Base' [no-matching-declaration]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:32:11: semantic error: out-of-line definition of 'Base::method' with type 'int (int)' does not match any declaration in class 'Base' [no-matching-declaration]
  32 | int Base::method(int extra) { return extra; }   // error: does not match any declaration in class 'Base'
     |           ^
 
-test/invalid/e09_classes.c:33:14: semantic error: use of undeclared class 'Nowhere' in the definition of 'Nowhere::method' [unknown-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:33:14: semantic error: use of undeclared class 'Nowhere' in the definition of 'Nowhere::method' [unknown-type]
  33 | int Nowhere::method() { return 0; }             // error: use of undeclared class 'Nowhere'
     |              ^
 
-test/invalid/e09_classes.c:36:12: semantic error: invalid use of 'this' outside of a non-static member function [this]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:36:12: semantic error: invalid use of 'this' outside of a non-static member function [this]
  36 |     return this->pub;             // error: invalid use of 'this' outside of a non-static member function
     |            ^
 
-test/invalid/e09_classes.c:44:7: semantic error: 'prot' is a protected member of 'class Base' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:44:7: semantic error: 'prot' is a protected member of 'class Base' and is not accessible outside the class [access]
  44 |     b.prot = 2;                   // error: 'prot' is a protected member of 'class Base' and is not accessible outside the class
     |       ^
 
-test/invalid/e09_classes.c:45:7: semantic error: 'priv' is a private member of 'class Base' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:45:7: semantic error: 'priv' is a private member of 'class Base' and is not accessible outside the class [access]
  45 |     b.priv = 3;                   // error: 'priv' is a private member of 'class Base'
     |       ^
 
-test/invalid/e09_classes.c:46:7: semantic error: 'hidden' is a private member of 'class Base' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:46:7: semantic error: 'hidden' is a private member of 'class Base' and is not accessible outside the class [access]
  46 |     b.hidden();                   // error: 'hidden' is a private member of 'class Base'
     |       ^
 
-test/invalid/e09_classes.c:47:7: semantic error: 'prot' is a protected member of 'class Base' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:47:7: semantic error: 'prot' is a protected member of 'class Base' and is not accessible outside the class [access]
  47 |     d.prot = 4;                   // error: 'prot' is a protected member of 'class Base'
     |       ^
 
-test/invalid/e09_classes.c:48:7: semantic error: 'pub' (a public member of 'class Base') is not accessible outside the class because of non-public inheritance [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:48:7: semantic error: 'pub' (a public member of 'class Base') is not accessible outside the class because of non-public inheritance [access]
  48 |     h.pub = 5;                    // error: is not accessible outside the class because of non-public inheritance
     |       ^
 
-test/invalid/e09_classes.c:49:7: semantic error: reference to member function 'work' must be called [member-access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:49:7: semantic error: reference to member function 'work' must be called [member-access]
  49 |     b.work;                       // error: reference to member function 'work' must be called
     |       ^
 
-test/invalid/e09_classes.c:50:7: semantic error: function 'work' expects 0 arguments but 1 was provided [argument-count]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:50:7: semantic error: function 'work' expects 0 arguments but 1 was provided [argument-count]
  50 |     b.work(1);                    // error: function 'work' expects 0 arguments but 1 was provided
     |       ^
 
-test/invalid/e09_classes.c:51:7: semantic error: unknown member 'nothing': no member named 'nothing' in 'class Base' [unknown-member]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e09_classes.c:51:7: semantic error: unknown member 'nothing': no member named 'nothing' in 'class Base' [unknown-member]
  51 |     b.nothing();                  // error: no member named 'nothing' in 'class Base'
     |       ^
 

@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test9_pointers_and_function_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test9_pointers.c
 
 No errors found.
 
@@ -62,30 +62,51 @@ argv                           CHAR_POINTER_POINTER
 )                              close_paren_op      
 {                              open_brace_op       
 int                            int                 
+nums                           INT_ARRAY           
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
+;                              semicolon_op        
+int                            int                 
 (                              open_paren_op       
 *                              star_op             
-fp                             INT_FUNCTION_POINTER
+row                            INT_POINTER_ARRAY   
 )                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-,                              comma_op            
-int                            int                 
-)                              close_paren_op      
+[                              open_bracket_op     
+3                              INT_LITERAL         
+]                              close_bracket_op    
 ;                              semicolon_op        
-fp                             INT_FUNCTION_POINTER
+row                            INT_POINTER_ARRAY   
+=                              assign_op           
+&                              ampersand_op        
+nums                           INT_ARRAY           
+;                              semicolon_op        
+(                              open_paren_op       
+*                              star_op             
+row                            INT_POINTER_ARRAY   
+)                              close_paren_op      
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+result                         INT                 
+;                              semicolon_op        
+result                         INT                 
 =                              assign_op           
 add                            PROCEDURE           
-;                              semicolon_op        
-int                            int                 
-result                         INT                 
-;                              semicolon_op        
-result                         INT                 
-=                              assign_op           
-fp                             INT_FUNCTION_POINTER
 (                              open_paren_op       
 2                              INT_LITERAL         
 ,                              comma_op            
-3                              INT_LITERAL         
+(                              open_paren_op       
+*                              star_op             
+row                            INT_POINTER_ARRAY   
+)                              close_paren_op      
+[                              open_bracket_op     
+0                              INT_LITERAL         
+]                              close_bracket_op    
 )                              close_paren_op      
 ;                              semicolon_op        
 int                            int                 
@@ -138,19 +159,31 @@ Program "translation_unit"
     |-- ParamDecl "argc : INT"
     |-- ParamDecl "argv : CHAR_POINTER_POINTER"
     `-- CompoundStmt
-        |-- VarDecl "fp : INT_FUNCTION_POINTER"
+        |-- VarDecl "nums : INT_ARRAY"
+        |-- VarDecl "row : INT_POINTER_ARRAY"
         |-- ExprStmt
         |   `-- AssignExpr "="
-        |       |-- Identifier "fp"
-        |       `-- Identifier "add"
+        |       |-- Identifier "row"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "nums"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- IndexExpr
+        |       |   |-- UnaryExpr "*"
+        |       |   |   `-- Identifier "row"
+        |       |   `-- IntLiteral "0"
+        |       `-- IntLiteral "1"
         |-- VarDecl "result : INT"
         |-- ExprStmt
         |   `-- AssignExpr "="
         |       |-- Identifier "result"
         |       `-- CallExpr
-        |           |-- Identifier "fp"
+        |           |-- Identifier "add"
         |           |-- IntLiteral "2"
-        |           `-- IntLiteral "3"
+        |           `-- IndexExpr
+        |               |-- UnaryExpr "*"
+        |               |   `-- Identifier "row"
+        |               `-- IntLiteral "0"
         |-- VarDecl "val : INT_POINTER"
         |-- ExprStmt
         |   `-- AssignExpr "="
@@ -177,7 +210,8 @@ p                    variable       7      global > makeInt()           INT_POIN
 main                 procedure      13     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) main
 argc                 parameter      13     global > main()              INT                                       1                                
 argv                 parameter      13     global > main()              CHAR_POINTER_POINTER                          0                                
-fp                   variable       14     global > main()              INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
-result               variable       16     global > main()              INT                                       1                                
-val                  variable       19     global > main()              INT_POINTER      *                        1                                
-x                    variable       22     global > main()              INT                                       1                                
+nums                 variable       14     global > main()              INT_ARRAY        []                       1                                
+row                  variable       15     global > main()              INT_POINTER_ARRAY * []                     3                                
+result               variable       18     global > main()              INT                                       1                                
+val                  variable       21     global > main()              INT_POINTER      *                        1                                
+x                    variable       24     global > main()              INT                                       1                                

@@ -15,7 +15,7 @@
                                   (integer expressions, `defined NAME`)
      #include "file"              relative to the including file
      #include <header>            standard headers are accepted and ignored:
-                                  printf, malloc, fopen, ... are keywords
+                                  printf, malloc, free, ... are keywords
                                   of this language, nothing to declare
      #error / #warning / #pragma (ignored)
      __LINE__, __FILE__

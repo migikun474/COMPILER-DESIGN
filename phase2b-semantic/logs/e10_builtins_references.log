@@ -1,0 +1,44 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c
+
+Semantic analysis failed: 8 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:9:17: semantic error: argument 2 of 'scanf' must be a pointer to the object to store into, not 'int' (did you forget '&'?) [scanf-argument]
+ 9 |     scanf("%d", x);               // error: argument 2 of 'scanf' must be a pointer
+   |                 ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:10:20: semantic warning: format '%d' expects 'int *', but argument 2 has type 'double *' [format]
+ 10 |     scanf("%d %s", &d, ro);       // error: argument 3 of 'scanf' points to read-only storage  // warning: format '%d' expects 'int *', but argument 2 has type 'double *'
+    |                    ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:10:24: semantic error: argument 3 of 'scanf' points to read-only storage 'const char *' [scanf-argument]
+ 10 |     scanf("%d %s", &d, ro);       // error: argument 3 of 'scanf' points to read-only storage  // warning: format '%d' expects 'int *', but argument 2 has type 'double *'
+    |                        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:11:12: semantic error: type mismatch: argument 1 of 'printf' expects 'const char *' but got 'int' (incompatible integer to pointer conversion) [argument-type]
+ 11 |     printf(5);                    // error: argument 1 of 'printf' expects 'const char *' but got 'int'
+    |            ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:12:10: semantic error: type mismatch: argument 1 of 'free' expects 'void *' but got 'int' (incompatible integer to pointer conversion) [argument-type]
+ 12 |     free(x);                      // error: argument 1 of 'free' expects 'void *' but got 'int'
+    |          ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:13:21: semantic error: type mismatch: argument 1 of 'malloc' expects 'int' but got 'char *' (incompatible pointer to integer conversion) [argument-type]
+ 13 |     int *m = malloc("big");       // error: argument 1 of 'malloc' expects 'int' but got 'char *'
+    |                     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:14:14: semantic error: function 'calloc' expects 2 arguments but 1 was provided [argument-count]
+ 14 |     int *z = calloc(4);           // error: function 'calloc' expects 2 arguments but 1 was provided
+    |              ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:15:16: semantic error: non-const reference of type 'int &' cannot bind to a temporary of type 'int' [reference]
+ 15 |     int &ref = 5;                 // error: non-const reference of type 'int &' cannot bind to a temporary of type 'int'
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e10_builtins_references.c:16:18: semantic error: non-const reference of type 'char &' cannot bind to an lvalue of type 'int' [reference]
+ 16 |     char &cref = x;               // error: cannot bind to an lvalue of type 'int'
+    |                  ^
+

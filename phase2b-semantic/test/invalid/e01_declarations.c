@@ -6,7 +6,6 @@ int f;                            // error: redefinition of 'f' as a different k
 typedef int T;
 void nothing;                     // error: variable 'nothing' has incomplete type 'void'
 struct Missing m;                 // error: has incomplete type 'struct Missing'
-FILE handle;                      // error: incomplete type 'FILE' (declare a pointer
 int unsized[];                    // error: needs an explicit size or an initializer
 int counter = 0;
 int twice = counter * 2;          // error: initializer element is not a compile-time constant

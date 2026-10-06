@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 960 444" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="feature-map-title feature-map-desc" id="feature-map-root">
         <title id="feature-map-title">The front end is complete; the back end has not started</title>
-        <desc id="feature-map-desc">Share of features fully implemented per phase for four feature groups: the front-end phases are at or near 100 percent except classes and lambdas in the semantic phase, and the TAC and MIPS phases are at zero.</desc>
+        <desc id="feature-map-desc">Share of features fully implemented per phase for four feature groups: the front-end phases are at or near 100 percent except classes and overloading in the parser and semantic phases, and the TAC and MIPS phases are at zero.</desc>
         <defs>
       <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
       #feature-map-root { --color-paper:   #f5f5f5;
@@ -69,20 +69,20 @@
 <rect x="760" y="132" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="advanced" data-col="MIPS" data-value="0" x="760" y="132" width="116" height="56" fill="#2d3142" fill-opacity="0.070"/>
 <text x="818" y="164" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">0%</text>
-<text x="148" y="220" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">CLASSES, LAMBDAS</text>
-<text x="148" y="233" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">7 features</text>
+<text x="148" y="220" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">CLASSES, OVERLOADS</text>
+<text x="148" y="233" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">6 features</text>
 <rect x="160" y="192" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="oop" data-col="LEXER" data-value="100" x="160" y="192" width="116" height="56" fill="#2d3142" fill-opacity="0.650"/>
 <text x="218" y="224" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">100%</text>
 <rect x="280" y="192" width="116" height="56" fill="#f5f5f5"/>
-<rect data-row="oop" data-col="PARSER" data-value="71" x="280" y="192" width="116" height="56" fill="#2d3142" fill-opacity="0.461"/>
-<text x="338" y="224" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">71%</text>
+<rect data-row="oop" data-col="PARSER" data-value="67" data-focal="true" x="280" y="192" width="116" height="56" fill="#eb6c36" fill-opacity="0.85" stroke="#eb6c36" stroke-width="1.2"/>
+<text x="338" y="224" fill="#111111" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">67%</text>
 <rect x="400" y="192" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="oop" data-col="AST" data-value="100" x="400" y="192" width="116" height="56" fill="#2d3142" fill-opacity="0.650"/>
 <text x="458" y="224" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">100%</text>
 <rect x="520" y="192" width="116" height="56" fill="#f5f5f5"/>
-<rect data-row="oop" data-col="SEMANTIC" data-value="57" data-focal="true" x="520" y="192" width="116" height="56" fill="#eb6c36" fill-opacity="0.85" stroke="#eb6c36" stroke-width="1.2"/>
-<text x="578" y="224" fill="#111111" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">57%</text>
+<rect data-row="oop" data-col="SEMANTIC" data-value="67" data-focal="true" x="520" y="192" width="116" height="56" fill="#eb6c36" fill-opacity="0.85" stroke="#eb6c36" stroke-width="1.2"/>
+<text x="578" y="224" fill="#111111" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">67%</text>
 <rect x="640" y="192" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="oop" data-col="IR / TAC" data-value="0" x="640" y="192" width="116" height="56" fill="#2d3142" fill-opacity="0.070"/>
 <text x="698" y="224" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">0%</text>
@@ -90,7 +90,7 @@
 <rect data-row="oop" data-col="MIPS" data-value="0" x="760" y="192" width="116" height="56" fill="#2d3142" fill-opacity="0.070"/>
 <text x="818" y="224" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">0%</text>
 <text x="148" y="280" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">OTHER ADDITIONS</text>
-<text x="148" y="293" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">16 features</text>
+<text x="148" y="293" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">12 features</text>
 <rect x="160" y="252" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="other" data-col="LEXER" data-value="100" x="160" y="252" width="116" height="56" fill="#2d3142" fill-opacity="0.650"/>
 <text x="218" y="284" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">100%</text>
@@ -101,8 +101,8 @@
 <rect data-row="other" data-col="AST" data-value="100" x="400" y="252" width="116" height="56" fill="#2d3142" fill-opacity="0.650"/>
 <text x="458" y="284" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">100%</text>
 <rect x="520" y="252" width="116" height="56" fill="#f5f5f5"/>
-<rect data-row="other" data-col="SEMANTIC" data-value="94" x="520" y="252" width="116" height="56" fill="#2d3142" fill-opacity="0.611"/>
-<text x="578" y="284" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">94%</text>
+<rect data-row="other" data-col="SEMANTIC" data-value="92" x="520" y="252" width="116" height="56" fill="#2d3142" fill-opacity="0.598"/>
+<text x="578" y="284" fill="#f5f5f5" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">92%</text>
 <rect x="640" y="252" width="116" height="56" fill="#f5f5f5"/>
 <rect data-row="other" data-col="IR / TAC" data-value="0" x="640" y="252" width="116" height="56" fill="#2d3142" fill-opacity="0.070"/>
 <text x="698" y="284" fill="#2d3142" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">0%</text>
@@ -119,7 +119,7 @@
 <rect x="296" y="342" width="24" height="12" fill="#2d3142" fill-opacity="0.65"/>
 <text x="328" y="352" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">100% of the group's features complete in that phase</text>
 <rect x="640" y="342" width="24" height="12" fill="#eb6c36" fill-opacity="0.85" stroke="#eb6c36" stroke-width="1"/>
-<text x="672" y="352" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">largest gap in the front end (57%)</text>
+<text x="672" y="352" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">largest gap in the front end (67%)</text>
 <text x="32" y="384" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">Source: the matrix in docs/FEATURES.md. A feature implemented with documented gaps is not counted as complete.</text>
 <text x="32" y="400" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">Not in the matrix (unsupported, rejected by the parser): bit-fields, default arguments, templates, namespaces,</text>
 <text x="32" y="414" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start">exceptions, inline, virtual, friend, explicit, const member functions, compound literals, nested functions.</text>

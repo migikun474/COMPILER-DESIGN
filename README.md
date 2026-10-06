@@ -6,7 +6,7 @@ then MIPS.
 
 | | |
 |---|---|
-| Source language | C-like (C89/C99 core plus classes, lambdas, references, overloading — see the [feature audit](docs/FEATURES.md)) |
+| Source language | C-like (C89/C99 core plus classes, references, overloading — see the [feature audit](docs/FEATURES.md)) |
 | Intermediate representation | Three Address Code — **not started** |
 | Target | MIPS — **not started** |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2, g++ 13 |
@@ -105,7 +105,7 @@ Abridged; the full matrix with test evidence for every row is in
 | int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | — | — | front end complete |
 | Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | — | — | front end complete |
 | Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | — | — | front end complete |
-| Structures, unions, enums, unnamed aggregates | ✓ | ✓ | ◐ | — | — | no brace elision into struct members |
+| Structures, unnamed structs, anonymous struct members | ✓ | ✓ | ◐ | — | — | no brace elision into struct members |
 | Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | — | — | front end complete |
 | printf / scanf | ✓ | ✓ | ✓ | — | — | front end complete (format checking) |
 | static, extern, register, const, volatile | ✓ | ✓ | ✓ | — | — | front end complete |
@@ -113,11 +113,9 @@ Abridged; the full matrix with test evidence for every row is in
 | Dynamic memory (`malloc` … `free`, `new`/`delete`) | ✓ | ✓ | ✓ | — | — | front end complete |
 | Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | — | — | front end complete |
 | typedef, references | ✓ | ✓ | ✓ | — | — | front end complete |
-| File manipulation (`FILE`, `fopen` …) | ✓ | ✓ | ✓ | — | — | front end complete |
 | Classes, inheritance, access modifiers | ✓ | ◐ | ◐ | — | — | no constructor initializer lists, `virtual`, `const` methods |
 | Constructors/destructors, operator overloading | ✓ | ◐ | ✓ | — | — | no member-initializer lists |
 | Function overloading | ✓ | ✓ | ◐ | — | — | converting constructors only in initialization |
-| Lambdas, function pointers | ✓ | ✓ | ◐ | — | — | captures checked against the innermost lambda |
 | Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | — | front end complete |
 
 ## Implemented basic features
@@ -137,13 +135,25 @@ multi-level pointers and multi-dimensional arrays.
 
 Beyond the specification, the code also implements classes and objects,
 inheritance, access modifiers, constructors and destructors, operator
-and function overloading, lambdas, function pointers, enums, unions,
-file manipulation, a C preprocessor, `extern`/`register`, casts,
-designated initializers, anonymous unions, and Itanium C++ name
-mangling. The semantic analyzer additionally gives gcc-style warnings
+and function overloading, a C preprocessor, `extern`/`register`, casts,
+designated initializers, unnamed structs with anonymous members, and
+Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
 for sequence-point violations (`i = i++`), integer overflow in constant
 expressions and printf/scanf format mismatches. See
 [`docs/FEATURES.md`](docs/FEATURES.md#c-additional-features-discovered-in-the-code).
+
+## Removed features
+
+Four features that an earlier version of the front end supported were
+removed on 2026-10-07, before the back end was started, to keep TAC and
+MIPS generation focused: **enum and union**, **file manipulation**
+(`FILE`, `fopen` …), **lambdas**, and **function pointers**. Their
+keywords are no longer reserved and their grammar rules, types and
+checks are gone; a program that uses one gets an ordinary error
+(`phase2-parser/test/test29_dropped_features.c`,
+`phase2b-semantic/test/invalid/e19_dropped_features.c`). The decision
+and its consequences are recorded in
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
 
 ## Partially implemented
 
@@ -156,7 +166,6 @@ expressions and printf/scanf format mismatches. See
   when a non-`void` function has no `return` at all; no unreachable-code
   or uninitialized-variable diagnostics; `goto`/`case` jumping over an
   initialization is not reported.
-- **Lambdas**: capture rules are checked against the innermost lambda only.
 - **Phase 1 lexer**: reports line numbers but no columns.
 
 Details: [`docs/FEATURES.md#d-partial-features`](docs/FEATURES.md#d-partial-features).
@@ -258,9 +267,9 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 
 | Suite | Command | Contents |
 |---|---|---|
-| Lexer | `cd phase1-lexer && ./run.sh` | 11 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
-| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 25 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test23`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **81 checks, all passing** |
+| Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
+| Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **80 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -270,11 +279,13 @@ unexpected diagnostic fails the test).
 
 - No back end: nothing is compiled to TAC or MIPS yet.
 - The partial features listed above.
+- Removed features (see above): `enum`, `union`, file manipulation,
+  lambdas, function pointers.
 - Constructs rejected as syntax errors: bit-fields, default arguments,
   templates, namespaces, `using`, exceptions, `inline`, `virtual`,
   `friend`, `explicit`, `const` member functions, compound literals,
   nested function definitions, `wchar_t` / wide literals.
-- `printf`, `scanf`, `malloc`, the file functions and `va_*` are
+- `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
   reserved words of this language (they cannot be used as identifiers);
   `#include <stdio.h>` and other system headers are accepted and ignored.
 - `long double` is treated as `double`.

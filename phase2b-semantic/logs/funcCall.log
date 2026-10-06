@@ -2,11 +2,11 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/funcCall.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/funcCall.c
 
-Semantic analysis successful: 0 error(s), 1 warning(s) in '../phase2-parser/test/funcCall.c'.
+Semantic analysis successful: 0 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/funcCall.c'.
 
-../phase2-parser/test/funcCall.c:9:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/funcCall.c:9:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  9 |   b = foo(a--,--a,a+b,a+*c);
    |               ^
 

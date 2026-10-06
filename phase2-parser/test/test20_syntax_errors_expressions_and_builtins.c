@@ -1,23 +1,21 @@
-/* test20 -- syntax errors in lambdas, ternary/casts/goto, and the
-   built-in I/O / memory calls (printf, scanf, malloc, ...). One
-   broken construct per function, each followed by a resync anchor
-   where it matters. */
+/* test20 -- syntax errors in expressions (operators, calls, ternary,
+   goto) and the built-in I/O / memory calls (printf, scanf, malloc,
+   ...). One broken construct per function, each followed by a resync
+   anchor where it matters. */
 
 void resync_marker() {}
 
-/* [1] [boundary -- now VALID] lambda without a parameter list: once a
-   syntax error, but as in real C++ the '(' ')' may now be omitted, so
-   this file reports 9 errors, not 10 */
-void t01_lambda_missing_param_parens() {
+/* [1] binary operator missing its right operand */
+void t01_binary_missing_operand() {
     int x = 1;
-    int (*f)() = [x] { return x; };
+    int y = (x + );
 }
 
-/* [2] lambda with a capture list missing its comma */
-void t02_lambda_capture_missing_comma() {
+/* [2] call with a missing comma between two arguments */
+void t02_call_args_missing_comma() {
     int x = 1;
     int y = 2;
-    auto f = [x y](int a) { return a + x + y; };
+    int z = t02_helper(x y);
 }
 
 /* [3] ternary expression missing the ':' branch */
@@ -48,9 +46,10 @@ void t07_malloc_dangling_comma() {
     int *p = malloc(,);
 }
 
-/* [8] fprintf missing its closing ')' */
-void t08_fprintf_missing_close_paren() {
-    fprintf(stdout_placeholder, "x = %d", 3;
+/* [8] free missing its closing ')' */
+void t08_free_missing_close_paren() {
+    int *p = 0;
+    free(p;
 }
 
 /* [9] sizeof used with unbalanced parens around the type */
@@ -68,7 +67,6 @@ void t10_new_missing_type() {
    broken constructs above -- exercises the same features correctly */
 int main() {
     int x = 10, y = 20;
-    auto adder = [x, &y](int a) { return a + x + y; };
     int cond = (x > y) ? x : y;
 
     printf("cond=%d\n", cond);

@@ -11,10 +11,5 @@ int main() {
     more = (int *) realloc(more, 20);
     free(more);
 
-    FILE *f;
-    f = fopen("data.txt", "r");
-    fprintf(f, "%d\n", 42);
-    fclose(f);
-
     return 0;
 }

@@ -12,6 +12,12 @@ any interesting ambiguity/precedence decisions behind the rule's shape.
 > [`../src/parser.y`](../src/parser.y) is the authority for the exact
 > text of a rule. The current summary of the grammar is in
 > [`../README.md`](../README.md#grammar-overview).
+>
+> **Removed on 2026-10-07:** `enum`, `union`, the file-manipulation
+> built-ins, lambdas and function pointers (see
+> [`../../docs/DESIGN_LOG.md`](../../docs/DESIGN_LOG.md)). Sections 3c
+> and 4 below were updated; any other mention of those constructs in
+> this document is historical.
 
 ---
 
@@ -508,7 +514,7 @@ VarDecl "matrix : INT_ARRAY_ARRAY"
 `_ARRAY` regardless of depth, which was a real bug fixed alongside the
 pointer-depth one.)
 
-### 3c. Function declarators, and the function-pointer disambiguation
+### 3c. Function declarators, and rejecting function pointers
 
 ```yacc
 direct_declarator
@@ -517,10 +523,11 @@ direct_declarator
     | direct_declarator '(' { pushScope(); } parameter_list_opt ')' {
           $$ = $1;
           if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) {
-              $$.decl.isFunctionPointer = true;   // fp: a VARIABLE
-          } else {
-              $$.decl.isFunction = true;           // add: a real function
+              popScope();                          // int (*fp)(int): no function pointers
+              yyerror("syntax error, unexpected '(' after a parenthesized pointer declarator");
+              YYERROR;
           }
+          $$.decl.isFunction = true;               // add: a real function
           $$.decl.wasParenGrouped = false;
           $$.decl.params = $4.paramList;
           popScope();
@@ -535,18 +542,21 @@ need to be told apart:
 | Input | Parses via | Meaning |
 |---|---|---|
 | `int add(int a, int b);` | `IDENTIFIER` then function-call form | a function |
-| `int (*fp)(int, int);` | `'(' declarator ')'` (grouped `*fp`) *then* function-call form | a **variable** whose type is "pointer to function" |
+| `int (*fp)(int, int);` | `'(' declarator ')'` (grouped `*fp`) *then* function-call form | would be a pointer to a function — **rejected** |
 
 The `wasParenGrouped` flag is the signal: it's only set by the
 parenthesized-grouping alternative. When the function-call-shaped
 extension sees that flag *and* a nonzero `pointerLevel` already sitting
 on what it's extending, that combination can only mean "the star was
-inside the parens" — i.e. a function pointer variable, not a real
-function declaration.
+inside the parens" — i.e. a function pointer, which the language does
+not have. The action reports a syntax error at the `(` and lets the
+normal error recovery skip the declaration. A parenthesized pointer
+declarator followed by `[`, as in `int (*pa)[3]` (pointer to an array),
+is still valid.
 
 **Example** — `int (*fp)(int, int);`:
 ```
-VarDecl "fp : INT_FUNCTION_POINTER"
+syntax error, unexpected '(' after a parenthesized pointer declarator
 ```
 versus `int add(int a, int b);`:
 ```
@@ -557,13 +567,13 @@ FunctionDecl "add : _Z3addii"
 
 ---
 
-## 4. Structures, classes, enums, unions, inheritance
+## 4. Structures, classes, inheritance
 
-All four keyword-introduced type declarations share one nonterminal,
+Both keyword-introduced type declarations share one nonterminal,
 `struct_or_class_specifier`, because they have the identical shape:
 `KEYWORD name { members }` or just `KEYWORD name` (referencing an
-existing one). Shown here for `class`; `struct`/`union`/`enum` are the
-same pattern with a different `SymKind`/AST-kind pair.
+existing one). Shown here for `class`; `struct` is the same pattern
+with a different `SymKind`/AST-kind pair.
 
 ```yacc
 struct_or_class_specifier
@@ -925,8 +935,8 @@ link name g++ would emit, like `_Z3addii`, `_ZN3Dog4barkEv` or
 | Declarations, multi-declarator lists | `declaration`, `init_declarator_list` | §2 |
 | Pointers, multi-level pointers | `pointer` | §3a, §9 |
 | Arrays, multi-dimensional arrays | `direct_declarator '[' ']'` | §3b |
-| Functions, function pointers | `direct_declarator '(' ')'` | §3c |
-| struct/union/class/enum, inheritance | `struct_or_class_specifier` | §4 |
+| Functions | `direct_declarator '(' ')'` | §3c |
+| struct/class, inheritance | `struct_or_class_specifier` | §4 |
 | Constructors/destructors | `constructor_def`/`destructor_def` | §5 |
 | if/else | `selection_stmt` | §6a |
 | for/while/do-while/until | `iteration_stmt` | §6b |

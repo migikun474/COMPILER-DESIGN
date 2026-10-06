@@ -1,8 +1,8 @@
 /* valid: if/else, loops, break/continue, switch, goto, until
    [test 27, 28, 31, 32] */
-enum Color { RED, GREEN = 5, BLUE };
+const int RED = 0, GREEN = 5, BLUE = 6;
 
-int classify(enum Color c) {
+int classify(int c) {
     switch (c) {
         case RED: return 0;
         case GREEN: return 1;

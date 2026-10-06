@@ -2,9 +2,9 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test16_syntax_errors_do_while_recovery_gap.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c
 
-test/test16_syntax_errors_do_while_recovery_gap.c:57:5: syntax error: syntax error, unexpected RETURN, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c:57:5: syntax error: syntax error, unexpected RETURN, expecting ';'
  57 |     return a;
     |     ^
     | note: insert ';' here
