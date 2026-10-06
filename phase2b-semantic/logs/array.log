@@ -1,0 +1,111 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/array.c
+
+Semantic analysis successful: 0 error(s), 1 warning(s) in '../phase2-parser/test/array.c'.
+
+../phase2-parser/test/array.c:7:17: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
+ 7 |     int  e    = 'ab';               
+   |                 ^
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"  <int[5]>  -> a.1 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       |-- IntLiteral "1"  <int> =1
+        |       |-- IntLiteral "2"  <int> =2
+        |       |-- IntLiteral "3"  <int> =3
+        |       |-- IntLiteral "4"  <int> =4
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "z : INT_ARRAY"  <int[5]>  -> z.2 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "b : CHAR_ARRAY"  <char[4]>  -> b.3 (variable, local)
+        |   `-- InitializerList  <char[4]>
+        |       |-- CharLiteral "'a'"  <char> =97
+        |       |-- CharLiteral "'b'"  <char> =98
+        |       |-- CharLiteral "'c'"  <char> =99
+        |       `-- CharLiteral "'\0'"  <char> =0
+        |-- VarDecl "c : CHAR_ARRAY"  <char[4]>  -> c.4 (variable, local)
+        |   `-- StringLiteral ""abc""  <char[4]> lvalue
+        |-- VarDecl "d : CHAR"  <char>  -> d.5 (variable, local)
+        |   `-- CharLiteral "'a'"  <char> =97
+        |-- VarDecl "e : INT"  <int>  -> e.6 (variable, local)
+        |   `-- CharLiteral "'ab'"  <int> =24930
+        |-- VarDecl "g : CHAR_ARRAY"  <char[6]>  -> g.7 (variable, local)
+        |   `-- StringLiteral ""a\"b\\c""  <char[6]> lvalue
+        |-- VarDecl "h : CHAR_ARRAY"  <char[32]>  -> h.8 (variable, local)
+        |   `-- StringLiteral ""a/*not a comment*/b // nor this""  <char[32]> lvalue
+        |-- VarDecl "i : CHAR_ARRAY"  <char[9]>  -> i.9 (variable, local)
+        |   `-- StringLiteral ""adjacent""  <char[9]> lvalue
+        |-- VarDecl "j : INT"  <int>  -> j.10 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""a       = ""  <char[11]> lvalue
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   |       `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   |       `-- IntLiteral "5"  <int> =5
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   `-- ExprStmt
+        |       `-- BuiltinCallExpr "printf"  <int>
+        |           |-- StringLiteral ""%d ""  <char[4]> lvalue
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- Identifier "a"  <int[5]> lvalue  -> a.1 (variable, local)
+        |               `-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""\n""  <char[2]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""z       = ""  <char[11]> lvalue
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="  <int>
+        |   |       |-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   |       `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   |       `-- IntLiteral "5"  <int> =5
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |   `-- ExprStmt
+        |       `-- BuiltinCallExpr "printf"  <int>
+        |           |-- StringLiteral ""%d ""  <char[4]> lvalue
+        |           `-- IndexExpr  <int> lvalue
+        |               |-- Identifier "z"  <int[5]> lvalue  -> z.2 (variable, local)
+        |               `-- Identifier "j"  <int> lvalue  -> j.10 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       `-- StringLiteral ""\n""  <char[2]> lvalue
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         1     -     0     main                 main                     defined
+a                  variable       int[5]                     local    global > main()                2     20    1     a.1                  -                        
+z                  variable       int[5]                     local    global > main()                3     20    1     z.2                  -                        
+b                  variable       char[4]                    local    global > main()                4     4     0     b.3                  -                        
+c                  variable       char[4]                    local    global > main()                5     4     0     c.4                  -                        
+d                  variable       char                       local    global > main()                6     1     0     d.5                  -                        
+e                  variable       int                        local    global > main()                7     4     0     e.6                  -                        
+g                  variable       char[6]                    local    global > main()                8     6     0     g.7                  -                        
+h                  variable       char[32]                   local    global > main()                9     32    0     h.8                  -                        
+i                  variable       char[9]                    local    global > main()                10    9     0     i.9                  -                        
+j                  variable       int                        local    global > main()                11    4     8     j.10                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

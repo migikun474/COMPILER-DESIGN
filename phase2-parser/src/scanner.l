@@ -9,29 +9,31 @@
 #include <cstring>
 #include <string>
 
-#include "common.h"
+#include "diagnostics/diagnostics.hpp"
 #include "parser.tab.hpp"
-#include "token_type.hpp"
+#include "scanner_support.h"
+#include "symbol_table/symbol_table.hpp"
+#include "token/token_log.hpp"
+#include "token/token_type.hpp"
 #include "token_converter.hpp"
 
 static std::string strbuf;
 static int litStartLine;
 static int litStartCol;
-
-/* Column tracking: flex has no built-in notion of column, so this is
-   the standard trick -- YY_USER_ACTION is a hook flex calls
-   automatically right before every single matched rule's action runs,
-   with no need to touch each rule individually. g_col tracks where
-   the NEXT unmatched character sits; g_tokStartCol captures where the
-   token that was JUST matched began, before g_col advances past it. */
 static int g_col = 1;
 static int g_tokStartCol = 1;
 #define YY_USER_ACTION { g_tokStartCol = g_col; g_col += yyleng; }
 
-/* Record + classify a token in one step, keep the scanner-side globals
-   (used by yyerror for accurate positions) in sync, and hand the
-   lexeme/index pair to the parser via yylval. */
+static int g_prevToken = 0; /* the previously returned token code */
+
 static int emit(int tokcode, const std::string &defaultCategory) {
+    if (tokcode != '*' && tokcode != '&' && tokcode != '(' && tokcode != CONST && tokcode != VOLATILE)
+        g_afterTypeKeyword = false;
+    if (tokcode == '(' || tokcode == '[' || tokcode == '{' || tokcode == DESIG_LBRACKET || tokcode == ABSTRACT_LPAREN)
+        ++g_bracketDepth;
+    else if (tokcode == ')' || tokcode == ']' || tokcode == '}') --g_bracketDepth;
+    else if (tokcode == ';' && inDeclaratorListAt(g_bracketDepth)) endDeclaratorList();
+    g_prevToken = tokcode;
     g_currentLine = yylineno;
     g_currentColumn = g_tokStartCol;
     g_lastText = yytext;
@@ -40,9 +42,9 @@ static int emit(int tokcode, const std::string &defaultCategory) {
     return tokcode;
 }
 
-/* Like emit(), but for tokens (strings/char literals) whose full text
-   was accumulated into strbuf rather than sitting in yytext. */
 static int emitText(int tokcode, const std::string &text, const std::string &category) {
+    g_afterTypeKeyword = false;
+    g_prevToken = tokcode;
     g_currentLine = yylineno;
     g_currentColumn = litStartCol; /* the opening quote's column, not the closing one */
     g_lastText = text;
@@ -51,13 +53,63 @@ static int emitText(int tokcode, const std::string &text, const std::string &cat
     return tokcode;
 }
 
-/* Looks a matched keyword or operator up in the SHARED tables (see
-   shared/include/token_type.hpp) and emits it -- this is what lets
-   phase1-lexer and phase2-parser agree on both "is this a keyword"
-   and "what do we call it" without either one hand-maintaining its
-   own copy of that list. */
 static int emitShared(TokenType t) {
     return emit(to_bison_token(t), to_string(t));
+}
+
+/* Inside its own body a class/struct/union name is a type too (`Node
+   *next;`), except right before '(' where it names a constructor
+   (`Node(int v)`, `~Node()`); everywhere else typedef'd names and
+   already-defined tags are TYPE_NAME (the classic lexer hack). */
+/* Tokens after which a type before '(' is a declaration specifier /
+   declarator name, never the start of a functional cast:
+   `new Dog(4)`, `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
+static bool typePositionAfter(int tok) {
+    switch (tok) {
+        case NEW: case SCOPE_RES: case '~': case STRUCT: case UNION: case CLASS: case ENUM: case OPERATOR:
+        case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
+        case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
+        case EXTERN: case REGISTER:
+        case VOLATILE: case FILE_KW: case VA_LIST:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static bool isSimpleTypeKeyword(TokenType t) {
+    switch (t) {
+        case TokenType::INT: case TokenType::CHAR: case TokenType::FLOAT: case TokenType::DOUBLE:
+        case TokenType::VOID: case TokenType::BOOL: case TokenType::SHORT: case TokenType::LONG:
+        case TokenType::SIGNED: case TokenType::UNSIGNED:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static int identifierOrKeyword(bool beforeParen) {
+    auto kw = reserved_word(yytext);
+    /* `T(...)` that can only be an expression -- `Dog(4).bark();`,
+       `int(x) + 1;` -- is announced as FCAST, so a statement may start
+       with it (LALR(1) alone would have to guess at the '(') */
+    bool typeHere = kw.has_value() ? isSimpleTypeKeyword(kw.value())
+                                   : (isTypeName(yytext) && !g_afterTypeKeyword);
+    if (beforeParen && typeHere && !typePositionAfter(g_prevToken) &&
+        parenGroupIsExpression(yylineno, g_col)) {
+        return emit(FCAST, kw.has_value() ? to_string(kw.value()) : "TYPEDEF");
+    }
+    if (kw.has_value()) {
+        return emitShared(kw.value());
+    }
+    if (isTypeName(yytext) && !g_afterTypeKeyword &&
+        !(g_prevToken == ',' && inDeclaratorListAt(g_bracketDepth))) {
+        return emit(TYPE_NAME, "TYPEDEF");
+    }
+    if (!beforeParen && !currentClassName().empty() && currentClassName() == yytext) {
+        return emit(TYPE_NAME, "TYPEDEF");
+    }
+    return emit(IDENTIFIER, "IDENTIFIER");
 }
 %}
 
@@ -85,21 +137,9 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*             { }
 
- /* identifiers AND keywords share one rule, exactly like phase1-lexer:
-    the matched text is looked up in the shared reserved_word() table;
-    if it's not a keyword, it's either a previously-seen typedef/class
-    name (the lexer hack -- phase1 has no equivalent, since it has no
-    parser feeding scope information back) or a plain identifier. */
-{ID} {
-    auto kw = reserved_word(yytext);
-    if (kw.has_value()) {
-        return emitShared(kw.value());
-    }
-    if (g_typedefNames.count(yytext)) {
-        return emit(TYPE_NAME, "TYPEDEF");
-    }
-    return emit(IDENTIFIER, "IDENTIFIER");
-}
+"delete"[ \t]*"["[ \t]*"]" { return emit(DELETE_ARRAY, "delete_array"); }
+{ID}/[ \t]*"(" { return identifierOrKeyword(/*beforeParen=*/true); }
+{ID}             { return identifierOrKeyword(/*beforeParen=*/false); }
 
 \"                     { strbuf = "\""; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(STRSTATE); }
 <STRSTATE>\\.          { strbuf += yytext; }
@@ -122,14 +162,23 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?         { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 {DIGIT}+{INT_SUFFIX}?                  { return emit(INT_LITERAL, "INT_LITERAL"); }
 
- /* Every operator -- multi- and single-character alike -- funnels
-    through one lookup against the shared operator_map via
-    operator_token(), exactly like phase1-lexer's single consolidated
-    operator rule. Flex's own longest-match rule already guarantees
-    "<<=" wins over "<<" over "<" whenever the longer form is actually
-    present, regardless of how many separate patterns are listed here
-    or that they all share one action (chained via "|" fall-through);
-    listing them longest-first below is for readability only. */
+"(" {
+    /* `(*)` / `(&)` right after a type: a nameless declarator, as in
+       `(int (*)(int)) f`, never the argument list of `int(...)` */
+    if ((typePositionAfter(g_prevToken) || g_prevToken == '*' || g_prevToken == '&') && abstractDeclaratorGroup(yylineno, g_col)) {
+        return emit(ABSTRACT_LPAREN, to_string(operator_token("(").value()));
+    }
+    return emitShared(operator_token("(").value());
+}
+
+"[" {
+    /* `[i] = v` in an initializer list: a designator, not a lambda */
+    if ((g_prevToken == '{' || g_prevToken == ',') && bracketIsDesignator(yylineno, g_col)) {
+        return emit(DESIG_LBRACKET, to_string(operator_token("[").value()));
+    }
+    return emitShared(operator_token("[").value());
+}
+
 "..."   |
 "::"    |
 "->"    |
@@ -153,7 +202,7 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 "&="    |
 "|="    |
 "^="    |
-[+\-*/%=<>!&|^~.,?:(){}\[\]\;] {
+[+\-*/%=<>!&|^~.,?:(){}\]\;] {
     auto op = operator_token(yytext);
     if (op.has_value()) {
         return emitShared(op.value());

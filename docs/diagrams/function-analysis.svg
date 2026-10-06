@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 812" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="function-analysis-title function-analysis-desc" id="function-analysis-root">
+        <title id="function-analysis-title">Semantic analysis of a function definition</title>
+        <desc id="function-analysis-desc">A function definition is registered by functionSignature, rejected if it already has a body, then its scope is entered, parameters and labels are declared, the body is analysed and the scope is left.</desc>
+        <defs>
+      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
+      #function-analysis-root { --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace; }
+      #function-analysis-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #function-analysis-root .diagram-container { width: 100%; overflow-x: auto; }
+      #function-analysis-root .diagram-container { overflow-x: visible; }</style>
+          <marker id="function-analysis-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="function-analysis-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+          <marker id="function-analysis-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+<line x1="360" y1="80" x2="360" y2="112" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="360" y1="176" x2="360" y2="200" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="488" y1="256" x2="592" y2="256" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="360" y1="312" x2="360" y2="344" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="360" y1="408" x2="360" y2="432" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="360" y1="488" x2="360" y2="512" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="488" y1="568" x2="592" y2="568" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<line x1="360" y1="624" x2="360" y2="656" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<path d="M 704,596 V 676 Q 704,684 696,684 H 464" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#function-analysis-arrow)"/>
+<rect x="526.0" y="236" width="28" height="12" rx="2" fill="#f5f5f5"/>
+<text x="540" y="245" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">YES</text>
+<rect x="368" y="322" width="24" height="12" rx="2" fill="#f5f5f5"/>
+<text x="380.0" y="331" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NO</text>
+<rect x="526.0" y="548" width="28" height="12" rx="2" fill="#f5f5f5"/>
+<text x="540" y="557" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">YES</text>
+<rect x="368" y="634" width="24" height="12" rx="2" fill="#f5f5f5"/>
+<text x="380.0" y="643" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NO</text>
+<rect x="256" y="32" width="208" height="48" rx="24" fill="#f5f5f5"/>
+<rect x="256" y="32" width="208" height="48" rx="24" fill="#2d3142" fill-opacity="0.03" stroke="#2d3142" stroke-opacity="0.30" stroke-width="1"/>
+<text x="360.0" y="53" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">FunctionDef node</text>
+<text x="360.0" y="68" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">int add(int a, int b) {…}</text>
+<rect x="256" y="112" width="208" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="256" y="112" width="208" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="360.0" y="134" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">functionSignature()</text>
+<text x="360.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">resolveType(): function type</text>
+<text x="360.0" y="162" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">declare or match the symbol</text>
+<polygon points="360,200 488,256 360,312 232,256" fill="#f5f5f5"/>
+<polygon points="360,200 488,256 360,312 232,256" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="360" y="254" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">body already</text>
+<text x="360" y="268" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">seen (isDefined)?</text>
+<rect x="592" y="228" width="224" height="56" rx="28" fill="#f5f5f5"/>
+<rect x="592" y="228" width="224" height="56" rx="28" fill="#2d3142" fill-opacity="0.03" stroke="#2d3142" stroke-opacity="0.30" stroke-width="1"/>
+<text x="704.0" y="253" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">redefinition of function</text>
+<text x="704.0" y="268" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">error; body is not analysed</text>
+<rect x="256" y="344" width="208" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="256" y="344" width="208" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="360.0" y="366" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">enterScope(Function)</text>
+<text x="360.0" y="381" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">declare the parameters</text>
+<text x="360.0" y="394" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">collectLabels(), FunctionCtx</text>
+<rect x="256" y="432" width="208" height="56" rx="6" fill="#f5f5f5"/>
+<rect x="256" y="432" width="208" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="360.0" y="457" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">blockItems(body)</text>
+<text x="360.0" y="472" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">each return is checked</text>
+<polygon points="360,512 488,568 360,624 232,568" fill="#f5f5f5"/>
+<polygon points="360,512 488,568 360,624 232,568" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="360" y="566" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">non-void, and</text>
+<text x="360" y="580" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">no return at all?</text>
+<rect x="592" y="540" width="224" height="56" rx="28" fill="#f5f5f5"/>
+<rect x="592" y="540" width="224" height="56" rx="28" fill="#2d3142" fill-opacity="0.03" stroke="#2d3142" stroke-opacity="0.30" stroke-width="1"/>
+<text x="704.0" y="565" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">warning: no return</text>
+<text x="704.0" y="580" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">analysis continues</text>
+<rect x="256" y="656" width="208" height="56" rx="28" fill="#f5f5f5"/>
+<rect x="256" y="656" width="208" height="56" rx="28" fill="#eb6c36" fill-opacity="0.08" stroke="#eb6c36" stroke-width="1"/>
+<text x="360.0" y="681" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">exitScope()</text>
+<text x="360.0" y="696" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">params, locals, bodyScopeId set</text>
+<line x1="32" y1="752" x2="928" y2="752" stroke="#2d3142" stroke-opacity="0.10" stroke-width="0.8"/>
+<text x="32" y="768" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
+<rect x="32" y="784" width="24" height="12" rx="6" fill="#2d3142" fill-opacity="0.03" stroke="#2d3142" stroke-opacity="0.30" stroke-width="1"/>
+<text x="68" y="794" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Start / outcome</text>
+<rect x="168" y="784" width="24" height="12" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="204" y="794" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Step (declarations.cpp)</text>
+<polygon points="344,790 356,784 368,790 356,796" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="380" y="794" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Decision</text>
+<rect x="448" y="784" width="24" height="12" rx="2" fill="#eb6c36" fill-opacity="0.08" stroke="#eb6c36" stroke-width="1"/>
+<text x="484" y="794" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Function symbol complete</text>
+      </svg>

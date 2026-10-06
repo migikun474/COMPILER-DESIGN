@@ -1,0 +1,170 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/pointers.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+a                              INT                 
+=                              assign_op           
+6                              INT_LITERAL         
+,                              comma_op            
+b                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+c                              INT                 
+=                              assign_op           
+a                              INT                 
+*                              star_op             
+b                              INT                 
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+p                              INT_POINTER         
+=                              assign_op           
+&                              ampersand_op        
+a                              INT                 
+;                              semicolon_op        
+int                            int                 
+d                              INT                 
+=                              assign_op           
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+int                            int                 
+*                              star_op             
+*                              star_op             
+pp                             INT_POINTER_POINTER 
+=                              assign_op           
+&                              ampersand_op        
+p                              INT_POINTER         
+;                              semicolon_op        
+int                            int                 
+e                              INT                 
+=                              assign_op           
+*                              star_op             
+*                              star_op             
+pp                             INT_POINTER_POINTER 
+;                              semicolon_op        
+a                              INT                 
+*=                             star_assign_op      
+b                              INT                 
+;                              semicolon_op        
+*                              star_op             
+p                              INT_POINTER         
+=                              assign_op           
+*                              star_op             
+p                              INT_POINTER         
+*                              star_op             
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+int                            int                 
+f                              INT                 
+=                              assign_op           
+a                              INT                 
+*                              star_op             
+*                              star_op             
+p                              INT_POINTER         
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d"                           STRING_LITERAL      
+,                              comma_op            
+c                              INT                 
++                              plus_op             
+d                              INT                 
++                              plus_op             
+e                              INT                 
++                              plus_op             
+f                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"
+        |   |   `-- IntLiteral "6"
+        |   `-- VarDecl "b : INT"
+        |       `-- IntLiteral "2"
+        |-- VarDecl "c : INT"
+        |   `-- BinaryExpr "*"
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- VarDecl "p : INT_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "a"
+        |-- VarDecl "d : INT"
+        |   `-- UnaryExpr "*"
+        |       `-- Identifier "p"
+        |-- VarDecl "pp : INT_POINTER_POINTER"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "p"
+        |-- VarDecl "e : INT"
+        |   `-- UnaryExpr "*"
+        |       `-- UnaryExpr "*"
+        |           `-- Identifier "pp"
+        |-- ExprStmt
+        |   `-- AssignExpr "*="
+        |       |-- Identifier "a"
+        |       `-- Identifier "b"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- UnaryExpr "*"
+        |       |   `-- Identifier "p"
+        |       `-- BinaryExpr "*"
+        |           |-- UnaryExpr "*"
+        |           |   `-- Identifier "p"
+        |           `-- UnaryExpr "*"
+        |               `-- Identifier "p"
+        |-- VarDecl "f : INT"
+        |   `-- BinaryExpr "*"
+        |       |-- Identifier "a"
+        |       `-- UnaryExpr "*"
+        |           `-- Identifier "p"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d""
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- BinaryExpr "+"
+        |           |   |   |-- Identifier "c"
+        |           |   |   `-- Identifier "d"
+        |           |   `-- Identifier "e"
+        |           `-- Identifier "f"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      1      global                       PROCEDURE                                 0         INT (VOID)             main
+a                    variable       2      global > main()              INT                                       4                                
+b                    variable       2      global > main()              INT                                       2                                
+c                    variable       3      global > main()              INT                                       1                                
+p                    variable       4      global > main()              INT_POINTER      *                        6                                
+d                    variable       5      global > main()              INT                                       1                                
+pp                   variable       6      global > main()              INT_POINTER_POINTER **                       1                                
+e                    variable       7      global > main()              INT                                       1                                
+f                    variable       10     global > main()              INT                                       1                                

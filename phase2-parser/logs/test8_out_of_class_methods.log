@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test8_out_of_class_methods.c
+Source File : test/test8_out_of_class_methods.c
 
 No errors found.
 
@@ -50,7 +50,7 @@ b                              INT
 =                              assign_op           
 d                              CLASS               
 .                              dot_op              
-bark                           IDENTIFIER          
+bark                           PROCEDURE           
 (                              open_paren_op       
 )                              close_paren_op      
 ;                              semicolon_op        
@@ -68,7 +68,7 @@ Program "translation_unit"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- Identifier "legs"
-`-- FunctionDef "main : _Z4mainv"
+`-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "d : CLASS"
         |-- VarDecl "b : INT"
@@ -85,10 +85,10 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Dog                  class_tag      5      global                       CLASS                                     0                                
-Dog::legs            variable       7      global > class Dog           INT                                       0                                
-Dog::bark            procedure      8      global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-Dog::bark            procedure      11     global                       PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-main                 procedure      15     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
-d                    variable       16     global > main()              CLASS                                     1                                
-b                    variable       17     global > main()              INT                                       1                                
+Dog                  class_tag      3      global                       CLASS                                     0                                
+Dog::legs            class_member   5      global > class Dog           INT                                       0                                
+Dog::bark            class_method   6      global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+Dog::bark            procedure      9      global                       PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 main
+d                    variable       14     global > main()              CLASS                                     1                                
+b                    variable       15     global > main()              INT                                       1                                

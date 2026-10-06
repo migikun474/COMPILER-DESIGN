@@ -1,0 +1,76 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/invalid/e01_declarations.c
+
+Semantic analysis failed: 17 error(s), 0 warning(s) in 'test/invalid/e01_declarations.c'.
+
+test/invalid/e01_declarations.c:3:5: semantic error: duplicate declaration of 'g' in the same scope (previous declaration at line 2) [redeclaration]
+ 3 | int g;                            // error: duplicate declaration of 'g' in the same scope
+   |     ^
+
+test/invalid/e01_declarations.c:5:5: semantic error: redefinition of 'f' as a different kind of symbol (previously declared as a function at line 4) [redeclaration]
+ 5 | int f;                            // error: redefinition of 'f' as a different kind of symbol
+   |     ^
+
+test/invalid/e01_declarations.c:7:6: semantic error: variable 'nothing' has incomplete type 'void' [incomplete-type]
+ 7 | void nothing;                     // error: variable 'nothing' has incomplete type 'void'
+   |      ^
+
+test/invalid/e01_declarations.c:8:16: semantic error: variable 'm' has incomplete type 'struct Missing' [incomplete-type]
+ 8 | struct Missing m;                 // error: has incomplete type 'struct Missing'
+   |                ^
+
+test/invalid/e01_declarations.c:9:6: semantic error: variable 'handle' has incomplete type 'FILE' (declare a pointer, e.g. 'FILE *') [incomplete-type]
+ 9 | FILE handle;                      // error: incomplete type 'FILE' (declare a pointer
+   |      ^
+
+test/invalid/e01_declarations.c:10:5: semantic error: definition of variable 'unsized' with array type needs an explicit size or an initializer [array-size]
+ 10 | int unsized[];                    // error: needs an explicit size or an initializer
+    |     ^
+
+test/invalid/e01_declarations.c:12:21: semantic error: initializer element is not a compile-time constant (variable 'twice' has static storage) [non-constant-initializer]
+ 12 | int twice = counter * 2;          // error: initializer element is not a compile-time constant
+    |                     ^
+
+test/invalid/e01_declarations.c:16:9: semantic error: duplicate declaration of 'x' in the same scope (previous declaration at line 15) [redeclaration]
+ 16 |     int x;                        // error: duplicate declaration of 'x'
+    |         ^
+
+test/invalid/e01_declarations.c:17:10: semantic error: duplicate declaration of 'x' in the same scope (previous declaration at line 15) [redeclaration]
+ 17 |     char x;                       // error: duplicate declaration of 'x'
+    |          ^
+
+test/invalid/e01_declarations.c:18:5: semantic error: undeclared identifier 'y' [undeclared]
+ 18 |     y = 10;                       // error: undeclared identifier 'y'
+    |     ^
+
+test/invalid/e01_declarations.c:19:13: semantic error: undeclared identifier 'w' [undeclared]
+ 19 |     int z = w + 1;                // error: undeclared identifier 'w'
+    |             ^
+
+test/invalid/e01_declarations.c:20:10: semantic error: declaration of 'a' with deduced type 'auto' requires an initializer [auto]
+ 20 |     auto a;                       // error: deduced type 'auto' requires an initializer
+    |          ^
+
+test/invalid/e01_declarations.c:21:14: semantic error: invalid combination of type specifiers 'int char' [invalid-specifiers]
+ 21 |     int char bad;                 // error: invalid combination of type specifiers 'int char'
+    |              ^
+
+test/invalid/e01_declarations.c:22:21: semantic error: invalid combination of type specifiers 'unsigned signed' [invalid-specifiers]
+ 22 |     unsigned signed both;         // error: invalid combination of type specifiers
+    |                     ^
+
+test/invalid/e01_declarations.c:23:10: semantic error: declaration of reference variable 'dangling' requires an initializer [reference]
+ 23 |     int &dangling;                // error: reference variable 'dangling' requires an initializer
+    |          ^
+
+test/invalid/e01_declarations.c:24:20: semantic error: initializer element is not a compile-time constant (variable 's' has static storage) [non-constant-initializer]
+ 24 |     static int s = x;             // error: initializer element is not a compile-time constant
+    |                    ^
+
+test/invalid/e01_declarations.c:25:12: semantic error: undeclared identifier 'late' (it is declared later, at line 28; variables must be declared before use) [undeclared]
+ 25 |     return late;                  // error: it is declared later, at line
+    |            ^
+

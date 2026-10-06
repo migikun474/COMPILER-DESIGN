@@ -1,0 +1,76 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/funcPtr.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/funcPtr.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"  <int (int, int)>  -> _Z3addii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|-- FunctionDef "mul : _Z3mulii"  <int (int, int)>  -> _Z3mulii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.3 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.4 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.3 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.4 (parameter, param)
+|-- FunctionDef "apply : _Z5applyPFiiiEii"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
+|   |-- ParamDecl "f : INT_POINTER"  <int (*)(int, int)>  -> f.5 (parameter, param)
+|   |-- ParamDecl "x : INT"  <int>  -> x.6 (parameter, param)
+|   |-- ParamDecl "y : INT"  <int>  -> y.7 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- CallExpr  <int>
+|               |-- Identifier "f"  <int (*)(int, int)> lvalue  -> f.5 (parameter, param)
+|               |-- Identifier "x"  <int> lvalue  -> x.6 (parameter, param)
+|               `-- Identifier "y"  <int> lvalue  -> y.7 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "r1 : INT"  <int>  -> r1.8 (variable, local)
+        |   `-- CallExpr  <int>  -> _Z5applyPFiiiEii (function)
+        |       |-- Identifier "apply"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
+        |       |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+        |       |-- IntLiteral "2"  <int> =2
+        |       `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "r2 : INT"  <int>  -> r2.9 (variable, local)
+        |   `-- CallExpr  <int>  -> _Z5applyPFiiiEii (function)
+        |       |-- Identifier "apply"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
+        |       |-- Identifier "mul"  <int (int, int)>  -> _Z3mulii (function)
+        |       |-- IntLiteral "2"  <int> =2
+        |       `-- IntLiteral "3"  <int> =3
+        `-- ExprStmt
+            `-- BuiltinCallExpr "printf"  <int>
+                |-- StringLiteral ""%d\n""  <char[4]> lvalue
+                `-- BinaryExpr "+"  <int>
+                    |-- Identifier "r1"  <int> lvalue  -> r1.8 (variable, local)
+                    `-- Identifier "r2"  <int> lvalue  -> r2.9 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+add                function       int (int, int)             -        global                         1     -     1     _Z3addii             _Z3addii                 defined
+a                  parameter      int                        param    global > add()                 1     4     1     a.1                  -                        
+b                  parameter      int                        param    global > add()                 1     4     1     b.2                  -                        
+mul                function       int (int, int)             -        global                         2     -     1     _Z3mulii             _Z3mulii                 defined
+a                  parameter      int                        param    global > mul()                 2     4     1     a.3                  -                        
+b                  parameter      int                        param    global > mul()                 2     4     1     b.4                  -                        
+apply              function       int (int (*)(int, int), int, int) -        global                         3     -     2     _Z5applyPFiiiEii     _Z5applyPFiiiEii         defined
+f                  parameter      int (*)(int, int)          param    global > apply()               3     4     1     f.5                  -                        
+x                  parameter      int                        param    global > apply()               3     4     1     x.6                  -                        
+y                  parameter      int                        param    global > apply()               3     4     1     y.7                  -                        
+main               function       int (void)                 -        global                         4     -     0     main                 main                     defined
+r1                 variable       int                        local    global > main()                5     4     1     r1.8                 -                        
+r2                 variable       int                        local    global > main()                6     4     1     r2.9                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

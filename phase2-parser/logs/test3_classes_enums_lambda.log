@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test3_classes_enums_lambda.c
+Source File : test/test3_classes_enums_lambda.c
 
 No errors found.
 
@@ -64,7 +64,7 @@ s                              CLASS
 ;                              semicolon_op        
 s                              CLASS               
 .                              dot_op              
-sides                          IDENTIFIER          
+sides                          INT                 
 =                              assign_op           
 4                              INT_LITERAL         
 ;                              semicolon_op        
@@ -93,10 +93,10 @@ auto                           auto
 adder                          INT                 
 =                              assign_op           
 [                              open_bracket_op     
-x                              IDENTIFIER          
+x                              INT                 
 ,                              comma_op            
 &                              ampersand_op        
-y                              IDENTIFIER          
+y                              INT                 
 ]                              close_bracket_op    
 (                              open_paren_op       
 int                            int                 
@@ -140,7 +140,7 @@ x                              INT
 )                              close_paren_op      
 ;                              semicolon_op        
 goto                           goto                
-done                           IDENTIFIER          
+done                           LABEL               
 ;                              semicolon_op        
 done                           LABEL               
 :                              colon_op            
@@ -164,7 +164,7 @@ Program "translation_unit"
 |   |               |-- Identifier "sides"
 |   |               `-- Identifier "sides"
 |   `-- VarDecl "secret : INT"
-`-- FunctionDef "main : _Z4mainv"
+`-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "c : ENUM"
         |-- ExprStmt
@@ -225,15 +225,15 @@ RED                  enum_constant  1      global                       ENUM_CON
 GREEN                enum_constant  1      global                       ENUM_CONSTANT                             0                                
 BLUE                 enum_constant  1      global                       ENUM_CONSTANT                             0                                
 Shape                class_tag      3      global                       CLASS                                     0                                
-Shape::sides         variable       5      global > class Shape         INT                                       2                                
-Shape::area          procedure      6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
-Shape::secret        variable       10     global > class Shape         INT                                       0                                
-main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
+Shape::sides         class_member   5      global > class Shape         INT                                       2                                
+Shape::area          class_method   6      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::secret        class_member   10     global > class Shape         INT                                       0                                
+main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 main
 c                    variable       14     global > main()              ENUM                                      1                                
 s                    variable       16     global > main()              CLASS                                     1                                
 fp                   variable       19     global > main()              INT_FUNCTION_POINTER *                        0         INT (INT, INT)         
-x                    variable       21     global > main()              INT                                       6                                
-y                    variable       22     global > main()              INT                                       1                                
+x                    variable       21     global > main()              INT                                       7                                
+y                    variable       22     global > main()              INT                                       2                                
 z                    parameter      23     global > main() > lambda     INT                                       1                                
 adder                variable       23     global > main()              INT                                       0                                
 done                 label          36     global > main()              LABEL                                     0                                

@@ -1,0 +1,87 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/loops.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/loops.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "i : INT"  <int>  -> i.1 (variable, local)
+        |   |-- VarDecl "s : INT"  <int>  -> s.2 (variable, local)
+        |   `-- VarDecl "n : INT"  <int>  -> n.3 (variable, local)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- ForStmt
+        |   |-- ExprStmt
+        |   |   `-- CommaExpr  <int>
+        |   |       |-- AssignExpr "="  <int>
+        |   |       |   |-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |   |       |   `-- IntLiteral "0"  <int> =0
+        |   |       `-- AssignExpr "="  <int>
+        |   |           |-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |   |           `-- IntLiteral "0"  <int> =0
+        |   |-- ExprStmt
+        |   |   `-- BinaryExpr "<"  <int>
+        |   |       |-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |   |       `-- Identifier "n"  <int> lvalue  -> n.3 (variable, local)
+        |   |-- PostfixOpExpr "++"  <int>
+        |   |   `-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |   `-- ExprStmt
+        |       `-- AssignExpr "+="  <int>
+        |           |-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |           `-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""for sum 0..2      = %d\n""  <char[24]> lvalue
+        |       `-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- WhileStmt
+        |   |-- IntLiteral "0"  <int> =0
+        |   `-- ExprStmt
+        |       `-- PostfixOpExpr "++"  <int>
+        |           `-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""while(0) body ran = %d times\n""  <char[30]> lvalue
+        |       `-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "i"  <int> lvalue  -> i.1 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- DoWhileStmt
+        |   |-- ExprStmt
+        |   |   `-- PostfixOpExpr "++"  <int>
+        |   |       `-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        |   `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""do-while(0) ran   = %d time\n""  <char[29]> lvalue
+        |       `-- Identifier "s"  <int> lvalue  -> s.2 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         1     -     0     main                 main                     defined
+i                  variable       int                        local    global > main()                2     4     6     i.1                  -                        
+s                  variable       int                        local    global > main()                2     4     9     s.2                  -                        
+n                  variable       int                        local    global > main()                2     4     1     n.3                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

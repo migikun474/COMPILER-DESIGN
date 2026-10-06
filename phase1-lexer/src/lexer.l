@@ -11,10 +11,11 @@
 #include <vector>
 #include <utility>
 
-#include "diagnostics.h"
+#include "diagnostics/diagnostics.hpp"
+#include "preprocessor/preprocessor.hpp"
 #include "logger.h"
 #include "token.h"
-#include "token_type.hpp"
+#include "token/token_type.hpp"
 
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
@@ -25,6 +26,14 @@ static int chrCharCount;   /* how many actual characters seen in the
                                as ONE character, e.g. '\n' has 1) */
 
 static const char* SIMPLE_ESCAPES = "ntr\\'\"abfv?";
+
+/* this phase's errors and warnings go into the shared diagnostics list */
+static void reportError(int line, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, 0, lexeme, message, "Lexical error");
+}
+static void reportWarning(int line, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, 0, lexeme, message, "Lexical warning");
+}
 
 static void invalidEscape(const char* text, int line) {
     reportError(line, text, "Invalid escape sequence");
@@ -117,7 +126,10 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                        if (chrCharCount == 0) {
                                            reportError(tokStartLine, strbuf, "Empty character literal");
                                        } else if (chrCharCount > 1) {
-                                           reportError(tokStartLine, strbuf, "Too many characters in character literal");
+                                           /* accepted, as gcc/clang do: an int-valued,
+                                              implementation-defined constant */
+                                           reportWarning(tokStartLine, strbuf, "Multi-character character constant (has type int)");
+                                           if (!litHadError) addToken(TokenType::CHAR_LITERAL, strbuf);
                                        } else if (!litHadError) {
                                            addToken(TokenType::CHAR_LITERAL, strbuf);
                                        }
@@ -193,7 +205,8 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Usage: %s <source-file>\n", argv[0]);
         return 1;
     }
-    FILE* f = fopen(argv[1], "r");
+    /* like any C compiler, lex the preprocessed text (#define, #include, #if ...) */
+    FILE* f = openPreprocessed(argv[1]);
     if (!f) {
         fprintf(stderr, "Error: could not open file '%s'\n", argv[1]);
         return 1;
@@ -202,16 +215,26 @@ int main(int argc, char** argv) {
     yylex();
     fclose(f);
 
-    writeLexerLog(argv[1], diagnostics);
+    writeLexerLog(argv[1]);
+    std::vector<Diagnostic> errors = errorDiagnostics(), warnings = warningDiagnostics();
 
     if (hasErrors()) {
         fprintf(stderr, "Lexical analysis failed: %zu error(s) found in '%s'.\n",
-                diagnostics.size(), argv[1]);
-        for (const auto &d : diagnostics) {
-            fprintf(stderr, "Line %d: %s (near '%s')\n",
-                    d.line, d.message.c_str(), d.lexeme.c_str());
+                errors.size(), argv[1]);
+        for (const auto &d : errors) {
+            fprintf(stderr, "Line %s: %s (near '%s')\n",
+                    displayLine(d.line).c_str(), d.message.c_str(), d.near_text.c_str());
+        }
+        for (const auto &w : warnings) {
+            fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
+                    displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
         }
         return 1;
+    }
+
+    for (const auto &w : warnings) {
+        fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
+                displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
     }
 
     printf("%-30s %-20s\n", "Lexeme", "Token");

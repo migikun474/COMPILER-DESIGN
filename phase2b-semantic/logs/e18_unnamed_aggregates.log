@@ -1,0 +1,52 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c
+
+Semantic analysis failed: 9 error(s), 2 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c'.
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:2:33: semantic error: duplicate member 'i' in struct 'Dup' (previous declaration at line 2) [duplicate-member]
+ 2 | struct Dup { int i; union { int i; float f; }; };    // error: duplicate member 'i' in struct 'Dup'
+   |                                 ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:3:47: semantic error: duplicate member 'k' in struct 'Dup2' (previous declaration at line 3) [duplicate-member]
+ 3 | struct Dup2 { union { int k; }; struct { char k; }; }; // error: duplicate member 'k' in struct 'Dup2'
+   |                                               ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:7:1: semantic warning: unnamed struct/union that defines no instances [anonymous]
+ 7 | struct { int unused; };                               // warning: unnamed struct/union that defines no instances
+   | ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:12:7: semantic error: unknown member 'z': no member named 'z' in 'Pt' [unknown-member]
+ 12 |     p.z = 1;                                          // error: no member named 'z' in 'Pt'
+    |       ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:13:9: semantic error: type mismatch: cannot assign 'int' to 'Pt' [type-mismatch]
+ 13 |     p = 5;                                            // error: cannot assign 'int' to 'Pt'
+    |         ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:14:7: semantic error: unknown member 'b': no member named 'b' in 'struct (unnamed at 6:1)' [unknown-member]
+ 14 |     g.b = 2;                                          // error: no member named 'b' in 'struct (unnamed at 6:1)'
+    |       ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:15:15: semantic error: type mismatch: cannot initialize variable 'ip' of type 'int *' with a value of type 'Pt *' (incompatible pointer types) [type-mismatch]
+ 15 |     int *ip = &p;                                     // error: of type 'int *' with a value of type 'Pt *'
+    |               ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:16:7: semantic error: 'secret' is a private member of 'class Box' and is not accessible outside the class [access]
+ 16 |     b.secret = 3;                                     // error: 'secret' is a private member of 'class Box'
+    |       ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:17:23: semantic error: unknown member 'w': no member named 'w' in 'Pt' [unknown-member]
+ 17 |     Pt q = { .x = 1, .w = 2 };                        // error: no member named 'w' in 'Pt'
+    |                       ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:18:5: semantic warning: unnamed struct/union that defines no instances [anonymous]
+ 18 |     struct { int s1; };                               // warning: unnamed struct/union that defines no instances
+    |     ^
+
+/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e18_unnamed_aggregates.c:19:5: semantic error: undeclared identifier 's1' [undeclared]
+ 19 |     s1 = 4;                                           // error: undeclared identifier 's1'
+    |     ^
+

@@ -1,0 +1,117 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v14_warnings.c
+
+Semantic analysis successful: 0 error(s), 9 warning(s) in 'test/valid/v14_warnings.c'.
+
+test/valid/v14_warnings.c:2:5: semantic warning: function 'helper' is used but never defined [undefined-function]
+ 2 | int helper(int v);                // warning: is used but never defined
+   |     ^
+
+test/valid/v14_warnings.c:4:5: semantic warning: non-void function 'compute' has no return statement (declared to return 'int') [missing-return]
+ 4 | int compute(int v) {              // warning: has no return statement
+   |     ^
+
+test/valid/v14_warnings.c:11:7: semantic warning: array index 4 is past the end of the array (which has 4 elements) [array-bounds]
+ 11 |     a[4] = 0;                     // warning: past the end of the array
+    |       ^
+
+test/valid/v14_warnings.c:12:7: semantic warning: array index -1 is before the beginning of the array [array-bounds]
+ 12 |     a[-1] = 0;                    // warning: before the beginning
+    |       ^
+
+test/valid/v14_warnings.c:13:13: semantic warning: division by zero is undefined [division-by-zero]
+ 13 |     x = x / 0;                    // warning: division by zero
+    |             ^
+
+test/valid/v14_warnings.c:14:5: semantic warning: format string of 'printf' expects 2 arguments after the format, but 1 was provided [format]
+ 14 |     printf("%d %d\n", x);         // warning: expects 2 arguments after the format, but 1 was provided
+    |     ^
+
+test/valid/v14_warnings.c:15:20: semantic warning: format '%s' expects a string (char *), but argument 2 has type 'int' [format]
+ 15 |     printf("%s\n", x);            // warning: format '%s' expects a string
+    |                    ^
+
+test/valid/v14_warnings.c:16:13: semantic warning: multi-character character constant 'ab' has type 'int' [multichar]
+ 16 |     int m = 'ab';                 // warning: multi-character character constant
+    |             ^
+
+test/valid/v14_warnings.c:17:12: semantic warning: type specifier missing, defaults to 'int' [implicit-int]
+ 17 |     static y;                     // warning: type specifier missing, defaults to 'int'
+    |            ^
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDecl "helper : _Z6helperi"  <int (int)>  -> _Z6helperi (function)
+|   `-- ParamDecl "v : INT"
+|-- FunctionDef "compute : _Z7computei"  <int (int)>  -> _Z7computei (function)
+|   |-- ParamDecl "v : INT"  <int>  -> v.1 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ExprStmt
+|           `-- AssignExpr "="  <int>
+|               |-- Identifier "v"  <int> lvalue  -> v.1 (parameter, param)
+|               `-- BinaryExpr "+"  <int>
+|                   |-- Identifier "v"  <int> lvalue  -> v.1 (parameter, param)
+|                   `-- IntLiteral "1"  <int> =1
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "a : INT_ARRAY"  <int[4]>  -> a.2 (variable, local)
+        |-- VarDecl "x : INT"  <int>  -> x.3 (variable, local)
+        |   `-- IntLiteral "1"  <int> =1
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "a"  <int[4]> lvalue  -> a.2 (variable, local)
+        |       |   `-- IntLiteral "4"  <int> =4
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- IndexExpr  <int> lvalue
+        |       |   |-- Identifier "a"  <int[4]> lvalue  -> a.2 (variable, local)
+        |       |   `-- UnaryExpr "-"  <int> =-1
+        |       |       `-- IntLiteral "1"  <int> =1
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+        |       `-- BinaryExpr "/"  <int>
+        |           |-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+        |           `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d %d\n""  <char[7]> lvalue
+        |       `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%s\n""  <char[4]> lvalue
+        |       `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+        |-- VarDecl "m : INT"  <int>  -> m.4 (variable, local)
+        |   `-- CharLiteral "'ab'"  <int> =24930
+        |-- VarDecl "y : INT"  <int>  -> y.5 (variable, static)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- CallExpr  <int>  -> _Z6helperi (function)
+                |   |   |-- Identifier "helper"  <int (int)>  -> _Z6helperi (function)
+                |   |   `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+                |   `-- CallExpr  <int>  -> _Z7computei (function)
+                |       |-- Identifier "compute"  <int (int)>  -> _Z7computei (function)
+                |       `-- Identifier "m"  <int> lvalue  -> m.4 (variable, local)
+                `-- Identifier "y"  <int> lvalue  -> y.5 (variable, static)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+helper             function       int (int)                  -        global                         2     -     1     _Z6helperi           _Z6helperi               declared only
+compute            function       int (int)                  -        global                         4     -     1     _Z7computei          _Z7computei              defined
+v                  parameter      int                        param    global > compute()             4     4     2     v.1                  -                        
+main               function       int (void)                 -        global                         8     -     0     main                 main                     defined
+a                  variable       int[4]                     local    global > main()                9     16    2     a.2                  -                        
+x                  variable       int                        local    global > main()                10    4     5     x.3                  -                        
+m                  variable       int                        local    global > main()                16    4     1     m.4                  -                        
+y                  variable       int                        static   global > main()                17    4     1     y.5                  -                        static
+
+=== Record Layouts (MIPS32) ===
+(no records)

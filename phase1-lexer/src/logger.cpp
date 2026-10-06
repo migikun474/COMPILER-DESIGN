@@ -5,10 +5,11 @@
 
 namespace fs = std::filesystem;
 
-void writeLexerLog(
-    const std::string &sourceFile,
-    const std::vector<Diagnostic> &diagnostics)
+void writeLexerLog(const std::string &sourceFile)
 {
+    const std::vector<Diagnostic> diagnostics = errorDiagnostics();
+    const std::vector<Diagnostic> warnings = warningDiagnostics();
+
     fs::create_directories("logs");
 
     std::string filename = fs::path(sourceFile).stem().string();
@@ -46,12 +47,12 @@ void writeLexerLog(
                     count++);
 
             fprintf(log,
-                    "Line    : %d\n",
-                    d.line);
+                    "Line    : %s\n",
+                    displayLine(d.line).c_str());
 
             fprintf(log,
                     "Lexeme  : %s\n",
-                    d.lexeme.c_str());
+                    d.near_text.c_str());
 
             fprintf(log,
                     "Message : %s\n\n",
@@ -64,6 +65,16 @@ void writeLexerLog(
         fprintf(log,
                 "Total Errors : %zu\n",
                 diagnostics.size());
+    }
+
+    if (!warnings.empty())
+    {
+        fprintf(log, "\nWarnings:\n");
+        for (const auto &w : warnings)
+        {
+            fprintf(log, "Line %s: %s (near '%s')\n",
+                    displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+        }
     }
 
     fclose(log);

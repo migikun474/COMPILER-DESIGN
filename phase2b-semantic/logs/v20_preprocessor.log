@@ -1,0 +1,88 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v20_preprocessor.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/v20_preprocessor.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDecl "area : _Z4areaii"  <int (int, int)>  -> _Z4areaii (function)
+|   |-- ParamDecl "w : INT"
+|   `-- ParamDecl "h : INT"
+|-- VarDecl "debugOn : INT"  <int>  -> debugOn (variable, global)
+|   `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "area : _Z4areaii"  -> _Z4areaii (function)
+|   |-- ParamDecl "w : INT"  <int>  -> w.1 (parameter, param)
+|   |-- ParamDecl "h : INT"  <int>  -> h.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- Identifier "w"  <int> lvalue  -> w.1 (parameter, param)
+|               `-- Identifier "h"  <int> lvalue  -> h.2 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "myvar : INT"  <int>  -> myvar.3 (variable, local)
+        |   `-- BinaryExpr "+"  <int> =19
+        |       |-- TernaryExpr  <int> =3
+        |       |   |-- BinaryExpr ">"  <int> =1
+        |       |   |   |-- IntLiteral "3"  <int> =3
+        |       |   |   `-- IntLiteral "2"  <int> =2
+        |       |   |-- IntLiteral "3"  <int> =3
+        |       |   `-- IntLiteral "2"  <int> =2
+        |       `-- BinaryExpr "*"  <int> =16
+        |           |-- BinaryExpr "+"  <int> =4
+        |           |   |-- IntLiteral "3"  <int> =3
+        |           |   `-- IntLiteral "1"  <int> =1
+        |           `-- BinaryExpr "+"  <int> =4
+        |               |-- IntLiteral "3"  <int> =3
+        |               `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "x : INT"  <int>  -> x.4 (variable, local)
+        |   `-- UnaryExpr "-"  <int> =1
+        |       `-- UnaryExpr "-"  <int> =-1
+        |           `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "s : CHAR_POINTER"  <char *>  -> s.5 (variable, local)
+        |   `-- StringLiteral ""hello world""  <char[12]> lvalue
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d %d\n""  <char[7]> lvalue
+        |       |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       `-- Identifier "myvar"  <int> lvalue  -> myvar.3 (variable, local)
+        |-- VarDecl "line : INT"  <int>  -> line.6 (variable, local)
+        |   `-- IntLiteral "34"  <int> =34
+        |-- VarDecl "a : INT_ARRAY"  <int[3]>  -> a.7 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- IndexExpr  <int> lvalue
+                |   |   |   |   |-- Identifier "a"  <int[3]> lvalue  -> a.7 (variable, local)
+                |   |   |   |   `-- IntLiteral "0"  <int> =0
+                |   |   |   `-- CallExpr "_Z4areaii"  <int>  -> _Z4areaii (function)
+                |   |   |       |-- Identifier "area"  <int (int, int)>  -> _Z4areaii (function)
+                |   |   |       |-- IntLiteral "4"  <int> =4
+                |   |   |       `-- IntLiteral "2"  <int> =2
+                |   |   `-- Identifier "line"  <int> lvalue  -> line.6 (variable, local)
+                |   `-- Identifier "debugOn"  <int> lvalue  -> debugOn (variable, global)
+                `-- IndexExpr  <char> lvalue
+                    |-- Identifier "s"  <char *> lvalue  -> s.5 (variable, local)
+                    `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+area               function       int (int, int)             -        global                         /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/valid/headers/geometry.h:5 -     1     _Z4areaii            _Z4areaii                defined
+debugOn            variable       int                        global   global                         19    4     1     debugOn              -                        
+w                  parameter      int                        param    global > area()                28    4     1     w.1                  -                        
+h                  parameter      int                        param    global > area()                28    4     1     h.2                  -                        
+main               function       int (void)                 -        global                         29    -     0     main                 main                     defined
+myvar              variable       int                        local    global > main()                30    4     1     myvar.3              -                        
+x                  variable       int                        local    global > main()                31    4     1     x.4                  -                        
+s                  variable       char *                     local    global > main()                32    4     1     s.5                  -                        
+line               variable       int                        local    global > main()                34    4     1     line.6               -                        
+a                  variable       int[3]                     local    global > main()                35    12    1     a.7                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

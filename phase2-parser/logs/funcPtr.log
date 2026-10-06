@@ -1,0 +1,179 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/funcPtr.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+mul                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
+*                              star_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+apply                          PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+(                              open_paren_op       
+*                              star_op             
+f                              INT_POINTER         
+)                              close_paren_op      
+(                              open_paren_op       
+int                            int                 
+,                              comma_op            
+int                            int                 
+)                              close_paren_op      
+,                              comma_op            
+int                            int                 
+x                              INT                 
+,                              comma_op            
+int                            int                 
+y                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+f                              INT_POINTER         
+(                              open_paren_op       
+x                              INT                 
+,                              comma_op            
+y                              INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+r1                             INT                 
+=                              assign_op           
+apply                          PROCEDURE           
+(                              open_paren_op       
+add                            PROCEDURE           
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+int                            int                 
+r2                             INT                 
+=                              assign_op           
+apply                          PROCEDURE           
+(                              open_paren_op       
+mul                            PROCEDURE           
+,                              comma_op            
+2                              INT_LITERAL         
+,                              comma_op            
+3                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d\n"                         STRING_LITERAL      
+,                              comma_op            
+r1                             INT                 
++                              plus_op             
+r2                             INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "add : _Z3addii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- FunctionDef "mul : _Z3mulii"
+|   |-- ParamDecl "a : INT"
+|   |-- ParamDecl "b : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "a"
+|               `-- Identifier "b"
+|-- FunctionDef "apply : _Z5applyPFiiiEii"
+|   |-- ParamDecl "f : INT_POINTER"
+|   |-- ParamDecl "x : INT"
+|   |-- ParamDecl "y : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- CallExpr
+|               |-- Identifier "f"
+|               |-- Identifier "x"
+|               `-- Identifier "y"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "r1 : INT"
+        |   `-- CallExpr
+        |       |-- Identifier "apply"
+        |       |-- Identifier "add"
+        |       |-- IntLiteral "2"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "r2 : INT"
+        |   `-- CallExpr
+        |       |-- Identifier "apply"
+        |       |-- Identifier "mul"
+        |       |-- IntLiteral "2"
+        |       `-- IntLiteral "3"
+        `-- ExprStmt
+            `-- BuiltinCallExpr "printf"
+                |-- StringLiteral ""%d\n""
+                `-- BinaryExpr "+"
+                    |-- Identifier "r1"
+                    `-- Identifier "r2"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+add                  procedure      1      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      1      global > add()               INT                                       1                                
+b                    parameter      1      global > add()               INT                                       1                                
+mul                  procedure      2      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3mulii
+a                    parameter      2      global > mul()               INT                                       1                                
+b                    parameter      2      global > mul()               INT                                       1                                
+apply                procedure      3      global                       PROCEDURE                                 2         INT (INT_POINTER, INT, INT) _Z5applyPFiiiEii
+f                    parameter      3      global > apply()             INT_POINTER                               1                                
+x                    parameter      3      global > apply()             INT                                       1                                
+y                    parameter      3      global > apply()             INT                                       1                                
+main                 procedure      4      global                       PROCEDURE                                 0         INT ()                 main
+r1                   variable       5      global > main()              INT                                       1                                
+r2                   variable       6      global > main()              INT                                       1                                

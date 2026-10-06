@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test6_dynamic_memory_file_io.c
+Source File : test/test6_dynamic_memory_file_io.c
 
 No errors found.
 
@@ -112,7 +112,7 @@ return                         return
 
 --- Abstract Syntax Tree ---
 Program "translation_unit"
-`-- FunctionDef "main : _Z4mainv"
+`-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "heap : INT_POINTER"
         |-- ExprStmt
@@ -172,7 +172,7 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-main                 procedure      8      global                       PROCEDURE                                 0         INT ()                 _Z4mainv
-heap                 variable       9      global > main()              INT_POINTER      *                        3                                
-more                 variable       14     global > main()              INT_POINTER      *                        4                                
-f                    variable       19     global > main()              FILE_POINTER     *                        3                                
+main                 procedure      3      global                       PROCEDURE                                 0         INT ()                 main
+heap                 variable       4      global > main()              INT_POINTER      *                        3                                
+more                 variable       9      global > main()              INT_POINTER      *                        4                                
+f                    variable       14     global > main()              FILE_POINTER     *                        3                                

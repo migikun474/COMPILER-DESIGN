@@ -1,0 +1,80 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : ../phase2-parser/test/pointers.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '../phase2-parser/test/pointers.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "a : INT"  <int>  -> a.1 (variable, local)
+        |   |   `-- IntLiteral "6"  <int> =6
+        |   `-- VarDecl "b : INT"  <int>  -> b.2 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "c : INT"  <int>  -> c.3 (variable, local)
+        |   `-- BinaryExpr "*"  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.4 (variable, local)
+        |   `-- UnaryExpr "&"  <int *>
+        |       `-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |-- VarDecl "d : INT"  <int>  -> d.5 (variable, local)
+        |   `-- UnaryExpr "*"  <int> lvalue
+        |       `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |-- VarDecl "pp : INT_POINTER_POINTER"  <int **>  -> pp.6 (variable, local)
+        |   `-- UnaryExpr "&"  <int **>
+        |       `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |-- VarDecl "e : INT"  <int>  -> e.7 (variable, local)
+        |   `-- UnaryExpr "*"  <int> lvalue
+        |       `-- UnaryExpr "*"  <int *> lvalue
+        |           `-- Identifier "pp"  <int **> lvalue  -> pp.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "*="  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- UnaryExpr "*"  <int> lvalue
+        |       |   `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |       `-- BinaryExpr "*"  <int>
+        |           |-- UnaryExpr "*"  <int> lvalue
+        |           |   `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |           `-- UnaryExpr "*"  <int> lvalue
+        |               `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |-- VarDecl "f : INT"  <int>  -> f.8 (variable, local)
+        |   `-- BinaryExpr "*"  <int>
+        |       |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
+        |       `-- UnaryExpr "*"  <int> lvalue
+        |           `-- Identifier "p"  <int *> lvalue  -> p.4 (variable, local)
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"  <int>
+        |       |-- StringLiteral ""%d""  <char[3]> lvalue
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- BinaryExpr "+"  <int>
+        |           |   |-- BinaryExpr "+"  <int>
+        |           |   |   |-- Identifier "c"  <int> lvalue  -> c.3 (variable, local)
+        |           |   |   `-- Identifier "d"  <int> lvalue  -> d.5 (variable, local)
+        |           |   `-- Identifier "e"  <int> lvalue  -> e.7 (variable, local)
+        |           `-- Identifier "f"  <int> lvalue  -> f.8 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+main               function       int (void)                 -        global                         1     -     0     main                 main                     defined
+a                  variable       int                        local    global > main()                2     4     4     a.1                  -                        
+b                  variable       int                        local    global > main()                2     4     2     b.2                  -                        
+c                  variable       int                        local    global > main()                3     4     1     c.3                  -                        
+p                  variable       int *                      local    global > main()                4     4     6     p.4                  -                        
+d                  variable       int                        local    global > main()                5     4     1     d.5                  -                        
+pp                 variable       int **                     local    global > main()                6     4     1     pp.6                 -                        
+e                  variable       int                        local    global > main()                7     4     1     e.7                  -                        
+f                  variable       int                        local    global > main()                10    4     1     f.8                  -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

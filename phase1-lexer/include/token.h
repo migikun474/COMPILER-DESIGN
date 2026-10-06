@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "token_type.hpp"
+#include "token/token_type.hpp"
 
 struct Token
 {

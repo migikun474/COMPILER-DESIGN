@@ -1,0 +1,200 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : test/valid/v04_functions.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v04_functions.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- FunctionDecl "add : _Z3addii"  <int (int, int)>  -> _Z3addii (function)
+|   |-- ParamDecl "a : INT"
+|   `-- ParamDecl "b : INT"
+|-- FunctionDef "add : _Z3addii"  -> _Z3addii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
+|-- FunctionDecl "add : _Z3addii"  -> _Z3addii (function)
+|-- FunctionDef "factorial : _Z9factoriali"  <int (int)>  -> _Z9factoriali (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.3 (parameter, param)
+|   `-- CompoundStmt
+|       |-- IfStmt
+|       |   |-- BinaryExpr "<="  <int>
+|       |   |   |-- Identifier "n"  <int> lvalue  -> n.3 (parameter, param)
+|       |   |   `-- IntLiteral "1"  <int> =1
+|       |   `-- ReturnStmt
+|       |       `-- IntLiteral "1"  <int> =1
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- Identifier "n"  <int> lvalue  -> n.3 (parameter, param)
+|               `-- CallExpr  <int>  -> _Z9factoriali (function)
+|                   |-- Identifier "factorial"  <int (int)>  -> _Z9factoriali (function)
+|                   `-- BinaryExpr "-"  <int>
+|                       |-- Identifier "n"  <int> lvalue  -> n.3 (parameter, param)
+|                       `-- IntLiteral "1"  <int> =1
+|-- FunctionDecl "is_even : _Z7is_eveni"  <int (int)>  -> _Z7is_eveni (function)
+|   `-- ParamDecl "n : INT"
+|-- FunctionDef "is_odd : _Z6is_oddi"  <int (int)>  -> _Z6is_oddi (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.4 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <int>
+|               |-- BinaryExpr "=="  <int>
+|               |   |-- Identifier "n"  <int> lvalue  -> n.4 (parameter, param)
+|               |   `-- IntLiteral "0"  <int> =0
+|               |-- IntLiteral "0"  <int> =0
+|               `-- CallExpr  <int>  -> _Z7is_eveni (function)
+|                   |-- Identifier "is_even"  <int (int)>  -> _Z7is_eveni (function)
+|                   `-- BinaryExpr "-"  <int>
+|                       |-- Identifier "n"  <int> lvalue  -> n.4 (parameter, param)
+|                       `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "is_even : _Z7is_eveni"  -> _Z7is_eveni (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.5 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <int>
+|               |-- BinaryExpr "=="  <int>
+|               |   |-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
+|               |   `-- IntLiteral "0"  <int> =0
+|               |-- IntLiteral "1"  <int> =1
+|               `-- CallExpr  <int>  -> _Z6is_oddi (function)
+|                   |-- Identifier "is_odd"  <int (int)>  -> _Z6is_oddi (function)
+|                   `-- BinaryExpr "-"  <int>
+|                       |-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
+|                       `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "log_value : _Z9log_valuei"  <void (int)>  -> _Z9log_valuei (function)
+|   |-- ParamDecl "v : INT"  <int>  -> v.6 (parameter, param)
+|   `-- CompoundStmt
+|       |-- IfStmt
+|       |   |-- BinaryExpr "<"  <int>
+|       |   |   |-- Identifier "v"  <int> lvalue  -> v.6 (parameter, param)
+|       |   |   `-- IntLiteral "0"  <int> =0
+|       |   `-- ReturnStmt
+|       `-- ExprStmt
+|           `-- BuiltinCallExpr "printf"  <int>
+|               |-- StringLiteral ""%d\n""  <char[4]> lvalue
+|               `-- Identifier "v"  <int> lvalue  -> v.6 (parameter, param)
+|-- FunctionDef "average : _Z7averageii"  <double (int, int)>  -> _Z7averageii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.7 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.8 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "/"  <double>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- Identifier "a"  <int> lvalue  -> a.7 (parameter, param)
+|               |   `-- Identifier "b"  <int> lvalue  -> b.8 (parameter, param)
+|               `-- FloatLiteral "2.0"  <double>
+|-- FunctionDef "first : _Z5firstPc"  <char (char *)>  -> _Z5firstPc (function)
+|   |-- ParamDecl "s : CHAR_POINTER"  <char *>  -> s.9 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- IndexExpr  <char> lvalue
+|               |-- Identifier "s"  <char *> lvalue  -> s.9 (parameter, param)
+|               `-- IntLiteral "0"  <int> =0
+|-- FunctionDef "sum : _Z3sumiz"  <int (int, ...)>  -> _Z3sumiz (function)
+|   |-- ParamDecl "count : INT"  <int>  -> count.10 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "count"  <int> lvalue  -> count.10 (parameter, param)
+|-- FunctionDef "main : main"  <int (void)>  -> main (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "r : INT"  <int>  -> r.11 (variable, local)
+|       |   `-- CallExpr "_Z3addii"  <int>  -> _Z3addii (function)
+|       |       |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+|       |       |-- IntLiteral "1"  <int> =1
+|       |       `-- IntLiteral "2"  <int> =2
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       |       `-- CallExpr "_Z3addii"  <int>  -> _Z3addii (function)
+|       |           |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
+|       |           |-- CharLiteral "'a'"  <char> =97
+|       |           `-- IntLiteral "2"  <int> =2
+|       |-- VarDecl "avg : DOUBLE"  <double>  -> avg.12 (variable, local)
+|       |   `-- CallExpr  <double>  -> _Z7averageii (function)
+|       |       |-- Identifier "average"  <double (int, int)>  -> _Z7averageii (function)
+|       |       |-- IntLiteral "3"  <int> =3
+|       |       `-- IntLiteral "4"  <int> =4
+|       |-- ExprStmt
+|       |   `-- CallExpr  <void>  -> _Z9log_valuei (function)
+|       |       |-- Identifier "log_value"  <void (int)>  -> _Z9log_valuei (function)
+|       |       `-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       |       `-- BinaryExpr "+"  <int>
+|       |           |-- BinaryExpr "+"  <int>
+|       |           |   |-- CallExpr  <int>  -> _Z9factoriali (function)
+|       |           |   |   |-- Identifier "factorial"  <int (int)>  -> _Z9factoriali (function)
+|       |           |   |   `-- IntLiteral "5"  <int> =5
+|       |           |   `-- CallExpr  <int>  -> _Z6is_oddi (function)
+|       |           |       |-- Identifier "is_odd"  <int (int)>  -> _Z6is_oddi (function)
+|       |           |       `-- IntLiteral "3"  <int> =3
+|       |           `-- CallExpr  <char>  -> _Z5firstPc (function)
+|       |               |-- Identifier "first"  <char (char *)>  -> _Z5firstPc (function)
+|       |               `-- StringLiteral ""abc""  <char[4]> lvalue
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       |       `-- BinaryExpr "+"  <int>
+|       |           |-- CallExpr  <int>  -> _Z3sumiz (function)
+|       |           |   |-- Identifier "sum"  <int (int, ...)>  -> _Z3sumiz (function)
+|       |           |   `-- IntLiteral "1"  <int> =1
+|       |           `-- CallExpr  <int>  -> _Z3sumiz (function)
+|       |               |-- Identifier "sum"  <int (int, ...)>  -> _Z3sumiz (function)
+|       |               |-- IntLiteral "3"  <int> =3
+|       |               |-- IntLiteral "1"  <int> =1
+|       |               |-- FloatLiteral "2.0"  <double>
+|       |               `-- StringLiteral ""x""  <char[2]> lvalue
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       |       `-- CallExpr  <int>  -> _Z5lateri (function)
+|       |           |-- Identifier "later"  <int (int)>  -> _Z5lateri (function)
+|       |           `-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <double>
+|               |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+|               `-- Identifier "avg"  <double> lvalue  -> avg.12 (variable, local)
+`-- FunctionDef "later : _Z5lateri"  <int (int)>  -> _Z5lateri (function)
+    |-- ParamDecl "v : INT"  <int>  -> v.13 (parameter, param)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- Identifier "v"  <int> lvalue  -> v.13 (parameter, param)
+                `-- IntLiteral "1"  <int> =1
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+add                function       int (int, int)             -        global                         3     -     2     _Z3addii             _Z3addii                 defined
+a                  parameter      int                        param    global > add()                 4     4     1     a.1                  -                        
+b                  parameter      int                        param    global > add()                 4     4     1     b.2                  -                        
+factorial          function       int (int)                  -        global                         9     -     2     _Z9factoriali        _Z9factoriali            defined
+n                  parameter      int                        param    global > factorial()           9     4     3     n.3                  -                        
+is_even            function       int (int)                  -        global                         14    -     1     _Z7is_eveni          _Z7is_eveni              defined
+is_odd             function       int (int)                  -        global                         15    -     2     _Z6is_oddi           _Z6is_oddi               defined
+n                  parameter      int                        param    global > is_odd()              15    4     2     n.4                  -                        
+n                  parameter      int                        param    global > is_even()             16    4     2     n.5                  -                        
+log_value          function       void (int)                 -        global                         18    -     1     _Z9log_valuei        _Z9log_valuei            defined
+v                  parameter      int                        param    global > log_value()           18    4     2     v.6                  -                        
+average            function       double (int, int)          -        global                         23    -     1     _Z7averageii         _Z7averageii             defined
+a                  parameter      int                        param    global > average()             23    4     1     a.7                  -                        
+b                  parameter      int                        param    global > average()             23    4     1     b.8                  -                        
+first              function       char (char *)              -        global                         24    -     1     _Z5firstPc           _Z5firstPc               defined
+s                  parameter      char *                     param    global > first()               24    4     1     s.9                  -                        
+sum                function       int (int, ...)             -        global                         25    -     2     _Z3sumiz             _Z3sumiz                 defined
+count              parameter      int                        param    global > sum()                 25    4     1     count.10             -                        
+main               function       int (void)                 -        global                         27    -     0     main                 main                     defined
+r                  variable       int                        local    global > main()                28    4     7     r.11                 -                        
+avg                variable       double                     local    global > main()                30    8     1     avg.12               -                        
+later              function       int (int)                  -        global                         38    -     1     _Z5lateri            _Z5lateri                defined
+v                  parameter      int                        param    global > later()               38    4     1     v.13                 -                        
+
+=== Record Layouts (MIPS32) ===
+(no records)

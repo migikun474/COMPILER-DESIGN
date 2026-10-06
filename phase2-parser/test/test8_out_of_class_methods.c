@@ -1,6 +1,4 @@
-/* Out-of-class method definitions: `Dog::bark() {...}` should mangle
- * to the exact same name as the in-class prototype `int bark();`
- * declared inside `class Dog {...}` -- both are the same function. */
+
 
 class Dog {
 public:

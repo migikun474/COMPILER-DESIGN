@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test1_variables_vs_procedures.c
+Source File : test/test1_variables_vs_procedures.c
 
 No errors found.
 
@@ -44,6 +44,7 @@ a                              INT
 +                              plus_op             
 1                              INT_LITERAL         
 ;                              semicolon_op        
+;                              semicolon_op        
 return                         return              
 0                              INT_LITERAL         
 ;                              semicolon_op        
@@ -59,7 +60,7 @@ Program "translation_unit"
 |           `-- BinaryExpr "+"
 |               |-- Identifier "b"
 |               `-- Identifier "c"
-`-- FunctionDef "main : _Z4mainv"
+`-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "a : INT"
         |-- ExprStmt
@@ -70,6 +71,7 @@ Program "translation_unit"
         |   `-- BinaryExpr "+"
         |       |-- Identifier "a"
         |       `-- IntLiteral "1"
+        |-- EmptyStmt
         `-- ReturnStmt
             `-- IntLiteral "0"
 
@@ -77,9 +79,9 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-a                    procedure      9      global                       PROCEDURE                                 0         INT (INT, INT)         _Z1aii
-b                    parameter      9      global > a()                 INT                                       1                                
-c                    parameter      9      global > a()                 INT                                       1                                
-main                 procedure      13     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
-a                    variable       14     global > main()              INT                                       2                                
-result               variable       16     global > main()              INT                                       0                                
+a                    procedure      3      global                       PROCEDURE                                 0         INT (INT, INT)         _Z1aii
+b                    parameter      3      global > a()                 INT                                       1                                
+c                    parameter      3      global > a()                 INT                                       1                                
+main                 procedure      7      global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       8      global > main()              INT                                       2                                
+result               variable       10     global > main()              INT                                       0                                

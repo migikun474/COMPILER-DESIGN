@@ -1,0 +1,5 @@
+# local tooling and backups: not part of the compiler
+.agents/
+.claude/
+skills-lock.json
+*.zip

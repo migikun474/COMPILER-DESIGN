@@ -1,5 +1,6 @@
 CC      = g++
-CFLAGS  = -std=c++17 -Wall -O2 -Iinclude -I../shared/include
+SHARED  = ../shared
+CFLAGS  = -std=c++17 -Wall -O2 -Iinclude -I$(SHARED)
 
 LEX     = flex
 
@@ -10,21 +11,22 @@ TARGET  = lexer
 
 LOGGER       = src/logger.cpp
 TOKEN        = src/token.cpp
-TOKEN_TYPE   = ../shared/src/token_type.cpp
-DIAGNOSTICS  = src/diagnostics.cpp
+LIBSHARED    = $(SHARED)/build/libshared.a
 
-.PHONY: all clean
+.PHONY: all clean $(LIBSHARED)
 
 all: $(TARGET)
 
-$(TARGET): $(GEN) $(LOGGER) $(TOKEN) $(TOKEN_TYPE) $(DIAGNOSTICS)
+$(LIBSHARED):
+	$(MAKE) -C $(SHARED)
+
+$(TARGET): $(GEN) $(LOGGER) $(TOKEN) $(wildcard include/*.h) $(LIBSHARED)
 	$(CC) $(CFLAGS) \
 	-o $(TARGET) \
 	$(GEN) \
 	$(LOGGER) \
 	$(TOKEN) \
-	$(TOKEN_TYPE) \
-	$(DIAGNOSTICS)
+	$(LIBSHARED)
 
 $(GEN): $(SRC)
 	$(LEX) -o $(GEN) $(SRC)

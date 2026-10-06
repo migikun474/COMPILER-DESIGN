@@ -1,19 +1,22 @@
 CC      = g++
-CFLAGS  = -std=c++17 -Wall -Wno-unused-function -Wno-class-memaccess -O2 -Iinclude -Ibuild -I../shared/include
+SHARED  = ../shared
+CFLAGS  = -std=c++17 -Wall -Wno-unused-function -Wno-class-memaccess -O2 -Iinclude -Ibuild -I$(SHARED)
 
 BISON   = bison
 FLEX    = flex
 
 TARGET  = syntax_analyzer
 
-COMMON      = src/common.cpp src/ast.cpp
-SHARED_SRC  = ../shared/src/token_type.cpp
-CONVERTER   = src/token_converter.cpp
+PHASE_SRC   = src/declarators.cpp src/scanner_support.cpp src/token_converter.cpp
 MAIN        = src/main.cpp
+LIBSHARED   = $(SHARED)/build/libshared.a
 
-.PHONY: all clean
+.PHONY: all clean $(LIBSHARED)
 
 all: $(TARGET)
+
+$(LIBSHARED):
+	$(MAKE) -C $(SHARED)
 
 build:
 	mkdir -p build
@@ -24,14 +27,13 @@ build/parser.tab.cpp build/parser.tab.hpp: src/parser.y | build
 build/lex.yy.cpp: src/scanner.l build/parser.tab.hpp
 	$(FLEX) -o build/lex.yy.cpp src/scanner.l
 
-$(TARGET): build/parser.tab.cpp build/lex.yy.cpp $(COMMON) $(SHARED_SRC) $(CONVERTER) $(MAIN)
+$(TARGET): build/parser.tab.cpp build/lex.yy.cpp $(PHASE_SRC) $(MAIN) $(wildcard include/*) $(LIBSHARED)
 	$(CC) $(CFLAGS) -o $(TARGET) \
 	build/parser.tab.cpp \
 	build/lex.yy.cpp \
-	$(COMMON) \
-	$(SHARED_SRC) \
-	$(CONVERTER) \
-	$(MAIN)
+	$(PHASE_SRC) \
+	$(MAIN) \
+	$(LIBSHARED)
 
 clean:
 	rm -rf build $(TARGET) logs

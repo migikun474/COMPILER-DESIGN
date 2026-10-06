@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test9_pointers_and_function_pointers.c
+Source File : test/test9_pointers_and_function_pointers.c
 
 No errors found.
 
@@ -134,7 +134,7 @@ Program "translation_unit"
 |       |       `-- IntLiteral "42"
 |       `-- ReturnStmt
 |           `-- Identifier "p"
-`-- FunctionDef "main : _Z4mainiPPc"
+`-- FunctionDef "main : main"
     |-- ParamDecl "argc : INT"
     |-- ParamDecl "argv : CHAR_POINTER_POINTER"
     `-- CompoundStmt
@@ -169,15 +169,15 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-add                  procedure      13     global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
-a                    parameter      13     global > add()               INT                                       1                                
-b                    parameter      13     global > add()               INT                                       1                                
-makeInt              procedure      17     global                       PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
-p                    variable       18     global > makeInt()           INT_POINTER      *                        3                                
-main                 procedure      24     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) _Z4mainiPPc
-argc                 parameter      24     global > main()              INT                                       1                                
-argv                 parameter      24     global > main()              CHAR_POINTER_POINTER                          0                                
-fp                   variable       25     global > main()              INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
-result               variable       27     global > main()              INT                                       1                                
-val                  variable       30     global > main()              INT_POINTER      *                        1                                
-x                    variable       33     global > main()              INT                                       1                                
+add                  procedure      2      global                       PROCEDURE                                 1         INT (INT, INT)         _Z3addii
+a                    parameter      2      global > add()               INT                                       1                                
+b                    parameter      2      global > add()               INT                                       1                                
+makeInt              procedure      6      global                       PROCEDURE        *                        1         INT_POINTER ()         _Z7makeIntv
+p                    variable       7      global > makeInt()           INT_POINTER      *                        3                                
+main                 procedure      13     global                       PROCEDURE                                 0         INT (INT, CHAR_POINTER_POINTER) main
+argc                 parameter      13     global > main()              INT                                       1                                
+argv                 parameter      13     global > main()              CHAR_POINTER_POINTER                          0                                
+fp                   variable       14     global > main()              INT_FUNCTION_POINTER *                        2         INT (INT, INT)         
+result               variable       16     global > main()              INT                                       1                                
+val                  variable       19     global > main()              INT_POINTER      *                        1                                
+x                    variable       22     global > main()              INT                                       1                                

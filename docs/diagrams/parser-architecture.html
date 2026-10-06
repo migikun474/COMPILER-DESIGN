@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How the scanner, the parser and the symbol table cooperate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1200px; width: 100%; min-width: 0; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 960px; display: block; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Sequence · phase 2</p>
+    <h1>How the scanner, the parser and the symbol table cooperate</h1>
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="parser-architecture-title parser-architecture-desc">
+        <title id="parser-architecture-title">How the scanner, the parser and the symbol table cooperate</title>
+        <desc id="parser-architecture-desc">Sequence of one parse: yyparse asks yylex for each token, yylex asks the parse-time symbol table whether a name is a type, and the reduce actions declare symbols and build AST nodes.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+<rect x="200" y="148" width="672" height="272" rx="4" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+<rect x="200" y="148" width="40" height="16" rx="2" fill="#f5f5f5" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+<text x="220" y="160" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.12em">LOOP</text>
+<text x="212" y="182" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.04em">[until EOF]</text>
+<line x1="120" y1="88" x2="120" y2="504" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="300" y1="88" x2="300" y2="504" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="480" y1="88" x2="480" y2="504" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="660" y1="88" x2="660" y2="504" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="840" y1="88" x2="840" y2="504" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="124" y1="124" x2="296" y2="124" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<line x1="304" y1="212" x2="476" y2="212" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<line x1="484" y1="244" x2="656" y2="244" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<line x1="656" y1="276" x2="484" y2="276" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<line x1="476" y1="308" x2="304" y2="308" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<line x1="304" y1="348" x2="656" y2="348" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<line x1="304" y1="388" x2="836" y2="388" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+<line x1="296" y1="456" x2="124" y2="456" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<rect x="190.0" y="104" width="40" height="12" rx="2" fill="#f5f5f5"/>
+<text x="210" y="113" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">PARSE</text>
+<rect x="356.0" y="192" width="68" height="12" rx="2" fill="#f5f5f5"/>
+<text x="390" y="201" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">NEXT TOKEN</text>
+<rect x="536.0" y="224" width="68" height="12" rx="2" fill="#f5f5f5"/>
+<text x="570" y="233" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">TYPE NAME?</text>
+<rect x="542.0" y="256" width="56" height="12" rx="2" fill="#f5f5f5"/>
+<text x="570" y="265" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">YES / NO</text>
+<rect x="370.0" y="288" width="40" height="12" rx="2" fill="#f5f5f5"/>
+<text x="390" y="297" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">TOKEN</text>
+<rect x="344.0" y="328" width="92" height="12" rx="2" fill="#f5f5f5"/>
+<text x="390" y="337" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">DECLARE SYMBOL</text>
+<rect x="344.0" y="368" width="92" height="12" rx="2" fill="#f5f5f5"/>
+<text x="390" y="377" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">BUILD AST NODE</text>
+<rect x="182.0" y="436" width="56" height="12" rx="2" fill="#f5f5f5"/>
+<text x="210" y="445" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">AST ROOT</text>
+<rect x="296" y="124" width="8" height="332" fill="#f5f5f5"/><rect x="296" y="124" width="8" height="332" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+<rect x="476" y="212" width="8" height="96" fill="#f5f5f5"/><rect x="476" y="212" width="8" height="96" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+<rect x="656" y="244" width="8" height="32" fill="#f5f5f5"/><rect x="656" y="244" width="8" height="32" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+<rect x="656" y="344" width="8" height="12" fill="#f5f5f5"/><rect x="656" y="344" width="8" height="12" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+<rect x="836" y="384" width="8" height="12" fill="#f5f5f5"/><rect x="836" y="384" width="8" height="12" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+<rect x="48" y="40" width="144" height="48" rx="6" fill="#f5f5f5"/>
+<rect x="48" y="40" width="144" height="48" rx="6" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+<text x="120.0" y="61" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">main()</text>
+<text x="120.0" y="76" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">main.cpp</text>
+<rect x="228" y="40" width="144" height="48" rx="6" fill="#f5f5f5"/>
+<rect x="228" y="40" width="144" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="300.0" y="61" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">yyparse()</text>
+<text x="300.0" y="76" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">parser.y · LALR(1)</text>
+<rect x="408" y="40" width="144" height="48" rx="6" fill="#f5f5f5"/>
+<rect x="408" y="40" width="144" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="480.0" y="61" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">yylex()</text>
+<text x="480.0" y="76" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">scanner.l</text>
+<rect x="588" y="40" width="144" height="48" rx="6" fill="#f5f5f5"/>
+<rect x="588" y="40" width="144" height="48" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+<text x="660.0" y="61" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">Symbol table</text>
+<text x="660.0" y="76" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">parse-time · part 1</text>
+<rect x="768" y="40" width="144" height="48" rx="6" fill="#f5f5f5"/>
+<rect x="768" y="40" width="144" height="48" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+<text x="840.0" y="61" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">AST</text>
+<text x="840.0" y="76" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">g_astRoot</text>
+<line x1="32" y1="532" x2="928" y2="532" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+<text x="32" y="548" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
+<line x1="32" y1="570" x2="60" y2="570" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<text x="68" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Call</text>
+<line x1="116" y1="570" x2="144" y2="570" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<text x="152" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Return</text>
+<line x1="208" y1="570" x2="236" y2="570" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+<text x="244" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">AST is built inside the reduce actions</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>

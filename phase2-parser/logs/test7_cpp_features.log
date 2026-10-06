@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /mnt/c/Users/Amirishettys/Desktop/parsing stage/COMPILER-DESIGN-lexer-work/phase2-parser/test/test7_cpp_features.c
+Source File : test/test7_cpp_features.c
 
 No errors found.
 
@@ -127,7 +127,7 @@ legs                           INT
 =                              assign_op           
 d                              CLASS               
 .                              dot_op              
-bark                           IDENTIFIER          
+bark                           PROCEDURE           
 (                              open_paren_op       
 )                              close_paren_op      
 ;                              semicolon_op        
@@ -141,20 +141,20 @@ Program "translation_unit"
 |-- ClassDecl "Animal"
 |   `-- VarDecl "legs : INT"
 |-- ClassDecl "Dog : Animal"
-|   |-- ConstructorDef "Dog : _ZN3Dog3DogEi"
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ei"
 |   |   |-- ParamDecl "n : INT"
 |   |   `-- CompoundStmt
 |   |       `-- ExprStmt
 |   |           `-- AssignExpr "="
 |   |               |-- Identifier "legs"
 |   |               `-- Identifier "n"
-|   |-- DestructorDef "Dog : _ZN3Dog4~DogEv"
+|   |-- DestructorDef "Dog : _ZN3DogD1Ev"
 |   |   `-- CompoundStmt
 |   `-- FunctionDef "bark : _ZN3Dog4barkEv"
 |       `-- CompoundStmt
 |           `-- ReturnStmt
 |               `-- Identifier "legs"
-`-- FunctionDef "main : _Z4mainv"
+`-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "flag : BOOL"
         |-- ExprStmt
@@ -203,19 +203,19 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Animal               class_tag      6      global                       CLASS                                     0                                
-Animal::legs         variable       8      global > class Animal        INT                                       0                                
-Dog                  class_tag      11     global                       CLASS                                     0                                
-Dog::n               parameter      13     global > class Dog > Dog::Dog() INT                                       1                                
-Dog::Dog             procedure      13     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3Dog3DogEi
-Dog::~Dog            procedure      16     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3Dog4~DogEv
-Dog::bark            procedure      18     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
-main                 procedure      23     global                       PROCEDURE                                 0         INT ()                 _Z4mainv
-flag                 variable       24     global > main()              BOOL                                      1                                
-limit                variable       26     global > main()              INT              const                    0                                
-p                    variable       28     global > main()              INT_POINTER      *                        2                                
-arr                  variable       32     global > main()              INT_ARRAY        []                       1                                
-sz                   variable       33     global > main()              INT                                       1                                
-sz2                  variable       35     global > main()              INT                                       1                                
-d                    variable       38     global > main()              CLASS                                     2                                
-legs                 variable       40     global > main()              INT                                       1                                
+Animal               class_tag      3      global                       CLASS                                     0                                
+Animal::legs         class_member   5      global > class Animal        INT                                       0                                
+Dog                  class_tag      8      global                       CLASS                                     0                                
+Dog::n               parameter      10     global > class Dog > Dog::Dog() INT                                       1                                
+Dog::Dog             class_method   10     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3DogC1Ei
+Dog::~Dog            class_method   13     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3DogD1Ev
+Dog::bark            class_method   15     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog4barkEv
+main                 procedure      20     global                       PROCEDURE                                 0         INT ()                 main
+flag                 variable       21     global > main()              BOOL                                      1                                
+limit                variable       23     global > main()              INT              const                    0                                
+p                    variable       25     global > main()              INT_POINTER      *                        2                                
+arr                  variable       29     global > main()              INT_ARRAY        []                       1                                
+sz                   variable       30     global > main()              INT                                       1                                
+sz2                  variable       32     global > main()              INT                                       1                                
+d                    variable       35     global > main()              CLASS                                     2                                
+legs                 variable       37     global > main()              INT                                       1                                
