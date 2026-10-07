@@ -162,7 +162,7 @@ semantic phase redoes all name resolution.)
 | Item | State |
 |---|---|
 | Three Address Code generation (phase 3) | **done** — [`phase3-ir/README.md`](../phase3-ir/README.md) |
-| TAC optimizations | `-O1` (local) **done**; `-O2` (global, loops) not started |
+| TAC optimizations | `-O1` (local) and `-O2` (global constants/copies, dead assignments) **done**; global CSE and loop optimizations not planned (D22) |
 | MIPS code generation (phase 4) | not started — [`phase4-codegen/README.md`](../phase4-codegen/README.md) |
 | MIPS optimizations, register allocation | not started |
 

@@ -592,6 +592,41 @@ executed by each.
   that are never read again stay (removing them needs liveness across
   blocks — `-O2`).
 
+### D22. What `-O2` contains
+
+**Decided by:** the user, choosing from four candidates.
+**In:** dead assignment elimination (live-variable analysis) and global
+constant and copy propagation.
+**Out:** global common subexpressions and loop optimizations
+(invariant code motion, induction-variable strength reduction). They
+can be added later as further passes over the same flow graph.
+
+**How they are done (Claude):** one flow graph per function (blocks
+from the same leader rule as `-O1`, edges from jumps and fall-through);
+propagation is a forward analysis whose meet keeps only the facts all
+predecessors agree on, with nothing known at the entry; liveness is the
+usual backward analysis, nothing live at the exit. Both restrict
+themselves to scalar locals whose address is never taken, so pointers,
+globals and calls cannot invalidate a fact. After each pass `-O1` runs
+again; the whole thing repeats until nothing changes.
+
+### Progress — `-O2` working (2026-10-08)
+
+- `opt.cpp` grew by about 200 lines; flag `-O2`.
+- `./run_tests.sh` runs every program raw, with `-O1` and with `-O2`:
+  **15 passed, 0 failed**. Executed instructions: `-O1` 6–42% fewer,
+  `-O2` 7–64% fewer.
+- New test `t15_global_opt`: facts that hold on every path versus
+  values that differ per path, loop-carried variables, a variable read
+  only through a pointer, a call whose result is unused.
+- `-O2` over the other suites: 45 programs run to completion with
+  identical output and exit code.
+- Twice a new test "failed" because the **test** was wrong, not the
+  compiler: `printf("%d %d", f(), g)` where `f` changes `g` — C leaves
+  the order of argument evaluation unspecified, and g++ and this
+  compiler legitimately differ. Both tests were rewritten to use
+  separate statements.
+
 ---
 
 ## Open questions

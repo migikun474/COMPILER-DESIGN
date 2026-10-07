@@ -16,8 +16,8 @@ then MIPS.
 
 > **Current implementation status: the front end and Three Address
 > Code generation are complete (with a TAC interpreter that runs the
-> generated code) and local optimization (`-O1`) works; global
-> optimization (`-O2`) and the MIPS back end are not yet started.**
+> generated code) and the TAC optimizer (`-O1`, `-O2`) works; the MIPS
+> back end is not yet started.**
 
 ```
 Front end
@@ -27,7 +27,7 @@ Front end
 └── Semantic analysis     ✓  phase2b-semantic           (types, scopes, annotated AST)
 Back end
 ├── IR / TAC              ✓  phase3-ir                  (quadruples, backpatching, TAC interpreter)
-├── Optimization          ◐  phase3-ir                  (-O1 local optimizations; -O2 not started)
+├── Optimization          ✓  phase3-ir                  (-O1 local, -O2 global data-flow)
 └── MIPS generation       ○  phase4-codegen             (README only, no code)
 ```
 
@@ -272,7 +272,7 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 | Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
 | Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **80 checks, all passing** |
 
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 14 programs generated and executed by the TAC interpreter, raw and with `-O1`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **14 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 15 programs generated and executed by the TAC interpreter, raw, with `-O1` and with `-O2`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **15 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**

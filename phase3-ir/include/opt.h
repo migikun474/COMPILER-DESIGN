@@ -14,6 +14,14 @@
    and jumps are cleaned up (jump to the next instruction, jump to a
    jump, a conditional jump over a jump, unreachable code).
 
+   -O2 adds two optimizations across basic blocks, each a data-flow
+   analysis over the function's flow graph (Dragon Book 9.2):
+     - global constant and copy propagation (forward; a fact holds at a
+       block's entry only if it holds at the end of every predecessor);
+     - dead assignment elimination (backward live-variable analysis:
+       `x = ...` is removed when x is not read again on any path).
+   After each, -O1 runs again on the result until nothing changes.
+
    Nothing here may change what a program prints or returns: the test
    suite runs every program before and after and compares.
    ===================================================================== */
@@ -34,6 +42,9 @@ struct OptStats {
     int dead = 0;              /* instructions whose result was never used */
     int jumps = 0;             /* jumps removed, redirected or inverted */
     int unreachable = 0;       /* instructions no path reaches */
+    int level = 1;
+    int global = 0;            /* -O2: operands replaced using facts from other blocks */
+    int deadAssignments = 0;   /* -O2: assignments to variables never read afterwards */
 };
 
 OptStats optimize(Program &program, int level);

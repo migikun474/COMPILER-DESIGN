@@ -5,8 +5,9 @@
      tac_generator file.c              print the TAC (also written to logs/file.tac)
      tac_generator --run file.c [args] print the TAC, then execute it
      tac_generator --run -q file.c     execute only: the program's own output
-     tac_generator -O1 file.c          optimize; with --run the program is run
-                                       before and after and must behave the same   */
+     tac_generator -O1 file.c          optimize (-O2: also across basic blocks); with
+                                       --run the program is run before and after
+                                       and must behave the same                    */
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -51,13 +52,15 @@ int main(int argc, char **argv) {
         if (!path && !std::strcmp(argv[i], "--run")) runIt = true;
         else if (!path && !std::strcmp(argv[i], "-q")) quiet = true;
         else if (!path && !std::strcmp(argv[i], "-O1")) level = 1;
+        else if (!path && !std::strcmp(argv[i], "-O2")) level = 2;
         else if (!path && !std::strcmp(argv[i], "-O0")) level = 0;
         else if (!path) path = argv[i];
         else programArgs.push_back(argv[i]); /* passed to the program's main */
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1] [--run [-q]] <source-file> [program arguments]\n"
-                        "  -O1    optimize the code (local optimizations)\n"
+        fprintf(stderr, "Usage: %s [-O1|-O2] [--run [-q]] <source-file> [program arguments]\n"
+                        "  -O1    optimize inside basic blocks\n"
+                        "  -O2    -O1 plus constant/copy propagation and dead assignments across blocks\n"
                         "  --run  execute the generated code with the TAC interpreter\n"
                         "  -q     with --run: print only what the program prints\n", argv[0]);
         return 1;

@@ -487,6 +487,204 @@ struct FunctionPass {
         fn.quads.swap(out);
     }
 
+    /* ---------------- -O2: data-flow over the flow graph ---------------- */
+
+    struct Block {
+        size_t begin = 0, end = 0;
+        std::vector<int> succ, pred;
+    };
+
+    std::vector<Block> flowGraph() const {
+        std::vector<bool> lead = leaders();
+        std::vector<Block> blocks;
+        std::vector<int> blockOf(fn.quads.size() + 1, -1);
+        for (size_t begin = 0; begin < fn.quads.size();) {
+            size_t end = begin + 1;
+            while (end < fn.quads.size() && !lead[end]) ++end;
+            for (size_t i = begin; i < end; ++i) blockOf[i] = static_cast<int>(blocks.size());
+            Block b;
+            b.begin = begin;
+            b.end = end;
+            blocks.push_back(b);
+            begin = end;
+        }
+        for (size_t k = 0; k < blocks.size(); ++k) {
+            const Quad &last = fn.quads[blocks[k].end - 1];
+            auto edge = [&](size_t quad) {
+                if (quad >= fn.quads.size()) return;
+                blocks[k].succ.push_back(blockOf[quad]);
+                blocks[blockOf[quad]].pred.push_back(static_cast<int>(k));
+            };
+            if (isJump(last)) edge(static_cast<size_t>(last.target));
+            if (last.op != Op::Goto && last.op != Op::Return) edge(blocks[k].end);
+        }
+        return blocks;
+    }
+
+    /* the name an instruction assigns, if any */
+    static Operand defined(const Quad &q) {
+        switch (q.op) {
+            case Op::Store: case Op::IndexStore: case Op::Goto: case Op::IfRel: case Op::Param:
+            case Op::Return: case Op::VaStart: case Op::VaEnd:
+                return Operand();
+            default:
+                return isName(q.r) ? q.r : Operand();
+        }
+    }
+
+    /* a scalar local nothing but its own assignments can change */
+    bool isPrivate(const Operand &o) const { return isName(o) && !inMemory(o) && !isVolatile(o) && !isBlock(o); }
+
+    /* the operands of q that are read as values (not array bases, not &x) */
+    template <class F> static void forEachValueUse(Quad &q, F f) {
+        switch (q.op) {
+            case Op::Assign: case Op::Neg: case Op::BitNot: case Op::Conv: case Op::Load: case Op::Param: case Op::Return:
+                f(q.a);
+                break;
+            case Op::Add: case Op::Sub: case Op::Mul: case Op::Div: case Op::Mod: case Op::BitAnd: case Op::BitOr:
+            case Op::BitXor: case Op::Shl: case Op::Shr: case Op::IfRel:
+                f(q.a);
+                f(q.b);
+                break;
+            case Op::IndexLoad: f(q.b); break;
+            case Op::IndexStore: f(q.b); f(q.r); break;
+            case Op::Store: f(q.a); f(q.r); break;
+            default: break;
+        }
+    }
+
+    using Facts = std::map<Name, Operand>; /* name -> the constant or other name it certainly equals */
+
+    static bool sameFact(const Operand &a, const Operand &b) {
+        if (a.kind != b.kind) return false;
+        if (isName(a)) return sameName(a, b);
+        if (classOf(a.type) != classOf(b.type)) return false;
+        return a.kind == Operand::FloatConst ? a.fval == b.fval : a.kind == Operand::Str ? a.str == b.str : a.ival == b.ival;
+    }
+
+    void transfer(const Quad &q, Facts &facts) const {
+        auto kill = [&](const Operand &o) {
+            if (!isName(o)) return;
+            facts.erase(nameOf(o));
+            for (auto it = facts.begin(); it != facts.end();)
+                it = sameName(it->second, o) ? facts.erase(it) : std::next(it);
+        };
+        if (q.op == Op::VaStart || q.op == Op::VaArg) kill(q.a);
+        Operand r = defined(q);
+        kill(r);
+        if (q.op != Op::Assign || !isPrivate(r)) return;
+        if (isNumber(q.a) || q.a.kind == Operand::Str) facts[nameOf(r)] = q.a;
+        else if (isPrivate(q.a) && !sameName(q.a, r) && classOf(q.a.type) == classOf(r.type)) facts[nameOf(r)] = q.a;
+    }
+
+    /* global constant and copy propagation */
+    bool propagate() {
+        std::vector<Block> blocks = flowGraph();
+        std::vector<Facts> in(blocks.size()), out(blocks.size());
+        std::vector<bool> done(blocks.size(), false);
+        for (bool changed = true; changed;) {
+            changed = false;
+            for (size_t k = 0; k < blocks.size(); ++k) {
+                Facts f;
+                bool first = true;
+                for (int p : blocks[k].pred) { /* meet: what every (already visited) predecessor agrees on */
+                    if (!done[p]) continue;
+                    if (first) { f = out[p]; first = false; continue; }
+                    for (auto it = f.begin(); it != f.end();) {
+                        auto other = out[p].find(it->first);
+                        it = other != out[p].end() && sameFact(it->second, other->second) ? std::next(it) : f.erase(it);
+                    }
+                }
+                if (k == 0) f.clear(); /* nothing is known on entry */
+                in[k] = f;
+                for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) transfer(fn.quads[i], f);
+                bool same = done[k] && f.size() == out[k].size();
+                if (same)
+                    for (const auto &e : f) {
+                        auto o = out[k].find(e.first);
+                        if (o == out[k].end() || !sameFact(o->second, e.second)) { same = false; break; }
+                    }
+                if (!same) { out[k] = f; done[k] = true; changed = true; }
+            }
+        }
+        bool rewrote = false;
+        for (size_t k = 0; k < blocks.size(); ++k) {
+            Facts f = in[k];
+            for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
+                Quad &q = fn.quads[i];
+                forEachValueUse(q, [&](Operand &o) {
+                    if (!isPrivate(o)) return;
+                    auto fact = f.find(nameOf(o));
+                    if (fact == f.end()) return;
+                    Operand r = fact->second;
+                    if (isNumber(r)) r = constant(valueOf(r), o);
+                    r.type = o.type;
+                    o = r;
+                    ++stats.global;
+                    rewrote = true;
+                });
+                transfer(q, f);
+            }
+        }
+        return rewrote;
+    }
+
+    /* live-variable analysis; an assignment whose target is not live afterwards is removed */
+    bool removeDeadAssignments() {
+        std::vector<Block> blocks = flowGraph();
+        auto step = [&](const Quad &q, std::set<Name> &live) { /* live before q, given live after */
+            Operand r = defined(q);
+            if (isName(r)) live.erase(nameOf(r));
+            if (isName(q.a)) live.insert(nameOf(q.a));
+            if (isName(q.b)) live.insert(nameOf(q.b));
+            if ((q.op == Op::Store || q.op == Op::IndexStore) && isName(q.r)) live.insert(nameOf(q.r));
+        };
+        std::vector<std::set<Name>> liveIn(blocks.size());
+        for (bool changed = true; changed;) {
+            changed = false;
+            for (size_t k = blocks.size(); k-- > 0;) {
+                std::set<Name> live;
+                for (int s : blocks[k].succ) live.insert(liveIn[s].begin(), liveIn[s].end());
+                for (size_t i = blocks[k].end; i-- > blocks[k].begin;) step(fn.quads[i], live);
+                if (live != liveIn[k]) { liveIn[k] = live; changed = true; }
+            }
+        }
+        std::vector<bool> dead(fn.quads.size(), false);
+        bool removed = false;
+        for (size_t k = 0; k < blocks.size(); ++k) {
+            std::set<Name> live;
+            for (int s : blocks[k].succ) live.insert(liveIn[s].begin(), liveIn[s].end());
+            for (size_t i = blocks[k].end; i-- > blocks[k].begin;) {
+                Quad &q = fn.quads[i];
+                Operand r = defined(q);
+                bool unread = isName(r) && !live.count(nameOf(r)) && !inMemory(r) && !isVolatile(r);
+                if (unread && q.op == Op::Call) {
+                    q.r = Operand(); /* the call may have effects: only its result is dropped */
+                    ++stats.deadAssignments;
+                    removed = true;
+                } else if (unread && q.op != Op::VaArg) {
+                    dead[i] = true;
+                    ++stats.deadAssignments;
+                    removed = true;
+                    continue; /* a removed instruction reads nothing */
+                }
+                step(q, live);
+            }
+        }
+        if (removed) compact(dead);
+        return removed;
+    }
+
+    void runGlobal() {
+        for (int round = 0; round < 10; ++round) {
+            run();
+            bool changed = propagate();
+            changed = removeDeadAssignments() || changed;
+            if (!changed) break;
+        }
+        run();
+    }
+
     void run() {
         for (int round = 0; round < 10; ++round) {
             std::vector<bool> dead(fn.quads.size(), false);
@@ -512,8 +710,11 @@ struct FunctionPass {
 OptStats optimize(Program &program, int level) {
     OptStats stats;
     for (const auto &f : program.functions) stats.before += static_cast<int>(f.quads.size());
-    if (level >= 1) {
-        for (auto &f : program.functions) FunctionPass(f, stats).run();
+    stats.level = level;
+    for (auto &f : program.functions) {
+        FunctionPass pass(f, stats);
+        if (level >= 2) pass.runGlobal();
+        else if (level == 1) pass.run();
     }
     int index = 100;
     for (auto &f : program.functions) {
@@ -525,7 +726,7 @@ OptStats optimize(Program &program, int level) {
 }
 
 void printStats(const OptStats &s, std::ostream &out) {
-    out << "optimization summary (-O1)\n"
+    out << "optimization summary (-O" << s.level << ")\n"
         << "    instructions                " << s.before << " -> " << s.after;
     if (s.before) out << "   (" << (100 * (s.before - s.after) / s.before) << "% fewer)";
     out << "\n"
@@ -536,7 +737,11 @@ void printStats(const OptStats &s, std::ostream &out) {
         << "    temporaries merged away     " << s.coalesced << "\n"
         << "    dead instructions removed   " << s.dead << "\n"
         << "    jumps removed or redirected " << s.jumps << "\n"
-        << "    unreachable instructions    " << s.unreachable << "\n\n";
+        << "    unreachable instructions    " << s.unreachable << "\n";
+    if (s.level >= 2)
+        out << "    propagated across blocks    " << s.global << "\n"
+            << "    dead assignments removed    " << s.deadAssignments << "\n";
+    out << "\n";
 }
 
 } // namespace tac

@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the `-O1` optimizer. 14 test programs are generated,
-> executed raw and optimized, and compared with gcc/g++
-> (`./run_tests.sh`: 14 passed). `-O2` is the next step.
+> interpreter and the optimizer (`-O1`, `-O2`). 15 test programs are
+> generated, executed raw and at both levels, and compared with gcc/g++
+> (`./run_tests.sh`: 15 passed). MIPS generation is the next step.
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -34,13 +34,13 @@ Prints the TAC, then executes it with the interpreter (`-q` after
 `tac_generator`; the number of executed instructions goes to stderr.
 
 ```bash
-./tac_generator -O1 --run file.c
+./tac_generator -O2 --run file.c
 ```
 
-Optimizes first (see [Optimization](#optimization--o1)). With `--run`
+Optimizes first (`-O1` or `-O2`, see [Optimization](#optimization--o1-and--o2)). With `--run`
 the program is executed both ways; a difference in output or exit code
 is reported as `OPTIMIZER BUG`, otherwise the line on stderr shows the
-instructions executed with and without `-O1`.
+instructions executed with and without optimization.
 
 ## What the output looks like
 
@@ -137,7 +137,7 @@ unique in the program); the instruction number stays visible.
 | [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors, `new` / `delete` |
 | [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, destructors at scope exit, local and static initializers, functions, frame tables |
 | [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
-| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the `-O1` optimizer |
+| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`) |
 | [`src/main.cpp`](src/main.cpp) | driver: phases 2 and 2b (compiled in unchanged), then generation and `--run` |
 
 The generator walks the AST that semantic analysis annotated: it reads
@@ -173,7 +173,7 @@ errors (null or out-of-range access, division by zero, a 500-million
 instruction limit) and counts executed instructions — the number the
 optimizer will later be measured by.
 
-## Optimization (`-O1`)
+## Optimization (`-O1` and `-O2`)
 
 [`src/opt.cpp`](src/opt.cpp). Each function is cut into basic blocks
 (a block starts at the first instruction, at every jump target and
@@ -200,12 +200,22 @@ field store, any call, and any assignment to a global or to a variable
 whose address was taken invalidates what is known about memory
 (`memoryChanged()`); `volatile` variables are never remembered.
 
-Not done at `-O1` (they need information from other blocks, which is
-`-O2`): removing dead assignments to named variables, constants and
-common subexpressions across blocks, loop-invariant code.
+**`-O2`** adds two optimizations across basic blocks. Both are
+data-flow analyses over the function's flow graph (Dragon Book 9.2)
+and both only reason about scalar locals whose address is never taken:
 
-On the test programs `-O1` executes 6% to 42% fewer instructions; the
-runner prints the figure per test.
+| Optimization | Analysis | Example |
+|---|---|---|
+| global constant and copy propagation | forward; a fact (`x = 5`, `b = a`) holds at a block's entry only if it holds at the end of every predecessor | `x = 5; if (c) y = x + 1; else y = x + 2;` → `y = 6` / `y = 7` |
+| dead assignment elimination | backward live-variable analysis | `a = 7; a = 8;` drops the first; a variable never read again loses its assignments (a call stays, its result is dropped) |
+
+After each, `-O1` runs again on the result, until nothing changes.
+
+Not done (by decision D22): common subexpressions across blocks and
+loop optimizations (invariant code motion, induction variables).
+
+On the test programs `-O1` executes 6% to 42% fewer instructions and
+`-O2` 7% to 64% fewer; the runner prints the figures per test.
 
 ## Tests
 
@@ -213,8 +223,8 @@ runner prints the figure per test.
 ./run_tests.sh
 ```
 
-Each `test/tNN_*.c` is generated and executed, raw and with `-O1`; in
-both cases what it prints and its exit code must equal
+Each `test/tNN_*.c` is generated and executed raw, with `-O1` and with
+`-O2`; every time what it prints and its exit code must equal
 `test/expected/<name>.out`. The programs are also
 valid C or C++, and every expected file was checked to be identical to
 the output of the same source compiled with gcc/g++.
@@ -236,11 +246,12 @@ the output of the same source compiled with gcc/g++.
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
 | `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on, `delete` of null |
 | `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls, `volatile` |
+| `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
 
 ## Limitations
 
-- Without `-O1` the output is deliberately unoptimized (decision D16).
-- After `-O1` the symbol table still lists temporaries that are no
+- Without `-O1`/`-O2` the output is deliberately unoptimized (decision D16).
+- After optimization the symbol table still lists temporaries that are no
   longer used (their frame slots are not reclaimed yet).
 - Unnamed temporaries of class type and by-value class parameters are
   not destroyed; static objects are not destroyed at program exit;
@@ -255,6 +266,4 @@ the output of the same source compiled with gcc/g++.
 
 ## Next
 
-`-O2`: a control-flow graph and data-flow analysis for optimizations
-across blocks (dead assignments, global constants and common
-subexpressions, loop-invariant code), then MIPS generation for SPIM.
+MIPS generation for the SPIM simulator (phase 4).
