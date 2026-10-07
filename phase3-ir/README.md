@@ -3,7 +3,7 @@
 > Status: **implemented and tested** — a TAC generator, a TAC
 > interpreter and the optimizer (`-O1`, `-O2`). 15 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 15 passed). MIPS generation is the next step.
+> (`./run_tests.sh`: 16 passed).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -247,6 +247,7 @@ the output of the same source compiled with gcc/g++.
 | `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on, `delete` of null |
 | `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls, `volatile` |
 | `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
+| `t16_runtime` | 64-bit arithmetic, int/float conversions, `printf` formats, structs and doubles through calls (aimed at the MIPS run-time library) |
 
 ## Limitations
 
@@ -266,4 +267,4 @@ the output of the same source compiled with gcc/g++.
 
 ## Next
 
-MIPS generation for the SPIM simulator (phase 4).
+Phase 4 turns this TAC into MIPS: [`../phase4-codegen/README.md`](../phase4-codegen/README.md).

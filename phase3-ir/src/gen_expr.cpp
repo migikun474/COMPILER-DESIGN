@@ -519,14 +519,18 @@ Generator::LValue Generator::lvalueOrTemp(const ASTNodePtr &n) {
 Generator::LValue Generator::indexLValue(const ASTNodePtr &n) {
     std::vector<ASTNodePtr> indices;
     ASTNodePtr node = n;
-    while (node->kind == ASTKind::IndexExpr && !isOverloaded(node) && sem::isArray(strip(node->children[0]->semType))) {
+    while (node->kind == ASTKind::IndexExpr && !isOverloaded(node) && sem::isArray(strip(node->children[0]->semType)) &&
+           node->children[0]->kind != ASTKind::StringLiteral) { /* "abc"[i] goes through the literal's address */
         indices.insert(indices.begin(), node->children[1]);
         node = node->children[0];
     }
     if (indices.empty()) { /* p[i] through a pointer: *(p + i * w) */
-        Operand p = rvalue(n->children[0]);
+        ASTNodePtr base = n->children[0], index = n->children[1];
+        TypePtr bt = sem::decay(base->semType);
+        if (!sem::isPointer(bt)) std::swap(base, index); /* i[p] means p[i] */
+        Operand p = rvalue(base);
         TypePtr elem = strip(n->semType);
-        Operand off = scaled(rvalue(n->children[1]), std::max(1LL, sem::sizeOf(elem)));
+        Operand off = scaled(rvalue(index), std::max(1LL, sem::sizeOf(elem)));
         LValue lv;
         lv.kind = LValue::Deref;
         lv.type = elem;

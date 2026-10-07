@@ -695,6 +695,7 @@ class Machine {
 
 } // namespace
 
+std::string decodeLiteral(const std::string &literal) { return Machine::decode(literal); }
 Val evalWrap(Cls c, Val v) { return Machine::wrap(c, v); }
 Val evalArithmetic(const Quad &q, Val a, Val b) { return Machine::arithmetic(q, a, b); }
 Val evalConvert(Cls from, Cls to, Val v) { return Machine::converted(from, to, v); }

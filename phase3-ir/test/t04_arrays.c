@@ -57,5 +57,6 @@ int main() {
     a[i] = a[i - 1] + a[i + 1];
     a[a[0]] += 10;
     printf("%d %d\n", a[2], a[1]);
+    printf("%d %c %c\n", 1[a], "literal"[2], 0[word]);   /* i[a] is a[i]; a literal can be indexed */
     return m[1][1];
 }
