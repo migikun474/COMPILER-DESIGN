@@ -4,7 +4,10 @@
 
      tac_generator file.c              print the TAC (also written to logs/file.tac)
      tac_generator --run file.c [args] print the TAC, then execute it
-     tac_generator --run -q file.c     execute only: the program's own output   */
+     tac_generator --run -q file.c     execute only: the program's own output
+     tac_generator -O1 file.c          optimize (-O2: also across basic blocks); with
+                                       --run the program is run before and after
+                                       and must behave the same                    */
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -18,6 +21,7 @@
 #include "diagnostics/diagnostics.hpp"
 #include "interp.h"
 #include "irgen.h"
+#include "opt.h"
 #include "parser.tab.hpp"
 #include "preprocessor/preprocessor.hpp"
 #include "semantic.h"
@@ -27,9 +31,10 @@
 extern FILE *yyin;
 namespace fs = std::filesystem;
 
-static void writeLog(const std::string &sourceFile, const std::string &status, const std::string &body) {
+static void writeLog(const std::string &sourceFile, const std::string &status, const std::string &body,
+                     const std::string &suffix = ".tac") {
     fs::create_directories("logs");
-    std::ofstream log("logs/" + fs::path(sourceFile).stem().string() + ".tac");
+    std::ofstream log("logs/" + fs::path(sourceFile).stem().string() + suffix);
     if (!log) return;
     log << "=========================================\n";
     log << "         THREE ADDRESS CODE\n";
@@ -41,15 +46,21 @@ static void writeLog(const std::string &sourceFile, const std::string &status, c
 int main(int argc, char **argv) {
     const char *path = nullptr;
     bool runIt = false, quiet = false;
+    int level = 0;
     std::vector<std::string> programArgs;
     for (int i = 1; i < argc; ++i) {
         if (!path && !std::strcmp(argv[i], "--run")) runIt = true;
         else if (!path && !std::strcmp(argv[i], "-q")) quiet = true;
+        else if (!path && !std::strcmp(argv[i], "-O1")) level = 1;
+        else if (!path && !std::strcmp(argv[i], "-O2")) level = 2;
+        else if (!path && !std::strcmp(argv[i], "-O0")) level = 0;
         else if (!path) path = argv[i];
         else programArgs.push_back(argv[i]); /* passed to the program's main */
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [--run [-q]] <source-file> [program arguments]\n"
+        fprintf(stderr, "Usage: %s [-O1|-O2] [--run [-q]] <source-file> [program arguments]\n"
+                        "  -O1    optimize inside basic blocks\n"
+                        "  -O2    -O1 plus constant/copy propagation and dead assignments across blocks\n"
                         "  --run  execute the generated code with the TAC interpreter\n"
                         "  -q     with --run: print only what the program prints\n", argv[0]);
         return 1;
@@ -110,8 +121,17 @@ int main(int argc, char **argv) {
                          " function(s), " + std::to_string(instructions) + " instruction(s) for '" + std::string(path) + "'.";
     std::ostringstream body;
     tac::printProgram(program, body);
+    tac::Program raw = program; /* kept to compare behaviour with the optimized code */
+    if (level > 0) {
+        tac::OptStats stats = tac::optimize(program, level);
+        body.str("");
+        tac::printStats(stats, body);
+        tac::printProgram(program, body);
+        status = "Optimized three address code (-O" + std::to_string(level) + "): " + std::to_string(stats.before) +
+                 " -> " + std::to_string(stats.after) + " instruction(s) for '" + std::string(path) + "'.";
+    }
     if (!quiet) printf("%s\n\n%s", status.c_str(), body.str().c_str());
-    writeLog(path, status, body.str());
+    writeLog(path, status, body.str(), level > 0 ? ".O" + std::to_string(level) + ".tac" : ".tac");
     if (!runIt) return 0;
 
     bool readsInput = false;
@@ -128,7 +148,19 @@ int main(int argc, char **argv) {
         fprintf(stderr, "\nrun-time error: %s\n", result.error.c_str());
         return 2;
     }
-    fprintf(stderr, "%s[exit code %d, %lld instructions executed]\n",
-            !result.output.empty() && result.output.back() != '\n' ? "\n" : "", result.exitCode, result.executed);
+    const char *newline = !result.output.empty() && result.output.back() != '\n' ? "\n" : "";
+    if (level > 0) { /* the optimizer's own check: same output, same exit code */
+        tac::RunResult before = tac::run(raw, programArgs, input);
+        if (before.output != result.output || before.exitCode != result.exitCode || before.error != result.error) {
+            fprintf(stderr, "%sOPTIMIZER BUG: the optimized program behaves differently (exit %d, was %d)\n", newline,
+                    result.exitCode, before.exitCode);
+            return 3;
+        }
+        fprintf(stderr, "%s[exit code %d, %lld instructions executed; %lld without -O%d: %lld%% fewer]\n", newline,
+                result.exitCode, result.executed, before.executed, level,
+                before.executed ? 100 * (before.executed - result.executed) / before.executed : 0);
+        return result.exitCode;
+    }
+    fprintf(stderr, "%s[exit code %d, %lld instructions executed]\n", newline, result.exitCode, result.executed);
     return result.exitCode;
 }

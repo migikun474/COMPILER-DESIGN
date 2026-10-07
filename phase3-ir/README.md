@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
-> Status: **implemented and tested** — a TAC generator and a TAC
-> interpreter. 13 test programs are generated, executed, and compared
-> with gcc/g++ (`./run_tests.sh`: 13 passed). Optimization is the next
-> step and is not started.
+> Status: **implemented and tested** — a TAC generator, a TAC
+> interpreter and the optimizer (`-O1`, `-O2`). 15 test programs are
+> generated, executed raw and at both levels, and compared with gcc/g++
+> (`./run_tests.sh`: 15 passed). MIPS generation is the next step.
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -32,6 +32,15 @@ Prints the TAC, then executes it with the interpreter (`-q` after
 `--run` prints only what the program itself prints). The program's
 `scanf` reads standard input; its exit code becomes the exit code of
 `tac_generator`; the number of executed instructions goes to stderr.
+
+```bash
+./tac_generator -O2 --run file.c
+```
+
+Optimizes first (`-O1` or `-O2`, see [Optimization](#optimization--o1-and--o2)). With `--run`
+the program is executed both ways; a difference in output or exit code
+is reported as `OPTIMIZER BUG`, otherwise the line on stderr shows the
+instructions executed with and without optimization.
 
 ## What the output looks like
 
@@ -128,6 +137,7 @@ unique in the program); the instruction number stays visible.
 | [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors, `new` / `delete` |
 | [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, destructors at scope exit, local and static initializers, functions, frame tables |
 | [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
+| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`) |
 | [`src/main.cpp`](src/main.cpp) | driver: phases 2 and 2b (compiled in unchanged), then generation and `--run` |
 
 The generator walks the AST that semantic analysis annotated: it reads
@@ -163,14 +173,59 @@ errors (null or out-of-range access, division by zero, a 500-million
 instruction limit) and counts executed instructions — the number the
 optimizer will later be measured by.
 
+## Optimization (`-O1` and `-O2`)
+
+[`src/opt.cpp`](src/opt.cpp). Each function is cut into basic blocks
+(a block starts at the first instruction, at every jump target and
+after every jump or return) and each block is optimized by **value
+numbering**: every value computed in the block gets a number, and two
+instructions that get the same number compute the same value. A value
+number is a node of the block's DAG (Dragon Book 8.5; the hash-table
+construction is 6.1.2), so this is the DAG method without building and
+re-linearizing a graph.
+
+| Optimization | Example |
+|---|---|
+| constant folding | `t1 = 3 int+ 4` → `t1 = 7`; `if 1 int== 1 goto L` → `goto L`; folded with the interpreter's own arithmetic, so wrap-around and conversions are exact |
+| algebraic simplification | `x + 0`, `x * 1`, `x / 1` → `x`; `x * 0` → `0`; `x * 8` → `x << 3` (integers only; `x + 0.0` is left alone because of `-0.0`) |
+| common subexpressions | the second `x * y + 3`, `&d`, `a[i]` or `*p` reuses the first result |
+| copy and constant propagation | after `t = a`, uses of `t` become `a`; after `b = 2`, uses of `b` in the block become `2` |
+| temporary merging | `t1 = a + b ; x = t1` → `x = a + b` |
+| dead temporaries | an instruction whose result no instruction reads is removed (a call stays, only its unused result goes) |
+| jump clean-up | jump to the next instruction; jump to a jump; `if c goto L1 ; goto L2 ; L1:` → `if !c goto L2`; code no path reaches |
+
+What keeps it correct: a value read from memory is only reused while
+nothing can have changed it. Any store through a pointer, any array or
+field store, any call, and any assignment to a global or to a variable
+whose address was taken invalidates what is known about memory
+(`memoryChanged()`); `volatile` variables are never remembered.
+
+**`-O2`** adds two optimizations across basic blocks. Both are
+data-flow analyses over the function's flow graph (Dragon Book 9.2)
+and both only reason about scalar locals whose address is never taken:
+
+| Optimization | Analysis | Example |
+|---|---|---|
+| global constant and copy propagation | forward; a fact (`x = 5`, `b = a`) holds at a block's entry only if it holds at the end of every predecessor | `x = 5; if (c) y = x + 1; else y = x + 2;` → `y = 6` / `y = 7` |
+| dead assignment elimination | backward live-variable analysis | `a = 7; a = 8;` drops the first; a variable never read again loses its assignments (a call stays, its result is dropped) |
+
+After each, `-O1` runs again on the result, until nothing changes.
+
+Not done (by decision D22): common subexpressions across blocks and
+loop optimizations (invariant code motion, induction variables).
+
+On the test programs `-O1` executes 6% to 42% fewer instructions and
+`-O2` 7% to 64% fewer; the runner prints the figures per test.
+
 ## Tests
 
 ```bash
 ./run_tests.sh
 ```
 
-Each `test/tNN_*.c` is generated and executed; what it prints and its
-exit code must equal `test/expected/<name>.out`. The programs are also
+Each `test/tNN_*.c` is generated and executed raw, with `-O1` and with
+`-O2`; every time what it prints and its exit code must equal
+`test/expected/<name>.out`. The programs are also
 valid C or C++, and every expected file was checked to be identical to
 the output of the same source compiled with gcc/g++.
 `t12_lecture_examples` additionally compares the TAC listing itself.
@@ -190,11 +245,14 @@ the output of the same source compiled with gcc/g++.
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
 | `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on, `delete` of null |
+| `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls, `volatile` |
+| `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
 
 ## Limitations
 
-- The output is deliberately unoptimized (decision D16): jumps to the
-  next instruction and constant arithmetic are left for the optimizer.
+- Without `-O1`/`-O2` the output is deliberately unoptimized (decision D16).
+- After optimization the symbol table still lists temporaries that are no
+  longer used (their frame slots are not reclaimed yet).
 - Unnamed temporaries of class type and by-value class parameters are
   not destroyed; static objects are not destroyed at program exit;
   `delete[]` does not call element destructors.
@@ -208,6 +266,4 @@ the output of the same source compiled with gcc/g++.
 
 ## Next
 
-Basic blocks and a control-flow graph, then the local optimizations
-(`-O1`), checked by running optimized and unoptimized TAC through the
-interpreter.
+MIPS generation for the SPIM simulator (phase 4).

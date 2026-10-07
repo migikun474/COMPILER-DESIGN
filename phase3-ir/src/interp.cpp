@@ -20,11 +20,6 @@ const uint32_t HEAP_BASE = 0x1000000;
 const uint32_t MEMORY_LIMIT = 0x8000000;
 const long long STEP_LIMIT = 500000000LL;
 
-struct Val {
-    long long i = 0;
-    double f = 0;
-};
-
 struct Arg { /* a `param` waiting for its call */
     Cls cls = Cls::Int;
     Val v;
@@ -85,7 +80,7 @@ class Machine {
         return result;
     }
 
-  private:
+    /* (everything below is file-local; the eval* functions at the end use the statics) */
     const Program &prog;
     std::string input;
     size_t inputPos = 0;
@@ -299,7 +294,7 @@ class Machine {
         return v;
     }
 
-    Val arithmetic(const Quad &q, Val a, Val b) {
+    static Val arithmetic(const Quad &q, Val a, Val b) {
         Val r;
         Cls c = q.cls;
         if (isFloatCls(c)) {
@@ -699,6 +694,11 @@ class Machine {
 };
 
 } // namespace
+
+Val evalWrap(Cls c, Val v) { return Machine::wrap(c, v); }
+Val evalArithmetic(const Quad &q, Val a, Val b) { return Machine::arithmetic(q, a, b); }
+Val evalConvert(Cls from, Cls to, Val v) { return Machine::converted(from, to, v); }
+bool evalCompare(const Quad &q, Val a, Val b) { return Machine::compare(q, a, b); }
 
 RunResult run(const Program &program, const std::vector<std::string> &args, const std::string &input) {
     Machine m(program, input);

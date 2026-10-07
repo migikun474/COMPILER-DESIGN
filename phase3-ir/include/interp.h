@@ -27,6 +27,17 @@ struct RunResult {
     std::string error;      /* a run-time error (invalid memory access, division by zero, ...) */
 };
 
+/* The machine's arithmetic, shared with the optimizer so that a folded
+   constant is exactly what executing the instruction would give. */
+struct Val {
+    long long i = 0;
+    double f = 0;
+};
+Val evalWrap(Cls c, Val v);                        /* v as a value of class c */
+Val evalArithmetic(const Quad &q, Val a, Val b);   /* throws std::runtime_error on division by zero */
+Val evalConvert(Cls from, Cls to, Val v);
+bool evalCompare(const Quad &q, Val a, Val b);
+
 /* runs `main`; `input` is what scanf reads */
 RunResult run(const Program &program, const std::vector<std::string> &args, const std::string &input);
 
