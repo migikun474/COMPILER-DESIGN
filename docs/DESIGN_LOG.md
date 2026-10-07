@@ -629,6 +629,98 @@ again; the whole thing repeats until nothing changes.
 
 ---
 
+## 2026-10-08 — Session 4: MIPS design
+
+SPIM 8.0 is installed (`/usr/bin/spim`); a hand-written program run
+with `spim -file` printed correctly and returned its exit code through
+the `exit2` system call, so MIPS output can be tested by script.
+
+### D23. `printf` / `scanf`: a run-time routine written in MIPS
+
+**Decided by:** the user.
+**Decision:** SPIM has no C library, so `printf` is one MIPS routine
+that walks the format string at run time: `%d %u %x %o %c %s %f %%`
+with width, precision, the `-` and `0` flags and the `l` / `ll`
+lengths. `scanf` is done the same way over the read system calls.
+`%e` and `%g` are not supported.
+**Alternative rejected:** expanding a literal format into separate
+print system calls at compile time — little code, but widths and
+precision would be lost and several tests would stop matching gcc.
+
+### D24. `long long`: full support with run-time helpers
+
+**Decided by:** the user.
+**Decision:** a `long long` occupies two words; add, subtract,
+compare, bitwise operations and conversions are generated inline;
+multiply, divide, remainder and shifts call run-time routines.
+
+---
+
+### D25. MIPS calling convention: everything on the stack
+
+**Decided by:** the user, after asking why it was recommended.
+**Decision:** all arguments are passed on the stack (first argument at
+the lowest address), the result comes back in `$v0` / `$v0:$v1` /
+`$f0`, the caller removes the arguments.
+**Why:** it maps one-to-one onto `param` / `call`; with every value in
+the frame anyway, register arguments would be stored to memory at once;
+the o32 convention's special cases (doubles after ints, structs split
+across registers, variadic home area, `long long` register pairs) buy
+nothing on SPIM, where no foreign code is ever called; and `va_arg`
+becomes "read and advance".
+**Cost, accepted:** more instructions per call, and it is not the
+textbook `$a0`–`$a3` convention. Passing the first integer arguments
+in `$a0`–`$a3` can be added with register allocation.
+
+### Progress — MIPS generation working on SPIM (2026-10-08)
+
+- `phase4-codegen/`: `src/mips.cpp` (about 620 lines), the run-time
+  library `runtime/runtime.s` (about 800 lines of MIPS: `printf`,
+  `scanf`, allocation, 64-bit helpers), driver `mips_generator`.
+- `phase4-codegen/run_tests.sh` compiles every test at `-O0`, `-O1`,
+  `-O2`, runs it in SPIM and compares with the gcc-verified expected
+  output: **16 passed, 0 failed**. 14 of the 15 programs passed on the
+  first complete run.
+- What had to be fixed after that:
+  - `%f` printed `2147483648.0` for larger values and rounded `3.375`
+    to `3.37`; the routine now scales to a 64-bit integer and rounds to
+    nearest-even, which is what glibc prints.
+  - `%zu` was not understood (`z` is now accepted).
+  - `%e` is not implemented (as decided in D23), so it was removed from
+    test `t10_io`.
+  - **A generator bug that the interpreter had hidden:** `1[a]` and
+    `"literal"[2]` produced wrong addresses. The interpreter read
+    garbage without faulting; SPIM raised an address error. Fixed in
+    `indexLValue()`, and both forms are now in `t04_arrays`.
+- Wider check: the 45 runnable programs of the semantic and parser
+  suites, compiled at `-O0` and `-O2` and run in SPIM — 90 runs, all
+  identical to the TAC interpreter.
+- New test `t16_runtime` for the run-time library.
+
+### D26. The programs are run in QtSpim
+
+**Decided by:** the user ("shift to qtspim").
+**What it changes:** QtSpim 9.1.21 is installed and is what the user
+runs and demonstrates with. It is the same simulator as the
+command-line `spim` with a window, and it has no batch mode, so:
+
+- the automated tests keep using command-line `spim` (they have to run
+  unattended); the generated file is the same for both;
+- `scanf` no longer reads file descriptor 0 with the `read` system
+  call — QtSpim's console cannot feed that. It now takes input a line
+  at a time with `read_string`, which the terminal and the QtSpim
+  console both serve; end of input is still detected (`scanf` returns
+  -1), checked with a `while (scanf(...) == 1)` loop;
+- the run-time library uses only system calls both versions have.
+
+**Not verified by Claude:** an actual run inside the QtSpim window
+(it cannot be driven from a script). The steps are in
+`phase4-codegen/README.md`; the user's first run there is the check.
+
+Remaining on the roadmap: register allocation and a peephole pass.
+
+---
+
 ## Open questions
 
-*(none at the moment — say so if your course requires MARS or QtSpim instead of SPIM)*
+*(none at the moment)*

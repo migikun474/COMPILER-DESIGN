@@ -38,6 +38,9 @@ Val evalArithmetic(const Quad &q, Val a, Val b);   /* throws std::runtime_error 
 Val evalConvert(Cls from, Cls to, Val v);
 bool evalCompare(const Quad &q, Val a, Val b);
 
+/* a string literal as written in the source ("a\n" "b") -> its bytes */
+std::string decodeLiteral(const std::string &literal);
+
 /* runs `main`; `input` is what scanf reads */
 RunResult run(const Program &program, const std::vector<std::string> &args, const std::string &input);
 

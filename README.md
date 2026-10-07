@@ -8,16 +8,16 @@ then MIPS.
 |---|---|
 | Source language | C-like (C89/C99 core plus classes, references, overloading — see the [feature audit](docs/FEATURES.md)) |
 | Intermediate representation | Three Address Code — **implemented** (generator + interpreter, [`phase3-ir`](phase3-ir/README.md)) |
-| Target | MIPS — **not started** |
+| Target | MIPS for the SPIM simulator — **implemented** ([`phase4-codegen`](phase4-codegen/README.md)) |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2, g++ 13 |
 | Specification | [`docs/project_description.md`](docs/project_description.md) |
 
 ## Current development status
 
-> **Current implementation status: the front end and Three Address
-> Code generation are complete (with a TAC interpreter that runs the
-> generated code) and the TAC optimizer (`-O1`, `-O2`) works; the MIPS
-> back end is not yet started.**
+> **Current implementation status: every phase works end to end —
+> front end, Three Address Code (with an interpreter), the optimizer
+> (`-O1`, `-O2`) and MIPS code that runs on SPIM. Register allocation
+> is the remaining roadmap item.**
 
 ```
 Front end
@@ -28,13 +28,13 @@ Front end
 Back end
 ├── IR / TAC              ✓  phase3-ir                  (quadruples, backpatching, TAC interpreter)
 ├── Optimization          ✓  phase3-ir                  (-O1 local, -O2 global data-flow)
-└── MIPS generation       ○  phase4-codegen             (README only, no code)
+└── MIPS generation       ✓  phase4-codegen             (SPIM; stack frames, run-time library)
 ```
 
 ✓ implemented and tested ○ not started
 
-No source file in the repository generates MIPS; `phase4-codegen/`
-contains only a README describing the plan.
+The MIPS code keeps every value in the stack frame; register
+allocation is not done yet.
 
 ## Compiler architecture
 
@@ -54,7 +54,9 @@ annotated AST (types, lvalues, constants, symbols) + sem::SymbolTable + record l
    ↓
 generate()                    phase3-ir             quadruples per function, labels, frame offsets
    ↓
-tac::Program  →  TAC interpreter (--run)   →  [ MIPS — not started ]
+tac::Program  →  TAC interpreter (--run)
+   ↓  mips::generate()            phase4-codegen        one fixed sequence per TAC instruction + run-time library
+file.s  →  spim -file file.s
 ```
 
 The phases are three separate executables that share one static
@@ -90,7 +92,7 @@ a source file directly. Every run also writes a report to
 ├── phase2-parser/            flex scanner + bison LALR(1) parser
 ├── phase2b-semantic/         semantic analyzer
 ├── phase3-ir/                Three Address Code: generator, interpreter, tests
-└── phase4-codegen/           planned: MIPS (README only)
+└── phase4-codegen/           MIPS for SPIM / QtSpim: generator, run-time library, tests
 ```
 
 ## Feature matrix
@@ -272,7 +274,8 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 | Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
 | Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **80 checks, all passing** |
 
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 15 programs generated and executed by the TAC interpreter, raw, with `-O1` and with `-O2`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **15 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 16 programs generated and executed by the TAC interpreter, raw, with `-O1` and with `-O2`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **16 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 16 programs compiled to MIPS at `-O0`, `-O1`, `-O2` and run in SPIM against the same expected outputs — **16 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -280,8 +283,8 @@ unexpected diagnostic fails the test).
 
 ## Known limitations
 
-- No MIPS back end and no optimizer yet: the compiler stops at
-  (unoptimized) Three Address Code, which the TAC interpreter can run.
+- The MIPS code is not register-allocated (every value lives in the
+  stack frame), and `printf` in the SPIM run-time has no `%e`/`%g`.
 - The partial features listed above.
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers.
