@@ -14,11 +14,14 @@ files that exercise it.
 | ✓ | implemented in that phase and verified |
 | ◐ | implemented with documented gaps (see the notes / [Partial features](#d-partial-features)) |
 | ✗ | rejected (not implemented) |
-| — | not started (TAC and MIPS phases do not exist yet) |
+| — | not started (the MIPS phase does not exist yet) / not applicable |
 
-The IR/TAC and MIPS columns are **— for every feature**: no back-end
-code exists (`phase3-ir/` and `phase4-codegen/` contain only a README).
-So "front end complete" is the strongest status any feature can have
+The **IR** column is the Three Address Code generator of `phase3-ir/`
+(its tests run the generated code in the TAC interpreter and compare
+with gcc/g++ — see [`phase3-ir/README.md`](../phase3-ir/README.md)).
+The **MIPS** column is **— for every feature**: `phase4-codegen/`
+contains only a README.
+So "front end + TAC" is the strongest status any feature can have
 today.
 
 Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
@@ -32,62 +35,62 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Arithmetic operators `+ - * / %` | ✓ | ✓ | ✓ | ✓ | — | — | L:test1, P:operators, S:v02 e02 | front end complete |
-| Logical `&& \|\| !` (short-circuit typing) | ✓ | ✓ | ✓ | ✓ | — | — | L:test1, P:operators, S:v02 | front end complete |
-| Relational / equality `< > <= >= == !=` | ✓ | ✓ | ✓ | ✓ | — | — | L:test1, S:v02 e02 e06 | front end complete |
-| Bitwise `& \| ^ ~ << >>` | ✓ | ✓ | ✓ | ✓ | — | — | L:test1, S:v02 e02 | front end complete |
-| Assignment and compound assignment | ✓ | ✓ | ✓ | ✓ | — | — | S:v02 e02 e20 | front end complete |
-| Unary `+ - ++ --` (pre/post) | ✓ | ✓ | ✓ | ✓ | — | — | P:operators, S:v02 | front end complete |
-| Address-of `&`, dereference `*` | ✓ | ✓ | ✓ | ✓ | — | — | S:v06 e06 | front end complete |
-| if / if-else / nested if | ✓ | ✓ | ✓ | ✓ | — | — | L:test2, P:if_else, S:v08 e08 | front end complete |
-| for loop | ✓ | ✓ | ✓ | ✓ | — | — | P:loops, S:v08 | front end complete |
-| while loop | ✓ | ✓ | ✓ | ✓ | — | — | P:loops, S:v08 | front end complete |
-| do-while loop | ✓ | ✓ | ✓ | ✓ | — | — | P:loops test16, S:v08 | front end complete |
-| switch / case / default (fall-through, multiple labels) | ✓ | ✓ | ✓ | ✓ | — | — | L:test2, P:test4, S:v08 e08 | front end complete |
-| break / continue / goto / labels | ✓ | ✓ | ✓ | ◐ | — | — | L:test2, P:test10, S:v08 e08 | front end complete; jumps over initializations are not checked |
-| int, char, void (+ short, long, long long, float, double, bool, signed/unsigned) | ✓ | ✓ | ✓ | ✓ | — | — | L:test7, S:v01 | front end complete (`long double` is treated as `double`) |
-| Integer and char arrays | ✓ | ✓ | ✓ | ✓ | — | — | P:array, S:v05 e05 | front end complete |
-| Pointers | ✓ | ✓ | ✓ | ✓ | — | — | P:pointers, S:v06 e06 | front end complete |
-| Structures (nested) | ✓ | ✓ | ✓ | ◐ | — | — | P:test2 test11, S:v07 e07 | front end complete; no brace elision into struct members |
-| printf / scanf | ✓ | ✓ | ✓ | ✓ | — | — | P:printf_scanf, S:v09 e10 v24 e20 | front end complete (reserved words; format strings checked) |
-| Function declaration / definition / call / arguments / return | ✓ | ✓ | ✓ | ✓ | — | — | P:funcCall test1, S:v04 e04 | front end complete |
-| static keyword | ✓ | ✓ | ✓ | ✓ | — | — | L:test2, P:test28, S:v01 | front end complete |
+| Arithmetic operators `+ - * / %` | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test1, P:operators, S:v02 e02 | front end + TAC |
+| Logical `&& \|\| !` (short-circuit typing) | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test1, P:operators, S:v02 | front end + TAC |
+| Relational / equality `< > <= >= == !=` | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test1, S:v02 e02 e06 | front end + TAC |
+| Bitwise `& \| ^ ~ << >>` | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test1, S:v02 e02 | front end + TAC |
+| Assignment and compound assignment | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v02 e02 e20 | front end + TAC |
+| Unary `+ - ++ --` (pre/post) | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:operators, S:v02 | front end + TAC |
+| Address-of `&`, dereference `*` | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v06 e06 | front end + TAC |
+| if / if-else / nested if | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test2, P:if_else, S:v08 e08 | front end + TAC |
+| for loop | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:loops, S:v08 | front end + TAC |
+| while loop | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:loops, S:v08 | front end + TAC |
+| do-while loop | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:loops test16, S:v08 | front end + TAC |
+| switch / case / default (fall-through, multiple labels) | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test2, P:test4, S:v08 e08 | front end + TAC |
+| break / continue / goto / labels | ✓ | ✓ | ✓ | ◐ | ✓ | — | L:test2, P:test10, S:v08 e08 | front end + TAC; jumps over initializations are not checked |
+| int, char, void (+ short, long, long long, float, double, bool, signed/unsigned) | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test7, S:v01 | front end + TAC (`long double` is treated as `double`) |
+| Integer and char arrays | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:array, S:v05 e05 | front end + TAC |
+| Pointers | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:pointers, S:v06 e06 | front end + TAC |
+| Structures (nested) | ✓ | ✓ | ✓ | ◐ | ✓ | — | P:test2 test11, S:v07 e07 | front end + TAC; no brace elision into struct members |
+| printf / scanf | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:printf_scanf, S:v09 e10 v24 e20 | front end + TAC (reserved words; format strings checked) |
+| Function declaration / definition / call / arguments / return | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:funcCall test1, S:v04 e04 | front end + TAC |
+| static keyword | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test2, P:test28, S:v01 | front end + TAC |
 
 ### Advanced features (project specification)
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test4, S:v04 v18 e15 | front end complete |
-| Dynamic memory (`malloc` `calloc` `realloc` `free`, `new` `delete` `delete[]`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test4, P:test6, S:v09 e10 | front end complete |
-| Command-line input (`int main(int argc, char **argv)`) | ✓ | ✓ | ✓ | ✓ | — | — | S:v12 v13 e11 e12 | front end complete (`main` signature checked) |
-| typedef | ✓ | ✓ | ✓ | ✓ | — | — | L:test4, S:v01 v07 | front end complete |
-| References (`int &r`, `int *&r`) | ✓ | ✓ | ✓ | ✓ | — | — | S:v11 v18 e14 | front end complete |
-| until loop | ✓ | ✓ | ✓ | ✓ | — | — | L:test5, P:test15, S:v08 e08 | front end complete |
-| Multi-level pointers | ✓ | ✓ | ✓ | ✓ | — | — | L:test3, S:v06 | front end complete |
-| Multi-dimensional arrays | ✓ | ✓ | ✓ | ✓ | — | — | L:test3, S:v05 e05 | front end complete |
+| Variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`) | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test4, S:v04 v18 e15 | front end + TAC |
+| Dynamic memory (`malloc` `calloc` `realloc` `free`, `new` `delete` `delete[]`) | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test4, P:test6, S:v09 e10 | front end + TAC |
+| Command-line input (`int main(int argc, char **argv)`) | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v12 v13 e11 e12 | front end + TAC (`main` signature checked) |
+| typedef | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test4, S:v01 v07 | front end + TAC |
+| References (`int &r`, `int *&r`) | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v11 v18 e14 | front end + TAC |
+| until loop | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test5, P:test15, S:v08 e08 | front end + TAC |
+| Multi-level pointers | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test3, S:v06 | front end + TAC |
+| Multi-dimensional arrays | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test3, S:v05 e05 | front end + TAC |
 
 ### Additional features (not in the specification)
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Classes, objects, `this`, methods, static members | ✓ | ◐ | ✓ | ◐ | — | — | P:test7 test8 test13, S:v10 e09 | partial: no constructor initializer lists, `virtual`, `const` methods, `friend`, `explicit` |
-| Inheritance (single, multiple), inheritance access | ✓ | ✓ | ✓ | ✓ | — | — | S:v10 e09 e14 | front end complete |
-| Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | — | — | S:v10 e09 e14 | front end complete |
-| Constructors / destructors (in-class, out-of-class, `new T(args)`) | ✓ | ◐ | ✓ | ✓ | — | — | P:test24, S:v17 e15 | partial: no member-initializer lists |
-| Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | — | — | P:test24, S:v17 e15 | front end complete |
-| Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ◐ | — | — | P:test12, S:v11 v16 e04 | front end complete; converting constructors only in initialization |
+| Classes, objects, `this`, methods, static members | ✓ | ◐ | ✓ | ◐ | ✓ | — | P:test7 test8 test13, S:v10 e09 | TAC done; front end partial: no constructor initializer lists, `virtual`, `const` methods, `friend`, `explicit` |
+| Inheritance (single, multiple), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v10 e09 e14 | front end + TAC |
+| Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v10 e09 e14 | front end + TAC |
+| Constructors / destructors (in-class, out-of-class, `new T(args)`) | ✓ | ◐ | ✓ | ✓ | ◐ | — | P:test24, S:v17 e15 | TAC done; front end partial: no member-initializer lists |
+| Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:test24, S:v17 e15 | front end + TAC |
+| Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ◐ | ✓ | — | P:test12, S:v11 v16 e04 | front end + TAC; converting constructors only in initialization |
 | Preprocessor (`#define` object/function-like, `#` `##` `__VA_ARGS__`, `#undef`, `#if/#ifdef/#ifndef/#elif/#else/#endif`, `#include "…"`, `#error`, `#pragma once`) | ✓ | ✓ | — | ✓ | — | — | L:test11, P:test26, S:v20 e16 e17 | front end complete; `#include <…>` system headers are accepted and ignored |
-| `const`, `volatile`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | — | — | S:v01 v11 v18 | front end complete |
-| `extern`, `register` | ✓ | ✓ | ✓ | ✓ | — | — | P:test28, S:v24 e20 | front end complete (linkage, composite types) |
-| Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | — | — | P:test25, S:v19 | front end complete |
-| `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | — | — | S:v02 v22 v24 | front end complete |
-| Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | — | — | S:v02 | front end complete |
-| Initializer lists, designated `.x = 1`, `[2] = 7`, empty `{}` | ✓ | ✓ | ✓ | ◐ | — | — | P:test24, S:v05 v18 | front end complete; brace elision for arrays only |
-| Unnamed structs/classes, anonymous struct members | ✓ | ✓ | ✓ | ✓ | — | — | P:test27, S:v22 e18 | front end complete |
-| Numeric literals: hex, octal, binary, suffixes `U L LL`, floats `.5` `5.` `1e3f` | ✓ | ✓ | ✓ | ✓ | — | — | L:test5 test7 | front end complete |
-| String/char literals, escapes, adjacent string concatenation | ✓ | ✓ | ✓ | ✓ | — | — | L:test6, P:array | front end complete |
-| `bool`, `true`, `false` | ✓ | ✓ | ✓ | ✓ | — | — | L:test7, S:v01 | front end complete |
-| Itanium C++ name mangling | — | ✓ | — | ✓ | — | — | S:v21 | front end complete (checked against g++) |
+| `const`, `volatile`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v01 v11 v18 | front end + TAC |
+| `extern`, `register` | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:test28, S:v24 e20 | front end + TAC (linkage, composite types) |
+| Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:test25, S:v19 | front end + TAC |
+| `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v02 v22 v24 | front end + TAC |
+| Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | ✓ | — | S:v02 | front end + TAC |
+| Initializer lists, designated `.x = 1`, `[2] = 7`, empty `{}` | ✓ | ✓ | ✓ | ◐ | ✓ | — | P:test24, S:v05 v18 | front end + TAC; brace elision for arrays only |
+| Unnamed structs/classes, anonymous struct members | ✓ | ✓ | ✓ | ✓ | ✓ | — | P:test27, S:v22 e18 | front end + TAC |
+| Numeric literals: hex, octal, binary, suffixes `U L LL`, floats `.5` `5.` `1e3f` | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test5 test7 | front end + TAC |
+| String/char literals, escapes, adjacent string concatenation | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test6, P:array | front end + TAC |
+| `bool`, `true`, `false` | ✓ | ✓ | ✓ | ✓ | ✓ | — | L:test7, S:v01 | front end + TAC |
+| Itanium C++ name mangling | — | ✓ | — | ✓ | ✓ | — | S:v21 | front end + TAC (checked against g++) |
 
 ### Compiler capabilities (not language features)
 
@@ -158,7 +161,7 @@ semantic phase redoes all name resolution.)
 
 | Item | State |
 |---|---|
-| Three Address Code generation (phase 3) | not started — [`phase3-ir/README.md`](../phase3-ir/README.md) |
+| Three Address Code generation (phase 3) | **done** — [`phase3-ir/README.md`](../phase3-ir/README.md) |
 | TAC optimizations | not started |
 | MIPS code generation (phase 4) | not started — [`phase4-codegen/README.md`](../phase4-codegen/README.md) |
 | MIPS optimizations, register allocation | not started |

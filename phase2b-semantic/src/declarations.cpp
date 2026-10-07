@@ -440,6 +440,33 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
 
     Resolved r = resolveType(te, n.get(), false);
     TypePtr t = r.type;
+    /* `int Dog::count = 5;`: the definition of a static data member, not a
+       new file-scope variable */
+    if (ctx == DeclCtx::Global && !te.className.empty()) {
+        SymbolPtr tag = st.lookupTag(te.className);
+        MemberLookup ml = tag && tag->record ? lookupMember(tag->record.get(), name) : MemberLookup();
+        SymbolPtr member = ml.symbols.empty() ? nullptr : ml.symbols.front();
+        if (!member || member->kind != SymbolKind::Field || member->storage != Storage::Static) {
+            error(line, col, "'" + te.className + "::" + name + "' is not a static data member of '" + te.className + "'",
+                  "member-access");
+            if (init) expr(init);
+            return nullptr;
+        }
+        if (t && !isError(t) && !sameType(t, member->type)) {
+            error(line, col, "definition of '" + te.className + "::" + name + "' with type " + q(t) +
+                                 " does not match its declaration as " + q(member->type),
+                  "conflicting-types");
+        }
+        if (init) {
+            checkInitializer(member->type, init, true, "static member '" + te.className + "::" + name + "'");
+            member->hasInitializer = true;
+        }
+        member->isDefined = true;
+        member->declNode = n.get();
+        n->symbol = member;
+        n->semType = member->type;
+        return member;
+    }
     if (r.isAuto) {
         if (!init) {
             error(line, col, "declaration of '" + name + "' with deduced type 'auto' requires an initializer", "auto");

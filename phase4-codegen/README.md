@@ -1,8 +1,8 @@
 # Phase 4 — MIPS Code Generation
 
 > **Status: not started.** This folder contains only this README. No
-> part of the repository emits MIPS assembly, and there is no phase 3
-> (TAC) for it to consume yet.
+> part of the repository emits MIPS assembly. Its input, Three Address
+> Code, is produced by [`../phase3-ir`](../phase3-ir/README.md).
 
 ## Planned work (not implemented)
 
