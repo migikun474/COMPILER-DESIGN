@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v03_scopes.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v03_scopes.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v03_scopes.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v03_scopes.c'.
 
 === Annotated AST ===
 Program "translation_unit"

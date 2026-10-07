@@ -1,0 +1,156 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:17:1: syntax error: syntax error, unexpected IDENTIFIER
+ 17 | enum T01_Color { RED, GREEN, BLUE };
+    | ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:21:1: syntax error: syntax error, unexpected IDENTIFIER
+ 21 | union T02_Number { int i; float f; };
+    | ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:21:36: syntax error: syntax error, unexpected '}'
+ 21 | union T02_Number { int i; float f; };
+    |                                    ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:26:10: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 26 |     enum T01_Color c;
+    |          ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:32:11: syntax error: syntax error, unexpected '{', expecting ';' or ','
+ 32 |     union { int word; char bytes[4]; } u;
+    |           ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:32:40: syntax error: syntax error, unexpected IDENTIFIER
+ 32 |     union { int word; char bytes[4]; } u;
+    |                                        ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:39:16: syntax error: syntax error, unexpected '['
+ 39 |     auto add = [x](int a) { return a + x; };
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:46:16: syntax error: syntax error, unexpected '['
+ 46 |     auto get = [&]() { return x; };
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:52:23: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 52 |     int (*fp)(int, int);
+    |                       ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:57:49: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 57 | int t08_function_pointer_parameter(int (*op)(int), int v) { return v; }
+    |                                                 ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:60:34: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 60 | typedef int (*T09_BinOp)(int, int);
+    |                                  ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:65:17: syntax error: syntax error, unexpected '(', expecting ')'
+ 65 |     x = (int (*)(int)) x;
+    |                 ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:71:29: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 71 |     int (*table[2])(int, int);
+    |                             ^
+
+-----------------------------------------
+Total Errors : 13
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- ErrorNode "line 17: near 'enum'"
+|-- ErrorNode "line 17: near 'enum'"
+|-- VarDecl "resync_after_1 : INT"
+|-- ErrorNode "line 21: near 'union'"
+|-- VarDecl "f : FLOAT"
+|-- ErrorNode "line 21: near '}'"
+|-- ErrorNode "line 21: near '}'"
+|-- VarDecl "resync_after_2 : INT"
+|-- FunctionDef "t03_enum_variable : _Z17t03_enum_variablev"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 26: near 'T01_Color'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t04_unnamed_union : _Z17t04_unnamed_unionv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 32: near '{'"
+|       `-- VarDecl "bytes : CHAR_ARRAY"
+|-- ErrorNode "line 32: near 'u'"
+|-- ErrorNode "line 32: near 'u'"
+|-- ErrorNode "line 32: near 'u'"
+|-- FunctionDef "t05_lambda : _Z10t05_lambdav"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 39: near '['"
+|-- ErrorNode "line 39: near '['"
+|-- ErrorNode "line 39: near '['"
+|-- ErrorNode "line 39: near '['"
+|-- FunctionDef "t06_lambda_capture_default : _Z26t06_lambda_capture_defaultv"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 46: near '['"
+|-- ErrorNode "line 46: near '['"
+|-- ErrorNode "line 46: near '['"
+|-- ErrorNode "line 46: near '['"
+|-- FunctionDef "t07_function_pointer_variable : _Z29t07_function_pointer_variablev"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 52: near ')'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- ErrorNode "line 57: near ')'"
+|-- ErrorNode "line 57: near ')'"
+|-- ErrorNode "line 60: near ')'"
+|-- FunctionDef "t10_function_pointer_cast : _Z25t10_function_pointer_castv"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "0"
+|       |-- ErrorNode "line 65: near '('"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t11_function_pointer_array : _Z26t11_function_pointer_arrayv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 71: near ')'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "twice : _Z5twicei"
+|   |-- ParamDecl "v : INT"
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"
+|               |-- Identifier "v"
+|               `-- IntLiteral "2"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "nums : INT_ARRAY"
+        |   `-- InitializerList
+        |       |-- IntLiteral "1"
+        |       |-- IntLiteral "2"
+        |       `-- IntLiteral "3"
+        |-- VarDecl "row : INT_POINTER_ARRAY"
+        |   `-- UnaryExpr "&"
+        |       `-- Identifier "nums"
+        |-- VarDecl "total : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- CallExpr
+        |       |   |-- Identifier "twice"
+        |       |   `-- IndexExpr
+        |       |       |-- UnaryExpr "*"
+        |       |       |   `-- Identifier "row"
+        |       |       `-- IntLiteral "0"
+        |       `-- IndexExpr
+        |           |-- Identifier "nums"
+        |           `-- IntLiteral "2"
+        `-- ReturnStmt
+            `-- Identifier "total"

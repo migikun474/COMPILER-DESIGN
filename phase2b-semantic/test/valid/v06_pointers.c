@@ -1,9 +1,7 @@
 /* valid: pointers, multi-level pointers, pointer arithmetic, void *,
-   null, function pointers [test 19, 20, 22] */
+   null [test 19, 20, 22] */
 int add(int a, int b) { return a + b; }
 int mul(int a, int b) { return a * b; }
-
-int apply(int (*op)(int, int), int x, int y) { return op(x, y); }
 
 void swap(int *a, int *b) {
     int t = *a;
@@ -31,9 +29,7 @@ int main() {
     int *back = raw;              /* void * -> object pointer (C) */
     char *bytes = (char *) back;  /* explicit cast between pointer types */
     const int *ro = &x;           /* adding const is fine */
-    int (*op)(int, int) = add;
-    op = mul;
-    v = v + op(2, 3) + (*op)(4, 5) + apply(add, 1, 2) + apply(mul, 3, 4);
+    v = v + add(2, 3) + mul(4, 5);
     if (p) v++;
     if (!q) v--;
     return v + gap + same + *ro + *bytes;

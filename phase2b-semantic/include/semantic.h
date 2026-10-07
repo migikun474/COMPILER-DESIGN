@@ -60,13 +60,9 @@ class SemanticAnalyzer {
         int defaultLine = 0;
     };
 
-    struct LambdaCapture {
-        bool byRef = false;
-    };
-
-    /* one per function / method / lambda body being analysed */
+    /* one per function / method body being analysed */
     struct FunctionCtx {
-        Symbol *fn = nullptr;            /* null for lambdas */
+        Symbol *fn = nullptr;
         std::string name;                /* for messages */
         TypePtr ret;
         bool isConstructorLike = false;  /* constructor / destructor: no value returns */
@@ -77,15 +73,6 @@ class SemanticAnalyzer {
         std::map<std::string, const ASTNode *> labels;
         RecordInfo *cls = nullptr;       /* enclosing class of a method body */
         bool isStaticMethod = false;
-        /* lambdas */
-        bool isLambda = false;
-        int lambdaScope = -1;
-        TypePtr deducedRet;              /* first `return` fixes it */
-        bool explicitReturn = false;     /* `-> T` given: ret is fixed */
-        bool isMutable = false;          /* by-copy captures may be modified */
-        bool capturesThis = false;       /* `[this]` */
-        char defaultCapture = 0;         /* 0, '&' or '=' */
-        std::map<std::string, LambdaCapture> captures;
     };
 
     SymbolTable &st;
@@ -98,7 +85,6 @@ class SemanticAnalyzer {
     std::unordered_map<std::string, std::vector<ASTNodePtr>> topFunctions;
     std::unordered_map<std::string, int> topVariableLines;
     std::set<const ASTNode *> signatureDone;
-    std::set<const ASTNode *> byCopyCaptureUses;
 
     /* ---- diagnostics ---- */
     void error(const ASTNode *at, const std::string &msg, const std::string &category);
@@ -130,14 +116,7 @@ class SemanticAnalyzer {
     void functionBody(const ASTNodePtr &n, const SymbolPtr &fnSym, RecordInfo *cls);
     void outOfClassDefinition(const ASTNodePtr &n);
     void recordDefinition(const ASTNodePtr &n);
-    void enumDefinition(const ASTNodePtr &n);
     void checkMainSignature(const SymbolPtr &s, const ASTNode *at);
-    /* `union { int a; char b; };` outside a record: a hidden union object
-       plus variables a, b living in it */
-    void anonymousUnionObject(const ASTNodePtr &n, DeclCtx ctx);
-    /* an anonymous union may only have public non-static data members */
-    bool checkAnonymousUnionMembers(const ASTNodePtr &n);
-    int anonymousUnions = 0;
     int unevaluated = 0; /* inside `sizeof`: uses there need no definition */
     bool hoistFunction(const std::string &name);
     int declScopeForTags();
@@ -172,7 +151,6 @@ class SemanticAnalyzer {
     TypePtr index(const ASTNodePtr &n);
     TypePtr cast(const ASTNodePtr &n);
     TypePtr sizeofExpr(const ASTNodePtr &n);
-    TypePtr lambda(const ASTNodePtr &n);
 
     bool isNullPointerConstant(const ASTNodePtr &n);
     bool checkModifiable(const ASTNodePtr &n, const std::string &what);
@@ -210,9 +188,6 @@ class SemanticAnalyzer {
     bool overloadedOperator(const ASTNodePtr &n, const std::string &op, const std::vector<ASTNodePtr> &operands,
                             TypePtr &result);
     TypePtr varargBuiltin(const ASTNodePtr &n);
-    bool isLambdaThisCaptured(const FunctionCtx *f) const {
-        return f && f->isLambda && (f->defaultCapture || f->capturesThis);
-    }
 };
 
 std::string describeSignature(const SymbolPtr &fnSym);

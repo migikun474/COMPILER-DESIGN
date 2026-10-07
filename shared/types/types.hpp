@@ -6,16 +6,19 @@
    ---------------------------------------------------------------------
    A type is a small immutable graph of type constructors over basic
    types (Dragon Book 6.3.1): pointer(t), reference(t), array(n, t),
-   function(params -> ret), plus named record / enum types. Pointer
+   function(params -> ret), plus named record types. Pointer
    depth is therefore structural -- `int **` is Pointer(Pointer(Int)) --
    never a counter. Qualifiers (const/volatile) live on the level they
    qualify, so `const int *p` is Pointer(const Int): *p is read-only, p
    is not.
 
    Equivalence is structural for the constructors and *by name* for
-   records and enums (C's rule): two struct types are the same type iff
-   they share the same RecordInfo, which is what the tag in scope
-   resolves to.
+   records (C's rule): two struct types are the same type iff they share
+   the same RecordInfo, which is what the tag in scope resolves to.
+
+   A Function type only ever describes a declared function: the language
+   has no function pointers, so Pointer(Function) is never built and a
+   function name is not a value.
 
    Sizes follow the MIPS32 (ILP32) target, so later phases can lay out
    frames and records straight from these numbers.
@@ -33,23 +36,20 @@ using TypePtr = std::shared_ptr<const Type>;
 struct Symbol;
 using SymbolPtr = std::shared_ptr<Symbol>;
 struct RecordInfo;
-struct EnumInfo;
 
 enum class TypeKind {
     Error,     /* result of an expression that already produced an error;
                   accepted silently everywhere to avoid cascades */
     Void, Bool, Char, Short, Int, Long, LongLong, Float, Double,
-    Enum,
     Pointer, Reference, Array, Function,
-    Record,    /* struct / union / class */
-    Opaque,    /* FILE (usable only through a pointer) and va_list */
-    Closure    /* the unique type of one lambda expression */
+    Record,    /* struct / class */
+    Opaque     /* va_list */
 };
 
 /* NoAccess = "not accessible at all from here", e.g. a base class's
    private member seen through a derived class */
 enum class Access { Public, Protected, Private, NoAccess };
-enum class RecordKind { Struct, Union, Class };
+enum class RecordKind { Struct, Class };
 
 struct Type {
     TypeKind kind = TypeKind::Error;
@@ -60,14 +60,12 @@ struct Type {
     TypePtr elem;                /* Pointer/Reference: target; Array: element */
     long long arraySize = -1;    /* Array: element count, -1 for `[]` */
 
-    TypePtr ret;                 /* Function/Closure */
+    TypePtr ret;                 /* Function */
     std::vector<TypePtr> params;
     bool variadic = false;
 
     std::shared_ptr<RecordInfo> record; /* Record */
-    std::shared_ptr<EnumInfo> enumInfo; /* Enum */
-    std::string name;            /* Opaque: "FILE"; Closure: "lambda at line N" */
-    bool closureCaptures = false; /* Closure: has captures (so no fn-pointer conversion) */
+    std::string name;            /* Opaque: "va_list" */
 };
 
 struct BaseClass {
@@ -90,7 +88,7 @@ struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
     SymbolPtr destructor;
     std::vector<BaseClass> bases;
 
-    /* members of unnamed members (`struct S { union { int i; float f; }; }`),
+    /* members of unnamed members (`struct S { struct { int i; float f; }; }`),
        usable as s.i: one entry per promoted name, a copy of the inner
        field with its offset from the start of *this* record. They are in
        `members` too (so lookup finds them) but not in `fields`. */
@@ -99,13 +97,6 @@ struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
     long long size = 0;          /* MIPS32 layout, valid once complete */
     int align = 1;
     int scopeId = -1;            /* scope holding the members (see SymbolTable) */
-};
-
-struct EnumInfo {
-    std::string tag;
-    std::string typedefName;     /* unnamed enum: the first typedef naming it */
-    bool complete = false;
-    std::vector<std::pair<std::string, long long>> enumerators;
 };
 
 /* ---------------- construction ---------------- */
@@ -122,19 +113,15 @@ TypePtr referenceTo(const TypePtr &t);
 TypePtr arrayOf(const TypePtr &elem, long long size);
 TypePtr functionType(const TypePtr &ret, const std::vector<TypePtr> &params, bool variadic);
 TypePtr recordType(const std::shared_ptr<RecordInfo> &r);
-TypePtr enumType(const std::shared_ptr<EnumInfo> &e);
 TypePtr opaqueType(const std::string &name);
-TypePtr closureType(const TypePtr &ret, const std::vector<TypePtr> &params, bool hasCaptures,
-                    const std::string &name);
 TypePtr qualified(const TypePtr &t, bool isConst, bool isVolatile); /* adds to existing */
 TypePtr unqualified(const TypePtr &t);
-TypePtr withReturn(const TypePtr &closureOrFn, const TypePtr &ret);
 
 /* ---------------- classification ---------------- */
 bool isError(const TypePtr &t);
 bool isVoid(const TypePtr &t);
 bool isBool(const TypePtr &t);
-bool isIntegral(const TypePtr &t);   /* bool, char, short, int, long, long long, enum */
+bool isIntegral(const TypePtr &t);   /* bool, char, short, int, long, long long */
 bool isFloating(const TypePtr &t);
 bool isArithmetic(const TypePtr &t);
 bool isPointer(const TypePtr &t);
@@ -142,17 +129,14 @@ bool isReference(const TypePtr &t);
 bool isArray(const TypePtr &t);
 bool isFunction(const TypePtr &t);
 bool isRecord(const TypePtr &t);
-bool isClosure(const TypePtr &t);
 bool isScalar(const TypePtr &t);     /* arithmetic or pointer: usable as a condition */
-bool isFunctionPointer(const TypePtr &t);
 bool isVoidPointer(const TypePtr &t);
-bool isCallable(const TypePtr &t);   /* function, function pointer, closure */
-/* has a known size: not void, not an incomplete record/enum, not FILE,
-   not `[]`, not a function */
+/* has a known size: not void, not an incomplete record, not `[]`, not
+   a function */
 bool isComplete(const TypePtr &t);
 
 /* ---------------- relations ---------------- */
-/* structural equality; records/enums by identity. Top-level qualifiers
+/* structural equality; records by identity. Top-level qualifiers
    are ignored unless `exactQualifiers` (nested levels always compare
    qualifiers, so `const int *` != `int *`). */
 bool sameType(const TypePtr &a, const TypePtr &b, bool exactQualifiers = false);
@@ -161,8 +145,9 @@ bool isDerivedFrom(const RecordInfo *derived, const RecordInfo *base);
 bool sameParameterLists(const TypePtr &a, const TypePtr &b);
 
 /* the value a use of an expression of type t produces: arrays decay to
-   a pointer to their first element, functions to a function pointer,
-   references to what they refer to; top-level qualifiers drop */
+   a pointer to their first element, references to what they refer to;
+   top-level qualifiers drop. A function type is returned unchanged (a
+   function is not a value; the caller reports that). */
 TypePtr decay(const TypePtr &t);
 TypePtr integerPromotion(const TypePtr &t);
 /* "usual arithmetic conversions": the common type both operands of an
@@ -174,7 +159,7 @@ TypePtr usualArithmetic(const TypePtr &a, const TypePtr &b);
    `-1 < 0u` compares 4294967295u with 0u, `~0u` is 4294967295 and
    `2147483647 + 1` overflows int. Values are kept in a long long holding
    the type's bit pattern sign- or zero-extended (MIPS32 widths: char 8,
-   short 16, int/long/enum/pointer 32, long long 64), so a 64-bit unsigned
+   short 16, int/long/pointer 32, long long 64), so a 64-bit unsigned
    value above LLONG_MAX is stored as its two's-complement pattern. */
 int integerBits(const TypePtr &t);           /* 0 for a non-integer type */
 bool isUnsignedInteger(const TypePtr &t);    /* unsigned kinds, bool, pointers */
@@ -206,7 +191,7 @@ int alignOf(const TypePtr &t);
 void layoutRecord(RecordInfo &r);   /* assigns field offsets, size, align */
 
 /* ---------------- printing ---------------- */
-/* C spelling: "int", "char *", "int [10]", "struct Point", "int (*)(int, int)" */
+/* C spelling: "int", "char *", "int [10]", "struct Point", "int (int, int)" */
 std::string typeToString(const TypePtr &t);
 /* "struct Point", or for an unnamed type its typedef name ("Pt") or
    "struct (unnamed at 3:9)" */

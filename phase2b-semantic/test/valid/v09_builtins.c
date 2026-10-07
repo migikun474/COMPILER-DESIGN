@@ -1,4 +1,4 @@
-/* valid: printf/scanf, dynamic memory and file I/O builtins */
+/* valid: printf/scanf and dynamic memory builtins */
 int main() {
     int x = 0, n = 3;
     char buf[32];
@@ -18,16 +18,5 @@ int main() {
     free(heap);
     free(zeroed);
     free(text);
-
-    FILE *f = fopen("data.txt", "w");
-    fprintf(f, "%d\n", x);
-    fputs("line\n", f);
-    fclose(f);
-    f = fopen("data.txt", "r");
-    fscanf(f, "%d", &x);
-    if (fgets(buf, 32, f)) x++;
-    int items = fread(buf, 1, 32, f) + fwrite(buf, 1, 4, f);
-    while (!feof(f)) break;
-    fclose(f);
-    return items;
+    return x + n;
 }

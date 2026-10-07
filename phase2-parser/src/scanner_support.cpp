@@ -98,13 +98,13 @@ bool parenGroupIsExpression(int line, int column) {
     if (first == ")" ) return true;                       /* `T()` */
     if (first == "#num" || first == "#str") return true;  /* `T(4)` */
     static const char *exprOnly[] = {"this", "sizeof", "new", "delete", "true", "false", "printf", "scanf",
-                                     "malloc", "calloc", "realloc", "fopen", "fgets", "va_arg"};
+                                     "malloc", "calloc", "realloc", "va_arg"};
     for (const char *w : exprOnly) {
         if (first == w) return true;
     }
     bool declaratorStart = first == "*" || first == "&" || first == "(" || first == "::" ||
                            std::isalpha(static_cast<unsigned char>(first[0])) || first[0] == '_';
-    if (!declaratorStart) return true;                    /* `T(-x)`, `T(!x)`, `T([](){...})` */
+    if (!declaratorStart) return true;                    /* `T(-x)`, `T(!x)` */
     /* could be a declarator: decide by what follows the ')' */
     std::string after = afterMatching(p, first == "(" ? 2 : 1);
     static const char *declFollow[] = {";", ",", "=", "[", "(", ")", "{", ":", ""};
@@ -131,7 +131,3 @@ bool abstractDeclaratorGroup(int line, int column) {
     return false;
 }
 
-bool bracketIsDesignator(int line, int column) {
-    SourcePeek p(line, column);
-    return afterMatching(p, 1) == "=";
-}

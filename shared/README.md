@@ -80,7 +80,7 @@ type), which is why they live in the same library.
 | diagnostics | `struct Diagnostic`, `g_diagnostics`, `reportDiagnostic()`, `hasErrors()`, `errorDiagnostics()`, `warningDiagnostics()`, `printDiagnostic()`, `displayLine()`, `g_lineOrigins` |
 | preprocessor | `preprocessFile()`, `openPreprocessed()` |
 | ast | `ASTKind`, `ASTNode`, `ASTTypeExpr`, `mkNode()`, `addChild()`, `printAST()`, `g_astRoot`, `anonymousTag()` |
-| types | `sem::Type`, `TypeKind`, `RecordInfo`, `EnumInfo`; `pointerTo()`, `arrayOf()`, `functionType()` …; `sameType()`, `implicitConversion()`, `checkCast()`, `usualArithmetic()`, `integerPromotion()`, `decay()`, `sizeOf()`, `alignOf()`, `layoutRecord()`, `lookupMember()`, `typeToString()`, `wrapToType()` |
+| types | `sem::Type`, `TypeKind`, `RecordInfo`; `pointerTo()`, `arrayOf()`, `functionType()` …; `sameType()`, `implicitConversion()`, `checkCast()`, `usualArithmetic()`, `integerPromotion()`, `decay()`, `sizeOf()`, `alignOf()`, `layoutRecord()`, `lookupMember()`, `typeToString()`, `wrapToType()` |
 | symbol_table | part 1: `pushScope()`, `popScope()`, `declareSymbol()`, `lookupSymbol()`, `isTypeName()`, `mangle()`, `printSymbolTable()`; part 2: `sem::Symbol`, `sem::Scope`, `sem::SymbolTable`, `printSemanticSymbolTable()`, `printRecordLayouts()` |
 
 The symbol tables are documented in detail in

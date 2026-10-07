@@ -73,7 +73,7 @@ bool isExpressionKind(ASTKind k) {
         case ASTKind::BinaryExpr: case ASTKind::UnaryExpr: case ASTKind::PostfixOpExpr: case ASTKind::AssignExpr:
         case ASTKind::TernaryExpr: case ASTKind::CallExpr: case ASTKind::BuiltinCallExpr: case ASTKind::MemberExpr:
         case ASTKind::ArrowExpr: case ASTKind::ScopeExpr: case ASTKind::IndexExpr: case ASTKind::CastExpr:
-        case ASTKind::SizeofExpr: case ASTKind::NewExpr: case ASTKind::DeleteExpr: case ASTKind::LambdaExpr:
+        case ASTKind::SizeofExpr: case ASTKind::NewExpr: case ASTKind::DeleteExpr:
         case ASTKind::CommaExpr: case ASTKind::ConstructExpr: case ASTKind::InitializerList:
         case ASTKind::DesignatedInit: case ASTKind::IntLiteral: case ASTKind::FloatLiteral: case ASTKind::CharLiteral:
         case ASTKind::StringLiteral: case ASTKind::BoolLiteral: case ASTKind::Identifier: case ASTKind::ThisExpr:
@@ -139,7 +139,7 @@ class Sequencer {
         if (n->kind == ASTKind::Identifier) {
             const SymbolPtr &s = n->symbol;
             if (!s || (s->kind != SymbolKind::Variable && s->kind != SymbolKind::Parameter)) return false;
-            if (s->type && (isArray(s->type) || isFunction(s->type))) return false; /* an address, not a stored value */
+            if (s->type && isArray(s->type)) return false; /* an address, not a stored value */
             a.key = std::to_string(reinterpret_cast<std::uintptr_t>(s.get()));
             a.spelling = n->label;
             return true;
@@ -171,9 +171,6 @@ class Sequencer {
                 break; /* `f().x`, `(*p).x`: the operand's effects */
             }
             case ASTKind::SizeofExpr: /* not evaluated */
-                return none;
-            case ASTKind::LambdaExpr: /* its body runs later; its own full expressions are checked there */
-                visit(n);
                 return none;
             case ASTKind::BinaryExpr:
                 if (n->label == "&&" || n->label == "||") return sequenced(n);

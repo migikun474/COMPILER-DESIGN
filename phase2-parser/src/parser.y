@@ -48,51 +48,24 @@
         return n;
     }
 
-    /* LambdaExpr: label = capture list, children = named ParamDecls then
-       the body; typeExpr = the function shape, with the explicit `-> T`
-       return type in its specifiers when one was written */
-    static ASTNodePtr makeLambdaNode(int bracketIdx, const std::string &captures,
-                                     const std::vector<DeclInfo> &params, bool variadic,
-                                     const ParserValue &specs, const ASTNodePtr &body) {
-        auto n = atToken(mkNode(ASTKind::LambdaExpr, captures), bracketIdx);
-        bool explicitReturn = specs.idx == 1;
-        DeclInfo fn = explicitReturn ? specs.decl : DeclInfo();
-        fn.isFunction = true;
-        fn.isVariadic = variadic;
-        fn.params = params;
-        n->typeExpr = makeTypeExpr(explicitReturn ? specs.typeSpec : TypeSpec(), fn);
-        n->typeExpr->isMutable = specs.str == "mutable";
-        n->typeExpr->hasExplicitReturn = explicitReturn;
-        for (auto &p : params) {
-            if (!p.name.empty()) {
-                auto pn = atToken(mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr), p.nameIdx);
-                pn->typeExpr = p.typeExpr;
-                addChild(n, pn);
-            }
-        }
-        addChild(n, body);
-        return n;
-    }
 }
 
 /* ---- keywords ---- */
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
-%token STRUCT ENUM UNION CLASS
+%token STRUCT CLASS
 %token PUBLIC PRIVATE PROTECTED THIS
 %token STATIC TYPEDEF AUTO EXTERN REGISTER CONST VOLATILE
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
-%token FILE_KW FOPEN FCLOSE FREAD FWRITE FPRINTF FSCANF FGETS FPUTS FEOF
 %token BOOL
 %token NEW DELETE SIZEOF
 %token VA_LIST VA_START VA_ARG VA_END
-%token MUTABLE OPERATOR
+%token OPERATOR
 %token DELETE_ARRAY /* `delete[]`, one token (see scanner.l) */
 %token FCAST        /* a type name / type keyword starting `T(...)` that can only be an
                        expression (`Dog(4).bark();`), decided by the scanner's lookahead */
-%token DESIG_LBRACKET /* '[' opening an array designator `[i] = v` (scanner lookahead) */
-%token ABSTRACT_LPAREN /* '(' after a type that opens a nameless declarator: `int (*)(int)` */
+%token ABSTRACT_LPAREN /* '(' after a type that opens a nameless declarator: `int (*)[3]` */
 
 /* ---- literals / names ---- */
 %token IDENTIFIER TYPE_NAME
@@ -177,18 +150,12 @@ declaration
               if (n) declNodes.push_back(n);
           }
           if (declNodes.empty()) {
-              $$.node = $1.node; /* bare struct/class/enum/union declaration */
-              /* `union { int i; float f; };` inside a struct: its members
+              $$.node = $1.node; /* bare struct/class declaration */
+              /* `struct { int i; float f; };` inside a struct: its members
                  are the enclosing struct's (an anonymous member) */
               if (isAnonymousTag($1.typeSpec.tagName) && $1.node) {
-                  if (atAggregateMemberLevel()) {
+                  if (atAggregateMemberLevel())
                       addAnonymousMember(currentClassName(), $1.typeSpec.tagName);
-                  } else if ($1.node->kind == ASTKind::UnionDecl) {
-                      /* `union { int a; char b; };` in a function (or `static`
-                         at file scope): a and b are names in this scope */
-                      promoteAnonymousMembers($1.typeSpec.tagName);
-                  }
-                  /* `static union {...};`: phase 2b needs the storage class */
                   $1.node->typeExpr = makeTypeExpr($1.typeSpec, DeclInfo());
               }
           } else if (declNodes.size() == 1 && !$1.node) {
@@ -243,20 +210,17 @@ type_specifier
     | LONG     { $$.typeSpec.parts.push_back("LONG"); g_afterTypeKeyword = true; }
     | SIGNED   { $$.typeSpec.parts.push_back("SIGNED"); g_afterTypeKeyword = true; }
     | UNSIGNED { $$.typeSpec.parts.push_back("UNSIGNED"); g_afterTypeKeyword = true; }
-    | FILE_KW  { $$.typeSpec.parts.push_back("FILE"); g_afterTypeKeyword = true; }
     | VA_LIST  { $$.typeSpec.parts.push_back("VA_LIST"); g_afterTypeKeyword = true; }
     | TYPE_NAME {
           const Symbol *s = lookupTypeSymbol($1.str);
           setCategory($1.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back(s ? s->typeStr : "INT");
           $$.typeSpec.typedefName = $1.str;
-          if (s && (s->kind == SymKind::STRUCT_TAG || s->kind == SymKind::UNION_TAG ||
-                    s->kind == SymKind::CLASS_TAG)) {
+          if (s && (s->kind == SymKind::STRUCT_TAG || s->kind == SymKind::CLASS_TAG)) {
               $$.typeSpec.tagName = $1.str; /* "Dog d;" -- Dog referenced directly,
                                                 without repeating class/struct */
           } else if (s && s->kind == SymKind::TYPEDEF_NAME && s->typeExpr && s->typeExpr->pointerLevel == 0 &&
-                     s->typeExpr->arrayDims.empty() && !s->typeExpr->isFunction &&
-                     !s->typeExpr->isFunctionPointer) {
+                     s->typeExpr->arrayDims.empty() && !s->typeExpr->isFunction) {
               $$.typeSpec.tagName = s->typeExpr->tagName; /* `Pt p;` with `typedef struct {...} Pt;`:
                                                               p.x resolves through the struct */
           }
@@ -291,7 +255,7 @@ struct_or_class_specifier
           $$.node = node;
       }
     /* unnamed: `struct { int x, y; } p;`, `typedef struct { ... } Pt;`,
-       or an anonymous member `struct S { union { int i; float f; }; };`.
+       or an anonymous member `struct S { struct { int lo, hi; }; };`.
        The tag is made up from the position (anonymousTag()). */
     | STRUCT '{' {
           $$.str = anonymousTagAt($1.idx);
@@ -317,45 +281,6 @@ struct_or_class_specifier
           const Symbol *s = lookupTypeSymbol($2.str);
           setCategory($2.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back("STRUCT");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION tag_name {
-          declareSymbol($2.str, SymKind::UNION_TAG, "UNION", SymbolDeclInfo{$2.idx});
-          setCategory($2.idx, "UNION");
-          enterClass($2.str, "union");
-      } '{' { pushScope("union " + $2.str); markAggregateMemberDepth(); } member_decl_list_opt '}' {
-          popScope(); leaveClass();
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-          addTypeName($2.str);
-          auto node = atToken(mkNode(ASTKind::UnionDecl, $2.str), $2.idx);
-          for (auto &m : $6.nodeList) addChild(node, m);
-          $$.node = node;
-      }
-    | UNION '{' {
-          $$.str = anonymousTagAt($1.idx);
-          declareSymbol($$.str, SymKind::UNION_TAG, "UNION", SymbolDeclInfo{$1.idx});
-          enterClass($$.str, "union");
-          pushScope("union " + $$.str);
-          markAggregateMemberDepth();
-      } member_decl_list_opt '}' {
-          popScope(); leaveClass();
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $3.str;
-          auto node = atToken(mkNode(ASTKind::UnionDecl, $3.str), $1.idx);
-          for (auto &m : $4.nodeList) addChild(node, m);
-          $$.node = node;
-      }
-    | UNION IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "UNION");
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("UNION");
           $$.typeSpec.tagName = $2.str;
       }
     | CLASS tag_name {
@@ -398,39 +323,6 @@ struct_or_class_specifier
           const Symbol *s = lookupTypeSymbol($2.str);
           setCategory($2.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back("CLASS");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | ENUM tag_name {
-          declareSymbol($2.str, SymKind::ENUM_TAG, "ENUM", SymbolDeclInfo{$2.idx});
-          setCategory($2.idx, "ENUM");
-      } '{' enumerator_list '}' {
-          $$.typeSpec.parts.push_back("ENUM");
-          $$.typeSpec.tagName = $2.str;
-          addTypeName($2.str);
-          auto node = atToken(mkNode(ASTKind::EnumDecl, $2.str), $2.idx);
-          for (auto &e : $5.nodeList) addChild(node, e);
-          $$.node = node;
-      }
-    | ENUM '{' {
-          $$.str = anonymousTagAt($1.idx);
-          declareSymbol($$.str, SymKind::ENUM_TAG, "ENUM", SymbolDeclInfo{$1.idx});
-      } enumerator_list '}' {
-          $$.typeSpec.parts.push_back("ENUM");
-          $$.typeSpec.tagName = $3.str;
-          auto node = atToken(mkNode(ASTKind::EnumDecl, $3.str), $1.idx);
-          for (auto &e : $4.nodeList) addChild(node, e);
-          $$.node = node;
-      }
-    | ENUM IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "ENUM");
-          $$.typeSpec.parts.push_back("ENUM");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | ENUM TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("ENUM");
           $$.typeSpec.tagName = $2.str;
       }
     ;
@@ -596,24 +488,6 @@ access_specifier
     | PROTECTED
     ;
 
-enumerator_list
-    : enumerator { $$.nodeList.push_back($1.node); }
-    | enumerator_list ',' enumerator { $$ = $1; $$.nodeList.push_back($3.node); }
-    ;
-
-enumerator
-    : IDENTIFIER {
-          declareSymbol($1.str, SymKind::ENUM_CONST, "ENUM_CONSTANT", SymbolDeclInfo{$1.idx});
-          setCategory($1.idx, "ENUM_CONSTANT");
-          $$.node = atToken(mkNode(ASTKind::Enumerator, $1.str), $1.idx);
-      }
-    | IDENTIFIER '=' constant_expr {
-          declareSymbol($1.str, SymKind::ENUM_CONST, "ENUM_CONSTANT", SymbolDeclInfo{$1.idx});
-          setCategory($1.idx, "ENUM_CONSTANT");
-          $$.node = atToken(mkNode(ASTKind::Enumerator, $1.str, {$3.node}), $1.idx);
-      }
-    ;
-
 init_declarator_list_opt
     : /* empty */ { $$ = ParserValue(); }
     | init_declarator_list { $$ = $1; }
@@ -654,8 +528,7 @@ initializer_item
     | '.' IDENTIFIER '=' initializer {
           $$.node = atToken(mkNode(ASTKind::DesignatedInit, "." + $2.str, {$4.node}), $2.idx);
       }
-    | DESIG_LBRACKET constant_expr ']' '=' initializer {
-          /* the scanner saw `] =` ahead, so this '[' cannot open a lambda */
+    | '[' constant_expr ']' '=' initializer {
           $$.node = atToken(mkNode(ASTKind::DesignatedInit, "[]", {$2.node, $5.node}), $1.idx);
       }
     ;
@@ -679,7 +552,7 @@ declarator
     | direct_declarator { $$ = $1; }
     ;
 
-/* a declarator without a name: `int *`, `char *[]`, `int (*)(int)` --
+/* a declarator without a name: `int *`, `char *[]`, `int (*)[3]` --
    for unnamed parameters and in casts / sizeof / new */
 abstract_declarator
     : pointer { $$ = $1; }
@@ -706,15 +579,6 @@ direct_abstract_declarator
     | '[' assignment_expr ']' { $$ = ParserValue(); $$.decl.arrayLevel = 1; $$.decl.arrayDims.push_back($2.node); }
     | direct_abstract_declarator '[' ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back(nullptr); }
     | direct_abstract_declarator '[' assignment_expr ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back($3.node); }
-    | direct_abstract_declarator '(' param_scope parameter_list_opt ')' {
-          $$ = $1;
-          if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) $$.decl.isFunctionPointer = true;
-          else $$.decl.isFunction = true;
-          $$.decl.wasParenGrouped = false;
-          $$.decl.params = $4.paramList;
-          $$.decl.isVariadic = $4.decl.isVariadic;
-          popScope();
-      }
     ;
 
 direct_declarator
@@ -771,12 +635,14 @@ direct_declarator
     | direct_declarator '(' param_scope parameter_list_opt ')' {
           $$ = $1;
           if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) {
-              /* `int (*fp)(int, int)` -- fp is a VARIABLE of function-
-                 pointer type, not a function declaration. */
-              $$.decl.isFunctionPointer = true;
-          } else {
-              $$.decl.isFunction = true;
+              /* `int (*fp)(int)` would declare a pointer to a function;
+                 the language has no function pointers, so a parameter
+                 list cannot follow a parenthesized pointer declarator */
+              popScope();
+              yyerror("syntax error, unexpected '(' after a parenthesized pointer declarator");
+              YYERROR;
           }
+          $$.decl.isFunction = true;
           $$.decl.wasParenGrouped = false; /* consumed */
           $$.decl.params = $4.paramList;
           $$.decl.isVariadic = $4.decl.isVariadic;
@@ -1200,7 +1066,6 @@ type_name_specifier
     | LONG     %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("LONG"); }
     | SIGNED   %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("SIGNED"); }
     | UNSIGNED %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("UNSIGNED"); }
-    | FILE_KW  { $$.typeSpec.parts.push_back("FILE"); }
     | VA_LIST  { $$.typeSpec.parts.push_back("VA_LIST"); }
     | CONST    { $$ = ParserValue(); $$.typeSpec.isConst = true; }
     | VOLATILE { $$ = ParserValue(); $$.typeSpec.isVolatile = true; }
@@ -1225,18 +1090,6 @@ type_name_specifier
           $$.typeSpec.parts.push_back("STRUCT");
           $$.typeSpec.tagName = $2.str;
       }
-    | UNION IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "UNION");
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-      }
     | CLASS IDENTIFIER {
           const Symbol *s = lookupSymbol($2.str);
           setCategory($2.idx, s ? s->typeStr : "CLASS");
@@ -1247,18 +1100,6 @@ type_name_specifier
           const Symbol *s = lookupTypeSymbol($2.str);
           setCategory($2.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back("CLASS");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | ENUM IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "ENUM");
-          $$.typeSpec.parts.push_back("ENUM");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | ENUM TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("ENUM");
           $$.typeSpec.tagName = $2.str;
       }
     ;
@@ -1334,15 +1175,6 @@ builtin_call
     | FREE '(' argument_list_opt ')'    { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "free"), $1.idx);    for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | CALLOC '(' argument_list_opt ')'  { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "calloc"), $1.idx);  for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | REALLOC '(' argument_list_opt ')' { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "realloc"), $1.idx); for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FOPEN '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fopen"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FCLOSE '(' argument_list_opt ')'  { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fclose"), $1.idx);  for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FREAD '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fread"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FWRITE '(' argument_list_opt ')'  { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fwrite"), $1.idx);  for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FPRINTF '(' argument_list_opt ')' { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fprintf"), $1.idx); for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FSCANF '(' argument_list_opt ')'  { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fscanf"), $1.idx);  for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FGETS '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fgets"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FPUTS '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "fputs"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | FEOF '(' argument_list_opt ')'    { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "feof"), $1.idx);    for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | VA_START '(' argument_list_opt ')' { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_start"), $1.idx); for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | VA_ARG '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_arg"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | VA_END '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_end"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
@@ -1416,7 +1248,6 @@ primary_expr
           $$.node = atToken(mkNode(ASTKind::ScopeExpr, $3.str, {base}), $3.idx);
       }
     | '(' expr ')' { $$.node = $2.node; }
-    | lambda_expr { $$.node = $1.node; }
     ;
 
 /* adjacent literals are one string, as in C: "adj" "acent" == "adjacent" */
@@ -1427,62 +1258,6 @@ string_literal
           std::string &text = $$.node->label;
           text = text.substr(0, text.size() - 1) + $2.str.substr(1);
       }
-    ;
-
-lambda_expr
-    : '[' capture_list_opt ']' '(' { pushScope("lambda"); } parameter_list_opt ')' lambda_specifiers {
-          for (auto &p : $6.paramList) {
-              if (p.nameIdx >= 0) {
-                  declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, SymbolDeclInfo{p.nameIdx});
-                  setCategory(p.nameIdx, p.typeStr);
-              }
-          }
-      } compound_stmt {
-          popScope();
-          $$.node = makeLambdaNode($1.idx, $2.str, $6.paramList, $6.decl.isVariadic, $8, $10.node);
-      }
-    | '[' capture_list_opt ']' { pushScope("lambda"); } compound_stmt {
-          /* `[x] { ... }`: no parameter list */
-          popScope();
-          $$.node = makeLambdaNode($1.idx, $2.str, {}, false, ParserValue(), $5.node);
-      }
-    ;
-
-/* `mutable` and/or an explicit `-> T` return type; $$.str is "mutable"
-   when present, $$.typeSpec/$$.decl the return type when given */
-lambda_specifiers
-    : /* empty */ { $$ = ParserValue(); }
-    | MUTABLE { $$ = ParserValue(); $$.str = "mutable"; }
-    | ARROW type_name { $$ = $2; $$.str = ""; $$.idx = 1; }
-    | MUTABLE ARROW type_name { $$ = $3; $$.str = "mutable"; $$.idx = 1; }
-    ;
-
-capture_list_opt
-    : /* empty */ { $$ = ParserValue(); }
-    | capture_list { $$ = $1; }
-    ;
-
-capture_list
-    : capture { $$.str = $1.str; }
-    | capture_list ',' capture { $$.str = $1.str + ", " + $3.str; }
-    ;
-
-capture
-    : IDENTIFIER {
-          const Symbol *s = lookupSymbol($1.str);
-          if (s) setCategory($1.idx, s->typeStr);
-          recordUsage(s);
-          $$.str = $1.str;
-      }
-    | '&' IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          if (s) setCategory($2.idx, s->typeStr);
-          recordUsage(s);
-          $$.str = "&" + $2.str;
-      }
-    | '&' { $$.str = "&"; }
-    | '=' { $$.str = "="; }
-    | THIS { $$.str = "this"; }
     ;
 
 %%

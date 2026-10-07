@@ -1,0 +1,181 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test3_classes_until_goto.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+class                          class               
+Shape                          CLASS               
+{                              open_brace_op       
+public                         public              
+:                              colon_op            
+int                            int                 
+sides                          INT                 
+;                              semicolon_op        
+int                            int                 
+area                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+sides                          INT                 
+*                              star_op             
+sides                          INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+private                        private             
+:                              colon_op            
+int                            int                 
+secret                         INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+;                              semicolon_op        
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+class                          class               
+Shape                          CLASS               
+s                              CLASS               
+;                              semicolon_op        
+s                              CLASS               
+.                              dot_op              
+sides                          INT                 
+=                              assign_op           
+4                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+=                              assign_op           
+5                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+y                              INT                 
+=                              assign_op           
+10                             INT_LITERAL         
+;                              semicolon_op        
+auto                           auto                
+total                          INT                 
+=                              assign_op           
+x                              INT                 
++                              plus_op             
+y                              INT                 
++                              plus_op             
+s                              CLASS               
+.                              dot_op              
+area                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+;                              semicolon_op        
+until                          until               
+(                              open_paren_op       
+x                              INT                 
+<=                             le_op               
+0                              INT_LITERAL         
+)                              close_paren_op      
+{                              open_brace_op       
+x                              INT                 
+=                              assign_op           
+x                              INT                 
+-                              minus_op            
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+do                             do                  
+{                              open_brace_op       
+x                              INT                 
+++                             increment_op        
+;                              semicolon_op        
+}                              close_brace_op      
+while                          while               
+(                              open_paren_op       
+x                              INT                 
+<                              lt_op               
+5                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+goto                           goto                
+done                           LABEL               
+;                              semicolon_op        
+done                           LABEL               
+:                              colon_op            
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- ClassDecl "Shape"
+|   |-- VarDecl "sides : INT"
+|   |-- FunctionDef "area : _ZN5Shape4areaEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"
+|   |               |-- Identifier "sides"
+|   |               `-- Identifier "sides"
+|   `-- VarDecl "secret : INT"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- VarDecl "s : CLASS"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "sides"
+        |       |   `-- Identifier "s"
+        |       `-- IntLiteral "4"
+        |-- VarDecl "x : INT"
+        |   `-- IntLiteral "5"
+        |-- VarDecl "y : INT"
+        |   `-- IntLiteral "10"
+        |-- VarDecl "total : INT"
+        |   `-- BinaryExpr "+"
+        |       |-- BinaryExpr "+"
+        |       |   |-- Identifier "x"
+        |       |   `-- Identifier "y"
+        |       `-- CallExpr
+        |           `-- MemberExpr "area"
+        |               `-- Identifier "s"
+        |-- UntilStmt
+        |   |-- BinaryExpr "<="
+        |   |   |-- Identifier "x"
+        |   |   `-- IntLiteral "0"
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "x"
+        |               `-- BinaryExpr "-"
+        |                   |-- Identifier "x"
+        |                   `-- IntLiteral "1"
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"
+        |   |           `-- Identifier "x"
+        |   `-- BinaryExpr "<"
+        |       |-- Identifier "x"
+        |       `-- IntLiteral "5"
+        |-- GotoStmt "done"
+        `-- LabeledStmt "done"
+            `-- ReturnStmt
+                `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+Shape                class_tag      1      global                       CLASS                                     0                                
+Shape::sides         class_member   3      global > class Shape         INT                                       2                                
+Shape::area          class_method   4      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape4areaEv
+Shape::secret        class_member   8      global > class Shape         INT                                       0                                
+main                 procedure      11     global                       PROCEDURE                                 0         INT ()                 main
+s                    variable       12     global > main()              CLASS                                     2                                
+x                    variable       15     global > main()              INT                                       6                                
+y                    variable       16     global > main()              INT                                       1                                
+total                variable       17     global > main()              INT                                       0                                
+done                 label          28     global > main()              LABEL                                     0                                

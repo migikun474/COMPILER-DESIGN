@@ -6,16 +6,17 @@ then MIPS.
 
 | | |
 |---|---|
-| Source language | C-like (C89/C99 core plus classes, lambdas, references, overloading — see the [feature audit](docs/FEATURES.md)) |
-| Intermediate representation | Three Address Code — **not started** |
+| Source language | C-like (C89/C99 core plus classes, references, overloading — see the [feature audit](docs/FEATURES.md)) |
+| Intermediate representation | Three Address Code — **implemented** (generator + interpreter, [`phase3-ir`](phase3-ir/README.md)) |
 | Target | MIPS — **not started** |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2, g++ 13 |
 | Specification | [`docs/project_description.md`](docs/project_description.md) |
 
 ## Current development status
 
-> **Current implementation status: the front end is complete up to
-> semantic analysis; IR/TAC generation and the MIPS back end are not yet
+> **Current implementation status: the front end and Three Address
+> Code generation are complete (with a TAC interpreter that runs the
+> generated code); TAC optimization and the MIPS back end are not yet
 > started.**
 
 ```
@@ -25,15 +26,15 @@ Front end
 ├── Syntax analysis       ✓  phase2-parser              (LALR(1), AST, parse-time symbol table)
 └── Semantic analysis     ✓  phase2b-semantic           (types, scopes, annotated AST)
 Back end
-├── IR / TAC              ○  phase3-ir                  (README only, no code)
+├── IR / TAC              ✓  phase3-ir                  (quadruples, backpatching, TAC interpreter)
 ├── Optimization          ○  —
 └── MIPS generation       ○  phase4-codegen             (README only, no code)
 ```
 
 ✓ implemented and tested ○ not started
 
-No source file in the repository generates TAC or MIPS; the two back-end
-folders contain only a README describing the plan.
+No source file in the repository optimizes TAC or generates MIPS;
+`phase4-codegen/` contains only a README describing the plan.
 
 ## Compiler architecture
 
@@ -51,7 +52,9 @@ tokens → AST (g_astRoot) + parse-time symbol table + Token/Token_Type table
    ↓  sem::SemanticAnalyzer::analyze()   phase2b-semantic/src/*.cpp
 annotated AST (types, lvalues, constants, symbols) + sem::SymbolTable + record layouts
    ↓
-[ IR / TAC — not started ]  →  [ MIPS — not started ]
+generate()                    phase3-ir             quadruples per function, labels, frame offsets
+   ↓
+tac::Program  →  TAC interpreter (--run)   →  [ MIPS — not started ]
 ```
 
 The phases are three separate executables that share one static
@@ -86,7 +89,7 @@ a source file directly. Every run also writes a report to
 ├── phase1-lexer/             standalone flex lexer
 ├── phase2-parser/            flex scanner + bison LALR(1) parser
 ├── phase2b-semantic/         semantic analyzer
-├── phase3-ir/                planned: Three Address Code (README only)
+├── phase3-ir/                Three Address Code: generator, interpreter, tests
 └── phase4-codegen/           planned: MIPS (README only)
 ```
 
@@ -105,7 +108,7 @@ Abridged; the full matrix with test evidence for every row is in
 | int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | — | — | front end complete |
 | Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | — | — | front end complete |
 | Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | — | — | front end complete |
-| Structures, unions, enums, unnamed aggregates | ✓ | ✓ | ◐ | — | — | no brace elision into struct members |
+| Structures, unnamed structs, anonymous struct members | ✓ | ✓ | ◐ | — | — | no brace elision into struct members |
 | Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | — | — | front end complete |
 | printf / scanf | ✓ | ✓ | ✓ | — | — | front end complete (format checking) |
 | static, extern, register, const, volatile | ✓ | ✓ | ✓ | — | — | front end complete |
@@ -113,11 +116,9 @@ Abridged; the full matrix with test evidence for every row is in
 | Dynamic memory (`malloc` … `free`, `new`/`delete`) | ✓ | ✓ | ✓ | — | — | front end complete |
 | Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | — | — | front end complete |
 | typedef, references | ✓ | ✓ | ✓ | — | — | front end complete |
-| File manipulation (`FILE`, `fopen` …) | ✓ | ✓ | ✓ | — | — | front end complete |
 | Classes, inheritance, access modifiers | ✓ | ◐ | ◐ | — | — | no constructor initializer lists, `virtual`, `const` methods |
 | Constructors/destructors, operator overloading | ✓ | ◐ | ✓ | — | — | no member-initializer lists |
 | Function overloading | ✓ | ✓ | ◐ | — | — | converting constructors only in initialization |
-| Lambdas, function pointers | ✓ | ✓ | ◐ | — | — | captures checked against the innermost lambda |
 | Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | — | front end complete |
 
 ## Implemented basic features
@@ -137,13 +138,25 @@ multi-level pointers and multi-dimensional arrays.
 
 Beyond the specification, the code also implements classes and objects,
 inheritance, access modifiers, constructors and destructors, operator
-and function overloading, lambdas, function pointers, enums, unions,
-file manipulation, a C preprocessor, `extern`/`register`, casts,
-designated initializers, anonymous unions, and Itanium C++ name
-mangling. The semantic analyzer additionally gives gcc-style warnings
+and function overloading, a C preprocessor, `extern`/`register`, casts,
+designated initializers, unnamed structs with anonymous members, and
+Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
 for sequence-point violations (`i = i++`), integer overflow in constant
 expressions and printf/scanf format mismatches. See
 [`docs/FEATURES.md`](docs/FEATURES.md#c-additional-features-discovered-in-the-code).
+
+## Removed features
+
+Four features that an earlier version of the front end supported were
+removed on 2026-10-07, before the back end was started, to keep TAC and
+MIPS generation focused: **enum and union**, **file manipulation**
+(`FILE`, `fopen` …), **lambdas**, and **function pointers**. Their
+keywords are no longer reserved and their grammar rules, types and
+checks are gone; a program that uses one gets an ordinary error
+(`phase2-parser/test/test29_dropped_features.c`,
+`phase2b-semantic/test/invalid/e19_dropped_features.c`). The decision
+and its consequences are recorded in
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
 
 ## Partially implemented
 
@@ -156,15 +169,12 @@ expressions and printf/scanf format mismatches. See
   when a non-`void` function has no `return` at all; no unreachable-code
   or uninitialized-variable diagnostics; `goto`/`case` jumping over an
   initialization is not reported.
-- **Lambdas**: capture rules are checked against the innermost lambda only.
 - **Phase 1 lexer**: reports line numbers but no columns.
 
 Details: [`docs/FEATURES.md#d-partial-features`](docs/FEATURES.md#d-partial-features).
 
 ## Planned
 
-- Phase 3 — Three Address Code generation, with a TAC interpreter to
-  check it ([`phase3-ir/README.md`](phase3-ir/README.md)).
 - TAC optimizations (local, then global and loop optimizations).
 - Phase 4 — MIPS code generation, register allocation, peephole
   optimization ([`phase4-codegen/README.md`](phase4-codegen/README.md)).
@@ -181,7 +191,7 @@ functions, wide characters.
 | Lexical analysis | [`phase1-lexer/README.md`](phase1-lexer/README.md) |
 | Syntax analysis | [`phase2-parser/README.md`](phase2-parser/README.md) · grammar walkthrough [`phase2-parser/docs/GRAMMAR_DESIGN.md`](phase2-parser/docs/GRAMMAR_DESIGN.md) |
 | Semantic analysis | [`phase2b-semantic/README.md`](phase2b-semantic/README.md) |
-| IR / TAC (planned) | [`phase3-ir/README.md`](phase3-ir/README.md) |
+| IR / TAC | [`phase3-ir/README.md`](phase3-ir/README.md) |
 | MIPS (planned) | [`phase4-codegen/README.md`](phase4-codegen/README.md) |
 
 Each phase folder also keeps its development history in
@@ -258,9 +268,11 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 
 | Suite | Command | Contents |
 |---|---|---|
-| Lexer | `cd phase1-lexer && ./run.sh` | 11 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
-| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 25 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test23`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **81 checks, all passing** |
+| Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
+| Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **80 checks, all passing** |
+
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 13 programs generated and executed by the TAC interpreter; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **13 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -268,21 +280,23 @@ unexpected diagnostic fails the test).
 
 ## Known limitations
 
-- No back end: nothing is compiled to TAC or MIPS yet.
+- No MIPS back end and no optimizer yet: the compiler stops at
+  (unoptimized) Three Address Code, which the TAC interpreter can run.
 - The partial features listed above.
+- Removed features (see above): `enum`, `union`, file manipulation,
+  lambdas, function pointers.
 - Constructs rejected as syntax errors: bit-fields, default arguments,
   templates, namespaces, `using`, exceptions, `inline`, `virtual`,
   `friend`, `explicit`, `const` member functions, compound literals,
   nested function definitions, `wchar_t` / wide literals.
-- `printf`, `scanf`, `malloc`, the file functions and `va_*` are
+- `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
   reserved words of this language (they cannot be used as identifiers);
   `#include <stdio.h>` and other system headers are accepted and ignored.
 - `long double` is treated as `double`.
 
 ## Future work
 
-1. **IR / TAC** — lower the annotated AST to quadruples; build a TAC
-   interpreter as the correctness oracle.
+1. **IR / TAC** — done ([`phase3-ir`](phase3-ir/README.md)).
 2. **Optimization** — basic blocks and a control-flow graph; constant
    folding, copy propagation, common-subexpression and dead-code
    elimination; later data-flow and loop optimizations.

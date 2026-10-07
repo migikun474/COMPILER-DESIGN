@@ -39,10 +39,7 @@ const char *astKindName(ASTKind k) {
         case ASTKind::FunctionDef: return "FunctionDef";
         case ASTKind::DeclGroup: return "DeclGroup";
         case ASTKind::StructDecl: return "StructDecl";
-        case ASTKind::UnionDecl: return "UnionDecl";
         case ASTKind::ClassDecl: return "ClassDecl";
-        case ASTKind::EnumDecl: return "EnumDecl";
-        case ASTKind::Enumerator: return "Enumerator";
         case ASTKind::TypedefDecl: return "TypedefDecl";
         case ASTKind::ConstructorDef: return "ConstructorDef";
         case ASTKind::DestructorDef: return "DestructorDef";
@@ -79,7 +76,6 @@ const char *astKindName(ASTKind k) {
         case ASTKind::SizeofExpr: return "SizeofExpr";
         case ASTKind::NewExpr: return "NewExpr";
         case ASTKind::DeleteExpr: return "DeleteExpr";
-        case ASTKind::LambdaExpr: return "LambdaExpr";
         case ASTKind::CommaExpr: return "CommaExpr";
         case ASTKind::ConstructExpr: return "ConstructExpr";
         case ASTKind::DesignatedInit: return "DesignatedInit";

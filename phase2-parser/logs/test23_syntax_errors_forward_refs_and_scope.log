@@ -2,40 +2,40 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test23_syntax_errors_forward_refs_and_scope.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c
 
-test/test23_syntax_errors_forward_refs_and_scope.c:23:1: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:23:1: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
  23 | later:
     | ^
     | note: insert ';' here
 
-test/test23_syntax_errors_forward_refs_and_scope.c:29:10: syntax error: syntax error, unexpected INT, expecting IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:29:10: syntax error: syntax error, unexpected INT, expecting IDENTIFIER
  29 |     goto int;
     |          ^
 
-test/test23_syntax_errors_forward_refs_and_scope.c:37:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:37:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
  37 |     a = a + 1;
     |     ^
 
-test/test23_syntax_errors_forward_refs_and_scope.c:44:34: syntax error: syntax error, unexpected ';', expecting ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:44:34: syntax error: syntax error, unexpected ';', expecting ')'
  44 |     int r = later_defined_fn(1, 2;
     |                                  ^
     | note: insert ')' here
 
-test/test23_syntax_errors_forward_refs_and_scope.c:59:1: syntax error: syntax error, unexpected IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:59:1: syntax error: syntax error, unexpected IDENTIFIER
  59 | T05_Cta feed(int amount) {
     | ^
 
-test/test23_syntax_errors_forward_refs_and_scope.c:69:14: syntax error: syntax error, unexpected '(', expecting OPERATOR or IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:69:14: syntax error: syntax error, unexpected '(', expecting OPERATOR or IDENTIFIER
  69 | int T06_Dog::(int volume) {
     |              ^
 
-test/test23_syntax_errors_forward_refs_and_scope.c:79:29: syntax error: syntax error, unexpected '{', expecting ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:79:29: syntax error: syntax error, unexpected '{', expecting ')'
  79 | int T07_Bird::fly(int speed {
     |                             ^
     | note: insert ')' here
 
-test/test23_syntax_errors_forward_refs_and_scope.c:90:23: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test23_syntax_errors_forward_refs_and_scope.c:90:23: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
  90 |     int v = T08_Util::;
     |                       ^
 

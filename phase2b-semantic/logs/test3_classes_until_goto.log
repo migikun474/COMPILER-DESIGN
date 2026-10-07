@@ -1,0 +1,81 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test3_classes_until_goto.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test3_classes_until_goto.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- VarDecl "sides : INT"  <int>  -> Shape::sides (field, member)
+|   |-- FunctionDef "area : _ZN5Shape4areaEv"  <int (void)>  -> _ZN5Shape4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"  <int>
+|   |               |-- Identifier "sides"  <int> lvalue  -> Shape::sides (field, member)
+|   |               `-- Identifier "sides"  <int> lvalue  -> Shape::sides (field, member)
+|   `-- VarDecl "secret : INT"  <int>  -> Shape::secret (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "s : CLASS"  <class Shape>  -> s.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "sides"  <int> lvalue  -> Shape::sides (field, member)
+        |       |   `-- Identifier "s"  <class Shape> lvalue  -> s.1 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "x : INT"  <int>  -> x.2 (variable, local)
+        |   `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "y : INT"  <int>  -> y.3 (variable, local)
+        |   `-- IntLiteral "10"  <int> =10
+        |-- VarDecl "total : INT"  <int>  -> total.4 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- BinaryExpr "+"  <int>
+        |       |   |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |       |   `-- Identifier "y"  <int> lvalue  -> y.3 (variable, local)
+        |       `-- CallExpr  <int>  -> _ZN5Shape4areaEv (function)
+        |           `-- MemberExpr "area"  <int (void)>  -> _ZN5Shape4areaEv (function)
+        |               `-- Identifier "s"  <class Shape> lvalue  -> s.1 (variable, local)
+        |-- UntilStmt
+        |   |-- BinaryExpr "<="  <int>
+        |   |   |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
+        |   `-- CompoundStmt
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="  <int>
+        |               |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |               `-- BinaryExpr "-"  <int>
+        |                   |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |                   `-- IntLiteral "1"  <int> =1
+        |-- DoWhileStmt
+        |   |-- CompoundStmt
+        |   |   `-- ExprStmt
+        |   |       `-- PostfixOpExpr "++"  <int>
+        |   |           `-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |   `-- BinaryExpr "<"  <int>
+        |       |-- Identifier "x"  <int> lvalue  -> x.2 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- GotoStmt "done"  -> main.done (label)
+        `-- LabeledStmt "done"  -> main.done (label)
+            `-- ReturnStmt
+                `-- IntLiteral "0"  <int> =0
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Shape              class_tag      class Shape                -        global                         1     -     0     Shape                -                        size 8
+Shape::sides       field          int                        member   global > class Shape           3     4     3     Shape::sides         -                        public, offset 0
+Shape::area        method         int (void)                 -        global > class Shape           4     -     1     _ZN5Shape4areaEv     _ZN5Shape4areaEv         public, defined
+Shape::secret      field          int                        member   global > class Shape           8     4     0     Shape::secret        -                        private, offset 4
+main               function       int (void)                 -        global                         11    -     0     main                 main                     defined
+done               label          -                          -        global > main()                28    -     1     main.done            -                        
+s                  variable       class Shape                local    global > main()                12    8     2     s.1                  -                        
+x                  variable       int                        local    global > main()                15    4     6     x.2                  -                        
+y                  variable       int                        local    global > main()                16    4     1     y.3                  -                        
+total              variable       int                        local    global > main()                17    4     0     total.4              -                        
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 8, align 4
+    +0  int sides  [public]
+    +4  int secret  [private]

@@ -2,11 +2,11 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e12_main_params.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e12_main_params.c
 
-Semantic analysis failed: 1 error(s), 0 warning(s) in 'test/invalid/e12_main_params.c'.
+Semantic analysis failed: 1 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e12_main_params.c'.
 
-test/invalid/e12_main_params.c:2:5: semantic error: invalid parameter list for 'main': expected '()' or '(int argc, char **argv)' [main]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e12_main_params.c:2:5: semantic error: invalid parameter list for 'main': expected '()' or '(int argc, char **argv)' [main]
  2 | int main(int argc, int argv) {    // error: invalid parameter list for 'main'
    |     ^
 

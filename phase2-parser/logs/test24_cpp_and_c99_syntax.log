@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test24_cpp_and_c99_syntax.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test24_cpp_and_c99_syntax.c
 
 No errors found.
 
@@ -85,24 +85,10 @@ get                            PROCEDURE
 (                              open_paren_op       
 )                              close_paren_op      
 {                              open_brace_op       
-auto                           auto                
-f                              INT                 
-=                              assign_op           
-[                              open_bracket_op     
+return                         return              
 this                           this                
-]                              close_bracket_op    
-(                              open_paren_op       
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-value                          INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
-return                         return              
-f                              INT                 
-(                              open_paren_op       
-)                              close_paren_op      
+->                             arrow_op            
+value                          IDENTIFIER          
 ;                              semicolon_op        
 }                              close_brace_op      
 }                              close_brace_op      
@@ -196,12 +182,7 @@ int                            int
 apply                          PROCEDURE           
 (                              open_paren_op       
 int                            int                 
-(                              open_paren_op       
 *                              star_op             
-)                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
 ,                              comma_op            
 int                            int                 
 )                              close_paren_op      
@@ -210,23 +191,18 @@ int                            int
 apply                          PROCEDURE           
 (                              open_paren_op       
 int                            int                 
-(                              open_paren_op       
 *                              star_op             
 f                              INT_POINTER         
-)                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
 ,                              comma_op            
 int                            int                 
 v                              INT                 
 )                              close_paren_op      
 {                              open_brace_op       
 return                         return              
+*                              star_op             
 f                              INT_POINTER         
-(                              open_paren_op       
++                              plus_op             
 v                              INT                 
-)                              close_paren_op      
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
@@ -310,53 +286,6 @@ rp                             INT_POINTER_POINTER
 =                              assign_op           
 many                           INT_POINTER         
 ;                              semicolon_op        
-auto                           auto                
-counter                        INT                 
-=                              assign_op           
-[                              open_bracket_op     
-x                              INT                 
-]                              close_bracket_op    
-(                              open_paren_op       
-)                              close_paren_op      
-mutable                        mutable             
-{                              open_brace_op       
-x                              INT                 
-++                             increment_op        
-;                              semicolon_op        
-return                         return              
-x                              INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
-auto                           auto                
-typed                          INT                 
-=                              assign_op           
-[                              open_bracket_op     
-]                              close_bracket_op    
-(                              open_paren_op       
-int                            int                 
-v                              INT                 
-)                              close_paren_op      
-->                             arrow_op            
-double                         double              
-{                              open_brace_op       
-return                         return              
-v                              INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
-auto                           auto                
-bare                           INT                 
-=                              assign_op           
-[                              open_bracket_op     
-&                              ampersand_op        
-]                              close_bracket_op    
-{                              open_brace_op       
-return                         return              
-x                              INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
 struct                         struct              
 Pt                             STRUCT              
 p                              STRUCT              
@@ -406,22 +335,23 @@ s                              CHAR_POINTER
 int                            int                 
 (                              open_paren_op       
 *                              star_op             
-fn                             INT_FUNCTION_POINTER
+grid                           INT_POINTER_ARRAY   
 )                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
 =                              assign_op           
 (                              open_paren_op       
 int                            int                 
 (                              open_paren_op       
 *                              star_op             
 )                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
 )                              close_paren_op      
-)                              close_paren_op      
-twice                          PROCEDURE           
+&                              ampersand_op        
+arr                            INT_ARRAY           
 ;                              semicolon_op        
 {                              open_brace_op       
 struct                         struct              
@@ -469,19 +399,6 @@ cp                             INT_POINTER
 *                              star_op             
 rp                             INT_POINTER_POINTER 
 +                              plus_op             
-counter                        INT                 
-(                              open_paren_op       
-)                              close_paren_op      
-+                              plus_op             
-typed                          INT                 
-(                              open_paren_op       
-1                              INT_LITERAL         
-)                              close_paren_op      
-+                              plus_op             
-bare                           INT                 
-(                              open_paren_op       
-)                              close_paren_op      
-+                              plus_op             
 p                              STRUCT              
 .                              dot_op              
 x                              INT                 
@@ -501,16 +418,25 @@ s                              CHAR_POINTER
 0                              INT_LITERAL         
 ]                              close_bracket_op    
 +                              plus_op             
-fn                             INT_FUNCTION_POINTER
 (                              open_paren_op       
-1                              INT_LITERAL         
+*                              star_op             
+grid                           INT_POINTER_ARRAY   
 )                              close_paren_op      
+[                              open_bracket_op     
+1                              INT_LITERAL         
+]                              close_bracket_op    
 +                              plus_op             
 apply                          PROCEDURE           
 (                              open_paren_op       
-twice                          PROCEDURE           
+&                              ampersand_op        
+x                              INT                 
 ,                              comma_op            
 1                              INT_LITERAL         
+)                              close_paren_op      
++                              plus_op             
+twice                          PROCEDURE           
+(                              open_paren_op       
+2                              INT_LITERAL         
 )                              close_paren_op      
 +                              plus_op             
 Local                          INT                 
@@ -559,14 +485,9 @@ Program "translation_unit"
 |   |                       `-- Identifier "o"
 |   `-- FunctionDef "get : _ZN4Node3getEv"
 |       `-- CompoundStmt
-|           |-- VarDecl "f : INT"
-|           |   `-- LambdaExpr "this"
-|           |       `-- CompoundStmt
-|           |           `-- ReturnStmt
-|           |               `-- Identifier "value"
 |           `-- ReturnStmt
-|               `-- CallExpr
-|                   `-- Identifier "f"
+|               `-- ArrowExpr "value"
+|                   `-- ThisExpr
 |-- ConstructorDef "Node : _ZN4NodeC1Ei"
 |   |-- ParamDecl "v : INT"
 |   `-- CompoundStmt
@@ -604,14 +525,15 @@ Program "translation_unit"
 |       |       `-- Identifier "ap"
 |       `-- ReturnStmt
 |           `-- Identifier "s"
-|-- FunctionDecl "apply : _Z5applyPFiiEi"
-|-- FunctionDef "apply : _Z5applyPFiiEi"
+|-- FunctionDecl "apply : _Z5applyPii"
+|-- FunctionDef "apply : _Z5applyPii"
 |   |-- ParamDecl "f : INT_POINTER"
 |   |-- ParamDecl "v : INT"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
-|           `-- CallExpr
-|               |-- Identifier "f"
+|           `-- BinaryExpr "+"
+|               |-- UnaryExpr "*"
+|               |   `-- Identifier "f"
 |               `-- Identifier "v"
 |-- FunctionDef "twice : _Z5twicei"
 |   |-- ParamDecl "v : INT"
@@ -648,25 +570,6 @@ Program "translation_unit"
         |       `-- Identifier "x"
         |-- VarDecl "rp : INT_POINTER_POINTER"
         |   `-- Identifier "many"
-        |-- VarDecl "counter : INT"
-        |   `-- LambdaExpr "x"
-        |       `-- CompoundStmt
-        |           |-- ExprStmt
-        |           |   `-- PostfixOpExpr "++"
-        |           |       `-- Identifier "x"
-        |           `-- ReturnStmt
-        |               `-- Identifier "x"
-        |-- VarDecl "typed : INT"
-        |   `-- LambdaExpr
-        |       |-- ParamDecl "v : INT"
-        |       `-- CompoundStmt
-        |           `-- ReturnStmt
-        |               `-- Identifier "v"
-        |-- VarDecl "bare : INT"
-        |   `-- LambdaExpr "&"
-        |       `-- CompoundStmt
-        |           `-- ReturnStmt
-        |               `-- Identifier "x"
         |-- VarDecl "p : STRUCT"
         |   `-- InitializerList
         |       |-- DesignatedInit ".y"
@@ -682,9 +585,10 @@ Program "translation_unit"
         |   `-- InitializerList
         |-- VarDecl "s : CHAR_POINTER"
         |   `-- StringLiteral ""adjacent""
-        |-- VarDecl "fn : INT_FUNCTION_POINTER"
-        |   `-- CastExpr "INT_POINTER"
-        |       `-- Identifier "twice"
+        |-- VarDecl "grid : INT_POINTER_ARRAY"
+        |   `-- CastExpr "INT_POINTER_ARRAY"
+        |       `-- UnaryExpr "&"
+        |           `-- Identifier "arr"
         |-- CompoundStmt
         |   `-- StructDecl "Local"
         |       `-- VarDecl "k : INT"
@@ -712,44 +616,40 @@ Program "translation_unit"
                 |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- CallExpr
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- ScopeExpr "count"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "Node"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |       |-- Identifier "sum"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |       |-- IntLiteral "1"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "2"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
-                |   |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "cp"
-                |   |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
-                |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "rp"
-                |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr
-                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "counter"
-                |   |   |   |   |   |   |   |   |   |   `-- CallExpr
-                |   |   |   |   |   |   |   |   |   |       |-- Identifier "typed"
-                |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "1"
-                |   |   |   |   |   |   |   |   |   `-- CallExpr
-                |   |   |   |   |   |   |   |   |       `-- Identifier "bare"
-                |   |   |   |   |   |   |   |   `-- MemberExpr "x"
-                |   |   |   |   |   |   |   |       `-- Identifier "p"
+                |   |   |   |   |   |   |   |   |   |   |   |   |-- CallExpr
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- ScopeExpr "count"
+                |   |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "Node"
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr
+                |   |   |   |   |   |   |   |   |   |   |   |       |-- Identifier "sum"
+                |   |   |   |   |   |   |   |   |   |   |   |       |-- IntLiteral "1"
+                |   |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "2"
+                |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
+                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "cp"
+                |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"
+                |   |   |   |   |   |   |   |   |   |       `-- Identifier "rp"
+                |   |   |   |   |   |   |   |   |   `-- MemberExpr "x"
+                |   |   |   |   |   |   |   |   |       `-- Identifier "p"
+                |   |   |   |   |   |   |   |   `-- IndexExpr
+                |   |   |   |   |   |   |   |       |-- Identifier "arr"
+                |   |   |   |   |   |   |   |       `-- IntLiteral "1"
                 |   |   |   |   |   |   |   `-- IndexExpr
-                |   |   |   |   |   |   |       |-- Identifier "arr"
-                |   |   |   |   |   |   |       `-- IntLiteral "1"
+                |   |   |   |   |   |   |       |-- Identifier "zeros"
+                |   |   |   |   |   |   |       `-- IntLiteral "0"
                 |   |   |   |   |   |   `-- IndexExpr
-                |   |   |   |   |   |       |-- Identifier "zeros"
+                |   |   |   |   |   |       |-- Identifier "s"
                 |   |   |   |   |   |       `-- IntLiteral "0"
                 |   |   |   |   |   `-- IndexExpr
-                |   |   |   |   |       |-- Identifier "s"
-                |   |   |   |   |       `-- IntLiteral "0"
+                |   |   |   |   |       |-- UnaryExpr "*"
+                |   |   |   |   |       |   `-- Identifier "grid"
+                |   |   |   |   |       `-- IntLiteral "1"
                 |   |   |   |   `-- CallExpr
-                |   |   |   |       |-- Identifier "fn"
+                |   |   |   |       |-- Identifier "apply"
+                |   |   |   |       |-- UnaryExpr "&"
+                |   |   |   |       |   `-- Identifier "x"
                 |   |   |   |       `-- IntLiteral "1"
-                |   |   |   `-- CallExpr "_Z5applyPFiiEi"
-                |   |   |       |-- Identifier "apply"
+                |   |   |   `-- CallExpr
                 |   |   |       |-- Identifier "twice"
-                |   |   |       `-- IntLiteral "1"
+                |   |   |       `-- IntLiteral "2"
                 |   |   `-- Identifier "Local"
                 |   `-- Identifier "T"
                 `-- CallExpr
@@ -762,7 +662,7 @@ Name                 Kind           Line   Scope                        Type    
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
 T                    typedef        11     global                       INT                                       0                                
 Node                 class_tag      12     global                       CLASS                                     0                                
-Node::value          class_member   14     global > class Node          INT                                       3                                
+Node::value          class_member   14     global > class Node          INT                                       2                                
 Node::next           class_member   15     global > class Node          CLASS_POINTER    *                        1                                
 Node::v              parameter      16     global > class Node > Node::Node() INT                                       0                                
 Node::Node           class_method   16     global > class Node          CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
@@ -774,7 +674,6 @@ Node::count          class_method   19     global > class Node          PROCEDUR
 Node::operator+      class_method   20     global > class Node          PROCEDURE                                 0         CLASS (CLASS)          _ZN4NodeplES_
 Node::o              parameter      20     global > class Node > operator+() CLASS                                     1                                
 Node::get            class_method   21     global > class Node          PROCEDURE                                 0         INT ()                 _ZN4Node3getEv
-Node::f              variable       21     global > class Node > get()  INT                                       1                                
 Node::v              parameter      23     global > Node::Node()        INT                                       1                                
 Node::Node           procedure      23     global                       CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
 Node::~Node          procedure      24     global                       DESTRUCTOR                                0         VOID ()                _ZN4NodeD1Ev
@@ -786,11 +685,11 @@ sum                  procedure      27     global                       PROCEDUR
 n                    parameter      27     global > sum()               INT                                       1                                
 ap                   variable       28     global > sum()               VA_LIST                                   3                                
 s                    variable       30     global > sum()               INT                                       1                                
-apply                procedure      34     global                       PROCEDURE                                 0         INT (INT_POINTER, INT) _Z5applyPFiiEi
-apply                procedure      35     global                       PROCEDURE                                 1         INT (INT_POINTER, INT) _Z5applyPFiiEi
+apply                procedure      34     global                       PROCEDURE                                 0         INT (INT_POINTER, INT) _Z5applyPii
+apply                procedure      35     global                       PROCEDURE                                 1         INT (INT_POINTER, INT) _Z5applyPii
 f                    parameter      35     global > apply()             INT_POINTER                               1                                
 v                    parameter      35     global > apply()             INT                                       1                                
-twice                procedure      36     global                       PROCEDURE                                 2         INT (INT)              _Z5twicei
+twice                procedure      36     global                       PROCEDURE                                 1         INT (INT)              _Z5twicei
 v                    parameter      36     global > twice()             INT                                       1                                
 main                 procedure      37     global                       PROCEDURE                                 0         INT ()                 main
 a                    variable       38     global > main()              CLASS                                     2                                
@@ -798,19 +697,15 @@ b                    variable       39     global > main()              CLASS   
 c                    variable       40     global > main()              CLASS                                     1                                
 heap                 variable       41     global > main()              CLASS_POINTER    *                        1                                
 many                 variable       42     global > main()              INT_POINTER      *                        2                                
-x                    variable       43     global > main()              INT                                       5                                
+x                    variable       43     global > main()              INT                                       2                                
 cp                   variable       44     global > main()              INT_POINTER      *                        1                                
 rp                   variable       45     global > main()              INT_POINTER_POINTER **                       1                                
-counter              variable       46     global > main()              INT                                       1                                
-v                    parameter      47     global > main() > lambda     INT                                       1                                
-typed                variable       47     global > main()              INT                                       1                                
-bare                 variable       48     global > main()              INT                                       1                                
-p                    variable       49     global > main()              STRUCT                                    1                                
-arr                  variable       50     global > main()              INT_ARRAY        []                       1                                
-zeros                variable       51     global > main()              INT_ARRAY        []                       1                                
-s                    variable       52     global > main()              CHAR_POINTER     *                        1                                
-fn                   variable       53     global > main()              INT_FUNCTION_POINTER *                        1         INT (INT)              
-Local                struct_tag     55     global > main() > block      STRUCT                                    0                                
-Local::k             struct_member  55     global > main() > block > struct Local INT                                       0                                
-Local                variable       57     global > main()              INT                                       1                                
-T                    variable       58     global > main()              INT                                       1                                
+p                    variable       46     global > main()              STRUCT                                    1                                
+arr                  variable       47     global > main()              INT_ARRAY        []                       2                                
+zeros                variable       48     global > main()              INT_ARRAY        []                       1                                
+s                    variable       49     global > main()              CHAR_POINTER     *                        1                                
+grid                 variable       50     global > main()              INT_POINTER_ARRAY * []                     1                                
+Local                struct_tag     52     global > main() > block      STRUCT                                    0                                
+Local::k             struct_member  52     global > main() > block > struct Local INT                                       0                                
+Local                variable       54     global > main()              INT                                       1                                
+T                    variable       55     global > main()              INT                                       1                                

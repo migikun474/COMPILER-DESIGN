@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v09_builtins.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v09_builtins.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v09_builtins.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v09_builtins.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -90,78 +90,22 @@ Program "translation_unit"
         |-- ExprStmt
         |   `-- BuiltinCallExpr "free"  <void>
         |       `-- Identifier "text"  <char *> lvalue  -> text.7 (variable, local)
-        |-- VarDecl "f : FILE_POINTER"  <FILE *>  -> f.8 (variable, local)
-        |   `-- BuiltinCallExpr "fopen"  <FILE *>
-        |       |-- StringLiteral ""data.txt""  <char[9]> lvalue
-        |       `-- StringLiteral ""w""  <char[2]> lvalue
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fprintf"  <int>
-        |       |-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |       |-- StringLiteral ""%d\n""  <char[4]> lvalue
-        |       `-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fputs"  <int>
-        |       |-- StringLiteral ""line\n""  <char[6]> lvalue
-        |       `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fclose"  <int>
-        |       `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |-- ExprStmt
-        |   `-- AssignExpr "="  <FILE *>
-        |       |-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |       `-- BuiltinCallExpr "fopen"  <FILE *>
-        |           |-- StringLiteral ""data.txt""  <char[9]> lvalue
-        |           `-- StringLiteral ""r""  <char[2]> lvalue
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fscanf"  <int>
-        |       |-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |       |-- StringLiteral ""%d""  <char[3]> lvalue
-        |       `-- UnaryExpr "&"  <int *>
-        |           `-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
-        |-- IfStmt
-        |   |-- BuiltinCallExpr "fgets"  <char *>
-        |   |   |-- Identifier "buf"  <char[32]> lvalue  -> buf.3 (variable, local)
-        |   |   |-- IntLiteral "32"  <int> =32
-        |   |   `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |   `-- ExprStmt
-        |       `-- PostfixOpExpr "++"  <int>
-        |           `-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
-        |-- VarDecl "items : INT"  <int>  -> items.9 (variable, local)
-        |   `-- BinaryExpr "+"  <int>
-        |       |-- BuiltinCallExpr "fread"  <int>
-        |       |   |-- Identifier "buf"  <char[32]> lvalue  -> buf.3 (variable, local)
-        |       |   |-- IntLiteral "1"  <int> =1
-        |       |   |-- IntLiteral "32"  <int> =32
-        |       |   `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |       `-- BuiltinCallExpr "fwrite"  <int>
-        |           |-- Identifier "buf"  <char[32]> lvalue  -> buf.3 (variable, local)
-        |           |-- IntLiteral "1"  <int> =1
-        |           |-- IntLiteral "4"  <int> =4
-        |           `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |-- WhileStmt
-        |   |-- UnaryExpr "!"  <int>
-        |   |   `-- BuiltinCallExpr "feof"  <int>
-        |   |       `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
-        |   `-- BreakStmt
-        |-- ExprStmt
-        |   `-- BuiltinCallExpr "fclose"  <int>
-        |       `-- Identifier "f"  <FILE *> lvalue  -> f.8 (variable, local)
         `-- ReturnStmt
-            `-- Identifier "items"  <int> lvalue  -> items.9 (variable, local)
+            `-- BinaryExpr "+"  <int>
+                |-- Identifier "x"  <int> lvalue  -> x.1 (variable, local)
+                `-- Identifier "n"  <int> lvalue  -> n.2 (variable, local)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
 main               function       int (void)                 -        global                         2     -     0     main                 main                     defined
-x                  variable       int                        local    global > main()                3     4     7     x.1                  -                        
-n                  variable       int                        local    global > main()                3     4     4     n.2                  -                        
-buf                variable       char[32]                   local    global > main()                4     32    4     buf.3                -                        
+x                  variable       int                        local    global > main()                3     4     5     x.1                  -                        
+n                  variable       int                        local    global > main()                3     4     5     n.2                  -                        
+buf                variable       char[32]                   local    global > main()                4     32    1     buf.3                -                        
 d                  variable       double                     local    global > main()                5     8     2     d.4                  -                        
 heap               variable       int *                      local    global > main()                13    4     2     heap.5               -                        
 zeroed             variable       int *                      local    global > main()                15    4     3     zeroed.6             -                        
 text               variable       char *                     local    global > main()                17    4     1     text.7               -                        
-f                  variable       FILE *                     local    global > main()                22    4     10    f.8                  -                        
-items              variable       int                        local    global > main()                29    4     1     items.9              -                        
 
 === Record Layouts (MIPS32) ===
 (no records)

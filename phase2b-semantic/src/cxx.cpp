@@ -271,9 +271,9 @@ void SemanticAnalyzer::checkOperatorDeclaration(const SymbolPtr &s, const ASTNod
     if (!member) {
         bool classParam = std::any_of(s->type->params.begin(), s->type->params.end(), [](const TypePtr &t) {
             TypePtr u = stripRef(t);
-            return isRecord(u) || u->kind == TypeKind::Enum;
+            return isRecord(u);
         });
-        if (!classParam) return bad("must have at least one parameter of class or enumeration type");
+        if (!classParam) return bad("must have at least one parameter of class type");
     }
 }
 
@@ -357,7 +357,7 @@ TypePtr SemanticAnalyzer::varargBuiltin(const ASTNodePtr &n) {
     }
     if (name == "va_start") {
         FunctionCtx *f = fn();
-        Symbol *fsym = f && !f->isLambda ? f->fn : nullptr;
+        Symbol *fsym = f ? f->fn : nullptr;
         if (!fsym || !fsym->type->variadic) {
             error(n.get(), "'va_start' used in " + std::string(fsym ? "function '" + fsym->name + "', which has fixed arguments"
                                                                     : "a context that is not a variadic function"),
@@ -389,7 +389,7 @@ TypePtr SemanticAnalyzer::varargBuiltin(const ASTNodePtr &n) {
     }
     TypePtr promoted = integerPromotion(t);
     if (t->kind == TypeKind::Float) promoted = doubleType();
-    if (!sameType(promoted, t) && t->kind != TypeKind::Enum) {
+    if (!sameType(promoted, t)) {
         warning(tn.get(), q(t) + " is promoted to " + q(promoted) + " when passed through '...', so 'va_arg' must ask for " +
                               q(promoted),
                 "varargs");

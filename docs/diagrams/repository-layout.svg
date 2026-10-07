@@ -41,13 +41,13 @@
 <text x="488.0" y="197" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase1-lexer/</text>
 <text x="488.0" y="212" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: lexer</text>
 <text x="632" y="196" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/lexer.l</text>
-<text x="632" y="210" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 11 programs</text>
+<text x="632" y="210" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 9 programs</text>
 <rect x="368" y="248" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="248" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="269" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase2-parser/</text>
 <text x="488.0" y="284" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: syntax_analyzer</text>
 <text x="632" y="268" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/parser.y · src/scanner.l</text>
-<text x="632" y="282" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 37 programs</text>
+<text x="632" y="282" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 36 programs</text>
 <rect x="368" y="320" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="320" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="341" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase2b-semantic/</text>

@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v06_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v06_pointers.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in 'test/valid/v06_pointers.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v06_pointers.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -24,215 +24,181 @@ Program "translation_unit"
 |           `-- BinaryExpr "*"  <int>
 |               |-- Identifier "a"  <int> lvalue  -> a.3 (parameter, param)
 |               `-- Identifier "b"  <int> lvalue  -> b.4 (parameter, param)
-|-- FunctionDef "apply : _Z5applyPFiiiEii"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
-|   |-- ParamDecl "op : INT_POINTER"  <int (*)(int, int)>  -> op.5 (parameter, param)
-|   |-- ParamDecl "x : INT"  <int>  -> x.6 (parameter, param)
-|   |-- ParamDecl "y : INT"  <int>  -> y.7 (parameter, param)
-|   `-- CompoundStmt
-|       `-- ReturnStmt
-|           `-- CallExpr  <int>
-|               |-- Identifier "op"  <int (*)(int, int)> lvalue  -> op.5 (parameter, param)
-|               |-- Identifier "x"  <int> lvalue  -> x.6 (parameter, param)
-|               `-- Identifier "y"  <int> lvalue  -> y.7 (parameter, param)
 |-- FunctionDef "swap : _Z4swapPiS_"  <void (int *, int *)>  -> _Z4swapPiS_ (function)
-|   |-- ParamDecl "a : INT_POINTER"  <int *>  -> a.8 (parameter, param)
-|   |-- ParamDecl "b : INT_POINTER"  <int *>  -> b.9 (parameter, param)
+|   |-- ParamDecl "a : INT_POINTER"  <int *>  -> a.5 (parameter, param)
+|   |-- ParamDecl "b : INT_POINTER"  <int *>  -> b.6 (parameter, param)
 |   `-- CompoundStmt
-|       |-- VarDecl "t : INT"  <int>  -> t.10 (variable, local)
+|       |-- VarDecl "t : INT"  <int>  -> t.7 (variable, local)
 |       |   `-- UnaryExpr "*"  <int> lvalue
-|       |       `-- Identifier "a"  <int *> lvalue  -> a.8 (parameter, param)
+|       |       `-- Identifier "a"  <int *> lvalue  -> a.5 (parameter, param)
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- UnaryExpr "*"  <int> lvalue
-|       |       |   `-- Identifier "a"  <int *> lvalue  -> a.8 (parameter, param)
+|       |       |   `-- Identifier "a"  <int *> lvalue  -> a.5 (parameter, param)
 |       |       `-- UnaryExpr "*"  <int> lvalue
-|       |           `-- Identifier "b"  <int *> lvalue  -> b.9 (parameter, param)
+|       |           `-- Identifier "b"  <int *> lvalue  -> b.6 (parameter, param)
 |       `-- ExprStmt
 |           `-- AssignExpr "="  <int>
 |               |-- UnaryExpr "*"  <int> lvalue
-|               |   `-- Identifier "b"  <int *> lvalue  -> b.9 (parameter, param)
-|               `-- Identifier "t"  <int> lvalue  -> t.10 (variable, local)
+|               |   `-- Identifier "b"  <int *> lvalue  -> b.6 (parameter, param)
+|               `-- Identifier "t"  <int> lvalue  -> t.7 (variable, local)
 `-- FunctionDef "main : main"  <int (void)>  -> main (function)
     `-- CompoundStmt
         |-- DeclGroup
-        |   |-- VarDecl "x : INT"  <int>  -> x.11 (variable, local)
+        |   |-- VarDecl "x : INT"  <int>  -> x.8 (variable, local)
         |   |   `-- IntLiteral "5"  <int> =5
-        |   `-- VarDecl "y : INT"  <int>  -> y.12 (variable, local)
+        |   `-- VarDecl "y : INT"  <int>  -> y.9 (variable, local)
         |       `-- IntLiteral "6"  <int> =6
-        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.13 (variable, local)
+        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.10 (variable, local)
         |   `-- UnaryExpr "&"  <int *>
-        |       `-- Identifier "x"  <int> lvalue  -> x.11 (variable, local)
-        |-- VarDecl "pp : INT_POINTER_POINTER"  <int **>  -> pp.14 (variable, local)
+        |       `-- Identifier "x"  <int> lvalue  -> x.8 (variable, local)
+        |-- VarDecl "pp : INT_POINTER_POINTER"  <int **>  -> pp.11 (variable, local)
         |   `-- UnaryExpr "&"  <int **>
-        |       `-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
-        |-- VarDecl "ppp : INT_POINTER_POINTER_POINTER"  <int ***>  -> ppp.15 (variable, local)
+        |       `-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
+        |-- VarDecl "ppp : INT_POINTER_POINTER_POINTER"  <int ***>  -> ppp.12 (variable, local)
         |   `-- UnaryExpr "&"  <int ***>
-        |       `-- Identifier "pp"  <int **> lvalue  -> pp.14 (variable, local)
-        |-- VarDecl "v : INT"  <int>  -> v.16 (variable, local)
+        |       `-- Identifier "pp"  <int **> lvalue  -> pp.11 (variable, local)
+        |-- VarDecl "v : INT"  <int>  -> v.13 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- BinaryExpr "+"  <int>
         |       |   |-- UnaryExpr "*"  <int> lvalue
-        |       |   |   `-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
+        |       |   |   `-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
         |       |   `-- UnaryExpr "*"  <int> lvalue
         |       |       `-- UnaryExpr "*"  <int *> lvalue
-        |       |           `-- Identifier "pp"  <int **> lvalue  -> pp.14 (variable, local)
+        |       |           `-- Identifier "pp"  <int **> lvalue  -> pp.11 (variable, local)
         |       `-- UnaryExpr "*"  <int> lvalue
         |           `-- UnaryExpr "*"  <int *> lvalue
         |               `-- UnaryExpr "*"  <int **> lvalue
-        |                   `-- Identifier "ppp"  <int ***> lvalue  -> ppp.15 (variable, local)
+        |                   `-- Identifier "ppp"  <int ***> lvalue  -> ppp.12 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- UnaryExpr "*"  <int> lvalue
         |       |   `-- UnaryExpr "*"  <int *> lvalue
-        |       |       `-- Identifier "pp"  <int **> lvalue  -> pp.14 (variable, local)
+        |       |       `-- Identifier "pp"  <int **> lvalue  -> pp.11 (variable, local)
         |       `-- IntLiteral "9"  <int> =9
         |-- ExprStmt
         |   `-- CallExpr  <void>  -> _Z4swapPiS_ (function)
         |       |-- Identifier "swap"  <void (int *, int *)>  -> _Z4swapPiS_ (function)
         |       |-- UnaryExpr "&"  <int *>
-        |       |   `-- Identifier "x"  <int> lvalue  -> x.11 (variable, local)
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.8 (variable, local)
         |       `-- UnaryExpr "&"  <int *>
-        |           `-- Identifier "y"  <int> lvalue  -> y.12 (variable, local)
-        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.17 (variable, local)
-        |-- VarDecl "q : INT_POINTER"  <int *>  -> q.18 (variable, local)
+        |           `-- Identifier "y"  <int> lvalue  -> y.9 (variable, local)
+        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.14 (variable, local)
+        |-- VarDecl "q : INT_POINTER"  <int *>  -> q.15 (variable, local)
         |   `-- BinaryExpr "+"  <int *>
-        |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
+        |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.14 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
         |-- ExprStmt
         |   `-- AssignExpr "="  <int *>
-        |       |-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |       |-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |       `-- BinaryExpr "-"  <int *>
-        |           |-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |           |-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |           `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "gap : INT"  <int>  -> gap.19 (variable, local)
+        |-- VarDecl "gap : INT"  <int>  -> gap.16 (variable, local)
         |   `-- BinaryExpr "-"  <int>
-        |       |-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
-        |       `-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
+        |       |-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
+        |       `-- Identifier "arr"  <int[4]> lvalue  -> arr.14 (variable, local)
         |-- ExprStmt
         |   `-- PostfixOpExpr "++"  <int *>
-        |       `-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |       `-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |-- ExprStmt
         |   `-- UnaryExpr "--(pre)"  <int *>
-        |       `-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
-        |-- VarDecl "same : INT"  <int>  -> same.20 (variable, local)
+        |       `-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
+        |-- VarDecl "same : INT"  <int>  -> same.17 (variable, local)
         |   `-- BinaryExpr "||"  <int>
         |       |-- BinaryExpr "||"  <int>
         |       |   |-- BinaryExpr "=="  <int>
-        |       |   |   |-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
-        |       |   |   `-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |       |   |   |-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
+        |       |   |   `-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |       |   `-- BinaryExpr "!="  <int>
-        |       |       |-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
+        |       |       |-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
         |       |       `-- IntLiteral "0"  <int> =0
         |       `-- BinaryExpr "<"  <int>
-        |           |-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |           |-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |           `-- BinaryExpr "+"  <int *>
-        |               |-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
+        |               |-- Identifier "arr"  <int[4]> lvalue  -> arr.14 (variable, local)
         |               `-- IntLiteral "4"  <int> =4
         |-- ExprStmt
         |   `-- AssignExpr "="  <int *>
-        |       |-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
+        |       |-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
         |       `-- IntLiteral "0"  <int> =0
-        |-- VarDecl "raw : VOID_POINTER"  <void *>  -> raw.21 (variable, local)
+        |-- VarDecl "raw : VOID_POINTER"  <void *>  -> raw.18 (variable, local)
         |   `-- UnaryExpr "&"  <int *>
-        |       `-- Identifier "x"  <int> lvalue  -> x.11 (variable, local)
-        |-- VarDecl "back : INT_POINTER"  <int *>  -> back.22 (variable, local)
-        |   `-- Identifier "raw"  <void *> lvalue  -> raw.21 (variable, local)
-        |-- VarDecl "bytes : CHAR_POINTER"  <char *>  -> bytes.23 (variable, local)
+        |       `-- Identifier "x"  <int> lvalue  -> x.8 (variable, local)
+        |-- VarDecl "back : INT_POINTER"  <int *>  -> back.19 (variable, local)
+        |   `-- Identifier "raw"  <void *> lvalue  -> raw.18 (variable, local)
+        |-- VarDecl "bytes : CHAR_POINTER"  <char *>  -> bytes.20 (variable, local)
         |   `-- CastExpr "CHAR_POINTER"  <char *>
-        |       `-- Identifier "back"  <int *> lvalue  -> back.22 (variable, local)
-        |-- VarDecl "ro : INT_POINTER"  <const int *>  -> ro.24 (variable, local)
+        |       `-- Identifier "back"  <int *> lvalue  -> back.19 (variable, local)
+        |-- VarDecl "ro : INT_POINTER"  <const int *>  -> ro.21 (variable, local)
         |   `-- UnaryExpr "&"  <int *>
-        |       `-- Identifier "x"  <int> lvalue  -> x.11 (variable, local)
-        |-- VarDecl "op : INT_FUNCTION_POINTER"  <int (*)(int, int)>  -> op.25 (variable, local)
-        |   `-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
-        |-- ExprStmt
-        |   `-- AssignExpr "="  <int (*)(int, int)>
-        |       |-- Identifier "op"  <int (*)(int, int)> lvalue  -> op.25 (variable, local)
-        |       `-- Identifier "mul"  <int (int, int)>  -> _Z3mulii (function)
+        |       `-- Identifier "x"  <int> lvalue  -> x.8 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- Identifier "v"  <int> lvalue  -> v.16 (variable, local)
+        |       |-- Identifier "v"  <int> lvalue  -> v.13 (variable, local)
         |       `-- BinaryExpr "+"  <int>
         |           |-- BinaryExpr "+"  <int>
-        |           |   |-- BinaryExpr "+"  <int>
-        |           |   |   |-- BinaryExpr "+"  <int>
-        |           |   |   |   |-- Identifier "v"  <int> lvalue  -> v.16 (variable, local)
-        |           |   |   |   `-- CallExpr  <int>
-        |           |   |   |       |-- Identifier "op"  <int (*)(int, int)> lvalue  -> op.25 (variable, local)
-        |           |   |   |       |-- IntLiteral "2"  <int> =2
-        |           |   |   |       `-- IntLiteral "3"  <int> =3
-        |           |   |   `-- CallExpr  <int>
-        |           |   |       |-- UnaryExpr "*"  <int (int, int)>
-        |           |   |       |   `-- Identifier "op"  <int (*)(int, int)> lvalue  -> op.25 (variable, local)
-        |           |   |       |-- IntLiteral "4"  <int> =4
-        |           |   |       `-- IntLiteral "5"  <int> =5
-        |           |   `-- CallExpr  <int>  -> _Z5applyPFiiiEii (function)
-        |           |       |-- Identifier "apply"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
+        |           |   |-- Identifier "v"  <int> lvalue  -> v.13 (variable, local)
+        |           |   `-- CallExpr  <int>  -> _Z3addii (function)
         |           |       |-- Identifier "add"  <int (int, int)>  -> _Z3addii (function)
-        |           |       |-- IntLiteral "1"  <int> =1
-        |           |       `-- IntLiteral "2"  <int> =2
-        |           `-- CallExpr  <int>  -> _Z5applyPFiiiEii (function)
-        |               |-- Identifier "apply"  <int (int (*)(int, int), int, int)>  -> _Z5applyPFiiiEii (function)
+        |           |       |-- IntLiteral "2"  <int> =2
+        |           |       `-- IntLiteral "3"  <int> =3
+        |           `-- CallExpr  <int>  -> _Z3mulii (function)
         |               |-- Identifier "mul"  <int (int, int)>  -> _Z3mulii (function)
-        |               |-- IntLiteral "3"  <int> =3
-        |               `-- IntLiteral "4"  <int> =4
+        |               |-- IntLiteral "4"  <int> =4
+        |               `-- IntLiteral "5"  <int> =5
         |-- IfStmt
-        |   |-- Identifier "p"  <int *> lvalue  -> p.13 (variable, local)
+        |   |-- Identifier "p"  <int *> lvalue  -> p.10 (variable, local)
         |   `-- ExprStmt
         |       `-- PostfixOpExpr "++"  <int>
-        |           `-- Identifier "v"  <int> lvalue  -> v.16 (variable, local)
+        |           `-- Identifier "v"  <int> lvalue  -> v.13 (variable, local)
         |-- IfStmt
         |   |-- UnaryExpr "!"  <int>
-        |   |   `-- Identifier "q"  <int *> lvalue  -> q.18 (variable, local)
+        |   |   `-- Identifier "q"  <int *> lvalue  -> q.15 (variable, local)
         |   `-- ExprStmt
         |       `-- PostfixOpExpr "--"  <int>
-        |           `-- Identifier "v"  <int> lvalue  -> v.16 (variable, local)
+        |           `-- Identifier "v"  <int> lvalue  -> v.13 (variable, local)
         `-- ReturnStmt
             `-- BinaryExpr "+"  <int>
                 |-- BinaryExpr "+"  <int>
                 |   |-- BinaryExpr "+"  <int>
                 |   |   |-- BinaryExpr "+"  <int>
-                |   |   |   |-- Identifier "v"  <int> lvalue  -> v.16 (variable, local)
-                |   |   |   `-- Identifier "gap"  <int> lvalue  -> gap.19 (variable, local)
-                |   |   `-- Identifier "same"  <int> lvalue  -> same.20 (variable, local)
+                |   |   |   |-- Identifier "v"  <int> lvalue  -> v.13 (variable, local)
+                |   |   |   `-- Identifier "gap"  <int> lvalue  -> gap.16 (variable, local)
+                |   |   `-- Identifier "same"  <int> lvalue  -> same.17 (variable, local)
                 |   `-- UnaryExpr "*"  <const int> lvalue
-                |       `-- Identifier "ro"  <const int *> lvalue  -> ro.24 (variable, local)
+                |       `-- Identifier "ro"  <const int *> lvalue  -> ro.21 (variable, local)
                 `-- UnaryExpr "*"  <char> lvalue
-                    `-- Identifier "bytes"  <char *> lvalue  -> bytes.23 (variable, local)
+                    `-- Identifier "bytes"  <char *> lvalue  -> bytes.20 (variable, local)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
-add                function       int (int, int)             -        global                         3     -     2     _Z3addii             _Z3addii                 defined
+add                function       int (int, int)             -        global                         3     -     1     _Z3addii             _Z3addii                 defined
 a                  parameter      int                        param    global > add()                 3     4     1     a.1                  -                        
 b                  parameter      int                        param    global > add()                 3     4     1     b.2                  -                        
-mul                function       int (int, int)             -        global                         4     -     2     _Z3mulii             _Z3mulii                 defined
+mul                function       int (int, int)             -        global                         4     -     1     _Z3mulii             _Z3mulii                 defined
 a                  parameter      int                        param    global > mul()                 4     4     1     a.3                  -                        
 b                  parameter      int                        param    global > mul()                 4     4     1     b.4                  -                        
-apply              function       int (int (*)(int, int), int, int) -        global                         6     -     2     _Z5applyPFiiiEii     _Z5applyPFiiiEii         defined
-op                 parameter      int (*)(int, int)          param    global > apply()               6     4     1     op.5                 -                        
-x                  parameter      int                        param    global > apply()               6     4     1     x.6                  -                        
-y                  parameter      int                        param    global > apply()               6     4     1     y.7                  -                        
-swap               function       void (int *, int *)        -        global                         8     -     1     _Z4swapPiS_          _Z4swapPiS_              defined
-a                  parameter      int *                      param    global > swap()                8     4     2     a.8                  -                        
-b                  parameter      int *                      param    global > swap()                8     4     2     b.9                  -                        
-t                  variable       int                        local    global > swap()                9     4     1     t.10                 -                        
-main               function       int (void)                 -        global                         14    -     0     main                 main                     defined
-x                  variable       int                        local    global > main()                15    4     4     x.11                 -                        
-y                  variable       int                        local    global > main()                15    4     1     y.12                 -                        
-p                  variable       int *                      local    global > main()                16    4     6     p.13                 -                        
-pp                 variable       int **                     local    global > main()                17    4     3     pp.14                -                        
-ppp                variable       int ***                    local    global > main()                18    4     1     ppp.15               -                        
-v                  variable       int                        local    global > main()                19    4     5     v.16                 -                        
-arr                variable       int[4]                     local    global > main()                22    16    3     arr.17               -                        
-q                  variable       int *                      local    global > main()                23    4     8     q.18                 -                        
-gap                variable       int                        local    global > main()                25    4     1     gap.19               -                        
-same               variable       int                        local    global > main()                28    4     1     same.20              -                        
-raw                variable       void *                     local    global > main()                30    4     1     raw.21               -                        
-back               variable       int *                      local    global > main()                31    4     1     back.22              -                        
-bytes              variable       char *                     local    global > main()                32    4     1     bytes.23             -                        
-ro                 variable       const int *                local    global > main()                33    4     1     ro.24                -                        
-op                 variable       int (*)(int, int)          local    global > main()                34    4     3     op.25                -                        
+swap               function       void (int *, int *)        -        global                         6     -     1     _Z4swapPiS_          _Z4swapPiS_              defined
+a                  parameter      int *                      param    global > swap()                6     4     2     a.5                  -                        
+b                  parameter      int *                      param    global > swap()                6     4     2     b.6                  -                        
+t                  variable       int                        local    global > swap()                7     4     1     t.7                  -                        
+main               function       int (void)                 -        global                         12    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                13    4     4     x.8                  -                        
+y                  variable       int                        local    global > main()                13    4     1     y.9                  -                        
+p                  variable       int *                      local    global > main()                14    4     6     p.10                 -                        
+pp                 variable       int **                     local    global > main()                15    4     3     pp.11                -                        
+ppp                variable       int ***                    local    global > main()                16    4     1     ppp.12               -                        
+v                  variable       int                        local    global > main()                17    4     5     v.13                 -                        
+arr                variable       int[4]                     local    global > main()                20    16    3     arr.14               -                        
+q                  variable       int *                      local    global > main()                21    4     8     q.15                 -                        
+gap                variable       int                        local    global > main()                23    4     1     gap.16               -                        
+same               variable       int                        local    global > main()                26    4     1     same.17              -                        
+raw                variable       void *                     local    global > main()                28    4     1     raw.18               -                        
+back               variable       int *                      local    global > main()                29    4     1     back.19              -                        
+bytes              variable       char *                     local    global > main()                30    4     1     bytes.20             -                        
+ro                 variable       const int *                local    global > main()                31    4     1     ro.21                -                        
 
 === Record Layouts (MIPS32) ===
 (no records)

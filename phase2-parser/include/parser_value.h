@@ -19,9 +19,9 @@
    ===================================================================== */
 struct TypeSpec {
     std::vector<std::string> parts; /* e.g. {"UNSIGNED","LONG"} or {"STRUCT"} */
-    std::string tagName; /* the specific struct/union/class tag, e.g. "Point" --
+    std::string tagName; /* the specific struct/class tag, e.g. "Point" --
                              `parts` only ever records the generic "STRUCT"/
-                             "CLASS"/"UNION", so this is what actually lets a
+                             "CLASS", so this is what actually lets a
                              later `p.x` be traced back to a specific
                              aggregate's member list */
     std::string typedefName; /* the TYPE_NAME spelling, when the type came
@@ -50,16 +50,10 @@ struct DeclInfo {
     std::string className;        /* set for `Class::member(...)` out-of-class
                                       definitions, empty otherwise */
     bool wasParenGrouped = false; /* set by direct_declarator: '(' declarator ')' --
-                                      distinguishes `int (*fp)(...)` (a function-
-                                      POINTER VARIABLE, whose pointer sits inside the
-                                      parens) from `int *f(...)` (a function whose
-                                      RETURN TYPE is a pointer, where the pointer is
-                                      outside/before the whole declarator). Without
-                                      this, both looked identical (isFunction=true,
-                                      pointerLevel>0) and the former was wrongly
-                                      classified as a PROCEDURE instead of a
-                                      variable. */
-    bool isFunctionPointer = false;
+                                      tells `int (*fp)(...)` (a pointer to a
+                                      function, which the language does not have:
+                                      the grammar rejects it) from `int *f(...)`
+                                      (a function returning a pointer) */
     bool isReference = false;           /* declarator began with '&' */
     bool isVariadic = false;            /* parameter list ended in `...` */
     bool grouped = false;               /* see ASTTypeExpr::grouped */

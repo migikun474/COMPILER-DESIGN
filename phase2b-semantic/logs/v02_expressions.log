@@ -2,15 +2,15 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/valid/v02_expressions.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v02_expressions.c
 
-Semantic analysis successful: 0 error(s), 2 warning(s) in 'test/valid/v02_expressions.c'.
+Semantic analysis successful: 0 error(s), 2 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v02_expressions.c'.
 
-test/valid/v02_expressions.c:20:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v02_expressions.c:20:15: semantic warning: operation on 'a' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  20 |     r = a++ + ++a - b-- - --b;      // warning: operation on 'a' may be undefined  // warning: operation on 'b' may be undefined
     |               ^
 
-test/valid/v02_expressions.c:20:27: semantic warning: operation on 'b' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v02_expressions.c:20:27: semantic warning: operation on 'b' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  20 |     r = a++ + ++a - b-- - --b;      // warning: operation on 'a' may be undefined  // warning: operation on 'b' may be undefined
     |                           ^
 

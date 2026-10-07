@@ -44,7 +44,6 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->ptrOps = d.ptrOps;
     t->innerPtrOps = d.innerPtrOps;
     t->isFunction = d.isFunction;
-    t->isFunctionPointer = d.isFunctionPointer;
     t->isVariadic = d.isVariadic;
     for (const auto &p : d.params) {
         t->params.push_back(p.typeExpr ? p.typeExpr : std::make_shared<ASTTypeExpr>());
@@ -92,8 +91,7 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
     if (ts.isTypedefStorage) {
         std::string typeStr = computeTypeStr(ts, d.pointerLevel, d.arrayLevel);
         /* `typedef struct { ... } Pt;` names the unnamed type Pt */
-        if (isAnonymousTag(ts.tagName) && d.pointerLevel == 0 && d.arrayLevel == 0 && !d.isFunction &&
-            !d.isFunctionPointer)
+        if (isAnonymousTag(ts.tagName) && d.pointerLevel == 0 && d.arrayLevel == 0 && !d.isFunction)
             nameAnonymousTag(ts.tagName, d.name);
         SymbolDeclInfo extra;
         extra.tokenIdx = d.nameIdx;
@@ -105,27 +103,6 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
         setCategory(d.nameIdx, "TYPEDEF");
         auto node = atToken(mkNode(ASTKind::TypedefDecl, d.name + " = " + typeStr), d.nameIdx);
         node->typeExpr = extra.typeExpr;
-        return node;
-    } else if (d.isFunctionPointer) {
-    
-        std::vector<std::string> paramTypes;
-        for (auto &p : d.params) paramTypes.push_back(p.typeStr);
-        std::string returnType = computeTypeStr(ts, d.pointerLevel - 1, 0);
-        std::string typeStr = returnType + "_FUNCTION_POINTER";
-
-        SymbolDeclInfo extra;
-        extra.tokenIdx = d.nameIdx;
-        extra.isStatic = ts.isStatic;
-        extra.isConst = ts.isConst;
-        extra.isVolatile = ts.isVolatile;
-        extra.pointerLevel = d.pointerLevel;
-        extra.returnType = returnType;
-        extra.paramTypes = paramTypes;
-        declareSymbol(d.name, SymKind::VARIABLE, typeStr, extra);
-        setCategory(d.nameIdx, typeStr);
-        auto node = atToken(mkNode(ASTKind::VarDecl, d.name + " : " + typeStr), d.nameIdx);
-        node->typeExpr = makeTypeExpr(ts, d);
-        if (d.initExpr) addChild(node, d.initExpr);
         return node;
     } else if (d.isFunction) {
         std::vector<std::string> paramTypes;

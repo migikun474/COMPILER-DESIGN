@@ -64,12 +64,12 @@ instead of a `%union`):
 **AST** ([`../shared/ast/ast.hpp`](../shared/ast/ast.hpp)): one generic
 node type, `ASTNode { kind, label, line, column, children, typeExpr,
 access, bases }` plus slots semantic analysis fills (`semType`,
-`symbol`, `isLValue`, `constValue`). `ASTKind` has 60 kinds —
+`symbol`, `isLValue`, `constValue`). `ASTKind` has 56 kinds —
 declarations (`VarDecl`, `FunctionDef`, `StructDecl`, `ClassDecl`,
 `TypedefDecl` …), statements (`IfStmt`, `ForStmt`, `UntilStmt`,
 `SwitchStmt`, `CaseStmt`, `GotoStmt` …), expressions (`BinaryExpr`,
 `AssignExpr`, `CallExpr`, `MemberExpr`, `IndexExpr`, `CastExpr`,
-`LambdaExpr`, `NewExpr`, `ConstructExpr` …), literals and `ErrorNode`.
+`NewExpr`, `ConstructExpr` …), literals and `ErrorNode`.
 Declarations carry an `ASTTypeExpr` with the full declarator shape
 (specifiers, tag, typedef name, pointer operators, array-size
 expressions, parameters, `(…)` grouping) so phase 2b can resolve real
@@ -101,8 +101,8 @@ log; see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md#part-1--the-parse-t
   table is scoped, so `int T;` in an inner scope hides an outer type `T`.
 - **Bounded lookahead in the scanner** for the few places one token is
   not enough: `FCAST` (a type that starts a functional cast `int(x)`),
-  `ABSTRACT_LPAREN` (`int (*)(int)`), `DESIG_LBRACKET` (`[2] = 7` in an
-  initializer vs. a lambda), `DELETE_ARRAY` (`delete[]`).
+  `ABSTRACT_LPAREN` (`(int (*)[3])`, an abstract declarator),
+  `DELETE_ARRAY` (`delete[]`).
 - **Deferred resolution** of forward references (`goto` to a later
   label, a call before the definition): `queuePendingReference()` /
   `resolvePendingReferences()` fix the Token_Type after the parse.
@@ -116,10 +116,10 @@ log; see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md#part-1--the-parse-t
 |---|---|
 | Program | `translation_unit` → `external_decl` (function definitions, declarations, out-of-class constructors/destructors) |
 | Declarations | `declaration`, `declaration_specifiers`, `storage_or_type_specifier`, `type_specifier`, `init_declarator_list`, `declarator`, `direct_declarator`, `pointer`, `abstract_declarator`, `initializer`, `initializer_list` |
-| Aggregates | `struct_or_class_specifier` (named and unnamed struct/union/class/enum), `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `destructor_def`, `enumerator_list` |
+| Aggregates | `struct_or_class_specifier` (named and unnamed struct/class), `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `destructor_def` |
 | Functions | `function_definition`, `parameter_list`, `parameter_decl`, `operator_function_id` |
 | Statements | `statement`, `compound_stmt`, `expr_stmt`, `selection_stmt` (if/else, switch), `iteration_stmt` (while, do-while, for, until), `labeled_stmt` (case, default, labels), `jump_stmt` (goto, break, continue, return) |
-| Expressions | `expr` (comma), `assignment_expr`, `binary_expr`, `unary_expr`, `postfix_expr`, `primary_expr`, `lambda_expr`, `builtin_call`, `new_type_id` |
+| Expressions | `expr` (comma), `assignment_expr`, `binary_expr`, `unary_expr`, `postfix_expr`, `primary_expr`, `builtin_call`, `new_type_id` |
 
 A production-by-production walkthrough is in
 [`docs/GRAMMAR_DESIGN.md`](docs/GRAMMAR_DESIGN.md).
@@ -217,13 +217,22 @@ this grammar, except the constructs listed as unsupported there. In
 particular: all operators with C precedence; if/else, while, do-while,
 for (with a declaration), `until`, switch/case/default, goto/labels,
 break/continue/return; declarations with pointers, arrays (any number of
-dimensions), function pointers, parenthesized declarators
+dimensions), parenthesized declarators
 (`int (*pa)[3]`), references, `const`/`volatile`, `static`/`extern`/
 `register`/`typedef`/`auto`; initializer lists with designators;
-struct/union/enum (named or unnamed); classes with inheritance, access
+structs (named or unnamed); classes with inheritance, access
 specifiers, constructors/destructors (in or out of class), operator
-overloading; lambdas; `new`/`delete`; C-style and functional casts;
-`sizeof`; the built-in I/O, memory, file and varargs operations.
+overloading; `new`/`delete`; C-style and functional casts;
+`sizeof`; the built-in I/O, memory and varargs operations.
+
+**Removed** (2026-10-07, see [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)):
+`enum`, `union`, the file-manipulation built-ins, lambdas and function
+pointers. Their tokens and rules are gone, so `enum`, `union`, `FILE`,
+`fopen` … and `mutable` scan as ordinary identifiers. A parameter list
+after a parenthesized pointer declarator (`int (*fp)(int)`) is rejected
+in the `direct_declarator` action with a syntax error;
+`test/test29_dropped_features.c` shows every dropped construct being
+rejected.
 
 **Not parsed** (syntax errors): constructor member-initializer lists
 (`Dog() : Animal(4) {}`), `virtual`, `const` member functions, `friend`,
@@ -251,13 +260,13 @@ make
 ./run.sh
 ```
 
-`./run.sh` runs the parser over the 37 files in `test/` and prints each
+`./run.sh` runs the parser over the 36 files in `test/` and prints each
 result:
 
 | Kind | Files |
 |---|---|
-| valid (25) | `array`, `funcCall`, `funcPtr`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`–`test28` |
-| deliberate syntax errors (12) | `negative`, `test5`, `test14`–`test23` (declarations, control flow, `do`-`while` recovery, functions, arrays/pointers, aggregates, lambdas/builtins, cascading recovery, file I/O, forward references) |
+| valid (24) | `array`, `funcCall`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`–`test28` |
+| deliberate syntax errors (12) | `negative`, `test5`, `test14`–`test21`, `test23`, `test29` (declarations, control flow, `do`-`while` recovery, functions, arrays/pointers, aggregates, expressions/builtins, cascading recovery, forward references, the dropped features) |
 
 The parser corpus is also run end to end by
 `../phase2b-semantic/run_tests.sh`, which checks that the 12 broken files

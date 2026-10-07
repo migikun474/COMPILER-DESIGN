@@ -2,11 +2,11 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c
 
 Syntax analysis failed: 1 error(s); semantic analysis was not run.
 
-../phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c:57:5: syntax error: syntax error, unexpected RETURN, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test16_syntax_errors_do_while_recovery_gap.c:57:5: syntax error: syntax error, unexpected RETURN, expecting ';'
  57 |     return a;
     |     ^
     | note: insert ';' here

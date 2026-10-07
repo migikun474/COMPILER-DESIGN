@@ -30,7 +30,7 @@ ASTNodePtr atNode(const ASTNodePtr &n, const ASTNodePtr &from);
    returns the AST node representing this one declaration (VarDecl /
    FunctionDecl / TypedefDecl), or nullptr for an abstract declarator
    with nothing to register. */
-/* the internal tag of an unnamed struct/union/class/enum whose keyword
+/* the internal tag of an unnamed struct/class whose keyword
    is token `tokIdx` (see anonymousTag() in ast.hpp) */
 std::string anonymousTagAt(int tokIdx);
 /* the parameters' type expressions, for mangle() */

@@ -2,51 +2,51 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c
 
 Preprocessing failed: 10 error(s); semantic analysis was not run.
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:3:1: preprocessor warning: 'PI' macro redefined (previous definition at line 2)
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:3:1: preprocessor warning: 'PI' macro redefined (previous definition at line 2)
  3 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:5:1: preprocessor error: 'missing.h' file not found
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:5:1: preprocessor error: 'missing.h' file not found
  5 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:6:1: preprocessor error: 'graphics.h' file not found (only the standard headers are known; their library functions are built into this language)
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:6:1: preprocessor error: 'graphics.h' file not found (only the standard headers are known; their library functions are built into this language)
  6 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:7:1: preprocessor error: invalid preprocessing directive '#frobnicate'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:7:1: preprocessor error: invalid preprocessing directive '#frobnicate'
  7 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:8:1: preprocessor error: #else without #if
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:8:1: preprocessor error: #else without #if
  8 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:9:1: preprocessor error: invalid #if expression: expression ends too early
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:9:1: preprocessor error: invalid #if expression: expression ends too early
  9 | 
    | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:14:1: preprocessor error: macro name must be an identifier
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:14:1: preprocessor error: macro name must be an identifier
  14 | 
     | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:15:1: preprocessor error: '#' is not followed by a macro parameter
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:15:1: preprocessor error: '#' is not followed by a macro parameter
  15 | 
     | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:16:1: preprocessor error: #error stop right here
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:16:1: preprocessor error: #error stop right here
  16 | 
     | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:17:1: preprocessor error: macro 'TWO' requires 2 arguments, but 1 was given
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:17:1: preprocessor error: macro 'TWO' requires 2 arguments, but 1 was given
  17 | int main() { return TWO(1); }   // error: macro 'TWO' requires 2 arguments, but 1 was given
     | ^
 
-/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/test/invalid/e16_preprocessor.c:18:1: preprocessor error: unterminated conditional directive (#if without #endif)
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e16_preprocessor.c:18:1: preprocessor error: unterminated conditional directive (#if without #endif)
  18 | 
     | ^
 

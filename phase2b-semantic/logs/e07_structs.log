@@ -2,51 +2,43 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e07_structs.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c
 
-Semantic analysis failed: 11 error(s), 0 warning(s) in 'test/invalid/e07_structs.c'.
+Semantic analysis failed: 9 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c'.
 
-test/invalid/e07_structs.c:9:10: semantic error: duplicate member 'a' in struct 'Dup' (previous declaration at line 8) [duplicate-member]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:9:10: semantic error: duplicate member 'a' in struct 'Dup' (previous declaration at line 8) [duplicate-member]
  9 |     char a;                       // error: duplicate member 'a' in struct 'Dup'
    |          ^
 
-test/invalid/e07_structs.c:13:17: semantic error: field 'inner' has incomplete type 'struct Self' [incomplete-type]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:13:17: semantic error: field 'inner' has incomplete type 'struct Self' [incomplete-type]
  13 |     struct Self inner;            // error: field 'inner' has incomplete type 'struct Self'
     |                 ^
 
-test/invalid/e07_structs.c:24:7: semantic error: unknown member 'name': no member named 'name' in 'struct Student' [unknown-member]
- 24 |     s.name = 1;                   // error: no member named 'name' in 'struct Student'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:23:7: semantic error: unknown member 'name': no member named 'name' in 'struct Student' [unknown-member]
+ 23 |     s.name = 1;                   // error: no member named 'name' in 'struct Student'
     |       ^
 
-test/invalid/e07_structs.c:25:12: semantic error: member reference type 'struct Student *' is a pointer; did you mean to use '->'? [member-access]
- 25 |     n = sp.age;                   // error: is a pointer; did you mean to use '->'?
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:24:12: semantic error: member reference type 'struct Student *' is a pointer; did you mean to use '->'? [member-access]
+ 24 |     n = sp.age;                   // error: is a pointer; did you mean to use '->'?
     |            ^
 
-test/invalid/e07_structs.c:26:12: semantic error: member reference type 'struct Student' is not a pointer; did you mean to use '.'? [member-access]
- 26 |     n = s->age;                   // error: is not a pointer; did you mean to use '.'?
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:25:12: semantic error: member reference type 'struct Student' is not a pointer; did you mean to use '.'? [member-access]
+ 25 |     n = s->age;                   // error: is not a pointer; did you mean to use '.'?
     |            ^
 
-test/invalid/e07_structs.c:27:11: semantic error: member reference base type 'int' is not a struct, union or class [member-access]
- 27 |     n = n.age;                    // error: member reference base type 'int' is not a struct
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:26:11: semantic error: member reference base type 'int' is not a struct or class [member-access]
+ 26 |     n = n.age;                    // error: member reference base type 'int' is not a struct
     |           ^
 
-test/invalid/e07_structs.c:28:9: semantic error: type mismatch: cannot assign 'struct Other' to 'struct Student' [type-mismatch]
- 28 |     s = o;                        // error: cannot assign 'struct Other' to 'struct Student'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:27:9: semantic error: type mismatch: cannot assign 'struct Other' to 'struct Student' [type-mismatch]
+ 27 |     s = o;                        // error: cannot assign 'struct Other' to 'struct Student'
     |         ^
 
-test/invalid/e07_structs.c:29:13: semantic error: type mismatch: cannot assign 'char *' to 'int' (incompatible pointer to integer conversion) [type-mismatch]
- 29 |     s.age = "old";                // error: cannot assign 'char *' to 'int'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:28:13: semantic error: type mismatch: cannot assign 'char *' to 'int' (incompatible pointer to integer conversion) [type-mismatch]
+ 28 |     s.age = "old";                // error: cannot assign 'char *' to 'int'
     |             ^
 
-test/invalid/e07_structs.c:30:33: semantic error: excess elements in struct initializer for 'struct Student' [initializer]
- 30 |     struct Student t = {1, 'a', 3};   // error: excess elements in struct initializer
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e07_structs.c:29:33: semantic error: excess elements in struct initializer for 'struct Student' [initializer]
+ 29 |     struct Student t = {1, 'a', 3};   // error: excess elements in struct initializer
     |                                 ^
-
-test/invalid/e07_structs.c:31:21: semantic error: excess elements in union initializer for 'union U' [initializer]
- 31 |     union U u = {1, 2};           // error: excess elements in union initializer
-    |                     ^
-
-test/invalid/e07_structs.c:32:14: semantic error: use of 'U' with tag type 'struct' that does not match its declaration as 'union' [tag-mismatch]
- 32 |     struct U wrong;               // error: tag type 'struct' that does not match its declaration as 'union'
-    |              ^
 

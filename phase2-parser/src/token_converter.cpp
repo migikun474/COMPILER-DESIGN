@@ -29,8 +29,6 @@ int to_bison_token(TokenType t) {
 
         // ---- composite-type keywords ----
         case TokenType::STRUCT: return STRUCT;
-        case TokenType::ENUM:   return ENUM;
-        case TokenType::UNION:  return UNION;
         case TokenType::CLASS:  return CLASS;
 
         // ---- access modifiers ----
@@ -77,24 +75,10 @@ int to_bison_token(TokenType t) {
         case TokenType::FREE:    return FREE;
         case TokenType::CALLOC:  return CALLOC;
         case TokenType::REALLOC: return REALLOC;
-
-        // ---- file-manipulation keywords ----
-        case TokenType::FILE_KEYWORD: return FILE_KW;
-        case TokenType::FOPEN:        return FOPEN;
-        case TokenType::FCLOSE:       return FCLOSE;
-        case TokenType::FREAD:        return FREAD;
-        case TokenType::FWRITE:       return FWRITE;
-        case TokenType::FPRINTF:      return FPRINTF;
-        case TokenType::FSCANF:       return FSCANF;
-        case TokenType::FGETS:        return FGETS;
-        case TokenType::FPUTS:        return FPUTS;
-        case TokenType::FEOF:         return FEOF;
-
         case TokenType::VA_LIST:      return VA_LIST;
         case TokenType::VA_START:     return VA_START;
         case TokenType::VA_ARG:       return VA_ARG;
         case TokenType::VA_END:       return VA_END;
-        case TokenType::MUTABLE:      return MUTABLE;
         case TokenType::OPERATOR:     return OPERATOR;
 
         // ---- multi-character operators ----

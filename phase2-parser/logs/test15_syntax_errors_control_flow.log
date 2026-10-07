@@ -2,47 +2,47 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test15_syntax_errors_control_flow.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c
 
-test/test15_syntax_errors_control_flow.c:32:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:32:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  32 |     if (a > 0 {
     |               ^
 
-test/test15_syntax_errors_control_flow.c:40:8: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:40:8: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
  40 |     if a > 0) {
     |        ^
     | note: insert '(' here
 
-test/test15_syntax_errors_control_flow.c:48:18: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:48:18: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  48 |     while (a > 0 {
     |                  ^
 
-test/test15_syntax_errors_control_flow.c:56:20: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:56:20: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  56 |     until (a > 100 {
     |                    ^
 
-test/test15_syntax_errors_control_flow.c:64:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:64:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
  64 |     for (a = 0 a < 10; a++) {
     |                ^
 
-test/test15_syntax_errors_control_flow.c:64:27: syntax error: syntax error, unexpected ')', expecting ';' or ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:64:27: syntax error: syntax error, unexpected ')', expecting ';' or ','
  64 |     for (a = 0 a < 10; a++) {
     |                           ^
 
-test/test15_syntax_errors_control_flow.c:71:20: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:71:20: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
  71 |     for (int i = 0 i < 10; i++) {
     |                    ^
     | note: insert ';' here
 
-test/test15_syntax_errors_control_flow.c:71:31: syntax error: syntax error, unexpected ')', expecting ';' or ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:71:31: syntax error: syntax error, unexpected ')', expecting ';' or ','
  71 |     for (int i = 0 i < 10; i++) {
     |                               ^
 
-test/test15_syntax_errors_control_flow.c:79:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:79:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  79 |     switch (a {
     |               ^
 
-test/test15_syntax_errors_control_flow.c:88:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ':'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test15_syntax_errors_control_flow.c:88:16: syntax error: syntax error, unexpected IDENTIFIER, expecting ':'
  88 |         case 1 a = 2; break;
     |                ^
     | note: insert ':' here

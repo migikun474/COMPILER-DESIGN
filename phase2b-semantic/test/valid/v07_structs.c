@@ -1,4 +1,4 @@
-/* valid: structures, nested structures, unions, typedef'd structs,
+/* valid: structures, nested structures, typedef'd structs,
    self-referential structures, struct initializers [test 23] */
 struct Point {
     int x;
@@ -14,11 +14,6 @@ struct Student {
 struct Node {
     int value;
     struct Node *next;            /* pointer to the struct being defined */
-};
-
-union Number {
-    int i;
-    double d;
 };
 
 typedef struct Point PointT;
@@ -54,9 +49,6 @@ int main() {
     struct Node n1, n2;
     n1.next = &n2;
     n2.next = 0;
-    union Number num;
-    num.i = 3;
-    num.d = 2.5;
     struct Point pts[3];
     pts[0].x = 1;
     (&pts[1])->y = 2;

@@ -12,7 +12,6 @@ public:
     int get(int k) { return x + k; }
     int twice() { return get() + get(2) + later(); }   /* `later` is declared below in the class */
     int fact(int n) { return n <= 1 ? 1 : n * fact(n - 1); }
-    int viaLambda() { auto f = [=]() { return x + get(); }; return f(); }
     int later() { return 1; }
 };
 
@@ -23,7 +22,7 @@ int main() {
     int proto(int);                 /* block-scope prototype of a file-scope function */
     r = r + proto(2) + helper(1);
     A obj;
-    r = r + obj.twice() + obj.fact(4) + obj.viaLambda();
+    r = r + obj.twice() + obj.fact(4);
     {
         int r = 5;                  /* shadows the outer r inside this block only */
         x = r;

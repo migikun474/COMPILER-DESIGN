@@ -21,8 +21,6 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
 
     // composite types
     {"struct", TokenType::STRUCT},
-    {"enum", TokenType::ENUM},
-    {"union", TokenType::UNION},
     {"class", TokenType::CLASS},
 
     // access modifiers
@@ -70,18 +68,6 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     {"calloc", TokenType::CALLOC},
     {"realloc", TokenType::REALLOC},
 
-    // file manipulation (custom reserved words)
-    {"FILE", TokenType::FILE_KEYWORD},
-    {"fopen", TokenType::FOPEN},
-    {"fclose", TokenType::FCLOSE},
-    {"fread", TokenType::FREAD},
-    {"fwrite", TokenType::FWRITE},
-    {"fprintf", TokenType::FPRINTF},
-    {"fscanf", TokenType::FSCANF},
-    {"fgets", TokenType::FGETS},
-    {"fputs", TokenType::FPUTS},
-    {"feof", TokenType::FEOF},
-
     // variable-argument access (custom reserved words)
     {"va_list", TokenType::VA_LIST},
     {"va_start", TokenType::VA_START},
@@ -89,7 +75,6 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     {"va_end", TokenType::VA_END},
 
     // C++-style extensions
-    {"mutable", TokenType::MUTABLE},
     {"operator", TokenType::OPERATOR},
 
     // boolean literals -- returned via keyword_map like the reference
@@ -180,8 +165,6 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::VOLATILE, "volatile"},
 
     {TokenType::STRUCT, "struct"},
-    {TokenType::ENUM, "enum"},
-    {TokenType::UNION, "union"},
     {TokenType::CLASS, "class"},
 
     {TokenType::PUBLIC, "public"},
@@ -221,23 +204,10 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::FREE, "free"},
     {TokenType::CALLOC, "calloc"},
     {TokenType::REALLOC, "realloc"},
-
-    {TokenType::FILE_KEYWORD, "file"},
-    {TokenType::FOPEN, "fopen"},
-    {TokenType::FCLOSE, "fclose"},
-    {TokenType::FREAD, "fread"},
-    {TokenType::FWRITE, "fwrite"},
-    {TokenType::FPRINTF, "fprintf"},
-    {TokenType::FSCANF, "fscanf"},
-    {TokenType::FGETS, "fgets"},
-    {TokenType::FPUTS, "fputs"},
-    {TokenType::FEOF, "feof"},
-
     {TokenType::VA_LIST, "va_list"},
     {TokenType::VA_START, "va_start"},
     {TokenType::VA_ARG, "va_arg"},
     {TokenType::VA_END, "va_end"},
-    {TokenType::MUTABLE, "mutable"},
     {TokenType::OPERATOR, "operator"},
 
     {TokenType::ARROW_OP, "arrow_op"},

@@ -1,7 +1,7 @@
-/* test19 -- syntax errors in struct/union/enum/class declarations:
-   malformed bodies, bad enumerator lists, bad inheritance lists, and
-   access specifiers used somewhere they can't be. One broken
-   construct per top-level declaration. */
+/* test19 -- syntax errors in struct/class declarations: malformed
+   bodies, bad member lists, bad inheritance lists, and access
+   specifiers used somewhere they can't be. One broken construct per
+   top-level declaration. */
 
 void resync_marker() {}
 
@@ -17,11 +17,11 @@ struct T02_Line {
     int y1;
 };
 
-/* [3] enum with a missing comma between enumerators */
-enum T03_Color { RED, GREEN BLUE };
+/* [3] struct member list with a missing comma between declarators */
+struct T03_Color { int red, green blue; };
 
-/* [4] union with a member missing its own ';' */
-union T04_Value {
+/* [4] class with a member missing its own ';' */
+class T04_Value {
     int i
     float f;
 };
@@ -38,7 +38,7 @@ class T06_Bad2 : public {
 int resync_after_6;
 
 /* [7] a bare access specifier at file scope -- 'public:' only means
-   anything inside a class/struct/union body, not here */
+   anything inside a class/struct body, not here */
 public:
 int t07_after_bad_access_specifier;
 

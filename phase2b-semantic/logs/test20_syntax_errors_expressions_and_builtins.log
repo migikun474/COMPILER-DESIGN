@@ -1,0 +1,54 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c
+
+Syntax analysis failed: 10 error(s); semantic analysis was not run.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:11:18: syntax error: syntax error, unexpected ')'
+ 11 |     int y = (x + );
+    |                  ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:18:26: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
+ 18 |     int z = t02_helper(x y);
+    |                          ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:24:25: syntax error: syntax error, unexpected ';', expecting ':' or ','
+ 24 |     int b = (a > 0) ? 1 ;
+    |                         ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:29:10: syntax error: syntax error, unexpected ';', expecting IDENTIFIER
+ 29 |     goto ;
+    |          ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:34:26: syntax error: syntax error, unexpected ';', expecting ')'
+ 34 |     printf("hello, %d", 5;
+    |                          ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:40:11: syntax error: syntax error, unexpected ',', expecting ')'
+ 40 |     scanf(, &x);
+    |           ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:46:21: syntax error: syntax error, unexpected ',', expecting ')'
+ 46 |     int *p = malloc(,);
+    |                     ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:52:11: syntax error: syntax error, unexpected ';', expecting ')'
+ 52 |     free(p;
+    |           ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:57:23: syntax error: syntax error, unexpected ';', expecting ')'
+ 57 |     int s = sizeof(int;
+    |                       ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:63:17: syntax error: syntax error, unexpected ';'
+ 63 |     int *p = new;
+    |                 ^
+

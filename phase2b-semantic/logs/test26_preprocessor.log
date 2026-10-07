@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test26_preprocessor.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test26_preprocessor.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/test26_preprocessor.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test26_preprocessor.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -73,7 +73,7 @@ Program "translation_unit"
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
-area               function       int (int, int)             -        global                         /home/amirishetty/parsing stage/parsing stage work/phase2b-semantic/../phase2-parser/test/headers/geometry.h:5 -     1     _Z4areaii            _Z4areaii                defined
+area               function       int (int, int)             -        global                         /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/headers/geometry.h:5 -     1     _Z4areaii            _Z4areaii                defined
 debugOn            variable       int                        global   global                         19    4     1     debugOn              -                        
 w                  parameter      int                        param    global > area()                28    4     1     w.1                  -                        
 h                  parameter      int                        param    global > area()                28    4     1     h.2                  -                        

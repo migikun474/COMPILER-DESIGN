@@ -2,45 +2,46 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test19_syntax_errors_aggregates.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c
 
-test/test19_syntax_errors_aggregates.c:12:1: syntax error: syntax error, unexpected ';', expecting '}'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:12:1: syntax error: syntax error, unexpected ';', expecting '}'
  12 | ;
     | ^
     | note: insert '}' here
 
-test/test19_syntax_errors_aggregates.c:17:5: syntax error: syntax error, unexpected INT, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:17:5: syntax error: syntax error, unexpected INT, expecting ';'
  17 |     int y1;
     |     ^
     | note: insert ';' here
 
-test/test19_syntax_errors_aggregates.c:21:29: syntax error: syntax error, unexpected IDENTIFIER, expecting '}' or ','
- 21 | enum T03_Color { RED, GREEN BLUE };
-    |                             ^
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:21:35: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 21 | struct T03_Color { int red, green blue; };
+    |                                   ^
+    | note: insert ';' here
 
-test/test19_syntax_errors_aggregates.c:26:5: syntax error: syntax error, unexpected FLOAT, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:26:5: syntax error: syntax error, unexpected FLOAT, expecting ';'
  26 |     float f;
     |     ^
     | note: insert ';' here
 
-test/test19_syntax_errors_aggregates.c:30:17: syntax error: syntax error, unexpected '{'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:30:17: syntax error: syntax error, unexpected '{'
  30 | class T05_Bad : {
     |                 ^
 
-test/test19_syntax_errors_aggregates.c:35:25: syntax error: syntax error, unexpected '{', expecting IDENTIFIER or TYPE_NAME
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:35:25: syntax error: syntax error, unexpected '{', expecting IDENTIFIER or TYPE_NAME
  35 | class T06_Bad2 : public {
     |                         ^
 
-test/test19_syntax_errors_aggregates.c:42:1: syntax error: syntax error, unexpected PUBLIC
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:42:1: syntax error: syntax error, unexpected PUBLIC
  42 | public:
     | ^
 
-test/test19_syntax_errors_aggregates.c:48:29: syntax error: syntax error, unexpected '{', expecting ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:48:29: syntax error: syntax error, unexpected '{', expecting ')'
  48 |     T08_Widget(int w, int h {
     |                             ^
     | note: insert ')' here
 
-test/test19_syntax_errors_aggregates.c:56:6: syntax error: syntax error, unexpected '(', expecting IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test19_syntax_errors_aggregates.c:56:6: syntax error: syntax error, unexpected '(', expecting IDENTIFIER
  56 |     ~() {
     |      ^
 
@@ -55,8 +56,9 @@ Program "translation_unit"
 |-- ErrorNode "line 17: near 'int'"
 |-- ErrorNode "line 17: near 'int'"
 |-- ErrorNode "line 17: near 'int'"
-|-- ErrorNode "line 21: near 'BLUE'"
-|-- ErrorNode "line 21: near 'BLUE'"
+|-- ErrorNode "line 21: near 'blue'"
+|-- ErrorNode "line 21: near 'blue'"
+|-- ErrorNode "line 21: near 'blue'"
 |-- ErrorNode "line 26: near 'float'"
 |-- ErrorNode "line 26: near 'float'"
 |-- ErrorNode "line 26: near 'float'"

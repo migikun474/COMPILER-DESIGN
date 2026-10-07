@@ -2,52 +2,52 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test18_syntax_errors_arrays_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c
 
 Syntax analysis failed: 10 error(s); semantic analysis was not run.
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:8:14: syntax error: syntax error, unexpected ';', expecting ']'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:8:14: syntax error: syntax error, unexpected ';', expecting ']'
  8 |     int arr[5;
    |              ^
    | note: insert ']' here
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:14:15: syntax error: syntax error, unexpected ';', expecting ']'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:14:15: syntax error: syntax error, unexpected ';', expecting ']'
  14 |     int m[2][3;
     |               ^
     | note: insert ']' here
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:21:14: syntax error: syntax error, unexpected ';', expecting ',' or ']'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:21:14: syntax error: syntax error, unexpected ';', expecting ',' or ']'
  21 |     arr[2 = 9;
     |              ^
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:27:15: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:27:15: syntax error: syntax error, unexpected ';'
  27 |     int *p = &;
     |               ^
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:34:10: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:34:10: syntax error: syntax error, unexpected ';'
  34 |     *p = ;
     |          ^
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:40:23: syntax error: syntax error, unexpected ';', expecting ')'
- 40 |     int (*fp(int, int);
-    |                       ^
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:40:16: syntax error: syntax error, unexpected ';', expecting ')'
+ 40 |     int (*pa[3];
+    |                ^
     | note: insert ')' here
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:47:27: syntax error: syntax error, unexpected ';', expecting ')'
- 47 |     int (*fp)(int a, int b;
-    |                           ^
-    | note: insert ')' here
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:47:16: syntax error: syntax error, unexpected ';', expecting ']'
+ 47 |     int (*pa)[3;
+    |                ^
+    | note: insert ']' here
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:55:7: syntax error: syntax error, unexpected '='
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:55:7: syntax error: syntax error, unexpected '='
  55 |     * = x;
     |       ^
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:62:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:62:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ')'
  62 |     x;
     |     ^
     | note: insert ')' here
 
-../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:67:20: syntax error: syntax error, unexpected ')'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test18_syntax_errors_arrays_pointers.c:67:20: syntax error: syntax error, unexpected ')'
  67 |     int s = sizeof();
     |                    ^
 

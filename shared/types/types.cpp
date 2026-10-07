@@ -64,27 +64,9 @@ TypePtr recordType(const std::shared_ptr<RecordInfo> &r) {
     return make(t);
 }
 
-TypePtr enumType(const std::shared_ptr<EnumInfo> &e) {
-    Type t;
-    t.kind = TypeKind::Enum;
-    t.enumInfo = e;
-    return make(t);
-}
-
 TypePtr opaqueType(const std::string &name) {
     Type t;
     t.kind = TypeKind::Opaque;
-    t.name = name;
-    return make(t);
-}
-
-TypePtr closureType(const TypePtr &ret, const std::vector<TypePtr> &params, bool hasCaptures,
-                    const std::string &name) {
-    Type t;
-    t.kind = TypeKind::Closure;
-    t.ret = ret;
-    t.params = params;
-    t.closureCaptures = hasCaptures;
     t.name = name;
     return make(t);
 }
@@ -105,12 +87,6 @@ TypePtr unqualified(const TypePtr &t) {
     return make(q);
 }
 
-TypePtr withReturn(const TypePtr &fn, const TypePtr &ret) {
-    Type f = *fn;
-    f.ret = ret;
-    return make(f);
-}
-
 /* ---------------- classification ---------------- */
 
 static TypeKind kindOf(const TypePtr &t) { return t ? t->kind : TypeKind::Error; }
@@ -121,7 +97,7 @@ bool isBool(const TypePtr &t) { return kindOf(t) == TypeKind::Bool; }
 bool isIntegral(const TypePtr &t) {
     switch (kindOf(t)) {
         case TypeKind::Bool: case TypeKind::Char: case TypeKind::Short: case TypeKind::Int:
-        case TypeKind::Long: case TypeKind::LongLong: case TypeKind::Enum:
+        case TypeKind::Long: case TypeKind::LongLong:
             return true;
         default:
             return false;
@@ -136,22 +112,15 @@ bool isReference(const TypePtr &t) { return kindOf(t) == TypeKind::Reference; }
 bool isArray(const TypePtr &t) { return kindOf(t) == TypeKind::Array; }
 bool isFunction(const TypePtr &t) { return kindOf(t) == TypeKind::Function; }
 bool isRecord(const TypePtr &t) { return kindOf(t) == TypeKind::Record; }
-bool isClosure(const TypePtr &t) { return kindOf(t) == TypeKind::Closure; }
 bool isScalar(const TypePtr &t) { return isArithmetic(t) || isPointer(t); }
-bool isFunctionPointer(const TypePtr &t) { return isPointer(t) && isFunction(t->elem); }
 bool isVoidPointer(const TypePtr &t) { return isPointer(t) && isVoid(t->elem); }
-bool isCallable(const TypePtr &t) { return isFunction(t) || isFunctionPointer(t) || isClosure(t); }
 
 bool isComplete(const TypePtr &t) {
     switch (kindOf(t)) {
-        case TypeKind::Opaque:
-            return t->name == "va_list"; /* FILE is only usable through a pointer */
         case TypeKind::Void: case TypeKind::Function:
             return false;
         case TypeKind::Record:
             return t->record && t->record->complete;
-        case TypeKind::Enum:
-            return t->enumInfo && t->enumInfo->complete;
         case TypeKind::Array:
             return t->arraySize >= 0 && isComplete(t->elem);
         default:
@@ -182,9 +151,7 @@ bool sameType(const TypePtr &a, const TypePtr &b, bool exactQualifiers) {
             return true;
         case TypeKind::Record:
             return a->record == b->record;
-        case TypeKind::Enum:
-            return a->enumInfo == b->enumInfo;
-        case TypeKind::Opaque: case TypeKind::Closure:
+        case TypeKind::Opaque:
             return a->name == b->name;
         default:
             return true; /* Void, Bool, Float, Double, Error */
@@ -213,14 +180,14 @@ TypePtr decay(const TypePtr &t) {
     switch (t->kind) {
         case TypeKind::Reference: return decay(t->elem);
         case TypeKind::Array: return pointerTo(t->elem);
-        case TypeKind::Function: return pointerTo(t);
+        case TypeKind::Function: return t; /* not a value: no function pointers */
         default: return unqualified(t);
     }
 }
 
 TypePtr integerPromotion(const TypePtr &t) {
     switch (kindOf(t)) {
-        case TypeKind::Bool: case TypeKind::Char: case TypeKind::Short: case TypeKind::Enum:
+        case TypeKind::Bool: case TypeKind::Char: case TypeKind::Short:
             return intType();
         default:
             return unqualified(t);
@@ -267,7 +234,7 @@ Conversion implicitConversion(const TypePtr &fromIn, const TypePtr &toIn, bool f
     if (isArithmetic(from) && isArithmetic(to)) {
         bool promotion = (to->kind == TypeKind::Int && !to->isUnsigned &&
                           (from->kind == TypeKind::Bool || from->kind == TypeKind::Char ||
-                           from->kind == TypeKind::Short || from->kind == TypeKind::Enum)) ||
+                           from->kind == TypeKind::Short)) ||
                          (from->kind == TypeKind::Float && to->kind == TypeKind::Double);
         c.rank = promotion ? ConvRank::Promotion : ConvRank::Conversion;
         return c;
@@ -277,7 +244,7 @@ Conversion implicitConversion(const TypePtr &fromIn, const TypePtr &toIn, bool f
         if (isPointer(from)) {
             const TypePtr &fp = from->elem, &tp = to->elem;
             bool related = sameType(unqualified(fp), unqualified(tp)) ||
-                           (isVoid(tp) && !isFunction(fp)) || (isVoid(fp) && !isFunction(tp)) ||
+                           isVoid(tp) || isVoid(fp) ||
                            (isRecord(fp) && isRecord(tp) &&
                             isDerivedFrom(fp->record.get(), tp->record.get()));
             if (!related) {
@@ -295,18 +262,6 @@ Conversion implicitConversion(const TypePtr &fromIn, const TypePtr &toIn, bool f
                              : ConvRank::Exact;
             } else {
                 c.rank = ConvRank::Conversion;
-            }
-            return c;
-        }
-        if (isClosure(from) && isFunction(to->elem)) {
-            if (from->closureCaptures) {
-                c.why = "a lambda with captures cannot convert to a function pointer";
-                return c;
-            }
-            if (sameType(functionType(from->ret, from->params, false), to->elem)) {
-                c.rank = ConvRank::Conversion;
-            } else {
-                c.why = "lambda signature does not match the function pointer";
             }
             return c;
         }
@@ -347,8 +302,8 @@ long long sizeOf(const TypePtr &t) {
     switch (kindOf(t)) {
         case TypeKind::Bool: case TypeKind::Char: return 1;
         case TypeKind::Short: return 2;
-        case TypeKind::Int: case TypeKind::Long: case TypeKind::Float: case TypeKind::Enum:
-        case TypeKind::Pointer: case TypeKind::Reference: case TypeKind::Closure:
+        case TypeKind::Int: case TypeKind::Long: case TypeKind::Float:
+        case TypeKind::Pointer: case TypeKind::Reference:
             return 4;
         case TypeKind::LongLong: case TypeKind::Double: return 8;
         case TypeKind::Array: {
@@ -358,7 +313,7 @@ long long sizeOf(const TypePtr &t) {
         case TypeKind::Record:
             return (t->record && t->record->complete) ? t->record->size : -1;
         case TypeKind::Opaque:
-            return t->name == "va_list" ? 4 : -1; /* a cursor into the argument area */
+            return 4; /* va_list: a cursor into the argument area */
         default:
             return -1;
     }
@@ -378,31 +333,24 @@ int alignOf(const TypePtr &t) {
 static long long alignUp(long long v, int a) { return a > 1 ? (v + a - 1) / a * a : v; }
 
 void layoutRecord(RecordInfo &r) {
-    long long offset = 0, size = 0;
+    long long offset = 0;
     int align = 1;
-    if (r.kind != RecordKind::Union) {
-        for (const auto &b : r.bases) { /* base sub-objects first, in order */
-            if (!b.record || !b.record->complete) continue;
-            offset = alignUp(offset, b.record->align);
-            offset += b.record->size;
-            align = std::max(align, b.record->align);
-        }
+    for (const auto &b : r.bases) { /* base sub-objects first, in order */
+        if (!b.record || !b.record->complete) continue;
+        offset = alignUp(offset, b.record->align);
+        offset += b.record->size;
+        align = std::max(align, b.record->align);
     }
     for (auto &f : r.fields) {
         if (f->storage != Storage::Member) continue; /* static members live elsewhere */
         long long fs = std::max(0LL, sizeOf(f->type));
         int fa = alignOf(f->type);
         align = std::max(align, fa);
-        if (r.kind == RecordKind::Union) {
-            f->offset = 0;
-            size = std::max(size, fs);
-        } else {
-            offset = alignUp(offset, fa);
-            f->offset = offset;
-            offset += fs;
-        }
+        offset = alignUp(offset, fa);
+        f->offset = offset;
+        offset += fs;
     }
-    if (r.kind != RecordKind::Union) size = offset;
+    long long size = offset;
     if (size == 0) size = 1; /* no zero-sized objects (C++ rule) */
     r.size = alignUp(size, align);
     r.align = align;
@@ -423,7 +371,6 @@ std::string accessName(Access a) {
 std::string recordKindName(RecordKind k) {
     switch (k) {
         case RecordKind::Struct: return "struct";
-        case RecordKind::Union: return "union";
         case RecordKind::Class: return "class";
     }
     return "?";
@@ -442,13 +389,9 @@ static std::string baseName(const TypePtr &t) {
         case TypeKind::LongLong: return u + "long long";
         case TypeKind::Float: return "float";
         case TypeKind::Double: return "double";
-        case TypeKind::Enum:
-            if (t->enumInfo && !t->enumInfo->typedefName.empty()) return t->enumInfo->typedefName;
-            return "enum " + (t->enumInfo ? t->enumInfo->tag : std::string("?"));
         case TypeKind::Record:
             return t->record ? recordDisplayName(*t->record) : "struct ?";
         case TypeKind::Opaque: return t->name;
-        case TypeKind::Closure: return "(" + t->name + ")";
         default: return "?";
     }
 }
@@ -505,7 +448,7 @@ int integerBits(const TypePtr &t) {
         case TypeKind::Bool: return 1;
         case TypeKind::Char: return 8;
         case TypeKind::Short: return 16;
-        case TypeKind::Int: case TypeKind::Long: case TypeKind::Enum: case TypeKind::Pointer: return 32;
+        case TypeKind::Int: case TypeKind::Long: case TypeKind::Pointer: return 32;
         case TypeKind::LongLong: return 64;
         default: return 0;
     }

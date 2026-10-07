@@ -10,7 +10,7 @@ enum class ASTKind {
     Program,
 
     VarDecl, ParamDecl, FunctionDecl, FunctionDef, DeclGroup,
-    StructDecl, UnionDecl, ClassDecl, EnumDecl, Enumerator, TypedefDecl,
+    StructDecl, ClassDecl, TypedefDecl,
     ConstructorDef, DestructorDef, InitDeclarator, InitializerList,
 
     CompoundStmt, IfStmt, WhileStmt, DoWhileStmt, UntilStmt, ForStmt,
@@ -19,7 +19,7 @@ enum class ASTKind {
 
     BinaryExpr, UnaryExpr, PostfixOpExpr, AssignExpr, TernaryExpr,
     CallExpr, BuiltinCallExpr, MemberExpr, ArrowExpr, ScopeExpr, IndexExpr,
-    CastExpr, SizeofExpr, NewExpr, DeleteExpr, LambdaExpr, CommaExpr,
+    CastExpr, SizeofExpr, NewExpr, DeleteExpr, CommaExpr,
     ConstructExpr, /* `T(args)`, `T x(args)` and `new T(args)`: build a T from args */
     DesignatedInit, /* `.field = v` / `[3] = v` inside an initializer list */
 
@@ -48,7 +48,7 @@ using ASTNodePtr = std::shared_ptr<ASTNode>;
    analysis resolves it into a structural sem::Type. Never printed. */
 struct ASTTypeExpr {
     std::vector<std::string> specParts; /* same as TypeSpec::parts */
-    std::string tagName;                /* struct/union/class/enum tag, if any */
+    std::string tagName;                /* struct/class tag, if any */
     std::string typedefName;            /* set when spelled via a TYPE_NAME */
     bool isStatic = false;
     bool isExtern = false;              /* `extern`: declares, does not define */
@@ -62,7 +62,7 @@ struct ASTTypeExpr {
     int pointerLevel = 0;               /* counts a leading '&' too, see isReference */
     bool isReference = false;           /* declarator began with '&' */
     std::vector<ASTNodePtr> arrayDims;  /* in source order; nullptr for `[]` */
-    /* `(...)` grouping, e.g. `int (*pa)[3]` / `int (*fps[2])(int)`: how many
+    /* `(...)` grouping, e.g. `int (*pa)[3]`: how many
        of pointerLevel / arrayDims were written *inside* the parentheses,
        which bind tighter than the suffixes after them */
     bool grouped = false;
@@ -74,10 +74,7 @@ struct ASTTypeExpr {
        innerPtrOps inside it. */
     std::string ptrOps;
     std::string innerPtrOps;
-    bool isMutable = false;             /* lambda declared `mutable` */
-    bool hasExplicitReturn = false;     /* lambda `-> T` */
     bool isFunction = false;
-    bool isFunctionPointer = false;
     bool isVariadic = false;
     std::vector<std::shared_ptr<ASTTypeExpr>> params;
 
@@ -96,7 +93,7 @@ struct ASTNode {
     std::vector<std::shared_ptr<ASTNode>> children;
 
     /* extra syntactic detail, never printed by printAST() */
-    ASTTypeExprPtr typeExpr;  /* declarations, params, casts, sizeof(type), new, lambdas */
+    ASTTypeExprPtr typeExpr;  /* declarations, params, casts, sizeof(type), new */
     std::string access;       /* "public"/"protected"/"private" on aggregate members
                                  that follow an explicit access specifier */
     std::vector<std::pair<std::string, std::string>> bases; /* ClassDecl: (access, base name) */
@@ -109,8 +106,8 @@ struct ASTNode {
     long long constValue = 0;
 };
 
-/* Unnamed struct/union/class/enum types (`struct { int x; } p;`,
-   `typedef struct { ... } Pt;`, `union { ... };` inside a struct) get an
+/* Unnamed struct/class types (`struct { int x; } p;`,
+   `typedef struct { ... } Pt;`, `struct { ... };` inside a struct) get an
    internal tag naming where they were written, "(unnamed at 3:9)" -- the
    way clang spells them. It can never collide with a real tag, and every
    phase keys records by tag, so nothing else has to special-case them. */

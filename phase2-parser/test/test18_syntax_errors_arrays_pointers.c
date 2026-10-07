@@ -1,5 +1,5 @@
 /* test18 -- syntax errors involving arrays, pointers, multi-level
-   pointers and function pointers. One broken construct per function. */
+   pointers and pointers to arrays. One broken construct per function. */
 
 void resync_marker() {}
 
@@ -34,17 +34,17 @@ void t05_deref_missing_rhs() {
     *p = ;
 }
 
-/* [6] function-pointer declarator with a missing ')' on the inner
+/* [6] pointer-to-array declarator with a missing ')' on the inner
    parenthesized declarator */
-void t06_function_pointer_missing_close_paren() {
-    int (*fp(int, int);
+void t06_pointer_to_array_missing_close_paren() {
+    int (*pa[3];
     resync_marker();
 }
 
-/* [7] function-pointer declarator missing the ')' on the parameter
-   list itself */
-void t07_function_pointer_params_missing_close_paren() {
-    int (*fp)(int a, int b;
+/* [7] pointer-to-array declarator missing the ']' on the dimension
+   that follows the parenthesized declarator */
+void t07_pointer_to_array_missing_close_bracket() {
+    int (*pa)[3;
     resync_marker();
 }
 

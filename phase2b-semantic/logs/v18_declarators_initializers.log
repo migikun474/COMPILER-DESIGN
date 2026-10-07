@@ -1,0 +1,283 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v18_declarators_initializers.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v18_declarators_initializers.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- TypedefDecl "T = INT"  <int>  -> T (typedef)
+|-- StructDecl "Pt"  <struct Pt>  -> Pt (tag)
+|   |-- VarDecl "x : INT"  <int>  -> Pt::x (field, member)
+|   |-- VarDecl "y : INT"  <int>  -> Pt::y (field, member)
+|   `-- VarDecl "z : INT"  <int>  -> Pt::z (field, member)
+|-- StructDecl "Node"  <struct Node>  -> Node (tag)
+|   |-- VarDecl "v : INT"  <int>  -> Node::v (field, member)
+|   `-- VarDecl "next : STRUCT_POINTER"  <struct Node *>  -> Node::next (field, member)
+|-- FunctionDef "sum : _Z3sumiz"  <int (int, ...)>  -> _Z3sumiz (function)
+|   |-- ParamDecl "n : INT"  <int>  -> n.1 (parameter, param)
+|   `-- CompoundStmt
+|       |-- VarDecl "ap : VA_LIST"  <va_list>  -> ap.2 (variable, local)
+|       |-- ExprStmt
+|       |   `-- BuiltinCallExpr "va_start"  <void>
+|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.2 (variable, local)
+|       |       `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
+|       |-- VarDecl "s : INT"  <int>  -> s.3 (variable, local)
+|       |   `-- IntLiteral "0"  <int> =0
+|       |-- ForStmt
+|       |   |-- VarDecl "i : INT"  <int>  -> i.4 (variable, local)
+|       |   |   `-- IntLiteral "0"  <int> =0
+|       |   |-- ExprStmt
+|       |   |   `-- BinaryExpr "<"  <int>
+|       |   |       |-- Identifier "i"  <int> lvalue  -> i.4 (variable, local)
+|       |   |       `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
+|       |   |-- PostfixOpExpr "++"  <int>
+|       |   |   `-- Identifier "i"  <int> lvalue  -> i.4 (variable, local)
+|       |   `-- ExprStmt
+|       |       `-- AssignExpr "+="  <int>
+|       |           |-- Identifier "s"  <int> lvalue  -> s.3 (variable, local)
+|       |           `-- BuiltinCallExpr "va_arg"  <int>
+|       |               |-- Identifier "ap"  <va_list> lvalue  -> ap.2 (variable, local)
+|       |               `-- TypeName "INT"  <int>
+|       |-- VarDecl "tail : DOUBLE"  <double>  -> tail.5 (variable, local)
+|       |   `-- BuiltinCallExpr "va_arg"  <double>
+|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.2 (variable, local)
+|       |       `-- TypeName "DOUBLE"  <double>
+|       |-- ExprStmt
+|       |   `-- BuiltinCallExpr "va_end"  <void>
+|       |       `-- Identifier "ap"  <va_list> lvalue  -> ap.2 (variable, local)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <double>
+|               |-- Identifier "s"  <int> lvalue  -> s.3 (variable, local)
+|               `-- Identifier "tail"  <double> lvalue  -> tail.5 (variable, local)
+|-- FunctionDecl "apply : _Z5applyPii"  <int (int *, int)>  -> _Z5applyPii (function)
+|-- FunctionDef "apply : _Z5applyPii"  -> _Z5applyPii (function)
+|   |-- ParamDecl "f : INT_POINTER"  <int *>  -> f.6 (parameter, param)
+|   |-- ParamDecl "v : INT"  <int>  -> v.7 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- UnaryExpr "*"  <int> lvalue
+|               |   `-- Identifier "f"  <int *> lvalue  -> f.6 (parameter, param)
+|               `-- Identifier "v"  <int> lvalue  -> v.7 (parameter, param)
+|-- FunctionDef "twice : _Z5twicei"  <int (int)>  -> _Z5twicei (function)
+|   |-- ParamDecl "v : INT"  <int>  -> v.8 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- Identifier "v"  <int> lvalue  -> v.8 (parameter, param)
+|               `-- IntLiteral "2"  <int> =2
+|-- ClassDecl "Counter"  <class Counter>  -> Counter (tag)
+|   |-- VarDecl "count : INT"  <int>  -> Counter::count (field, member)
+|   `-- FunctionDef "bump : _ZN7Counter4bumpEv"  <int (void)>  -> _ZN7Counter4bumpEv (function)
+|       `-- CompoundStmt
+|           |-- ExprStmt
+|           |   `-- PostfixOpExpr "++"  <int>
+|           |       `-- ArrowExpr "count"  <int> lvalue  -> Counter::count (field, member)
+|           |           `-- ThisExpr  <class Counter *>
+|           `-- ReturnStmt
+|               `-- Identifier "count"  <int> lvalue  -> Counter::count (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"  <int>  -> x.9 (variable, local)
+        |   |   `-- IntLiteral "1"  <int> =1
+        |   `-- VarDecl "y : INT"  <int>  -> y.10 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "cp : INT_POINTER"  <int * const>  -> cp.11 (variable, local)
+        |   `-- UnaryExpr "&"  <int *>
+        |       `-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- UnaryExpr "*"  <int> lvalue
+        |       |   `-- Identifier "cp"  <int * const> lvalue  -> cp.11 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- VarDecl "p2 : INT_POINTER"  <int *>  -> p2.12 (variable, local)
+        |   `-- UnaryExpr "&"  <int *>
+        |       `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |-- VarDecl "rp : INT_POINTER_POINTER"  <int *&>  -> rp.13 (variable, local)
+        |   `-- Identifier "p2"  <int *> lvalue  -> p2.12 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "rp"  <int *> lvalue  -> rp.13 (variable, local)
+        |       `-- UnaryExpr "&"  <int *>
+        |           `-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |-- VarDecl "pc : INT_POINTER"  <const int *>  -> pc.14 (variable, local)
+        |   `-- UnaryExpr "&"  <int *>
+        |       `-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <const int *>
+        |       |-- Identifier "pc"  <const int *> lvalue  -> pc.14 (variable, local)
+        |       `-- UnaryExpr "&"  <int *>
+        |           `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |-- VarDecl "p : STRUCT"  <struct Pt>  -> p.15 (variable, local)
+        |   `-- InitializerList  <struct Pt>
+        |       |-- DesignatedInit ".y"  <int>  -> Pt::y (field, member)
+        |       |   `-- IntLiteral "2"  <int> =2
+        |       `-- DesignatedInit ".x"  <int>  -> Pt::x (field, member)
+        |           `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "arr : INT_ARRAY"  <int[5]>  -> arr.16 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       |-- DesignatedInit "[]"  <int>
+        |       |   |-- IntLiteral "2"  <int> =2
+        |       |   `-- IntLiteral "7"  <int> =7
+        |       `-- IntLiteral "8"  <int> =8
+        |-- VarDecl "sized : INT_ARRAY"  <int[5]>  -> sized.17 (variable, local)
+        |   `-- InitializerList  <int[5]>
+        |       `-- DesignatedInit "[]"  <int>
+        |           |-- IntLiteral "4"  <int> =4
+        |           `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "zeros : INT_ARRAY"  <int[3]>  -> zeros.18 (variable, local)
+        |   `-- InitializerList  <int[3]>
+        |-- VarDecl "origin : STRUCT"  <struct Pt>  -> origin.19 (variable, local)
+        |   `-- InitializerList  <struct Pt>
+        |-- VarDecl "scalar : INT"  <int>  -> scalar.20 (variable, local)
+        |   `-- InitializerList  <int>
+        |-- VarDecl "word : CHAR_POINTER"  <char *>  -> word.21 (variable, local)
+        |   `-- StringLiteral ""adjacent""  <char[9]> lvalue
+        |-- VarDecl "grid : INT_POINTER_ARRAY"  <int (*)[5]>  -> grid.22 (variable, local)
+        |   `-- CastExpr "INT_POINTER_ARRAY"  <int (*)[5]>
+        |       `-- UnaryExpr "&"  <int (*)[5]>
+        |           `-- Identifier "arr"  <int[5]> lvalue  -> arr.16 (variable, local)
+        |-- VarDecl "T : INT"  <int>  -> T.23 (variable, local)
+        |   `-- IntLiteral "3"  <int> =3
+        |-- CompoundStmt
+        |   |-- StructDecl "Local"  <struct Local>  -> Local (tag)
+        |   |   `-- VarDecl "k : INT"  <int>  -> Local::k (field, member)
+        |   |-- VarDecl "l : STRUCT"  <struct Local>  -> l.24 (variable, local)
+        |   |   `-- InitializerList  <struct Local>
+        |   |       `-- IntLiteral "1"  <int> =1
+        |   `-- ExprStmt
+        |       `-- AssignExpr "+="  <int>
+        |           |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |           `-- MemberExpr "k"  <int> lvalue  -> Local::k (field, member)
+        |               `-- Identifier "l"  <struct Local> lvalue  -> l.24 (variable, local)
+        |-- VarDecl "Local : INT"  <int>  -> Local.25 (variable, local)
+        |   `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "c : CLASS"  <class Counter>  -> c.26 (variable, local)
+        |-- VarDecl "n1 : STRUCT"  <struct Node>  -> n1.27 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <struct Node *>
+        |       |-- MemberExpr "next"  <struct Node *> lvalue  -> Node::next (field, member)
+        |       |   `-- Identifier "n1"  <struct Node> lvalue  -> n1.27 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |-- CallExpr  <int>  -> _Z5applyPii (function)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "apply"  <int (int *, int)>  -> _Z5applyPii (function)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- UnaryExpr "&"  <int *>
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- IntLiteral "3"  <int> =3
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- CallExpr  <int>  -> _Z5twicei (function)
+                |   |   |   |   |   |   |   |   |   |   |   |   |       |-- Identifier "twice"  <int (int)>  -> _Z5twicei (function)
+                |   |   |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "4"  <int> =4
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "x"  <int> lvalue  -> Pt::x (field, member)
+                |   |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "p"  <struct Pt> lvalue  -> p.15 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |   |   |   |   |   |   |   |       |-- Identifier "arr"  <int[5]> lvalue  -> arr.16 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "3"  <int> =3
+                |   |   |   |   |   |   |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |   |   |   |   |   |   |       |-- Identifier "sized"  <int[5]> lvalue  -> sized.17 (variable, local)
+                |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "4"  <int> =4
+                |   |   |   |   |   |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |   |   |   |   |   |       |-- Identifier "zeros"  <int[3]> lvalue  -> zeros.18 (variable, local)
+                |   |   |   |   |   |   |   |   |       `-- IntLiteral "0"  <int> =0
+                |   |   |   |   |   |   |   |   `-- MemberExpr "z"  <int> lvalue  -> Pt::z (field, member)
+                |   |   |   |   |   |   |   |       `-- Identifier "origin"  <struct Pt> lvalue  -> origin.19 (variable, local)
+                |   |   |   |   |   |   |   `-- Identifier "scalar"  <int> lvalue  -> scalar.20 (variable, local)
+                |   |   |   |   |   |   `-- IndexExpr  <char> lvalue
+                |   |   |   |   |   |       |-- Identifier "word"  <char *> lvalue  -> word.21 (variable, local)
+                |   |   |   |   |   |       `-- IntLiteral "0"  <int> =0
+                |   |   |   |   |   `-- IndexExpr  <int> lvalue
+                |   |   |   |   |       |-- UnaryExpr "*"  <int[5]> lvalue
+                |   |   |   |   |       |   `-- Identifier "grid"  <int (*)[5]> lvalue  -> grid.22 (variable, local)
+                |   |   |   |   |       `-- IntLiteral "2"  <int> =2
+                |   |   |   |   `-- Identifier "T"  <int> lvalue  -> T.23 (variable, local)
+                |   |   |   `-- Identifier "Local"  <int> lvalue  -> Local.25 (variable, local)
+                |   |   `-- UnaryExpr "*"  <const int> lvalue
+                |   |       `-- Identifier "pc"  <const int *> lvalue  -> pc.14 (variable, local)
+                |   `-- CallExpr  <int>  -> _ZN7Counter4bumpEv (function)
+                |       `-- MemberExpr "bump"  <int (void)>  -> _ZN7Counter4bumpEv (function)
+                |           `-- Identifier "c"  <class Counter> lvalue  -> c.26 (variable, local)
+                `-- CallExpr  <int>  -> _Z3sumiz (function)
+                    |-- Identifier "sum"  <int (int, ...)>  -> _Z3sumiz (function)
+                    |-- IntLiteral "2"  <int> =2
+                    |-- IntLiteral "1"  <int> =1
+                    |-- IntLiteral "2"  <int> =2
+                    `-- FloatLiteral "3.0"  <double>
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+T                  typedef        int                        -        global                         4     -     0     T                    -                        
+Pt                 struct_tag     struct Pt                  -        global                         5     -     0     Pt                   -                        size 12
+Pt::x              field          int                        member   global > struct Pt             5     4     1     Pt::x                -                        public, offset 0
+Pt::y              field          int                        member   global > struct Pt             5     4     0     Pt::y                -                        public, offset 4
+Pt::z              field          int                        member   global > struct Pt             5     4     1     Pt::z                -                        public, offset 8
+Node               struct_tag     struct Node                -        global                         6     -     0     Node                 -                        size 8
+Node::v            field          int                        member   global > struct Node           6     4     0     Node::v              -                        public, offset 0
+Node::next         field          struct Node *              member   global > struct Node           6     4     1     Node::next           -                        public, offset 4
+sum                function       int (int, ...)             -        global                         8     -     1     _Z3sumiz             _Z3sumiz                 defined
+n                  parameter      int                        param    global > sum()                 8     4     2     n.1                  -                        
+ap                 variable       va_list                    local    global > sum()                 9     4     4     ap.2                 -                        
+s                  variable       int                        local    global > sum()                 11    4     2     s.3                  -                        
+i                  variable       int                        local    global > sum() > for           12    4     2     i.4                  -                        
+tail               variable       double                     local    global > sum()                 13    8     1     tail.5               -                        
+apply              function       int (int *, int)           -        global                         17    -     1     _Z5applyPii          _Z5applyPii              defined
+f                  parameter      int *                      param    global > apply()               18    4     1     f.6                  -                        
+v                  parameter      int                        param    global > apply()               18    4     1     v.7                  -                        
+twice              function       int (int)                  -        global                         19    -     1     _Z5twicei            _Z5twicei                defined
+v                  parameter      int                        param    global > twice()               19    4     1     v.8                  -                        
+Counter            class_tag      class Counter              -        global                         21    -     0     Counter              -                        size 4
+Counter::count     field          int                        member   global > class Counter         23    4     2     Counter::count       -                        public, offset 0
+Counter::bump      method         int (void)                 -        global > class Counter         24    -     1     _ZN7Counter4bumpEv   _ZN7Counter4bumpEv       public, defined
+main               function       int (void)                 -        global                         27    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                28    4     5     x.9                  -                        
+y                  variable       int                        local    global > main()                28    4     2     y.10                 -                        
+cp                 variable       int * const                local    global > main()                29    4     1     cp.11                -                        
+p2                 variable       int *                      local    global > main()                31    4     1     p2.12                -                        
+rp                 variable       int *&                     local    global > main()                32    4     1     rp.13                -                        
+pc                 variable       const int *                local    global > main()                34    4     2     pc.14                -                        
+p                  variable       struct Pt                  local    global > main()                36    12    1     p.15                 -                        
+arr                variable       int[5]                     local    global > main()                37    20    2     arr.16               -                        
+sized              variable       int[5]                     local    global > main()                38    20    1     sized.17             -                        
+zeros              variable       int[3]                     local    global > main()                39    12    1     zeros.18             -                        
+origin             variable       struct Pt                  local    global > main()                40    12    1     origin.19            -                        
+scalar             variable       int                        local    global > main()                41    4     1     scalar.20            -                        
+word               variable       char *                     local    global > main()                42    4     1     word.21              -                        
+grid               variable       int (*)[5]                 local    global > main()                43    4     1     grid.22              -                        
+T                  variable       int                        local    global > main()                44    4     1     T.23                 -                        
+Local              struct_tag     struct Local               -        global > main() > block        46    -     0     Local                -                        size 4
+Local::k           field          int                        member   global > main() > block > struct Local 46    4     1     Local::k             -                        public, offset 0
+l                  variable       struct Local               local    global > main() > block        47    4     1     l.24                 -                        
+Local              variable       int                        local    global > main()                50    4     1     Local.25             -                        
+c                  variable       class Counter              local    global > main()                51    4     1     c.26                 -                        
+n1                 variable       struct Node                local    global > main()                52    8     1     n1.27                -                        
+
+=== Record Layouts (MIPS32) ===
+struct Pt: size 12, align 4
+    +0  int x  [public]
+    +4  int y  [public]
+    +8  int z  [public]
+struct Node: size 8, align 4
+    +0  int v  [public]
+    +4  struct Node * next  [public]
+class Counter: size 4, align 4
+    +0  int count  [public]
+struct Local: size 4, align 4
+    +0  int k  [public]

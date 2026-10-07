@@ -1,0 +1,61 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c
+
+Syntax analysis failed: 13 error(s); semantic analysis was not run.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:17:1: syntax error: syntax error, unexpected IDENTIFIER
+ 17 | enum T01_Color { RED, GREEN, BLUE };
+    | ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:21:1: syntax error: syntax error, unexpected IDENTIFIER
+ 21 | union T02_Number { int i; float f; };
+    | ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:21:36: syntax error: syntax error, unexpected '}'
+ 21 | union T02_Number { int i; float f; };
+    |                                    ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:26:10: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 26 |     enum T01_Color c;
+    |          ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:32:11: syntax error: syntax error, unexpected '{', expecting ';' or ','
+ 32 |     union { int word; char bytes[4]; } u;
+    |           ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:32:40: syntax error: syntax error, unexpected IDENTIFIER
+ 32 |     union { int word; char bytes[4]; } u;
+    |                                        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:39:16: syntax error: syntax error, unexpected '['
+ 39 |     auto add = [x](int a) { return a + x; };
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:46:16: syntax error: syntax error, unexpected '['
+ 46 |     auto get = [&]() { return x; };
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:52:23: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 52 |     int (*fp)(int, int);
+    |                       ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:57:49: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 57 | int t08_function_pointer_parameter(int (*op)(int), int v) { return v; }
+    |                                                 ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:60:34: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 60 | typedef int (*T09_BinOp)(int, int);
+    |                                  ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:65:17: syntax error: syntax error, unexpected '(', expecting ')'
+ 65 |     x = (int (*)(int)) x;
+    |                 ^
+    | note: insert ')' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:71:29: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+ 71 |     int (*table[2])(int, int);
+    |                             ^
+

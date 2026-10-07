@@ -3,6 +3,11 @@
 > It records how the phase was built and the reasoning behind decisions;
 > some statements (counts, limitations, plans) are outdated. The current,
 > verified documentation is [`../README.md`](../README.md).
+>
+> In particular, these notes still describe **enum, union, file
+> manipulation, lambdas and function pointers**, which were removed from
+> the language on 2026-10-07 (see
+> [`../../docs/DESIGN_LOG.md`](../../docs/DESIGN_LOG.md), decisions D1–D6).
 
 # Phase 2 — Syntax Analyzer
 

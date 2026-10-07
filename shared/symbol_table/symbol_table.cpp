@@ -130,7 +130,7 @@ const SymbolTableEntry *findMember(const std::string &tagName, const std::string
     for (const auto &e : g_symbolTable) {
         if (e.qualifiedName == wanted) return &e;
     }
-    /* `s.i` where `i` belongs to an unnamed union inside s */
+    /* `s.i` where `i` belongs to an unnamed struct inside s */
     auto anon = g_anonymousMembers.find(tagName);
     if (anon != g_anonymousMembers.end()) {
         for (const auto &inner : anon->second) {
@@ -170,23 +170,6 @@ std::string anonymousTagName(const std::string &tag) {
 }
 void addAnonymousMember(const std::string &outerTag, const std::string &anonTag) {
     g_anonymousMembers[outerTag].push_back(anonTag);
-}
-void promoteAnonymousMembers(const std::string &anonTag) {
-    std::string prefix = anonTag + "::";
-    std::vector<std::pair<std::string, std::string>> members; /* name, type; copied first: declaring appends */
-    for (const auto &e : g_symbolTable) {
-        if (e.qualifiedName.compare(0, prefix.size(), prefix) == 0 && !e.ownerAggregateKind.empty() &&
-            e.kind == SymKind::VARIABLE)
-            members.push_back({e.name, e.typeStr});
-    }
-    for (const auto &[name, type] : members) {
-        declareSymbol(name, SymKind::VARIABLE, type);
-        hideTypeName(name);
-    }
-    auto inner = g_anonymousMembers.find(anonTag);
-    if (inner != g_anonymousMembers.end()) {
-        for (const auto &t : std::vector<std::string>(inner->second)) promoteAnonymousMembers(t);
-    }
 }
 std::string currentClassName() { return g_currentClassName; }
 std::string currentAggregateKind() { return g_currentAggregateKind; }
@@ -238,8 +221,7 @@ const Symbol *lookupTypeSymbol(const std::string &name) {
         if (found == it->end()) continue;
         for (auto s = found->second.rbegin(); s != found->second.rend(); ++s) {
             switch (s->kind) {
-                case SymKind::TYPEDEF_NAME: case SymKind::STRUCT_TAG: case SymKind::UNION_TAG:
-                case SymKind::CLASS_TAG: case SymKind::ENUM_TAG:
+                case SymKind::TYPEDEF_NAME: case SymKind::STRUCT_TAG: case SymKind::CLASS_TAG:
                     return &*s;
                 default:
                     break;
@@ -314,7 +296,7 @@ std::string categoryForTypeName(const Symbol *s) {
     if (!s) return "TYPEDEF";
     switch (s->kind) {
         case SymKind::TYPEDEF_NAME: return "TYPEDEF";
-        default: return s->typeStr; /* CLASS / STRUCT / UNION / ENUM tags */
+        default: return s->typeStr; /* CLASS / STRUCT tags */
     }
 }
 
@@ -324,11 +306,8 @@ std::string symKindName(SymKind k) {
         case SymKind::PROCEDURE: return "procedure";
         case SymKind::PARAMETER: return "parameter";
         case SymKind::STRUCT_TAG: return "struct_tag";
-        case SymKind::UNION_TAG: return "union_tag";
-        case SymKind::ENUM_TAG: return "enum_tag";
         case SymKind::CLASS_TAG: return "class_tag";
         case SymKind::TYPEDEF_NAME: return "typedef";
-        case SymKind::ENUM_CONST: return "enum_constant";
         case SymKind::LABEL: return "label";
     }
     return "?";
@@ -402,7 +381,7 @@ class Mangler {
                     out += "E";
                     break;
                 }
-                default: out = plain; break; /* record / enum / FILE / ... */
+                default: out = plain; break; /* record, va_list */
             }
         }
         subs_.push_back(plain);
@@ -466,9 +445,7 @@ class Mangler {
             /* an unnamed type is known by its first typedef name (C++
                [dcl.typedef]/9); one with none has no linkage: Ut_ */
             case TypeKind::Record: return t->record ? typeName(t->record->tag, t->record->typedefName) : "Ut_";
-            case TypeKind::Enum: return t->enumInfo ? typeName(t->enumInfo->tag, t->enumInfo->typedefName) : "Ut_";
-            case TypeKind::Opaque: return t->name == "FILE" ? "8_IO_FILE" : sourceName(t->name);
-            case TypeKind::Closure: return "u7closure";
+            case TypeKind::Opaque: return sourceName(t->name);
             default: return "u5error"; /* a vendor-extended type: only after an error */
         }
     }
@@ -500,7 +477,7 @@ std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &p
     bool voidList = params.size() == 1 && params[0] && params[0]->specParts.size() == 1 &&
                     params[0]->specParts[0] == "VOID" && params[0]->typedefName.empty() &&
                     params[0]->pointerLevel == 0 && params[0]->arrayDims.empty() &&
-                    !params[0]->isFunction && !params[0]->isFunctionPointer;
+                    !params[0]->isFunction;
     if (!voidList) {
         for (const auto &p : params) types.push_back(p ? parseTimeType(*p, true) : sem::errorType());
     }
@@ -519,10 +496,6 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
             ASTTypeExpr alias = *s->typeExpr;
             alias.isStatic = alias.isTypedef = false;
             base = parseTimeType(alias, false);
-        } else if (s && s->kind == SymKind::ENUM_TAG) {
-            auto e = std::make_shared<EnumInfo>();
-            e->tag = te.typedefName;
-            base = enumType(e);
         } else {
             auto r = std::make_shared<RecordInfo>();
             r->tag = te.typedefName;
@@ -533,19 +506,13 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
     std::map<std::string, int> n;
     for (const auto &p : te.specParts) n[p]++;
     auto c = [&](const char *k) { return n.count(k) ? n[k] : 0; };
-    if (c("ENUM")) {
-        auto e = std::make_shared<EnumInfo>();
-        e->tag = te.tagName;
-        e->typedefName = anonymousTagName(te.tagName);
-        base = enumType(e);
-    } else if (c("STRUCT") || c("UNION") || c("CLASS")) {
+    if (c("STRUCT") || c("CLASS")) {
         auto r = std::make_shared<RecordInfo>();
         r->tag = te.tagName;
         r->typedefName = anonymousTagName(te.tagName);
         base = recordType(r);
     } else if (c("VOID")) base = voidType();
     else if (c("BOOL")) base = boolType();
-    else if (c("FILE")) base = opaqueType("FILE");
     else if (c("VA_LIST")) base = opaqueType("va_list");
     else if (c("FLOAT")) base = basicType(TypeKind::Float);
     else if (c("DOUBLE")) base = doubleType();
@@ -593,16 +560,13 @@ sem::TypePtr parseTimeType(const ASTTypeExpr &te, bool isParam) {
         for (const auto &p : te.params) params.push_back(parseTimeType(*p, true));
     }
     TypePtr t = wrapPointers(base, outerOps);
-    if (te.isFunction || te.isFunctionPointer) t = functionType(t, params, te.isVariadic);
+    if (te.isFunction) t = functionType(t, params, te.isVariadic);
     else t = wrapArrays(t, innerDims, te.arrayDims.size());
     if (te.grouped) {
         t = wrapPointers(t, innerOps);
         t = wrapArrays(t, 0, innerDims);
     }
-    if (isParam) {
-        if (isArray(t)) t = pointerTo(t->elem);
-        else if (isFunction(t)) t = pointerTo(t);
-    }
+    if (isParam && isArray(t)) t = pointerTo(t->elem);
     return t;
 }
 
@@ -787,10 +751,6 @@ Lookup SymbolTable::lookup(const std::string &name) const {
             out.scopeId = s.id;
             return out;
         }
-        if (s.kind == ScopeKind::Lambda && !out.crossedLambda) {
-            out.crossedLambda = true;
-            out.lambdaScopeId = s.id;
-        }
     }
     return out;
 }
@@ -819,7 +779,6 @@ std::string symbolKindName(SymbolKind k) {
         case SymbolKind::Function: return "function";
         case SymbolKind::Field: return "field";
         case SymbolKind::Typedef: return "typedef";
-        case SymbolKind::EnumConstant: return "enum_constant";
         case SymbolKind::Label: return "label";
         case SymbolKind::Tag: return "tag";
     }
@@ -842,7 +801,6 @@ std::string storageName(Storage s) {
 
 static std::string kindLabel(const Symbol &s) {
     if (s.kind == SymbolKind::Tag) {
-        if (s.enumInfo) return "enum_tag";
         return s.record ? recordKindName(s.record->kind) + "_tag" : "tag";
     }
     if (s.kind == SymbolKind::Function) {
@@ -855,7 +813,6 @@ static std::string kindLabel(const Symbol &s) {
 
 static std::string typeLabel(const Symbol &s) {
     if (s.kind == SymbolKind::Tag) {
-        if (s.enumInfo) return "enum " + s.name;
         if (s.record) return recordKindName(s.record->kind) + " " + s.name + (s.record->complete ? "" : " (incomplete)");
     }
     if (s.kind == SymbolKind::Label) return "-";
@@ -868,8 +825,7 @@ static std::string notes(const Symbol &s) {
     if (s.ownerRecord) add(accessName(s.access));
     if (s.isStatic) add("static");
     if (s.kind == SymbolKind::Function && !s.isConstructor && !s.isDestructor) add(s.isDefined ? "defined" : "declared only");
-    if (s.kind == SymbolKind::EnumConstant || s.isConstant) add("value " + std::to_string(s.constValue));
-    if (s.anonymousUnion) add("in " + s.anonymousUnion->uniqueName);
+    if (s.isConstant) add("value " + std::to_string(s.constValue));
     if (s.kind == SymbolKind::Variable && s.storage == Storage::Global && !s.isDefined) add("extern, not defined here");
     if (s.isRegister) add("register");
     if (s.offset >= 0) add("offset " + std::to_string(s.offset));

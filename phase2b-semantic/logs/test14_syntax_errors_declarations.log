@@ -2,49 +2,49 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : ../phase2-parser/test/test14_syntax_errors_declarations.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c
 
 Syntax analysis failed: 10 error(s); semantic analysis was not run.
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:21:1: syntax error: syntax error, unexpected INT, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:21:1: syntax error: syntax error, unexpected INT, expecting ';'
  21 | int b;
     | ^
     | note: insert ';' here
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:37:9: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:37:9: syntax error: syntax error, unexpected ';'
  37 | int c = ;
     |         ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:42:1: syntax error: syntax error, unexpected IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:42:1: syntax error: syntax error, unexpected IDENTIFIER
  42 | Whatsit d;
     | ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:46:8: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:46:8: syntax error: syntax error, unexpected ';'
  46 | int e, ;
     |        ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:56:23: syntax error: syntax error, unexpected ';', expecting '}' or ','
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:56:23: syntax error: syntax error, unexpected ';', expecting '}' or ','
  56 | int arr1[3] = {1, 2, 3;
     |                       ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:60:19: syntax error: syntax error, unexpected ','
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:60:19: syntax error: syntax error, unexpected ','
  60 | int arr2[3] = {1, , 3};
     |                   ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:65:1: syntax error: syntax error, unexpected IDENTIFIER
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:65:1: syntax error: syntax error, unexpected IDENTIFIER
  65 | global_undeclared_but_thats_not_the_point = 2;
     | ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:70:15: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:70:15: syntax error: syntax error, unexpected ';'
  70 |     int *p = &;
     |               ^
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:74:15: syntax error: syntax error, unexpected ';', expecting ']'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:74:15: syntax error: syntax error, unexpected ';', expecting ']'
  74 |     int m[2][3;
     |               ^
     | note: insert ']' here
 
-../phase2-parser/test/test14_syntax_errors_declarations.c:78:18: syntax error: syntax error, unexpected ';', expecting ')'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test14_syntax_errors_declarations.c:78:18: syntax error: syntax error, unexpected ';', expecting ')'
  78 |     int y = (int ;
     |                  ^
     | note: insert ')' here

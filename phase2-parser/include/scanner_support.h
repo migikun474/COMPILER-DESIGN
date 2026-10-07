@@ -25,19 +25,16 @@ bool inDeclaratorListAt(int bracketDepth);
 extern int g_bracketDepth; /* ( [ { nesting, maintained by the scanner */
 
 /* Bounded lookahead over the source text (g_sourceLines), used by the
-   scanner for two decisions LALR(1) cannot make from one token. Lines
+   scanner for decisions LALR(1) cannot make from one token. Lines
    and columns are 1-based; (line, column) is where to start looking.
      parenGroupIsExpression: at `T (...)` with T a type -- true when the
        parenthesized part cannot be a declarator, so `T(...)` must be an
-       expression (`Dog(4)`, `Dog()`, `Dog(a).x`, `int(x) + 1`).
-     bracketIsDesignator: at `[ ... ]` -- true when `=` follows the
-       matching ']' (`[i] = v` in an initializer list, not a lambda). */
+       expression (`Dog(4)`, `Dog()`, `Dog(a).x`, `int(x) + 1`). */
 bool parenGroupIsExpression(int line, int column);
-bool bracketIsDesignator(int line, int column);
 /*   abstractDeclaratorGroup: at the inside of a `(` that follows a type
        -- true when the group holds only `*`, `&`, `const`, `volatile`,
        `[n]` and nested parentheses, i.e. `(*)`, `(**)`, `(&)`: a nameless
-       declarator (`(int (*)(int)) f`), never a functional cast. */
+       declarator (`sizeof(int (*)[3])`), never a functional cast. */
 bool abstractDeclaratorGroup(int line, int column);
 
 #endif

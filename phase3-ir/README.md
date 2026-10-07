@@ -1,40 +1,213 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
-> **Status: not started.** This folder contains only this README. There
-> is no TAC data structure, no generator, no interpreter and no build
-> file anywhere in the repository; the compiler stops after semantic
-> analysis.
+> Status: **implemented and tested** — a TAC generator and a TAC
+> interpreter. 13 test programs are generated, executed, and compared
+> with gcc/g++ (`./run_tests.sh`: 13 passed). Optimization is the next
+> step and is not started.
 
-## What exists today that this phase will use
+The format follows the course slides (Lectures 25–27) and Dragon Book
+chapter 6. Every choice between two valid forms was put to the user;
+the decisions and their reasons are in
+[`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md) (D8–D17).
 
-The semantic phase ([`../phase2b-semantic`](../phase2b-semantic/README.md))
-already produces everything a TAC generator needs to read; none of it is
-consumed yet:
+## Usage
 
-| Available | Where |
+```bash
+make
+```
+
+```bash
+./tac_generator file.c
+```
+
+Prints the TAC and writes it to `logs/file.tac`. Lexical, syntax or
+semantic errors are reported exactly as in the earlier phases and no
+code is generated.
+
+```bash
+./tac_generator --run file.c arg1 arg2
+```
+
+Prints the TAC, then executes it with the interpreter (`-q` after
+`--run` prints only what the program itself prints). The program's
+`scanf` reads standard input; its exit code becomes the exit code of
+`tac_generator`; the number of executed instructions goes to stderr.
+
+## What the output looks like
+
+```c
+int main() {
+    int a, b = 2, c = 3, x, y, i = 1, arr[10];
+    a = b * -c + b * -c;
+    while (a < b) a = a + 1;
+    y = a < b;
+    x = arr[i];
+    return y;
+}
+```
+
+```
+function main()        link name: main
+  symbol table (name, kind, type, width, offset)
+    a              local  int                        4      0
+    ...
+    t1             temp   int                        4     64
+    ...
+    total width 100
+  code
+ 100:     b = 2
+ 101:     c = 3
+ 102:     i = 1
+ 103:     t1 = int- c
+ 104:     t2 = b int* t1
+ 105:     t3 = int- c
+ 106:     t4 = b int* t3
+ 107:     t5 = t2 int+ t4
+ 108:     a = t5
+ 109: L1: if a int< b goto L2
+ 110:     goto L3
+ 111: L2: t6 = a int+ 1
+ 112:     a = t6
+ 113:     goto L1
+ 114: L3: if a int< b goto L4
+ 115:     t7 = 0
+ 116:     goto L5
+ 117: L4: t7 = 1
+ 118: L5: y = t7
+ 119:     t8 = i int* 4                       (w = 4)
+ 120:     t9 = arr[t8]
+ 121:     x = t9
+ 122:     return y
+```
+
+The full listing for the slides' examples is
+[`test/expected/t12_lecture_examples.tac`](test/expected/t12_lecture_examples.tac).
+
+## Instruction set
+
+Quadruples `(op, arg1, arg2, result)` in one numbered array per
+function (numbering runs through the program from 100).
+
+| Form | Meaning |
 |---|---|
-| The annotated AST: each expression's type (`semType`), lvalue-ness, folded constant, resolved symbol | `ASTNode` fields, set by `sem::SemanticAnalyzer` |
-| A persistent symbol table with a collision-free `uniqueName` per symbol (`x.4`, `_Z3addii`), storage class, and each function's `params` and `locals` | `sem::SymbolTable` — [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md) |
-| MIPS32 sizes, alignments and record field offsets | `sizeOf()`, `alignOf()`, `layoutRecord()` in `../shared/types` |
-| Conversion rules to insert explicit conversions | `usualArithmetic()`, `integerPromotion()`, `implicitConversion()`, `decay()` |
-| Constant arithmetic with the target's widths | `wrapToType()`, `fitsInType()` |
+| `x = y` | copy (a struct is copied whole) |
+| `x = y <type><op> z` | `+ - * / % & \| ^ << >>` on `int`, `uint`, `llong`, `ullong`, `float`, `double`, `ptr` |
+| `x = <type>- y`, `x = <type>~ y` | unary minus, bitwise not |
+| `x = <from>to<to> y` | conversion: `inttodouble`, `chartoint`, `doubletoint`, … |
+| `goto L` | jump |
+| `if x <type><relop> y goto L` | conditional jump, `== != < > <= >=` |
+| `x = y[z]`, `y[z] = x` | load / store at byte offset `z` from the object `y` |
+| `x = &y`, `x = *y`, `*x = y` | address, load and store through a pointer |
+| `param x`, `call f, n`, `x = call f, n` | arguments left to right, then the call |
+| `return`, `return x` | |
+| `va_start ap, last`, `x = va_arg ap, type`, `va_end ap` | variable arguments |
 
-See ["What the IR phase gets"](../phase2b-semantic/README.md#what-the-ir-phase-gets).
+Every instruction that is a jump target gets a label (`L1`, `L2` …,
+unique in the program); the instruction number stays visible.
 
-## Planned work (not implemented)
+## How the slides map to the code
 
-The agreed order for the back end:
+| Slides | Here |
+|---|---|
+| `E.place`, `E.code` | the `Operand` returned by `rvalue()` / the quads it appends |
+| `newtmp()`, `emit()` / `gen()` | `newTemp()`, `emit()` |
+| `E.true`, `E.false`, `S.next` | backpatch lists: the two filled by `cond()`, the one returned by `stmt()` |
+| `makelist`, `merge`, `backpatch` | the same names in `Generator` |
+| `mktable`, `enter`, `addwidth` (Lecture 25) | `buildFrame()`: each function's table of names with type, width, offset |
+| `base + i × w`, `((i1 × n2) + i2) × w` (Lecture 26) | `indexLValue()` |
+| `int +`, `real +`, `inttoreal` (Lecture 26) | the type on every operator, `convert()` |
+| relop as a value: `if … goto +3; t = 0; goto +2; t = 1` (Lecture 27) | `boolValue()` |
+| short-circuit `or` / `and` / `not` (Lecture 27) | `cond()` |
 
-1. **TAC generation** — lower the annotated AST into quadruples
-   (`t1 = a + b`, `if t1 goto L`, `param x`, `call f, n`, indexed and
-   pointer loads/stores); explicit conversions; short-circuit `&&`/`||`;
-   `switch`; calls, constructors and destructors at scope exit.
-2. **A TAC interpreter**, used as the correctness check for generated
-   and optimized code.
-3. **Local optimizations** on basic blocks: constant folding, algebraic
-   simplification, copy propagation, common-subexpression elimination,
-   dead-code removal.
-4. Later: global data-flow and loop optimizations.
+## Source layout
 
-Open design questions: closure conversion for lambdas, how `this` is
-passed to methods, `long long` on a 32-bit target.
+| File | Contents |
+|---|---|
+| [`include/tac.h`](include/tac.h), [`src/tac.cpp`](src/tac.cpp) | `Operand`, `Quad`, `Function`, `Program`; the listing printer |
+| [`include/irgen.h`](include/irgen.h) | the `Generator` class |
+| [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors, `new` / `delete` |
+| [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, destructors at scope exit, local and static initializers, functions, frame tables |
+| [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
+| [`src/main.cpp`](src/main.cpp) | driver: phases 2 and 2b (compiled in unchanged), then generation and `--run` |
+
+The generator walks the AST that semantic analysis annotated: it reads
+each node's `semType`, `symbol` and constant value and never re-derives
+a type or an overload.
+
+## How language features are lowered
+
+| Feature | TAC |
+|---|---|
+| `if`, `while`, `for`, `do`, `until`, `?:`, `&&`, `\|\|`, `!` | jumping code with backpatching |
+| `switch` | subject in a temporary, body, then a chain of `if t == v goto Lcase` and a `goto` to the default |
+| `break`, `continue`, `goto` | `goto`, after the destructors of the blocks being left |
+| arrays, `struct` fields | `x = a[offset]`, offset from the slides' formula or the field's layout offset |
+| pointers, `p->f`, `p[i]` | `ptr+` and `*` |
+| references | hold an address: `r = &x`, a use is `*r` |
+| member functions | `this` is a hidden first parameter; fields are `this ptr+ offset` |
+| inheritance | base sub-object offset added to `this` and to converted pointers |
+| constructors, destructors | calls with the object's address; bases and members first in a constructor, last (reversed) in a destructor; locals destroyed at scope exit |
+| operator overloading | a call to `operator<op>` |
+| `new`, `delete` | `malloc` / `free` plus the constructor / destructor call |
+| `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
+| variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
+| globals, `static` locals | data in the `globals` table; class objects among them are constructed when `main` starts |
+
+## The interpreter
+
+`src/interp.cpp` executes a `tac::Program` with the MIPS32 data model:
+byte-addressed memory, 4-byte `int` and pointers, each function's
+frame laid out by its symbol table. It implements the built-ins
+(`printf` formats, `scanf`, the allocation functions), reports run-time
+errors (null or out-of-range access, division by zero, a 500-million
+instruction limit) and counts executed instructions — the number the
+optimizer will later be measured by.
+
+## Tests
+
+```bash
+./run_tests.sh
+```
+
+Each `test/tNN_*.c` is generated and executed; what it prints and its
+exit code must equal `test/expected/<name>.out`. The programs are also
+valid C or C++, and every expected file was checked to be identical to
+the output of the same source compiled with gcc/g++.
+`t12_lecture_examples` additionally compares the TAC listing itself.
+
+| Test | Covers |
+|---|---|
+| `t01_expressions` | arithmetic, conversions, unsigned, `long long`, bitwise, compound assignment, `++`/`--`, comma, `?:`, casts |
+| `t02_control_flow` | `if`, loops, `until`, `switch` with fall-through, `break`, `continue`, `goto` |
+| `t03_booleans` | short circuit with side effects, comparisons as values, `!` |
+| `t04_arrays` | 1-D to 3-D arrays, initializers, designators, strings, array parameters |
+| `t05_pointers` | multi-level pointers, pointer arithmetic, `void *`, pointer to array |
+| `t06_structs` | nesting, copies, by-value parameters and results, anonymous members |
+| `t07_functions` | recursion, overloading, references, varargs, `static` locals, forward calls |
+| `t08_classes` | constructor / destructor order, inheritance, static members, operators, `new` / `delete` |
+| `t09_memory` | `malloc` family, `new[]`, a linked list |
+| `t10_io` | `printf` formats, `scanf` (input in `t10_io.in`) |
+| `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
+| `t12_lecture_examples` | the slides' examples, with the expected listing |
+| `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on, `delete` of null |
+
+## Limitations
+
+- The output is deliberately unoptimized (decision D16): jumps to the
+  next instruction and constant arithmetic are left for the optimizer.
+- Unnamed temporaries of class type and by-value class parameters are
+  not destroyed; static objects are not destroyed at program exit;
+  `delete[]` does not call element destructors.
+- `static` locals of class type are constructed at program start, not
+  on first use.
+- A `goto` into a block past a declaration with a constructor is not
+  diagnosed.
+- The interpreter's `free` does not reuse memory.
+- A static initializer the generator cannot evaluate at compile time
+  is reported as a code generation error (no code is produced).
+
+## Next
+
+Basic blocks and a control-flow graph, then the local optimizations
+(`-O1`), checked by running optimized and unoptimized TAC through the
+interpreter.

@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-enum Color { RED, GREEN };
 struct Point { int x; int y; };
-union U { int a; float b; };
 
 class Dog {
 public:
@@ -34,7 +32,6 @@ void Cat::meow(Cat *other, struct Point *where) { }       // mangled: _ZN3Cat4me
 
 typedef unsigned int uint;
 typedef struct Point Pt;
-typedef int (*BinOp)(int, int);
 typedef int *IntPtr;
 
 /* builtin types */
@@ -46,21 +43,16 @@ void f4(float a, double b, bool c) { }                    // mangled: _Z2f4fdb
 /* pointers, const, substitutions; top-level const is not part of the signature */
 void f5(int *a, int **b, const int *c, int *const d, const char *e, const char *f) { } // mangled: _Z2f5PiPS_PKiS_PKcS4_
 void f6(struct Point a, struct Point *b, struct Point &c, const struct Point &d) { } // mangled: _Z2f65PointPS_RS_RKS_
-void f7(enum Color a, union U b) { }                      // mangled: _Z2f75Color1U
 void f8(Dog a, Dog *b, Dog &c) { }                        // mangled: _Z2f83DogPS_RS_
 /* typedefs mangle as what they name */
 void f9(uint a, Pt b) { }                                 // mangled: _Z2f9j5Point
-void f10(BinOp op) { }                                    // mangled: _Z3f10PFiiiE
 void f25(IntPtr a, IntPtr b) { }                          // mangled: _Z3f25PiS_
-/* function pointers, decayed arrays, pointer to array */
-void f11(int (*g)(int), void (*h)(void)) { }              // mangled: _Z3f11PFiiEPFvvE
+/* decayed arrays, pointer to array */
 void f12(int a[], char *argv[]) { }                       // mangled: _Z3f12PiPPc
 void f13(int (*p)[3]) { }                                 // mangled: _Z3f13PA3_i
 void f26(int a[][4]) { }                                  // mangled: _Z3f26PA4_i
-int f20(int (*g)(int), int (*h)(int)) { return 0; }       // mangled: _Z3f20PFiiES0_
-/* variadic, FILE, references, volatile, void pointers */
+/* variadic, references, volatile, void pointers */
 void f14(const char *fmt, ...) { }                        // mangled: _Z3f14PKcz
-void f15(FILE *fp) { }                                    // mangled: _Z3f15P8_IO_FILE
 void f17(int &a, int &b) { }                              // mangled: _Z3f17RiS_
 void f18(struct Point *a, struct Point *b, struct Point c) { } // mangled: _Z3f18P5PointS0_S_
 void f19(const struct Point *a, const struct Point *b) { } // mangled: _Z3f19PK5PointS1_
@@ -71,7 +63,6 @@ struct Point operator+(struct Point a, struct Point b) { return a; } // mangled:
 int over(int a) { return a; }                             // mangled: _Z4overi
 int over(double a) { return 0; }                          // mangled: _Z4overd
 int over(struct Point *p) { return 0; }                   // mangled: _Z4overP5Point
-int over(union U *p) { return 0; }                        // mangled: _Z4overP1U
 
 int main() {                                              // mangled: main
     Dog d(3);

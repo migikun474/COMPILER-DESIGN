@@ -1,7 +1,7 @@
 /* Expression type checking: every rule synthesizes the node's type
    (semType), whether it designates an object (isLValue) and, for integer
    constant expressions, its value (constValue) -- needed for case labels,
-   array sizes, enumerators and static initializers. */
+   array sizes and static initializers. */
 #include <algorithm>
 #include <cctype>
 #include <climits>
@@ -140,8 +140,7 @@ bool SemanticAnalyzer::convertible(const TypePtr &target, const ASTNodePtr &e, c
 void SemanticAnalyzer::checkConstantConversion(const TypePtr &targetIn, const ASTNodePtr &e) {
     TypePtr from = e->semType ? unqualified(decay(e->semType)) : nullptr;
     TypePtr target = unqualified(targetIn);
-    if (!e->hasConstValue || !from || !isIntegral(from) || !isIntegral(target) || target->kind == TypeKind::Bool ||
-        target->kind == TypeKind::Enum)
+    if (!e->hasConstValue || !from || !isIntegral(from) || !isIntegral(target) || target->kind == TypeKind::Bool)
         return;
     long long v = wrapToType(e->constValue, from);
     if (fitsInType(v, from, target)) return;
@@ -158,7 +157,7 @@ void SemanticAnalyzer::checkConstantConversion(const TypePtr &targetIn, const AS
 }
 
 /* A record is a modifiable lvalue only if all its members are (C11
-   6.3.2.1; Papaspyrou's isModifiable for struct/union types): the first
+   6.3.2.1; Papaspyrou's isModifiable for struct types): the first
    const-qualified data member reached through fields, arrays, nested
    records and base classes, as "id" or "inner.id"; "" if there is none. */
 static std::string constMemberPath(const RecordInfo *r, int depth = 0) {
@@ -198,10 +197,6 @@ bool SemanticAnalyzer::checkModifiable(const ASTNodePtr &n, const std::string &w
     }
     if (isFunction(t)) {
         error(n.get(), "a function is not assignable", "lvalue");
-        return false;
-    }
-    if (byCopyCaptureUses.count(n.get())) {
-        error(n.get(), "cannot modify '" + n->label + "': it is captured by copy in a non-mutable lambda", "const");
         return false;
     }
     if (t->isConst) {
@@ -323,10 +318,6 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
                       "this");
                 t = errorType();
             } else {
-                if (f && f->isLambda && !isLambdaThisCaptured(f)) {
-                    error(n.get(), "'this' is not captured by this lambda (capture it with [this], [=] or [&])",
-                          "capture");
-                }
                 t = pointerTo(recordType(cls->shared_from_this()));
             }
             break;
@@ -380,7 +371,7 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
         case ASTKind::ConstructExpr: t = constructExpr(n); break;
         case ASTKind::DeleteExpr: {
             TypePtr vt = value(n->children[0]);
-            if (!isError(vt) && (!isPointer(vt) || isFunction(vt->elem))) {
+            if (!isError(vt) && !isPointer(vt)) {
                 error(n.get(), "cannot " + std::string(n->label == "[]" ? "delete[]" : "delete") +
                                    " an expression of type " + q(vt) + " (a pointer is required)",
                       "delete");
@@ -388,7 +379,6 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
             t = voidType();
             break;
         }
-        case ASTKind::LambdaExpr: t = lambda(n); break;
         case ASTKind::TypeNameNode:
             error(n.get(), "unexpected type name '" + n->label + "' where an expression was expected", "type-as-value");
             t = errorType();
@@ -431,24 +421,20 @@ TypePtr SemanticAnalyzer::identifier(const ASTNodePtr &n) {
         case SymbolKind::Label:
             error(n.get(), "unexpected type name '" + name + "' where an expression was expected", "type-as-value");
             return errorType();
-        case SymbolKind::EnumConstant:
-            sym->useCount++;
-            setConst(n, sym->constValue);
-            return intType();
-        case SymbolKind::Function: {
-            if (l.symbols.size() > 1) {
-                error(n.get(), "reference to overloaded function '" + name +
-                                   "' is ambiguous here (call it, so its arguments select an overload)",
-                      "ambiguous-overload");
-                return errorType();
+        case SymbolKind::Function:
+            /* a callee never comes through here (call() resolves it), so
+               this is a function name used as a value -- and the language
+               has no function pointers for it to decay to */
+            if (l.viaRecord && sym->isMethod) {
+                error(n.get(), "reference to " + std::string(sym->isStatic ? "static" : "non-static") +
+                                   " member function '" + name + "' must be called",
+                      "member-access");
+            } else {
+                error(n.get(), "reference to function '" + name +
+                                   "' must be called (a function is not a value: function pointers are not supported)",
+                      "function-value");
             }
-            if (l.viaRecord && sym->isMethod && !sym->isStatic) {
-                error(n.get(), "reference to non-static member function '" + name + "' must be called", "member-access");
-                return errorType();
-            }
-            sym->useCount++;
-            return sym->type;
-        }
+            return errorType();
         default:
             break;
     }
@@ -460,34 +446,12 @@ TypePtr SemanticAnalyzer::identifier(const ASTNodePtr &n) {
             error(n.get(), "invalid use of non-static member '" + name + "' in a static member function", "this");
             return errorType();
         }
-        if (f && f->isLambda && !isLambdaThisCaptured(f) && sym->storage == Storage::Member) {
-            error(n.get(), "member '" + name + "' needs 'this', which this lambda does not capture ([this], [=] or [&])",
-                  "capture");
-        }
         checkAccess(l.member, currentClass(), name, n.get());
-    }
-    bool byCopy = false;
-    if (l.crossedLambda && (sym->storage == Storage::Local || sym->storage == Storage::Param)) {
-        for (auto &ctx : fns) {
-            if (!ctx.isLambda || ctx.lambdaScope != l.lambdaScopeId) continue;
-            auto cap = ctx.captures.find(name);
-            if (cap == ctx.captures.end() && !ctx.defaultCapture) {
-                error(n.get(), "variable '" + name +
-                                   "' cannot be used in the lambda: it is not captured and the lambda has no capture-default",
-                      "capture");
-            } else {
-                byCopy = (cap != ctx.captures.end() ? !cap->second.byRef : ctx.defaultCapture == '=') && !ctx.isMutable;
-            }
-        }
     }
     sym->useCount++;
     if (!unevaluated) sym->evaluatedUses++;
     TypePtr t = sym->type;
     if (isReference(t)) t = t->elem;
-    if (byCopy) {
-        byCopyCaptureUses.insert(n.get());
-        t = qualified(t, true, false);
-    }
     n->isLValue = true;
     if (sym->isConstant) setConst(n, sym->constValue);
     return t;
@@ -610,7 +574,6 @@ TypePtr SemanticAnalyzer::binary(const ASTNodePtr &n) {
     auto pointeeUsable = [&](const TypePtr &p) {
         const TypePtr &e = p->elem;
         if (isVoid(e)) return error(n.get(), "arithmetic on a pointer to void (" + q(p) + ")", "invalid-operands"), false;
-        if (isFunction(e)) return error(n.get(), "arithmetic on a pointer to a function (" + q(p) + ")", "invalid-operands"), false;
         if (!isComplete(e)) return error(n.get(), "arithmetic on a pointer to incomplete type " + q(e), "invalid-operands"), false;
         return true;
     };
@@ -701,7 +664,6 @@ TypePtr SemanticAnalyzer::unary(const ASTNodePtr &n) {
         TypePtr overloaded;
         if (overloadedOperator(n, "&", {c}, overloaded)) return overloaded;
         if (isError(ot)) return errorType();
-        if (isFunction(ot)) return pointerTo(ot);
         if (!c->isLValue) {
             error(n.get(), "cannot take the address of an rvalue of type " + q(ot), "address-of");
             return errorType();
@@ -725,11 +687,11 @@ TypePtr SemanticAnalyzer::unary(const ASTNodePtr &n) {
             error(n.get(), "cannot dereference a " + q(vt) + " pointer (cast it to a typed pointer first)", "dereference");
             return errorType();
         }
-        if (!isFunction(vt->elem) && !isComplete(vt->elem) && !isArray(vt->elem)) {
+        if (!isComplete(vt->elem) && !isArray(vt->elem)) {
             error(n.get(), "cannot dereference a pointer to incomplete type " + q(vt->elem), "dereference");
             return errorType();
         }
-        n->isLValue = !isFunction(vt->elem);
+        n->isLValue = true;
         return vt->elem;
     }
     TypePtr vt = value(c);
@@ -837,7 +799,6 @@ TypePtr SemanticAnalyzer::ternary(const ASTNodePtr &n) {
         else if (isRecord(a->elem) && isRecord(b->elem) && isDerivedFrom(b->elem->record.get(), a->elem->record.get())) t = a;
     } else if (isPointer(a) && isNullPointerConstant(B)) t = a;
     else if (isPointer(b) && isNullPointerConstant(A)) t = b;
-    else if (isClosure(a) && sameType(a, b)) t = a;
     if (!t) {
         error(n.get(), "incompatible operand types in conditional expression (" + q(a) + " and " + q(b) + ")",
               "type-mismatch");
@@ -870,8 +831,8 @@ TypePtr SemanticAnalyzer::index(const ASTNodePtr &n) {
         error(idxNode, "array subscript is not an integer (it has type " + q(idx) + ")", "subscript");
         return errorType();
     }
-    if (isVoid(ptr->elem) || isFunction(ptr->elem) || !isComplete(ptr->elem)) {
-        error(n.get(), "subscript of a pointer to " + std::string(isVoid(ptr->elem) ? "void" : isFunction(ptr->elem) ? "a function" : "an incomplete type") +
+    if (isVoid(ptr->elem) || !isComplete(ptr->elem)) {
+        error(n.get(), "subscript of a pointer to " + std::string(isVoid(ptr->elem) ? "void" : "an incomplete type") +
                            " (" + q(ptr) + ")",
               "subscript");
         return errorType();
@@ -962,7 +923,7 @@ TypePtr SemanticAnalyzer::member(const ASTNodePtr &n, bool arrow, bool calleePos
             error(n.get(), "member reference type " + q(bt) + " is a pointer; did you mean to use '->'?", "member-access");
         } else {
             error(n.get(), "member reference base type " + q(bt) + " is not a " +
-                               std::string(arrow ? "pointer to a struct, union or class" : "struct, union or class"),
+                               std::string(arrow ? "pointer to a struct or class" : "struct or class"),
                   "member-access");
         }
         return errorType();
@@ -1010,7 +971,7 @@ TypePtr SemanticAnalyzer::scopeMember(const ASTNodePtr &n) {
     }
     SymbolPtr tag = st.lookupTag(base->label);
     if (!tag || !tag->record) {
-        error(base.get(), "'" + base->label + "' is not a class, struct or union", "scope");
+        error(base.get(), "'" + base->label + "' is not a class or struct", "scope");
         return errorType();
     }
     RecordInfo *rec = tag->record.get();
@@ -1205,10 +1166,6 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
                     error(callee.get(), "call to non-static member function '" + name +
                                             "' from a static member function (there is no object)",
                           "this");
-                } else if (!chosen->isStatic && f && f->isLambda && !f->defaultCapture) {
-                    error(callee.get(), "calling member function '" + name +
-                                            "' needs 'this', which a lambda with no capture-default does not capture",
-                          "capture");
                 }
             }
             return finish(chosen, name);
@@ -1226,7 +1183,7 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
             MemberLookup ml = lookupMember(rec, callee->label);
             return finish(resolveOverload(callee->label, ml.symbols, args, callee.get()), callee->label);
         }
-        /* a field holding a function pointer or a lambda: called below */
+        /* a data member: callable only if its class has operator() */
     } else if (callee->kind == ASTKind::ScopeExpr && callee->children[0]->kind == ASTKind::Identifier &&
                st.lookupTag(callee->children[0]->label) && st.lookupTag(callee->children[0]->label)->record &&
                [&] {
@@ -1249,7 +1206,7 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
         t = expr(callee);
     }
 
-    /* calling through a value: function pointer, lambda, `(*fp)(...)` */
+    /* calling a value: only a function object (a class with operator()) */
     callee->semType = t;
     if (isError(t)) return errorType();
     TypePtr vt = decay(t);
@@ -1262,13 +1219,11 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
         TypePtr overloaded;
         if (overloadedOperator(n, "()", operands, overloaded)) return overloaded;
     }
-    if (isFunctionPointer(vt)) return checkCallArgs(vt->elem, name, args, n.get());
-    if (isClosure(vt)) return checkCallArgs(functionType(vt->ret, vt->params, false), name, args, n.get());
-    error(callee.get(), "called object of type " + q(t) + " is not a function, function pointer or lambda", "not-callable");
+    error(callee.get(), "called object of type " + q(t) + " is not a function", "not-callable");
     return errorType();
 }
 
-/* ---------------- printf / scanf / memory / file builtins ---------------- */
+/* ---------------- printf / scanf / memory builtins ---------------- */
 
 namespace {
 struct Builtin {
@@ -1282,10 +1237,7 @@ struct Builtin {
 const Builtin *builtinFor(const std::string &name) {
     static std::map<std::string, Builtin> table = [] {
         TypePtr cstr = pointerTo(qualified(charType(), true, false));
-        TypePtr str = pointerTo(charType());
         TypePtr vp = pointerTo(voidType());
-        TypePtr cvp = pointerTo(qualified(voidType(), true, false));
-        TypePtr file = pointerTo(opaqueType("FILE"));
         TypePtr i = intType();
         std::map<std::string, Builtin> m;
         m["printf"] = {i, {cstr}, true, 0, false};
@@ -1294,15 +1246,6 @@ const Builtin *builtinFor(const std::string &name) {
         m["calloc"] = {vp, {i, i}, false, -1, false};
         m["realloc"] = {vp, {vp, i}, false, -1, false};
         m["free"] = {voidType(), {vp}, false, -1, false};
-        m["fopen"] = {file, {cstr, cstr}, false, -1, false};
-        m["fclose"] = {i, {file}, false, -1, false};
-        m["fread"] = {i, {vp, i, i, file}, false, -1, false};
-        m["fwrite"] = {i, {cvp, i, i, file}, false, -1, false};
-        m["fprintf"] = {i, {file, cstr}, true, 1, false};
-        m["fscanf"] = {i, {file, cstr}, true, 1, true};
-        m["fgets"] = {str, {str, i, file}, false, -1, false};
-        m["fputs"] = {i, {cstr, file}, false, -1, false};
-        m["feof"] = {i, {file}, false, -1, false};
         return m;
     }();
     auto it = table.find(name);
@@ -1322,7 +1265,7 @@ TypePtr SemanticAnalyzer::builtinCall(const ASTNodePtr &n) {
         for (size_t i = b->params.size(); i < args.size(); ++i) {
             TypePtr t = decay(args[i]->semType);
             if (isError(t)) continue;
-            if (!isPointer(t) || isFunction(t->elem)) {
+            if (!isPointer(t)) {
                 error(args[i].get(), "argument " + std::to_string(i + 1) + " of '" + n->label +
                                          "' must be a pointer to the object to store into, not " + q(t) +
                                          " (did you forget '&'?)",
@@ -1433,7 +1376,7 @@ void SemanticAnalyzer::checkFormat(const std::string &fnName, const std::vector<
             TypePtr e = unqualified(t->elem);
             if (std::strchr("diouxXn", c)) {
                 TypeKind want = lengthKind(cv.len, false);
-                TypePtr norm = e->kind == TypeKind::Enum ? intType() : e;
+                TypePtr norm = e;
                 if (!isIntegral(norm) || norm->kind != want || norm->kind == TypeKind::Bool)
                     complain("'" + kindName(want) + " *'");
             } else if (std::strchr("eEfFgGaA", c)) {
@@ -1453,7 +1396,7 @@ void SemanticAnalyzer::checkFormat(const std::string &fnName, const std::vector<
             }
             if (c == '*' || c == 'c') continue;
             TypeKind want = lengthKind(cv.len, true);
-            TypeKind have = p->kind == TypeKind::Enum ? TypeKind::Int : p->kind;
+            TypeKind have = p->kind;
             if (have != want) complain("'" + kindName(want) + "'");
         } else if (std::strchr("eEfFgGaA", c)) {
             if (!isFloating(t)) complain("a floating-point value ('double')");
@@ -1463,120 +1406,6 @@ void SemanticAnalyzer::checkFormat(const std::string &fnName, const std::vector<
             complain("a pointer");
         }
     }
-}
-
-/* ---------------- lambdas ---------------- */
-
-TypePtr SemanticAnalyzer::lambda(const ASTNodePtr &n) {
-    FunctionCtx ctx;
-    ctx.isLambda = true;
-    ctx.name = "lambda";
-    ctx.cls = nullptr;
-
-    /* capture list, as the parser spelled it: "x, &y" / "&" / "=" */
-    std::string caps = n->label;
-    std::vector<std::string> items;
-    for (size_t start = 0; start < caps.size();) {
-        size_t comma = caps.find(',', start);
-        std::string item = caps.substr(start, comma == std::string::npos ? std::string::npos : comma - start);
-        item.erase(0, item.find_first_not_of(' '));
-        item.erase(item.find_last_not_of(' ') + 1);
-        if (!item.empty()) items.push_back(item);
-        if (comma == std::string::npos) break;
-        start = comma + 1;
-    }
-    for (const auto &item : items) {
-        if (item == "&" || item == "=") {
-            if (ctx.defaultCapture) error(n.get(), "a lambda can have only one capture-default", "capture");
-            ctx.defaultCapture = item[0];
-            continue;
-        }
-        if (item == "this") {
-            RecordInfo *cls = currentClass();
-            FunctionCtx *outer = fn();
-            if (!cls || (outer && outer->isStaticMethod)) {
-                error(n.get(), "'this' cannot be captured outside a non-static member function", "capture");
-            } else if (ctx.capturesThis) {
-                error(n.get(), "'this' can appear only once in a capture list", "capture");
-            }
-            ctx.capturesThis = true;
-            continue;
-        }
-        bool byRef = item[0] == '&';
-        std::string name = byRef ? item.substr(1) : item;
-        if (ctx.captures.count(name)) {
-            error(n.get(), "'" + name + "' can appear only once in a capture list", "capture");
-            continue;
-        }
-        Lookup l = st.lookup(name);
-        if (l.symbols.empty()) {
-            error(n.get(), "undeclared identifier '" + name + "' in the capture list", "undeclared");
-            continue;
-        }
-        const SymbolPtr &s = l.symbols.front();
-        if (s->kind != SymbolKind::Variable && s->kind != SymbolKind::Parameter) {
-            error(n.get(), "'" + name + "' in the capture list does not name a variable", "capture");
-            continue;
-        }
-        if (l.viaRecord || (s->storage != Storage::Local && s->storage != Storage::Param)) {
-            error(n.get(), "'" + name + "' cannot be captured because it does not have automatic storage duration",
-                  "capture");
-            continue;
-        }
-        s->useCount++;
-        ctx.captures[name] = LambdaCapture{byRef};
-    }
-
-    int sid = st.enterScope(ScopeKind::Lambda, "lambda");
-    ctx.lambdaScope = sid;
-    if (n->typeExpr) {
-        ctx.isMutable = n->typeExpr->isMutable;
-        if (n->typeExpr->hasExplicitReturn) { /* `-> T`: returns are checked against T */
-            ASTTypeExpr retExpr = *n->typeExpr;
-            retExpr.isFunction = false;
-            retExpr.params.clear();
-            retExpr.isVariadic = false;
-            ctx.explicitReturn = true;
-            ctx.ret = resolveType(retExpr, n.get(), false).type;
-            if (!ctx.ret) ctx.ret = errorType();
-            ctx.name = "lambda";
-        }
-    }
-    std::vector<TypePtr> params =
-        n->typeExpr ? resolveParams(*n->typeExpr, n.get()) : std::vector<TypePtr>{};
-    std::vector<ASTNodePtr> paramNodes;
-    for (const auto &c : n->children) {
-        if (c->kind == ASTKind::ParamDecl) paramNodes.push_back(c);
-    }
-    size_t named = 0;
-    for (size_t i = 0; i < params.size(); ++i) {
-        ASTTypeExprPtr pte = n->typeExpr && i < n->typeExpr->params.size() ? n->typeExpr->params[i] : nullptr;
-        SymbolPtr ps = makeParamSymbol(pte, params[i], n.get());
-        if (ps->name.empty()) continue;
-        if (!st.lookupLocal(ps->name).empty()) {
-            error(ps->line, ps->column, "redefinition of parameter '" + ps->name + "'", "redeclaration");
-            continue;
-        }
-        st.declare(ps);
-        if (named < paramNodes.size()) {
-            paramNodes[named]->symbol = ps;
-            paramNodes[named]->semType = ps->type;
-            ++named;
-        }
-    }
-    ASTNodePtr body = n->children.empty() ? nullptr : n->children.back();
-    if (body && body->kind == ASTKind::CompoundStmt) {
-        collectLabels(body, ctx);
-        fns.push_back(ctx);
-        blockItems(body);
-        ctx = fns.back();
-        fns.pop_back();
-    }
-    st.exitScope();
-    TypePtr ret = ctx.explicitReturn ? ctx.ret : ctx.deducedRet ? ctx.deducedRet : voidType();
-    bool hasCaptures = !ctx.captures.empty() || ctx.defaultCapture || ctx.capturesThis;
-    return closureType(ret, params, hasCaptures,
-                       "lambda at line " + displayLine(n->line) + ":" + std::to_string(n->column));
 }
 
 } // namespace sem

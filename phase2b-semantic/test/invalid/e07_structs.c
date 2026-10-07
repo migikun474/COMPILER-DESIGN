@@ -13,7 +13,6 @@ struct Self {
     struct Self inner;            // error: field 'inner' has incomplete type 'struct Self'
 };
 
-union U { int i; };
 struct Other { int age; };
 
 int main() {
@@ -28,7 +27,5 @@ int main() {
     s = o;                        // error: cannot assign 'struct Other' to 'struct Student'
     s.age = "old";                // error: cannot assign 'char *' to 'int'
     struct Student t = {1, 'a', 3};   // error: excess elements in struct initializer
-    union U u = {1, 2};           // error: excess elements in union initializer
-    struct U wrong;               // error: tag type 'struct' that does not match its declaration as 'union'
     return s.age;
 }

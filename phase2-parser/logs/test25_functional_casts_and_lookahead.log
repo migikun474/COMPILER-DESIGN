@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test25_functional_casts_and_lookahead.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test25_functional_casts_and_lookahead.c
 
 No errors found.
 
@@ -17,15 +17,15 @@ typedef                        typedef
 int                            int                 
 U                              TYPEDEF             
 ;                              semicolon_op        
-enum                           enum                
-Slot                           ENUM                
-{                              open_brace_op       
-FIRST                          ENUM_CONSTANT       
+const                          const               
+int                            int                 
+FIRST                          INT                 
+=                              assign_op           
+0                              INT_LITERAL         
 ,                              comma_op            
-SECOND                         ENUM_CONSTANT       
-,                              comma_op            
-THIRD                          ENUM_CONSTANT       
-}                              close_brace_op      
+THIRD                          INT                 
+=                              assign_op           
+2                              INT_LITERAL         
 ;                              semicolon_op        
 class                          class               
 Dog                            CLASS               
@@ -248,13 +248,13 @@ N                              INT
 7                              INT_LITERAL         
 ,                              comma_op            
 [                              open_bracket_op     
-FIRST                          ENUM_CONSTANT       
+FIRST                          INT                 
 ]                              close_bracket_op    
 =                              assign_op           
 1                              INT_LITERAL         
 ,                              comma_op            
 [                              open_bracket_op     
-THIRD                          ENUM_CONSTANT       
+THIRD                          INT                 
 +                              plus_op             
 1                              INT_LITERAL         
 ]                              close_bracket_op    
@@ -262,51 +262,13 @@ THIRD                          ENUM_CONSTANT
 9                              INT_LITERAL         
 }                              close_brace_op      
 ;                              semicolon_op        
-auto                           auto                
-f                              INT                 
-=                              assign_op           
-[                              open_bracket_op     
-x                              INT                 
-]                              close_bracket_op    
-(                              open_paren_op       
-int                            int                 
-q                              INT                 
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-q                              INT                 
-+                              plus_op             
-x                              INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
 int                            int                 
 g                              INT                 
 =                              assign_op           
-f                              INT                 
+twice                          PROCEDURE           
 (                              open_paren_op       
 1                              INT_LITERAL         
 )                              close_paren_op      
-;                              semicolon_op        
-int                            int                 
-(                              open_paren_op       
-*                              star_op             
-fp                             INT_FUNCTION_POINTER
-)                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
-=                              assign_op           
-(                              open_paren_op       
-int                            int                 
-(                              open_paren_op       
-*                              star_op             
-)                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
-)                              close_paren_op      
-twice                          PROCEDURE           
 ;                              semicolon_op        
 int                            int                 
 *                              star_op             
@@ -334,9 +296,9 @@ int                            int
 (                              open_paren_op       
 *                              star_op             
 )                              close_paren_op      
-(                              open_paren_op       
-int                            int                 
-)                              close_paren_op      
+[                              open_bracket_op     
+4                              INT_LITERAL         
+]                              close_bracket_op    
 )                              close_paren_op      
 ;                              semicolon_op        
 return                         return              
@@ -375,11 +337,6 @@ arr                            INT_ARRAY
 +                              plus_op             
 g                              INT                 
 +                              plus_op             
-fp                             INT_FUNCTION_POINTER
-(                              open_paren_op       
-1                              INT_LITERAL         
-)                              close_paren_op      
-+                              plus_op             
 s                              INT                 
 +                              plus_op             
 d                              DOUBLE              
@@ -390,10 +347,11 @@ d                              DOUBLE
 Program "translation_unit"
 |-- TypedefDecl "T = INT"
 |-- TypedefDecl "U = INT"
-|-- EnumDecl "Slot"
-|   |-- Enumerator "FIRST"
-|   |-- Enumerator "SECOND"
-|   `-- Enumerator "THIRD"
+|-- DeclGroup
+|   |-- VarDecl "FIRST : INT"
+|   |   `-- IntLiteral "0"
+|   `-- VarDecl "THIRD : INT"
+|       `-- IntLiteral "2"
 |-- ClassDecl "Dog"
 |   |-- VarDecl "legs : INT"
 |   |-- ConstructorDef "Dog : _ZN3DogC1Ei"
@@ -512,21 +470,10 @@ Program "translation_unit"
         |           |   |-- Identifier "THIRD"
         |           |   `-- IntLiteral "1"
         |           `-- IntLiteral "9"
-        |-- VarDecl "f : INT"
-        |   `-- LambdaExpr "x"
-        |       |-- ParamDecl "q : INT"
-        |       `-- CompoundStmt
-        |           `-- ReturnStmt
-        |               `-- BinaryExpr "+"
-        |                   |-- Identifier "q"
-        |                   `-- Identifier "x"
         |-- VarDecl "g : INT"
         |   `-- CallExpr
-        |       |-- Identifier "f"
+        |       |-- Identifier "twice"
         |       `-- IntLiteral "1"
-        |-- VarDecl "fp : INT_FUNCTION_POINTER"
-        |   `-- CastExpr "INT_POINTER"
-        |       `-- Identifier "twice"
         |-- VarDecl "ip : INT_POINTER"
         |   `-- CastExpr "INT_POINTER"
         |       `-- IntLiteral "0"
@@ -535,7 +482,7 @@ Program "translation_unit"
         |       |-- BinaryExpr "*"
         |       |   |-- SizeofExpr "INT"
         |       |   `-- IntLiteral "2"
-        |       `-- SizeofExpr "INT_POINTER"
+        |       `-- SizeofExpr "INT_POINTER_ARRAY"
         `-- ReturnStmt
             `-- BinaryExpr "+"
                 |-- BinaryExpr "+"
@@ -552,28 +499,24 @@ Program "translation_unit"
                 |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "x"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "i"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "c"
-                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "big"
-                |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "y"
-                |   |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"
-                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "spot"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "x"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "i"
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "c"
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "big"
+                |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "y"
                 |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"
-                |   |   |   |   |   |   |   |   |   |       `-- Identifier "rex"
-                |   |   |   |   |   |   |   |   |   `-- Identifier "a"
-                |   |   |   |   |   |   |   |   `-- Identifier "T"
-                |   |   |   |   |   |   |   `-- Identifier "k"
-                |   |   |   |   |   |   `-- Identifier "U"
-                |   |   |   |   |   `-- Identifier "m"
-                |   |   |   |   `-- IndexExpr
-                |   |   |   |       |-- Identifier "arr"
-                |   |   |   |       `-- IntLiteral "3"
-                |   |   |   `-- Identifier "g"
-                |   |   `-- CallExpr
-                |   |       |-- Identifier "fp"
-                |   |       `-- IntLiteral "1"
+                |   |   |   |   |   |   |   |   |   |       `-- Identifier "spot"
+                |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"
+                |   |   |   |   |   |   |   |   |       `-- Identifier "rex"
+                |   |   |   |   |   |   |   |   `-- Identifier "a"
+                |   |   |   |   |   |   |   `-- Identifier "T"
+                |   |   |   |   |   |   `-- Identifier "k"
+                |   |   |   |   |   `-- Identifier "U"
+                |   |   |   |   `-- Identifier "m"
+                |   |   |   `-- IndexExpr
+                |   |   |       |-- Identifier "arr"
+                |   |   |       `-- IntLiteral "3"
+                |   |   `-- Identifier "g"
                 |   `-- Identifier "s"
                 `-- Identifier "d"
 
@@ -583,10 +526,8 @@ Name                 Kind           Line   Scope                        Type    
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
 T                    typedef        7      global                       INT                                       0                                
 U                    typedef        8      global                       INT                                       0                                
-Slot                 enum_tag       9      global                       ENUM                                      0                                
-FIRST                enum_constant  9      global                       ENUM_CONSTANT                             1                                
-SECOND               enum_constant  9      global                       ENUM_CONSTANT                             0                                
-THIRD                enum_constant  9      global                       ENUM_CONSTANT                             1                                
+FIRST                variable       9      global                       INT              const                    1                                
+THIRD                variable       9      global                       INT              const                    1                                
 Dog                  class_tag      10     global                       CLASS                                     0                                
 Dog::legs            class_member   12     global > class Dog           INT                                       3                                
 Dog::n               parameter      13     global > class Dog > Dog::Dog() INT                                       1                                
@@ -598,7 +539,7 @@ d                    parameter      17     global > take()              CLASS   
 twice                procedure      18     global                       PROCEDURE                                 1         INT (INT)              _Z5twicei
 v                    parameter      18     global > twice()             INT                                       1                                
 main                 procedure      19     global                       PROCEDURE                                 0         INT ()                 main
-x                    variable       20     global > main()              INT                                       8                                
+x                    variable       20     global > main()              INT                                       6                                
 d                    variable       21     global > main()              DOUBLE                                    2                                
 i                    variable       22     global > main()              INT                                       1                                
 c                    variable       23     global > main()              CHAR                                      1                                
@@ -613,9 +554,6 @@ U                    variable       34     global > main()              INT     
 m                    variable       34     global > main()              INT                                       1                                
 N                    variable       35     global > main()              INT              const                    1                                
 arr                  variable       36     global > main()              INT_ARRAY        []                       1                                
-q                    parameter      37     global > main() > lambda     INT                                       1                                
-f                    variable       37     global > main()              INT                                       1                                
-g                    variable       38     global > main()              INT                                       1                                
-fp                   variable       39     global > main()              INT_FUNCTION_POINTER *                        1         INT (INT)              
-ip                   variable       40     global > main()              INT_POINTER      *                        0                                
-s                    variable       41     global > main()              INT                                       1                                
+g                    variable       37     global > main()              INT                                       1                                
+ip                   variable       38     global > main()              INT_POINTER      *                        0                                
+s                    variable       39     global > main()              INT                                       1                                

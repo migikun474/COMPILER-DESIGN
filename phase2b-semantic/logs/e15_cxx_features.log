@@ -2,131 +2,119 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : test/invalid/e15_cxx_features.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c
 
-Semantic analysis failed: 30 error(s), 1 warning(s) in 'test/invalid/e15_cxx_features.c'.
+Semantic analysis failed: 27 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c'.
 
-test/invalid/e15_cxx_features.c:4:14: semantic error: typedef redefinition with different types ('char' vs 'int') [redeclaration]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:4:14: semantic error: typedef redefinition with different types ('char' vs 'int') [redeclaration]
  4 | typedef char T;                   // error: typedef redefinition with different types ('char' vs 'int')
    |              ^
 
-test/invalid/e15_cxx_features.c:6:8: semantic error: redefinition of 'struct S' (previous definition at line 5) [redefinition]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:6:8: semantic error: redefinition of 'struct S' (previous definition at line 5) [redefinition]
  6 | struct S { int b; };              // error: redefinition of 'struct S'
    |        ^
 
-test/invalid/e15_cxx_features.c:11:9: semantic error: overloaded 'operator+' must be a unary or binary operator (it has 3 operands) [operator-overload]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:11:9: semantic error: overloaded 'operator+' must be a unary or binary operator (it has 3 operands) [operator-overload]
  11 |     Vec operator+(Vec o, Vec p);  // error: must be a unary or binary operator (it has 3 operands)
     |         ^
 
-test/invalid/e15_cxx_features.c:12:9: semantic error: overloaded 'operator!' must be a unary operator (it has 2 operands) [operator-overload]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:12:9: semantic error: overloaded 'operator!' must be a unary operator (it has 2 operands) [operator-overload]
  12 |     int operator!(int k);         // error: overloaded 'operator!' must be a unary operator
     |         ^
 
-test/invalid/e15_cxx_features.c:16:5: semantic error: overloaded 'operator+' must have at least one parameter of class or enumeration type [operator-overload]
- 16 | int operator+(int a, int b);      // error: must have at least one parameter of class or enumeration type
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:16:5: semantic error: overloaded 'operator+' must have at least one parameter of class type [operator-overload]
+ 16 | int operator+(int a, int b);      // error: must have at least one parameter of class type
     |     ^
 
-test/invalid/e15_cxx_features.c:17:5: semantic error: overloaded 'operator=' must be a non-static member function [operator-overload]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:17:5: semantic error: overloaded 'operator=' must be a non-static member function [operator-overload]
  17 | Vec operator=(Vec a, Vec b);      // error: overloaded 'operator=' must be a non-static member function
     |     ^
 
-test/invalid/e15_cxx_features.c:18:6: semantic error: out-of-line definition of constructor 'Vec::Vec(double)' does not match any constructor declared in 'class Vec' [no-matching-declaration]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:18:6: semantic error: out-of-line definition of constructor 'Vec::Vec(double)' does not match any constructor declared in 'class Vec' [no-matching-declaration]
  18 | Vec::Vec(double d) { x = 0; }     // error: out-of-line definition of constructor 'Vec::Vec(double)' does not match
     |      ^
 
-test/invalid/e15_cxx_features.c:19:7: semantic error: out-of-line definition of 'Vec::~Vec', but 'class Vec' declares no destructor [no-matching-declaration]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:19:7: semantic error: out-of-line definition of 'Vec::~Vec', but 'class Vec' declares no destructor [no-matching-declaration]
  19 | Vec::~Vec() { }                   // error: but 'class Vec' declares no destructor
     |       ^
 
-test/invalid/e15_cxx_features.c:20:32: semantic error: 'va_start' used in function 'fixed', which has fixed arguments [varargs]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:20:32: semantic error: 'va_start' used in function 'fixed', which has fixed arguments [varargs]
  20 | int fixed(int n) { va_list ap; va_start(ap, n); return 0; }   // error: 'va_start' used in function 'fixed', which has fixed arguments
     |                                ^
 
-test/invalid/e15_cxx_features.c:24:14: semantic error: argument 1 of 'va_start' must be a 'va_list' variable, not 'int' [varargs]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:24:14: semantic error: argument 1 of 'va_start' must be a 'va_list' variable, not 'int' [varargs]
  24 |     va_start(k, n);               // error: argument 1 of 'va_start' must be a 'va_list' variable
     |              ^
 
-test/invalid/e15_cxx_features.c:25:29: semantic warning: 'char' is promoted to 'int' when passed through '...', so 'va_arg' must ask for 'int' [varargs]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:25:29: semantic warning: 'char' is promoted to 'int' when passed through '...', so 'va_arg' must ask for 'int' [varargs]
  25 |     char c = va_arg(ap, char);    // warning: 'char' is promoted to 'int' when passed through '...'
     |                             ^
 
-test/invalid/e15_cxx_features.c:26:24: semantic error: second argument of 'va_arg' must be a type [varargs]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:26:24: semantic error: second argument of 'va_arg' must be a type [varargs]
  26 |     int z = va_arg(ap, 3);        // error: second argument of 'va_arg' must be a type
     |                        ^
 
-test/invalid/e15_cxx_features.c:31:9: semantic error: 'class Vec' has no default constructor (declared: Vec(int), Vec(char *)); pass constructor arguments, e.g. 'Vec x(...)' [constructor]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:31:9: semantic error: 'class Vec' has no default constructor (declared: Vec(int), Vec(char *)); pass constructor arguments, e.g. 'Vec x(...)' [constructor]
  31 |     Vec a;                        // error: 'class Vec' has no default constructor
     |         ^
 
-test/invalid/e15_cxx_features.c:32:10: semantic error: no matching function for call to 'Vec::Vec(int, int)'; candidates are: Vec(int), Vec(char *) [no-matching-overload]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:32:10: semantic error: no matching function for call to 'Vec::Vec(int, int)'; candidates are: Vec(int), Vec(char *) [no-matching-overload]
  32 |     Vec b(1, 2);                  // error: no matching function for call to 'Vec::Vec(int, int)'
     |          ^
 
-test/invalid/e15_cxx_features.c:33:10: semantic error: 'Vec::Vec(char *)' is a private member of 'class Vec' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:33:10: semantic error: 'Vec::Vec(char *)' is a private member of 'class Vec' and is not accessible outside the class [access]
  33 |     Vec c("str");                 // error: 'Vec::Vec(char *)' is a private member of 'class Vec'
     |          ^
 
-test/invalid/e15_cxx_features.c:34:15: semantic error: invalid operands to binary '*' ('class Vec' and 'int'): no 'operator*' is declared for these operands [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:34:15: semantic error: invalid operands to binary '*' ('class Vec' and 'int'): no 'operator*' is declared for these operands [invalid-operands]
  34 |     Vec d = c * 2;                // error: no 'operator*' is declared for these operands
     |               ^
 
-test/invalid/e15_cxx_features.c:35:7: semantic error: invalid operands to compound assignment '+=' ('class Vec' and 'class Vec'): no 'operator+=' is declared [invalid-operands]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:35:7: semantic error: invalid operands to compound assignment '+=' ('class Vec' and 'class Vec'): no 'operator+=' is declared [invalid-operands]
  35 |     c += d;                       // error: no 'operator+=' is declared
     |       ^
 
-test/invalid/e15_cxx_features.c:38:5: semantic error: cannot assign to variable 'cp' with const-qualified type 'int * const' [const]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:38:5: semantic error: cannot assign to variable 'cp' with const-qualified type 'int * const' [const]
  38 |     cp = 0;                       // error: cannot assign to variable 'cp' with const-qualified type 'int * const'
     |     ^
 
-test/invalid/e15_cxx_features.c:39:11: semantic error: 'bad' declared as a pointer to a reference [invalid-declarator]
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:39:11: semantic error: 'bad' declared as a pointer to a reference [invalid-declarator]
  39 |     int &*bad;                    // error: 'bad' declared as a pointer to a reference
     |           ^
 
-test/invalid/e15_cxx_features.c:40:22: semantic error: cannot modify 'x': it is captured by copy in a non-mutable lambda [const]
- 40 |     auto f = [x]() { x = 2; return x; };          // error: captured by copy in a non-mutable lambda
-    |                      ^
-
-test/invalid/e15_cxx_features.c:41:40: semantic error: type mismatch: cannot return 'char *' from a lambda whose return type is 'int' (incompatible pointer to integer conversion) [type-mismatch]
- 41 |     auto g = [](int v) -> int { return "no"; };   // error: cannot return 'char *' from a lambda whose return type is 'int'
-    |                                        ^
-
-test/invalid/e15_cxx_features.c:42:20: semantic error: unknown member 'nope': no member named 'nope' in 'struct S' [unknown-member]
- 42 |     struct S s = {.nope = 1};     // error: no member named 'nope' in 'struct S'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:40:20: semantic error: unknown member 'nope': no member named 'nope' in 'struct S' [unknown-member]
+ 40 |     struct S s = {.nope = 1};     // error: no member named 'nope' in 'struct S'
     |                    ^
 
-test/invalid/e15_cxx_features.c:43:19: semantic error: array index 5 in initializer exceeds the bounds of variable 'arr' (2 elements) [initializer]
- 43 |     int arr[2] = {[5] = 1};       // error: array index 5 in initializer exceeds the bounds
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:41:19: semantic error: array index 5 in initializer exceeds the bounds of variable 'arr' (2 elements) [initializer]
+ 41 |     int arr[2] = {[5] = 1};       // error: array index 5 in initializer exceeds the bounds
     |                   ^
 
-test/invalid/e15_cxx_features.c:44:15: semantic error: designator '.a' cannot be used to initialize the scalar variable 'k' [initializer]
- 44 |     int k = {.a = 1};             // error: designator '.a' cannot be used to initialize the scalar
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:42:15: semantic error: designator '.a' cannot be used to initialize the scalar variable 'k' [initializer]
+ 42 |     int k = {.a = 1};             // error: designator '.a' cannot be used to initialize the scalar
     |               ^
 
-test/invalid/e15_cxx_features.c:45:22: semantic error: array size in 'new' must have an integer type, not 'double' [array-size]
- 45 |     int *p = new int[2.5];        // error: array size in 'new' must have an integer type, not 'double'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:43:22: semantic error: array size in 'new' must have an integer type, not 'double' [array-size]
+ 43 |     int *p = new int[2.5];        // error: array size in 'new' must have an integer type, not 'double'
     |                      ^
 
-test/invalid/e15_cxx_features.c:46:5: semantic error: cannot delete[] an expression of type 'int' (a pointer is required) [delete]
- 46 |     delete[] x;                   // error: cannot delete[] an expression of type 'int'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:44:5: semantic error: cannot delete[] an expression of type 'int' (a pointer is required) [delete]
+ 44 |     delete[] x;                   // error: cannot delete[] an expression of type 'int'
     |     ^
 
-test/invalid/e15_cxx_features.c:47:14: semantic error: 'this' cannot be captured outside a non-static member function [capture]
- 47 |     auto h = [this]() { return 0; };   // error: 'this' cannot be captured outside a non-static member function
-    |              ^
-
-test/invalid/e15_cxx_features.c:48:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
- 48 |     int q(1, 2);                  // error: is initialized with exactly one value, not 2
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:45:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
+ 45 |     int q(1, 2);                  // error: is initialized with exactly one value, not 2
     |          ^
 
-test/invalid/e15_cxx_features.c:49:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
- 49 |     int empty[] = {};             // error: zero-size array 'empty'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:46:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
+ 46 |     int empty[] = {};             // error: zero-size array 'empty'
     |         ^
 
-test/invalid/e15_cxx_features.c:50:25: semantic error: array designator index must be an integer constant expression [initializer]
- 50 |     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:47:25: semantic error: array designator index must be an integer constant expression [initializer]
+ 47 |     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression
     |                         ^
 
-test/invalid/e15_cxx_features.c:51:22: semantic error: array designator index -1 is negative [initializer]
- 51 |     int below[3] = {[-1] = 1};    // error: array designator index -1 is negative
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:48:22: semantic error: array designator index -1 is negative [initializer]
+ 48 |     int below[3] = {[-1] = 1};    // error: array designator index -1 is negative
     |                      ^
 
