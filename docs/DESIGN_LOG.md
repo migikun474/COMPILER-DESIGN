@@ -490,11 +490,110 @@ After the fixes: `phase3-ir/run_tests.sh` **13 passed**,
 without warnings. Honest remaining limits are the ones listed under
 D15 and in `phase3-ir/README.md`.
 
+### Merged (2026-10-07)
+
+Both commits of branch `tac` were pushed and merged into `main` through
+pull request #2 (merge commit `1136ed4`), on the user's instruction.
+
+### D18. MIPS target: the SPIM simulator
+
+**Decided by:** Claude, at the user's request ("confirm which simulator
+we will use and why") — the user can still overrule it.
+**Decision:** generated MIPS runs on **SPIM**; the assembly is kept to
+the system calls and directives that MARS also accepts, so it can be
+shown in MARS/QtSpim as well.
+
+| | SPIM | MARS | MIPS Linux (cross gcc + qemu) |
+|---|---|---|---|
+| Install here | `sudo apt install spim` (in Ubuntu's repository) | needs Java (not installed) and a manually downloaded jar | two toolchain packages |
+| Run from a script | `spim -file prog.s` | `java -jar Mars.jar nc prog.asm` | `qemu-mipsel ./prog` |
+| printf / scanf / malloc | system calls + a small run-time written in MIPS | the same | the C library, for free |
+| What must be exactly right | our own conventions | our own conventions | the full o32 ABI (varargs, struct passing, double alignment), or libc calls crash |
+| Fits a course demo | the textbook simulator (Patterson & Hennessy) | also common | not a simulator |
+
+**Why SPIM:** it installs with one command, runs from the command
+line (so `run_tests.sh` can compare its output with the TAC
+interpreter's automatically), has no delayed branches by default, and
+is the simulator the standard textbook uses. **Cost:** there is no C
+library, so `printf` formatting (`%5.2f`, `%lld`), `scanf` and
+`malloc`/`realloc` are a run-time library we write in MIPS on top of
+the print/read/`sbrk` system calls.
+**Needed from the user:** `sudo apt install spim` (Claude cannot run
+`sudo`).
+
+---
+
+## 2026-10-08 — Session 3: optimization
+
+### D19. Order of the remaining work: `-O1`, `-O2`, then MIPS
+
+**Decided by:** the user. Claude had recommended MIPS before `-O2`
+(the required deliverable before the open-ended part); the user chose
+to finish all optimizer work first. Both orders are technically fine:
+optimizations work on TAC and are verified by the interpreter.
+
+### D20. Common subexpressions by value numbering
+
+**Decided by:** the user, conditionally: "choose the DAG if it is
+computationally easier".
+**Decision:** value numbering — because the honest answer to the
+condition is that the explicit DAG is *not* the easier one. Building
+the graph is easy, but the block then has to be regenerated from it
+(choosing an order, choosing which of several names keeps a value);
+value numbering does the same analysis in one pass over the block with
+a hash table and rewrites instructions in place. The two are the same
+idea: a value number **is** a DAG node, and the Dragon book itself
+builds DAGs this way (section 6.1.2, "the value-number method").
+**What is given up:** there is no DAG picture to print. If the course
+slides, when they arrive, require showing the DAG, a printer over the
+value-number table can be added.
+
+### D21. What `-O1` contains, and how it is known to be right
+
+**Decided by:** Claude (the list is the roadmap's; slides not available
+yet, the Dragon book chapters 8.4–8.5 are followed).
+
+- per basic block: constant folding, algebraic simplification, copy
+  and constant propagation, common subexpressions (including repeated
+  `&x`, `a[i]`, `*p`);
+- per function: merging `t = e ; x = t`, removing dead temporaries,
+  jump clean-up, unreachable code.
+
+**Constant folding uses the interpreter's own arithmetic functions**
+(`evalArithmetic`, `evalConvert`, `evalCompare`), so a folded result is
+by construction what executing the instruction would have produced —
+there is one definition of `int` wrap-around, not two.
+**Safety rule:** anything read from memory is forgotten at a store
+through a pointer, an array/field store, a call, or an assignment to a
+global or address-taken variable; `volatile` is never remembered;
+floating-point identities that are not exact are not applied.
+
+**How you can see it:** `./tac_generator -O1 file.c` prints a summary
+(instructions before → after, a count per optimization) and the
+optimized listing; with `--run` it executes the program both ways,
+refuses to continue if they differ, and prints the instructions
+executed by each.
+
+### Progress — `-O1` working (2026-10-08)
+
+- `phase3-ir/src/opt.cpp` (about 480 lines), `-O1` flag in the driver.
+- `./run_tests.sh` now runs every program raw **and** with `-O1`
+  against the same expected output: **14 passed, 0 failed**; executed
+  instructions drop by 6% to 42% per test.
+- A new test, `t14_optimizer`, is built around the traps: values
+  changed through pointers, references, calls and globals, `volatile`,
+  `-0.0`, a division that must not be folded.
+- That test caught a real bug in the first version: a simplified
+  instruction lost its operand (`t15 = _`) because the rewrite reset
+  the instruction before copying the operand out of it. Fixed.
+- `-O1` was also run over the other suites' programs: 45 programs run
+  to completion with identical output and exit code before and after.
+- Not addressed at `-O1`, by design: assignments to named variables
+  that are never read again stay (removing them needs liveness across
+  blocks — `-O2`).
+
 ---
 
 ## Open questions
 
-- MIPS target (still open from the roadmap): SPIM/MARS simulator with
-  a small hand-written run-time for `printf`/`scanf`/`malloc`, or MIPS
-  Linux through a cross-compiler and emulator. Needed before phase 4,
-  not before `-O1`.
+*(none at the moment — say so if your course requires MARS or QtSpim instead of SPIM)*

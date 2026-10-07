@@ -16,7 +16,7 @@ TARGET  = tac_generator
 PARSER_SRC = $(PARSER)/src/declarators.cpp $(PARSER)/src/scanner_support.cpp $(PARSER)/src/token_converter.cpp
 SEM_SRC    = $(SEM)/src/declarations.cpp $(SEM)/src/statements.cpp $(SEM)/src/expressions.cpp \
              $(SEM)/src/cxx.cpp $(SEM)/src/sequencing.cpp $(SEM)/src/report.cpp
-IR_SRC     = src/tac.cpp src/gen_expr.cpp src/gen_stmt.cpp src/interp.cpp
+IR_SRC     = src/tac.cpp src/gen_expr.cpp src/gen_stmt.cpp src/interp.cpp src/opt.cpp
 MAIN       = src/main.cpp
 HEADERS    = $(wildcard include/*.h) $(wildcard $(SEM)/include/*.h) $(wildcard $(PARSER)/include/*)
 LIBSHARED  = $(SHARED)/build/libshared.a
