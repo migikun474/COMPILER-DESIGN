@@ -1,0 +1,32 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c
+
+Semantic analysis failed: 6 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:4:6: semantic error: cannot assign to a read-only location of type 'const int' [const]
+ 4 |     r[0] = 1;                     // error: cannot assign
+   |      ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:14:8: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+ 14 |     (x ? x : c) = 5;              // error: not assignable
+    |        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:15:8: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+ 15 |     (x ? x : d) = 5;              // error: not assignable
+    |        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:16:16: semantic error: non-const reference of type 'int &' cannot bind to a temporary of type 'double' [reference]
+ 16 |     int &r = x ? x : d;           // error: cannot bind to a temporary
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:17:14: semantic error: cannot take the address of an rvalue of type 'int' [address-of]
+ 17 |     int *p = &(x ? x : 3);        // error: cannot take the address of an rvalue
+    |              ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e21_lvalues_and_conversions.c:18:18: semantic error: type mismatch: argument 1 of 'write' expects 'int *' but got 'const int *' (conversion discards 'const' qualifier) [argument-type]
+ 18 |     return write(primes);         // error: conversion discards 'const' qualifier
+    |                  ^
+

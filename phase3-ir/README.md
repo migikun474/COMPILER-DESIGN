@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`). 15 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`). 27 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 16 passed).
+> (`./run_tests.sh`: 27 passed).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -248,6 +248,17 @@ the output of the same source compiled with gcc/g++.
 | `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls, `volatile` |
 | `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
 | `t16_runtime` | 64-bit arithmetic, int/float conversions, `printf` formats, structs and doubles through calls (aimed at the MIPS run-time library) |
+| `t17_strings` | strings by hand: length, copy, compare, reverse, number ↔ text |
+| `t18_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve |
+| `t19_scopes` | shadowing, nested blocks, `static` locals, globals |
+| `t20_bits` | bit tricks, shifts, wrap-around of every integer width, signed/unsigned comparison |
+| `t21_numeric` | `float` and `double`: Newton's method, series, rounding, mixed conversions |
+| `t22_data_structures` | linked list, binary tree, stack, table of rows from `malloc`, pointers to pointers |
+| `t23_objects` | three-level inheritance, objects inside objects, arrays of objects, operators returning references |
+| `t24_references` | reference parameters and results, references to structs and pointers, `const` references |
+| `t25_control` | state machine in a `switch`, nested loops, `goto` out of loops, `?:` chains, comma |
+| `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers, macros |
+| `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, `delete[]` of objects, static objects destroyed at exit |
 
 ## Limitations
 
@@ -255,8 +266,9 @@ the output of the same source compiled with gcc/g++.
 - After optimization the symbol table still lists temporaries that are no
   longer used (their frame slots are not reclaimed yet).
 - Unnamed temporaries of class type and by-value class parameters are
-  not destroyed; static objects are not destroyed at program exit;
-  `delete[]` does not call element destructors.
+  not destroyed.
+- `obj.Base::member` (a qualified member name after `.` or `->`) is not
+  in the grammar; a hidden base member is reached through a base pointer.
 - `static` locals of class type are constructed at program start, not
   on first use.
 - A `goto` into a block past a declaration with a constructor is not

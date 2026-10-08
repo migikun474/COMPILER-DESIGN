@@ -101,6 +101,10 @@ struct ASTNode {
     /* filled in by semantic analysis; unused by the parser */
     std::shared_ptr<const sem::Type> semType;
     std::shared_ptr<sem::Symbol> symbol;
+    /* an initializer converted by a constructor (`Vec v = other;`): that
+       constructor. Kept apart from `symbol`, which stays what the
+       expression itself refers to. */
+    std::shared_ptr<sem::Symbol> converter;
     bool isLValue = false;
     bool hasConstValue = false;
     long long constValue = 0;

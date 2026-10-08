@@ -10,14 +10,10 @@ using sem::RecordInfo;
 using sem::TypeKind;
 using sem::TypePtr;
 
-static TypePtr strip(const TypePtr &t) { return sem::isReference(t) ? t->elem : t; }
-
 static RecordInfo *recordOf(const TypePtr &tIn) {
     TypePtr t = strip(tIn);
     return t && sem::isRecord(t) ? t->record.get() : nullptr;
 }
-
-static long long alignUp(long long v, int a) { return a > 1 ? (v + a - 1) / a * a : v; }
 
 bool baseOffset(const RecordInfo *derived, const RecordInfo *base, long long &offset) {
     if (!derived || !base) return false;
@@ -415,6 +411,8 @@ bool Generator::isLValueKind(const ASTNodePtr &n) const {
             return !isOverloaded(n);
         case ASTKind::UnaryExpr:
             return n->label == "*" && !isOverloaded(n);
+        case ASTKind::TernaryExpr:
+            return n->isLValue; /* c ? a : b with two lvalues names one of them */
         default:
             return false;
     }
@@ -480,6 +478,22 @@ Generator::LValue Generator::lvalue(const ASTNodePtr &n) {
             if (n->label == "*" && !isOverloaded(n)) {
                 lv.kind = LValue::Deref;
                 lv.base = rvalue(n->children[0]);
+                return lv;
+            }
+            break;
+        case ASTKind::TernaryExpr:
+            if (n->isLValue) { /* p = c ? &a : &b, and the lvalue is *p */
+                Operand p = newTemp(sem::pointerTo(lv.type));
+                List trueList, falseList;
+                cond(n->children[0], trueList, falseList);
+                backpatch(trueList, nextQuad());
+                emitAssign(p, address(lvalue(n->children[1])));
+                int skip = emitGoto();
+                backpatch(falseList, nextQuad());
+                emitAssign(p, address(lvalue(n->children[2])));
+                backpatch(makelist(skip), nextQuad());
+                lv.kind = LValue::Deref;
+                lv.base = p;
                 return lv;
             }
             break;
@@ -848,9 +862,40 @@ Operand Generator::referenceTo(const ASTNodePtr &n, const TypePtr &elem) {
     return address(lv);
 }
 
+/* `rec`'s copy constructor rec(const rec &), if the class declares one */
+static sem::Symbol *copyConstructor(RecordInfo *rec) {
+    if (!rec) return nullptr;
+    for (const auto &c : rec->constructors) {
+        if (!c->type || c->type->params.size() != 1) continue;
+        const TypePtr &p = c->type->params[0];
+        if (sem::isReference(p) && sem::isRecord(p->elem) && p->elem->record.get() == rec) return c.get();
+    }
+    return nullptr;
+}
+
+/* a class object passed or returned by value: a new object made by the
+   copy constructor when the class has one and the source is an existing
+   object. A temporary is used as it is, and a returned local is not
+   copied either (what C++ compilers do: copy elision). */
+Operand Generator::copyOf(const ASTNodePtr &n, const TypePtr &type, bool elideLocal) {
+    sem::Symbol *ctor = copyConstructor(recordOf(type));
+    bool refCall = (n->kind == ASTKind::CallExpr || isOverloaded(n)) && n->isLValue;
+    bool existing = isLValueKind(n) || refCall;
+    bool local = n->kind == ASTKind::Identifier && n->symbol && n->symbol->storage == sem::Storage::Local;
+    if (!ctor || !existing || (elideLocal && local)) return rvalue(n);
+    Operand copy = newTemp(type);
+    LValue lv;
+    lv.kind = LValue::Direct;
+    lv.base = copy;
+    lv.type = sem::unqualified(strip(type));
+    Operand to = address(lv);
+    call(ctor, to, {n}, {}, false);
+    return copy;
+}
+
 Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
     if (sem::isReference(param)) return referenceTo(arg, param->elem);
-    if (sem::isRecord(param)) return rvalue(arg);
+    if (sem::isRecord(param)) return copyOf(arg, param, false);
     return convert(rvalue(arg), param);
 }
 
@@ -1134,9 +1179,11 @@ Operand Generator::newExpr(const ASTNodePtr &n) {
     bool arrayNew = n->typeExpr && !n->typeExpr->arrayDims.empty() && !n->typeExpr->grouped;
     long long w = std::max(1LL, sem::sizeOf(target));
     Operand count, size = icon(w);
+    bool counted = arrayNew && needsDestruction(target); /* delete[] must know how many to destroy */
     if (arrayNew) {
         count = convert(rvalue(n->typeExpr->arrayDims.front()), sem::intType());
         size = scaled(count, w);
+        if (counted) size = size.kind == Operand::IntConst ? icon(size.ival + 8) : emitBinary(Op::Add, size, icon(8), sem::intType());
     }
     Quad p;
     p.op = Op::Param;
@@ -1149,6 +1196,15 @@ Operand Generator::newExpr(const ASTNodePtr &n) {
     q.r = newTemp(pt);
     emit(q);
     Operand obj = q.r;
+    if (counted) { /* [count][elements ...]: the pointer handed out is to the elements */
+        Quad keep;
+        keep.op = Op::Store;
+        keep.a = obj;
+        keep.r = count;
+        keep.cls = Cls::Int;
+        emit(keep);
+        obj = pointerAdd(obj, icon(8));
+    }
 
     RecordInfo *rec = recordOf(target);
     if (!arrayNew) {
@@ -1195,6 +1251,58 @@ Operand Generator::newExpr(const ASTNodePtr &n) {
 void Generator::deleteExpr(const ASTNodePtr &n) {
     Operand p = rvalue(n->children[0]);
     bool arrayDelete = n->label == "[]";
+    if (arrayDelete && p.type && sem::isPointer(p.type) && needsDestruction(p.type->elem)) {
+        /* the count is in front of the block (see newExpr): destroy the
+           elements last to first, then free the whole block */
+        TypePtr elem = p.type->elem;
+        long long w = std::max(1LL, sem::sizeOf(elem));
+        Quad isNull;
+        isNull.op = Op::IfRel;
+        isNull.a = p;
+        isNull.b = icon(0, p.type);
+        isNull.relop = "==";
+        isNull.cls = Cls::Ptr;
+        int skip = emit(isNull);
+        Operand block = pointerAdd(p, icon(8), true);
+        Operand i = newTemp(sem::intType());
+        Quad load;
+        load.op = Op::Load;
+        load.a = block;
+        load.r = i;
+        load.cls = Cls::Int;
+        emit(load);
+        int test = nextQuad();
+        Quad done;
+        done.op = Op::IfRel;
+        done.a = i;
+        done.b = icon(0);
+        done.relop = "<=";
+        done.cls = Cls::Int;
+        int exit = emit(done);
+        Quad dec;
+        dec.op = Op::Sub;
+        dec.a = i;
+        dec.b = icon(1);
+        dec.r = i;
+        dec.cls = Cls::Int;
+        emit(dec);
+        Operand e = pointerAdd(p, scaled(i, w));
+        e.type = p.type;
+        destroy(e, recordOf(elem));
+        emitGoto(test);
+        backpatch(makelist(exit), nextQuad());
+        Quad a;
+        a.op = Op::Param;
+        a.a = block;
+        emit(a);
+        Quad q;
+        q.op = Op::Call;
+        q.calleeName = "free";
+        q.nargs = 1;
+        emit(q);
+        backpatch(makelist(skip), nextQuad());
+        return;
+    }
     RecordInfo *rec = !arrayDelete && p.type && sem::isPointer(p.type) ? recordOf(p.type->elem) : nullptr;
     if (rec && needsDestruction(sem::recordType(rec->shared_from_this()))) {
         Quad isNull; /* `delete` of a null pointer does nothing */

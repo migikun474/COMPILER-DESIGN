@@ -5,7 +5,7 @@ every static rule of the language, and annotates the tree with types,
 lvalue-ness, constant values and resolved symbols — the representation
 the (future) IR phase will lower.
 
-> Status: **implemented and tested** (80 automated checks, all
+> Status: **implemented and tested** (82 automated checks, all
 > passing). This is the last implemented phase: nothing consumes its
 > output yet.
 
@@ -369,14 +369,14 @@ make
 
 `run_tests.sh` is self-checking and runs three groups:
 
-1. **`test/valid/`** — 24 programs that must be accepted (`v01`–`v24`:
+1. **`test/valid/`** — 25 programs that must be accepted (`v01`–`v25`:
    declarations, expressions, scopes, functions, arrays, pointers,
    structs, control flow, built-ins, classes, overloading and
    references, `main` arguments, warnings, declarators, name resolution,
    constructors and operators, preprocessor, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
    rules).
-2. **`test/invalid/`** — 20 programs that must be rejected (`e01`–`e20`).
+2. **`test/invalid/`** — 21 programs that must be rejected (`e01`–`e21`).
 3. **End to end** — the 36 programs of `../phase2-parser/test`: the 12
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which
@@ -391,7 +391,7 @@ int over(double a) { return 0; }    // mangled: _Z4overd
 ```
 
 The runner requires each annotated message on its line **and** fails on
-any diagnostic that is not annotated. Result today: `passed: 80 failed: 0`.
+any diagnostic that is not annotated. Result today: `passed: 82 failed: 0`.
 `./run.sh` just prints the output for every test.
 
 ## Limitations

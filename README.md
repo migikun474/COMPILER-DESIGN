@@ -272,10 +272,10 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
 | Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 24 valid + 20 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **80 checks, all passing** |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 25 valid + 21 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **82 checks, all passing** |
 
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 16 programs generated and executed by the TAC interpreter, raw, with `-O1` and with `-O2`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **16 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 16 programs compiled to MIPS at `-O0`, `-O1`, `-O2` and run in SPIM against the same expected outputs — **16 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 27 programs generated and executed by the TAC interpreter, raw, with `-O1` and with `-O2`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **27 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 27 programs compiled to MIPS at `-O0`, `-O1`, `-O2` and run in SPIM against the same expected outputs — **27 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**

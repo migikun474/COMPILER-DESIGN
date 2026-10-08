@@ -10,10 +10,6 @@ namespace tac {
 using sem::RecordInfo;
 using sem::TypePtr;
 
-static TypePtr strip(const TypePtr &t) { return sem::isReference(t) ? t->elem : t; }
-
-static long long alignUp(long long v, long long a) { return a > 1 ? (v + a - 1) / a * a : v; }
-
 /* ---------------- statements ---------------- */
 
 Generator::Breakable *Generator::innermostLoop() {
@@ -37,6 +33,17 @@ void Generator::destroyObject(const LValue &obj) {
         LValue e = count == 1 && !sem::isArray(obj.type) ? obj : addOffset(obj, icon(i * w), t);
         e.type = t;
         destroy(address(e), t->record.get());
+    }
+}
+
+/* objects with static storage, destroyed when main returns, last constructed first */
+void Generator::destroyStatics() {
+    for (auto g = dynamicGlobals.rbegin(); g != dynamicGlobals.rend(); ++g) {
+        LValue obj;
+        obj.kind = LValue::Direct;
+        obj.base = var(g->first);
+        obj.type = g->first->type;
+        destroyObject(obj);
     }
 }
 
@@ -258,10 +265,11 @@ List Generator::stmt(const ASTNodePtr &n) {
             if (child(0)) {
                 if (noValue) rvalue(child(0), true);
                 else if (sem::isReference(ret)) q.a = referenceTo(child(0), ret->elem);
-                else if (sem::isRecord(ret)) q.a = rvalue(child(0));
+                else if (sem::isRecord(ret)) q.a = copyOf(child(0), ret, true);
                 else q.a = convert(rvalue(child(0)), ret);
             }
-            if (hasObjects(0)) {
+            bool statics = inMain() && !dynamicGlobals.empty();
+            if (hasObjects(0) || statics) {
                 /* the value is computed first, then the locals are destroyed */
                 if (q.a.kind == Operand::Var) {
                     Operand saved = newTemp(q.a.type);
@@ -269,6 +277,7 @@ List Generator::stmt(const ASTNodePtr &n) {
                     q.a = saved;
                 }
                 destroyScopes(0);
+                if (statics) destroyStatics();
             }
             emit(q);
             return {};
@@ -377,12 +386,9 @@ void Generator::initObject(const LValue &obj, const ASTNodePtr &init) {
     } else if (init->kind == ASTKind::ConstructExpr && sem::isRecord(strip(init->semType)) &&
                strip(init->semType)->record.get() == rec) { /* Dog d(4);  Dog d = Dog(4); */
         constructInto(address(obj), rec, init->symbol.get(), init->children);
-    } else if (init->symbol && init->symbol->isConstructor && !sem::isRecord(strip(init->semType))) {
-        /* Dog d = 4;  a converting constructor */
+    } else if (init->converter) { /* Dog d = 4;  Vec v = other;  a converting constructor */
         Operand a = address(obj);
-        sem::Symbol *ctor = init->symbol.get();
-        Operand v = convert(rvalue(init), ctor->type->params.empty() ? init->semType : ctor->type->params[0]);
-        call(ctor, a, {}, {v}, false);
+        call(init->converter.get(), a, {init}, {}, false);
     } else {
         store(obj, rvalue(init));
     }
@@ -767,6 +773,7 @@ void Generator::function(const ASTNodePtr &n) {
     for (const auto &q : fn->quads)
         if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target == nextQuad()) endIsTarget = true;
     if (!endsInJump || endIsTarget) {
+        if (inMain()) destroyStatics();
         Quad q;
         q.op = Op::Return;
         if (sym->name == "main" && !cls) q.a = icon(0); /* falling off the end of main returns 0 */

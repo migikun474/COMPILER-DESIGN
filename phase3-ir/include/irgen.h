@@ -169,12 +169,18 @@ class Generator {
     Operand argumentFor(const sem::TypePtr &param, const ASTNodePtr &arg);
     Operand promoteVariadic(const Operand &v);
     Operand referenceTo(const ASTNodePtr &n, const sem::TypePtr &elem);
+    Operand copyOf(const ASTNodePtr &n, const sem::TypePtr &type, bool elideLocal);
+    void destroyStatics();
+    bool inMain() const { return fn && fn->sym && fn->sym->name == "main" && !fn->sym->ownerRecord; }
     sem::RecordInfo *currentClass() const;
 };
 
 /* offset of the `base` sub-object inside a `derived` object; false if
    `base` is not a base class of `derived` */
 bool baseOffset(const sem::RecordInfo *derived, const sem::RecordInfo *base, long long &offset);
+inline sem::TypePtr strip(const sem::TypePtr &t) { return sem::isReference(t) ? t->elem : t; }
+inline long long alignUp(long long v, long long a) { return a > 1 ? (v + a - 1) / a * a : v; }
+
 /* a class with a destructor, or with a base or member that has one */
 bool needsDestruction(const sem::TypePtr &t);
 

@@ -719,6 +719,62 @@ command-line `spim` with a window, and it has no batch mode, so:
 
 Remaining on the roadmap: register allocation and a peephole pass.
 
+### Second audit: are the semantic phase and IR generation finished? (2026-10-09)
+
+**Asked by:** the user ("increase the number of test cases and re-run
+the code review so that I can see exactly whether we finished the
+semantic phase and the IR generation phase").
+
+**What was done**
+
+- 10 new test programs (`t17`–`t26`: strings, algorithms, scopes, bit
+  manipulation, floating point, data structures, class hierarchies,
+  references, control flow, declarations), each compared with g++.
+- 85 short probe programs for the semantic phase: 40 valid ones to
+  look for false errors, 45 invalid ones to look for missed errors.
+- A code review of `phase2b-semantic` and `phase3-ir`.
+
+**What the probes say about the semantic phase**
+
+- All 40 genuinely invalid programs were rejected. The 5 "invalid"
+  probes that were accepted are programs C itself accepts (division
+  by a constant zero, array index out of range, a missing `return` —
+  each already gets a warning — plus an uninitialized read and a null
+  dereference, which need flow analysis).
+- Of the 40 valid programs, 2 were wrongly rejected (both fixed, see
+  below); 9 more are rejected because they use features this language
+  does not have (templates, namespaces, `virtual`, default arguments,
+  member-initializer lists, `const` member functions, pointers to
+  members, implicit `int`).
+
+**Findings and what happened to them**
+
+| # | Phase | Finding | Outcome |
+|---|---|---|---|
+| 1 | IR | a class object passed or returned by value was copied byte by byte; the copy constructor was never called | **fixed** (a returned local and a temporary are not copied, as in g++) |
+| 2 | semantic | `Vec v = other;` with a converting constructor overwrote the initializer's symbol; the generated code failed | **fixed** (the constructor is stored separately, `ASTNode::converter`) |
+| 3 | semantic | `c ? a : b` was never an lvalue, so `int &r = c ? a : b;` was rejected | **fixed**, with pointer-selecting TAC for it |
+| 4 | semantic | `const Row r` (a typedef'd array) lost `const` on its elements | **fixed** |
+| 5 | parser | `obj.Base::member()` is a syntax error | **left open** — needs a grammar rule plus lookup changes; a base pointer reaches the same member |
+| 6 | IR | unnamed class temporaries are never destroyed | **left open** (needs copy elision to do correctly; D15) |
+| 7 | IR | `delete[]` did not call element destructors | **fixed** (the count is stored in front of the block) |
+| 8 | IR | static objects were not destroyed when `main` returns | **fixed** |
+| 9 | semantic | reading an uninitialized local is not diagnosed | **left open** (no flow analysis in the semantic phase) |
+| 10 | IR | two one-line helpers were repeated per file | **fixed** |
+
+**Answer to the question.** For the language as it is defined now, both
+phases do what they are meant to do on everything tested: 82 semantic
+checks, 27 programs through the TAC interpreter at three optimization
+levels and through SPIM at three levels, all equal to g++. What is
+knowingly not done is the three open rows above plus the features
+listed as unsupported in `docs/FEATURES.md`. "Finished" cannot be
+proved by tests — each of the two audits found real defects that the
+existing tests had not — so the honest statement is: no known wrong
+result remains, and the open items are listed.
+
+Test totals after this session: semantic 82 (25 valid, 21 invalid, 36
+parser programs end to end), TAC 27, MIPS on SPIM 27.
+
 ---
 
 ## Open questions

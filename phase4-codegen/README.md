@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 16 test
+> Status: **implemented and tested** on the SPIM simulator. All 27 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization, with `-O1` and with `-O2`
-> (`./run_tests.sh`: 16 passed).
+> (`./run_tests.sh`: 27 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention).

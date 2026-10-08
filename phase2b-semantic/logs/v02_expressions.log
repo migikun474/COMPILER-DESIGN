@@ -209,7 +209,7 @@ Program "translation_unit"
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- Identifier "r"  <int> lvalue  -> r.3 (variable, local)
-        |       `-- TernaryExpr  <int>
+        |       `-- TernaryExpr  <int> lvalue
         |           |-- BinaryExpr ">"  <int>
         |           |   |-- Identifier "a"  <int> lvalue  -> a.1 (variable, local)
         |           |   `-- Identifier "b"  <int> lvalue  -> b.2 (variable, local)
