@@ -1,5 +1,9 @@
 # Feature Audit
 
+> Branch `ir-phase` stops at intermediate code. The **MIPS** column
+> below describes the code generator on [`main`](https://github.com/migikun474/COMPILER-DESIGN/tree/main), which this branch
+> does not contain.
+
 Every status below was established from the source and by running the
 current build — not from the specification or older READMEs. Each
 feature was compiled through the front-end executables
@@ -162,7 +166,7 @@ semantic phase redoes all name resolution.)
 |---|---|
 | Three Address Code generation (phase 3) | **done** — [`phase3-ir/README.md`](../phase3-ir/README.md) |
 | TAC optimizations | `-O1` (local), `-O2` (global constants/copies, dead assignments) and `-O3` (inlining, tail recursion, global common subexpressions, loop-invariant code motion) **done** |
-| MIPS code generation (phase 4) | **done** (SPIM) — [`phase4-codegen/README.md`](../phase4-codegen/README.md) |
+| MIPS code generation (phase 4) | **done** (SPIM) — [`phase4-codegen/README.md`](https://github.com/migikun474/COMPILER-DESIGN/tree/main/phase4-codegen/README.md) on `main` |
 | Register allocation (usage counts with live intervals; integer and floating-point registers), immediates, peephole | **done** |
 
 ### G. Unsupported (no implementation; rejected as syntax errors)

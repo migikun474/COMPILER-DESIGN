@@ -297,7 +297,7 @@ destroyed there when it became something with a longer life:
 
 ## Warnings from this phase
 
-`tac_generator` and `mips_generator` print one warning for each local
+`tac_generator` prints one warning for each local
 variable that some path reads before anything was stored in it:
 
 ```
@@ -328,4 +328,4 @@ globals and anything reached through a pointer are not.
 
 ## Next
 
-Phase 4 turns this TAC into MIPS: [`../phase4-codegen/README.md`](../phase4-codegen/README.md).
+Phase 4 turns this TAC into MIPS; it is on the [`main`](https://github.com/migikun474/COMPILER-DESIGN/tree/main/phase4-codegen) branch, not on this one.
