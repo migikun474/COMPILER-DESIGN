@@ -71,19 +71,17 @@ TypePtr opaqueType(const std::string &name) {
     return make(t);
 }
 
-TypePtr qualified(const TypePtr &t, bool isConst, bool isVolatile) {
-    if (!t || (!isConst && !isVolatile)) return t;
-    if ((t->isConst || !isConst) && (t->isVolatile || !isVolatile)) return t;
+TypePtr qualified(const TypePtr &t, bool isConst) {
+    if (!t || !isConst || t->isConst) return t;
     Type q = *t;
-    q.isConst = q.isConst || isConst;
-    q.isVolatile = q.isVolatile || isVolatile;
+    q.isConst = true;
     return make(q);
 }
 
 TypePtr unqualified(const TypePtr &t) {
-    if (!t || (!t->isConst && !t->isVolatile)) return t;
+    if (!t || !t->isConst) return t;
     Type q = *t;
-    q.isConst = q.isVolatile = false;
+    q.isConst = false;
     return make(q);
 }
 
@@ -133,7 +131,7 @@ bool isComplete(const TypePtr &t) {
 bool sameType(const TypePtr &a, const TypePtr &b, bool exactQualifiers) {
     if (a == b) return true;
     if (!a || !b || a->kind != b->kind) return false;
-    if (exactQualifiers && (a->isConst != b->isConst || a->isVolatile != b->isVolatile)) return false;
+    if (exactQualifiers && a->isConst != b->isConst) return false;
     switch (a->kind) {
         case TypeKind::Char: case TypeKind::Short: case TypeKind::Int:
         case TypeKind::Long: case TypeKind::LongLong:
@@ -251,13 +249,12 @@ Conversion implicitConversion(const TypePtr &fromIn, const TypePtr &toIn, bool f
                 c.why = "incompatible pointer types";
                 return c;
             }
-            if ((fp->isConst && !tp->isConst) || (fp->isVolatile && !tp->isVolatile)) {
-                c.why = std::string("conversion discards '") + (fp->isConst ? "const" : "volatile") +
-                        "' qualifier";
+            if (fp->isConst && !tp->isConst) {
+                c.why = "conversion discards 'const' qualifier";
                 return c;
             }
             if (sameType(unqualified(fp), unqualified(tp))) {
-                c.rank = (fp->isConst != tp->isConst || fp->isVolatile != tp->isVolatile)
+                c.rank = fp->isConst != tp->isConst
                              ? ConvRank::Promotion /* qualification added */
                              : ConvRank::Exact;
             } else {
@@ -399,7 +396,6 @@ static std::string baseName(const TypePtr &t) {
 static std::string quals(const TypePtr &t) {
     std::string q;
     if (t->isConst) q += "const ";
-    if (t->isVolatile) q += "volatile ";
     return q;
 }
 
@@ -421,8 +417,7 @@ static std::string spell(const TypePtr &t, const std::string &inner) {
         case TypeKind::Pointer: case TypeKind::Reference: {
             std::string in = t->kind == TypeKind::Pointer ? "*" : "&";
             if (t->isConst) in += " const";
-            if (t->isVolatile) in += " volatile";
-            if (!inner.empty()) in += (t->isConst || t->isVolatile ? " " : "") + inner;
+            if (!inner.empty()) in += (t->isConst ? " " : "") + inner;
             if (isArray(t->elem) || isFunction(t->elem)) in = "(" + in + ")";
             return spell(t->elem, in);
         }

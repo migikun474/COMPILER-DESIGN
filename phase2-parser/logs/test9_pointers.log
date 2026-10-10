@@ -37,8 +37,17 @@ p                              INT_POINTER
 ;                              semicolon_op        
 p                              INT_POINTER         
 =                              assign_op           
-new                            new                 
+(                              open_paren_op       
 int                            int                 
+*                              star_op             
+)                              close_paren_op      
+malloc                         malloc              
+(                              open_paren_op       
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
 ;                              semicolon_op        
 *                              star_op             
 p                              INT_POINTER         
@@ -147,7 +156,9 @@ Program "translation_unit"
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="
 |       |       |-- Identifier "p"
-|       |       `-- NewExpr "INT"
+|       |       `-- CastExpr "INT_POINTER"
+|       |           `-- BuiltinCallExpr "malloc"
+|       |               `-- SizeofExpr "INT"
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="
 |       |       |-- UnaryExpr "*"

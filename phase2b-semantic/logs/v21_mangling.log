@@ -501,22 +501,6 @@ b                              STRUCT_POINTER
 {                              open_brace_op       
 }                              close_brace_op      
 void                           void                
-f22                            PROCEDURE           
-(                              open_paren_op       
-volatile                       volatile            
-int                            int                 
-*                              star_op             
-a                              INT_POINTER         
-,                              comma_op            
-const                          const               
-volatile                       volatile            
-int                            int                 
-*                              star_op             
-b                              INT_POINTER         
-)                              close_paren_op      
-{                              open_brace_op       
-}                              close_brace_op      
-void                           void                
 f24                            PROCEDURE           
 (                              open_paren_op       
 void                           void                
@@ -842,10 +826,6 @@ Program "translation_unit"
 |   |-- ParamDecl "a : STRUCT_POINTER"
 |   |-- ParamDecl "b : STRUCT_POINTER"
 |   `-- CompoundStmt
-|-- FunctionDef "f22 : _Z3f22PViPVKi"
-|   |-- ParamDecl "a : INT_POINTER"
-|   |-- ParamDecl "b : INT_POINTER"
-|   `-- CompoundStmt
 |-- FunctionDef "f24 : _Z3f24PvPKv"
 |   |-- ParamDecl "a : VOID_POINTER"
 |   |-- ParamDecl "b : VOID_POINTER"
@@ -1032,24 +1012,21 @@ c                    parameter      57     global > f18()               STRUCT  
 f19                  procedure      58     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER) _Z3f19PK5PointS1_
 a                    parameter      58     global > f19()               STRUCT_POINTER                            0                                
 b                    parameter      58     global > f19()               STRUCT_POINTER                            0                                
-f22                  procedure      59     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f22PViPVKi
-a                    parameter      59     global > f22()               INT_POINTER                               0                                
-b                    parameter      59     global > f22()               INT_POINTER                               0                                
-f24                  procedure      60     global                       PROCEDURE                                 0         VOID (VOID_POINTER, VOID_POINTER) _Z3f24PvPKv
-a                    parameter      60     global > f24()               VOID_POINTER                              0                                
-b                    parameter      60     global > f24()               VOID_POINTER                              0                                
-operator+            procedure      62     global                       PROCEDURE                                 0         STRUCT (STRUCT, STRUCT) _Zpl5PointS_
-a                    parameter      62     global > operator+()         STRUCT                                    1                                
-b                    parameter      62     global > operator+()         STRUCT                                    0                                
-over                 procedure      63     global                       PROCEDURE                                 1         INT (INT)              _Z4overi
-a                    parameter      63     global > over()              INT                                       1                                
-over                 procedure      64     global                       PROCEDURE                                 0         INT (DOUBLE)           _Z4overd
-a                    parameter      64     global > over()              DOUBLE                                    0                                
-over                 procedure      65     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z4overP5Point
-p                    parameter      65     global > over()              STRUCT_POINTER                            0                                
-main                 procedure      67     global                       PROCEDURE                                 0         INT ()                 main
-d                    variable       68     global > main()              CLASS                                     5                                
-z                    variable       69     global > main()              CLASS                                     0                                
-e                    variable       70     global > main()              CLASS                                     3                                
-p                    variable       73     global > main()              STRUCT                                    4                                
-c                    variable       75     global > main()              CLASS                                     2                                
+f24                  procedure      59     global                       PROCEDURE                                 0         VOID (VOID_POINTER, VOID_POINTER) _Z3f24PvPKv
+a                    parameter      59     global > f24()               VOID_POINTER                              0                                
+b                    parameter      59     global > f24()               VOID_POINTER                              0                                
+operator+            procedure      61     global                       PROCEDURE                                 0         STRUCT (STRUCT, STRUCT) _Zpl5PointS_
+a                    parameter      61     global > operator+()         STRUCT                                    1                                
+b                    parameter      61     global > operator+()         STRUCT                                    0                                
+over                 procedure      62     global                       PROCEDURE                                 1         INT (INT)              _Z4overi
+a                    parameter      62     global > over()              INT                                       1                                
+over                 procedure      63     global                       PROCEDURE                                 0         INT (DOUBLE)           _Z4overd
+a                    parameter      63     global > over()              DOUBLE                                    0                                
+over                 procedure      64     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z4overP5Point
+p                    parameter      64     global > over()              STRUCT_POINTER                            0                                
+main                 procedure      66     global                       PROCEDURE                                 0         INT ()                 main
+d                    variable       67     global > main()              CLASS                                     5                                
+z                    variable       68     global > main()              CLASS                                     0                                
+e                    variable       69     global > main()              CLASS                                     3                                
+p                    variable       72     global > main()              STRUCT                                    4                                
+c                    variable       74     global > main()              CLASS                                     2                                

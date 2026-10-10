@@ -73,7 +73,7 @@ bool isExpressionKind(ASTKind k) {
         case ASTKind::BinaryExpr: case ASTKind::UnaryExpr: case ASTKind::PostfixOpExpr: case ASTKind::AssignExpr:
         case ASTKind::TernaryExpr: case ASTKind::CallExpr: case ASTKind::BuiltinCallExpr: case ASTKind::MemberExpr:
         case ASTKind::ArrowExpr: case ASTKind::ScopeExpr: case ASTKind::IndexExpr: case ASTKind::CastExpr:
-        case ASTKind::SizeofExpr: case ASTKind::NewExpr: case ASTKind::DeleteExpr:
+        case ASTKind::SizeofExpr:
         case ASTKind::CommaExpr: case ASTKind::ConstructExpr: case ASTKind::InitializerList:
         case ASTKind::DesignatedInit: case ASTKind::IntLiteral: case ASTKind::FloatLiteral: case ASTKind::CharLiteral:
         case ASTKind::StringLiteral: case ASTKind::BoolLiteral: case ASTKind::Identifier: case ASTKind::ThisExpr:
@@ -193,8 +193,7 @@ class Sequencer {
                 return assignment(n);
             case ASTKind::CallExpr:
             case ASTKind::BuiltinCallExpr:
-            case ASTKind::ConstructExpr:
-            case ASTKind::NewExpr: {
+            case ASTKind::ConstructExpr: {
                 /* function and arguments are interleaved; then a sequence
                    point before the call, so nothing is pending afterwards */
                 std::vector<Effects> parts;

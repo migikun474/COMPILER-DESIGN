@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c
 
-Syntax analysis failed: 13 error(s); semantic analysis was not run.
+Syntax analysis failed: 17 error(s); semantic analysis was not run.
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:17:1: syntax error: syntax error, unexpected IDENTIFIER
  17 | enum T01_Color { RED, GREEN, BLUE };
@@ -58,4 +58,21 @@ Syntax analysis failed: 13 error(s); semantic analysis was not run.
 /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:71:29: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
  71 |     int (*table[2])(int, int);
     |                             ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:82:18: syntax error: syntax error, unexpected INT, expecting ';'
+ 82 |     int *p = new int;
+    |                  ^
+    | note: insert ';' here
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:89:12: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 89 |     delete p;
+    |            ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:95:14: syntax error: syntax error, unexpected INT, expecting ';' or ','
+ 95 |     register int fast = 1;
+    |              ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:101:14: syntax error: syntax error, unexpected INT, expecting ';' or ','
+ 101 |     volatile int sensor = 1;
+     |              ^
 

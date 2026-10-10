@@ -134,7 +134,7 @@ unique in the program); the instruction number stays visible.
 |---|---|
 | [`include/tac.h`](include/tac.h), [`src/tac.cpp`](src/tac.cpp) | `Operand`, `Quad`, `Function`, `Program`; the listing printer |
 | [`include/irgen.h`](include/irgen.h) | the `Generator` class |
-| [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors, `new` / `delete` |
+| [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors |
 | [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, destructors at scope exit, local and static initializers, functions, frame tables |
 | [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
 | [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`, `-O3`) |
@@ -158,7 +158,6 @@ a type or an overload.
 | inheritance | base sub-object offset added to `this` and to converted pointers |
 | constructors, destructors | calls with the object's address; bases and members first in a constructor, last (reversed) in a destructor; locals destroyed at scope exit |
 | operator overloading | a call to `operator<op>` |
-| `new`, `delete` | `malloc` / `free` plus the constructor / destructor call |
 | `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
 | variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
 | globals, `static` locals | data in the `globals` table; class objects among them are constructed when `main` starts |
@@ -198,7 +197,7 @@ What keeps it correct: a value read from memory is only reused while
 nothing can have changed it. Any store through a pointer, any array or
 field store, any call, and any assignment to a global or to a variable
 whose address was taken invalidates what is known about memory
-(`memoryChanged()`); `volatile` variables are never remembered.
+(`memoryChanged()`).
 
 **`-O2`** adds two optimizations across basic blocks. Both are
 data-flow analyses over the function's flow graph (Dragon Book 9.2)
@@ -252,13 +251,13 @@ the output of the same source compiled with gcc/g++.
 | `t05_pointers` | multi-level pointers, pointer arithmetic, `void *`, pointer to array |
 | `t06_structs` | nesting, copies, by-value parameters and results, anonymous members |
 | `t07_functions` | recursion, overloading, references, varargs, `static` locals, forward calls |
-| `t08_classes` | constructor / destructor order, inheritance, static members, operators, `new` / `delete` |
-| `t09_memory` | `malloc` family, `new[]`, a linked list |
+| `t08_classes` | constructor / destructor order, inheritance, static members, operators, arrays of objects |
+| `t09_memory` | `malloc` family, a linked list |
 | `t10_io` | `printf` formats, `scanf` (input in `t10_io.in`) |
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
-| `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on, `delete` of null |
-| `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls, `volatile` |
+| `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, multiple inheritance, null base pointers, `va_list` passed on |
+| `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls |
 | `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
 | `t16_runtime` | 64-bit arithmetic, int/float conversions, `printf` formats, structs and doubles through calls (aimed at the MIPS run-time library) |
 | `t17_strings` | strings by hand: length, copy, compare, reverse, number ↔ text |
@@ -271,7 +270,7 @@ the output of the same source compiled with gcc/g++.
 | `t24_references` | reference parameters and results, references to structs and pointers, `const` references |
 | `t25_control` | state machine in a `switch`, nested loops, `goto` out of loops, `?:` chains, comma |
 | `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers, macros |
-| `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, `delete[]` of objects, static objects destroyed at exit |
+| `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, arrays of objects, static objects destroyed at exit |
 | `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, invariants and non-invariants in loops, a division that must stay, values reused or not across branches and stores |
 | `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
 | `t30_temporaries` | unnamed class objects destroyed at the end of their full expression, the cases where they are kept (initializing a variable, the function result, a reference), by-value parameters, `obj.Base::member`, `long long` arithmetic in a loop |

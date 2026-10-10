@@ -85,9 +85,6 @@ struct FunctionPass {
         return o.kind == Operand::Var &&
                (o.sym->storage == sem::Storage::Global || o.sym->storage == sem::Storage::Static);
     }
-    static bool isVolatile(const Operand &o) {
-        return o.kind == Operand::Var && o.sym->type && o.sym->type->isVolatile;
-    }
 
     std::vector<bool> leaders() const {
         std::vector<bool> lead(fn.quads.size() + 1, false);
@@ -140,7 +137,7 @@ struct FunctionPass {
             nodes[n].constant = o;
             return floatConsts[key] = n;
         }
-        if (!isName(o) || isVolatile(o)) return fresh();
+        if (!isName(o)) return fresh();
         auto it = current.find(nameOf(o));
         if (it != current.end()) return it->second;
         int n = fresh();
@@ -159,7 +156,7 @@ struct FunctionPass {
 
     /* the best way to write operand o: a constant, or the first name that has its value */
     Operand best(const Operand &o) {
-        if (!isName(o) || isBlock(o) || isVolatile(o)) return o;
+        if (!isName(o) || isBlock(o)) return o;
         int n = number(o);
         Operand r = o;
         if (nodes[n].isConst) {
@@ -191,7 +188,7 @@ struct FunctionPass {
     void define(const Operand &r, int n) {
         if (!isName(r)) return;
         if (inMemory(r)) memoryChanged();
-        if (isBlock(r) || isVolatile(r)) { current.erase(nameOf(r)); return; }
+        if (isBlock(r)) { current.erase(nameOf(r)); return; }
         current[nameOf(r)] = n;
         nodes[n].names.push_back(r);
     }
@@ -392,7 +389,7 @@ struct FunctionPass {
             Quad &q = fn.quads[i], &next = fn.quads[i + 1];
             if (dead[i] || dead[i + 1] || lead[i + 1]) continue;
             if (q.r.kind != Operand::Temp || q.op == Op::Store || q.op == Op::IndexStore || isJump(q)) continue;
-            if (next.op != Op::Assign || !sameName(next.a, q.r) || !isName(next.r) || isVolatile(next.r)) continue;
+            if (next.op != Op::Assign || !sameName(next.a, q.r) || !isName(next.r)) continue;
             Name t = nameOf(q.r);
             if (used[t] != 1 || defs[t] != 1 || addressTaken.count(t)) continue;
             if (classOf(next.r.type) != classOf(q.r.type)) continue;
@@ -559,7 +556,7 @@ struct FunctionPass {
     }
 
     /* a scalar local nothing but its own assignments can change */
-    bool isPrivate(const Operand &o) const { return isName(o) && !inMemory(o) && !isVolatile(o) && !isBlock(o); }
+    bool isPrivate(const Operand &o) const { return isName(o) && !inMemory(o) && !isBlock(o); }
 
     /* the operands of q that are read as values (not array bases, not &x) */
     template <class F> static void forEachValueUse(Quad &q, F f) {
@@ -712,7 +709,7 @@ struct FunctionPass {
             for (size_t i = blocks[k].end; i-- > blocks[k].begin;) {
                 Quad &q = fn.quads[i];
                 Operand r = defined(q);
-                bool unread = isName(r) && !live.count(nameOf(r)) && !inMemory(r) && !isVolatile(r);
+                bool unread = isName(r) && !live.count(nameOf(r)) && !inMemory(r);
                 if (unread && q.op == Op::Call) {
                     q.r = Operand(); /* the call may have effects: only its result is dropped */
                     ++stats.deadAssignments;

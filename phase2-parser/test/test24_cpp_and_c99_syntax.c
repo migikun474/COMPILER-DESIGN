@@ -2,7 +2,7 @@
    language's C++-style features can actually be *used*: constructor
    calls, out-of-class constructors/destructors, `Class::member` in
    expressions, a class name used as a type inside its own body,
-   operator overloading, `new T(args)` / `new T[n]` / `delete[]`,
+   operator overloading,
    va_list / va_start / va_arg / va_end, const pointers and references
    to pointers, unnamed (abstract) parameters and pointer-to-array casts,
    designated and empty initializers, adjacent string literals, and a
@@ -38,8 +38,7 @@ int main() {
     Node a(1);
     Node b(2, &a);
     Node c = a + b;
-    Node *heap = new Node(3);
-    int *many = new int[4];
+    int *many = (int *) malloc(4 * sizeof(int));
     int x(5);
     int *const cp = &x;
     int *&rp = many;
@@ -53,8 +52,7 @@ int main() {
     }
     int Local = 0;
     int T = 3;
-    delete heap;
-    delete[] many;
+    free(many);
     return Node::count() + sum(1, 2) + *cp + *rp + p.x + arr[1] +
            zeros[0] + s[0] + (*grid)[1] + apply(&x, 1) + twice(2) + Local + T + c.get();
 }

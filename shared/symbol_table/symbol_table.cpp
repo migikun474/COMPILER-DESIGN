@@ -195,7 +195,6 @@ void declareSymbol(const std::string &name, SymKind kind, const std::string &typ
                      : g_currentLine;
     e.isStatic = extra.isStatic;
     e.isConst = extra.isConst;
-    e.isVolatile = extra.isVolatile;
     e.pointerLevel = extra.pointerLevel;
     e.arrayLevel = extra.arrayLevel;
     e.returnType = extra.returnType;
@@ -363,13 +362,13 @@ class Mangler {
     std::string type(const TypePtr &tIn) {
         TypePtr t = normalize(tIn);
         std::string plain = canonical(t);
-        if (!(t->isConst || t->isVolatile) && !builtinCode(*t).empty()) return plain;
+        if (!t->isConst && !builtinCode(*t).empty()) return plain;
         for (size_t i = 0; i < subs_.size(); ++i) {
             if (subs_[i] == plain) return seqId(i);
         }
         std::string out;
-        if (t->isConst || t->isVolatile) {
-            out = cvCode(*t) + type(sem::unqualified(t));
+        if (t->isConst) {
+            out = "K" + type(sem::unqualified(t));
         } else {
             switch (t->kind) {
                 case TypeKind::Pointer: out = "P" + type(t->elem); break;
@@ -410,7 +409,6 @@ class Mangler {
         } while (n);
         return "S" + digits + "_";
     }
-    static std::string cvCode(const sem::Type &t) { return std::string(t.isVolatile ? "V" : "") + (t.isConst ? "K" : ""); }
     static std::string arrayCode(const sem::Type &t) {
         return "A" + (t.arraySize >= 0 ? std::to_string(t.arraySize) : std::string()) + "_";
     }
@@ -422,13 +420,13 @@ class Mangler {
     static TypePtr normalize(const TypePtr &t) {
         if (!t) return sem::errorType();
         if (t->kind == TypeKind::Opaque && t->name == "va_list")
-            return sem::qualified(sem::pointerTo(sem::voidType()), t->isConst, t->isVolatile);
+            return sem::qualified(sem::pointerTo(sem::voidType()), t->isConst);
         return t;
     }
     /* the full encoding without substitutions: the identity of a component */
     static std::string canonical(const TypePtr &tIn) {
         TypePtr t = normalize(tIn);
-        if (t->isConst || t->isVolatile) return cvCode(*t) + canonical(sem::unqualified(t));
+        if (t->isConst) return "K" + canonical(sem::unqualified(t));
         std::string b = builtinCode(*t);
         if (!b.empty()) return b;
         switch (t->kind) {
@@ -501,7 +499,7 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
             r->tag = te.typedefName;
             base = recordType(r);
         }
-        return qualified(base, te.isConst, te.isVolatile);
+        return qualified(base, te.isConst);
     }
     std::map<std::string, int> n;
     for (const auto &p : te.specParts) n[p]++;
@@ -520,7 +518,7 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
     else if (c("SHORT")) base = basicType(TypeKind::Short, c("UNSIGNED") > 0);
     else if (c("LONG")) base = basicType(c("LONG") == 2 ? TypeKind::LongLong : TypeKind::Long, c("UNSIGNED") > 0);
     else base = basicType(TypeKind::Int, c("UNSIGNED") > 0);
-    return qualified(base, te.isConst, te.isVolatile);
+    return qualified(base, te.isConst);
 }
 
 static int parseTimeTypedefDepth = 0;
@@ -538,7 +536,7 @@ sem::TypePtr parseTimeType(const ASTTypeExpr &te, bool isParam) {
     size_t innerDims = te.grouped ? std::min<size_t>(te.innerArrayCount, te.arrayDims.size()) : 0;
     auto wrapPointers = [](TypePtr t, const std::string &ops) {
         for (char op : ops) {
-            if (op == 'c' || op == 'v') t = qualified(t, op == 'c', op == 'v');
+            if (op == 'c') t = qualified(t, true);
             else t = op == '&' ? referenceTo(t) : pointerTo(t);
         }
         return t;
@@ -574,7 +572,6 @@ static std::string qualifiersFor(const SymbolTableEntry &e) {
     std::string q;
     if (e.isStatic) q += "static ";
     if (e.isConst) q += "const ";
-    if (e.isVolatile) q += "volatile ";
     if (e.pointerLevel > 0) q += std::string(e.pointerLevel, '*') + " ";
     if (e.arrayLevel > 0) q += "[]" + std::string(e.arrayLevel > 1 ? std::to_string(e.arrayLevel) : "") + " ";
     if (!q.empty()) q.pop_back(); /* trailing space */
@@ -827,7 +824,6 @@ static std::string notes(const Symbol &s) {
     if (s.kind == SymbolKind::Function && !s.isConstructor && !s.isDestructor) add(s.isDefined ? "defined" : "declared only");
     if (s.isConstant) add("value " + std::to_string(s.constValue));
     if (s.kind == SymbolKind::Variable && s.storage == Storage::Global && !s.isDefined) add("extern, not defined here");
-    if (s.isRegister) add("register");
     if (s.offset >= 0) add("offset " + std::to_string(s.offset));
     if (s.kind == SymbolKind::Tag && s.record && s.record->complete) {
         add("size " + std::to_string(s.record->size));

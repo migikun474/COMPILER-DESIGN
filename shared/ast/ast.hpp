@@ -19,8 +19,8 @@ enum class ASTKind {
 
     BinaryExpr, UnaryExpr, PostfixOpExpr, AssignExpr, TernaryExpr,
     CallExpr, BuiltinCallExpr, MemberExpr, ArrowExpr, ScopeExpr, IndexExpr,
-    CastExpr, SizeofExpr, NewExpr, DeleteExpr, CommaExpr,
-    ConstructExpr, /* `T(args)`, `T x(args)` and `new T(args)`: build a T from args */
+    CastExpr, SizeofExpr, CommaExpr,
+    ConstructExpr, /* `T(args)` and `T x(args)`: build a T from args */
     DesignatedInit, /* `.field = v` / `[3] = v` inside an initializer list */
 
     IntLiteral, FloatLiteral, CharLiteral, StringLiteral, BoolLiteral,
@@ -40,8 +40,8 @@ struct Symbol;
 struct ASTNode;
 using ASTNodePtr = std::shared_ptr<ASTNode>;
 
-/* The declared type of a declaration / parameter / cast / sizeof(type) /
-   new, exactly as written: specifiers plus declarator shape. The flat
+/* The declared type of a declaration / parameter / cast / sizeof(type),
+   exactly as written: specifiers plus declarator shape. The flat
    typeStr strings in labels ("INT_POINTER_ARRAY") lose struct tags,
    array sizes, `...`, unnamed parameters and return types; this keeps
    them. Purely syntactic -- the parser still checks nothing; semantic
@@ -52,10 +52,8 @@ struct ASTTypeExpr {
     std::string typedefName;            /* set when spelled via a TYPE_NAME */
     bool isStatic = false;
     bool isExtern = false;              /* `extern`: declares, does not define */
-    bool isRegister = false;
     int storageClasses = 0;             /* how many storage-class keywords (> 1 is an error) */
     bool isConst = false;
-    bool isVolatile = false;
     bool isAuto = false;
     bool isTypedef = false;
 
@@ -69,7 +67,7 @@ struct ASTTypeExpr {
     int innerPointerLevel = 0;
     int innerArrayCount = 0;
     /* the pointer operators themselves, left to right: '*' pointer, '&'
-       reference, 'c'/'v' const/volatile on the pointer just before it --
+       reference, 'c' const on the pointer just before it --
        `int *const *&r` is "*c*&". ptrOps is outside any `(...)` group,
        innerPtrOps inside it. */
     std::string ptrOps;
@@ -93,7 +91,7 @@ struct ASTNode {
     std::vector<std::shared_ptr<ASTNode>> children;
 
     /* extra syntactic detail, never printed by printAST() */
-    ASTTypeExprPtr typeExpr;  /* declarations, params, casts, sizeof(type), new */
+    ASTTypeExprPtr typeExpr;  /* declarations, params, casts, sizeof(type) */
     std::string access;       /* "public"/"protected"/"private" on aggregate members
                                  that follow an explicit access specifier */
     std::vector<std::pair<std::string, std::string>> bases; /* ClassDecl: (access, base name) */

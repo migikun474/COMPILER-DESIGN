@@ -57,8 +57,25 @@ Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test29_drop
  71 |     int (*table[2])(int, int);
     |                             ^
 
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:82:18: syntax error: syntax error, unexpected INT, expecting ';'
+ 82 |     int *p = new int;
+    |                  ^
+    | note: insert ';' here
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:89:12: syntax error: syntax error, unexpected IDENTIFIER, expecting ';' or ','
+ 89 |     delete p;
+    |            ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:95:14: syntax error: syntax error, unexpected INT, expecting ';' or ','
+ 95 |     register int fast = 1;
+    |              ^
+
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test29_dropped_features.c:101:14: syntax error: syntax error, unexpected INT, expecting ';' or ','
+ 101 |     volatile int sensor = 1;
+     |              ^
+
 -----------------------------------------
-Total Errors : 13
+Total Errors : 17
 
 --- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
 Program "translation_unit"
@@ -121,6 +138,32 @@ Program "translation_unit"
 |-- FunctionDef "t11_function_pointer_array : _Z26t11_function_pointer_arrayv"
 |   `-- CompoundStmt
 |       |-- ErrorNode "line 71: near ')'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t12_new : _Z7t12_newv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 82: near 'int'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t13_delete : _Z10t13_deletev"
+|   `-- CompoundStmt
+|       |-- VarDecl "p : INT_POINTER"
+|       |   `-- IntLiteral "0"
+|       |-- ErrorNode "line 89: near 'p'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t14_register : _Z12t14_registerv"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 95: near 'int'"
+|       `-- ExprStmt
+|           `-- CallExpr
+|               `-- Identifier "resync_marker"
+|-- FunctionDef "t15_volatile : _Z12t15_volatilev"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 101: near 'int'"
 |       `-- ExprStmt
 |           `-- CallExpr
 |               `-- Identifier "resync_marker"

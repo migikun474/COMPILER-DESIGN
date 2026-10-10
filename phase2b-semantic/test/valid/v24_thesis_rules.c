@@ -27,7 +27,7 @@ int read_total(void) { extern int total; return total; }
 struct Mutable { int a, b; };
 
 int main() {
-    register int r = 2;
+    int r = 2;
     int i = 0, j = 0, a[4] = { 0 };
     struct Mutable m1 = { 1, 2 }, m2 = { 3, 4 };
     m1 = m2;                         /* no const member: assignable */

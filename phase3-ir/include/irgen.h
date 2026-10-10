@@ -150,8 +150,6 @@ class Generator {
     Operand incDec(const ASTNodePtr &operand, bool increment, bool prefix, bool discard);
     Operand ternary(const ASTNodePtr &n, bool discard);
     Operand construct(const ASTNodePtr &n);
-    Operand newExpr(const ASTNodePtr &n);
-    void deleteExpr(const ASTNodePtr &n);
     Operand builtin(const ASTNodePtr &n, bool discard);
     Operand callExpr(const ASTNodePtr &n, bool discard);
     Operand overloaded(const ASTNodePtr &n);

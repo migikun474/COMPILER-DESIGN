@@ -51,8 +51,8 @@ int main() {
     const char *words[] = {"one", "two", "three"};
     char rows[2][6] = {"ab", "cde"};
     printf("%d %s %c %s %d\n", trace, words[2], rows[1][2], rows[0], (int) (sizeof(words) / sizeof(words[0])));
-    volatile int sensor = 5;
-    register int fast = sensor * 2;
+    int sensor = 5;
+    int fast = sensor * 2;
     static int kept = 3;
     auto deduced = fast + kept;
     return deduced;

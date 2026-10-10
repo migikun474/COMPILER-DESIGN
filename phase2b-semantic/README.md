@@ -146,8 +146,8 @@ pointers, references to what they refer to).
   argument as if by assignment.
 - **Members** — `member()` with `lookupMember()` (base classes
   included) and `checkAccess()`; `.` on a pointer suggests `->`.
-- **Subscripts, casts, `sizeof`, `new`** — `index()`,
-  `cast()` (`checkCast()`), `sizeofExpr()`, `newExpr()`.
+- **Subscripts, casts, `sizeof`** — `index()`,
+  `cast()` (`checkCast()`), `sizeofExpr()`.
 - **Constants** — integer constant expressions are folded **in their
   own type** (`wrapToType()`): `-1 < 0u` is false, `~0u` is
   `4294967295`; signed overflow, shift counts and value-changing
@@ -185,8 +185,7 @@ type. Details:
 
 ### Pointers, arrays, structures
 
-Pointers are chains of `Pointer` types; `&` needs an lvalue (and not a
-`register` variable), `*` needs a non-`void` pointer; qualifiers may be
+Pointers are chains of `Pointer` types; `&` needs an lvalue, `*` needs a non-`void` pointer; qualifiers may be
 added but not dropped in conversions. Arrays are nested `Array` types
 with constant positive sizes; `a[i]` needs a pointer/array and an
 integer, with a warning for constant out-of-range indices.
@@ -264,7 +263,7 @@ lists, brace elision for arrays, struct member order, string
 literals into `char` arrays, size inference for `int a[] = {...}`);
 designators (`.field` must name a field, `[N]` must be inside the array);
 typedef redefinition with a different type; storage classes (`extern` with an initializer in a block,
-several storage classes, file-scope `register`, conflicting `extern`
+several storage classes, conflicting `extern`
 types, an `extern` object used but never defined — warning).
 
 **Expressions** — undeclared identifiers; type names used as values;
@@ -274,12 +273,11 @@ integer promotions; assignment compatibility with an explanation
 (`incompatible integer to pointer conversion`, `discards 'const'
 qualifier` …); modifiable-lvalue rules for `=`, compound assignment,
 `++`/`--` (rvalues, arrays, `const` objects, structs with a
-`const` member); `&` needs an lvalue (not a
-`register` variable); `*` needs a non-`void` pointer; subscripts;
+`const` member); `&` needs an lvalue; `*` needs a non-`void` pointer; subscripts;
 member access (`.` vs `->` with a hint, unknown member, ambiguous member
 in multiple inheritance); casts (no struct casts, no casts from `void`);
 conditional-operator operand compatibility; `sizeof` on functions or
-incomplete types; `new` of incomplete types; `delete` of non-pointers;
+incomplete types;
 typed constant folding with warnings for integer overflow, bad shift
 counts and value-changing constant conversions; division by a constant
 zero (warning); sequence-point violations (warning).
@@ -302,7 +300,7 @@ non-integer; non-scalar conditions; `goto` to an undeclared label;
 duplicate labels.
 
 **Classes and objects** — constructor selection by overload resolution
-(`Dog d(4)`, `Dog(4)`, `new Dog(4)`, `Dog d = 4`, `Dog d;`), implicit
+(`Dog d(4)`, `Dog(4)`, `Dog d = 4`, `Dog d;`), implicit
 default and copy constructors, no default construction when none is
 callable without arguments, private constructors, out-of-class
 definitions must match a declaration; operator overloading (arity,
@@ -405,7 +403,7 @@ any diagnostic that is not annotated. Result today: `passed: 84 failed: 0`.
 - Converting constructors apply in initialization, not to arguments or
   returns.
 - A class declared inside a function body can see that function's locals.
-- `long double` is `double`.
+- `long double` is rejected (an invalid combination of specifiers).
 - The sequence-point check tracks named variables and members, not what
   pointers or array elements designate, and does not look into called
   functions (as gcc).

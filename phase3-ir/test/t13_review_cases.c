@@ -69,9 +69,8 @@ int main() {
         k ? one() : 0;                                /* the block still ends with ~Dog(1) */
     }
     printf("after the block\n");
-    Dog *nothing = 0;
-    delete nothing;                                   /* no destructor call */
-    Dog *heap = new Dog(2);
-    delete heap;
+    {
+        Dog last(2);
+    }
     return 0;
 }

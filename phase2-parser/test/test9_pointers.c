@@ -5,7 +5,7 @@ int add(int a, int b) {
 
 int *makeInt() {
     int *p;
-    p = new int;
+    p = (int *) malloc(sizeof(int));
     *p = 42;
     return p;
 }

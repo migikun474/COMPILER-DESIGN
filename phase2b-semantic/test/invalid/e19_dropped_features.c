@@ -2,8 +2,11 @@
    Function pointers are gone, so a function is never a value: its name
    can only be called. (enum, union, FILE, lambdas and `int (*fp)(int)`
    are rejected earlier, as syntax errors: phase2-parser/test/
-   test29_dropped_features.c.) */
+   test29_dropped_features.c, and so are `new`, `delete`, `register`
+   and `volatile`, dropped later. `long double` is no longer a spelling
+   of `double`.) */
 typedef int Fn(int);
+long double wide;                 // error: invalid combination of type specifiers 'long double'
 int twice(int v) { return v * 2; }
 int apply(int op(int), int v) { return v; }   // error: parameter 'op' cannot have a function type
 Fn *handler;                      // error: 'handler' declared as a pointer to a function

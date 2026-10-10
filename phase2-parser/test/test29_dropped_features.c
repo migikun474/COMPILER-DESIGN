@@ -2,8 +2,8 @@
    enum and union, file manipulation, lambdas, function pointers. Their
    keywords are no longer reserved and their grammar rules are gone, so
    each construct below is an ordinary syntax error. One per top-level
-   declaration or function, each followed by a resync anchor (13 errors
-   for 11 constructs: [2] and [4] are each reported twice, at the start
+   declaration or function, each followed by a resync anchor (17 errors
+   for 15 constructs: [2] and [4] are each reported twice, at the start
    of the construct and again inside its body).
 
    (File I/O leaves no syntax behind: `FILE *f = fopen("a", "r");` now
@@ -69,6 +69,36 @@ void t10_function_pointer_cast() {
 /* [11] an array of function pointers */
 void t11_function_pointer_array() {
     int (*table[2])(int, int);
+    resync_marker();
+}
+
+/* The second batch (dropped after the back end was complete): `new`,
+   `delete`, `register` and `volatile` are ordinary identifiers too, so
+   each of [12]-[15] is one more syntax error. Dynamic memory is
+   malloc / calloc / realloc / free. */
+
+/* [12] a new-expression */
+void t12_new() {
+    int *p = new int;
+    resync_marker();
+}
+
+/* [13] a delete-expression */
+void t13_delete() {
+    int *p = 0;
+    delete p;
+    resync_marker();
+}
+
+/* [14] the register storage class */
+void t14_register() {
+    register int fast = 1;
+    resync_marker();
+}
+
+/* [15] the volatile qualifier */
+void t15_volatile() {
+    volatile int sensor = 1;
     resync_marker();
 }
 

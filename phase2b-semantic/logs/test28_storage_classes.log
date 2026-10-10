@@ -79,13 +79,13 @@ limit              variable       int                        global   global    
 lookup             variable       int[3]                     global   global                         6     12    1     lookup               -                        
 scale              function       int (int)                  -        global                         5     -     1     _Z5scalei            _Z5scalei                defined
 factor             parameter      int                        param    global > scale()               9     4     1     factor.1             -                        
-k                  variable       int                        local    global > scale()               11    4     4     k.2                  -                        register
+k                  variable       int                        local    global > scale()               11    4     4     k.2                  -                        
 sum                variable       int                        local    global > scale()               12    4     2     sum.3                -                        
 calls              variable       int                        global   global                         17    4     2     calls                -                        static
 counter_t          typedef        unsigned long              -        global                         18    -     0     counter_t            -                        
 main               function       int (void)                 -        global                         20    -     0     main                 main                     defined
 n                  variable       unsigned long              local    global > main()                21    4     3     n.4                  -                        
-r                  variable       int                        local    global > main()                22    4     1     r.5                  -                        register
+r                  variable       int                        local    global > main()                22    4     1     r.5                  -                        
 
 === Record Layouts (MIPS32) ===
 (no records)

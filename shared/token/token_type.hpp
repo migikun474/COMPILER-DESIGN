@@ -44,7 +44,6 @@ enum class TokenType {
 
     // ---- type qualifiers ----
     CONST,
-    VOLATILE,
 
     // ---- composite-type keywords (introduce a user-defined type) ----
     STRUCT,
@@ -57,15 +56,12 @@ enum class TokenType {
 
     // ---- object-oriented ----
     THIS,
-    NEW,
-    DELETE,
 
     // ---- storage-class keywords ----
     STATIC,
     TYPEDEF,
     AUTO,
     EXTERN,
-    REGISTER,
 
     // ---- control-flow keywords ----
     IF,

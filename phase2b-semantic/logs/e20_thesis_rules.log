@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c
 
-Semantic analysis failed: 9 error(s), 16 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c'.
+Semantic analysis failed: 7 error(s), 16 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c'.
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:8:22: semantic warning: integer overflow in expression of type 'int' results in '-2147483648' [overflow]
  8 | int over1[2147483647 + 1];             // warning: integer overflow in expression of type 'int' results in '-2147483648'  // error: array size must be greater than zero
@@ -46,63 +46,55 @@ Semantic analysis failed: 9 error(s), 16 warning(s) in '/home/amirishetty/Deskto
  20 | static extern int z;                   // error: multiple storage classes in the declaration of 'z'
     |                   ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:21:14: semantic error: 'register' is not allowed at file scope (variable 'file_reg') [storage-class]
- 21 | register int file_reg;                 // error: 'register' is not allowed at file scope
-    |              ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:22:12: semantic warning: variable 'never_defined' is declared 'extern' and used but never defined [undefined-variable]
- 22 | extern int never_defined;              // warning: variable 'never_defined' is declared 'extern' and used but never defined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:21:12: semantic warning: variable 'never_defined' is declared 'extern' and used but never defined [undefined-variable]
+ 21 | extern int never_defined;              // warning: variable 'never_defined' is declared 'extern' and used but never defined
     |            ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:27:5: semantic error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified [const]
- 27 |     k1 = k2;                           // error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:26:5: semantic error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified [const]
+ 26 |     k1 = k2;                           // error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified
     |     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:28:5: semantic error: cannot assign to variable 'w1' of type 'struct Wrap': its member 'k.id' is const-qualified [const]
- 28 |     w1 = w2;                           // error: its member 'k.id' is const-qualified
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:27:5: semantic error: cannot assign to variable 'w1' of type 'struct Wrap': its member 'k.id' is const-qualified [const]
+ 27 |     w1 = w2;                           // error: its member 'k.id' is const-qualified
     |     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:29:16: semantic error: 'q' has both 'extern' and an initializer (a block-scope 'extern' only refers to an object defined elsewhere) [storage-class]
- 29 |     extern int q = 1;                  // error: 'q' has both 'extern' and an initializer
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:28:16: semantic error: 'q' has both 'extern' and an initializer (a block-scope 'extern' only refers to an object defined elsewhere) [storage-class]
+ 28 |     extern int q = 1;                  // error: 'q' has both 'extern' and an initializer
     |                ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:31:15: semantic error: address of register variable 'r' requested [address-of]
- 31 |     int *pr = &r;                      // error: address of register variable 'r' requested
-    |               ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:33:7: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
- 33 |     i = i++;                           // warning: operation on 'i' may be undefined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:30:7: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 30 |     i = i++;                           // warning: operation on 'i' may be undefined
     |       ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:34:13: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
- 34 |     a[i] = i++;                        // warning: operation on 'i' may be undefined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:31:13: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 31 |     a[i] = i++;                        // warning: operation on 'i' may be undefined
     |             ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:35:16: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
- 35 |     j = i++ + i++;                     // warning: operation on 'i' may be undefined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:32:16: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 32 |     j = i++ + i++;                     // warning: operation on 'i' may be undefined
     |                ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:36:12: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
- 36 |     j = (i = 1) + i;                   // warning: operation on 'i' may be undefined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:33:12: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 33 |     j = (i = 1) + i;                   // warning: operation on 'i' may be undefined
     |            ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:37:29: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
- 37 |     printf("%d %d\n", i++, i++);       // warning: operation on 'i' may be undefined
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:34:29: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+ 34 |     printf("%d %d\n", i++, i++);       // warning: operation on 'i' may be undefined
     |                             ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:39:20: semantic warning: format '%d' expects 'int', but argument 2 has type 'long' [format]
- 39 |     printf("%d\n", l);                 // warning: format '%d' expects 'int', but argument 2 has type 'long'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:36:20: semantic warning: format '%d' expects 'int', but argument 2 has type 'long' [format]
+ 36 |     printf("%d\n", l);                 // warning: format '%d' expects 'int', but argument 2 has type 'long'
     |                    ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:40:20: semantic warning: format '%f' expects a floating-point value ('double'), but argument 2 has type 'int' [format]
- 40 |     printf("%f\n", i);                 // warning: format '%f' expects a floating-point value
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:37:20: semantic warning: format '%f' expects a floating-point value ('double'), but argument 2 has type 'int' [format]
+ 37 |     printf("%f\n", i);                 // warning: format '%f' expects a floating-point value
     |                    ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:41:17: semantic warning: format '%f' expects 'float *' (use '%lf' for a double), but argument 2 has type 'double *' [format]
- 41 |     scanf("%f", &d);                   // warning: format '%f' expects 'float *' (use '%lf' for a double)
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:38:17: semantic warning: format '%f' expects 'float *' (use '%lf' for a double), but argument 2 has type 'double *' [format]
+ 38 |     scanf("%f", &d);                   // warning: format '%f' expects 'float *' (use '%lf' for a double)
     |                 ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:42:17: semantic warning: format '%d' expects 'int *', but argument 2 has type 'char *' [format]
- 42 |     scanf("%d", &c);                   // warning: format '%d' expects 'int *', but argument 2 has type 'char *'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e20_thesis_rules.c:39:17: semantic warning: format '%d' expects 'int *', but argument 2 has type 'char *' [format]
+ 39 |     scanf("%d", &c);                   // warning: format '%d' expects 'int *', but argument 2 has type 'char *'
     |                 ^
 

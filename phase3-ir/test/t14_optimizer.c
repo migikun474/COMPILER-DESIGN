@@ -1,6 +1,6 @@
 /* t14 -- code the optimizer must improve without changing its meaning:
    constants, common subexpressions and copies, next to the cases where
-   reusing a value would be wrong (pointers, globals, calls, volatile) */
+   reusing a value would be wrong (pointers, globals, calls) */
 #include <stdio.h>
 
 int g = 1;
@@ -57,8 +57,8 @@ int globals() {
     int c = g + 1;
     g = 2;
     int d = g + 1;
-    volatile int v = 3;
-    int e = v + v;                                            /* read twice, never merged */
+    int v = 3;
+    int e = v + v;
     return a + b + c + d + e + bump();
 }
 

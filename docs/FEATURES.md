@@ -2,9 +2,10 @@
 
 Every status below was established from the source and by running the
 current build — not from the specification or older READMEs. Each
-feature was compiled through all three executables
+feature was compiled through the front-end executables
 (`phase1-lexer/lexer`, `phase2-parser/syntax_analyzer`,
-`phase2b-semantic/semantic_analyzer`); the "Tests" column names test
+`phase2b-semantic/semantic_analyzer`) and, for the IR and MIPS columns,
+run in the TAC interpreter and in SPIM; the "Tests" column names test
 files that exercise it.
 
 **Legend**
@@ -47,7 +48,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | do-while loop | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:loops test16, S:v08 | all phases |
 | switch / case / default (fall-through, multiple labels) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test2, P:test4, S:v08 e08 | all phases |
 | break / continue / goto / labels | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | L:test2, P:test10, S:v08 e08 | all phases; jumps over initializations are not checked |
-| int, char, void (+ short, long, long long, float, double, bool, signed/unsigned) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test7, S:v01 | all phases (`long double` is treated as `double`) |
+| int, char, void (+ short, long, long long, float, double, bool, signed/unsigned) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test7, S:v01 | all phases (`long double` is rejected) |
 | Integer and char arrays | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:array, S:v05 e05 | all phases |
 | Pointers | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:pointers, S:v06 e06 | all phases |
 | Structures (nested) | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | P:test2 test11, S:v07 e07 | all phases; no brace elision into struct members |
@@ -60,7 +61,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
 | Variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, S:v04 v18 e15 | all phases |
-| Dynamic memory (`malloc` `calloc` `realloc` `free`, `new` `delete` `delete[]`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, P:test6, S:v09 e10 | all phases |
+| Dynamic memory (`malloc` `calloc` `realloc` `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, P:test6, S:v09 e10 | all phases |
 | Command-line input (`int main(int argc, char **argv)`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v12 v13 e11 e12 | all phases (`main` signature checked) |
 | typedef | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, S:v01 v07 | all phases |
 | References (`int &r`, `int *&r`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v11 v18 e14 | all phases |
@@ -75,12 +76,12 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Classes, objects, `this`, methods, static members | ✓ | ◐ | ✓ | ◐ | ✓ | ✓ | P:test7 test8 test13, S:v10 e09 | TAC done; front end partial: no constructor initializer lists, `virtual`, `const` methods, `friend`, `explicit` |
 | Inheritance (single, multiple), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
 | Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
-| Constructors / destructors (in-class, out-of-class, `new T(args)`) | ✓ | ◐ | ✓ | ✓ | ◐ | ◐ | P:test24, S:v17 e15 | TAC done; front end partial: no member-initializer lists |
+| Constructors / destructors (in-class, out-of-class) | ✓ | ◐ | ✓ | ✓ | ◐ | ◐ | P:test24, S:v17 e15 | TAC done; front end partial: no member-initializer lists |
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v17 e15 | all phases |
 | Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | P:test12, S:v11 v16 e04 | all phases; converting constructors only in initialization |
 | Preprocessor (`#define` object/function-like, `#` `##` `__VA_ARGS__`, `#undef`, `#if/#ifdef/#ifndef/#elif/#else/#endif`, `#include "…"`, `#error`, `#pragma once`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test11, P:test26, S:v20 e16 e17 | front end complete; `#include <…>` system headers are accepted and ignored |
-| `const`, `volatile`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
-| `extern`, `register` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test28, S:v24 e20 | all phases (linkage, composite types) |
+| `const`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
+| `extern` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test28, S:v24 e20 | all phases (linkage, composite types) |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test25, S:v19 | all phases |
 | `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 v22 v24 | all phases |
 | Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 | all phases |
@@ -107,18 +108,18 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 80 test programs |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 84 checks |
 
 ## Feature catalog
 
-### A. Basic features — implemented (front end)
+### A. Basic features — implemented (all phases)
 
 All of the specification's basic features: all arithmetic and logical
 operators, if-else, for, while, do-while, switch/case, integer and char
 arrays, pointers, structures, printf and scanf, function calls with
 arguments, goto/break/continue, `static`.
 
-### B. Advanced features — implemented (front end)
+### B. Advanced features — implemented (all phases)
 
 All of the specification's advanced features: variable-argument
 functions, dynamic memory allocation, command-line input, typedef,
@@ -129,8 +130,8 @@ arrays.
 
 Classes/objects/`this`, single and multiple inheritance, access
 modifiers, constructors/destructors, operator overloading, function
-overloading, a C preprocessor, `const`/`volatile`/`auto`,
-`extern`/`register`, C-style and functional casts, `sizeof`, ternary
+overloading, a C preprocessor, `const`/`auto`,
+`extern`, C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
 structs and anonymous struct members, hex/octal/binary literals with
 suffixes, `bool`, Itanium name mangling — plus the analysis capabilities
@@ -147,7 +148,6 @@ layouts, gcc-style printf/scanf format checking).
 | Overloading | converting constructors are applied in initialization (`Dog d = 4;`) but not to arguments or returns | `argumentConversion()` |
 | Parser member classification | the Token_Type table resolves `p.x` / `p->x` only when the base is a plain identifier (`arr[0].x` stays `IDENTIFIER`); semantic analysis types every form correctly | `parser.y` |
 | Phase-1 lexer positions | line numbers only, no columns (the parser's scanner does report columns) | `lexer.l` |
-| `long double` | accepted, but treated as `double` | `resolveSpecifiers()` |
 
 ### E. Parser-only features
 
@@ -178,6 +178,18 @@ function-pointer declarators are syntax errors
 (P:test29); a function name used as a value, a parameter of function
 type and the now-undeclared file names are semantic errors (S:e19);
 S:v23 shows the former keywords used as identifiers.
+
+**Removed on 2026-10-10** (decision D31, after a feature audit; none of
+them is in the project specification): `new` / `delete` / `delete[]`
+(dynamic memory is `malloc` / `calloc` / `realloc` / `free`; a class
+object on the heap is set up by an ordinary method, because `malloc`
+runs no constructor), the `register` storage class (the register
+allocator decides by use count), the `volatile` qualifier (nothing in
+this target changes a variable behind the program's back), and
+`long double` (it was only another spelling of `double`). The four
+words are ordinary identifiers again and each use is a syntax error
+(P:test29 [12]–[15]); `long double` is "invalid combination of type
+specifiers" (S:e19).
 
 **Never implemented:**
 

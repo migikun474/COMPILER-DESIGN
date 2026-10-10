@@ -57,10 +57,9 @@ void t09_sizeof_unbalanced_parens() {
     int s = sizeof(int;
 }
 
-/* [10] new-expression used where it can't produce a valid statement
-   (missing the type entirely) */
-void t10_new_missing_type() {
-    int *p = new;
+/* [10] a cast with nothing to convert */
+void t10_cast_missing_operand() {
+    int v = (int);
 }
 
 /* a fully valid function proving the parser recovered after all ten

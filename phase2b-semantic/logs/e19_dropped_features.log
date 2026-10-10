@@ -4,65 +4,69 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c
 
-Semantic analysis failed: 15 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c'.
+Semantic analysis failed: 16 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c'.
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:8:15: semantic error: parameter 'op' cannot have a function type (function pointers are not supported) [invalid-parameter]
- 8 | int apply(int op(int), int v) { return v; }   // error: parameter 'op' cannot have a function type
-   |               ^
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:9:13: semantic error: invalid combination of type specifiers 'long double' [invalid-specifiers]
+ 9 | long double wide;                 // error: invalid combination of type specifiers 'long double'
+   |             ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:9:5: semantic error: 'handler' declared as a pointer to a function (function pointers are not supported) [invalid-declarator]
- 9 | Fn *handler;                      // error: 'handler' declared as a pointer to a function
-   |     ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:10:5: semantic error: 'alias' declared as a reference to a function (function pointers are not supported) [invalid-declarator]
- 10 | Fn &alias;                        // error: 'alias' declared as a reference to a function
-    |     ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:17:24: semantic error: reference to non-static member function 'area' must be called [member-access]
- 17 |     int bad() { return area; }    // error: reference to non-static member function 'area' must be called
-    |                        ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:18:25: semantic error: reference to static member function 'count' must be called [member-access]
- 18 |     int bad2() { return count; }  // error: reference to static member function 'count' must be called
-    |                         ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:24:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 24 |     x = twice;                    // error: reference to function 'twice' must be called
-    |         ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:25:15: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 25 |     int *q = &twice;              // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:11:15: semantic error: parameter 'op' cannot have a function type (function pointers are not supported) [invalid-parameter]
+ 11 | int apply(int op(int), int v) { return v; }   // error: parameter 'op' cannot have a function type
     |               ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:26:10: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 26 |     x = *twice;                   // error: function pointers are not supported
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:12:5: semantic error: 'handler' declared as a pointer to a function (function pointers are not supported) [invalid-declarator]
+ 12 | Fn *handler;                      // error: 'handler' declared as a pointer to a function
+    |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:13:5: semantic error: 'alias' declared as a reference to a function (function pointers are not supported) [invalid-declarator]
+ 13 | Fn &alias;                        // error: 'alias' declared as a reference to a function
+    |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:20:24: semantic error: reference to non-static member function 'area' must be called [member-access]
+ 20 |     int bad() { return area; }    // error: reference to non-static member function 'area' must be called
+    |                        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:21:25: semantic error: reference to static member function 'count' must be called [member-access]
+ 21 |     int bad2() { return count; }  // error: reference to static member function 'count' must be called
+    |                         ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:27:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 27 |     x = twice;                    // error: reference to function 'twice' must be called
+    |         ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:28:15: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 28 |     int *q = &twice;              // error: reference to function 'twice' must be called
+    |               ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:29:10: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 29 |     x = *twice;                   // error: function pointers are not supported
     |          ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:27:11: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 27 |     x = (*twice)(3);              // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:30:11: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 30 |     x = (*twice)(3);              // error: reference to function 'twice' must be called
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:28:10: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 28 |     sink(twice);                  // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:31:10: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 31 |     sink(twice);                  // error: reference to function 'twice' must be called
     |          ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:29:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 29 |     if (twice) x = 1;             // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:32:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 32 |     if (twice) x = 1;             // error: reference to function 'twice' must be called
     |         ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:30:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 30 |     x = twice ? 1 : 2;            // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:33:9: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 33 |     x = twice ? 1 : 2;            // error: reference to function 'twice' must be called
     |         ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:31:16: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
- 31 |     x = sizeof(twice);            // error: reference to function 'twice' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:34:16: semantic error: reference to function 'twice' must be called (a function is not a value: function pointers are not supported) [function-value]
+ 34 |     x = sizeof(twice);            // error: reference to function 'twice' must be called
     |                ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:32:11: semantic error: reference to member function 'area' must be called [member-access]
- 32 |     x = s.area;                   // error: reference to member function 'area' must be called
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:35:11: semantic error: reference to member function 'area' must be called [member-access]
+ 35 |     x = s.area;                   // error: reference to member function 'area' must be called
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:33:9: semantic error: called object of type 'int' is not a function [not-callable]
- 33 |     x = x(3);                     // error: called object of type 'int' is not a function
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e19_dropped_features.c:36:9: semantic error: called object of type 'int' is not a function [not-callable]
+ 36 |     x = x(3);                     // error: called object of type 'int' is not a function
     |         ^
 

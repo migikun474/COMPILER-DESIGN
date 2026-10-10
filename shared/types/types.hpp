@@ -8,7 +8,7 @@
    types (Dragon Book 6.3.1): pointer(t), reference(t), array(n, t),
    function(params -> ret), plus named record types. Pointer
    depth is therefore structural -- `int **` is Pointer(Pointer(Int)) --
-   never a counter. Qualifiers (const/volatile) live on the level they
+   never a counter. The qualifier (const) lives on the level it
    qualify, so `const int *p` is Pointer(const Int): *p is read-only, p
    is not.
 
@@ -54,7 +54,6 @@ enum class RecordKind { Struct, Class };
 struct Type {
     TypeKind kind = TypeKind::Error;
     bool isConst = false;
-    bool isVolatile = false;
     bool isUnsigned = false;     /* integer kinds only */
 
     TypePtr elem;                /* Pointer/Reference: target; Array: element */
@@ -114,7 +113,7 @@ TypePtr arrayOf(const TypePtr &elem, long long size);
 TypePtr functionType(const TypePtr &ret, const std::vector<TypePtr> &params, bool variadic);
 TypePtr recordType(const std::shared_ptr<RecordInfo> &r);
 TypePtr opaqueType(const std::string &name);
-TypePtr qualified(const TypePtr &t, bool isConst, bool isVolatile); /* adds to existing */
+TypePtr qualified(const TypePtr &t, bool isConst); /* adds to existing */
 TypePtr unqualified(const TypePtr &t);
 
 /* ---------------- classification ---------------- */

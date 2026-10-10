@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c
 
-Semantic analysis failed: 15 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c'.
+Semantic analysis failed: 14 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c'.
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:10:9: semantic error: indirection requires a pointer operand ('int' is not a pointer) [dereference]
  10 |     x = *x;                       // error: indirection requires a pointer operand ('int' is not a pointer)
@@ -54,15 +54,11 @@ Semantic analysis failed: 15 error(s), 0 warning(s) in '/home/amirishetty/Deskto
  21 |     x = cp - p;                   // error: pointers to different types cannot be subtracted
     |            ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:22:5: semantic error: cannot delete an expression of type 'int' (a pointer is required) [delete]
- 22 |     delete x;                     // error: cannot delete an expression of type 'int'
-    |     ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:23:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
- 23 |     int (*pa)[3] = &x;            // error: incompatible pointer types
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:22:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
+ 22 |     int (*pa)[3] = &x;            // error: incompatible pointer types
     |                    ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:24:11: semantic error: type mismatch: argument 1 of 'f' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
- 24 |     x = f(*pp);                   // error: argument 1 of 'f' expects 'int' but got 'int *'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e06_pointers.c:23:11: semantic error: type mismatch: argument 1 of 'f' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
+ 23 |     x = f(*pp);                   // error: argument 1 of 'f' expects 'int' but got 'int *'
     |           ^
 

@@ -57,7 +57,6 @@ struct SymbolDeclInfo {
                            declaration line via g_tokens[tokenIdx].line */
     bool isStatic = false;
     bool isConst = false;
-    bool isVolatile = false;
     int pointerLevel = 0;
     int arrayLevel = 0;
     std::string returnType;              /* callables only */
@@ -192,7 +191,6 @@ struct SymbolTableEntry {
     int declLine = 0;
     bool isStatic = false;
     bool isConst = false;
-    bool isVolatile = false;
     int pointerLevel = 0;
     int arrayLevel = 0;
     std::string returnType;              /* callables only */
@@ -319,7 +317,6 @@ struct Symbol {
     /* functions (incl. methods / constructors / destructors) */
     bool isDefined = false;   /* functions: body seen; objects: defined here, not just
                                  declared `extern` */
-    bool isRegister = false;  /* `register`: its address may not be taken */
     bool isStatic = false;    /* `static` function / member */
     bool isMethod = false;
     bool isConstructor = false;

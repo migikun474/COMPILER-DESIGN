@@ -1,4 +1,4 @@
-/* invalid: constructors, operator overloading, varargs, new declarators,
+/* invalid: constructors, operator overloading, varargs, declarators,
    designated initializers */
 typedef int T;
 typedef char T;                   // error: typedef redefinition with different types ('char' vs 'int')
@@ -40,8 +40,6 @@ int main() {
     struct S s = {.nope = 1};     // error: no member named 'nope' in 'struct S'
     int arr[2] = {[5] = 1};       // error: array index 5 in initializer exceeds the bounds
     int k = {.a = 1};             // error: designator '.a' cannot be used to initialize the scalar
-    int *p = new int[2.5];        // error: array size in 'new' must have an integer type, not 'double'
-    delete[] x;                   // error: cannot delete[] an expression of type 'int'
     int q(1, 2);                  // error: is initialized with exactly one value, not 2
     int empty[] = {};             // error: zero-size array 'empty'
     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression

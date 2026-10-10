@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c
 
-Semantic analysis failed: 27 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c'.
+Semantic analysis failed: 25 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c'.
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:4:14: semantic error: typedef redefinition with different types ('char' vs 'int') [redeclaration]
  4 | typedef char T;                   // error: typedef redefinition with different types ('char' vs 'int')
@@ -94,27 +94,19 @@ Semantic analysis failed: 27 error(s), 1 warning(s) in '/home/amirishetty/Deskto
  42 |     int k = {.a = 1};             // error: designator '.a' cannot be used to initialize the scalar
     |               ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:43:22: semantic error: array size in 'new' must have an integer type, not 'double' [array-size]
- 43 |     int *p = new int[2.5];        // error: array size in 'new' must have an integer type, not 'double'
-    |                      ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:44:5: semantic error: cannot delete[] an expression of type 'int' (a pointer is required) [delete]
- 44 |     delete[] x;                   // error: cannot delete[] an expression of type 'int'
-    |     ^
-
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:45:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
- 45 |     int q(1, 2);                  // error: is initialized with exactly one value, not 2
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:43:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
+ 43 |     int q(1, 2);                  // error: is initialized with exactly one value, not 2
     |          ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:46:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
- 46 |     int empty[] = {};             // error: zero-size array 'empty'
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:44:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
+ 44 |     int empty[] = {};             // error: zero-size array 'empty'
     |         ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:47:25: semantic error: array designator index must be an integer constant expression [initializer]
- 47 |     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:45:25: semantic error: array designator index must be an integer constant expression [initializer]
+ 45 |     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression
     |                         ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:48:22: semantic error: array designator index -1 is negative [initializer]
- 48 |     int below[3] = {[-1] = 1};    // error: array designator index -1 is negative
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e15_cxx_features.c:46:22: semantic error: array designator index -1 is negative [initializer]
+ 46 |     int below[3] = {[-1] = 1};    // error: array designator index -1 is negative
     |                      ^
 

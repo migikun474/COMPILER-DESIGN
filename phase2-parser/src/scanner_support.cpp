@@ -97,7 +97,7 @@ bool parenGroupIsExpression(int line, int column) {
     std::string first = p.next();
     if (first == ")" ) return true;                       /* `T()` */
     if (first == "#num" || first == "#str") return true;  /* `T(4)` */
-    static const char *exprOnly[] = {"this", "sizeof", "new", "delete", "true", "false", "printf", "scanf",
+    static const char *exprOnly[] = {"this", "sizeof", "true", "false", "printf", "scanf",
                                      "malloc", "calloc", "realloc", "va_arg"};
     for (const char *w : exprOnly) {
         if (first == w) return true;
@@ -124,7 +124,7 @@ bool abstractDeclaratorGroup(int line, int column) {
             ++depth;
         } else if (t == ")") {
             if (--depth == 0) return true;
-        } else if (!(t == "*" || t == "&" || t == "[" || t == "]" || t == "#num" || t == "const" || t == "volatile")) {
+        } else if (!(t == "*" || t == "&" || t == "[" || t == "]" || t == "#num" || t == "const")) {
             return false;
         }
     }

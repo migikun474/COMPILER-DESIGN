@@ -172,14 +172,13 @@ class SemanticAnalyzer {
                      bool isScanf, const ASTNode *at);
     void foldBinary(const ASTNodePtr &n, const std::string &op);
 
-    /* ---- constructors, operator overloading, va_*, new (cxx.cpp) ---- */
+    /* ---- constructors, operator overloading, va_* (cxx.cpp) ---- */
     /* overload resolution among `rec`'s constructors (plus the implicit
        default/copy constructors); returns the user constructor chosen */
     SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at);
     void defaultConstruct(const TypePtr &t, const ASTNode *at);
     void constructorInit(const TypePtr &target, const ASTNodePtr &init, const std::string &what);
     TypePtr constructExpr(const ASTNodePtr &n);
-    TypePtr newExpr(const ASTNodePtr &n);
     void outOfClassSpecial(const ASTNodePtr &n);
     void checkOperatorDeclaration(const SymbolPtr &s, const ASTNode *at);
     bool anyViable(const std::vector<SymbolPtr> &candidates, const std::vector<ASTNodePtr> &args);

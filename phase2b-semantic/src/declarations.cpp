@@ -196,7 +196,7 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
                     error(line, col, "cannot combine a struct/class type with other type specifiers",
                           "invalid-specifiers");
                 }
-                return qualified(resolveTag(te, tagKw, at), te.isConst, te.isVolatile);
+                return qualified(resolveTag(te, tagKw, at), te.isConst);
             }
         }
         if (te.specParts.empty()) {
@@ -205,7 +205,7 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
                 return nullptr;
             }
             warning(line, col, "type specifier missing, defaults to 'int'", "implicit-int");
-            return qualified(intType(), te.isConst, te.isVolatile);
+            return qualified(intType(), te.isConst);
         }
         auto c = [&](const char *k) { return n.count(k) ? n[k] : 0; };
         int ints = c("INT"), chars = c("CHAR"), shorts = c("SHORT"), longs = c("LONG"), sig = c("SIGNED"),
@@ -226,7 +226,7 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
                 base = voids ? voidType() : bools ? boolType()
                      : valists ? opaqueType("va_list") : basicType(TypeKind::Float);
             } else if (dbls) {
-                bad = others != 1 + longs || longs > 1;
+                bad = others != 1; /* `long double` is not a type of this language */
                 base = doubleType();
             } else if (chars) {
                 bad = ints || shorts || longs;
@@ -246,13 +246,13 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
         }
     }
     /* `const Row r` with `typedef int Row[4]`: the elements are const */
-    if (base && isArray(base) && (te.isConst || te.isVolatile)) {
+    if (base && isArray(base) && te.isConst) {
         std::function<TypePtr(const TypePtr &)> elements = [&](const TypePtr &a) -> TypePtr {
-            return isArray(a) ? arrayOf(elements(a->elem), a->arraySize) : qualified(a, te.isConst, te.isVolatile);
+            return isArray(a) ? arrayOf(elements(a->elem), a->arraySize) : qualified(a, te.isConst);
         };
         return elements(base);
     }
-    return qualified(base, te.isConst, te.isVolatile);
+    return qualified(base, te.isConst);
 }
 
 long long SemanticAnalyzer::arrayDimension(const ASTNodePtr &dim, const ASTNode *at) {
@@ -339,8 +339,8 @@ SemanticAnalyzer::Resolved SemanticAnalyzer::resolveType(const ASTTypeExpr &te, 
     auto wrapPointers = [&](TypePtr t, const std::string &ops) {
         for (char op : ops) {
             if (isError(t)) return t;
-            if (op == 'c' || op == 'v') {
-                t = qualified(t, op == 'c', op == 'v');
+            if (op == 'c') {
+                t = qualified(t, true);
             } else if (isFunction(t)) {
                 /* only reachable through a typedef of a function type */
                 error(line, col, who + " declared as a " + std::string(op == '&' ? "reference" : "pointer") +
@@ -487,7 +487,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
                 error(init.get(), "variable '" + name + "' cannot be deduced from an expression of type 'void'", "auto");
                 t = errorType();
             } else {
-                t = qualified(decay(it), te.isConst, te.isVolatile);
+                t = qualified(decay(it), te.isConst);
             }
         }
     }
@@ -503,8 +503,6 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
         error(line, col, "multiple storage classes in the declaration of '" + name + "'", "storage-class");
     if (te.isExtern && ctx == DeclCtx::Member)
         error(line, col, "'extern' is not allowed on a member ('" + name + "')", "storage-class");
-    if (te.isRegister && ctx == DeclCtx::Global)
-        error(line, col, "'register' is not allowed at file scope (variable '" + name + "')", "storage-class");
     if (isExtern && init) {
         if (ctx == DeclCtx::Local) {
             error(line, col, "'" + name + "' has both 'extern' and an initializer (a block-scope 'extern' only refers "
@@ -539,7 +537,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
                                                  }())));
                 count = (count + inner - 1) / inner;
             }
-            t = qualified(arrayOf(t->elem, std::max(1LL, count)), t->isConst, t->isVolatile);
+            t = qualified(arrayOf(t->elem, std::max(1LL, count)), t->isConst);
         } else if (init && init->kind == ASTKind::StringLiteral && t->elem && t->elem->kind == TypeKind::Char) {
             TypePtr lit = expr(init);
             t = arrayOf(t->elem, lit->arraySize);
@@ -649,7 +647,6 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     sym->line = line;
     sym->column = col;
     sym->isStatic = te.isStatic;
-    sym->isRegister = te.isRegister;
     sym->isDefined = !declarationOnly; /* `extern int x;` declares; any other object declaration defines */
     sym->declNode = n.get();
     if (ctx == DeclCtx::Member) {
@@ -987,7 +984,7 @@ void SemanticAnalyzer::typedefDecl(const ASTNodePtr &n) {
     }
     /* `typedef struct { ... } Pt;`: the unnamed type is called Pt from now
        on, in messages and in mangled names (the first typedef wins) */
-    if (r.type && !r.type->isConst && !r.type->isVolatile) {
+    if (r.type && !r.type->isConst) {
         if (r.type->kind == TypeKind::Record && r.type->record && isAnonymousTag(r.type->record->tag) &&
             r.type->record->typedefName.empty())
             r.type->record->typedefName = te.name;

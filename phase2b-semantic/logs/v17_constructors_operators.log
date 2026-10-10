@@ -220,32 +220,15 @@ Program "translation_unit"
         |           `-- CallExpr  <class Vec *>  -> _ZN3Vec4selfEv (function)
         |               `-- MemberExpr "self"  <class Vec *(void)>  -> _ZN3Vec4selfEv (function)
         |                   `-- Identifier "c"  <class Vec> lvalue  -> c.19 (variable, local)
-        |-- VarDecl "h : CLASS_POINTER"  <class Vec *>  -> h.23 (variable, local)
-        |   `-- NewExpr "CLASS"  <class Vec *>
-        |       `-- ConstructExpr "CLASS"  <class Vec>  -> _ZN3VecC1Eii (function)
-        |           |-- IntLiteral "1"  <int> =1
-        |           `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "row : CLASS_POINTER"  <class Vec *>  -> row.24 (variable, local)
-        |   `-- NewExpr "CLASS_ARRAY"  <class Vec *>
-        |-- VarDecl "nums : INT_POINTER"  <int *>  -> nums.25 (variable, local)
-        |   `-- NewExpr "INT_ARRAY"  <int *>
-        |-- VarDecl "w : INT"  <int>  -> w.26 (variable, local)
+        |-- VarDecl "row : CLASS_ARRAY"  <class Vec[3]>  -> row.23 (variable, local)
+        |-- VarDecl "w : INT"  <int>  -> w.24 (variable, local)
         |   `-- ConstructExpr "INT"  <int>
         |       `-- IntLiteral "7"  <int> =7
-        |-- VarDecl "half : DOUBLE"  <double>  -> half.27 (variable, local)
+        |-- VarDecl "half : DOUBLE"  <double>  -> half.25 (variable, local)
         |   `-- BinaryExpr "/"  <double>
         |       |-- CastExpr "DOUBLE"  <double>
-        |       |   `-- Identifier "w"  <int> lvalue  -> w.26 (variable, local)
+        |       |   `-- Identifier "w"  <int> lvalue  -> w.24 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
-        |-- ExprStmt
-        |   `-- DeleteExpr  <void>
-        |       `-- Identifier "h"  <class Vec *> lvalue  -> h.23 (variable, local)
-        |-- ExprStmt
-        |   `-- DeleteExpr "[]"  <void>
-        |       `-- Identifier "row"  <class Vec *> lvalue  -> row.24 (variable, local)
-        |-- ExprStmt
-        |   `-- DeleteExpr "[]"  <void>
-        |       `-- Identifier "nums"  <int *> lvalue  -> nums.25 (variable, local)
         `-- ReturnStmt
             `-- BinaryExpr "+"  <double>
                 |-- BinaryExpr "+"  <double>
@@ -255,8 +238,8 @@ Program "translation_unit"
                 |   |   |   |   |-- Identifier "same"  <int> lvalue  -> same.22 (variable, local)
                 |   |   |   |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
                 |   |   |   |       `-- Identifier "g"  <class Vec> lvalue  -> g.21 (variable, local)
-                |   |   |   `-- Identifier "w"  <int> lvalue  -> w.26 (variable, local)
-                |   |   `-- Identifier "half"  <double> lvalue  -> half.27 (variable, local)
+                |   |   |   `-- Identifier "w"  <int> lvalue  -> w.24 (variable, local)
+                |   |   `-- Identifier "half"  <double> lvalue  -> half.25 (variable, local)
                 |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
                 |       `-- Identifier "e"  <class Vec> lvalue  -> e.17 (variable, local)
                 `-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
@@ -268,7 +251,7 @@ Name               Kind           Type                       Storage  Scope     
 Vec                class_tag      class Vec                  -        global                         3     -     0     Vec                  -                        size 8
 Vec::x             field          int                        member   global > class Vec             5     4     17    Vec::x               -                        public, offset 0
 Vec::y             field          int                        member   global > class Vec             6     4     14    Vec::y               -                        public, offset 4
-Vec::Vec           constructor    void (int, int)            -        global > class Vec             7     -     6     _ZN3VecC1Eii         _ZN3VecC1Eii             public
+Vec::Vec           constructor    void (int, int)            -        global > class Vec             7     -     5     _ZN3VecC1Eii         _ZN3VecC1Eii             public
 Vec::Vec           constructor    void (int)                 -        global > class Vec             8     -     1     _ZN3VecC1Ei          _ZN3VecC1Ei              public
 Vec::Vec           constructor    void (void)                -        global > class Vec             9     -     2     _ZN3VecC1Ev          _ZN3VecC1Ev              public
 Vec::~Vec          destructor     void (void)                -        global > class Vec             10    -     0     _ZN3VecD1Ev          _ZN3VecD1Ev              public
@@ -297,7 +280,7 @@ operator*          function       class Vec (class Vec, int) -        global    
 v                  parameter      class Vec                  param    global > operator*()           25    8     2     v.11                 -                        
 k                  parameter      int                        param    global > operator*()           25    4     2     k.12                 -                        
 main               function       int (int, char **)         -        global                         27    -     0     main                 main                     defined
-argc               parameter      int                        param    global > main()                27    4     1     argc.13              -                        
+argc               parameter      int                        param    global > main()                27    4     0     argc.13              -                        
 argv               parameter      char **                    param    global > main()                27    4     0     argv.14              -                        
 a                  variable       class Vec                  local    global > main()                28    8     8     a.15                 -                        
 b                  variable       class Vec                  local    global > main()                29    8     3     b.16                 -                        
@@ -307,11 +290,9 @@ c                  variable       class Vec                  local    global > m
 d                  variable       class Vec                  local    global > main()                33    8     1     d.20                 -                        
 g                  variable       class Vec                  local    global > main()                34    8     2     g.21                 -                        
 same               variable       int                        local    global > main()                39    4     1     same.22              -                        
-h                  variable       class Vec *                local    global > main()                40    4     1     h.23                 -                        
-row                variable       class Vec *                local    global > main()                41    4     1     row.24               -                        
-nums               variable       int *                      local    global > main()                42    4     1     nums.25              -                        
-w                  variable       int                        local    global > main()                43    4     2     w.26                 -                        
-half               variable       double                     local    global > main()                44    8     1     half.27              -                        
+row                variable       class Vec[3]               local    global > main()                40    24    0     row.23               -                        
+w                  variable       int                        local    global > main()                41    4     2     w.24                 -                        
+half               variable       double                     local    global > main()                42    8     1     half.25              -                        
 
 === Record Layouts (MIPS32) ===
 class Vec: size 8, align 4

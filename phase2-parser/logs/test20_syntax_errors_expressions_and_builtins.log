@@ -46,9 +46,9 @@ Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test20_synt
     |                       ^
     | note: insert ')' here
 
-/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:63:17: syntax error: syntax error, unexpected ';'
- 63 |     int *p = new;
-    |                 ^
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:62:18: syntax error: syntax error, unexpected ';'
+ 62 |     int v = (int);
+    |                  ^
 
 -----------------------------------------
 Total Errors : 10
@@ -95,9 +95,9 @@ Program "translation_unit"
 |-- FunctionDef "t09_sizeof_unbalanced_parens : _Z28t09_sizeof_unbalanced_parensv"
 |   `-- CompoundStmt
 |       `-- ErrorNode "line 57: near ';'"
-|-- FunctionDef "t10_new_missing_type : _Z20t10_new_missing_typev"
+|-- FunctionDef "t10_cast_missing_operand : _Z24t10_cast_missing_operandv"
 |   `-- CompoundStmt
-|       `-- ErrorNode "line 63: near ';'"
+|       `-- ErrorNode "line 62: near ';'"
 `-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- DeclGroup

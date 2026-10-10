@@ -1,5 +1,5 @@
 /* The C++-style parts of the language: constructors and object
-   construction, operator overloading, `new`, and va_start/va_arg/va_end. */
+   construction, operator overloading, and va_start/va_arg/va_end. */
 #include <algorithm>
 
 #include "diagnostics/diagnostics.hpp"
@@ -79,7 +79,7 @@ SymbolPtr SemanticAnalyzer::construct(RecordInfo *rec, const std::vector<ASTNode
     return chosen;
 }
 
-/* `Dog d;` / `Dog pack[3];` / `new Dog`: a class with constructors must
+/* `Dog d;` / `Dog pack[3];`: a class with constructors must
    have one callable without arguments */
 void SemanticAnalyzer::defaultConstruct(const TypePtr &t, const ASTNode *at) {
     TypePtr e = t;
@@ -145,46 +145,6 @@ TypePtr SemanticAnalyzer::constructExpr(const ASTNodePtr &n) {
     }
     if (args[0]->hasConstValue && isIntegral(t)) n->hasConstValue = true, n->constValue = args[0]->constValue;
     return unqualified(t);
-}
-
-TypePtr SemanticAnalyzer::newExpr(const ASTNodePtr &n) {
-    if (!n->typeExpr) return errorType();
-    ASTTypeExpr te = *n->typeExpr;
-    bool arrayNew = !te.arrayDims.empty() && !te.grouped;
-    if (arrayNew) { /* `new T[n]`: the first size is evaluated at run time */
-        ASTNodePtr first = te.arrayDims.front();
-        te.arrayDims.erase(te.arrayDims.begin());
-        TypePtr st0 = value(first);
-        if (!isError(st0) && !isIntegral(st0)) {
-            error(first.get(), "array size in 'new' must have an integer type, not " + q(st0), "array-size");
-        } else if (first->hasConstValue && first->constValue < 0) {
-            error(first.get(), "array size in 'new' is negative ('" + std::to_string(first->constValue) + "')",
-                  "array-size");
-        }
-    }
-    TypePtr target = resolveType(te, n.get(), false).type;
-    if (!target) target = errorType();
-    ASTNodePtr init;
-    for (const auto &c : n->children) {
-        if (c->kind == ASTKind::ConstructExpr) init = c;
-    }
-    if (isError(target)) {
-        if (init) for (const auto &a : init->children) expr(a);
-        return errorType();
-    }
-    if (!isComplete(target)) {
-        error(n.get(), "'new' cannot allocate an object of incomplete type " + q(target), "incomplete-type");
-        return errorType();
-    }
-    if (init) {
-        if (arrayNew && !init->children.empty()) {
-            error(init.get(), "'new T[n]' cannot pass constructor arguments to the elements", "initializer");
-        }
-        constructorInit(target, init, "the object allocated by 'new'");
-    } else {
-        defaultConstruct(target, n.get());
-    }
-    return pointerTo(target);
 }
 
 /* `Dog::Dog(...) { }` / `Dog::~Dog() { }` after the class */

@@ -57,7 +57,6 @@ extern                         extern
 int                            int                 
 limit                          INT                 
 ;                              semicolon_op        
-register                       register            
 int                            int                 
 k                              INT                 
 ;                              semicolon_op        
@@ -111,7 +110,6 @@ n                              UNSIGNED_LONG
 =                              assign_op           
 0                              INT_LITERAL         
 ;                              semicolon_op        
-register                       register            
 int                            int                 
 r                              INT                 
 =                              assign_op           

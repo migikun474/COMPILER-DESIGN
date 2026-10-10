@@ -31,10 +31,8 @@ struct TypeSpec {
     bool isTypedefStorage = false;
     bool isStatic = false;
     bool isExtern = false;
-    bool isRegister = false;
-    int storageClasses = 0;     /* static/extern/register/typedef keywords seen */
+    int storageClasses = 0;     /* static/extern/typedef keywords seen */
     bool isConst = false;
-    bool isVolatile = false;
     bool isAuto = false;
 };
 

@@ -1,4 +1,4 @@
-/* t09 -- dynamic memory: malloc / calloc / realloc / free, new[] / delete[],
+/* t09 -- dynamic memory: malloc / calloc / realloc / free,
    a linked list and a growing array */
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,15 +33,15 @@ int main() {
         free(dead);
     }
 
-    double *d = new double[3];
+    double *d = (double *) malloc(3 * sizeof(double));
     d[0] = 1.5; d[1] = 2.5; d[2] = d[0] + d[1];
-    int *one = new int;
+    int *one = (int *) malloc(sizeof(int));
     *one = 42;
     char *text = (char *) malloc(8);
     text[0] = 'o'; text[1] = 'k'; text[2] = 0;
     printf("%.1f %d %s\n", d[2], *one, text);
-    delete[] d;
-    delete one;
+    free(d);
+    free(one);
     free(text);
     free(a);
     free(z);
