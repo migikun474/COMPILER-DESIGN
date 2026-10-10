@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 29 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 30 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 29 passed).
+> (`./run_tests.sh`: 31 passed, the 30 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -274,16 +274,51 @@ the output of the same source compiled with gcc/g++.
 | `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, `delete[]` of objects, static objects destroyed at exit |
 | `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, invariants and non-invariants in loops, a division that must stay, values reused or not across branches and stores |
 | `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
+| `t30_temporaries` | unnamed class objects destroyed at the end of their full expression, the cases where they are kept (initializing a variable, the function result, a reference), by-value parameters, `obj.Base::member`, `long long` arithmetic in a loop |
+| `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
+
+## Unnamed class objects
+
+An object the expression itself creates (`Tag(3)`, the result of a call
+that returns a class, the copy made for a by-value parameter, the value
+of `c ? a : b`) is recorded while the expression is translated and
+destroyed, last made first, at the end of the full expression: the end
+of an expression statement, of a declaration, of a `for` step, of a
+`return` value, or just before the jump of a test. It is *not*
+destroyed there when it became something with a longer life:
+
+| Case | What happens |
+|---|---|
+| `Tag t = make(5);`, `Tag t(make(5));`, an element of a brace list | the object is the variable: destroyed with it |
+| `return Tag(3);`, `return make(3);` | the object is the function's result: the caller destroys it |
+| `return t;` where every `return` names the same local of the outermost block | `t` is the result itself: not copied and not destroyed (g++ 13's rule for the named return value optimization) |
+| `return a;` otherwise (two different locals, a parameter, a global) | copied out (by the copy constructor if there is one), then the locals are destroyed |
+| `const Tag &r = Tag(50);` | lives as long as `r`: destroyed at the end of the block |
+| `f(x)` with a by-value class parameter | the parameter is a copy (copy constructor, or a block copy) destroyed after the call |
+
+## Warnings from this phase
+
+`tac_generator` and `mips_generator` print one warning for each local
+variable that some path reads before anything was stored in it:
+
+```
+u.c:6: warning: variable 'x' may be used uninitialized in function 'pick(int)' [uninitialized]
+```
+
+It comes from the liveness analysis the optimizer already has (a
+variable live at the entry of the function is read before it is
+written), computed on the unoptimized code at every `-O` level. Only
+scalars whose address is never taken are tracked: arrays, objects,
+globals and anything reached through a pointer are not.
 
 ## Limitations
 
 - Without an `-O` flag the output is deliberately unoptimized (decision D16).
 - After optimization the symbol table still lists temporaries that are no
   longer used (their frame slots are not reclaimed yet).
-- Unnamed temporaries of class type and by-value class parameters are
-  not destroyed.
-- `obj.Base::member` (a qualified member name after `.` or `->`) is not
-  in the grammar; a hidden base member is reached through a base pointer.
+- A temporary made inside a condition is destroyed before that test's
+  jump, not at the end of the whole condition: in `a(T(1)) && b(T(2))`
+  `T(1)` is destroyed before `T(2)` is made (C++ destroys it after).
 - `static` locals of class type are constructed at program start, not
   on first use.
 - A `goto` into a block past a declaration with a constructor is not

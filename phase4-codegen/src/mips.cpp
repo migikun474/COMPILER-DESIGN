@@ -62,6 +62,7 @@ struct Emitter {
     using Key = std::pair<const sem::Symbol *, int>;
     std::map<Key, std::string> home; /* names that live in $s0-$s7 / $f20-$f30 instead of the frame */
     std::map<Key, Cls> homeClass;    /* the declared class of each of them */
+    std::map<Key, std::string> homeHi; /* a long long takes a pair: `home` has its low word, this its high word */
 
     /* a char, short or bool in a register is kept exactly as a load would give it */
     void normalize(const std::string &reg, Cls c) {
@@ -183,13 +184,30 @@ struct Emitter {
             ins("li    " + hi + ", " + std::to_string(static_cast<int32_t>(o.ival >> 32)));
             return;
         }
+        if (const std::string *h = homeOf(o)) {
+            if (*h != lo) ins("move  " + lo + ", " + *h);
+            if (homeHi[keyOf(o)] != hi) ins("move  " + hi + ", " + homeHi[keyOf(o)]);
+            return;
+        }
         ins("lw    " + lo + ", " + mem(o));
         ins("lw    " + hi + ", " + mem(o, 4));
     }
 
     void storeWide(const std::string &lo, const std::string &hi, const Operand &dst) {
+        if (const std::string *h = homeOf(dst)) {
+            if (*h != lo) ins("move  " + *h + ", " + lo);
+            if (homeHi[keyOf(dst)] != hi) ins("move  " + homeHi[keyOf(dst)] + ", " + hi);
+            return;
+        }
         ins("sw    " + lo + ", " + mem(dst));
         ins("sw    " + hi + ", " + mem(dst, 4));
+    }
+
+    /* the registers that hold a long long (low, high): its own pair, or the scratch pair after a load */
+    std::pair<std::string, std::string> wideUse(const Operand &o, const std::string &lo, const std::string &hi) {
+        if (const std::string *h = homeOf(o)) return {*h, homeHi[keyOf(o)]};
+        loadWide(lo, hi, o);
+        return {lo, hi};
     }
 
     /* floating constants live in the data segment as their exact bits */
@@ -245,11 +263,11 @@ struct Emitter {
             loadFloat("$f0", o, c);
             ins(std::string(c == Cls::Double ? "s.d   " : "s.s   ") + "$f0, " + at);
         } else if (isWide(c)) {
-            loadWide("$t0", "$t1", o);
+            auto v = wideUse(o, "$t0", "$t1");
             std::string base = at.substr(at.find('('));
             int off = std::stoi(at.substr(0, at.find('(')));
-            ins("sw    $t0, " + std::to_string(off) + base);
-            ins("sw    $t1, " + std::to_string(off + 4) + base);
+            ins("sw    " + v.first + ", " + std::to_string(off) + base);
+            ins("sw    " + v.second + ", " + std::to_string(off + 4) + base);
         } else {
             std::string r = use(o, "$t0");
             ins(std::string(c == Cls::Bool || c == Cls::Char || c == Cls::UChar ? "sb    " : c == Cls::Short || c == Cls::UShort ? "sh    " : "sw    ") + r + ", " + at);
@@ -309,38 +327,40 @@ struct Emitter {
                 storeWide("$v0", "$v1", q.r);
                 return;
             }
-            loadWide("$t0", "$t1", q.a);
-            loadWide("$t2", "$t3", q.b);
+            /* the operands are read where they are; the result is built in
+               $t4:$t6 because it may be one of the operands (x = x + y) */
+            auto a = wideUse(q.a, "$t0", "$t1"), b = wideUse(q.b, "$t2", "$t3");
+            const std::string &aLo = a.first, &aHi = a.second, &bLo = b.first, &bHi = b.second;
             switch (q.op) {
                 case Op::Add:
-                    ins("addu  $t4, $t0, $t2");
-                    ins("sltu  $t5, $t4, $t0"); /* carry out of the low word */
-                    ins("addu  $t1, $t1, $t3");
-                    ins("addu  $t1, $t1, $t5");
+                    ins("addu  $t4, " + aLo + ", " + bLo);
+                    ins("sltu  $t5, $t4, " + aLo); /* carry out of the low word */
+                    ins("addu  $t6, " + aHi + ", " + bHi);
+                    ins("addu  $t6, $t6, $t5");
                     break;
                 case Op::Sub:
-                    ins("sltu  $t5, $t0, $t2"); /* borrow */
-                    ins("subu  $t4, $t0, $t2");
-                    ins("subu  $t1, $t1, $t3");
-                    ins("subu  $t1, $t1, $t5");
+                    ins("sltu  $t5, " + aLo + ", " + bLo); /* borrow */
+                    ins("subu  $t4, " + aLo + ", " + bLo);
+                    ins("subu  $t6, " + aHi + ", " + bHi);
+                    ins("subu  $t6, $t6, $t5");
                     break;
                 case Op::Mul:
-                    ins("multu $t0, $t2");
+                    ins("multu " + aLo + ", " + bLo);
                     ins("mflo  $t4");
                     ins("mfhi  $t5");
-                    ins("mul   $t6, $t0, $t3");
+                    ins("mul   $t6, " + aLo + ", " + bHi);
                     ins("addu  $t5, $t5, $t6");
-                    ins("mul   $t6, $t1, $t2");
-                    ins("addu  $t1, $t5, $t6");
+                    ins("mul   $t6, " + aHi + ", " + bLo);
+                    ins("addu  $t6, $t5, $t6");
                     break;
                 default: {
                     const char *op = q.op == Op::BitAnd ? "and   " : q.op == Op::BitOr ? "or    " : "xor   ";
-                    ins(std::string(op) + "$t4, $t0, $t2");
-                    ins(std::string(op) + "$t1, $t1, $t3");
+                    ins(std::string(op) + "$t4, " + aLo + ", " + bLo);
+                    ins(std::string(op) + "$t6, " + aHi + ", " + bHi);
                     break;
                 }
             }
-            storeWide("$t4", "$t1", q.r);
+            storeWide("$t4", "$t6", q.r);
             return;
         }
         bool isSigned = c == Cls::Int;
@@ -388,17 +408,17 @@ struct Emitter {
             ins(std::string(c == Cls::Double ? "neg.d " : "neg.s ") + d + ", " + a);
             floatFinish(d, q.r);
         } else if (isWide(c)) {
-            loadWide("$t0", "$t1", q.a);
+            auto a = wideUse(q.a, "$t0", "$t1");
             if (q.op == Op::Neg) {
-                ins("sltu  $t5, $zero, $t0");
-                ins("negu  $t0, $t0");
-                ins("negu  $t1, $t1");
-                ins("subu  $t1, $t1, $t5");
+                ins("sltu  $t5, $zero, " + a.first);
+                ins("negu  $t4, " + a.first);
+                ins("negu  $t6, " + a.second);
+                ins("subu  $t6, $t6, $t5");
             } else {
-                ins("nor   $t0, $t0, $zero");
-                ins("nor   $t1, $t1, $zero");
+                ins("nor   $t4, " + a.first + ", $zero");
+                ins("nor   $t6, " + a.second + ", $zero");
             }
-            storeWide("$t0", "$t1", q.r);
+            storeWide("$t4", "$t6", q.r);
         } else {
             std::string a = use(q.a, "$t0"), d = dest(q.r, "$t0");
             ins(q.op == Op::Neg ? "negu  " + d + ", " + a : "nor   " + d + ", " + a + ", $zero");
@@ -493,18 +513,18 @@ struct Emitter {
             return;
         }
         if (isWide(c)) {
-            loadWide("$t0", "$t1", q.a);
-            loadWide("$t2", "$t3", q.b);
+            auto wa = wideUse(q.a, "$t0", "$t1"), wb = wideUse(q.b, "$t2", "$t3");
             if (op == "==" || op == "!=") {
-                ins("xor   $t4, $t0, $t2");
-                ins("xor   $t5, $t1, $t3");
+                ins("xor   $t4, " + wa.first + ", " + wb.first);
+                ins("xor   $t5, " + wa.second + ", " + wb.second);
                 ins("or    $t4, $t4, $t5");
                 ins(std::string(op == "==" ? "beqz  " : "bnez  ") + "$t4, " + target);
                 return;
             }
             /* high words decide unless they are equal; then the low words, unsigned */
             bool swap = op == ">" || op == ">=";
-            std::string aLo = swap ? "$t2" : "$t0", aHi = swap ? "$t3" : "$t1", bLo = swap ? "$t0" : "$t2", bHi = swap ? "$t1" : "$t3";
+            if (swap) std::swap(wa, wb);
+            const std::string &aLo = wa.first, &aHi = wa.second, &bLo = wb.first, &bHi = wb.second;
             std::string skip = fresh();
             ins(std::string(c == Cls::ULLong ? "bltu  " : "blt   ") + aHi + ", " + bHi + ", " + target);
             ins("bne   " + aHi + ", " + bHi + ", " + skip);
@@ -601,8 +621,12 @@ struct Emitter {
                     loadFloat(d, q.a, rc);
                     floatFinish(d, q.r);
                 } else if (isWide(rc)) {
-                    loadWide("$t0", "$t1", q.a);
-                    storeWide("$t0", "$t1", q.r);
+                    if (const std::string *h = homeOf(q.r)) {
+                        loadWide(*h, homeHi[keyOf(q.r)], q.a);
+                    } else {
+                        auto a = wideUse(q.a, "$t0", "$t1");
+                        storeWide(a.first, a.second, q.r);
+                    }
                 } else {
                     std::string d = dest(q.r, "$t0");
                     loadInt(d, q.a);
@@ -725,10 +749,12 @@ struct Emitter {
         /* registers for the most used names; a slot to save each register this function uses */
         home.clear();
         homeClass.clear();
+        homeHi.clear();
         if (optimize) assignRegisters(f, incoming);
         std::map<std::string, int> saved;
-        for (const auto &h : home)
-            if (!saved.count(h.second)) saved[h.second] = place(h.second[1] == 'f' ? sem::doubleType() : sem::intType());
+        for (const auto *pairs : {&home, &homeHi})
+            for (const auto &h : *pairs)
+                if (!saved.count(h.second)) saved[h.second] = place(h.second[1] == 'f' ? sem::doubleType() : sem::intType());
         auto saveOp = [](const std::string &reg, bool store) { return std::string(reg[1] == 'f' ? (store ? "s.d   " : "l.d   ") : (store ? "sw    " : "lw    ")); };
         frameSize = roundUp(depth, 8);
 
@@ -767,6 +793,7 @@ struct Emitter {
             if (h == home.end()) continue;
             Cls c = homeClass[Key(p, 0)];
             ins(std::string(c == Cls::Double ? "l.d   " : c == Cls::Float ? "l.s   " : "lw    ") + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
+            if (isWide(c)) ins("lw    " + homeHi[Key(p, 0)] + ", " + std::to_string(varOff[p] + 4) + "($fp)");
         }
         for (const auto &line : code) text << line << "\n";
         for (const auto &line : body) text << line << "\n";
@@ -788,9 +815,8 @@ struct Emitter {
        loop it reaches into. In order of count each name takes the first
        register that no name with an overlapping interval already holds:
        $s0-$s7 for integers and pointers, $f20-$f30 for float and double.
-       Only scalars whose address is never needed qualify.
-       ponytail: long long always stays in the frame (it would need a
-       register pair and is rarely in a hot loop). */
+       Only scalars whose address is never needed qualify. A long long
+       takes two of the integer registers, or none if two are not free. */
     void assignRegisters(const Function &f, const std::vector<const sem::Symbol *> &incoming) {
         int n = static_cast<int>(f.quads.size());
         std::vector<int> depth(n, 0);
@@ -816,7 +842,7 @@ struct Emitter {
             TypePtr t = o.kind == Operand::Temp ? f.temps[o.temp - 1] : o.sym->type;
             Cls c = classOf(t);
             bool scalar = t && !sem::isArray(t) && !t->isVolatile && t->kind != sem::TypeKind::Opaque && c != Cls::Block &&
-                          c != Cls::Void && !isWide(c);
+                          c != Cls::Void;
             if (!scalar) { never.insert(keyOf(o)); return; }
             Info &x = info[keyOf(o)];
             x.weight += w;
@@ -867,15 +893,19 @@ struct Emitter {
         std::map<std::string, std::vector<std::pair<int, int>>> busy;
         for (const auto &r : ranked) {
             const Info &x = info[r.second];
+            std::vector<std::string> got;
+            size_t need = isWide(x.cls) ? 2 : 1;
             for (const std::string &reg : isFloatCls(x.cls) ? floatRegs : intRegs) {
                 bool free = true;
                 for (const auto &b : busy[reg]) free = free && (x.first > b.second || x.last < b.first);
-                if (!free) continue;
-                home[r.second] = reg;
-                homeClass[r.second] = x.cls;
-                busy[reg].push_back({x.first, x.last});
-                break;
+                if (free) got.push_back(reg);
+                if (got.size() == need) break;
             }
+            if (got.size() < need) continue;
+            home[r.second] = got[0];
+            if (need == 2) homeHi[r.second] = got[1];
+            homeClass[r.second] = x.cls;
+            for (const std::string &reg : got) busy[reg].push_back({x.first, x.last});
         }
     }
 

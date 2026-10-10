@@ -143,7 +143,7 @@ layouts, gcc-style printf/scanf format checking).
 |---|---|---|
 | Classes | constructor member-initializer lists (`Dog() : Animal(4) {}` is a syntax error), `virtual` / polymorphism, `const` member functions, `friend`, `explicit` | grammar (`parser.y`) |
 | Struct initialization | brace elision into struct members: `struct { int a[2]; int b; } s = {1, 2, 3};` is rejected (and the message calls `s` an "array variable") | `checkInitializer()` |
-| Control-flow checks | no flow analysis: "missing return" only when a non-`void` function has no `return` at all; no unreachable-code or uninitialized-use diagnostics; a `goto`/`case` jumping over an initialization is not reported | `statements.cpp` |
+| Control-flow checks | no flow analysis in the semantic phase: "missing return" only when a non-`void` function has no `return` at all; no unreachable-code diagnostics; uninitialized reads are warned about by the TAC phase (liveness); a `goto`/`case` jumping over an initialization is not reported | `statements.cpp` |
 | Overloading | converting constructors are applied in initialization (`Dog d = 4;`) but not to arguments or returns | `argumentConversion()` |
 | Parser member classification | the Token_Type table resolves `p.x` / `p->x` only when the base is a plain identifier (`arr[0].x` stays `IDENTIFIER`); semantic analysis types every form correctly | `parser.y` |
 | Phase-1 lexer positions | line numbers only, no columns (the parser's scanner does report columns) | `lexer.l` |

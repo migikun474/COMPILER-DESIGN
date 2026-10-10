@@ -656,25 +656,54 @@ struct FunctionPass {
     }
 
     /* live-variable analysis; an assignment whose target is not live afterwards is removed */
-    bool removeDeadAssignments() {
-        std::vector<Block> blocks = flowGraph();
-        auto step = [&](const Quad &q, std::set<Name> &live) { /* live before q, given live after */
-            Operand r = defined(q);
-            if (isName(r)) live.erase(nameOf(r));
-            if (isName(q.a)) live.insert(nameOf(q.a));
-            if (isName(q.b)) live.insert(nameOf(q.b));
-            if ((q.op == Op::Store || q.op == Op::IndexStore) && isName(q.r)) live.insert(nameOf(q.r));
-        };
+    static void liveStep(const Quad &q, std::set<Name> &live) { /* live before q, given live after */
+        if (q.op == Op::VaStart) { /* va_start(ap, last) assigns ap and reads nothing */
+            if (isName(q.a)) live.erase(nameOf(q.a));
+            return;
+        }
+        Operand r = defined(q);
+        if (isName(r)) live.erase(nameOf(r));
+        if (isName(q.a)) live.insert(nameOf(q.a));
+        if (isName(q.b)) live.insert(nameOf(q.b));
+        if ((q.op == Op::Store || q.op == Op::IndexStore) && isName(q.r)) live.insert(nameOf(q.r));
+    }
+
+    /* live-variable analysis: the names live at the entry of every block */
+    std::vector<std::set<Name>> liveness(const std::vector<Block> &blocks) const {
         std::vector<std::set<Name>> liveIn(blocks.size());
         for (bool changed = true; changed;) {
             changed = false;
             for (size_t k = blocks.size(); k-- > 0;) {
                 std::set<Name> live;
                 for (int s : blocks[k].succ) live.insert(liveIn[s].begin(), liveIn[s].end());
-                for (size_t i = blocks[k].end; i-- > blocks[k].begin;) step(fn.quads[i], live);
+                for (size_t i = blocks[k].end; i-- > blocks[k].begin;) liveStep(fn.quads[i], live);
                 if (live != liveIn[k]) { liveIn[k] = live; changed = true; }
             }
         }
+        return liveIn;
+    }
+
+    /* a scalar local that is live when the function starts is read on
+       some path before anything was assigned to it */
+    std::vector<const sem::Symbol *> readBeforeAssigned() const {
+        std::vector<const sem::Symbol *> found;
+        if (fn.quads.empty()) return found;
+        std::vector<std::set<Name>> liveIn = liveness(flowGraph()); /* kept: the loop refers into it */
+        for (const Name &n : liveIn[0]) {
+            if (!n.first || n.first->storage != sem::Storage::Local || sem::isArray(n.first->type)) continue;
+            Operand o;
+            o.kind = Operand::Var;
+            o.sym = const_cast<sem::Symbol *>(n.first);
+            o.type = n.first->type;
+            if (isPrivate(o)) found.push_back(n.first);
+        }
+        return found;
+    }
+
+    bool removeDeadAssignments() {
+        std::vector<Block> blocks = flowGraph();
+        auto step = [&](const Quad &q, std::set<Name> &live) { liveStep(q, live); };
+        std::vector<std::set<Name>> liveIn = liveness(blocks);
         std::vector<bool> dead(fn.quads.size(), false);
         bool removed = false;
         for (size_t k = 0; k < blocks.size(); ++k) {
@@ -1149,6 +1178,16 @@ OptStats optimize(Program &program, int level) {
         stats.after += static_cast<int>(f.quads.size());
     }
     return stats;
+}
+
+std::vector<std::pair<int, std::string>> uninitializedReads(Program &program) {
+    std::vector<std::pair<int, std::string>> out;
+    OptStats unused;
+    for (auto &f : program.functions)
+        for (const sem::Symbol *v : FunctionPass(f, unused).readBeforeAssigned())
+            out.push_back({v->line, "variable '" + v->name + "' may be used uninitialized in function '" + f.signature + "'"});
+    std::sort(out.begin(), out.end());
+    return out;
 }
 
 void printStats(const OptStats &s, std::ostream &out) {

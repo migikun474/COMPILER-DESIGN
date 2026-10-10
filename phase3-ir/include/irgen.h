@@ -71,6 +71,8 @@ class Generator {
     std::map<const sem::Symbol *, LabelInfo> labels;
     std::map<const sem::Symbol *, std::vector<const ASTNode *>> labelScopes; /* the blocks around each label */
     std::vector<Scope> scopes;
+    std::vector<Operand> temporaries;           /* unnamed class objects of the current full expression */
+    const sem::Symbol *resultObject = nullptr;  /* the local every `return` names: it is the result itself */
     std::vector<std::pair<sem::Symbol *, const ASTNode *>> dynamicGlobals; /* class objects built at program start */
     std::vector<std::pair<const sem::Symbol *, int>> pendingGotos;
     List returnJumps;                 /* destructor bodies: `return` runs the epilogue first */
@@ -169,8 +171,12 @@ class Generator {
     Operand argumentFor(const sem::TypePtr &param, const ASTNodePtr &arg);
     Operand promoteVariadic(const Operand &v);
     Operand referenceTo(const ASTNodePtr &n, const sem::TypePtr &elem);
-    Operand copyOf(const ASTNodePtr &n, const sem::TypePtr &type, bool elideLocal);
+    Operand copyOf(const ASTNodePtr &n, const sem::TypePtr &type, bool returned);
     void destroyStatics();
+    Operand temporary(const Operand &t);
+    void keep(const Operand &t);
+    void destroyTemporaries(size_t from = 0);
+    bool isExisting(const ASTNodePtr &n) const;
     bool inMain() const { return fn && fn->sym && fn->sym->name == "main" && !fn->sym->ownerRecord; }
     sem::RecordInfo *currentClass() const;
 };

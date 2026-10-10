@@ -755,14 +755,22 @@ Operand Generator::ternary(const ASTNodePtr &n, bool discard) {
     List trueList, falseList;
     cond(C, trueList, falseList);
     backpatch(trueList, nextQuad());
-    Operand a = rvalue(A, isVoid);
-    if (!isVoid) emitAssign(t, sem::isRecord(T) ? a : convert(a, T));
+    /* a class object picked by value is a temporary of its own; whatever
+       else a branch creates dies inside that branch, the only place it exists */
+    bool object = !isVoid && sem::isRecord(T) && !n->isLValue;
+    auto branch = [&](const ASTNodePtr &e) {
+        size_t mark = temporaries.size();
+        Operand v = object ? copyOf(e, T, false) : rvalue(e, isVoid);
+        if (!isVoid) emitAssign(t, sem::isRecord(T) ? v : convert(v, T));
+        keep(v);
+        destroyTemporaries(mark);
+    };
+    branch(A);
     int skip = emitGoto();
     backpatch(falseList, nextQuad());
-    Operand b = rvalue(B, isVoid);
-    if (!isVoid) emitAssign(t, sem::isRecord(T) ? b : convert(b, T));
+    branch(B);
     backpatch(makelist(skip), nextQuad());
-    return t;
+    return object ? temporary(t) : t;
 }
 
 /* ---------------- boolean expressions (Lecture 27) ---------------- */
@@ -773,12 +781,16 @@ int Generator::relJump(const ASTNodePtr &n) {
     TypePtr lt = sem::decay(L->semType), rt = sem::decay(R->semType);
     TypePtr C = (sem::isArithmetic(lt) && sem::isArithmetic(rt)) ? sem::usualArithmetic(lt, rt)
                 : sem::isPointer(lt) ? lt : rt;
+    /* ponytail: a test's temporaries die before its jump, not at the end
+       of the whole condition; `a(T(1)) && b(T(2))` destroys T(1) before T(2) is made */
+    size_t mark = temporaries.size();
     Quad q;
     q.op = Op::IfRel;
     q.a = convert(rvalue(L), C);
     q.b = convert(rvalue(R), C);
     q.relop = n->label;
     q.cls = classOf(C);
+    destroyTemporaries(mark);
     return emit(q);
 }
 
@@ -814,6 +826,7 @@ void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
         (n->constValue ? trueList : falseList).push_back(emitGoto()); /* E -> true: goto E.true */
         return;
     }
+    size_t mark = temporaries.size();
     Operand v = rvalue(n);
     TypePtr vt = v.type ? strip(v.type) : sem::intType();
     Quad q;
@@ -822,6 +835,7 @@ void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
     q.b = isFloatCls(classOf(vt)) ? fcon(0, vt) : icon(0, vt);
     q.relop = "!=";
     q.cls = classOf(vt);
+    destroyTemporaries(mark);
     trueList.push_back(emit(q));
     falseList.push_back(emitGoto());
 }
@@ -873,24 +887,59 @@ static sem::Symbol *copyConstructor(RecordInfo *rec) {
     return nullptr;
 }
 
-/* a class object passed or returned by value: a new object made by the
-   copy constructor when the class has one and the source is an existing
-   object. A temporary is used as it is, and a returned local is not
-   copied either (what C++ compilers do: copy elision). */
-Operand Generator::copyOf(const ASTNodePtr &n, const TypePtr &type, bool elideLocal) {
+/* an object that already exists (an lvalue), not one the expression creates */
+bool Generator::isExisting(const ASTNodePtr &n) const {
+    return isLValueKind(n) || ((n->kind == ASTKind::CallExpr || isOverloaded(n)) && n->isLValue);
+}
+
+/* ---------------- unnamed class objects ---------------- */
+
+/* `t` is an object the expression created: it is destroyed at the end of
+   the full expression unless something keeps it */
+Operand Generator::temporary(const Operand &t) {
+    if (t.kind == Operand::Temp && t.type && sem::isRecord(t.type) && needsDestruction(t.type)) temporaries.push_back(t);
+    return t;
+}
+
+/* `t` became a variable, an element or the function's result: no destructor here */
+void Generator::keep(const Operand &t) {
+    for (size_t i = temporaries.size(); t.kind == Operand::Temp && i-- > 0;)
+        if (temporaries[i].temp == t.temp) temporaries.erase(temporaries.begin() + i);
+}
+
+/* the end of a full expression: the last one made is destroyed first */
+void Generator::destroyTemporaries(size_t from) {
+    while (temporaries.size() > from) {
+        LValue obj;
+        obj.kind = LValue::Direct;
+        obj.base = temporaries.back();
+        obj.type = obj.base.type;
+        temporaries.pop_back();
+        destroyObject(obj);
+    }
+}
+
+/* a class object passed or returned by value. An existing object is
+   copied: by the copy constructor when the class has one, else as a
+   block. A parameter's copy is destroyed after the call. An object the
+   expression creates is used as it is, and so is the local that is the
+   function's result (what C++ compilers do: copy elision). */
+Operand Generator::copyOf(const ASTNodePtr &n, const TypePtr &type, bool returned) {
     sem::Symbol *ctor = copyConstructor(recordOf(type));
-    bool refCall = (n->kind == ASTKind::CallExpr || isOverloaded(n)) && n->isLValue;
-    bool existing = isLValueKind(n) || refCall;
-    bool local = n->kind == ASTKind::Identifier && n->symbol && n->symbol->storage == sem::Storage::Local;
-    if (!ctor || !existing || (elideLocal && local)) return rvalue(n);
+    bool result = returned && n->kind == ASTKind::Identifier && n->symbol.get() == resultObject;
+    if (!isExisting(n) || result || (!ctor && (returned || !needsDestruction(type)))) return rvalue(n);
     Operand copy = newTemp(type);
-    LValue lv;
-    lv.kind = LValue::Direct;
-    lv.base = copy;
-    lv.type = sem::unqualified(strip(type));
-    Operand to = address(lv);
-    call(ctor, to, {n}, {}, false);
-    return copy;
+    if (ctor) {
+        LValue lv;
+        lv.kind = LValue::Direct;
+        lv.base = copy;
+        lv.type = sem::unqualified(strip(type));
+        Operand to = address(lv);
+        call(ctor, to, {n}, {}, false);
+    } else {
+        emitAssign(copy, rvalue(n));
+    }
+    return returned ? copy : temporary(copy);
 }
 
 Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
@@ -926,10 +975,12 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArg, const std::
     q.callee = callee;
     q.nargs = static_cast<int>(values.size()) + (thisArg.isNone() ? 0 : 1);
     TypePtr ret = ft ? ft->ret : nullptr;
-    if (wantResult && ret && !sem::isVoid(ret) && !callee->isConstructor && !callee->isDestructor) q.r = newTemp(ret);
+    /* an object result is received even when it is not used: it must be destroyed */
+    bool wanted = wantResult || (ret && needsDestruction(ret));
+    if (wanted && ret && !sem::isVoid(ret) && !callee->isConstructor && !callee->isDestructor) q.r = newTemp(ret);
     if (!q.r.isNone()) q.r.type = ret; /* keeps `T &`: the caller dereferences */
     emit(q);
-    return q.r;
+    return temporary(q.r);
 }
 
 /* the address a member function receives as `this`, adjusted to the
@@ -1097,7 +1148,9 @@ void Generator::defaultConstruct(const Operand &addr, const TypePtr &t) {
 
 void Generator::constructInto(const Operand &addr, RecordInfo *rec, sem::Symbol *ctor,
                               const std::vector<ASTNodePtr> &args) {
-    if (ctor) {
+    /* T x(f()), T(f()): the object f made becomes this one, no copy */
+    bool same = args.size() == 1 && !isExisting(args[0]) && recordOf(args[0]->semType) == rec;
+    if (ctor && !(same && ctor == copyConstructor(rec))) {
         call(ctor, addr, args, {}, false);
         return;
     }
@@ -1112,6 +1165,7 @@ void Generator::constructInto(const Operand &addr, RecordInfo *rec, sem::Symbol 
             q.r = load(member(lvalueOrTemp(args[0]), off, sem::recordType(rec->shared_from_this())));
         } else {
             q.r = rvalue(args[0]);
+            keep(q.r);
         }
         q.cls = Cls::Block;
         emit(q);
@@ -1163,7 +1217,7 @@ Operand Generator::construct(const ASTNodePtr &n) {
         lv.base = obj;
         lv.type = T;
         constructInto(address(lv), rec, n->symbol.get(), n->children);
-        return obj;
+        return temporary(obj);
     }
     if (n->children.empty()) return isFloatCls(classOf(T)) ? fcon(0, T) : icon(0, T);
     return convert(rvalue(n->children[0]), T);

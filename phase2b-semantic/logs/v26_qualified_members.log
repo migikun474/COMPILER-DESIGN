@@ -1,0 +1,111 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v26_qualified_members.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v26_qualified_members.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- VarDecl "corners : INT"  <int>  -> Shape::corners (field, member)
+|   |-- FunctionDef "sides : _ZN5Shape5sidesEv"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- IntLiteral "0"  <int> =0
+|   `-- FunctionDef "kind : _ZN5Shape4kindEv"  <int (void)>  -> _ZN5Shape4kindEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "1"  <int> =1
+|-- ClassDecl "Square : Shape"  <class Square>  -> Square (tag)
+|   |-- VarDecl "corners : INT"  <int>  -> Square::corners (field, member)
+|   |-- FunctionDef "sides : _ZN6Square5sidesEv"  <int (void)>  -> _ZN6Square5sidesEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- IntLiteral "4"  <int> =4
+|   `-- FunctionDef "kind : _ZN6Square4kindEv"  <int (void)>  -> _ZN6Square4kindEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "2"  <int> =2
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "q : CLASS"  <class Square>  -> q.1 (variable, local)
+        |-- VarDecl "p : CLASS_POINTER"  <class Square *>  -> p.2 (variable, local)
+        |   `-- UnaryExpr "&"  <class Square *>
+        |       `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "corners"  <int> lvalue  -> Square::corners (field, member)
+        |       |   `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "corners"  <int> lvalue  -> Shape::corners (field, member)
+        |       |   `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- ArrowExpr "corners"  <int> lvalue  -> Shape::corners (field, member)
+        |       |   `-- Identifier "p"  <class Square *> lvalue  -> p.2 (variable, local)
+        |       `-- BinaryExpr "+"  <int>
+        |           |-- ArrowExpr "corners"  <int> lvalue  -> Shape::corners (field, member)
+        |           |   `-- Identifier "p"  <class Square *> lvalue  -> p.2 (variable, local)
+        |           `-- IntLiteral "1"  <int> =1
+        |-- VarDecl "a : INT"  <int>  -> a.3 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- CallExpr  <int>  -> _ZN6Square5sidesEv (function)
+        |       |   `-- MemberExpr "sides"  <int (void)>  -> _ZN6Square5sidesEv (function)
+        |       |       `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        |       `-- CallExpr  <int>  -> _ZN5Shape5sidesEv (function)
+        |           `-- MemberExpr "sides"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+        |               `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        |-- VarDecl "b : INT"  <int>  -> b.4 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- CallExpr  <int>  -> _ZN6Square4kindEv (function)
+        |       |   `-- ArrowExpr "kind"  <int (void)>  -> _ZN6Square4kindEv (function)
+        |       |       `-- Identifier "p"  <class Square *> lvalue  -> p.2 (variable, local)
+        |       `-- CallExpr  <int>  -> _ZN5Shape4kindEv (function)
+        |           `-- ArrowExpr "kind"  <int (void)>  -> _ZN5Shape4kindEv (function)
+        |               `-- Identifier "p"  <class Square *> lvalue  -> p.2 (variable, local)
+        |-- VarDecl "c : INT"  <int>  -> c.5 (variable, local)
+        |   `-- CallExpr  <int>  -> _ZN6Square5sidesEv (function)
+        |       `-- MemberExpr "sides"  <int (void)>  -> _ZN6Square5sidesEv (function)
+        |           `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- Identifier "a"  <int> lvalue  -> a.3 (variable, local)
+                |   |   |   `-- Identifier "b"  <int> lvalue  -> b.4 (variable, local)
+                |   |   `-- Identifier "c"  <int> lvalue  -> c.5 (variable, local)
+                |   `-- MemberExpr "corners"  <int> lvalue  -> Square::corners (field, member)
+                |       `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+                `-- MemberExpr "corners"  <int> lvalue  -> Shape::corners (field, member)
+                    `-- Identifier "q"  <class Square> lvalue  -> q.1 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Shape              class_tag      class Shape                -        global                         3     -     0     Shape                -                        size 4
+Shape::corners     field          int                        member   global > class Shape           5     4     4     Shape::corners       -                        public, offset 0
+Shape::sides       method         int (void)                 -        global > class Shape           6     -     1     _ZN5Shape5sidesEv    _ZN5Shape5sidesEv        public, defined
+Shape::kind        method         int (void)                 -        global > class Shape           7     -     1     _ZN5Shape4kindEv     _ZN5Shape4kindEv         public, defined
+Square             class_tag      class Square               -        global                         9     -     0     Square               -                        size 8, public base Shape
+Square::corners    field          int                        member   global > class Square          11    4     2     Square::corners      -                        public, offset 4
+Square::sides      method         int (void)                 -        global > class Square          12    -     2     _ZN6Square5sidesEv   _ZN6Square5sidesEv       public, defined
+Square::kind       method         int (void)                 -        global > class Square          13    -     1     _ZN6Square4kindEv    _ZN6Square4kindEv        public, defined
+main               function       int (void)                 -        global                         16    -     0     main                 main                     defined
+q                  variable       class Square               local    global > main()                17    8     8     q.1                  -                        
+p                  variable       class Square *             local    global > main()                18    4     4     p.2                  -                        
+a                  variable       int                        local    global > main()                22    4     1     a.3                  -                        
+b                  variable       int                        local    global > main()                23    4     1     b.4                  -                        
+c                  variable       int                        local    global > main()                24    4     1     c.5                  -                        
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 4, align 4
+    +0  int corners  [public]
+class Square: size 8, align 4
+    (base Shape, public)
+    +4  int corners  [public]

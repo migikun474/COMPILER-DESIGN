@@ -5,7 +5,7 @@ every static rule of the language, and annotates the tree with types,
 lvalue-ness, constant values and resolved symbols — the representation
 the (future) IR phase will lower.
 
-> Status: **implemented and tested** (82 automated checks, all
+> Status: **implemented and tested** (84 automated checks, all
 > passing). This is the last implemented phase: nothing consumes its
 > output yet.
 
@@ -369,14 +369,14 @@ make
 
 `run_tests.sh` is self-checking and runs three groups:
 
-1. **`test/valid/`** — 25 programs that must be accepted (`v01`–`v25`:
+1. **`test/valid/`** — 26 programs that must be accepted (`v01`–`v26`:
    declarations, expressions, scopes, functions, arrays, pointers,
    structs, control flow, built-ins, classes, overloading and
    references, `main` arguments, warnings, declarators, name resolution,
    constructors and operators, preprocessor, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
    rules).
-2. **`test/invalid/`** — 21 programs that must be rejected (`e01`–`e21`).
+2. **`test/invalid/`** — 22 programs that must be rejected (`e01`–`e22`).
 3. **End to end** — the 36 programs of `../phase2-parser/test`: the 12
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which
@@ -391,14 +391,16 @@ int over(double a) { return 0; }    // mangled: _Z4overd
 ```
 
 The runner requires each annotated message on its line **and** fails on
-any diagnostic that is not annotated. Result today: `passed: 82 failed: 0`.
+any diagnostic that is not annotated. Result today: `passed: 84 failed: 0`.
 `./run.sh` just prints the output for every test.
 
 ## Limitations
 
 - **No flow analysis**: "missing return" only when a function has no
-  `return` at all; no unreachable-code or uninitialized-use diagnostics;
-  `goto`/`case` jumping over an initialization is not reported.
+  `return` at all; no unreachable-code diagnostics; `goto`/`case`
+  jumping over an initialization is not reported. Reads of uninitialized
+  locals are reported one phase later, by `tac_generator` (it has the
+  flow graph).
 - Brace elision into struct members is not supported (arrays only).
 - Converting constructors apply in initialization, not to arguments or
   returns.

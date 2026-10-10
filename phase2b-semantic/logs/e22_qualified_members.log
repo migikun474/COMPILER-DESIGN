@@ -1,0 +1,20 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e22_qualified_members.c
+
+Semantic analysis failed: 3 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e22_qualified_members.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e22_qualified_members.c:9:22: semantic error: 'Other' is not 'class Square' or one of its base classes [member-access]
+ 9 |     int a = q.Other::sides();     // error: is not
+   |                      ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e22_qualified_members.c:10:23: semantic error: 'Other' is not 'class Square' or one of its base classes [member-access]
+ 10 |     int b = p->Other::extra;      // error: is not
+    |                       ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e22_qualified_members.c:11:22: semantic error: unknown member 'missing': no member named 'missing' in 'class Shape' [unknown-member]
+ 11 |     int c = q.Shape::missing;     // error: no member named 'missing'
+    |                      ^
+

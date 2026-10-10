@@ -941,6 +941,16 @@ TypePtr SemanticAnalyzer::member(const ASTNodePtr &n, bool arrow, bool calleePos
               "incomplete-type");
         return errorType();
     }
+    if (n->typeExpr && !n->typeExpr->className.empty()) { /* obj.Base::member: looked up in Base */
+        SymbolPtr named = st.lookupTag(n->typeExpr->className);
+        RecordInfo *base = named && named->record ? named->record.get() : nullptr;
+        if (!base || !(base == rec || isDerivedFrom(rec, base))) {
+            error(n.get(), "'" + n->typeExpr->className + "' is not '" + recordDisplayName(*rec) + "' or one of its base classes",
+                  "member-access");
+            return errorType();
+        }
+        rec = base;
+    }
     MemberLookup ml = lookupMember(rec, name);
     if (ml.symbols.empty()) {
         error(n.get(), "unknown member '" + name + "': no member named '" + name + "' in '" +
@@ -1188,6 +1198,8 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
         if (callee->symbol && callee->symbol->kind == SymbolKind::Function) {
             bool constObject;
             RecordInfo *rec = recordOfBase(callee->children[0]->semType, arrow, constObject);
+            if (callee->typeExpr && !callee->typeExpr->className.empty()) /* obj.Base::f(): Base's overloads */
+                rec = st.lookupTag(callee->typeExpr->className)->record.get();
             MemberLookup ml = lookupMember(rec, callee->label);
             return finish(resolveOverload(callee->label, ml.symbols, args, callee.get()), callee->label);
         }

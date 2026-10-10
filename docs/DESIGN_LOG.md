@@ -894,6 +894,30 @@ One practical note from that run: QtSpim's file dialog opens in the
 home folder, so write the `.s` file somewhere under it rather than
 `/tmp`.
 
+### D30. The four items left open by the second review (2026-10-10)
+
+The user asked for the four open items to be fixed before closing
+pull request #7. No new question was put to the user: each item had
+one behaviour to match (g++), so the choices below are about how.
+
+| Item | Decision | Why |
+|---|---|---|
+| `obj.Base::member` was a syntax error | Two grammar rules, `postfix '.' TYPE_NAME '::' IDENTIFIER` and the `->` form (no new conflicts, `%expect 0` holds). The qualifier is stored on the member node; semantic analysis checks it names the object's class or a base and looks the member up there. TAC needed no change. | The existing base-offset code already handles a member that belongs to a base. |
+| Unnamed class objects were never destroyed | A list of the objects made while one full expression is translated; destroyed in reverse at the end of the full expression, removed from the list when the object becomes a variable, an element, the function result or the target of a reference. By-value class parameters are copies destroyed after the call. | It is the C++ rule, and the output now equals g++'s destructor for destructor (`t30_temporaries`). |
+| ...and `return local;` destroyed the local it had just returned | The local is treated as the result itself only when every `return` of the function names it and it is declared in the outermost block. Otherwise it is copied out and destroyed. | That is exactly when g++ 13 (the reference compiler here) elides the copy; anything else would print different constructor / destructor lines. |
+| No warning for reading an uninitialized variable | A warning from liveness on the unoptimized TAC: a tracked local that is live at the function's entry. Printed by `tac_generator` and `mips_generator`. | The semantic phase has no flow graph; the optimizer already had liveness, so this is about 30 lines. It is flow-sensitive (no warning when every path assigns first). |
+| `long long` never in registers | A `long long` takes two integer registers when two are free over its interval. Arithmetic reads the pair in place and builds the result in scratch registers. | Smallest change that is always correct when the result is also an operand. |
+
+**Known ceilings, on purpose.** A temporary inside a condition dies
+before that test's jump rather than at the end of the whole condition.
+The uninitialized warning covers scalars whose address is never taken,
+not arrays, objects or anything behind a pointer, and
+`semantic_analyzer` alone does not print it.
+
+**Result:** semantic 84 passed (new `v26`, `e22`), TAC 31 passed (new
+`t30_temporaries` and the warnings check `diagnostics/uninitialized`),
+SPIM 30 passed at `-O0`…`-O3`.
+
 ---
 
 ## Open questions

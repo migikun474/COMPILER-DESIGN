@@ -33,6 +33,9 @@
    ===================================================================== */
 
 #include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "tac.h"
 
@@ -58,6 +61,10 @@ struct OptStats {
 };
 
 OptStats optimize(Program &program, int level);
+
+/* (line, message) for every scalar local that some path reads before
+   assigning it: the liveness analysis run on the unoptimized code */
+std::vector<std::pair<int, std::string>> uninitializedReads(Program &program);
 void printStats(const OptStats &s, std::ostream &out);
 
 } // namespace tac
