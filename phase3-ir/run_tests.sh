@@ -11,6 +11,8 @@
 # identically; the line shows the instructions executed without
 # optimization and how many fewer each level executes.
 #
+# test/diagnostics/<name>.c must produce exactly the warnings in <name>.err.
+#
 # --update rewrites the expected files from the current build.
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
@@ -40,6 +42,15 @@ for f in test/*.c; do
     [ -f "test/expected/$n.tac" ] && { cmp -s "$TMP/tac" "test/expected/$n.tac" || ok=0; }
     if [ $ok = 1 ]; then pass=$((pass + 1)); printf '  PASS  %-22s %6s executed %s\n' "$n" "$raw" "$gain"
     else fail=$((fail + 1)); echo "  FAIL  $n"; diff "$TMP/out" "test/expected/$n.out" | head -5; diff "$TMP/out1" "test/expected/$n.out" | head -5; fi
+done
+# the warnings the generator itself gives (reads of variables nothing was stored in)
+for f in test/diagnostics/*.c; do
+    n="$(basename "$f" .c)"
+    cp "$f" "$TMP/"
+    (cd "$TMP" && "$OLDPWD/tac_generator" -q "$n.c" 2>&1 >/dev/null | grep "warning" > warn)
+    [ "$1" = "--update" ] && cp "$TMP/warn" "test/diagnostics/$n.err"
+    if cmp -s "$TMP/warn" "test/diagnostics/$n.err"; then pass=$((pass + 1)); printf '  PASS  %s (warnings)\n' "$n"
+    else fail=$((fail + 1)); echo "  FAIL  $n (warnings)"; diff "$TMP/warn" "test/diagnostics/$n.err" | head -5; fi
 done
 echo; echo "passed: $pass   failed: $fail"
 [ "$fail" -eq 0 ]

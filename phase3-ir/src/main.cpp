@@ -123,6 +123,8 @@ int main(int argc, char **argv) {
                          " function(s), " + std::to_string(instructions) + " instruction(s) for '" + std::string(path) + "'.";
     std::ostringstream body;
     tac::printProgram(program, body);
+    for (const auto &w : tac::uninitializedReads(program))
+        fprintf(stderr, "%s:%s: warning: %s [uninitialized]\n", path, displayLine(w.first).c_str(), w.second.c_str());
     tac::Program raw = program; /* kept to compare behaviour with the optimized code */
     if (level > 0) {
         tac::OptStats stats = tac::optimize(program, level);

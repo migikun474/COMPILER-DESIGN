@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 29 test
+> Status: **implemented and tested** on the SPIM simulator. All 30 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization and with `-O1`, `-O2` and `-O3`
-> (`./run_tests.sh`: 29 passed).
+> (`./run_tests.sh`: 30 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention).
@@ -41,6 +41,10 @@ The same `.s` file is meant for QtSpim (the windowed SPIM, 9.1):
 Use the default settings (*Simulator → Settings*): Accept Pseudo
 Instructions **on**, Load Exception Handler **on**, Bare Machine
 **off**, Enable Delayed Branches **off**.
+
+Checked on 2026-10-10 with QtSpim 9.1.21: `t29_registers` compiled at
+`-O3` prints the same five lines in the QtSpim Console as in the
+terminal.
 
 QtSpim has no batch mode, so the automated tests run the command-line
 `spim`, which is the same simulator without the window. The run-time
@@ -108,12 +112,18 @@ Instructions in the generated functions (not the run-time library):
 
 A `char`, `short` or `bool` in a register is re-extended after every
 write, so it always holds what a load from memory would give.
-`long long` always stays in the frame: it would need a pair of
-registers and is rarely in a hot loop.
+A `long long` takes two of the integer registers (low word, high word)
+when two are free over its interval, otherwise it stays in the frame.
+Add, subtract, multiply, the bitwise operators, negation and
+comparisons read the pair directly; the result is built in
+`$t4`:`$t6` and then moved, because it may be one of the operands
+(`sum = sum + x`). Division and shifts still go through the run-time
+helpers, with the pair copied to `$a0`–`$a3`.
 
 A variable that is read before it is ever assigned has an arbitrary
 value in C. In the frame that value happens to be 0 on SPIM; in a
-register it is whatever the register held.
+register it is whatever the register held. The compiler warns about it
+(`[uninitialized]`, see `../phase3-ir/README.md`).
 
 ## Frame and calling convention (decision D25: stack only)
 
@@ -181,7 +191,6 @@ programs of the semantic and parser suites were compiled at `-O0` and
 
 ## Limitations
 
-- `long long` values always stay in the frame (no register pairs).
 - `printf` has no `%e` / `%g`; `%f` needs a value below about 9·10¹⁸
   after scaling by the precision. `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.

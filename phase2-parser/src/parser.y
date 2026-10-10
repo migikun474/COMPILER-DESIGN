@@ -1152,6 +1152,18 @@ postfix_expr
           }
           $$.node = atToken(mkNode(ASTKind::MemberExpr, $3.str, {$1.node}), $3.idx);
       }
+    | postfix_expr '.' TYPE_NAME SCOPE_RES IDENTIFIER {
+          /* obj.Base::member: the member as class Base declares it, even
+             if the object's own class hides it */
+          $$.node = atToken(mkNode(ASTKind::MemberExpr, $5.str, {$1.node}), $5.idx);
+          $$.node->typeExpr = std::make_shared<ASTTypeExpr>();
+          $$.node->typeExpr->className = $3.str;
+      }
+    | postfix_expr ARROW TYPE_NAME SCOPE_RES IDENTIFIER {
+          $$.node = atToken(mkNode(ASTKind::ArrowExpr, $5.str, {$1.node}), $5.idx);
+          $$.node->typeExpr = std::make_shared<ASTTypeExpr>();
+          $$.node->typeExpr->className = $3.str;
+      }
     | postfix_expr ARROW IDENTIFIER {
           if ($1.node && $1.node->kind == ASTKind::Identifier) {
               const Symbol *base = lookupSymbol($1.node->label);

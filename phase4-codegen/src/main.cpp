@@ -89,6 +89,8 @@ int main(int argc, char **argv) {
         for (const auto &u : program.unsupported) fprintf(stderr, "code generation error: %s\n", u.c_str());
         return 1;
     }
+    for (const auto &w : tac::uninitializedReads(program))
+        fprintf(stderr, "%s:%s: warning: %s [uninitialized]\n", path, displayLine(w.first).c_str(), w.second.c_str());
     if (level > 0) tac::optimize(program, level);
     fputs(mips::generate(program, runtime.str(), level > 0 && machine).c_str(), stdout);
     return 0;

@@ -1,0 +1,3 @@
+uninitialized.c:6: warning: variable 'x' may be used uninitialized in function 'pick(int)' [uninitialized]
+uninitialized.c:21: warning: variable 'a' may be used uninitialized in function 'main()' [uninitialized]
+uninitialized.c:26: warning: variable 'wide' may be used uninitialized in function 'main()' [uninitialized]

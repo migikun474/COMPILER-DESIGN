@@ -169,8 +169,10 @@ and its consequences are recorded in
   struct members.
 - **Control-flow analysis**: no flow analysis — "missing return" only
   when a non-`void` function has no `return` at all; no unreachable-code
-  or uninitialized-variable diagnostics; `goto`/`case` jumping over an
-  initialization is not reported.
+  diagnostics; `goto`/`case` jumping over an initialization is not
+  reported. A read of an uninitialized local is reported as a warning by
+  `tac_generator` / `mips_generator` (it needs the flow graph), not by
+  `semantic_analyzer`.
 - **Phase 1 lexer**: reports line numbers but no columns.
 
 Details: [`docs/FEATURES.md#d-partial-features`](docs/FEATURES.md#d-partial-features).
@@ -272,10 +274,10 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
 | Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 25 valid + 21 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **82 checks, all passing** |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 26 valid + 22 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **84 checks, all passing** |
 
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 29 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **29 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 29 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **29 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 30 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **31 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 30 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **30 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
