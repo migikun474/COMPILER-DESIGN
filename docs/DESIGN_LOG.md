@@ -854,6 +854,37 @@ same TAC level (table in `phase4-codegen/README.md`).
 **Not measured:** instructions *executed* in SPIM — the simulator does
 not report a count; the figures are static instruction counts.
 
+### D29. The three limits of the first register allocator
+
+**Asked by:** the user ("work on those limitations … finish it and
+merge"). What was done about each:
+
+| Limit | Outcome |
+|---|---|
+| A name kept its register for the whole function, so inner-loop temporaries could take all eight | **Fixed.** Each name now has a live interval (first to last occurrence, widened over every loop it reaches into, and up to the call for a `param`); names whose intervals do not overlap share a register. Still ordered by use count, so the method stays the one chosen in D28, with intervals added. |
+| `float`, `double`, `long long` and narrow integers always stayed in the frame | **Fixed for all but `long long`.** `float`/`double` use `$f20`–`$f30` (saved and restored like `$s0`–`$s7`); `char`/`short`/`bool` use the integer registers and are re-extended after every write. `long long` stays in the frame — a deliberate skip (register pairs, rarely hot). |
+| Never run inside the QtSpim window | **Still not verified by Claude.** QtSpim has no batch mode, and an attempt to start it without a window failed (its Qt build only has the `xcb` display plugin). The steps are in `phase4-codegen/README.md`; this needs one run by the user. |
+
+**Result:** `phase4-codegen/run_tests.sh` 29 passed (29 programs ×
+`-O0`…`-O3`); new test `t29_registers`. Code size with registers fell
+again, for example `t04_arrays` 609 → 470 and `t22_data_structures`
+835 → 612 instructions.
+
+**Something the wider check showed.** Two older test programs
+(`v19_former_limitations`, `test25_functional_casts_and_lookahead`)
+gave a different exit code with registers. They read two variables
+that were never assigned (`a` and `m`): in the frame that happens to be
+0, in a register it is whatever was there. That is undefined in C, not
+a compiler bug; the two programs now initialize the variables. It is
+also a reminder that the open item "no warning for an uninitialized
+read" matters more once values live in registers.
+
+### Merged (2026-10-10)
+
+On the user's instruction the stacked pull requests #3 (optimizer),
+#4 (MIPS), #5 (`-O3`) and #6 (MIPS-level optimizations) were merged
+into `main` by merging #6.
+
 ---
 
 ## Open questions

@@ -26,9 +26,9 @@ int main() {
     int y = take(Dog(5)) + take(Dog(x));
     Dog (spot);                        /* still a declaration, as in C++ */
     Dog rex(3);
-    int a, T;                          /* 3: T redeclared after a comma */
+    int a = 0, T;                       /* 3: T redeclared after a comma */
     T = 5;
-    int k = 2, U = T + 1, m;
+    int k = 2, U = T + 1, m = 0;
     const int N = 2;
     int arr[4] = {[N] = 7, [FIRST] = 1, [THIRD + 1] = 9};   /* 4: designators by constant expression */
     int g = twice(1);

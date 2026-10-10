@@ -16,8 +16,8 @@ then MIPS.
 
 > **Current implementation status: every phase works end to end —
 > front end, Three Address Code (with an interpreter), the optimizer
-> (`-O1`, `-O2`, `-O3`) and MIPS code that runs on SPIM, with registers
-> assigned by usage count.**
+> (`-O1`, `-O2`, `-O3`) and MIPS code that runs on SPIM, with register
+> allocation.**
 
 ```
 Front end
@@ -274,8 +274,8 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 | Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
 | Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 25 valid + 21 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **82 checks, all passing** |
 
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 28 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **28 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 28 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **28 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 29 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++) — **29 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 29 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **29 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -283,8 +283,8 @@ unexpected diagnostic fails the test).
 
 ## Known limitations
 
-- Register assignment is the simple usage-count method (no live
-  intervals), and `printf` in the SPIM run-time has no `%e`/`%g`.
+- `long long` values are never kept in registers, and `printf` in the
+  SPIM run-time has no `%e`/`%g`.
 - The partial features listed above.
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers.

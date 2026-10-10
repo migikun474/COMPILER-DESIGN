@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 28 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 29 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 28 passed).
+> (`./run_tests.sh`: 29 passed).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -273,6 +273,7 @@ the output of the same source compiled with gcc/g++.
 | `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers, macros |
 | `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, `delete[]` of objects, static objects destroyed at exit |
 | `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, invariants and non-invariants in loops, a division that must stay, values reused or not across branches and stores |
+| `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
 
 ## Limitations
 

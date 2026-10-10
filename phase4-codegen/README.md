@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 28 test
+> Status: **implemented and tested** on the SPIM simulator. All 29 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization and with `-O1`, `-O2` and `-O3`
-> (`./run_tests.sh`: 28 passed).
+> (`./run_tests.sh`: 29 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention).
@@ -81,7 +81,7 @@ registers (next section).
 
 | Optimization | What it does |
 |---|---|
-| registers by usage count (Dragon Book 8.8) | in each function the uses of every name are counted, a use inside a loop counting ten times per level of nesting; the eight highest get `$s0`–`$s7` for the whole function. Only 32-bit scalars whose address is never taken qualify. The function saves and restores the registers it uses, so they survive calls. A parameter that got a register is loaded once on entry. |
+| registers by usage count and live interval (Dragon Book 8.8) | in each function the uses of every name are counted, a use inside a loop counting ten times per level of nesting, and the interval of instructions in which the name occurs is recorded (widened over every loop it reaches into). In order of count each name takes the first register that no overlapping name holds, so names that are never alive together share one: `$s0`–`$s7` for integers, pointers, `char`, `short` and `bool`; `$f20`–`$f30` for `float` and `double`. Only scalars whose address is never taken qualify. The function saves and restores the registers it uses, so they survive calls. A parameter that got a register is loaded once on entry. |
 | immediate operands | a small constant goes into the instruction: `addiu`, `andi`, `ori`, `xori`, `sll`, `sra`, `srl`; `$zero` for 0; a constant array or field offset becomes the displacement (`lw $s0, -12($fp)`) |
 | comparison as a value | the TAC pattern `if a < b goto +3 ; t = 0 ; goto +2 ; t = 1` becomes `slt` (plus `xori`/`sltiu` for the other relations) |
 | leaf functions | a function that calls nothing does not save `$ra` |
@@ -98,16 +98,22 @@ Instructions in the generated functions (not the run-time library):
 
 | Program | `-O0` | `-O3 --stack-only` | `-O3` |
 |---|---|---|---|
-| `t04_arrays` | 856 | 864 | 609 |
-| `t18_algorithms` | 1247 | 1081 | 820 |
-| `t20_bits` | 679 | 424 | 352 |
-| `t22_data_structures` | 991 | 975 | 835 |
-| `t25_control` | 731 | 698 | 594 |
+| `t04_arrays` | 856 | 864 | 470 |
+| `t17_strings` | 1022 | 1215 | 807 |
+| `t18_algorithms` | 1247 | 1081 | 766 |
+| `t20_bits` | 679 | 424 | 328 |
+| `t21_numeric` | 655 | 528 | 425 |
+| `t22_data_structures` | 991 | 975 | 612 |
+| `t25_control` | 731 | 698 | 485 |
 
-A name keeps its register for the whole function, so the short-lived
-temporaries of an inner loop can take all eight and leave a variable on
-the stack; allocation by live intervals (linear scan) would fix that
-and is the natural next step.
+A `char`, `short` or `bool` in a register is re-extended after every
+write, so it always holds what a load from memory would give.
+`long long` always stays in the frame: it would need a pair of
+registers and is rarely in a hot loop.
+
+A variable that is read before it is ever assigned has an arbitrary
+value in C. In the frame that value happens to be 0 on SPIM; in a
+register it is whatever the register held.
 
 ## Frame and calling convention (decision D25: stack only)
 
@@ -175,9 +181,7 @@ programs of the semantic and parser suites were compiled at `-O0` and
 
 ## Limitations
 
-- Registers are assigned by usage count, one name per register for the
-  whole function; `float`, `double`, `long long` and narrow integers
-  always stay in the frame.
+- `long long` values always stay in the frame (no register pairs).
 - `printf` has no `%e` / `%g`; `%f` needs a value below about 9·10¹⁸
   after scaling by the precision. `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.

@@ -60,7 +60,26 @@ struct Emitter {
     std::vector<std::string> code; /* the function being generated, one line per entry */
     bool calls = false;            /* it contains a `jal`: $ra must be saved */
     using Key = std::pair<const sem::Symbol *, int>;
-    std::map<Key, std::string> home; /* names that live in $s0-$s7 instead of the frame */
+    std::map<Key, std::string> home; /* names that live in $s0-$s7 / $f20-$f30 instead of the frame */
+    std::map<Key, Cls> homeClass;    /* the declared class of each of them */
+
+    /* a char, short or bool in a register is kept exactly as a load would give it */
+    void normalize(const std::string &reg, Cls c) {
+        switch (c) {
+            case Cls::Bool: case Cls::UChar: ins("andi  " + reg + ", " + reg + ", 255"); break;
+            case Cls::UShort: ins("andi  " + reg + ", " + reg + ", 65535"); break;
+            case Cls::Char: ins("sll   " + reg + ", " + reg + ", 24"); ins("sra   " + reg + ", " + reg + ", 24"); break;
+            case Cls::Short: ins("sll   " + reg + ", " + reg + ", 16"); ins("sra   " + reg + ", " + reg + ", 16"); break;
+            default: break;
+        }
+    }
+    /* a name declared `char` read through an `unsigned char` operand (or the reverse) needs the other extension */
+    bool otherReading(const Operand &o) const {
+        auto c = homeClass.find(keyOf(o));
+        Cls want = classOf(o.type);
+        bool narrow = want == Cls::Bool || want == Cls::Char || want == Cls::UChar || want == Cls::Short || want == Cls::UShort;
+        return c != homeClass.end() && narrow && c->second != want;
+    }
 
     void ins(const std::string &s) {
         if (s.compare(0, 3, "jal") == 0) calls = true;
@@ -76,7 +95,11 @@ struct Emitter {
     }
     /* the register that holds o's value: its own, $zero, or `scratch` after a load */
     std::string use(const Operand &o, const std::string &scratch) {
-        if (const std::string *h = homeOf(o)) return *h;
+        if (const std::string *h = homeOf(o)) {
+            if (!otherReading(o)) return *h;
+            loadInt(scratch, o);
+            return scratch;
+        }
         if (optimize && o.kind == Operand::IntConst && static_cast<int32_t>(o.ival) == 0) return "$zero";
         loadInt(scratch, o);
         return scratch;
@@ -86,8 +109,18 @@ struct Emitter {
         const std::string *h = homeOf(r);
         return h ? *h : scratch;
     }
-    void finish(const std::string &reg, const Operand &r) {
+    /* `have`: the class the value in `reg` is already normalized for, if known */
+    void finish(const std::string &reg, const Operand &r, Cls have = Cls::Void) {
         if (!homeOf(r)) storeInt(reg, r);
+        else if (homeClass[keyOf(r)] != have) normalize(reg, homeClass[keyOf(r)]);
+    }
+    std::string floatUse(const Operand &o, const std::string &scratch, Cls c) {
+        if (const std::string *h = homeOf(o)) return *h;
+        loadFloat(scratch, o, c);
+        return scratch;
+    }
+    void floatFinish(const std::string &reg, const Operand &r) {
+        if (!homeOf(r)) storeFloat(reg, r);
     }
     std::string fresh() { return "M" + std::to_string(fnIndex) + "_" + std::to_string(localLabels++); }
 
@@ -117,6 +150,7 @@ struct Emitter {
     void loadInt(const std::string &reg, const Operand &o) {
         if (const std::string *h = homeOf(o)) {
             if (*h != reg) ins("move  " + reg + ", " + *h);
+            if (otherReading(o)) normalize(reg, classOf(o.type));
             return;
         }
         if (o.kind == Operand::IntConst) { ins("li    " + reg + ", " + std::to_string(static_cast<int32_t>(o.ival))); return; }
@@ -133,6 +167,7 @@ struct Emitter {
     void storeInt(const std::string &reg, const Operand &dst) {
         if (const std::string *h = homeOf(dst)) {
             if (*h != reg) ins("move  " + *h + ", " + reg);
+            normalize(*h, homeClass[keyOf(dst)]);
             return;
         }
         switch (classOf(dst.type)) {
@@ -176,6 +211,10 @@ struct Emitter {
     }
 
     void loadFloat(const std::string &reg, const Operand &o, Cls c) {
+        if (const std::string *h = homeOf(o)) {
+            if (*h != reg) ins(std::string(c == Cls::Double ? "mov.d " : "mov.s ") + reg + ", " + *h);
+            return;
+        }
         std::string op = c == Cls::Double ? "l.d   " : "l.s   ";
         if (o.kind == Operand::FloatConst) ins(op + reg + ", " + constantLabel(o.fval, c == Cls::Double));
         else if (o.kind == Operand::IntConst) ins(op + reg + ", " + constantLabel(static_cast<double>(o.ival), c == Cls::Double));
@@ -183,6 +222,10 @@ struct Emitter {
     }
 
     void storeFloat(const std::string &reg, const Operand &dst) {
+        if (const std::string *h = homeOf(dst)) {
+            if (*h != reg) ins(std::string(classOf(dst.type) == Cls::Double ? "mov.d " : "mov.s ") + *h + ", " + reg);
+            return;
+        }
         ins(std::string(classOf(dst.type) == Cls::Double ? "s.d   " : "s.s   ") + reg + ", " + mem(dst));
     }
 
@@ -234,7 +277,7 @@ struct Emitter {
                              : c == Cls::UShort ? "lhu   " : "lw    ";
             std::string d = dest(dst, "$t0");
             ins(std::string(op) + d + ", " + at);
-            finish(d, dst);
+            finish(d, dst, c);
         }
     }
 
@@ -244,11 +287,10 @@ struct Emitter {
         Cls c = q.cls;
         if (isFloatCls(c)) {
             std::string suffix = c == Cls::Double ? ".d" : ".s";
-            loadFloat("$f0", q.a, c);
-            loadFloat("$f2", q.b, c);
+            std::string a = floatUse(q.a, "$f0", c), b = floatUse(q.b, "$f2", c), d = dest(q.r, "$f0");
             const char *op = q.op == Op::Add ? "add" : q.op == Op::Sub ? "sub" : q.op == Op::Mul ? "mul" : "div";
-            ins(std::string(op) + suffix + " $f0, $f0, $f2");
-            storeFloat("$f0", q.r);
+            ins(std::string(op) + suffix + " " + d + ", " + a + ", " + b);
+            floatFinish(d, q.r);
             return;
         }
         if (isWide(c)) {
@@ -342,9 +384,9 @@ struct Emitter {
     void unary(const Quad &q) {
         Cls c = q.cls;
         if (isFloatCls(c)) {
-            loadFloat("$f0", q.a, c);
-            ins(std::string(c == Cls::Double ? "neg.d " : "neg.s ") + "$f0, $f0");
-            storeFloat("$f0", q.r);
+            std::string a = floatUse(q.a, "$f0", c), d = dest(q.r, "$f0");
+            ins(std::string(c == Cls::Double ? "neg.d " : "neg.s ") + d + ", " + a);
+            floatFinish(d, q.r);
         } else if (isWide(c)) {
             loadWide("$t0", "$t1", q.a);
             if (q.op == Op::Neg) {
@@ -378,8 +420,8 @@ struct Emitter {
         if (isFloatCls(from)) {
             loadFloat("$f0", q.a, from);
             if (from == Cls::Float) ins("cvt.d.s $f0, $f0"); /* work in double */
-            if (to == Cls::Double) { ins("s.d   $f0, " + mem(q.r)); return; }
-            if (to == Cls::Float) { ins("cvt.s.d $f0, $f0"); ins("s.s   $f0, " + mem(q.r)); return; }
+            if (to == Cls::Double) { storeFloat("$f0", q.r); return; }
+            if (to == Cls::Float) { ins("cvt.s.d $f0, $f0"); storeFloat("$f0", q.r); return; }
             if (isWide(to)) {
                 ins("mov.d $f12, $f0");
                 ins("jal   __dtoll");
@@ -443,11 +485,10 @@ struct Emitter {
         const std::string &op = q.relop;
         if (isFloatCls(c)) {
             std::string suffix = c == Cls::Double ? ".d" : ".s";
-            loadFloat("$f0", q.a, c);
-            loadFloat("$f2", q.b, c);
+            std::string x = floatUse(q.a, "$f0", c), y = floatUse(q.b, "$f2", c);
             bool swap = op == ">" || op == ">=";
             std::string test = op == "==" || op == "!=" ? "c.eq" : op == "<" || op == ">" ? "c.lt" : "c.le";
-            ins(test + suffix + (swap ? " $f2, $f0" : " $f0, $f2"));
+            ins(test + suffix + " " + (swap ? y + ", " + x : x + ", " + y));
             ins(std::string(op == "!=" ? "bc1f  " : "bc1t  ") + target);
             return;
         }
@@ -556,15 +597,16 @@ struct Emitter {
                     address("$a1", q.a);
                     copyBytes(sizeOfType(q.r.type));
                 } else if (isFloatCls(rc)) {
-                    loadFloat("$f0", q.a, rc);
-                    storeFloat("$f0", q.r);
+                    std::string d = dest(q.r, "$f0");
+                    loadFloat(d, q.a, rc);
+                    floatFinish(d, q.r);
                 } else if (isWide(rc)) {
                     loadWide("$t0", "$t1", q.a);
                     storeWide("$t0", "$t1", q.r);
                 } else {
                     std::string d = dest(q.r, "$t0");
                     loadInt(d, q.a);
-                    finish(d, q.r);
+                    finish(d, q.r, classOf(q.a.type));
                 }
                 break;
             case Op::Add: case Op::Sub: case Op::Mul: case Op::Div: case Op::Mod:
@@ -682,10 +724,12 @@ struct Emitter {
 
         /* registers for the most used names; a slot to save each register this function uses */
         home.clear();
-        if (optimize) assignRegisters(f);
+        homeClass.clear();
+        if (optimize) assignRegisters(f, incoming);
         std::map<std::string, int> saved;
         for (const auto &h : home)
-            if (!saved.count(h.second)) saved[h.second] = place(sem::intType());
+            if (!saved.count(h.second)) saved[h.second] = place(h.second[1] == 'f' ? sem::doubleType() : sem::intType());
+        auto saveOp = [](const std::string &reg, bool store) { return std::string(reg[1] == 'f' ? (store ? "s.d   " : "l.d   ") : (store ? "sw    " : "lw    ")); };
         frameSize = roundUp(depth, 8);
 
         std::vector<int> targeted(f.quads.size() + 1, 0);
@@ -717,16 +761,18 @@ struct Emitter {
         ins("sw    $fp, 0($sp)");
         ins("move  $fp, $sp");
         if (frameSize) ins("addiu $sp, $sp, -" + std::to_string(frameSize));
-        for (const auto &r : saved) ins("sw    " + r.first + ", " + std::to_string(r.second) + "($fp)");
+        for (const auto &r : saved) ins(saveOp(r.first, true) + r.first + ", " + std::to_string(r.second) + "($fp)");
         for (const sem::Symbol *p : incoming) { /* a parameter that lives in a register is fetched once */
             auto h = home.find(Key(p, 0));
-            if (h != home.end()) ins("lw    " + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
+            if (h == home.end()) continue;
+            Cls c = homeClass[Key(p, 0)];
+            ins(std::string(c == Cls::Double ? "l.d   " : c == Cls::Float ? "l.s   " : "lw    ") + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
         }
         for (const auto &line : code) text << line << "\n";
         for (const auto &line : body) text << line << "\n";
         code.clear();
         lab(label + "_exit");
-        for (const auto &r : saved) ins("lw    " + r.first + ", " + std::to_string(r.second) + "($fp)");
+        for (const auto &r : saved) ins(saveOp(r.first, false) + r.first + ", " + std::to_string(r.second) + "($fp)");
         ins("move  $sp, $fp");
         if (calls || !optimize) ins("lw    $ra, 4($sp)");
         ins("lw    $fp, 0($sp)");
@@ -736,50 +782,101 @@ struct Emitter {
         code.clear();
     }
 
-    /* Dragon Book 8.8: count the uses of every name, a use inside a loop
-       counting ten times as much per level of nesting, and give $s0-$s7
-       to the eight with the highest count. Only 32-bit scalars whose
-       address is never needed can live in a register.
-       ponytail: a name keeps its register for the whole function, so
-       short-lived temporaries of an inner loop can crowd out a variable;
-       live intervals (linear scan) would let them share. */
-    void assignRegisters(const Function &f) {
+    /* Dragon Book 8.8 with live intervals: every name gets a use count (a
+       use inside a loop counts ten times per level of nesting) and the
+       interval of instructions in which it occurs, widened to cover every
+       loop it reaches into. In order of count each name takes the first
+       register that no name with an overlapping interval already holds:
+       $s0-$s7 for integers and pointers, $f20-$f30 for float and double.
+       Only scalars whose address is never needed qualify.
+       ponytail: long long always stays in the frame (it would need a
+       register pair and is rarely in a hot loop). */
+    void assignRegisters(const Function &f, const std::vector<const sem::Symbol *> &incoming) {
         int n = static_cast<int>(f.quads.size());
         std::vector<int> depth(n, 0);
+        std::vector<std::pair<int, int>> loops;
         for (int j = 0; j < n; ++j) {
             const Quad &q = f.quads[j];
-            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target >= 0 && q.target <= j)
-                for (int i = q.target; i <= j; ++i) depth[i] = std::min(depth[i] + 1, 3); /* a backward jump closes a loop */
+            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target >= 0 && q.target <= j) { /* a backward jump closes a loop */
+                loops.push_back({q.target, j});
+                for (int i = q.target; i <= j; ++i) depth[i] = std::min(depth[i] + 1, 3);
+            }
         }
-        std::set<Key> never;
-        std::map<Key, long long> weight;
-        auto typeOf = [&](const Operand &o) { return o.kind == Operand::Temp ? f.temps[o.temp - 1] : o.sym->type; };
-        auto count = [&](const Operand &o, long long w) {
-            if (o.kind != Operand::Var && o.kind != Operand::Temp) return;
-            if (o.kind == Operand::Var && !varOff.count(o.sym)) return; /* a global */
-            TypePtr t = typeOf(o);
-            Cls c = classOf(t);
-            bool scalar = t && !sem::isArray(t) && !t->isVolatile && t->kind != sem::TypeKind::Opaque &&
-                          (c == Cls::Int || c == Cls::UInt || c == Cls::Ptr);
-            if (!scalar) never.insert(keyOf(o));
-            else weight[keyOf(o)] += w;
+        struct Info {
+            long long weight = 0;
+            int first = 1 << 30, last = -1;
+            Cls cls = Cls::Int;
         };
+        std::set<Key> never;
+        std::map<Key, Info> info;
+        auto isNamed = [](const Operand &o) { return o.kind == Operand::Var || o.kind == Operand::Temp; };
+        auto note = [&](const Operand &o, long long w, int at) {
+            if (!isNamed(o)) return;
+            if (o.kind == Operand::Var && !varOff.count(o.sym)) return; /* a global */
+            TypePtr t = o.kind == Operand::Temp ? f.temps[o.temp - 1] : o.sym->type;
+            Cls c = classOf(t);
+            bool scalar = t && !sem::isArray(t) && !t->isVolatile && t->kind != sem::TypeKind::Opaque && c != Cls::Block &&
+                          c != Cls::Void && !isWide(c);
+            if (!scalar) { never.insert(keyOf(o)); return; }
+            Info &x = info[keyOf(o)];
+            x.weight += w;
+            x.first = std::min(x.first, at);
+            x.last = std::max(x.last, at);
+            x.cls = c;
+        };
+        std::vector<int> pending; /* `param`s whose value is read when their call is reached */
         for (int i = 0; i < n; ++i) {
             const Quad &q = f.quads[i];
             long long w = depth[i] == 0 ? 1 : depth[i] == 1 ? 10 : depth[i] == 2 ? 100 : 1000;
             bool memory = q.op == Op::AddrOf || q.op == Op::IndexLoad || q.op == Op::IndexStore || q.op == Op::VaStart ||
                           q.op == Op::VaArg || q.op == Op::VaEnd;
-            if (memory && (q.a.kind == Operand::Var || q.a.kind == Operand::Temp)) never.insert(keyOf(q.a)); /* needs an address */
-            else count(q.a, w);
-            if (q.op == Op::VaStart && (q.b.kind == Operand::Var || q.b.kind == Operand::Temp)) never.insert(keyOf(q.b));
-            else count(q.b, w);
-            count(q.r, w);
+            if (memory && isNamed(q.a)) never.insert(keyOf(q.a)); /* needs an address */
+            else note(q.a, w, i);
+            if (q.op == Op::VaStart && isNamed(q.b)) never.insert(keyOf(q.b));
+            else note(q.b, w, i);
+            note(q.r, w, i);
+            if (q.op == Op::Param) pending.push_back(i);
+            if (q.op == Op::Call) {
+                size_t k = std::min(static_cast<size_t>(q.nargs), pending.size());
+                for (size_t p = pending.size() - k; p < pending.size(); ++p) note(f.quads[pending[p]].a, 0, i);
+                pending.resize(pending.size() - k);
+            }
+        }
+        for (const sem::Symbol *p : incoming) { /* a parameter holds its value from the first instruction */
+            auto it = info.find(Key(p, 0));
+            if (it != info.end()) it->second.first = 0;
         }
         std::vector<std::pair<long long, Key>> ranked;
-        for (const auto &e : weight)
-            if (!never.count(e.first)) ranked.push_back({e.second, e.first});
+        for (auto &e : info) {
+            if (never.count(e.first)) continue;
+            Info &x = e.second;
+            for (bool grown = true; grown;) { /* the value may be needed again on the next trip round a loop */
+                grown = false;
+                for (const auto &l : loops) {
+                    if (x.first > l.second || x.last < l.first || (x.first <= l.first && x.last >= l.second)) continue;
+                    x.first = std::min(x.first, l.first);
+                    x.last = std::max(x.last, l.second);
+                    grown = true;
+                }
+            }
+            ranked.push_back({x.weight, e.first});
+        }
         std::stable_sort(ranked.begin(), ranked.end(), [](const std::pair<long long, Key> &x, const std::pair<long long, Key> &y) { return x.first > y.first; });
-        for (size_t k = 0; k < ranked.size() && k < 8; ++k) home[ranked[k].second] = "$s" + std::to_string(k);
+        static const std::vector<std::string> intRegs = {"$s0", "$s1", "$s2", "$s3", "$s4", "$s5", "$s6", "$s7"};
+        static const std::vector<std::string> floatRegs = {"$f20", "$f22", "$f24", "$f26", "$f28", "$f30"};
+        std::map<std::string, std::vector<std::pair<int, int>>> busy;
+        for (const auto &r : ranked) {
+            const Info &x = info[r.second];
+            for (const std::string &reg : isFloatCls(x.cls) ? floatRegs : intRegs) {
+                bool free = true;
+                for (const auto &b : busy[reg]) free = free && (x.first > b.second || x.last < b.first);
+                if (!free) continue;
+                home[r.second] = reg;
+                homeClass[r.second] = x.cls;
+                busy[reg].push_back({x.first, x.last});
+                break;
+            }
+        }
     }
 
     /* quads i..i+3 are `if a relop b goto i+3 ; r = 0 ; goto i+4 ; r = 1`, entered only at i */
