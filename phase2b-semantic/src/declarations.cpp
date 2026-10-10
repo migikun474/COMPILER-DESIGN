@@ -245,6 +245,13 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
             base = errorType();
         }
     }
+    /* `const Row r` with `typedef int Row[4]`: the elements are const */
+    if (base && isArray(base) && (te.isConst || te.isVolatile)) {
+        std::function<TypePtr(const TypePtr &)> elements = [&](const TypePtr &a) -> TypePtr {
+            return isArray(a) ? arrayOf(elements(a->elem), a->arraySize) : qualified(a, te.isConst, te.isVolatile);
+        };
+        return elements(base);
+    }
     return qualified(base, te.isConst, te.isVolatile);
 }
 
@@ -941,7 +948,7 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
         RecordInfo *from = isRecord(decay(it)) ? decay(it)->record.get() : nullptr;
         if (!(from && (from == rec || isDerivedFrom(from, rec))) && !rec->constructors.empty() &&
             anyViable(rec->constructors, {init})) {
-            init->symbol = construct(rec, {init}, init.get());
+            init->converter = construct(rec, {init}, init.get());
             return;
         }
     }

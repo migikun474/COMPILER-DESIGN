@@ -2,10 +2,14 @@
    clean-up. See opt.h for what each part is. */
 #include "opt.h"
 
+#include <algorithm>
+#include <cstdint>
 #include <map>
 #include <set>
 #include <stdexcept>
+#include <string>
 #include <tuple>
+#include <vector>
 
 #include "interp.h"
 
@@ -44,6 +48,21 @@ Operand constant(Val v, const Operand &like) {
         o.kind = Operand::IntConst;
         o.ival = v.i;
     }
+    return o;
+}
+
+/* one more temporary in f, with a slot in its symbol table */
+Operand addTemp(Function &f, const sem::TypePtr &type) {
+    f.temps.push_back(type);
+    bool ref = type && sem::isReference(type);
+    long long width = ref ? 4 : std::max(0LL, sem::sizeOf(type)), align = ref ? 4 : std::max(1, sem::alignOf(type));
+    long long offset = (f.frameWidth + align - 1) / align * align;
+    f.frame.push_back({nullptr, "t" + std::to_string(f.temps.size()), "temp", type, width, offset});
+    f.frameWidth = (offset + width + 3) / 4 * 4;
+    Operand o;
+    o.kind = Operand::Temp;
+    o.temp = static_cast<int>(f.temps.size());
+    o.type = type;
     return o;
 }
 
@@ -232,8 +251,10 @@ struct FunctionPass {
     void expression(Quad &q, std::tuple<int, int, int, long long, long long, int> key) {
         auto it = exprs.find(key);
         Operand h;
-        if (it != exprs.end() && holder(it->second, h)) {
+        if (it != exprs.end() && (nodes[it->second].isConst || holder(it->second, h))) {
             int n = it->second;
+            if (nodes[n].isConst) /* a constant that was stored to this place */
+                h = nodes[n].constant.kind == Operand::Str ? nodes[n].constant : constant(valueOf(nodes[n].constant), q.r);
             becomeCopy(q, h);
             ++stats.common;
             define(q.r, n);
@@ -317,15 +338,20 @@ struct FunctionPass {
                     if (isBlock(q.r)) { define(q.r, 0); memoryChanged(); break; }
                     expression(q, std::make_tuple(static_cast<int>(q.op), rcls, 0, static_cast<long long>(number(q.a)), -1LL, epoch));
                     break;
-                case Op::IndexStore:
+                case Op::IndexStore: /* afterwards a load of the same place gives the stored value */
                     q.b = best(q.b);
                     if (!isBlock(q.r)) q.r = best(q.r);
                     memoryChanged();
+                    if (q.cls != Cls::Block)
+                        exprs[std::make_tuple(static_cast<int>(Op::IndexLoad), cls, 0, static_cast<long long>(idOf(q.a)),
+                                              static_cast<long long>(number(q.b)), epoch)] = number(q.r);
                     break;
                 case Op::Store:
                     q.a = best(q.a);
                     if (!isBlock(q.r)) q.r = best(q.r);
                     memoryChanged();
+                    if (q.cls != Cls::Block)
+                        exprs[std::make_tuple(static_cast<int>(Op::Load), cls, 0, static_cast<long long>(number(q.a)), -1LL, epoch)] = number(q.r);
                     break;
                 case Op::Param: case Op::Return:
                     if (!q.a.isNone() && !isBlock(q.a)) q.a = best(q.a);
@@ -675,6 +701,289 @@ struct FunctionPass {
         return removed;
     }
 
+    /* ---------------- -O3 ---------------- */
+
+    static bool isPure(Op op) { /* no effect but its result; may be computed early or reused */
+        switch (op) {
+            case Op::Add: case Op::Sub: case Op::Mul: case Op::BitAnd: case Op::BitOr: case Op::BitXor:
+            case Op::Shl: case Op::Shr: case Op::Neg: case Op::BitNot: case Op::Conv: case Op::AddrOf:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static std::string operandKey(const Operand &o) {
+        if (isName(o)) return "n" + std::to_string(reinterpret_cast<uintptr_t>(nameOf(o).first)) + ":" + std::to_string(nameOf(o).second);
+        if (o.kind == Operand::FloatConst) return "f" + std::to_string(static_cast<int>(classOf(o.type))) + ":" + std::to_string(o.fval);
+        if (o.kind == Operand::Str) return "s" + std::to_string(o.str);
+        return "c" + std::to_string(static_cast<int>(classOf(o.type))) + ":" + std::to_string(o.ival);
+    }
+
+    /* `r = a op b` as something another instruction can reuse: its key, or "" */
+    std::string reusable(const Quad &q) const {
+        if (!isPure(q.op) && q.op != Op::Div && q.op != Op::Mod) return "";
+        Operand r = defined(q);
+        if (!isPrivate(r) || sameName(q.a, r) || sameName(q.b, r)) return "";
+        if (q.op != Op::AddrOf)
+            for (const Operand *o : {&q.a, &q.b})
+                if (isName(*o) && !isPrivate(*o)) return "";
+        std::string a = operandKey(q.a), b = q.b.isNone() ? "" : operandKey(q.b);
+        bool commutes = q.op == Op::Add || q.op == Op::Mul || q.op == Op::BitAnd || q.op == Op::BitOr || q.op == Op::BitXor;
+        if (commutes && b < a) std::swap(a, b);
+        return std::to_string(static_cast<int>(q.op)) + "|" + std::to_string(static_cast<int>(q.cls)) + "|" +
+               std::to_string(static_cast<int>(q.from)) + "|" + std::to_string(static_cast<int>(classOf(q.r.type))) + "|" + a + "|" + b;
+    }
+
+    struct Available { /* an expression whose value some name still holds */
+        Operand holder;
+        std::vector<Name> uses;
+    };
+    using AvailableSet = std::map<std::string, Available>;
+
+    void transferAvailable(const Quad &q, AvailableSet &set) const {
+        auto kill = [&](const Operand &o) {
+            if (!isName(o)) return;
+            Name n = nameOf(o);
+            for (auto it = set.begin(); it != set.end();) {
+                bool gone = nameOf(it->second.holder) == n;
+                for (const Name &u : it->second.uses) gone = gone || u == n;
+                it = gone ? set.erase(it) : std::next(it);
+            }
+        };
+        if (q.op == Op::VaStart || q.op == Op::VaArg) kill(q.a);
+        std::string key = reusable(q);
+        kill(defined(q));
+        if (key.empty()) return;
+        Available a;
+        a.holder = q.r;
+        if (q.op != Op::AddrOf) /* the address of x does not change when x does */
+            for (const Operand *o : {&q.a, &q.b})
+                if (isName(*o)) a.uses.push_back(nameOf(*o));
+        set[key] = a;
+    }
+
+    /* common subexpressions across basic blocks: available-expressions analysis */
+    bool globalCommon() {
+        std::vector<Block> blocks = flowGraph();
+        std::vector<AvailableSet> in(blocks.size()), out(blocks.size());
+        std::vector<bool> done(blocks.size(), false);
+        auto same = [](const AvailableSet &x, const AvailableSet &y) {
+            if (x.size() != y.size()) return false;
+            for (const auto &e : x) {
+                auto o = y.find(e.first);
+                if (o == y.end() || !sameName(o->second.holder, e.second.holder)) return false;
+            }
+            return true;
+        };
+        for (bool changed = true; changed;) {
+            changed = false;
+            for (size_t k = 0; k < blocks.size(); ++k) {
+                AvailableSet f;
+                bool first = true;
+                for (int p : blocks[k].pred) {
+                    if (!done[p]) continue;
+                    if (first) { f = out[p]; first = false; continue; }
+                    for (auto it = f.begin(); it != f.end();) {
+                        auto o = out[p].find(it->first);
+                        it = o != out[p].end() && sameName(o->second.holder, it->second.holder) ? std::next(it) : f.erase(it);
+                    }
+                }
+                if (k == 0) f.clear();
+                in[k] = f;
+                for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) transferAvailable(fn.quads[i], f);
+                if (!done[k] || !same(f, out[k])) { out[k] = f; done[k] = true; changed = true; }
+            }
+        }
+        bool rewrote = false;
+        for (size_t k = 0; k < blocks.size(); ++k) {
+            AvailableSet f = in[k];
+            for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
+                Quad &q = fn.quads[i];
+                std::string key = reusable(q);
+                auto hit = key.empty() ? f.end() : f.find(key);
+                if (hit != f.end() && !sameName(hit->second.holder, q.r)) {
+                    becomeCopy(q, hit->second.holder);
+                    ++stats.globalCommon;
+                    rewrote = true;
+                }
+                transferAvailable(q, f);
+            }
+        }
+        return rewrote;
+    }
+
+    /* natural loops: a back edge n -> h where h dominates n, with every block that reaches n without passing h */
+    struct Loop {
+        int header = 0;
+        std::set<int> blocks;
+    };
+    static std::vector<Loop> loops(const std::vector<Block> &b) {
+        size_t n = b.size();
+        std::vector<std::vector<bool>> dom(n, std::vector<bool>(n, true));
+        if (n) { dom[0].assign(n, false); dom[0][0] = true; }
+        for (bool changed = true; changed;) {
+            changed = false;
+            for (size_t k = 1; k < n; ++k) {
+                std::vector<bool> d(n, !b[k].pred.empty());
+                for (int p : b[k].pred)
+                    for (size_t i = 0; i < n; ++i) d[i] = d[i] && dom[p][i];
+                d[k] = true;
+                if (d != dom[k]) { dom[k] = d; changed = true; }
+            }
+        }
+        std::map<int, Loop> byHeader;
+        for (size_t k = 0; k < n; ++k)
+            for (int h : b[k].succ) {
+                if (!dom[k][h]) continue;
+                Loop &l = byHeader[h];
+                l.header = h;
+                l.blocks.insert(h);
+                std::vector<int> work{static_cast<int>(k)};
+                while (!work.empty()) {
+                    int x = work.back();
+                    work.pop_back();
+                    if (!l.blocks.insert(x).second) continue;
+                    for (int p : b[x].pred) work.push_back(p);
+                }
+            }
+        std::vector<Loop> result;
+        for (const auto &e : byHeader) result.push_back(e.second);
+        return result;
+    }
+
+    /* loop-invariant code motion: a pure instruction whose operands do not
+       change in the loop, and whose result is assigned nowhere else, is
+       computed once in front of the loop */
+    bool hoistInvariants() {
+        std::vector<Block> blocks = flowGraph();
+        int n = static_cast<int>(fn.quads.size());
+        std::map<Name, int> defsAll;
+        for (const auto &q : fn.quads) {
+            Operand r = defined(q);
+            if (isName(r)) ++defsAll[nameOf(r)];
+            if ((q.op == Op::VaStart || q.op == Op::VaArg) && isName(q.a)) ++defsAll[nameOf(q.a)];
+        }
+        for (const Loop &l : loops(blocks)) {
+            std::set<int> inLoop;
+            for (int k : l.blocks)
+                for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) inLoop.insert(static_cast<int>(i));
+            int head = static_cast<int>(blocks[l.header].begin);
+            /* the code in front of the header must only be reached from outside the loop */
+            if (head > 0 && inLoop.count(head - 1) && fn.quads[head - 1].op != Op::Goto && fn.quads[head - 1].op != Op::Return) continue;
+            std::map<Name, int> defsIn;
+            for (int i : inLoop) {
+                const Quad &q = fn.quads[i];
+                Operand r = defined(q);
+                if (isName(r)) ++defsIn[nameOf(r)];
+                if ((q.op == Op::VaStart || q.op == Op::VaArg) && isName(q.a)) ++defsIn[nameOf(q.a)];
+            }
+            std::vector<Quad> moved;
+            std::vector<bool> drop(n, false);
+            std::set<Name> hoisted;
+            for (int i : inLoop) {
+                const Quad &q = fn.quads[i];
+                Operand r = defined(q);
+                if (!isPure(q.op) || !isPrivate(r) || defsAll[nameOf(r)] != 1) continue;
+                bool invariant = true;
+                if (q.op != Op::AddrOf)
+                    for (const Operand *o : {&q.a, &q.b})
+                        if (isName(*o) && !(isPrivate(*o) && (defsIn[nameOf(*o)] == 0 || hoisted.count(nameOf(*o))))) invariant = false;
+                if (!invariant) continue;
+                moved.push_back(q);
+                drop[i] = true;
+                hoisted.insert(nameOf(r));
+                ++stats.hoisted;
+            }
+            if (moved.empty()) continue;
+            /* rebuild: the moved instructions go in front of the header; jumps
+               from inside the loop still go to the header itself */
+            std::vector<int> at(n + 1, 0), origin;
+            std::vector<Quad> out;
+            int front = 0;
+            for (int i = 0; i < n; ++i) {
+                if (i == head) {
+                    front = static_cast<int>(out.size());
+                    for (const Quad &m : moved) { out.push_back(m); origin.push_back(-1); }
+                }
+                at[i] = static_cast<int>(out.size());
+                if (!drop[i]) { out.push_back(fn.quads[i]); origin.push_back(i); }
+            }
+            at[n] = static_cast<int>(out.size());
+            for (size_t k = 0; k < out.size(); ++k) {
+                if (origin[k] < 0 || !isJump(out[k]) || out[k].target < 0) continue;
+                int t = out[k].target;
+                out[k].target = t == head && !inLoop.count(origin[k]) ? front : at[t];
+            }
+            fn.quads.swap(out);
+            return true; /* indices changed: the caller starts again */
+        }
+        return false;
+    }
+
+    /* `return f(args);` inside f itself: assign the arguments and jump to the start */
+    bool tailRecursion() {
+        if (!fn.sym || (fn.sym->name == "main" && !fn.sym->ownerRecord) || !addressTaken.empty()) return false;
+        std::vector<sem::Symbol *> params;
+        if (fn.thisSym) params.push_back(fn.thisSym);
+        for (const auto &p : fn.sym->params) params.push_back(p.get());
+        bool changed = false;
+        for (size_t i = 0; i + 1 < fn.quads.size(); ++i) {
+            const Quad &c = fn.quads[i], &ret = fn.quads[i + 1];
+            size_t nargs = static_cast<size_t>(c.nargs);
+            if (c.op != Op::Call || c.callee != fn.sym.get() || ret.op != Op::Return || nargs != params.size() || i < nargs) continue;
+            if (!(c.r.isNone() ? ret.a.isNone() : sameName(ret.a, c.r))) continue;
+            bool ok = fn.sym->type && !fn.sym->type->variadic;
+            for (size_t k = 0; k < nargs; ++k) ok = ok && fn.quads[i - nargs + k].op == Op::Param;
+            if (!ok) continue;
+            std::vector<Quad> body; /* all arguments first: f(b, a) must not overwrite a before reading it */
+            std::vector<Operand> saved;
+            for (size_t k = 0; k < nargs; ++k) {
+                Quad q;
+                q.op = Op::Assign;
+                q.a = fn.quads[i - nargs + k].a;
+                q.r = addTemp(fn, params[k]->type);
+                q.cls = classOf(q.r.type);
+                saved.push_back(q.r);
+                body.push_back(q);
+            }
+            for (size_t k = 0; k < nargs; ++k) {
+                Quad q;
+                q.op = Op::Assign;
+                q.a = saved[k];
+                q.r.kind = Operand::Var;
+                q.r.sym = params[k];
+                q.r.type = params[k]->type;
+                q.cls = classOf(q.r.type);
+                body.push_back(q);
+            }
+            Quad again;
+            again.op = Op::Goto;
+            again.target = 0;
+            body.push_back(again);
+            size_t begin = i - nargs, delta = body.size() - (nargs + 1);
+            for (auto &q : fn.quads)
+                if (isJump(q) && q.target > static_cast<int>(i)) q.target += static_cast<int>(delta);
+            fn.quads.erase(fn.quads.begin() + static_cast<long>(begin), fn.quads.begin() + static_cast<long>(i) + 1);
+            fn.quads.insert(fn.quads.begin() + static_cast<long>(begin), body.begin(), body.end());
+            ++stats.tailCalls;
+            changed = true;
+            i = begin + body.size() - 1;
+        }
+        return changed;
+    }
+
+    void runLoops() {
+        runGlobal();
+        if (tailRecursion()) runGlobal();
+        for (int round = 0; round < 20; ++round) {
+            bool changed = globalCommon();
+            changed = hoistInvariants() || changed;
+            if (!changed) break;
+            runGlobal();
+        }
+    }
+
     void runGlobal() {
         for (int round = 0; round < 10; ++round) {
             run();
@@ -707,14 +1016,131 @@ struct FunctionPass {
 
 } // namespace
 
+/* a call to a small function is replaced by the function's body: its
+   parameters, locals and temporaries become temporaries of the caller,
+   `return v` becomes `result = v; goto <after the body>` */
+void inlineCalls(Program &program, OptStats &stats) {
+    const std::vector<Function> originals = program.functions; /* bodies are taken from here: one level only */
+    std::map<const sem::Symbol *, const Function *> bySymbol;
+    for (const auto &f : originals) {
+        bool ok = f.quads.size() <= 16 && f.linkName != "main" && f.sym->type && !f.sym->type->variadic;
+        for (const auto &q : f.quads)
+            ok = ok && q.op != Op::VaStart && q.op != Op::VaArg && !(q.op == Op::Call && q.callee == f.sym.get());
+        if (ok) bySymbol[f.sym.get()] = &f;
+    }
+    for (auto &caller : program.functions) {
+        std::vector<Quad> out;
+        std::vector<int> at(caller.quads.size() + 1, 0);
+        std::vector<bool> own; /* a jump of the caller itself, to be retargeted at the end */
+        for (size_t i = 0; i < caller.quads.size(); ++i) {
+            const Quad &q = caller.quads[i];
+            at[i] = static_cast<int>(out.size());
+            auto found = q.op == Op::Call && q.callee && q.callee != caller.sym.get() ? bySymbol.find(q.callee) : bySymbol.end();
+            const Function *callee = found == bySymbol.end() ? nullptr : found->second;
+            std::vector<const sem::Symbol *> params;
+            if (callee) {
+                if (callee->thisSym) params.push_back(callee->thisSym);
+                for (const auto &p : callee->sym->params) params.push_back(p.get());
+            }
+            size_t nargs = static_cast<size_t>(q.nargs);
+            bool usable = callee && nargs == params.size() && out.size() >= nargs;
+            for (size_t k = 0; usable && k < nargs; ++k) usable = out[out.size() - nargs + k].op == Op::Param && own[out.size() - nargs + k];
+            if (!usable) {
+                out.push_back(q);
+                own.push_back(true);
+                continue;
+            }
+            std::map<const sem::Symbol *, Operand> vars;
+            std::map<int, Operand> temps;
+            auto renamed = [&](Operand o) { /* the callee's names as temporaries of the caller */
+                if (o.kind == Operand::Temp) {
+                    auto it = temps.find(o.temp);
+                    if (it == temps.end()) it = temps.emplace(o.temp, addTemp(caller, callee->temps[o.temp - 1])).first;
+                    Operand t = it->second;
+                    t.type = o.type;
+                    return t;
+                }
+                if (o.kind == Operand::Var) {
+                    bool inFrame = false;
+                    for (const auto &e : callee->frame) inFrame = inFrame || e.sym == o.sym;
+                    if (!inFrame) return o; /* a global */
+                    auto it = vars.find(o.sym);
+                    if (it == vars.end()) it = vars.emplace(o.sym, addTemp(caller, o.sym->type)).first;
+                    Operand t = it->second;
+                    t.type = o.type;
+                    return t;
+                }
+                return o;
+            };
+            for (size_t k = 0; k < nargs; ++k) { /* param x  ->  parameter = x */
+                Quad &p = out[out.size() - nargs + k];
+                Operand formal;
+                formal.kind = Operand::Var;
+                formal.sym = const_cast<sem::Symbol *>(params[k]);
+                formal.type = params[k]->type;
+                p.op = Op::Assign;
+                p.r = renamed(formal);
+                p.cls = classOf(p.r.type);
+                p.note.clear();
+            }
+            int start = static_cast<int>(out.size());
+            at[i] = start;
+            std::vector<size_t> toEnd;
+            std::vector<int> bodyAt(callee->quads.size() + 1, 0);
+            std::vector<size_t> bodyJumps;
+            for (size_t k = 0; k < callee->quads.size(); ++k) {
+                Quad b = callee->quads[k];
+                bodyAt[k] = static_cast<int>(out.size());
+                b.a = renamed(b.a);
+                b.b = renamed(b.b);
+                b.r = renamed(b.r);
+                if (b.op == Op::Return) {
+                    if (!b.a.isNone() && !q.r.isNone()) {
+                        Quad result;
+                        result.op = Op::Assign;
+                        result.r = q.r;
+                        result.a = b.a;
+                        result.cls = classOf(q.r.type);
+                        out.push_back(result);
+                        own.push_back(false);
+                    }
+                    if (k + 1 == callee->quads.size()) continue; /* the last one falls out of the body */
+                    Quad leave;
+                    leave.op = Op::Goto;
+                    toEnd.push_back(out.size());
+                    out.push_back(leave);
+                    own.push_back(false);
+                    continue;
+                }
+                if (b.op == Op::Goto || b.op == Op::IfRel) bodyJumps.push_back(out.size());
+                out.push_back(b);
+                own.push_back(false);
+            }
+            bodyAt[callee->quads.size()] = static_cast<int>(out.size());
+            for (size_t j : bodyJumps) out[j].target = bodyAt[out[j].target];
+            for (size_t j : toEnd) out[j].target = static_cast<int>(out.size());
+            ++stats.inlined;
+        }
+        at[caller.quads.size()] = static_cast<int>(out.size());
+        for (size_t k = 0; k < out.size(); ++k)
+            if (own[k] && (out[k].op == Op::Goto || out[k].op == Op::IfRel) && out[k].target >= 0) out[k].target = at[out[k].target];
+        caller.quads.swap(out);
+    }
+}
+
 OptStats optimize(Program &program, int level) {
     OptStats stats;
     for (const auto &f : program.functions) stats.before += static_cast<int>(f.quads.size());
     stats.level = level;
     for (auto &f : program.functions) {
         FunctionPass pass(f, stats);
-        if (level >= 2) pass.runGlobal();
+        if (level >= 3) pass.runLoops();
+        else if (level == 2) pass.runGlobal();
         else if (level == 1) pass.run();
+    }
+    if (level >= 3) { /* small functions into their callers, then everything again on the larger bodies */
+        inlineCalls(program, stats);
+        for (auto &f : program.functions) FunctionPass(f, stats).runLoops();
     }
     int index = 100;
     for (auto &f : program.functions) {
@@ -741,6 +1167,11 @@ void printStats(const OptStats &s, std::ostream &out) {
     if (s.level >= 2)
         out << "    propagated across blocks    " << s.global << "\n"
             << "    dead assignments removed    " << s.deadAssignments << "\n";
+    if (s.level >= 3)
+        out << "    calls inlined               " << s.inlined << "\n"
+            << "    tail calls turned to jumps  " << s.tailCalls << "\n"
+            << "    common across blocks        " << s.globalCommon << "\n"
+            << "    moved out of loops          " << s.hoisted << "\n";
     out << "\n";
 }
 

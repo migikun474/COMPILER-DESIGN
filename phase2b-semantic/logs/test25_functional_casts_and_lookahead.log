@@ -105,6 +105,7 @@ Program "translation_unit"
         |       `-- IntLiteral "3"  <int> =3
         |-- DeclGroup
         |   |-- VarDecl "a : INT"  <int>  -> a.12 (variable, local)
+        |   |   `-- IntLiteral "0"  <int> =0
         |   `-- VarDecl "T : INT"  <int>  -> T.13 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
@@ -118,6 +119,7 @@ Program "translation_unit"
         |   |       |-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
         |   |       `-- IntLiteral "1"  <int> =1
         |   `-- VarDecl "m : INT"  <int>  -> m.16 (variable, local)
+        |       `-- IntLiteral "0"  <int> =0
         |-- VarDecl "N : INT"  <const int>  -> N.17 (variable, local)
         |   `-- IntLiteral "2"  <int> =2
         |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.18 (variable, local)

@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 16 test
+> Status: **implemented and tested** on the SPIM simulator. All 29 test
 > programs give the output and exit code that gcc/g++ give, compiled
-> without optimization, with `-O1` and with `-O2`
-> (`./run_tests.sh`: 16 passed).
+> without optimization and with `-O1`, `-O2` and `-O3`
+> (`./run_tests.sh`: 29 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention).
@@ -15,15 +15,17 @@ make
 ```
 
 ```bash
-./mips_generator -O2 file.c > file.s
+./mips_generator -O3 file.c > file.s
 ```
 
 ```bash
 spim -file file.s arg1 arg2
 ```
 
-`-O1` / `-O2` run the TAC optimizer first; without them the code is a
-direct translation. SPIM prints a five-line banner before the
+`-O1` / `-O2` / `-O3` run the TAC optimizer first and turn on the
+machine-level optimizations below; without them the code is a direct
+translation. `--stack-only` keeps the direct translation even when
+optimizing, to compare the two. SPIM prints a five-line banner before the
 program's output; the program's `return` value from `main` becomes
 SPIM's exit code.
 
@@ -60,8 +62,9 @@ code as a comment:
         sw    $t0, -144($fp)
 ```
 
-No value is kept in a register between two TAC instructions: there is
-no register allocation yet (the next step of the roadmap).
+Without optimization no value is kept in a register between two TAC
+instructions. With `-O1` and above the most used names live in
+registers (next section).
 
 | TAC | MIPS |
 |---|---|
@@ -73,6 +76,44 @@ no register allocation yet (the next step of the roadmap).
 | `if a relop b goto L` | `beq`/`blt`/`bltu` …; floating point `c.lt.d` + `bc1t` |
 | `x = a[i]`, `*p = x` | address in `$t8`, then `lw`/`lb`/`l.d` … or a byte copy for structs |
 | `param` / `call` | arguments stored into a freshly reserved stack area, `jal`, area released |
+
+## Machine-level optimizations (`-O1` and above)
+
+| Optimization | What it does |
+|---|---|
+| registers by usage count and live interval (Dragon Book 8.8) | in each function the uses of every name are counted, a use inside a loop counting ten times per level of nesting, and the interval of instructions in which the name occurs is recorded (widened over every loop it reaches into). In order of count each name takes the first register that no overlapping name holds, so names that are never alive together share one: `$s0`–`$s7` for integers, pointers, `char`, `short` and `bool`; `$f20`–`$f30` for `float` and `double`. Only scalars whose address is never taken qualify. The function saves and restores the registers it uses, so they survive calls. A parameter that got a register is loaded once on entry. |
+| immediate operands | a small constant goes into the instruction: `addiu`, `andi`, `ori`, `xori`, `sll`, `sra`, `srl`; `$zero` for 0; a constant array or field offset becomes the displacement (`lw $s0, -12($fp)`) |
+| comparison as a value | the TAC pattern `if a < b goto +3 ; t = 0 ; goto +2 ; t = 1` becomes `slt` (plus `xori`/`sltiu` for the other relations) |
+| leaf functions | a function that calls nothing does not save `$ra` |
+| peephole (Dragon Book 8.7) | a load right after a store to the same place reuses the register; a jump to the next line and `move $r, $r` are removed |
+
+```
+        # t4 = j int<< 2            (j in $s0, t4 in $s3)
+        sll   $s3, $s0, 2
+        # j = j int+ 1
+        addiu $s0, $s0, 1
+```
+
+Instructions in the generated functions (not the run-time library):
+
+| Program | `-O0` | `-O3 --stack-only` | `-O3` |
+|---|---|---|---|
+| `t04_arrays` | 856 | 864 | 470 |
+| `t17_strings` | 1022 | 1215 | 807 |
+| `t18_algorithms` | 1247 | 1081 | 766 |
+| `t20_bits` | 679 | 424 | 328 |
+| `t21_numeric` | 655 | 528 | 425 |
+| `t22_data_structures` | 991 | 975 | 612 |
+| `t25_control` | 731 | 698 | 485 |
+
+A `char`, `short` or `bool` in a register is re-extended after every
+write, so it always holds what a load from memory would give.
+`long long` always stays in the frame: it would need a pair of
+registers and is rarely in a hot loop.
+
+A variable that is read before it is ever assigned has an arbitrary
+value in C. In the frame that value happens to be 0 on SPIM; in a
+register it is whatever the register held.
 
 ## Frame and calling convention (decision D25: stack only)
 
@@ -140,8 +181,7 @@ programs of the semantic and parser suites were compiled at `-O0` and
 
 ## Limitations
 
-- No register allocation: every operand is loaded from and stored to
-  the frame.
+- `long long` values always stay in the frame (no register pairs).
 - `printf` has no `%e` / `%g`; `%f` needs a value below about 9·10¹⁸
   after scaling by the precision. `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.

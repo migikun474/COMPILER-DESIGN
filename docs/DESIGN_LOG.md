@@ -719,6 +719,172 @@ command-line `spim` with a window, and it has no batch mode, so:
 
 Remaining on the roadmap: register allocation and a peephole pass.
 
+### Second audit: are the semantic phase and IR generation finished? (2026-10-09)
+
+**Asked by:** the user ("increase the number of test cases and re-run
+the code review so that I can see exactly whether we finished the
+semantic phase and the IR generation phase").
+
+**What was done**
+
+- 10 new test programs (`t17`–`t26`: strings, algorithms, scopes, bit
+  manipulation, floating point, data structures, class hierarchies,
+  references, control flow, declarations), each compared with g++.
+- 85 short probe programs for the semantic phase: 40 valid ones to
+  look for false errors, 45 invalid ones to look for missed errors.
+- A code review of `phase2b-semantic` and `phase3-ir`.
+
+**What the probes say about the semantic phase**
+
+- All 40 genuinely invalid programs were rejected. The 5 "invalid"
+  probes that were accepted are programs C itself accepts (division
+  by a constant zero, array index out of range, a missing `return` —
+  each already gets a warning — plus an uninitialized read and a null
+  dereference, which need flow analysis).
+- Of the 40 valid programs, 2 were wrongly rejected (both fixed, see
+  below); 9 more are rejected because they use features this language
+  does not have (templates, namespaces, `virtual`, default arguments,
+  member-initializer lists, `const` member functions, pointers to
+  members, implicit `int`).
+
+**Findings and what happened to them**
+
+| # | Phase | Finding | Outcome |
+|---|---|---|---|
+| 1 | IR | a class object passed or returned by value was copied byte by byte; the copy constructor was never called | **fixed** (a returned local and a temporary are not copied, as in g++) |
+| 2 | semantic | `Vec v = other;` with a converting constructor overwrote the initializer's symbol; the generated code failed | **fixed** (the constructor is stored separately, `ASTNode::converter`) |
+| 3 | semantic | `c ? a : b` was never an lvalue, so `int &r = c ? a : b;` was rejected | **fixed**, with pointer-selecting TAC for it |
+| 4 | semantic | `const Row r` (a typedef'd array) lost `const` on its elements | **fixed** |
+| 5 | parser | `obj.Base::member()` is a syntax error | **left open** — needs a grammar rule plus lookup changes; a base pointer reaches the same member |
+| 6 | IR | unnamed class temporaries are never destroyed | **left open** (needs copy elision to do correctly; D15) |
+| 7 | IR | `delete[]` did not call element destructors | **fixed** (the count is stored in front of the block) |
+| 8 | IR | static objects were not destroyed when `main` returns | **fixed** |
+| 9 | semantic | reading an uninitialized local is not diagnosed | **left open** (no flow analysis in the semantic phase) |
+| 10 | IR | two one-line helpers were repeated per file | **fixed** |
+
+**Answer to the question.** For the language as it is defined now, both
+phases do what they are meant to do on everything tested: 82 semantic
+checks, 27 programs through the TAC interpreter at three optimization
+levels and through SPIM at three levels, all equal to g++. What is
+knowingly not done is the three open rows above plus the features
+listed as unsupported in `docs/FEATURES.md`. "Finished" cannot be
+proved by tests — each of the two audits found real defects that the
+existing tests had not — so the honest statement is: no known wrong
+result remains, and the open items are listed.
+
+Test totals after this session: semantic 82 (25 valid, 21 invalid, 36
+parser programs end to end), TAC 27, MIPS on SPIM 27.
+
+---
+
+## 2026-10-10 — Session 5: more TAC optimizations
+
+### D27. `-O3`: TAC-level optimizations before the MIPS-level ones
+
+**Decided by:** the user ("first let's do TAC level optimisations, then
+go for MIPS level"), from the list Claude proposed.
+**Decision (the level is Claude's choice):** they are a new level,
+`-O3`, so that the `-O1` and `-O2` listings stay as they were.
+
+| Optimization | Status |
+|---|---|
+| inlining of small functions | done: at most 16 instructions, not recursive, not variadic, one level per run |
+| tail recursion → jump | done: only when no local's address is taken |
+| common subexpressions across blocks | done: available expressions with the holding name |
+| loop-invariant code motion | done: natural loops from dominators; never a division |
+| store-to-load forwarding | done, inside `-O1`'s block pass |
+| strength reduction of induction variables | **not done**: `-O1` already turns `i * 4` into a shift, so replacing it by a running add removes no instruction at this level; it can pay at MIPS level and is noted there |
+
+**Safety conditions worth knowing**
+- Inlining copies the callee's parameters, locals and temporaries into
+  fresh temporaries of the caller, so a by-value struct stays a copy
+  and a side effect in the callee still happens once per call.
+- A moved instruction is pure, its operands are not assigned in the
+  loop, and its result is assigned nowhere else in the function; so it
+  is safe even if the loop body runs zero times. Divisions stay.
+- A tail call becomes a jump only if the function takes the address of
+  none of its locals (an address passed down would outlive the "call").
+
+### Progress — `-O3` working (2026-10-10)
+
+- `opt.cpp` grew by about 380 lines; flag `-O3` in both drivers.
+- Both runners now include `-O3`: `phase3-ir/run_tests.sh` **28
+  passed**, `phase4-codegen/run_tests.sh` (SPIM, four levels) **28
+  passed**. Executed instructions: `-O2` 8–64% fewer, `-O3` 12–64%
+  fewer; the class-heavy tests gain most (t08 8% → 33%, t23 11% → 42%)
+  because constructors, getters and operators are inlined.
+- New test `t28_o3` with a trap for each optimization.
+- `-O3` over the other suites: 46 programs, interpreter and SPIM, no
+  difference from unoptimized.
+
+Next: MIPS-level optimizations (register allocation, immediate
+operands, peephole).
+
+### D28. Registers by usage count
+
+**Decided by:** the user, from three options (usage counts, linear
+scan, graph colouring).
+**Decision:** the Dragon book's simple method (8.8): per function, the
+names with the highest weighted use count — a use in a loop counts ten
+times per nesting level — get `$s0`–`$s7` for the whole function.
+**Why:** callee-saved registers survive calls, so nothing changes at a
+call site; the method is a few dozen lines and easy to explain.
+**Known ceiling:** a name holds its register for the whole function;
+short-lived temporaries of an inner loop can take all eight. Linear
+scan over live intervals is the upgrade.
+
+### Progress — MIPS-level optimizations working (2026-10-10)
+
+In `phase4-codegen/src/mips.cpp`, switched on by `-O1` and above
+(`--stack-only` switches them off for comparison):
+
+- registers by usage count, saved and restored by the function;
+- immediate operands (`addiu`, `andi`, `sll` …), `$zero`, constant
+  offsets as displacements;
+- `slt` for a comparison used as a value;
+- leaf functions do not save `$ra`;
+- a peephole pass over each function's instruction list.
+
+Result: `phase4-codegen/run_tests.sh` (28 programs × `-O0`…`-O3` in
+SPIM) **28 passed** on the first run; 92 further SPIM runs from the
+other suites (`-O1` and `-O3`) identical to the TAC interpreter. The
+generated functions are 15–30% shorter than the stack-only code at the
+same TAC level (table in `phase4-codegen/README.md`).
+
+**Not measured:** instructions *executed* in SPIM — the simulator does
+not report a count; the figures are static instruction counts.
+
+### D29. The three limits of the first register allocator
+
+**Asked by:** the user ("work on those limitations … finish it and
+merge"). What was done about each:
+
+| Limit | Outcome |
+|---|---|
+| A name kept its register for the whole function, so inner-loop temporaries could take all eight | **Fixed.** Each name now has a live interval (first to last occurrence, widened over every loop it reaches into, and up to the call for a `param`); names whose intervals do not overlap share a register. Still ordered by use count, so the method stays the one chosen in D28, with intervals added. |
+| `float`, `double`, `long long` and narrow integers always stayed in the frame | **Fixed for all but `long long`.** `float`/`double` use `$f20`–`$f30` (saved and restored like `$s0`–`$s7`); `char`/`short`/`bool` use the integer registers and are re-extended after every write. `long long` stays in the frame — a deliberate skip (register pairs, rarely hot). |
+| Never run inside the QtSpim window | **Still not verified by Claude.** QtSpim has no batch mode, and an attempt to start it without a window failed (its Qt build only has the `xcb` display plugin). The steps are in `phase4-codegen/README.md`; this needs one run by the user. |
+
+**Result:** `phase4-codegen/run_tests.sh` 29 passed (29 programs ×
+`-O0`…`-O3`); new test `t29_registers`. Code size with registers fell
+again, for example `t04_arrays` 609 → 470 and `t22_data_structures`
+835 → 612 instructions.
+
+**Something the wider check showed.** Two older test programs
+(`v19_former_limitations`, `test25_functional_casts_and_lookahead`)
+gave a different exit code with registers. They read two variables
+that were never assigned (`a` and `m`): in the frame that happens to be
+0, in a register it is whatever was there. That is undefined in C, not
+a compiler bug; the two programs now initialize the variables. It is
+also a reminder that the open item "no warning for an uninitialized
+read" matters more once values live in registers.
+
+### Merged (2026-10-10)
+
+On the user's instruction the stacked pull requests #3 (optimizer),
+#4 (MIPS), #5 (`-O3`) and #6 (MIPS-level optimizations) were merged
+into `main` by merging #6.
+
 ---
 
 ## Open questions

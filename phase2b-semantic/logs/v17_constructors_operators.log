@@ -74,7 +74,7 @@ Program "translation_unit"
 |   |   |-- ParamDecl "i : INT"  <int>  -> i.5 (parameter, param)
 |   |   `-- CompoundStmt
 |   |       `-- ReturnStmt
-|   |           `-- TernaryExpr  <int>
+|   |           `-- TernaryExpr  <int> lvalue
 |   |               |-- BinaryExpr "=="  <int>
 |   |               |   |-- Identifier "i"  <int> lvalue  -> i.5 (parameter, param)
 |   |               |   `-- IntLiteral "0"  <int> =0
@@ -173,7 +173,7 @@ Program "translation_unit"
         |       `-- IntLiteral "4"  <int> =4
         |-- VarDecl "e : CLASS"  <class Vec>  -> e.17 (variable, local)
         |-- VarDecl "f : CLASS"  <class Vec>  -> f.18 (variable, local)
-        |   `-- IntLiteral "5"  <int> =5  -> _ZN3VecC1Ei (function)
+        |   `-- IntLiteral "5"  <int> =5
         |-- VarDecl "c : CLASS"  <class Vec>  -> c.19 (variable, local)
         |   `-- BinaryExpr "+"  <class Vec>  -> _ZN3VecplES_ (function)
         |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)

@@ -1,0 +1,217 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v25_lvalues_and_conversions.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v25_lvalues_and_conversions.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- TypedefDecl "Row = INT_ARRAY"  <int[4]>  -> Row (typedef)
+|-- VarDecl "primes : INT_ARRAY"  <const int[4]>  -> primes (variable, global)
+|   `-- InitializerList  <const int[4]>
+|       |-- IntLiteral "2"  <int> =2
+|       |-- IntLiteral "3"  <int> =3
+|       |-- IntLiteral "5"  <int> =5
+|       `-- IntLiteral "7"  <int> =7
+|-- FunctionDef "sum : _Z3sumPi"  <int (const int *)>  -> _Z3sumPKi (function)
+|   |-- ParamDecl "r : INT_ARRAY"  <const int *>  -> r.1 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- IndexExpr  <const int> lvalue
+|               |   |-- Identifier "r"  <const int *> lvalue  -> r.1 (parameter, param)
+|               |   `-- IntLiteral "0"  <int> =0
+|               `-- IndexExpr  <const int> lvalue
+|                   |-- Identifier "r"  <const int *> lvalue  -> r.1 (parameter, param)
+|                   `-- IntLiteral "3"  <int> =3
+|-- StructDecl "Account"  <struct Account>  -> Account (tag)
+|   |-- VarDecl "id : INT"  <int>  -> Account::id (field, member)
+|   `-- VarDecl "balance : DOUBLE"  <double>  -> Account::balance (field, member)
+|-- FunctionDef "richer : _Z6richerR7AccountS0_"  <struct Account &(struct Account &, struct Account &)>  -> _Z6richerR7AccountS0_ (function)
+|   |-- ParamDecl "a : STRUCT_POINTER"  <struct Account &>  -> a.2 (parameter, param)
+|   |-- ParamDecl "b : STRUCT_POINTER"  <struct Account &>  -> b.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <struct Account> lvalue
+|               |-- BinaryExpr ">="  <int>
+|               |   |-- MemberExpr "balance"  <double> lvalue  -> Account::balance (field, member)
+|               |   |   `-- Identifier "a"  <struct Account> lvalue  -> a.2 (parameter, param)
+|               |   `-- MemberExpr "balance"  <double> lvalue  -> Account::balance (field, member)
+|               |       `-- Identifier "b"  <struct Account> lvalue  -> b.3 (parameter, param)
+|               |-- Identifier "a"  <struct Account> lvalue  -> a.2 (parameter, param)
+|               `-- Identifier "b"  <struct Account> lvalue  -> b.3 (parameter, param)
+|-- FunctionDef "pick : _Z4pickiRiS_"  <int &(int, int &, int &)>  -> _Z4pickiRiS_ (function)
+|   |-- ParamDecl "which : INT"  <int>  -> which.4 (parameter, param)
+|   |-- ParamDecl "a : INT_POINTER"  <int &>  -> a.5 (parameter, param)
+|   |-- ParamDecl "b : INT_POINTER"  <int &>  -> b.6 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- TernaryExpr  <int> lvalue
+|               |-- Identifier "which"  <int> lvalue  -> which.4 (parameter, param)
+|               |-- Identifier "a"  <int> lvalue  -> a.5 (parameter, param)
+|               `-- Identifier "b"  <int> lvalue  -> b.6 (parameter, param)
+|-- ClassDecl "Other"  <class Other>  -> Other (tag)
+|   |-- VarDecl "n : INT"  <int>  -> Other::n (field, member)
+|   `-- ConstructorDef "Other : _ZN5OtherC1Ev"  -> _ZN5OtherC1Ev (function)
+|       `-- CompoundStmt
+|           `-- ExprStmt
+|               `-- AssignExpr "="  <int>
+|                   |-- Identifier "n"  <int> lvalue  -> Other::n (field, member)
+|                   `-- IntLiteral "7"  <int> =7
+|-- ClassDecl "Vec"  <class Vec>  -> Vec (tag)
+|   |-- VarDecl "x : INT"  <int>  -> Vec::x (field, member)
+|   |-- ConstructorDef "Vec : _ZN3VecC1E5Other"  -> _ZN3VecC1E5Other (function)
+|   |   |-- ParamDecl "o : CLASS"  <class Other>  -> o.7 (parameter, param)
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="  <int>
+|   |               |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
+|   |               `-- MemberExpr "n"  <int> lvalue  -> Other::n (field, member)
+|   |                   `-- Identifier "o"  <class Other> lvalue  -> o.7 (parameter, param)
+|   `-- ConstructorDef "Vec : _ZN3VecC1Ei"  -> _ZN3VecC1Ei (function)
+|       |-- ParamDecl "k : INT"  <int>  -> k.8 (parameter, param)
+|       `-- CompoundStmt
+|           `-- ExprStmt
+|               `-- AssignExpr "="  <int>
+|                   |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
+|                   `-- Identifier "k"  <int> lvalue  -> k.8 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"  <int>  -> x.9 (variable, local)
+        |   |   `-- IntLiteral "1"  <int> =1
+        |   `-- VarDecl "y : INT"  <int>  -> y.10 (variable, local)
+        |       `-- IntLiteral "2"  <int> =2
+        |-- VarDecl "r : INT_POINTER"  <int &>  -> r.11 (variable, local)
+        |   `-- TernaryExpr  <int> lvalue
+        |       |-- BinaryExpr ">"  <int>
+        |       |   |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |   `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |       |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
+        |       `-- IntLiteral "20"  <int> =20
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- TernaryExpr  <int> lvalue
+        |       |   |-- BinaryExpr "<"  <int>
+        |       |   |   |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |   |   `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |       |   |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |   `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |       `-- IntLiteral "10"  <int> =10
+        |-- ExprStmt
+        |   `-- PostfixOpExpr "++"  <int>
+        |       `-- TernaryExpr  <int> lvalue
+        |           |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |           |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |           `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.12 (variable, local)
+        |   `-- UnaryExpr "&"  <int *>
+        |       `-- TernaryExpr  <int> lvalue
+        |           |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |           |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |           `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "+="  <int>
+        |       |-- CallExpr  <int> lvalue  -> _Z4pickiRiS_ (function)
+        |       |   |-- Identifier "pick"  <int &(int, int &, int &)>  -> _Z4pickiRiS_ (function)
+        |       |   |-- IntLiteral "1"  <int> =1
+        |       |   |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |   `-- Identifier "y"  <int> lvalue  -> y.10 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        |-- DeclGroup
+        |   |-- VarDecl "a : STRUCT"  <struct Account>  -> a.13 (variable, local)
+        |   |   `-- InitializerList  <struct Account>
+        |   |       |-- IntLiteral "1"  <int> =1
+        |   |       `-- FloatLiteral "10.5"  <double>
+        |   `-- VarDecl "b : STRUCT"  <struct Account>  -> b.14 (variable, local)
+        |       `-- InitializerList  <struct Account>
+        |           |-- IntLiteral "2"  <int> =2
+        |           `-- FloatLiteral "99.0"  <double>
+        |-- ExprStmt
+        |   `-- AssignExpr "-="  <double>
+        |       |-- MemberExpr "balance"  <double> lvalue  -> Account::balance (field, member)
+        |       |   `-- CallExpr  <struct Account> lvalue  -> _Z6richerR7AccountS0_ (function)
+        |       |       |-- Identifier "richer"  <struct Account &(struct Account &, struct Account &)>  -> _Z6richerR7AccountS0_ (function)
+        |       |       |-- Identifier "a"  <struct Account> lvalue  -> a.13 (variable, local)
+        |       |       `-- Identifier "b"  <struct Account> lvalue  -> b.14 (variable, local)
+        |       `-- IntLiteral "9"  <int> =9
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.15 (variable, local)
+        |   `-- TernaryExpr  <double>
+        |       |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       |-- Identifier "x"  <int> lvalue  -> x.9 (variable, local)
+        |       `-- FloatLiteral "2.5"  <double>
+        |-- VarDecl "o : CLASS"  <class Other>  -> o.16 (variable, local)
+        |-- DeclGroup
+        |   |-- VarDecl "f : CLASS"  <class Vec>  -> f.17 (variable, local)
+        |   |   `-- Identifier "o"  <class Other> lvalue  -> o.16 (variable, local)
+        |   `-- VarDecl "g : CLASS"  <class Vec>  -> g.18 (variable, local)
+        |       `-- IntLiteral "5"  <int> =5
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |-- CallExpr  <int>  -> _Z3sumPKi (function)
+                |   |   |   |   |-- Identifier "sum"  <int (const int *)>  -> _Z3sumPKi (function)
+                |   |   |   |   `-- Identifier "primes"  <const int[4]> lvalue  -> primes (variable, global)
+                |   |   |   `-- UnaryExpr "*"  <int> lvalue
+                |   |   |       `-- Identifier "p"  <int *> lvalue  -> p.12 (variable, local)
+                |   |   `-- CastExpr "INT"  <int>
+                |   |       `-- Identifier "d"  <double> lvalue  -> d.15 (variable, local)
+                |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+                |       `-- Identifier "f"  <class Vec> lvalue  -> f.17 (variable, local)
+                `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+                    `-- Identifier "g"  <class Vec> lvalue  -> g.18 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Row                typedef        int[4]                     -        global                         4     -     0     Row                  -                        
+primes             variable       const int[4]               global   global                         5     16    1     primes               -                        
+sum                function       int (const int *)          -        global                         6     -     1     _Z3sumPKi            _Z3sumPKi                defined
+r                  parameter      const int *                param    global > sum()                 6     4     2     r.1                  -                        
+Account            struct_tag     struct Account             -        global                         8     -     0     Account              -                        size 16
+Account::id        field          int                        member   global > struct Account        8     4     0     Account::id          -                        public, offset 0
+Account::balance   field          double                     member   global > struct Account        8     8     3     Account::balance     -                        public, offset 8
+richer             function       struct Account &(struct Account &, struct Account &) -        global                         9     -     1     _Z6richerR7AccountS0_ _Z6richerR7AccountS0_    defined
+a                  parameter      struct Account &           param    global > richer()              9     4     2     a.2                  -                        
+b                  parameter      struct Account &           param    global > richer()              9     4     2     b.3                  -                        
+pick               function       int &(int, int &, int &)   -        global                         10    -     1     _Z4pickiRiS_         _Z4pickiRiS_             defined
+which              parameter      int                        param    global > pick()                10    4     1     which.4              -                        
+a                  parameter      int &                      param    global > pick()                10    4     1     a.5                  -                        
+b                  parameter      int &                      param    global > pick()                10    4     1     b.6                  -                        
+Other              class_tag      class Other                -        global                         12    -     0     Other                -                        size 4
+Other::n           field          int                        member   global > class Other           12    4     2     Other::n             -                        public, offset 0
+Other::Other       constructor    void (void)                -        global > class Other           12    -     1     _ZN5OtherC1Ev        _ZN5OtherC1Ev            public
+Vec                class_tag      class Vec                  -        global                         13    -     0     Vec                  -                        size 4
+Vec::x             field          int                        member   global > class Vec             15    4     4     Vec::x               -                        public, offset 0
+Vec::Vec           constructor    void (class Other)         -        global > class Vec             16    -     1     _ZN3VecC1E5Other     _ZN3VecC1E5Other         public
+Vec::Vec           constructor    void (int)                 -        global > class Vec             17    -     1     _ZN3VecC1Ei          _ZN3VecC1Ei              public
+o                  parameter      class Other                param    global > class Vec > Vec()     16    4     1     o.7                  -                        
+k                  parameter      int                        param    global > class Vec > Vec()     17    4     1     k.8                  -                        
+main               function       int (void)                 -        global                         20    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                21    4     11    x.9                  -                        
+y                  variable       int                        local    global > main()                21    4     7     y.10                 -                        
+r                  variable       int &                      local    global > main()                22    4     1     r.11                 -                        
+p                  variable       int *                      local    global > main()                26    4     1     p.12                 -                        
+a                  variable       struct Account             local    global > main()                28    16    1     a.13                 -                        
+b                  variable       struct Account             local    global > main()                28    16    1     b.14                 -                        
+d                  variable       double                     local    global > main()                30    8     1     d.15                 -                        
+o                  variable       class Other                local    global > main()                31    4     1     o.16                 -                        
+f                  variable       class Vec                  local    global > main()                32    4     1     f.17                 -                        
+g                  variable       class Vec                  local    global > main()                32    4     1     g.18                 -                        
+
+=== Record Layouts (MIPS32) ===
+struct Account: size 16, align 8
+    +0  int id  [public]
+    +8  double balance  [public]
+class Other: size 4, align 4
+    +0  int n  [public]
+class Vec: size 4, align 4
+    +0  int x  [public]

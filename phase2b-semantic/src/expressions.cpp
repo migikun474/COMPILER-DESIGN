@@ -808,6 +808,14 @@ TypePtr SemanticAnalyzer::ternary(const ASTNodePtr &n) {
         const ASTNodePtr &chosen = C->constValue ? A : B;
         if (chosen->hasConstValue && isIntegral(t)) setConst(n, wrapToType(chosen->constValue, t));
     }
+    /* two lvalues of the same type: the result names one of them (C++),
+       so `int &r = c ? a : b;` and `(c ? a : b) = 1;` are allowed */
+    TypePtr la = isReference(A->semType) ? A->semType->elem : A->semType;
+    TypePtr lb = isReference(B->semType) ? B->semType->elem : B->semType;
+    if (A->isLValue && B->isLValue && !isArray(la) && !isFunction(la) && sameType(la, lb, true)) {
+        n->isLValue = true;
+        return la;
+    }
     return t;
 }
 

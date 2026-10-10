@@ -161,9 +161,9 @@ semantic phase redoes all name resolution.)
 | Item | State |
 |---|---|
 | Three Address Code generation (phase 3) | **done** — [`phase3-ir/README.md`](../phase3-ir/README.md) |
-| TAC optimizations | `-O1` (local) and `-O2` (global constants/copies, dead assignments) **done**; global CSE and loop optimizations not planned (D22) |
+| TAC optimizations | `-O1` (local), `-O2` (global constants/copies, dead assignments) and `-O3` (inlining, tail recursion, global common subexpressions, loop-invariant code motion) **done** |
 | MIPS code generation (phase 4) | **done** (SPIM) — [`phase4-codegen/README.md`](../phase4-codegen/README.md) |
-| Register allocation, peephole optimization of MIPS | not started |
+| Register allocation (usage counts with live intervals; integer and floating-point registers), immediates, peephole | **done** |
 
 ### G. Unsupported (no implementation; rejected as syntax errors)
 

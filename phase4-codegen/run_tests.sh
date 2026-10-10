@@ -18,7 +18,7 @@ for f in $T/*.c; do
     args=""; [ -f "$T/$n.args" ] && args="$(cat "$T/$n.args")"
     in=/dev/null; [ -f "$T/$n.in" ] && in="$T/$n.in"
     ok=1; note=""
-    for level in -O0 -O1 -O2; do
+    for level in -O0 -O1 -O2 -O3; do
         ./mips_generator $level "$f" > "$TMP/$n.s" 2> "$TMP/err" || { ok=0; note="$note $level: no code;"; continue; }
         # SPIM prints a 5-line banner before the program's own output
         timeout 60 spim -file "$TMP/$n.s" $args < "$in" > "$TMP/raw" 2> "$TMP/spimerr"; code=$?
