@@ -245,25 +245,23 @@ a                              CLASS
 +                              plus_op             
 b                              CLASS               
 ;                              semicolon_op        
-Node                           CLASS               
-*                              star_op             
-heap                           CLASS_POINTER       
-=                              assign_op           
-new                            new                 
-Node                           CLASS               
-(                              open_paren_op       
-3                              INT_LITERAL         
-)                              close_paren_op      
-;                              semicolon_op        
 int                            int                 
 *                              star_op             
 many                           INT_POINTER         
 =                              assign_op           
-new                            new                 
+(                              open_paren_op       
 int                            int                 
-[                              open_bracket_op     
+*                              star_op             
+)                              close_paren_op      
+malloc                         malloc              
+(                              open_paren_op       
 4                              INT_LITERAL         
-]                              close_bracket_op    
+*                              star_op             
+sizeof                         sizeof              
+(                              open_paren_op       
+int                            int                 
+)                              close_paren_op      
+)                              close_paren_op      
 ;                              semicolon_op        
 int                            int                 
 x                              INT                 
@@ -373,11 +371,10 @@ T                              INT
 =                              assign_op           
 3                              INT_LITERAL         
 ;                              semicolon_op        
-delete                         delete              
-heap                           CLASS_POINTER       
-;                              semicolon_op        
-delete[]                       delete_array        
+free                           free                
+(                              open_paren_op       
 many                           INT_POINTER         
+)                              close_paren_op      
 ;                              semicolon_op        
 return                         return              
 Node                           CLASS               
@@ -556,12 +553,12 @@ Program "translation_unit"
         |   `-- BinaryExpr "+"
         |       |-- Identifier "a"
         |       `-- Identifier "b"
-        |-- VarDecl "heap : CLASS_POINTER"
-        |   `-- NewExpr "CLASS"
-        |       `-- ConstructExpr "CLASS"
-        |           `-- IntLiteral "3"
         |-- VarDecl "many : INT_POINTER"
-        |   `-- NewExpr "INT_ARRAY"
+        |   `-- CastExpr "INT_POINTER"
+        |       `-- BuiltinCallExpr "malloc"
+        |           `-- BinaryExpr "*"
+        |               |-- IntLiteral "4"
+        |               `-- SizeofExpr "INT"
         |-- VarDecl "x : INT"
         |   `-- ConstructExpr "INT"
         |       `-- IntLiteral "5"
@@ -597,10 +594,7 @@ Program "translation_unit"
         |-- VarDecl "T : INT"
         |   `-- IntLiteral "3"
         |-- ExprStmt
-        |   `-- DeleteExpr
-        |       `-- Identifier "heap"
-        |-- ExprStmt
-        |   `-- DeleteExpr "[]"
+        |   `-- BuiltinCallExpr "free"
         |       `-- Identifier "many"
         `-- ReturnStmt
             `-- BinaryExpr "+"
@@ -695,17 +689,16 @@ main                 procedure      37     global                       PROCEDUR
 a                    variable       38     global > main()              CLASS                                     2                                
 b                    variable       39     global > main()              CLASS                                     1                                
 c                    variable       40     global > main()              CLASS                                     1                                
-heap                 variable       41     global > main()              CLASS_POINTER    *                        1                                
-many                 variable       42     global > main()              INT_POINTER      *                        2                                
-x                    variable       43     global > main()              INT                                       2                                
-cp                   variable       44     global > main()              INT_POINTER      *                        1                                
-rp                   variable       45     global > main()              INT_POINTER_POINTER **                       1                                
-p                    variable       46     global > main()              STRUCT                                    1                                
-arr                  variable       47     global > main()              INT_ARRAY        []                       2                                
-zeros                variable       48     global > main()              INT_ARRAY        []                       1                                
-s                    variable       49     global > main()              CHAR_POINTER     *                        1                                
-grid                 variable       50     global > main()              INT_POINTER_ARRAY * []                     1                                
-Local                struct_tag     52     global > main() > block      STRUCT                                    0                                
-Local::k             struct_member  52     global > main() > block > struct Local INT                                       0                                
-Local                variable       54     global > main()              INT                                       1                                
-T                    variable       55     global > main()              INT                                       1                                
+many                 variable       41     global > main()              INT_POINTER      *                        2                                
+x                    variable       42     global > main()              INT                                       2                                
+cp                   variable       43     global > main()              INT_POINTER      *                        1                                
+rp                   variable       44     global > main()              INT_POINTER_POINTER **                       1                                
+p                    variable       45     global > main()              STRUCT                                    1                                
+arr                  variable       46     global > main()              INT_ARRAY        []                       2                                
+zeros                variable       47     global > main()              INT_ARRAY        []                       1                                
+s                    variable       48     global > main()              CHAR_POINTER     *                        1                                
+grid                 variable       49     global > main()              INT_POINTER_ARRAY * []                     1                                
+Local                struct_tag     51     global > main() > block      STRUCT                                    0                                
+Local::k             struct_member  51     global > main() > block > struct Local INT                                       0                                
+Local                variable       53     global > main()              INT                                       1                                
+T                    variable       54     global > main()              INT                                       1                                

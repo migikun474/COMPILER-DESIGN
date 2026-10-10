@@ -54,15 +54,14 @@
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
 %token STRUCT CLASS
 %token PUBLIC PRIVATE PROTECTED THIS
-%token STATIC TYPEDEF AUTO EXTERN REGISTER CONST VOLATILE
+%token STATIC TYPEDEF AUTO EXTERN CONST
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
 %token BOOL
-%token NEW DELETE SIZEOF
+%token SIZEOF
 %token VA_LIST VA_START VA_ARG VA_END
 %token OPERATOR
-%token DELETE_ARRAY /* `delete[]`, one token (see scanner.l) */
 %token FCAST        /* a type name / type keyword starting `T(...)` that can only be an
                        expression (`Dog(4).bark();`), decided by the scanner's lookahead */
 %token ABSTRACT_LPAREN /* '(' after a type that opens a nameless declarator: `int (*)[3]` */
@@ -84,12 +83,6 @@
    flat expression grammar below, same technique the K&R yacc grammar
    for C uses ---- */
 %precedence PREFER_EXPRESSION /* lowest: see type_name_specifier */
-/* `new T * x`: the type in a new-expression is the longest sequence of
-   `*`s that follows (C++ [expr.new]/3), so `new int * x` is `(new int*) x`
-   -- an error, exactly as in g++ -- never `(new int) * x`. Rules ending
-   a new_type_id carry this precedence, lower than '*', so the '*' is
-   shifted into the type. */
-%precedence NEW_TYPE_END
 %right '=' PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN AND_ASSIGN OR_ASSIGN XOR_ASSIGN SHL_ASSIGN SHR_ASSIGN
 %right '?' ':'
 %left OR_OP
@@ -176,10 +169,8 @@ declaration_specifiers
           if ($2.typeSpec.isStatic) $$.typeSpec.isStatic = true;
           if ($2.typeSpec.isTypedefStorage) $$.typeSpec.isTypedefStorage = true;
           if ($2.typeSpec.isExtern) $$.typeSpec.isExtern = true;
-          if ($2.typeSpec.isRegister) $$.typeSpec.isRegister = true;
           $$.typeSpec.storageClasses += $2.typeSpec.storageClasses;
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
-          if ($2.typeSpec.isVolatile) $$.typeSpec.isVolatile = true;
           if ($2.typeSpec.isAuto) $$.typeSpec.isAuto = true;
           if (!$2.typeSpec.tagName.empty()) $$.typeSpec.tagName = $2.typeSpec.tagName;
           if (!$2.typeSpec.typedefName.empty()) $$.typeSpec.typedefName = $2.typeSpec.typedefName;
@@ -191,11 +182,9 @@ declaration_specifiers
 storage_or_type_specifier
     : STATIC   { $$.typeSpec.isStatic = true; $$.typeSpec.storageClasses = 1; }
     | EXTERN   { $$.typeSpec.isExtern = true; $$.typeSpec.storageClasses = 1; }
-    | REGISTER { $$.typeSpec.isRegister = true; $$.typeSpec.storageClasses = 1; }
     | AUTO     { $$ = ParserValue(); $$.typeSpec.isAuto = true; }
     | TYPEDEF  { $$.typeSpec.isTypedefStorage = true; $$.typeSpec.storageClasses = 1; }
     | CONST    { $$.typeSpec.isConst = true; } /* now actually tracked -- see Symbol/SymbolTableEntry */
-    | VOLATILE { $$.typeSpec.isVolatile = true; }
     | type_specifier { $$ = $1; }
     ;
 
@@ -539,7 +528,6 @@ pointer
     | pointer '*'      { $$ = $1; $$.decl.pointerLevel++; $$.decl.ptrOps += "*"; }
     | pointer '&'      { $$ = $1; $$.decl.pointerLevel++; $$.decl.ptrOps += "&"; } /* `int *&r` */
     | pointer CONST    { $$ = $1; $$.decl.ptrOps += "c"; }                       /* `int *const p` */
-    | pointer VOLATILE { $$ = $1; $$.decl.ptrOps += "v"; }
     ;
 
 declarator
@@ -553,7 +541,7 @@ declarator
     ;
 
 /* a declarator without a name: `int *`, `char *[]`, `int (*)[3]` --
-   for unnamed parameters and in casts / sizeof / new */
+   for unnamed parameters and in casts / sizeof */
 abstract_declarator
     : pointer { $$ = $1; }
     | pointer direct_abstract_declarator {
@@ -739,7 +727,6 @@ function_definition
           extra.tokenIdx = $2.decl.nameIdx;
           extra.isStatic = $1.typeSpec.isStatic;
           extra.isConst = $1.typeSpec.isConst;
-          extra.isVolatile = $1.typeSpec.isVolatile;
           extra.pointerLevel = $2.decl.pointerLevel;
           extra.arrayLevel = $2.decl.arrayLevel;
           extra.returnType = returnType;
@@ -982,20 +969,6 @@ unary_expr
           $$.node = atToken(mkNode(ASTKind::SizeofExpr, $3.str), $1.idx);
           $$.node->typeExpr = makeTypeExpr($3.typeSpec, $3.decl);
       }
-    | NEW new_type_id {
-          $$.node = atToken(mkNode(ASTKind::NewExpr, $2.str), $1.idx);
-          $$.node->typeExpr = makeTypeExpr($2.typeSpec, $2.decl);
-      }
-    | NEW new_type_id '(' constructor_args_opt ')' {
-          $$.node = atToken(mkNode(ASTKind::NewExpr, $2.str), $1.idx);
-          $$.node->typeExpr = makeTypeExpr($2.typeSpec, $2.decl);
-          auto c = atToken(mkNode(ASTKind::ConstructExpr, $2.str), $3.idx);
-          c->typeExpr = $$.node->typeExpr;
-          for (auto &a : $4.nodeList) addChild(c, a);
-          addChild($$.node, c);
-      }
-    | DELETE unary_expr { $$.node = atToken(mkNode(ASTKind::DeleteExpr, "", {$2.node}), $1.idx); }
-    | DELETE_ARRAY unary_expr { $$.node = atToken(mkNode(ASTKind::DeleteExpr, "[]", {$2.node}), $1.idx); }
     ;
 
 type_name
@@ -1009,46 +982,11 @@ type_name
       }
     ;
 
-/* the type in `new T`, `new T *`, `new T[n]`: only pointers and array
-   sizes, so a following '(' is always the constructor arguments */
-new_type_id
-    : type_name_specifiers %prec NEW_TYPE_END {
-          $$.str = computeTypeStr($1.typeSpec, 0, 0);
-          $$.decl = DeclInfo();
-      }
-    | type_name_specifiers new_pointer %prec NEW_TYPE_END {
-          $$.str = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, 0);
-          $$.decl = $2.decl;
-      }
-    | type_name_specifiers new_array_dims {
-          $$.str = computeTypeStr($1.typeSpec, 0, $2.decl.arrayLevel);
-          $$.decl = $2.decl;
-      }
-    | type_name_specifiers new_pointer new_array_dims {
-          $$.str = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $3.decl.arrayLevel);
-          $$.decl = $3.decl;
-          $$.decl.pointerLevel = $2.decl.pointerLevel;
-          $$.decl.ptrOps = $2.decl.ptrOps;
-      }
-    ;
-
-new_pointer
-    : '*'             { $$.decl = DeclInfo(); $$.decl.pointerLevel = 1; $$.decl.ptrOps = "*"; }
-    | new_pointer '*' { $$ = $1; $$.decl.pointerLevel++; $$.decl.ptrOps += "*"; }
-    ;
-
-/* the first size of `new T[n]` may be any expression (checked later) */
-new_array_dims
-    : '[' expr ']' { $$.decl = DeclInfo(); $$.decl.arrayLevel = 1; $$.decl.arrayDims.push_back($2.node); }
-    | new_array_dims '[' expr ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back($3.node); }
-    ;
-
 type_name_specifiers
     : type_name_specifiers type_name_specifier {
           $$ = $1;
           for (auto &p : $2.typeSpec.parts) $$.typeSpec.parts.push_back(p);
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
-          if ($2.typeSpec.isVolatile) $$.typeSpec.isVolatile = true;
           if (!$2.typeSpec.tagName.empty()) $$.typeSpec.tagName = $2.typeSpec.tagName;
           if (!$2.typeSpec.typedefName.empty()) $$.typeSpec.typedefName = $2.typeSpec.typedefName;
       }
@@ -1068,7 +1006,6 @@ type_name_specifier
     | UNSIGNED %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("UNSIGNED"); }
     | VA_LIST  { $$.typeSpec.parts.push_back("VA_LIST"); }
     | CONST    { $$ = ParserValue(); $$.typeSpec.isConst = true; }
-    | VOLATILE { $$ = ParserValue(); $$.typeSpec.isVolatile = true; }
     | TYPE_NAME %prec PREFER_EXPRESSION {
           /* in a cast / sizeof / call argument, `T(` is the expression
              `T(...)`: these positions already accept expressions, and a

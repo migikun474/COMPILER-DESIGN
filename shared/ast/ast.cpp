@@ -74,8 +74,6 @@ const char *astKindName(ASTKind k) {
         case ASTKind::IndexExpr: return "IndexExpr";
         case ASTKind::CastExpr: return "CastExpr";
         case ASTKind::SizeofExpr: return "SizeofExpr";
-        case ASTKind::NewExpr: return "NewExpr";
-        case ASTKind::DeleteExpr: return "DeleteExpr";
         case ASTKind::CommaExpr: return "CommaExpr";
         case ASTKind::ConstructExpr: return "ConstructExpr";
         case ASTKind::DesignatedInit: return "DesignatedInit";

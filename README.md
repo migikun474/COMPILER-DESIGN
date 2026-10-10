@@ -99,29 +99,29 @@ a source file directly. Every run also writes a report to
 
 Abridged; the full matrix with test evidence for every row is in
 [`docs/FEATURES.md`](docs/FEATURES.md). ✓ implemented and tested,
-◐ implemented with documented gaps, — not started.
+◐ implemented with documented gaps, — not applicable.
 
 | Feature | Lexer | Parser | Semantic | IR | MIPS | Status |
 |---|---|---|---|---|---|---|
-| Arithmetic, logical, relational, bitwise, assignment, unary operators | ✓ | ✓ | ✓ | — | — | front end complete |
-| if-else, for, while, do-while, `until` | ✓ | ✓ | ✓ | — | — | front end complete |
-| switch/case/default | ✓ | ✓ | ✓ | — | — | front end complete |
-| goto, labels, break, continue | ✓ | ✓ | ◐ | — | — | jumps over initializations not checked |
-| int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | — | — | front end complete |
-| Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | — | — | front end complete |
-| Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | — | — | front end complete |
-| Structures, unnamed structs, anonymous struct members | ✓ | ✓ | ◐ | — | — | no brace elision into struct members |
-| Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | — | — | front end complete |
-| printf / scanf | ✓ | ✓ | ✓ | — | — | front end complete (format checking) |
-| static, extern, register, const, volatile | ✓ | ✓ | ✓ | — | — | front end complete |
-| Variable arguments (`...`, `va_*`) | ✓ | ✓ | ✓ | — | — | front end complete |
-| Dynamic memory (`malloc` … `free`, `new`/`delete`) | ✓ | ✓ | ✓ | — | — | front end complete |
-| Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | — | — | front end complete |
-| typedef, references | ✓ | ✓ | ✓ | — | — | front end complete |
-| Classes, inheritance, access modifiers | ✓ | ◐ | ◐ | — | — | no constructor initializer lists, `virtual`, `const` methods |
-| Constructors/destructors, operator overloading | ✓ | ◐ | ✓ | — | — | no member-initializer lists |
-| Function overloading | ✓ | ✓ | ◐ | — | — | converting constructors only in initialization |
-| Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | — | front end complete |
+| Arithmetic, logical, relational, bitwise, assignment, unary operators | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| if-else, for, while, do-while, `until` | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| switch/case/default | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| goto, labels, break, continue | ✓ | ✓ | ◐ | ✓ | ✓ | jumps over initializations not checked |
+| int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Structures, unnamed structs, anonymous struct members | ✓ | ✓ | ◐ | ✓ | ✓ | no brace elision into struct members |
+| Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| printf / scanf | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (format strings checked) |
+| static, extern, const | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Variable arguments (`...`, `va_*`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Dynamic memory (`malloc` … `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| typedef, references | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Classes, inheritance, access modifiers | ✓ | ◐ | ◐ | ✓ | ✓ | no constructor initializer lists, `virtual`, `const` methods |
+| Constructors/destructors, operator overloading | ✓ | ◐ | ✓ | ✓ | ✓ | no member-initializer lists |
+| Function overloading | ✓ | ✓ | ◐ | ✓ | ✓ | converting constructors only in initialization |
+| Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | — | runs before the other phases |
 
 ## Implemented basic features
 
@@ -140,7 +140,7 @@ multi-level pointers and multi-dimensional arrays.
 
 Beyond the specification, the code also implements classes and objects,
 inheritance, access modifiers, constructors and destructors, operator
-and function overloading, a C preprocessor, `extern`/`register`, casts,
+and function overloading, a C preprocessor, `extern`, casts,
 designated initializers, unnamed structs with anonymous members, and
 Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
 for sequence-point violations (`i = i++`), integer overflow in constant
@@ -159,6 +159,12 @@ checks are gone; a program that uses one gets an ordinary error
 `phase2b-semantic/test/invalid/e19_dropped_features.c`). The decision
 and its consequences are recorded in
 [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
+
+Four more, none of them in the project specification, were removed on
+2026-10-10 after a feature audit (decision D31): **`new` / `delete`**
+(dynamic memory is `malloc` / `calloc` / `realloc` / `free`),
+**`register`**, **`volatile`** and **`long double`**. They are gone
+from every phase and are covered by the same two test files.
 
 ## Partially implemented
 
@@ -179,9 +185,7 @@ Details: [`docs/FEATURES.md#d-partial-features`](docs/FEATURES.md#d-partial-feat
 
 ## Planned
 
-- TAC optimizations (local, then global and loop optimizations).
-- Phase 4 — MIPS code generation, register allocation, peephole
-  optimization ([`phase4-codegen/README.md`](phase4-codegen/README.md)).
+Nothing is in progress: every phase of the agreed plan is implemented.
 
 Not supported and not planned so far: bit-fields, default arguments,
 templates, namespaces, exceptions, `inline`, compound literals, nested
@@ -285,11 +289,11 @@ unexpected diagnostic fails the test).
 
 ## Known limitations
 
-- `long long` values are never kept in registers, and `printf` in the
-  SPIM run-time has no `%e`/`%g`.
+- `printf` in the SPIM run-time has no `%e`/`%g`.
 - The partial features listed above.
 - Removed features (see above): `enum`, `union`, file manipulation,
-  lambdas, function pointers.
+  lambdas, function pointers, `new`/`delete`, `register`, `volatile`,
+  `long double`.
 - Constructs rejected as syntax errors: bit-fields, default arguments,
   templates, namespaces, `using`, exceptions, `inline`, `virtual`,
   `friend`, `explicit`, `const` member functions, compound literals,
@@ -297,7 +301,6 @@ unexpected diagnostic fails the test).
 - `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
   reserved words of this language (they cannot be used as identifiers);
   `#include <stdio.h>` and other system headers are accepted and ignored.
-- `long double` is treated as `double`.
 
 ## Future work
 

@@ -18,7 +18,6 @@ int x = 1;
 extern double x;                       // error: conflicting types for 'x'
 extern int y = 2;                      // warning: 'y' initialized and declared 'extern'
 static extern int z;                   // error: multiple storage classes in the declaration of 'z'
-register int file_reg;                 // error: 'register' is not allowed at file scope
 extern int never_defined;              // warning: variable 'never_defined' is declared 'extern' and used but never defined
 
 int main() {
@@ -27,8 +26,6 @@ int main() {
     k1 = k2;                           // error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified
     w1 = w2;                           // error: its member 'k.id' is const-qualified
     extern int q = 1;                  // error: 'q' has both 'extern' and an initializer
-    register int r = 1;
-    int *pr = &r;                      // error: address of register variable 'r' requested
     int i = 0, j, a[4];
     i = i++;                           // warning: operation on 'i' may be undefined
     a[i] = i++;                        // warning: operation on 'i' may be undefined
@@ -40,5 +37,5 @@ int main() {
     printf("%f\n", i);                 // warning: format '%f' expects a floating-point value
     scanf("%f", &d);                   // warning: format '%f' expects 'float *' (use '%lf' for a double)
     scanf("%d", &c);                   // warning: format '%d' expects 'int *', but argument 2 has type 'char *'
-    return j + *pr + never_defined + bad + narrow + unarrow + shift1 + shift2;
+    return j + never_defined + bad + narrow + unarrow + shift1 + shift2;
 }

@@ -1,5 +1,5 @@
 /* valid: constructor calls, out-of-class constructors/destructors,
-   operator overloading, new/delete[], functional casts, Class::member */
+   operator overloading, arrays of objects, functional casts, Class::member */
 class Vec {
 public:
     int x;
@@ -37,13 +37,8 @@ int main(int argc, char **argv) {
     a++;
     g = d;                              /* memberwise copy */
     int same = (a == b) + a[0] + a(3) + Vec::dims() + c.self()->y;
-    Vec *h = new Vec(1, 1);
-    Vec *row = new Vec[3];              /* needs the default constructor */
-    int *nums = new int[argc];          /* the first size of new[] may be a run-time value */
+    Vec row[3];                         /* needs the default constructor */
     int w(7);                           /* direct initialization of a scalar */
     double half = (double) w / 2;
-    delete h;
-    delete[] row;
-    delete[] nums;
     return same + g.x + w + half + e.x + f.y;
 }

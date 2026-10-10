@@ -77,9 +77,10 @@ int main() {
     Segment s(1, 2, 4, 6);
     printf("%d %d\n", s.length2(), s.to.y);
 
-    Rect *heap = new Rect(2, 9);
-    Shape *base = heap;
-    printf("%d %d %d\n", heap->area(), base->area(), base->id);
-    delete heap;
+    {
+        Rect last(2, 9);
+        Shape *base = &last;
+        printf("%d %d %d\n", last.area(), base->area(), base->id);
+    }
     return Shape::live;
 }

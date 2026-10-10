@@ -841,7 +841,7 @@ struct Emitter {
             if (o.kind == Operand::Var && !varOff.count(o.sym)) return; /* a global */
             TypePtr t = o.kind == Operand::Temp ? f.temps[o.temp - 1] : o.sym->type;
             Cls c = classOf(t);
-            bool scalar = t && !sem::isArray(t) && !t->isVolatile && t->kind != sem::TypeKind::Opaque && c != Cls::Block &&
+            bool scalar = t && !sem::isArray(t) && t->kind != sem::TypeKind::Opaque && c != Cls::Block &&
                           c != Cls::Void;
             if (!scalar) { never.insert(keyOf(o)); return; }
             Info &x = info[keyOf(o)];

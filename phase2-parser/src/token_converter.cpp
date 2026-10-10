@@ -25,7 +25,6 @@ int to_bison_token(TokenType t) {
 
         // ---- qualifiers ----
         case TokenType::CONST:    return CONST;
-        case TokenType::VOLATILE: return VOLATILE;
 
         // ---- composite-type keywords ----
         case TokenType::STRUCT: return STRUCT;
@@ -38,15 +37,12 @@ int to_bison_token(TokenType t) {
 
         // ---- object-oriented ----
         case TokenType::THIS:   return THIS;
-        case TokenType::NEW:    return NEW;
-        case TokenType::DELETE: return DELETE;
 
         // ---- storage-class keywords ----
         case TokenType::STATIC:  return STATIC;
         case TokenType::TYPEDEF: return TYPEDEF;
         case TokenType::AUTO:    return AUTO;
         case TokenType::EXTERN:  return EXTERN;
-        case TokenType::REGISTER: return REGISTER;
 
         // ---- control-flow keywords ----
         case TokenType::IF:       return IF;

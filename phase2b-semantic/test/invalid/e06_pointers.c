@@ -19,7 +19,6 @@ int main() {
     x = p < cp;                   // error: comparison of distinct pointer types
     p = d;                        // error: cannot assign 'double' to 'int *'
     x = cp - p;                   // error: pointers to different types cannot be subtracted
-    delete x;                     // error: cannot delete an expression of type 'int'
     int (*pa)[3] = &x;            // error: incompatible pointer types
     x = f(*pp);                   // error: argument 1 of 'f' expects 'int' but got 'int *'
     return x;

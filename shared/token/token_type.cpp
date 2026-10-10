@@ -17,7 +17,6 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
 
     // type qualifiers
     {"const", TokenType::CONST},
-    {"volatile", TokenType::VOLATILE},
 
     // composite types
     {"struct", TokenType::STRUCT},
@@ -30,15 +29,12 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
 
     // object-oriented
     {"this", TokenType::THIS},
-    {"new", TokenType::NEW},
-    {"delete", TokenType::DELETE},
 
     // storage class
     {"static", TokenType::STATIC},
     {"typedef", TokenType::TYPEDEF},
     {"auto", TokenType::AUTO},
     {"extern", TokenType::EXTERN},
-    {"register", TokenType::REGISTER},
 
     // control flow
     {"if", TokenType::IF},
@@ -162,7 +158,6 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::BOOL, "bool"},
 
     {TokenType::CONST, "const"},
-    {TokenType::VOLATILE, "volatile"},
 
     {TokenType::STRUCT, "struct"},
     {TokenType::CLASS, "class"},
@@ -172,14 +167,11 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::PROTECTED, "protected"},
 
     {TokenType::THIS, "this"},
-    {TokenType::NEW, "new"},
-    {TokenType::DELETE, "delete"},
 
     {TokenType::STATIC, "static"},
     {TokenType::TYPEDEF, "typedef"},
     {TokenType::AUTO, "auto"},
     {TokenType::EXTERN, "extern"},
-    {TokenType::REGISTER, "register"},
 
     {TokenType::IF, "if"},
     {TokenType::ELSE, "else"},

@@ -208,6 +208,8 @@ rex                            CLASS
 ;                              semicolon_op        
 int                            int                 
 a                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
 ,                              comma_op            
 T                              INT                 
 ;                              semicolon_op        
@@ -227,6 +229,8 @@ T                              INT
 1                              INT_LITERAL         
 ,                              comma_op            
 m                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
 ;                              semicolon_op        
 const                          const               
 int                            int                 
@@ -442,6 +446,7 @@ Program "translation_unit"
         |       `-- IntLiteral "3"
         |-- DeclGroup
         |   |-- VarDecl "a : INT"
+        |   |   `-- IntLiteral "0"
         |   `-- VarDecl "T : INT"
         |-- ExprStmt
         |   `-- AssignExpr "="
@@ -455,6 +460,7 @@ Program "translation_unit"
         |   |       |-- Identifier "T"
         |   |       `-- IntLiteral "1"
         |   `-- VarDecl "m : INT"
+        |       `-- IntLiteral "0"
         |-- VarDecl "N : INT"
         |   `-- IntLiteral "2"
         |-- VarDecl "arr : INT_ARRAY"

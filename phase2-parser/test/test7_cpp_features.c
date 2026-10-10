@@ -23,8 +23,8 @@ int main() {
     const int limit = 10;
 
     int *p;
-    p = new int;
-    delete p;
+    p = (int *) malloc(sizeof(int));
+    free(p);
 
     int arr[5];
     int sz;

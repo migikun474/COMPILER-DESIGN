@@ -48,7 +48,7 @@ Syntax analysis failed: 10 error(s); semantic analysis was not run.
     |                       ^
     | note: insert ')' here
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:63:17: syntax error: syntax error, unexpected ';'
- 63 |     int *p = new;
-    |                 ^
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test20_syntax_errors_expressions_and_builtins.c:62:18: syntax error: syntax error, unexpected ';'
+ 62 |     int v = (int);
+    |                  ^
 

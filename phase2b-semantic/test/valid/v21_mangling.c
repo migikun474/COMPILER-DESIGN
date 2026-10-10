@@ -51,12 +51,11 @@ void f25(IntPtr a, IntPtr b) { }                          // mangled: _Z3f25PiS_
 void f12(int a[], char *argv[]) { }                       // mangled: _Z3f12PiPPc
 void f13(int (*p)[3]) { }                                 // mangled: _Z3f13PA3_i
 void f26(int a[][4]) { }                                  // mangled: _Z3f26PA4_i
-/* variadic, references, volatile, void pointers */
+/* variadic, references, void pointers */
 void f14(const char *fmt, ...) { }                        // mangled: _Z3f14PKcz
 void f17(int &a, int &b) { }                              // mangled: _Z3f17RiS_
 void f18(struct Point *a, struct Point *b, struct Point c) { } // mangled: _Z3f18P5PointS0_S_
 void f19(const struct Point *a, const struct Point *b) { } // mangled: _Z3f19PK5PointS1_
-void f22(volatile int *a, const volatile int *b) { }      // mangled: _Z3f22PViPVKi
 void f24(void *a, const void *b) { }                      // mangled: _Z3f24PvPKv
 /* overloads and a free operator */
 struct Point operator+(struct Point a, struct Point b) { return a; } // mangled: _Zpl5PointS_

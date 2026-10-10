@@ -27,7 +27,7 @@ static int g_tokStartCol = 1;
 static int g_prevToken = 0; /* the previously returned token code */
 
 static int emit(int tokcode, const std::string &defaultCategory) {
-    if (tokcode != '*' && tokcode != '&' && tokcode != '(' && tokcode != CONST && tokcode != VOLATILE)
+    if (tokcode != '*' && tokcode != '&' && tokcode != '(' && tokcode != CONST)
         g_afterTypeKeyword = false;
     if (tokcode == '(' || tokcode == '[' || tokcode == '{' || tokcode == ABSTRACT_LPAREN)
         ++g_bracketDepth;
@@ -63,14 +63,13 @@ static int emitShared(TokenType t) {
    already-defined tags are TYPE_NAME (the classic lexer hack). */
 /* Tokens after which a type before '(' is a declaration specifier /
    declarator name, never the start of a functional cast:
-   `new Dog(4)`, `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
+   `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
 static bool typePositionAfter(int tok) {
     switch (tok) {
-        case NEW: case SCOPE_RES: case '~': case STRUCT: case CLASS: case OPERATOR:
+        case SCOPE_RES: case '~': case STRUCT: case CLASS: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
-        case EXTERN: case REGISTER:
-        case VOLATILE: case VA_LIST:
+        case EXTERN: case VA_LIST:
             return true;
         default:
             return false;
@@ -137,7 +136,6 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*             { }
 
-"delete"[ \t]*"["[ \t]*"]" { return emit(DELETE_ARRAY, "delete_array"); }
 {ID}/[ \t]*"(" { return identifierOrKeyword(/*beforeParen=*/true); }
 {ID}             { return identifierOrKeyword(/*beforeParen=*/false); }
 

@@ -214,7 +214,7 @@ Mutable            struct_tag     struct Mutable             -        global    
 Mutable::a         field          int                        member   global > struct Mutable        27    4     1     Mutable::a           -                        public, offset 0
 Mutable::b         field          int                        member   global > struct Mutable        27    4     0     Mutable::b           -                        public, offset 4
 main               function       int (void)                 -        global                         29    -     0     main                 main                     defined
-r                  variable       int                        local    global > main()                30    4     1     r.1                  -                        register
+r                  variable       int                        local    global > main()                30    4     1     r.1                  -                        
 i                  variable       int                        local    global > main()                31    4     18    i.2                  -                        
 j                  variable       int                        local    global > main()                31    4     6     j.3                  -                        
 a                  variable       int[4]                     local    global > main()                31    16    1     a.4                  -                        

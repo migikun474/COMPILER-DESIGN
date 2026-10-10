@@ -94,8 +94,7 @@ Program "translation_unit"
         |       |-- MemberExpr "a"  <int> lvalue  -> Plain::a (field, member)
         |       |   `-- Identifier "pl"  <struct Plain> lvalue  -> pl.5 (variable, local)
         |       `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "made : CLASS_POINTER"  <class Shape *>  -> made.6 (variable, local)
-        |   `-- NewExpr "CLASS"  <class Shape *>
+        |-- VarDecl "made : CLASS"  <class Shape>  -> made.6 (variable, local)
         |-- VarDecl "total : INT"  <int>  -> total.7 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- BinaryExpr "+"  <int>
@@ -106,8 +105,8 @@ Program "translation_unit"
         |       |   |   |   |   |   `-- ArrowExpr "area"  <int (void)>  -> _ZN5Shape4areaEv (function)
         |       |   |   |   |   |       `-- Identifier "base"  <class Shape *> lvalue  -> base.3 (variable, local)
         |       |   |   |   |   `-- CallExpr  <int>  -> _ZN5Shape9perimeterEv (function)
-        |       |   |   |   |       `-- ArrowExpr "perimeter"  <int (void)>  -> _ZN5Shape9perimeterEv (function)
-        |       |   |   |   |           `-- Identifier "made"  <class Shape *> lvalue  -> made.6 (variable, local)
+        |       |   |   |   |       `-- MemberExpr "perimeter"  <int (void)>  -> _ZN5Shape9perimeterEv (function)
+        |       |   |   |   |           `-- Identifier "made"  <class Shape> lvalue  -> made.6 (variable, local)
         |       |   |   |   `-- CallExpr  <int>  -> _ZN6Square4sideEv (function)
         |       |   |   |       `-- MemberExpr "side"  <int (void)>  -> _ZN6Square4sideEv (function)
         |       |   |   |           `-- Identifier "sq"  <class Square> lvalue  -> sq.2 (variable, local)
@@ -119,9 +118,6 @@ Program "translation_unit"
         |       `-- CallExpr  <int>  -> _ZN5Shape5countEv (function)
         |           `-- ArrowExpr "count"  <int (void)>  -> _ZN5Shape5countEv (function)
         |               `-- Identifier "base"  <class Shape *> lvalue  -> base.3 (variable, local)
-        |-- ExprStmt
-        |   `-- DeleteExpr  <void>
-        |       `-- Identifier "made"  <class Shape *> lvalue  -> made.6 (variable, local)
         `-- ReturnStmt
             `-- Identifier "total"  <int> lvalue  -> total.7 (variable, local)
 
@@ -152,7 +148,7 @@ sq                 variable       class Square               local    global > m
 base               variable       class Shape *              local    global > main()                38    4     2     base.3               -                        
 c                  variable       class Counter              local    global > main()                39    4     2     c.4                  -                        
 pl                 variable       struct Plain               local    global > main()                41    4     2     pl.5                 -                        
-made               variable       class Shape *              local    global > main()                43    4     2     made.6               -                        
+made               variable       class Shape                local    global > main()                43    12    1     made.6               -                        
 total              variable       int                        local    global > main()                44    4     1     total.7              -                        
 
 === Record Layouts (MIPS32) ===

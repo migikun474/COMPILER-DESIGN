@@ -40,8 +40,7 @@ int main() {
     c.inc();
     struct Plain pl;
     pl.a = 1;
-    Shape *made = new Shape;
-    int total = base->area() + made->perimeter() + sq.side() + c.get() + pl.a + base->count();   /* static method through an object */
-    delete made;
+    Shape made;
+    int total = base->area() + made.perimeter() + sq.side() + c.get() + pl.a + base->count();   /* static method through an object */
     return total;
 }

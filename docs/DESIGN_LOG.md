@@ -918,6 +918,47 @@ not arrays, objects or anything behind a pointer, and
 `t30_temporaries` and the warnings check `diagnostics/uninitialized`),
 SPIM 30 passed at `-O0`…`-O3`.
 
+### D31. Feature audit: what the language does not need (2026-10-10)
+
+The user asked for an audit of the feature list ("we do not need some
+features like new and delete because I can run on malloc and calloc")
+and for anything unnecessary to be removed. Every feature was checked
+against the project specification, the number of test programs using it
+and what it costs in the compiler. Everything in the specification's
+Basic and Advanced lists stays. Three questions were put to the user.
+
+| Question | User's answer | Consequence |
+|---|---|---|
+| Remove `new` / `delete` / `delete[]`? | **Remove** | Dynamic memory is `malloc` / `calloc` / `realloc` / `free`. A class object on the heap gets no constructor call (`malloc` runs none), so it is set up by an ordinary method; objects with constructors are locals, globals, members and array elements. Gone: the tokens, the `new_type_id` grammar and its precedence level, `NewExpr` / `DeleteExpr`, the semantic checks, and in TAC the element-count header of `new T[n]` with the destructor loop of `delete[]`. |
+| Which no-effect keywords go? (`register`, `volatile` + `long double`, `auto`, `extern`) | **`register`, `volatile`, `long double`** | `register` did nothing (the allocator decides by use count, D28). `volatile` only switched optimizations off; the `isVolatile` flag is gone from types, symbols, mangling, the optimizer and the register allocator, and `qualified()` now takes one flag. `long double` was a second spelling of `double` and is now an invalid combination of specifiers. `auto` and `extern` stay. |
+| How much of the C++ side stays? | **All of it** | Classes, inheritance, constructors / destructors, function and operator overloading and name mangling are unchanged. |
+
+Kept without a question, because removal would only cost work:
+`long long` (the `%f` run-time needs the 64-bit helpers anyway), the
+preprocessor (the tests need `#include` / `#define` to compile under
+g++ for checking), `const`, casts, `sizeof`, `?:`, the comma operator,
+designated initializers, unnamed structs, binary literals.
+
+Like the first batch (D1–D6), the four words are ordinary identifiers
+again, so a use is a syntax error (`test29_dropped_features.c`
+[12]–[15]). Nineteen test programs that used them were rewritten with
+`malloc` or local objects; the seven TAC programs among them print
+exactly what they printed before (checked again with g++ / gcc).
+
+**Check of the first batch.** At the user's request the four features
+dropped on 2026-10-07 were verified again: no token, grammar rule, type
+or check for `enum`, `union`, file I/O, lambdas or function pointers is
+left in the sources, and twelve probe programs (definitions, variables,
+`fopen` / `fgets`, both lambda forms, function-pointer variables,
+parameters, typedefs, members and decay) are all rejected.
+
+**Also corrected:** the feature table in the root `README.md` still
+showed TAC and MIPS as "not started" for every feature and listed both
+under "Planned". It now shows what is implemented.
+
+**Result:** semantic 84 passed, TAC 31 passed (raw and `-O1`…`-O3`),
+SPIM 30 passed at `-O0`…`-O3`.
+
 ---
 
 ## Open questions

@@ -1,7 +1,7 @@
 /* t27 -- C++ object rules found missing by the second code review:
    copy constructors for by-value arguments and results, converting
    constructors from another class, c ? a : b as an lvalue, const on a
-   typedef'd array, delete[] of objects, destructors of static objects */
+   typedef'd array, arrays of objects, destructors of static objects */
 #include <stdio.h>
 
 class Counted {
@@ -60,11 +60,10 @@ int main() {
     printf("%d %d %.1f %.1f\n", x, y, p.balance, q.balance);
     printf("%d\n", sum(primes));
 
-    Dog *pack = new Dog[3];
-    for (int i = 0; i < 3; i++) pack[i].id = i + 1;
-    delete[] pack;                                  /* ~Dog 3, 2, 1 */
-    Dog *none = 0;
-    delete[] none;
+    {
+        Dog pack[3];
+        for (int i = 0; i < 3; i++) pack[i].id = i + 1;
+    }                                               /* ~Dog 3, 2, 1 */
     printf("end of main\n");
     return 0;
 }

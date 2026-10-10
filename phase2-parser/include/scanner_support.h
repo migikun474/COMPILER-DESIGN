@@ -10,7 +10,7 @@
    `char`, ...) has been seen: a declaration then cannot take *another*
    type, so a typedef'd name right after it -- `int T;`, `char *T;` --
    is being redeclared, and the scanner returns it as IDENTIFIER. Any
-   token other than '*', '&', '(', const or volatile clears it. */
+   token other than '*', '&', '(' or const clears it. */
 extern bool g_afterTypeKeyword;
 
 /* `int a, T;`: while the init-declarators of a declaration are being
@@ -32,7 +32,7 @@ extern int g_bracketDepth; /* ( [ { nesting, maintained by the scanner */
        expression (`Dog(4)`, `Dog()`, `Dog(a).x`, `int(x) + 1`). */
 bool parenGroupIsExpression(int line, int column);
 /*   abstractDeclaratorGroup: at the inside of a `(` that follows a type
-       -- true when the group holds only `*`, `&`, `const`, `volatile`,
+       -- true when the group holds only `*`, `&`, `const`,
        `[n]` and nested parentheses, i.e. `(*)`, `(**)`, `(&)`: a nameless
        declarator (`sizeof(int (*)[3])`), never a functional cast. */
 bool abstractDeclaratorGroup(int line, int column);

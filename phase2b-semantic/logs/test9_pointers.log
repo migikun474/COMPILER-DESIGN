@@ -22,7 +22,9 @@ Program "translation_unit"
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int *>
 |       |       |-- Identifier "p"  <int *> lvalue  -> p.3 (variable, local)
-|       |       `-- NewExpr "INT"  <int *>
+|       |       `-- CastExpr "INT_POINTER"  <int *>
+|       |           `-- BuiltinCallExpr "malloc"  <void *>
+|       |               `-- SizeofExpr "INT"  <unsigned int> =4
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- UnaryExpr "*"  <int> lvalue

@@ -367,18 +367,7 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
         case ASTKind::IndexExpr: t = index(n); break;
         case ASTKind::CastExpr: t = cast(n); break;
         case ASTKind::SizeofExpr: t = sizeofExpr(n); break;
-        case ASTKind::NewExpr: t = newExpr(n); break;
         case ASTKind::ConstructExpr: t = constructExpr(n); break;
-        case ASTKind::DeleteExpr: {
-            TypePtr vt = value(n->children[0]);
-            if (!isError(vt) && !isPointer(vt)) {
-                error(n.get(), "cannot " + std::string(n->label == "[]" ? "delete[]" : "delete") +
-                                   " an expression of type " + q(vt) + " (a pointer is required)",
-                      "delete");
-            }
-            t = voidType();
-            break;
-        }
         case ASTKind::TypeNameNode:
             error(n.get(), "unexpected type name '" + n->label + "' where an expression was expected", "type-as-value");
             t = errorType();
@@ -668,10 +657,6 @@ TypePtr SemanticAnalyzer::unary(const ASTNodePtr &n) {
             error(n.get(), "cannot take the address of an rvalue of type " + q(ot), "address-of");
             return errorType();
         }
-        if (c->kind == ASTKind::Identifier && c->symbol && c->symbol->isRegister) {
-            error(n.get(), "address of register variable '" + c->label + "' requested", "address-of");
-            return errorType();
-        }
         return pointerTo(ot);
     }
     if (op == "*") {
@@ -792,7 +777,7 @@ TypePtr SemanticAnalyzer::ternary(const ASTNodePtr &n) {
     else if (isVoid(a) && isVoid(b)) t = voidType();
     else if (isRecord(a) && sameType(a, b)) t = a;
     else if (isPointer(a) && isPointer(b)) {
-        if (sameType(unqualified(a->elem), unqualified(b->elem))) t = qualified(a, false, false);
+        if (sameType(unqualified(a->elem), unqualified(b->elem))) t = a;
         else if (isVoid(a->elem)) t = a;
         else if (isVoid(b->elem)) t = b;
         else if (isRecord(a->elem) && isRecord(b->elem) && isDerivedFrom(a->elem->record.get(), b->elem->record.get())) t = b;
@@ -976,7 +961,7 @@ TypePtr SemanticAnalyzer::member(const ASTNodePtr &n, bool arrow, bool calleePos
     sym->useCount++;
     TypePtr t = sym->type;
     if (isReference(t)) t = t->elem;
-    if (constObject && sym->storage == Storage::Member) t = qualified(t, true, false);
+    if (constObject && sym->storage == Storage::Member) t = qualified(t, true);
     n->isLValue = arrow || base->isLValue || sym->storage == Storage::Static;
     return t;
 }
@@ -1256,7 +1241,7 @@ struct Builtin {
 
 const Builtin *builtinFor(const std::string &name) {
     static std::map<std::string, Builtin> table = [] {
-        TypePtr cstr = pointerTo(qualified(charType(), true, false));
+        TypePtr cstr = pointerTo(qualified(charType(), true));
         TypePtr vp = pointerTo(voidType());
         TypePtr i = intType();
         std::map<std::string, Builtin> m;

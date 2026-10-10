@@ -57,7 +57,7 @@ instead of a `%union`):
 |---|---|
 | `str`, `idx` | a token's text and its index in the token log (for line/column) |
 | `node`, `nodeList` | the AST built so far |
-| `typeSpec` (`TypeSpec`) | declaration specifiers: `parts` (`"UNSIGNED"`, `"INT"`), `tagName`, `typedefName`, `isStatic`, `isExtern`, `isRegister`, `storageClasses`, `isTypedefStorage`, `isConst`, `isVolatile`, `isAuto` |
+| `typeSpec` (`TypeSpec`) | declaration specifiers: `parts` (`"UNSIGNED"`, `"INT"`), `tagName`, `typedefName`, `isStatic`, `isExtern`, `storageClasses`, `isTypedefStorage`, `isConst`, `isAuto` |
 | `decl` (`DeclInfo`) | a declarator: `name`, `pointerLevel`, `arrayLevel`, `arrayDims`, `ptrOps`, `isReference`, `isFunction`, `isFunctionPointer`, `params`, `isVariadic`, `grouped`, `initExpr`, `ctorInit`, `className` … |
 | `paramList`, `bases` | parameter lists, base classes |
 
@@ -93,16 +93,14 @@ log; see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md#part-1--the-parse-t
   by an explicit precedence: dangling `else` (`IFX` / `ELSE`), the
   "most vexing parse" `T(x);` (declaration wins: `TYPE_NAME`,
   `PREFER_DECLARATION`; expression inside casts and arguments:
-  `PREFER_EXPRESSION`), `sizeof (T) * x` (`SIZEOF_TYPE`), and
-  `new T * x` (`NEW_TYPE_END`).
+  `PREFER_EXPRESSION`) and `sizeof (T) * x` (`SIZEOF_TYPE`).
 - **Lexer hack.** The scanner returns `TYPE_NAME` for a name the
   parse-time table currently knows as a typedef or tag
   (`isTypeName()`), so `T * x;` parses as a declaration. The type-name
   table is scoped, so `int T;` in an inner scope hides an outer type `T`.
 - **Bounded lookahead in the scanner** for the few places one token is
   not enough: `FCAST` (a type that starts a functional cast `int(x)`),
-  `ABSTRACT_LPAREN` (`(int (*)[3])`, an abstract declarator),
-  `DELETE_ARRAY` (`delete[]`).
+  `ABSTRACT_LPAREN` (`(int (*)[3])`, an abstract declarator).
 - **Deferred resolution** of forward references (`goto` to a later
   label, a call before the definition): `queuePendingReference()` /
   `resolvePendingReferences()` fix the Token_Type after the parse.
@@ -218,11 +216,11 @@ particular: all operators with C precedence; if/else, while, do-while,
 for (with a declaration), `until`, switch/case/default, goto/labels,
 break/continue/return; declarations with pointers, arrays (any number of
 dimensions), parenthesized declarators
-(`int (*pa)[3]`), references, `const`/`volatile`, `static`/`extern`/
-`register`/`typedef`/`auto`; initializer lists with designators;
+(`int (*pa)[3]`), references, `const`, `static`/`extern`/
+`typedef`/`auto`; initializer lists with designators;
 structs (named or unnamed); classes with inheritance, access
 specifiers, constructors/destructors (in or out of class), operator
-overloading; `new`/`delete`; C-style and functional casts;
+overloading; C-style and functional casts;
 `sizeof`; the built-in I/O, memory and varargs operations.
 
 **Removed** (2026-10-07, see [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)):

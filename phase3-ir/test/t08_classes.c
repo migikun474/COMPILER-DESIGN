@@ -1,5 +1,5 @@
 /* t08 -- classes: methods, constructors and destructors in order,
-   inheritance, static members, operator overloading, new / delete */
+   inheritance, static members, operator overloading, arrays of objects */
 #include <stdio.h>
 
 class Animal {
@@ -58,9 +58,10 @@ int main() {
         printf("%d\n", base->legs);
     }
     printf("--\n");
-    Dog *heap = new Dog(5);
-    printf("%d %d\n", heap->human(), Dog::made);
-    delete heap;
+    {
+        Dog other(5);
+        printf("%d %d\n", other.human(), Dog::made);
+    }
     printf("--\n");
 
     Vec a(1, 2), b = Vec(3, 4), c;
@@ -71,10 +72,9 @@ int main() {
     ++a;
     printf("%d %d %d %d %d %d\n", c.x, c.y, d.x, e.y, a.x, a.y);
     printf("%d %d %d %d %d\n", a == b, c == c, a[0], a(2), a.dot(b));
-    Vec *row = new Vec[2];
+    Vec row[2];
     row[1].x = 9;
     printf("%d %d\n", row[0].x, row[1].x);
-    delete[] row;
     int w(7);
     return w + c.x;
 }

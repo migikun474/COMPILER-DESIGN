@@ -29,10 +29,8 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->typedefName = ts.typedefName;
     t->isStatic = ts.isStatic;
     t->isExtern = ts.isExtern;
-    t->isRegister = ts.isRegister;
     t->storageClasses = ts.storageClasses;
     t->isConst = ts.isConst;
-    t->isVolatile = ts.isVolatile;
     t->isAuto = ts.isAuto;
     t->isTypedef = ts.isTypedefStorage;
     t->pointerLevel = d.pointerLevel;
@@ -114,7 +112,6 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
         extra.tokenIdx = d.nameIdx;
         extra.isStatic = ts.isStatic;
         extra.isConst = ts.isConst;
-        extra.isVolatile = ts.isVolatile;
         extra.pointerLevel = d.pointerLevel;
         extra.arrayLevel = d.arrayLevel;
         extra.returnType = returnType;
@@ -139,7 +136,6 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
         extra.tokenIdx = d.nameIdx;
         extra.isStatic = ts.isStatic;
         extra.isConst = ts.isConst;
-        extra.isVolatile = ts.isVolatile;
         extra.pointerLevel = d.pointerLevel;
         extra.arrayLevel = d.arrayLevel;
         extra.aggregateTagName = ts.tagName; /* enables p.x / p->x resolution below */

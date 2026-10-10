@@ -50,7 +50,7 @@ One live entry (`::Symbol`, in a scope's map):
 One report entry (`SymbolTableEntry` in `g_symbolTable`): `name`,
 `qualifiedName` (`"Dog::bark"`), `kind`, `typeStr`, `mangledName`,
 `scopeDepth`, `scopePath`, `ownerAggregateKind` (`"struct"`/
-`"class"`/`""`), `declLine`, `isStatic`, `isConst`, `isVolatile`,
+`"class"`/`""`), `declLine`, `isStatic`, `isConst`,
 `pointerLevel`, `arrayLevel`, `returnType`, `paramTypes`, `useCount`.
 
 ### Operations
@@ -224,7 +224,7 @@ struct Type {
     TypeKind kind;               // Error, Void, Bool, Char, Short, Int, Long, LongLong,
                                  // Float, Double, Pointer, Reference, Array,
                                  // Function, Record, Opaque
-    bool isConst, isVolatile, isUnsigned;
+    bool isConst, isUnsigned;
     TypePtr elem;                // Pointer / Reference target, Array element
     long long arraySize;         // Array: element count, -1 for []
     TypePtr ret; std::vector<TypePtr> params; bool variadic;   // Function
@@ -331,7 +331,7 @@ from the declarator's pointer operators (`ASTTypeExpr::ptrOps`, e.g.
 `"*c*"` for `int *const *`).
 
 - `&e` (`unary()`): `e` must be an lvalue (`cannot take the address of an
-  rvalue`), not a `register` variable; the result is `pointerTo(type(e))`.
+  rvalue`); the result is `pointerTo(type(e))`.
 - `*p` (`unary()`): `p` must be a pointer (`indirection requires a
   pointer operand`), not `void *`, not a pointer to an incomplete type;
   the result is an lvalue of `p->elem`.
