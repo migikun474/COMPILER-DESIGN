@@ -54,8 +54,41 @@ struct Emitter {
 
     explicit Emitter(const Program &p) : prog(p) {}
 
-    void ins(const std::string &s) { text << "        " << s << "\n"; }
-    void lab(const std::string &s) { text << s << ":\n"; }
+    /* -O1 and above: registers for the most used names, constants inside
+       instructions, a peephole pass (Dragon Book 8.7, 8.8) */
+    bool optimize = false;
+    std::vector<std::string> code; /* the function being generated, one line per entry */
+    bool calls = false;            /* it contains a `jal`: $ra must be saved */
+    using Key = std::pair<const sem::Symbol *, int>;
+    std::map<Key, std::string> home; /* names that live in $s0-$s7 instead of the frame */
+
+    void ins(const std::string &s) {
+        if (s.compare(0, 3, "jal") == 0) calls = true;
+        code.push_back("        " + s);
+    }
+    void lab(const std::string &s) { code.push_back(s + ":"); }
+
+    static Key keyOf(const Operand &o) { return {o.kind == Operand::Var ? o.sym : nullptr, o.kind == Operand::Temp ? o.temp : 0}; }
+    const std::string *homeOf(const Operand &o) const {
+        if (o.kind != Operand::Var && o.kind != Operand::Temp) return nullptr;
+        auto it = home.find(keyOf(o));
+        return it == home.end() ? nullptr : &it->second;
+    }
+    /* the register that holds o's value: its own, $zero, or `scratch` after a load */
+    std::string use(const Operand &o, const std::string &scratch) {
+        if (const std::string *h = homeOf(o)) return *h;
+        if (optimize && o.kind == Operand::IntConst && static_cast<int32_t>(o.ival) == 0) return "$zero";
+        loadInt(scratch, o);
+        return scratch;
+    }
+    /* where to compute r: its own register, or `scratch` to be stored by finish() */
+    std::string dest(const Operand &r, const std::string &scratch) const {
+        const std::string *h = homeOf(r);
+        return h ? *h : scratch;
+    }
+    void finish(const std::string &reg, const Operand &r) {
+        if (!homeOf(r)) storeInt(reg, r);
+    }
     std::string fresh() { return "M" + std::to_string(fnIndex) + "_" + std::to_string(localLabels++); }
 
     /* ---------------- where an operand is ---------------- */
@@ -82,6 +115,10 @@ struct Emitter {
 
     /* an integer or pointer of at most 32 bits, extended to the register */
     void loadInt(const std::string &reg, const Operand &o) {
+        if (const std::string *h = homeOf(o)) {
+            if (*h != reg) ins("move  " + reg + ", " + *h);
+            return;
+        }
         if (o.kind == Operand::IntConst) { ins("li    " + reg + ", " + std::to_string(static_cast<int32_t>(o.ival))); return; }
         if (o.kind == Operand::Str) { address(reg, o); return; }
         switch (classOf(o.type)) {
@@ -94,6 +131,10 @@ struct Emitter {
     }
 
     void storeInt(const std::string &reg, const Operand &dst) {
+        if (const std::string *h = homeOf(dst)) {
+            if (*h != reg) ins("move  " + *h + ", " + reg);
+            return;
+        }
         switch (classOf(dst.type)) {
             case Cls::Bool: case Cls::Char: case Cls::UChar: ins("sb    " + reg + ", " + mem(dst)); break;
             case Cls::Short: case Cls::UShort: ins("sh    " + reg + ", " + mem(dst)); break;
@@ -167,8 +208,8 @@ struct Emitter {
             ins("sw    $t0, " + std::to_string(off) + base);
             ins("sw    $t1, " + std::to_string(off + 4) + base);
         } else {
-            loadInt("$t0", o);
-            ins(std::string(c == Cls::Bool || c == Cls::Char || c == Cls::UChar ? "sb    " : c == Cls::Short || c == Cls::UShort ? "sh    " : "sw    ") + "$t0, " + at);
+            std::string r = use(o, "$t0");
+            ins(std::string(c == Cls::Bool || c == Cls::Char || c == Cls::UChar ? "sb    " : c == Cls::Short || c == Cls::UShort ? "sh    " : "sw    ") + r + ", " + at);
         }
     }
 
@@ -191,8 +232,9 @@ struct Emitter {
         } else {
             const char *op = c == Cls::Bool || c == Cls::UChar ? "lbu   " : c == Cls::Char ? "lb    " : c == Cls::Short ? "lh    "
                              : c == Cls::UShort ? "lhu   " : "lw    ";
-            ins(std::string(op) + "$t0, " + at);
-            storeInt("$t0", dst);
+            std::string d = dest(dst, "$t0");
+            ins(std::string(op) + d + ", " + at);
+            finish(d, dst);
         }
     }
 
@@ -259,25 +301,42 @@ struct Emitter {
             storeWide("$t4", "$t1", q.r);
             return;
         }
-        loadInt("$t0", q.a);
-        loadInt("$t1", q.b);
         bool isSigned = c == Cls::Int;
+        std::string d = dest(q.r, "$t0");
+        if (optimize && q.b.kind == Operand::IntConst) { /* a small constant goes into the instruction itself */
+            long long v = static_cast<int32_t>(q.b.ival);
+            std::string op;
+            if (q.op == Op::Add && v >= -32768 && v <= 32767) op = "addiu ";
+            else if (q.op == Op::Sub && v >= -32767 && v <= 32768) { op = "addiu "; v = -v; }
+            else if (q.op == Op::BitAnd && v >= 0 && v <= 65535) op = "andi  ";
+            else if (q.op == Op::BitOr && v >= 0 && v <= 65535) op = "ori   ";
+            else if (q.op == Op::BitXor && v >= 0 && v <= 65535) op = "xori  ";
+            else if (q.op == Op::Shl && v >= 0 && v <= 31) op = "sll   ";
+            else if (q.op == Op::Shr && v >= 0 && v <= 31) op = isSigned ? "sra   " : "srl   ";
+            if (!op.empty()) {
+                std::string a = use(q.a, "$t0");
+                ins(op + d + ", " + a + ", " + std::to_string(v));
+                finish(d, q.r);
+                return;
+            }
+        }
+        std::string a = use(q.a, "$t0"), b = use(q.b, "$t1"), abc = d + ", " + a + ", " + b;
         switch (q.op) {
-            case Op::Add: ins("addu  $t0, $t0, $t1"); break;
-            case Op::Sub: ins("subu  $t0, $t0, $t1"); break;
-            case Op::Mul: ins("mul   $t0, $t0, $t1"); break;
+            case Op::Add: ins("addu  " + abc); break;
+            case Op::Sub: ins("subu  " + abc); break;
+            case Op::Mul: ins("mul   " + abc); break;
             case Op::Div: case Op::Mod:
-                ins(std::string(isSigned ? "div   " : "divu  ") + "$t0, $t1");
-                ins(q.op == Op::Div ? "mflo  $t0" : "mfhi  $t0");
+                ins(std::string(isSigned ? "div   " : "divu  ") + a + ", " + b);
+                ins(std::string(q.op == Op::Div ? "mflo  " : "mfhi  ") + d);
                 break;
-            case Op::BitAnd: ins("and   $t0, $t0, $t1"); break;
-            case Op::BitOr: ins("or    $t0, $t0, $t1"); break;
-            case Op::BitXor: ins("xor   $t0, $t0, $t1"); break;
-            case Op::Shl: ins("sllv  $t0, $t0, $t1"); break;
-            case Op::Shr: ins(std::string(isSigned ? "srav  " : "srlv  ") + "$t0, $t0, $t1"); break;
+            case Op::BitAnd: ins("and   " + abc); break;
+            case Op::BitOr: ins("or    " + abc); break;
+            case Op::BitXor: ins("xor   " + abc); break;
+            case Op::Shl: ins("sllv  " + abc); break;
+            case Op::Shr: ins(std::string(isSigned ? "srav  " : "srlv  ") + abc); break;
             default: break;
         }
-        storeInt("$t0", q.r);
+        finish(d, q.r);
     }
 
     void unary(const Quad &q) {
@@ -299,9 +358,9 @@ struct Emitter {
             }
             storeWide("$t0", "$t1", q.r);
         } else {
-            loadInt("$t0", q.a);
-            ins(q.op == Op::Neg ? "negu  $t0, $t0" : "nor   $t0, $t0, $zero");
-            storeInt("$t0", q.r);
+            std::string a = use(q.a, "$t0"), d = dest(q.r, "$t0");
+            ins(q.op == Op::Neg ? "negu  " + d + ", " + a : "nor   " + d + ", " + a + ", $zero");
+            finish(d, q.r);
         }
     }
 
@@ -412,12 +471,40 @@ struct Emitter {
             lab(skip);
             return;
         }
-        loadInt("$t0", q.a);
-        loadInt("$t1", q.b);
+        std::string x = use(q.a, "$t0"), y = use(q.b, "$t1");
         bool u = isUnsignedCls(c);
         std::string b = op == "==" ? "beq   " : op == "!=" ? "bne   " : op == "<" ? (u ? "bltu  " : "blt   ") : op == ">" ? (u ? "bgtu  " : "bgt   ")
                         : op == "<=" ? (u ? "bleu  " : "ble   ") : (u ? "bgeu  " : "bge   ");
-        ins(b + "$t0, $t1, " + target);
+        ins(b + x + ", " + y + ", " + target);
+    }
+
+    /* r = (a relop b) as 0 or 1, without a branch: the four-instruction
+       pattern `if a relop b goto +3 ; r = 0 ; goto +2 ; r = 1` in one or two instructions */
+    void setCondition(const Quad &q, const Operand &r) {
+        std::string a = use(q.a, "$t0"), b = use(q.b, "$t1"), d = dest(r, "$t0");
+        std::string slt = isUnsignedCls(q.cls) ? "sltu  " : "slt   ";
+        const std::string &op = q.relop;
+        if (op == "<") ins(slt + d + ", " + a + ", " + b);
+        else if (op == ">") ins(slt + d + ", " + b + ", " + a);
+        else if (op == "<=") { ins(slt + d + ", " + b + ", " + a); ins("xori  " + d + ", " + d + ", 1"); }
+        else if (op == ">=") { ins(slt + d + ", " + a + ", " + b); ins("xori  " + d + ", " + d + ", 1"); }
+        else if (op == "==") { ins("xor   " + d + ", " + a + ", " + b); ins("sltiu " + d + ", " + d + ", 1"); }
+        else { ins("xor   " + d + ", " + a + ", " + b); ins("sltu  " + d + ", $zero, " + d); }
+        finish(d, r);
+    }
+
+    /* the place a[offset], as displacement(register) */
+    std::string element(const Quad &q) {
+        if (optimize && q.b.kind == Operand::IntConst) {
+            int off = static_cast<int32_t>(q.b.ival);
+            if (isLocal(q.a)) return std::to_string((q.a.kind == Operand::Temp ? tempOff[q.a.temp] : varOff[q.a.sym]) + off) + "($fp)";
+            address("$t8", q.a);
+            return std::to_string(off) + "($t8)";
+        }
+        address("$t8", q.a);
+        std::string i = use(q.b, "$t9");
+        ins("addu  $t8, $t8, " + i);
+        return "0($t8)";
     }
 
     /* ---------------- calls ---------------- */
@@ -475,8 +562,9 @@ struct Emitter {
                     loadWide("$t0", "$t1", q.a);
                     storeWide("$t0", "$t1", q.r);
                 } else {
-                    loadInt("$t0", q.a);
-                    storeInt("$t0", q.r);
+                    std::string d = dest(q.r, "$t0");
+                    loadInt(d, q.a);
+                    finish(d, q.r);
                 }
                 break;
             case Op::Add: case Op::Sub: case Op::Mul: case Op::Div: case Op::Mod:
@@ -496,28 +584,22 @@ struct Emitter {
                 branch(q, target(q.target));
                 break;
             case Op::IndexLoad:
-                address("$t8", q.a);
-                loadInt("$t9", q.b);
-                ins("addu  $t8, $t8, $t9");
-                loadValueFrom("0($t8)", q.r);
+                loadValueFrom(element(q), q.r);
                 break;
             case Op::IndexStore:
-                address("$t8", q.a);
-                loadInt("$t9", q.b);
-                ins("addu  $t8, $t8, $t9");
-                storeValueAt(q.r, q.cls, "0($t8)");
+                storeValueAt(q.r, q.cls, element(q));
                 break;
-            case Op::AddrOf:
-                address("$t0", q.a);
-                ins("sw    $t0, " + mem(q.r));
+            case Op::AddrOf: {
+                std::string d = dest(q.r, "$t0");
+                address(d, q.a);
+                finish(d, q.r);
                 break;
+            }
             case Op::Load:
-                loadInt("$t8", q.a);
-                loadValueFrom("0($t8)", q.r);
+                loadValueFrom("0(" + use(q.a, "$t8") + ")", q.r);
                 break;
             case Op::Store:
-                loadInt("$t8", q.a);
-                storeValueAt(q.r, q.cls, "0($t8)");
+                storeValueAt(q.r, q.cls, "0(" + use(q.a, "$t8") + ")");
                 break;
             case Op::Param:
                 params.push_back(&q);
@@ -597,31 +679,159 @@ struct Emitter {
             for (const Operand *o : {&q.a, &q.b, &q.r})
                 if (o->kind == Operand::Temp) used.insert(o->temp);
         for (int t : used) tempOff[t] = place(f.temps[t - 1]);
+
+        /* registers for the most used names; a slot to save each register this function uses */
+        home.clear();
+        if (optimize) assignRegisters(f);
+        std::map<std::string, int> saved;
+        for (const auto &h : home)
+            if (!saved.count(h.second)) saved[h.second] = place(sem::intType());
         frameSize = roundUp(depth, 8);
 
-        std::vector<bool> isTarget(f.quads.size() + 1, false);
+        std::vector<int> targeted(f.quads.size() + 1, 0);
         for (const auto &q : f.quads)
-            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target >= 0) isTarget[q.target] = true;
+            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target >= 0) ++targeted[q.target];
+
+        code.clear();
+        calls = false;
+        for (size_t i = 0; i < f.quads.size(); ++i) {
+            if (targeted[i]) lab(target(static_cast<int>(i)));
+            const Quad &q = f.quads[i];
+            code.push_back("        # " + quadText(prog, f, q, {}));
+            if (optimize && i + 3 < f.quads.size() && isBooleanValue(f, i, targeted)) {
+                setCondition(q, f.quads[i + 1].r);
+                i += 3; /* r = 0 ; goto ; r = 1 are done */
+                continue;
+            }
+            quad(q);
+        }
+        if (targeted[f.quads.size()]) lab(target(static_cast<int>(f.quads.size())));
+        std::vector<std::string> body;
+        body.swap(code);
+        if (optimize) peephole(body);
 
         text << "\n# " << f.signature << "\n";
         lab(label);
         ins("addiu $sp, $sp, -8");
-        ins("sw    $ra, 4($sp)");
+        if (calls || !optimize) ins("sw    $ra, 4($sp)"); /* a leaf function never changes $ra */
         ins("sw    $fp, 0($sp)");
         ins("move  $fp, $sp");
         if (frameSize) ins("addiu $sp, $sp, -" + std::to_string(frameSize));
-        for (size_t i = 0; i < f.quads.size(); ++i) {
-            if (isTarget[i]) lab(target(static_cast<int>(i)));
-            text << "        # " << quadText(prog, f, f.quads[i], {}) << "\n";
-            quad(f.quads[i]);
+        for (const auto &r : saved) ins("sw    " + r.first + ", " + std::to_string(r.second) + "($fp)");
+        for (const sem::Symbol *p : incoming) { /* a parameter that lives in a register is fetched once */
+            auto h = home.find(Key(p, 0));
+            if (h != home.end()) ins("lw    " + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
         }
-        if (isTarget[f.quads.size()]) lab(target(static_cast<int>(f.quads.size())));
+        for (const auto &line : code) text << line << "\n";
+        for (const auto &line : body) text << line << "\n";
+        code.clear();
         lab(label + "_exit");
+        for (const auto &r : saved) ins("lw    " + r.first + ", " + std::to_string(r.second) + "($fp)");
         ins("move  $sp, $fp");
-        ins("lw    $ra, 4($sp)");
+        if (calls || !optimize) ins("lw    $ra, 4($sp)");
         ins("lw    $fp, 0($sp)");
         ins("addiu $sp, $sp, 8");
         ins("jr    $ra");
+        for (const auto &line : code) text << line << "\n";
+        code.clear();
+    }
+
+    /* Dragon Book 8.8: count the uses of every name, a use inside a loop
+       counting ten times as much per level of nesting, and give $s0-$s7
+       to the eight with the highest count. Only 32-bit scalars whose
+       address is never needed can live in a register.
+       ponytail: a name keeps its register for the whole function, so
+       short-lived temporaries of an inner loop can crowd out a variable;
+       live intervals (linear scan) would let them share. */
+    void assignRegisters(const Function &f) {
+        int n = static_cast<int>(f.quads.size());
+        std::vector<int> depth(n, 0);
+        for (int j = 0; j < n; ++j) {
+            const Quad &q = f.quads[j];
+            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target >= 0 && q.target <= j)
+                for (int i = q.target; i <= j; ++i) depth[i] = std::min(depth[i] + 1, 3); /* a backward jump closes a loop */
+        }
+        std::set<Key> never;
+        std::map<Key, long long> weight;
+        auto typeOf = [&](const Operand &o) { return o.kind == Operand::Temp ? f.temps[o.temp - 1] : o.sym->type; };
+        auto count = [&](const Operand &o, long long w) {
+            if (o.kind != Operand::Var && o.kind != Operand::Temp) return;
+            if (o.kind == Operand::Var && !varOff.count(o.sym)) return; /* a global */
+            TypePtr t = typeOf(o);
+            Cls c = classOf(t);
+            bool scalar = t && !sem::isArray(t) && !t->isVolatile && t->kind != sem::TypeKind::Opaque &&
+                          (c == Cls::Int || c == Cls::UInt || c == Cls::Ptr);
+            if (!scalar) never.insert(keyOf(o));
+            else weight[keyOf(o)] += w;
+        };
+        for (int i = 0; i < n; ++i) {
+            const Quad &q = f.quads[i];
+            long long w = depth[i] == 0 ? 1 : depth[i] == 1 ? 10 : depth[i] == 2 ? 100 : 1000;
+            bool memory = q.op == Op::AddrOf || q.op == Op::IndexLoad || q.op == Op::IndexStore || q.op == Op::VaStart ||
+                          q.op == Op::VaArg || q.op == Op::VaEnd;
+            if (memory && (q.a.kind == Operand::Var || q.a.kind == Operand::Temp)) never.insert(keyOf(q.a)); /* needs an address */
+            else count(q.a, w);
+            if (q.op == Op::VaStart && (q.b.kind == Operand::Var || q.b.kind == Operand::Temp)) never.insert(keyOf(q.b));
+            else count(q.b, w);
+            count(q.r, w);
+        }
+        std::vector<std::pair<long long, Key>> ranked;
+        for (const auto &e : weight)
+            if (!never.count(e.first)) ranked.push_back({e.second, e.first});
+        std::stable_sort(ranked.begin(), ranked.end(), [](const std::pair<long long, Key> &x, const std::pair<long long, Key> &y) { return x.first > y.first; });
+        for (size_t k = 0; k < ranked.size() && k < 8; ++k) home[ranked[k].second] = "$s" + std::to_string(k);
+    }
+
+    /* quads i..i+3 are `if a relop b goto i+3 ; r = 0 ; goto i+4 ; r = 1`, entered only at i */
+    static bool isBooleanValue(const Function &f, size_t i, const std::vector<int> &targeted) {
+        const Quad &test = f.quads[i], &zero = f.quads[i + 1], &skip = f.quads[i + 2], &one = f.quads[i + 3];
+        auto isConst = [](const Operand &o, long long v) { return o.kind == Operand::IntConst && o.ival == v; };
+        auto same = [](const Operand &x, const Operand &y) { return x.kind == y.kind && x.sym == y.sym && x.temp == y.temp; };
+        Cls rc = classOf(zero.r.type);
+        return test.op == Op::IfRel && !isFloatCls(test.cls) && !isWide(test.cls) && test.target == static_cast<int>(i) + 3 &&
+               zero.op == Op::Assign && isConst(zero.a, 0) && !isFloatCls(rc) && !isWide(rc) && rc != Cls::Block &&
+               skip.op == Op::Goto && skip.target == static_cast<int>(i) + 4 &&
+               one.op == Op::Assign && isConst(one.a, 1) && same(one.r, zero.r) &&
+               targeted[i + 1] == 0 && targeted[i + 2] == 0 && targeted[i + 3] == 1;
+    }
+
+    /* Dragon Book 8.7: local patterns in the finished instruction list.
+       Comment lines may sit between two instructions; a label may not. */
+    static void peephole(std::vector<std::string> &lines) {
+        auto isComment = [](const std::string &l) { return l.find_first_not_of(' ') != std::string::npos && l[l.find_first_not_of(' ')] == '#'; };
+        auto parse = [](const std::string &l, std::string &op, std::string &a, std::string &b) {
+            std::istringstream in(l);
+            std::string rest;
+            op.clear(); a.clear(); b.clear();
+            in >> op;
+            std::getline(in, rest);
+            size_t comma = rest.find(',');
+            auto trim = [](std::string t) {
+                size_t x = t.find_first_not_of(' ');
+                size_t y = t.find_last_not_of(' ');
+                return x == std::string::npos ? std::string() : t.substr(x, y - x + 1);
+            };
+            a = trim(comma == std::string::npos ? rest : rest.substr(0, comma));
+            b = comma == std::string::npos ? std::string() : trim(rest.substr(comma + 1));
+        };
+        std::vector<std::string> out;
+        for (size_t i = 0; i < lines.size(); ++i) {
+            std::string op, a, b;
+            parse(lines[i], op, a, b);
+            if (op == "move" && a == b) continue; /* move $r, $r */
+            size_t next = i + 1;
+            while (next < lines.size() && isComment(lines[next])) ++next;
+            if (next < lines.size()) {
+                std::string op2, a2, b2;
+                parse(lines[next], op2, a2, b2);
+                if (op == "j" && lines[next] == a + ":") continue; /* a jump to the next instruction */
+                if (op == "sw" && op2 == "lw" && b == b2) { /* the value just stored is still in its register */
+                    lines[next] = a2 == a ? std::string() : "        move  " + a2 + ", " + a;
+                }
+            }
+            if (!lines[i].empty()) out.push_back(lines[i]);
+        }
+        lines.swap(out);
     }
 
     /* ---------------- static data ---------------- */
@@ -701,8 +911,9 @@ struct Emitter {
 
 } // namespace
 
-std::string generate(const Program &program, const std::string &runtime) {
+std::string generate(const Program &program, const std::string &runtime, bool optimize) {
     Emitter e(program);
+    e.optimize = optimize;
     return e.run(runtime);
 }
 

@@ -22,8 +22,10 @@ make
 spim -file file.s arg1 arg2
 ```
 
-`-O1` / `-O2` / `-O3` run the TAC optimizer first; without them the code is a
-direct translation. SPIM prints a five-line banner before the
+`-O1` / `-O2` / `-O3` run the TAC optimizer first and turn on the
+machine-level optimizations below; without them the code is a direct
+translation. `--stack-only` keeps the direct translation even when
+optimizing, to compare the two. SPIM prints a five-line banner before the
 program's output; the program's `return` value from `main` becomes
 SPIM's exit code.
 
@@ -60,8 +62,9 @@ code as a comment:
         sw    $t0, -144($fp)
 ```
 
-No value is kept in a register between two TAC instructions: there is
-no register allocation yet (the next step of the roadmap).
+Without optimization no value is kept in a register between two TAC
+instructions. With `-O1` and above the most used names live in
+registers (next section).
 
 | TAC | MIPS |
 |---|---|
@@ -73,6 +76,38 @@ no register allocation yet (the next step of the roadmap).
 | `if a relop b goto L` | `beq`/`blt`/`bltu` …; floating point `c.lt.d` + `bc1t` |
 | `x = a[i]`, `*p = x` | address in `$t8`, then `lw`/`lb`/`l.d` … or a byte copy for structs |
 | `param` / `call` | arguments stored into a freshly reserved stack area, `jal`, area released |
+
+## Machine-level optimizations (`-O1` and above)
+
+| Optimization | What it does |
+|---|---|
+| registers by usage count (Dragon Book 8.8) | in each function the uses of every name are counted, a use inside a loop counting ten times per level of nesting; the eight highest get `$s0`–`$s7` for the whole function. Only 32-bit scalars whose address is never taken qualify. The function saves and restores the registers it uses, so they survive calls. A parameter that got a register is loaded once on entry. |
+| immediate operands | a small constant goes into the instruction: `addiu`, `andi`, `ori`, `xori`, `sll`, `sra`, `srl`; `$zero` for 0; a constant array or field offset becomes the displacement (`lw $s0, -12($fp)`) |
+| comparison as a value | the TAC pattern `if a < b goto +3 ; t = 0 ; goto +2 ; t = 1` becomes `slt` (plus `xori`/`sltiu` for the other relations) |
+| leaf functions | a function that calls nothing does not save `$ra` |
+| peephole (Dragon Book 8.7) | a load right after a store to the same place reuses the register; a jump to the next line and `move $r, $r` are removed |
+
+```
+        # t4 = j int<< 2            (j in $s0, t4 in $s3)
+        sll   $s3, $s0, 2
+        # j = j int+ 1
+        addiu $s0, $s0, 1
+```
+
+Instructions in the generated functions (not the run-time library):
+
+| Program | `-O0` | `-O3 --stack-only` | `-O3` |
+|---|---|---|---|
+| `t04_arrays` | 856 | 864 | 609 |
+| `t18_algorithms` | 1247 | 1081 | 820 |
+| `t20_bits` | 679 | 424 | 352 |
+| `t22_data_structures` | 991 | 975 | 835 |
+| `t25_control` | 731 | 698 | 594 |
+
+A name keeps its register for the whole function, so the short-lived
+temporaries of an inner loop can take all eight and leave a variable on
+the stack; allocation by live intervals (linear scan) would fix that
+and is the natural next step.
 
 ## Frame and calling convention (decision D25: stack only)
 
@@ -140,8 +175,9 @@ programs of the semantic and parser suites were compiled at `-O0` and
 
 ## Limitations
 
-- No register allocation: every operand is loaded from and stored to
-  the frame.
+- Registers are assigned by usage count, one name per register for the
+  whole function; `float`, `double`, `long long` and narrow integers
+  always stay in the frame.
 - `printf` has no `%e` / `%g`; `%f` needs a value below about 9·10¹⁸
   after scaling by the precision. `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.

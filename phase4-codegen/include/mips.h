@@ -29,8 +29,10 @@
 
 namespace mips {
 
-/* the whole assembly file: data, code, then the run-time library */
-std::string generate(const tac::Program &program, const std::string &runtime);
+/* the whole assembly file: data, code, then the run-time library.
+   `optimize` turns on the machine-level improvements: registers for the
+   most used names, constants inside instructions, a peephole pass. */
+std::string generate(const tac::Program &program, const std::string &runtime, bool optimize);
 
 } // namespace mips
 

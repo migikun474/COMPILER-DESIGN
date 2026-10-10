@@ -16,8 +16,8 @@ then MIPS.
 
 > **Current implementation status: every phase works end to end —
 > front end, Three Address Code (with an interpreter), the optimizer
-> (`-O1`, `-O2`, `-O3`) and MIPS code that runs on SPIM. Register allocation
-> is the remaining roadmap item.**
+> (`-O1`, `-O2`, `-O3`) and MIPS code that runs on SPIM, with registers
+> assigned by usage count.**
 
 ```
 Front end
@@ -33,8 +33,8 @@ Back end
 
 ✓ implemented and tested ○ not started
 
-The MIPS code keeps every value in the stack frame; register
-allocation is not done yet.
+Without an `-O` flag the MIPS code keeps every value in the stack
+frame; with one, the most used names live in `$s0`–`$s7`.
 
 ## Compiler architecture
 
@@ -283,8 +283,8 @@ unexpected diagnostic fails the test).
 
 ## Known limitations
 
-- The MIPS code is not register-allocated (every value lives in the
-  stack frame), and `printf` in the SPIM run-time has no `%e`/`%g`.
+- Register assignment is the simple usage-count method (no live
+  intervals), and `printf` in the SPIM run-time has no `%e`/`%g`.
 - The partial features listed above.
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers.

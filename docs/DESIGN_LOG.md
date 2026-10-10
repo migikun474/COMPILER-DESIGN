@@ -820,6 +820,40 @@ go for MIPS level"), from the list Claude proposed.
 Next: MIPS-level optimizations (register allocation, immediate
 operands, peephole).
 
+### D28. Registers by usage count
+
+**Decided by:** the user, from three options (usage counts, linear
+scan, graph colouring).
+**Decision:** the Dragon book's simple method (8.8): per function, the
+names with the highest weighted use count — a use in a loop counts ten
+times per nesting level — get `$s0`–`$s7` for the whole function.
+**Why:** callee-saved registers survive calls, so nothing changes at a
+call site; the method is a few dozen lines and easy to explain.
+**Known ceiling:** a name holds its register for the whole function;
+short-lived temporaries of an inner loop can take all eight. Linear
+scan over live intervals is the upgrade.
+
+### Progress — MIPS-level optimizations working (2026-10-10)
+
+In `phase4-codegen/src/mips.cpp`, switched on by `-O1` and above
+(`--stack-only` switches them off for comparison):
+
+- registers by usage count, saved and restored by the function;
+- immediate operands (`addiu`, `andi`, `sll` …), `$zero`, constant
+  offsets as displacements;
+- `slt` for a comparison used as a value;
+- leaf functions do not save `$ra`;
+- a peephole pass over each function's instruction list.
+
+Result: `phase4-codegen/run_tests.sh` (28 programs × `-O0`…`-O3` in
+SPIM) **28 passed** on the first run; 92 further SPIM runs from the
+other suites (`-O1` and `-O3`) identical to the TAC interpreter. The
+generated functions are 15–30% shorter than the stack-only code at the
+same TAC level (table in `phase4-codegen/README.md`).
+
+**Not measured:** instructions *executed* in SPIM — the simulator does
+not report a count; the figures are static instruction counts.
+
 ---
 
 ## Open questions

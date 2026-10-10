@@ -28,15 +28,17 @@ namespace fs = std::filesystem;
 int main(int argc, char **argv) {
     const char *path = nullptr;
     int level = 0;
+    bool machine = true; /* registers, immediates, peephole (with -O1 and above) */
     for (int i = 1; i < argc; ++i) {
         if (!std::strcmp(argv[i], "-O1")) level = 1;
         else if (!std::strcmp(argv[i], "-O2")) level = 2;
         else if (!std::strcmp(argv[i], "-O3")) level = 3;
         else if (!std::strcmp(argv[i], "-O0")) level = 0;
+        else if (!std::strcmp(argv[i], "--stack-only")) machine = false;
         else path = argv[i];
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] <source-file>     (the assembly is written to standard output)\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--stack-only] <source-file>     (the assembly is written to standard output)\n  --stack-only  keep every value in the stack frame even when optimizing (no registers, immediates or peephole)\n", argv[0]);
         return 1;
     }
     /* the run-time library sits beside the executable */
@@ -88,6 +90,6 @@ int main(int argc, char **argv) {
         return 1;
     }
     if (level > 0) tac::optimize(program, level);
-    fputs(mips::generate(program, runtime.str()).c_str(), stdout);
+    fputs(mips::generate(program, runtime.str(), level > 0 && machine).c_str(), stdout);
     return 0;
 }
