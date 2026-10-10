@@ -2,9 +2,10 @@
 
 Every status below was established from the source and by running the
 current build — not from the specification or older READMEs. Each
-feature was compiled through all three executables
+feature was compiled through the front-end executables
 (`phase1-lexer/lexer`, `phase2-parser/syntax_analyzer`,
-`phase2b-semantic/semantic_analyzer`); the "Tests" column names test
+`phase2b-semantic/semantic_analyzer`) and, for the IR and MIPS columns,
+run in the TAC interpreter and in SPIM; the "Tests" column names test
 files that exercise it.
 
 **Legend**
@@ -107,18 +108,18 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 80 test programs |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 84 checks |
 
 ## Feature catalog
 
-### A. Basic features — implemented (front end)
+### A. Basic features — implemented (all phases)
 
 All of the specification's basic features: all arithmetic and logical
 operators, if-else, for, while, do-while, switch/case, integer and char
 arrays, pointers, structures, printf and scanf, function calls with
 arguments, goto/break/continue, `static`.
 
-### B. Advanced features — implemented (front end)
+### B. Advanced features — implemented (all phases)
 
 All of the specification's advanced features: variable-argument
 functions, dynamic memory allocation, command-line input, typedef,
