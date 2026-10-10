@@ -42,6 +42,10 @@ Use the default settings (*Simulator → Settings*): Accept Pseudo
 Instructions **on**, Load Exception Handler **on**, Bare Machine
 **off**, Enable Delayed Branches **off**.
 
+Checked on 2026-10-10 with QtSpim 9.1.21: `t29_registers` compiled at
+`-O3` prints the same five lines in the QtSpim Console as in the
+terminal.
+
 QtSpim has no batch mode, so the automated tests run the command-line
 `spim`, which is the same simulator without the window. The run-time
 library only uses system calls both have (`print_char`, `read_string`,

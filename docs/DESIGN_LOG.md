@@ -885,6 +885,15 @@ On the user's instruction the stacked pull requests #3 (optimizer),
 #4 (MIPS), #5 (`-O3`) and #6 (MIPS-level optimizations) were merged
 into `main` by merging #6.
 
+### QtSpim run confirmed (2026-10-10)
+
+The last open point of D26 / D29 is closed: the user loaded
+`t29_registers` (compiled with `-O3`) in the QtSpim 9.1.21 window and
+the Console showed the same output as command-line `spim` and g++.
+One practical note from that run: QtSpim's file dialog opens in the
+home folder, so write the `.s` file somewhere under it rather than
+`/tmp`.
+
 ---
 
 ## Open questions
