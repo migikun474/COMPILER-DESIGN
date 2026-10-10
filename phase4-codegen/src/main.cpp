@@ -31,11 +31,12 @@ int main(int argc, char **argv) {
     for (int i = 1; i < argc; ++i) {
         if (!std::strcmp(argv[i], "-O1")) level = 1;
         else if (!std::strcmp(argv[i], "-O2")) level = 2;
+        else if (!std::strcmp(argv[i], "-O3")) level = 3;
         else if (!std::strcmp(argv[i], "-O0")) level = 0;
         else path = argv[i];
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1|-O2] <source-file>     (the assembly is written to standard output)\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] <source-file>     (the assembly is written to standard output)\n", argv[0]);
         return 1;
     }
     /* the run-time library sits beside the executable */

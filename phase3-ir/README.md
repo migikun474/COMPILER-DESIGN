@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`). 27 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 28 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 27 passed).
+> (`./run_tests.sh`: 28 passed).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -37,7 +37,7 @@ Prints the TAC, then executes it with the interpreter (`-q` after
 ./tac_generator -O2 --run file.c
 ```
 
-Optimizes first (`-O1` or `-O2`, see [Optimization](#optimization--o1-and--o2)). With `--run`
+Optimizes first (`-O1`, `-O2` or `-O3`, see [Optimization](#optimization--o1--o2--o3)). With `--run`
 the program is executed both ways; a difference in output or exit code
 is reported as `OPTIMIZER BUG`, otherwise the line on stderr shows the
 instructions executed with and without optimization.
@@ -137,7 +137,7 @@ unique in the program); the instruction number stays visible.
 | [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors, `new` / `delete` |
 | [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, destructors at scope exit, local and static initializers, functions, frame tables |
 | [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
-| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`) |
+| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`, `-O3`) |
 | [`src/main.cpp`](src/main.cpp) | driver: phases 2 and 2b (compiled in unchanged), then generation and `--run` |
 
 The generator walks the AST that semantic analysis annotated: it reads
@@ -173,7 +173,7 @@ errors (null or out-of-range access, division by zero, a 500-million
 instruction limit) and counts executed instructions — the number the
 optimizer will later be measured by.
 
-## Optimization (`-O1` and `-O2`)
+## Optimization (`-O1`, `-O2`, `-O3`)
 
 [`src/opt.cpp`](src/opt.cpp). Each function is cut into basic blocks
 (a block starts at the first instruction, at every jump target and
@@ -211,11 +211,24 @@ and both only reason about scalar locals whose address is never taken:
 
 After each, `-O1` runs again on the result, until nothing changes.
 
-Not done (by decision D22): common subexpressions across blocks and
-loop optimizations (invariant code motion, induction variables).
+**`-O3`** adds (decision D27):
 
-On the test programs `-O1` executes 6% to 42% fewer instructions and
-`-O2` 7% to 64% fewer; the runner prints the figures per test.
+| Optimization | How | Example |
+|---|---|---|
+| inlining | a call to a function of at most 16 instructions, not recursive and not variadic, is replaced by its body; parameters, locals and temporaries become temporaries of the caller; one level per run | `square(3)` → `9` after folding; getters and small operators disappear |
+| tail recursion | `return f(args);` inside `f` becomes "assign the arguments, jump to the start" | `gcd(b, a % b)` becomes a loop |
+| common subexpressions across blocks | available-expressions analysis: an expression is reused when the same name still holds it on every path | `x * y + 2` before an `if` and again inside it |
+| loop-invariant code motion | natural loops from dominators; a pure instruction whose operands do not change in the loop, and whose result is assigned nowhere else, moves in front of the loop | `k * 3 + 1` and `&arr` leave the loop |
+| store-to-load forwarding (part of `-O1`'s block pass) | after `a[i] = x` or `*p = x`, a load of the same place in the block is `x` until memory may have changed | `arr[i] = 10; a = arr[i];` → `a = 10` |
+
+Divisions are never moved out of a loop (the loop may run zero times
+with a zero divisor). Strength reduction of induction variables is not
+done: `-O1` already turns `i * 4` into a shift, so it would not remove
+any instruction.
+
+On the test programs `-O1` executes 7% to 42% fewer instructions,
+`-O2` 8% to 64% and `-O3` 12% to 64%; the runner prints the figures per
+test.
 
 ## Tests
 
@@ -223,8 +236,8 @@ On the test programs `-O1` executes 6% to 42% fewer instructions and
 ./run_tests.sh
 ```
 
-Each `test/tNN_*.c` is generated and executed raw, with `-O1` and with
-`-O2`; every time what it prints and its exit code must equal
+Each `test/tNN_*.c` is generated and executed raw, with `-O1`, `-O2`
+and `-O3`; every time what it prints and its exit code must equal
 `test/expected/<name>.out`. The programs are also
 valid C or C++, and every expected file was checked to be identical to
 the output of the same source compiled with gcc/g++.
@@ -259,10 +272,11 @@ the output of the same source compiled with gcc/g++.
 | `t25_control` | state machine in a `switch`, nested loops, `goto` out of loops, `?:` chains, comma |
 | `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers, macros |
 | `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, `delete[]` of objects, static objects destroyed at exit |
+| `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, invariants and non-invariants in loops, a division that must stay, values reused or not across branches and stores |
 
 ## Limitations
 
-- Without `-O1`/`-O2` the output is deliberately unoptimized (decision D16).
+- Without an `-O` flag the output is deliberately unoptimized (decision D16).
 - After optimization the symbol table still lists temporaries that are no
   longer used (their frame slots are not reclaimed yet).
 - Unnamed temporaries of class type and by-value class parameters are

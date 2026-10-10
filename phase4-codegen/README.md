@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 27 test
+> Status: **implemented and tested** on the SPIM simulator. All 28 test
 > programs give the output and exit code that gcc/g++ give, compiled
-> without optimization, with `-O1` and with `-O2`
-> (`./run_tests.sh`: 27 passed).
+> without optimization and with `-O1`, `-O2` and `-O3`
+> (`./run_tests.sh`: 28 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention).
@@ -15,14 +15,14 @@ make
 ```
 
 ```bash
-./mips_generator -O2 file.c > file.s
+./mips_generator -O3 file.c > file.s
 ```
 
 ```bash
 spim -file file.s arg1 arg2
 ```
 
-`-O1` / `-O2` run the TAC optimizer first; without them the code is a
+`-O1` / `-O2` / `-O3` run the TAC optimizer first; without them the code is a
 direct translation. SPIM prints a five-line banner before the
 program's output; the program's `return` value from `main` becomes
 SPIM's exit code.

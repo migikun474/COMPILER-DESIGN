@@ -777,6 +777,51 @@ parser programs end to end), TAC 27, MIPS on SPIM 27.
 
 ---
 
+## 2026-10-10 — Session 5: more TAC optimizations
+
+### D27. `-O3`: TAC-level optimizations before the MIPS-level ones
+
+**Decided by:** the user ("first let's do TAC level optimisations, then
+go for MIPS level"), from the list Claude proposed.
+**Decision (the level is Claude's choice):** they are a new level,
+`-O3`, so that the `-O1` and `-O2` listings stay as they were.
+
+| Optimization | Status |
+|---|---|
+| inlining of small functions | done: at most 16 instructions, not recursive, not variadic, one level per run |
+| tail recursion → jump | done: only when no local's address is taken |
+| common subexpressions across blocks | done: available expressions with the holding name |
+| loop-invariant code motion | done: natural loops from dominators; never a division |
+| store-to-load forwarding | done, inside `-O1`'s block pass |
+| strength reduction of induction variables | **not done**: `-O1` already turns `i * 4` into a shift, so replacing it by a running add removes no instruction at this level; it can pay at MIPS level and is noted there |
+
+**Safety conditions worth knowing**
+- Inlining copies the callee's parameters, locals and temporaries into
+  fresh temporaries of the caller, so a by-value struct stays a copy
+  and a side effect in the callee still happens once per call.
+- A moved instruction is pure, its operands are not assigned in the
+  loop, and its result is assigned nowhere else in the function; so it
+  is safe even if the loop body runs zero times. Divisions stay.
+- A tail call becomes a jump only if the function takes the address of
+  none of its locals (an address passed down would outlive the "call").
+
+### Progress — `-O3` working (2026-10-10)
+
+- `opt.cpp` grew by about 380 lines; flag `-O3` in both drivers.
+- Both runners now include `-O3`: `phase3-ir/run_tests.sh` **28
+  passed**, `phase4-codegen/run_tests.sh` (SPIM, four levels) **28
+  passed**. Executed instructions: `-O2` 8–64% fewer, `-O3` 12–64%
+  fewer; the class-heavy tests gain most (t08 8% → 33%, t23 11% → 42%)
+  because constructors, getters and operators are inlined.
+- New test `t28_o3` with a trap for each optimization.
+- `-O3` over the other suites: 46 programs, interpreter and SPIM, no
+  difference from unoptimized.
+
+Next: MIPS-level optimizations (register allocation, immediate
+operands, peephole).
+
+---
+
 ## Open questions
 
 *(none at the moment)*

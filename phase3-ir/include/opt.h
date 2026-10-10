@@ -22,6 +22,12 @@
        `x = ...` is removed when x is not read again on any path).
    After each, -O1 runs again on the result until nothing changes.
 
+   -O3 adds, on top of -O2:
+     - inlining of small functions (at most 16 instructions, not
+       recursive, not variadic) and tail recursion turned into a jump;
+     - common subexpressions across blocks (available expressions);
+     - loop-invariant code motion (natural loops from dominators).
+
    Nothing here may change what a program prints or returns: the test
    suite runs every program before and after and compares.
    ===================================================================== */
@@ -45,6 +51,10 @@ struct OptStats {
     int level = 1;
     int global = 0;            /* -O2: operands replaced using facts from other blocks */
     int deadAssignments = 0;   /* -O2: assignments to variables never read afterwards */
+    int inlined = 0;           /* -O3: calls replaced by the callee's body */
+    int tailCalls = 0;         /* -O3: `return f(...)` in f turned into a jump */
+    int globalCommon = 0;      /* -O3: expressions reused from another block */
+    int hoisted = 0;           /* -O3: instructions moved in front of a loop */
 };
 
 OptStats optimize(Program &program, int level);

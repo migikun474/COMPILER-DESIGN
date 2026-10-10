@@ -7,7 +7,7 @@
 # compiling the same sources. test/<name>.in is the program's input,
 # test/<name>.args its command-line arguments. A test with an
 # expected/<name>.tac file must also produce exactly that listing.
-# Every program is then run again with -O1 and with -O2 and must behave
+# Every program is then run again with -O1, -O2 and -O3 and must behave
 # identically; the line shows the instructions executed without
 # optimization and how many fewer each level executes.
 #
@@ -30,7 +30,7 @@ for f in test/*.c; do
     # the same program optimized: it must print and return exactly the same
     ok=1
     gain=""
-    for level in 1 2; do
+    for level in 1 2 3; do
         (cd "$TMP" && "$OLDPWD/tac_generator" -O$level --run -q "$OLDPWD/$f" $args < "$in" > out1 2> err1; echo "exit: $?" >> out1)
         cmp -s "$TMP/out1" "test/expected/$n.out" || ok=0
         gain="$gain  -O$level $(grep -o '[0-9]*% fewer' "$TMP/err1")"
