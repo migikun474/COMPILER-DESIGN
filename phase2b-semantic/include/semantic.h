@@ -120,6 +120,15 @@ class SemanticAnalyzer {
     int unevaluated = 0; /* inside `sizeof`: uses there need no definition */
     bool hoistFunction(const std::string &name);
     int declScopeForTags();
+    void elideBraces(const TypePtr &target, const ASTNodePtr &list);
+    ASTNodePtr takeElided(const TypePtr &sub, const std::vector<ASTNodePtr> &items, size_t &i);
+    void friendFunction(const ASTNodePtr &m, RecordInfo *rec, bool isDefinition,
+                        std::vector<std::pair<ASTNodePtr, SymbolPtr>> &bodies);
+    void virtualFunctions(RecordInfo *rec, const ASTNodePtr &n);
+    bool isAbstractType(const TypePtr &t) const;
+    void memberInitializers(const ASTNodePtr &ctorNode, RecordInfo *rec);
+    std::vector<SymbolPtr> objectCandidates(const std::vector<SymbolPtr> &all, bool constObject, const ASTNode *at,
+                                            const std::string &name);
     void checkInitializer(const TypePtr &target, const ASTNodePtr &init, bool requireConstant,
                           const std::string &what);
     bool isConstantInitializer(const ASTNodePtr &n);
@@ -134,6 +143,14 @@ class SemanticAnalyzer {
     void blockItems(const ASTNodePtr &block);
     void condition(const ASTNodePtr &n, const std::string &construct);
     void collectLabels(const ASTNodePtr &n, FunctionCtx &ctx);
+    struct JumpWalk {
+        std::map<const Symbol *, std::vector<const Symbol *>> labels; /* initialized locals visible at each label */
+        std::vector<std::pair<const ASTNode *, std::vector<const Symbol *>>> gotos;
+        std::vector<size_t> switches; /* visible count at each enclosing switch */
+    };
+    bool completes(const ASTNodePtr &s);
+    void jumpScopes(const ASTNodePtr &n, std::vector<const Symbol *> &inScope, JumpWalk &w);
+    void flowChecks(const ASTNodePtr &body, const Symbol *fnSym, bool valueReturned);
     void returnStatement(const ASTNodePtr &n);
 
     /* ---- expressions ---- */
@@ -160,7 +177,9 @@ class SemanticAnalyzer {
     void checkConstantConversion(const TypePtr &target, const ASTNodePtr &e);
     /* gcc's -Wsequence-point over every full expression (sequencing.cpp) */
     void checkSequencing(const ASTNodePtr &root);
-    Conversion argumentConversion(const TypePtr &param, const ASTNodePtr &arg);
+    Conversion argumentConversion(const TypePtr &param, const ASTNodePtr &arg, bool allowUser = true);
+    bool userConvertible(const TypePtr &T, const ASTNodePtr &arg);
+    void markConversions(const TypePtr &ft, const std::vector<ASTNodePtr> &args);
     SymbolPtr resolveOverload(const std::string &name, const std::vector<SymbolPtr> &candidates,
                               const std::vector<ASTNodePtr> &args, const ASTNode *at);
     TypePtr checkCallArgs(const TypePtr &fnType, const std::string &name,
@@ -175,7 +194,7 @@ class SemanticAnalyzer {
     /* ---- constructors, operator overloading, va_* (cxx.cpp) ---- */
     /* overload resolution among `rec`'s constructors (plus the implicit
        default/copy constructors); returns the user constructor chosen */
-    SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at);
+    SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at, bool implicit = false);
     void defaultConstruct(const TypePtr &t, const ASTNode *at);
     void constructorInit(const TypePtr &target, const ASTNodePtr &init, const std::string &what);
     TypePtr constructExpr(const ASTNodePtr &n);

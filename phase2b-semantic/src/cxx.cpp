@@ -1,6 +1,8 @@
 /* The C++-style parts of the language: constructors and object
    construction, operator overloading, and va_start/va_arg/va_end. */
 #include <algorithm>
+#include <functional>
+#include <set>
 
 #include "diagnostics/diagnostics.hpp"
 #include "semantic.h"
@@ -39,7 +41,8 @@ bool SemanticAnalyzer::anyViable(const std::vector<SymbolPtr> &candidates, const
 
 /* ---------------- constructors ---------------- */
 
-SymbolPtr SemanticAnalyzer::construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at) {
+/* `implicit`: a conversion the program did not spell, where `explicit` constructors do not take part */
+SymbolPtr SemanticAnalyzer::construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at, bool implicit) {
     if (!rec) return nullptr;
     if (!rec->complete) {
         error(at, "cannot construct an object of incomplete type '" + recordName(rec) + "'", "incomplete-type");
@@ -67,7 +70,10 @@ SymbolPtr SemanticAnalyzer::construct(RecordInfo *rec, const std::vector<ASTNode
               "constructor");
         return nullptr;
     }
-    SymbolPtr chosen = resolveOverload(rec->tag + "::" + rec->tag, rec->constructors, args, at);
+    std::vector<SymbolPtr> ctors;
+    for (const auto &c : rec->constructors)
+        if (!implicit || !c->isExplicit) ctors.push_back(c);
+    SymbolPtr chosen = resolveOverload(rec->tag + "::" + rec->tag, ctors, args, at);
     if (chosen) {
         MemberLookup ml;
         ml.symbols = {chosen};
@@ -123,6 +129,10 @@ TypePtr SemanticAnalyzer::constructExpr(const ASTNodePtr &n) {
     for (const auto &a : args) expr(a);
     if (isError(t)) return errorType();
     if (RecordInfo *rec = isRecord(t) ? t->record.get() : nullptr) {
+        if (rec->abstract) {
+            error(n.get(), "cannot create an object of abstract type " + q(t) + " (it has pure virtual functions)", "abstract");
+            return errorType();
+        }
         n->symbol = construct(rec, args, n.get());
         return t;
     }
@@ -197,6 +207,189 @@ void SemanticAnalyzer::outOfClassSpecial(const ASTNodePtr &n) {
     sym->declNode = n.get();
     n->symbol = sym;
     functionBody(n, sym, rec);
+}
+
+/* ---------------- virtual functions ---------------- */
+
+/* same name, parameters and const-ness: one overrides the other */
+static bool sameSlot(const Symbol *a, const Symbol *b) {
+    return a->name == b->name && sameParameterLists(a->type, b->type);
+}
+
+/* the virtual function of `rec` or one of its bases that `m` overrides */
+static Symbol *overridden(RecordInfo *rec, const Symbol *m) {
+    for (const auto &b : rec->bases) {
+        if (!b.record) continue;
+        auto it = b.record->members.find(m->name);
+        if (it != b.record->members.end())
+            for (const auto &c : it->second)
+                if (c->kind == SymbolKind::Function && c->isVirtual && sameSlot(c.get(), m)) return c.get();
+        if (Symbol *deeper = overridden(b.record.get(), m)) return deeper;
+    }
+    return nullptr;
+}
+
+/* the function `rec` uses for slot `s`: its own, else the nearest base's */
+static Symbol *finalOverrider(RecordInfo *rec, const Symbol *s) {
+    auto it = rec->members.find(s->name);
+    if (it != rec->members.end())
+        for (const auto &c : it->second)
+            if (c->kind == SymbolKind::Function && sameSlot(c.get(), s)) return c.get();
+    for (const auto &b : rec->bases)
+        if (b.record)
+            if (Symbol *f = finalOverrider(b.record.get(), s)) return f;
+    return nullptr;
+}
+
+static void collectSlots(RecordInfo *rec, std::vector<Symbol *> &out) {
+    out.insert(out.end(), rec->virtuals.begin(), rec->virtuals.end());
+    for (const auto &b : rec->bases)
+        if (b.record) collectSlots(b.record.get(), out);
+}
+
+/* once a class's members are known (before its layout): which member
+   functions are virtual, the slots of its table, and whether it is abstract */
+void SemanticAnalyzer::virtualFunctions(RecordInfo *rec, const ASTNodePtr &n) {
+    std::vector<Symbol *> methods; /* declaration order */
+    std::function<void(const ASTNodePtr &)> walk = [&](const ASTNodePtr &m) {
+        if (!m) return;
+        if (m->kind == ASTKind::DeclGroup) {
+            for (const auto &c : m->children) walk(c);
+            return;
+        }
+        if ((m->kind == ASTKind::FunctionDecl || m->kind == ASTKind::FunctionDef) && m->symbol &&
+            m->symbol->ownerRecord == rec && std::find(methods.begin(), methods.end(), m->symbol.get()) == methods.end())
+            methods.push_back(m->symbol.get());
+    };
+    for (const auto &m : n->children) walk(m);
+    bool anyVirtual = false;
+    for (Symbol *m : methods) {
+        if (m->isStatic) continue;
+        if (Symbol *base = overridden(rec, m)) {
+            m->isVirtual = true; /* overriding makes it virtual, with or without the keyword */
+            if (!sameType(m->type->ret, base->type->ret, true))
+                error(m->line, m->column, "'" + rec->tag + "::" + m->name + "' overrides a virtual function but its return type " +
+                                              "differs ('" + typeToString(m->type->ret) + "' vs '" + typeToString(base->type->ret) + "')",
+                      "virtual");
+        }
+        anyVirtual = anyVirtual || m->isVirtual;
+    }
+    if (rec->destructor) {
+        for (const auto &b : rec->bases)
+            if (b.record && b.record->destructor && b.record->destructor->isVirtual) rec->destructor->isVirtual = true;
+        anyVirtual = anyVirtual || rec->destructor->isVirtual;
+    }
+    bool primary = !rec->bases.empty() && rec->bases[0].record && rec->bases[0].record->polymorphic;
+    rec->polymorphic = anyVirtual || std::any_of(rec->bases.begin(), rec->bases.end(),
+                                                 [](const BaseClass &b) { return b.record && b.record->polymorphic; });
+    rec->ownVptr = rec->polymorphic && !primary;
+    if (primary) rec->virtuals = rec->bases[0].record->virtuals;
+    for (Symbol *m : methods) {
+        if (!m->isVirtual) continue;
+        for (size_t i = 0; i < rec->virtuals.size() && m->vtableIndex < 0; ++i)
+            if (sameSlot(rec->virtuals[i], m)) m->vtableIndex = static_cast<int>(i);
+        if (m->vtableIndex < 0) {
+            m->vtableIndex = static_cast<int>(rec->virtuals.size());
+            rec->virtuals.push_back(m);
+        }
+    }
+    std::vector<Symbol *> slots;
+    collectSlots(rec, slots);
+    for (Symbol *s : slots) {
+        Symbol *f = finalOverrider(rec, s);
+        if (f && f->isPure) rec->abstract = true;
+    }
+}
+
+bool SemanticAnalyzer::isAbstractType(const TypePtr &t) const {
+    TypePtr e = t;
+    while (e && isArray(e)) e = e->elem;
+    return e && isRecord(e) && e->record && e->record->abstract;
+}
+
+/* `Dog(int n) : Animal(4), legs(n) { }`: each name is a direct base or a
+   member of this class; it is built from the arguments, everything not
+   named is default-constructed */
+void SemanticAnalyzer::memberInitializers(const ASTNodePtr &ctorNode, RecordInfo *rec) {
+    std::set<std::string> seen;
+    std::set<const void *> covered;
+    for (const auto &m : ctorNode->children) {
+        if (m->kind != ASTKind::MemInit) continue;
+        std::vector<ASTNodePtr> args = m->children;
+        for (const auto &a : args) expr(a);
+        if (!seen.insert(m->label).second) {
+            error(m.get(), "'" + m->label + "' is initialized twice in the member initializer list", "member-init");
+            continue;
+        }
+        RecordInfo *base = nullptr;
+        for (const auto &b : rec->bases)
+            if (b.record && (b.record->tag == m->label || b.record->typedefName == m->label)) base = b.record.get();
+        if (base) {
+            m->symbol = st.lookupTag(base->tag);
+            m->converter = construct(base, args, m.get());
+            covered.insert(base);
+            continue;
+        }
+        SymbolPtr field;
+        auto it = rec->members.find(m->label);
+        if (it != rec->members.end() && !it->second.empty() && it->second.front()->kind == SymbolKind::Field &&
+            it->second.front()->storage == Storage::Member && it->second.front()->ownerRecord == rec)
+            field = it->second.front();
+        if (!field) {
+            error(m.get(), "'" + m->label + "' in the member initializer list is neither a member nor a direct base of '" +
+                               recordDisplayName(*rec) + "'",
+                  "member-init");
+            continue;
+        }
+        m->symbol = field;
+        covered.insert(field.get());
+        TypePtr t = field->type;
+        if (RecordInfo *fr = isRecord(t) ? t->record.get() : nullptr) {
+            m->converter = construct(fr, args, m.get());
+        } else if (args.size() > 1) {
+            error(m.get(), "member '" + m->label + "' of type " + q(t) + " is initialized with " + std::to_string(args.size()) +
+                               " values; it takes one",
+                  "member-init");
+        } else if (args.size() == 1) {
+            if (isReference(t)) checkInitializer(t, args[0], false, "member '" + m->label + "'");
+            else convertible(t, args[0], "type mismatch: cannot initialize member '" + m->label + "' of type '%T' with a value of type '%F'");
+        }
+    }
+    /* what the list leaves out must have a default constructor */
+    for (const auto &b : rec->bases)
+        if (b.record && !covered.count(b.record.get())) defaultConstruct(recordType(b.record), ctorNode.get());
+    for (const auto &f : rec->fields)
+        if (f->storage == Storage::Member && !covered.count(f.get()) && !f->name.empty()) defaultConstruct(f->type, ctorNode.get());
+}
+
+/* `obj.f()` on a const object may only call `f() const`; on any other
+   object a non-const `f` is preferred to `f() const` with the same parameters */
+std::vector<SymbolPtr> SemanticAnalyzer::objectCandidates(const std::vector<SymbolPtr> &all, bool constObject,
+                                                          const ASTNode *at, const std::string &name) {
+    auto constMethod = [](const SymbolPtr &s) { return s->kind == SymbolKind::Function && s->type && s->type->isConst; };
+    std::vector<SymbolPtr> out;
+    for (const auto &c : all) {
+        bool member = c->kind == SymbolKind::Function && !c->isStatic;
+        if (!member || !constObject || constMethod(c)) out.push_back(c);
+    }
+    if (constObject && out.empty() && !all.empty()) {
+        error(at, "'" + name + "' is not a const member function, so it cannot be called on a const object", "const-method");
+        return out;
+    }
+    if (!constObject) {
+        std::vector<SymbolPtr> preferred;
+        for (const auto &c : out) {
+            bool shadowed = constMethod(c) && std::any_of(out.begin(), out.end(), [&](const SymbolPtr &d) {
+                                return !constMethod(d) && d->kind == SymbolKind::Function && d->type &&
+                                       d->type->params.size() == c->type->params.size() &&
+                                       std::equal(d->type->params.begin(), d->type->params.end(), c->type->params.begin(),
+                                                  [](const TypePtr &x, const TypePtr &y) { return sameType(x, y); });
+                            });
+            if (!shadowed) preferred.push_back(c);
+        }
+        return preferred;
+    }
+    return out;
 }
 
 /* ---------------- operator overloading ---------------- */

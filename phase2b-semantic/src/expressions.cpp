@@ -121,6 +121,8 @@ bool SemanticAnalyzer::convertible(const TypePtr &target, const ASTNodePtr &e, c
     if (isError(from) || isError(target)) return true;
     if (isRecord(target) || isRecord(from)) {
         if (sameType(unqualified(target), from)) return true;
+        if (isRecord(target) && isRecord(from) && isDerivedFrom(from->record.get(), target->record.get()))
+            return true; /* slicing: the base part of a derived object */
         error(e.get(), fill(message, from, target), "type-mismatch");
         return false;
     }
@@ -225,6 +227,13 @@ void SemanticAnalyzer::checkAccess(const MemberLookup &ml, RecordInfo *naming, c
     if (!ml.declaringRecord || ml.symbols.empty()) return;
     RecordInfo *ctx = currentClass();
     if (ctx == ml.declaringRecord) return;
+    /* friends of the class that declares the member, or of the class it is named through */
+    const Symbol *current = fn() ? fn()->fn : nullptr;
+    for (const RecordInfo *r : {static_cast<const RecordInfo *>(ml.declaringRecord), static_cast<const RecordInfo *>(naming)}) {
+        if (!r) continue;
+        if (current && r->friendFunctions.count(current)) return;
+        if (ctx && r->friendClasses.count(ctx->tag)) return;
+    }
     bool ok = false;
     switch (ml.access) {
         case Access::Public: ok = true; break;
@@ -317,8 +326,8 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
                                    : "invalid use of 'this' outside of a non-static member function",
                       "this");
                 t = errorType();
-            } else {
-                t = pointerTo(recordType(cls->shared_from_this()));
+            } else { /* in `int get() const`, this is `const T *` */
+                t = pointerTo(qualified(recordType(cls->shared_from_this()), f && f->fn && f->fn->type && f->fn->type->isConst));
             }
             break;
         }
@@ -441,6 +450,8 @@ TypePtr SemanticAnalyzer::identifier(const ASTNodePtr &n) {
     if (!unevaluated) sym->evaluatedUses++;
     TypePtr t = sym->type;
     if (isReference(t)) t = t->elem;
+    if (l.viaRecord && sym->storage == Storage::Member && f && f->fn && f->fn->type && f->fn->type->isConst)
+        t = qualified(t, true); /* a member seen from `... const` */
     n->isLValue = true;
     if (sym->isConstant) setConst(n, sym->constValue);
     return t;
@@ -1010,7 +1021,30 @@ TypePtr SemanticAnalyzer::callResult(const TypePtr &fnType) {
     return fnType->ret;
 }
 
-Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTNodePtr &arg) {
+/* `T` has a constructor that is not `explicit` and takes `arg` through
+   standard conversions only (C++ allows one user-defined conversion) */
+bool SemanticAnalyzer::userConvertible(const TypePtr &T, const ASTNodePtr &arg) {
+    RecordInfo *rec = isRecord(T) && T->record && T->record->complete ? T->record.get() : nullptr;
+    if (!rec || isError(arg->semType)) return false;
+    for (const auto &c : rec->constructors)
+        if (!c->isExplicit && c->type && c->type->params.size() == 1 &&
+            argumentConversion(c->type->params[0], arg, false).rank != ConvRank::None)
+            return true;
+    return false;
+}
+
+/* after overload resolution: an argument that needs a converting
+   constructor records it, for code generation */
+void SemanticAnalyzer::markConversions(const TypePtr &ft, const std::vector<ASTNodePtr> &args) {
+    if (!ft || !isFunction(ft)) return;
+    for (size_t i = 0; i < args.size() && i < ft->params.size(); ++i) {
+        TypePtr T = isReference(ft->params[i]) ? ft->params[i]->elem : ft->params[i];
+        if (isRecord(T) && argumentConversion(ft->params[i], args[i]).rank == ConvRank::UserDefined)
+            args[i]->converter = construct(T->record.get(), {args[i]}, args[i].get(), true);
+    }
+}
+
+Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTNodePtr &arg, bool allowUser) {
     TypePtr at = arg->semType;
     Conversion c;
     if (isError(at) || isError(param)) {
@@ -1026,6 +1060,10 @@ Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTN
             c.rank = sameType(unqualified(T), unqualified(at)) ? ConvRank::Exact : ConvRank::Conversion;
             return c;
         }
+        if (T->isConst && allowUser && userConvertible(T, arg)) { /* `const Dog &` from 4: a temporary Dog */
+            c.rank = ConvRank::UserDefined;
+            return c;
+        }
         if (T->isConst) return implicitConversion(decay(at), T, isNullPointerConstant(arg));
         c.why = std::string("a non-const reference needs an lvalue of exactly type ") + q(T);
         return c;
@@ -1033,6 +1071,9 @@ Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTN
     TypePtr from = decay(at);
     if (isRecord(param) || isRecord(from)) {
         if (sameType(unqualified(param), from)) c.rank = ConvRank::Exact;
+        else if (isRecord(param) && isRecord(from) && isDerivedFrom(from->record.get(), param->record.get()))
+            c.rank = ConvRank::Conversion; /* a derived object passed as its base: sliced */
+        else if (allowUser && userConvertible(unqualified(param), arg)) c.rank = ConvRank::UserDefined;
         else c.why = "no conversion between these types";
         return c;
     }
@@ -1075,6 +1116,7 @@ SymbolPtr SemanticAnalyzer::resolveOverload(const std::string &name, const std::
     if (fns.empty()) return nullptr;
     if (fns.size() == 1) {
         checkCallArgs(fns[0]->type, name, args, at);
+        markConversions(fns[0]->type, args);
         return fns[0];
     }
     for (const auto &a : args) {
@@ -1117,7 +1159,10 @@ SymbolPtr SemanticAnalyzer::resolveOverload(const std::string &name, const std::
     for (const auto &v : viable) {
         bool best = std::all_of(viable.begin(), viable.end(),
                                 [&](const Viable &w) { return w.s == v.s || better(v, w); });
-        if (best) return v.s;
+        if (best) {
+            markConversions(v.s->type, args);
+            return v.s;
+        }
     }
     error(at, "call to overloaded function '" + name + "(" + argList + ")' is ambiguous; candidates are: " + candidatesText,
           "ambiguous-call");
@@ -1161,7 +1206,10 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
             return errorType();
         }
         if (l.symbols.front()->kind == SymbolKind::Function) {
-            SymbolPtr chosen = resolveOverload(name, l.symbols, args, callee.get());
+            FunctionCtx *cur = fn();
+            bool constThis = l.viaRecord && cur && cur->fn && cur->fn->type && cur->fn->type->isConst;
+            std::vector<SymbolPtr> candidates = l.viaRecord ? objectCandidates(l.symbols, constThis, callee.get(), name) : l.symbols;
+            SymbolPtr chosen = resolveOverload(name, candidates, args, callee.get());
             if (chosen && l.viaRecord) {
                 checkAccess(l.member, currentClass(), name, callee.get());
                 FunctionCtx *f = fn();
@@ -1186,7 +1234,8 @@ TypePtr SemanticAnalyzer::call(const ASTNodePtr &n) {
             if (callee->typeExpr && !callee->typeExpr->className.empty()) /* obj.Base::f(): Base's overloads */
                 rec = st.lookupTag(callee->typeExpr->className)->record.get();
             MemberLookup ml = lookupMember(rec, callee->label);
-            return finish(resolveOverload(callee->label, ml.symbols, args, callee.get()), callee->label);
+            std::vector<SymbolPtr> candidates = objectCandidates(ml.symbols, constObject, callee.get(), callee->label);
+            return finish(resolveOverload(callee->label, candidates, args, callee.get()), callee->label);
         }
         /* a data member: callable only if its class has operator() */
     } else if (callee->kind == ASTKind::ScopeExpr && callee->children[0]->kind == ASTKind::Identifier &&

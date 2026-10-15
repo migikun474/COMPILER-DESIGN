@@ -1,0 +1,10 @@
+[A animal] [D dog] 
+[A animal] [D dog] 
+[A animal] 
+dog 17 174 | puppy 13 134 | seal 0 0 | 
+17 5 0
+puppy 4 4
+animal 4
+animal 4
+6 12 10 | 17 34 21 | 
+[~A animal] [~A animal] [~D dog] [~A animal] [~D dog] [~A animal] exit: 0

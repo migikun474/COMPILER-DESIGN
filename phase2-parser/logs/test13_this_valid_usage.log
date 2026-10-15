@@ -25,7 +25,7 @@ bark                           PROCEDURE
 return                         return              
 this                           this                
 ->                             arrow_op            
-legs                           IDENTIFIER          
+legs                           INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
@@ -45,7 +45,7 @@ legCount                       PROCEDURE
 return                         return              
 this                           this                
 ->                             arrow_op            
-legs                           IDENTIFIER          
+legs                           INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 

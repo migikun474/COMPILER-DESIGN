@@ -34,6 +34,9 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     {"static", TokenType::STATIC},
     {"typedef", TokenType::TYPEDEF},
     {"auto", TokenType::AUTO},
+    {"virtual", TokenType::VIRTUAL},
+    {"explicit", TokenType::EXPLICIT},
+    {"friend", TokenType::FRIEND},
     {"extern", TokenType::EXTERN},
 
     // control flow
@@ -171,6 +174,9 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
     {TokenType::STATIC, "static"},
     {TokenType::TYPEDEF, "typedef"},
     {TokenType::AUTO, "auto"},
+    {TokenType::VIRTUAL, "virtual"},
+    {TokenType::EXPLICIT, "explicit"},
+    {TokenType::FRIEND, "friend"},
     {TokenType::EXTERN, "extern"},
 
     {TokenType::IF, "if"},

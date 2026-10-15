@@ -199,6 +199,7 @@ void declareSymbol(const std::string &name, SymKind kind, const std::string &typ
     e.arrayLevel = extra.arrayLevel;
     e.returnType = extra.returnType;
     e.paramTypes = extra.paramTypes;
+    e.aggregateTagName = extra.aggregateTagName;
     e.useCount = 0;
     g_symbolTable.push_back(std::move(e));
 
@@ -452,12 +453,12 @@ class Mangler {
 } // namespace
 
 std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className) {
+                   const std::string &className, bool constMethod) {
     if (name == "main" && className.empty()) return "main";
     Mangler m;
     std::string out = "_Z";
     if (!className.empty()) {
-        out += "N" + m.nestedPrefix(className);
+        out += std::string("N") + (constMethod ? "K" : "") + m.nestedPrefix(className); /* _ZNK3Dog3getEv */
         if (name == className) out += "C1";
         else if (name == "~" + className) out += "D1";
         else out += sourceName(name);
@@ -469,7 +470,7 @@ std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &par
 }
 
 std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className) {
+                   const std::string &className, bool constMethod) {
     std::vector<sem::TypePtr> types;
     /* `f(void)` has no parameters */
     bool voidList = params.size() == 1 && params[0] && params[0]->specParts.size() == 1 &&
@@ -479,7 +480,7 @@ std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &p
     if (!voidList) {
         for (const auto &p : params) types.push_back(p ? parseTimeType(*p, true) : sem::errorType());
     }
-    return mangle(name, types, variadic, className);
+    return mangle(name, types, variadic, className, constMethod);
 }
 
 /* mirrors the semantic phase's resolveType()/resolveSpecifiers() minus

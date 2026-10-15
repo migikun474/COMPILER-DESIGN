@@ -15,6 +15,7 @@ public:
     Dog(const Dog &o) { age = o.age; }                    // mangled: _ZN3DogC1ERKS_
     ~Dog() { }                                            // mangled: _ZN3DogD1Ev
     void bark() { }                                       // mangled: _ZN3Dog4barkEv
+    int years() const { return age; }                     // mangled: _ZNK3Dog5yearsEv
     static int count(int n) { return n; }                 // mangled: _ZN3Dog5countEi
     Dog &operator=(const Dog &o) { age = o.age; return *this; } // mangled: _ZN3DogaSERKS_
     int operator[](int i) { return i; }                   // mangled: _ZN3DogixEi

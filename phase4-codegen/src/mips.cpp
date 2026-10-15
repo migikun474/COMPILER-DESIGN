@@ -589,7 +589,8 @@ struct Emitter {
             bool narrow = c == Cls::Bool || c == Cls::Char || c == Cls::UChar || c == Cls::Short || c == Cls::UShort;
             storeValueAt(args[i]->a, narrow ? Cls::Int : c, std::to_string(offsets[i]) + "($sp)"); /* a full word per small argument */
         }
-        ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
+        if (!q.callee && !q.a.isNone()) ins("jalr  " + use(q.a, "$t9")); /* a virtual call: the address from the table */
+        else ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
         if (size) ins("addiu $sp, $sp, " + std::to_string(size));
         if (q.r.isNone()) return;
         Cls c = classOf(q.r.type);
@@ -984,7 +985,9 @@ struct Emitter {
                 size_t at = static_cast<size_t>(init.offset);
                 if (init.kind == GlobalInit::Address || init.kind == GlobalInit::String) {
                     /* an address is only known to the assembler: stored when the program starts */
-                    startup << "        la    $t0, " << (init.kind == GlobalInit::String ? "str" + std::to_string(init.str) : globalLabel[init.target])
+                    std::string to = init.kind == GlobalInit::String ? "str" + std::to_string(init.str)
+                                     : globalLabel.count(init.target) ? globalLabel[init.target] : functionLabel[init.target];
+                    startup << "        la    $t0, " << to
                             << "\n        sw    $t0, " << globalLabel[g.sym.get()] << "+" << init.offset << "\n";
                     continue;
                 }

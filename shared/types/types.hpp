@@ -25,6 +25,7 @@
    ===================================================================== */
 
 #include <map>
+#include <set>
 #include <memory>
 #include <string>
 #include <vector>
@@ -70,6 +71,7 @@ struct Type {
 struct BaseClass {
     std::shared_ptr<RecordInfo> record;
     Access access = Access::Public;
+    long long offset = 0;        /* of the base sub-object, set by layoutRecord */
 };
 
 struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
@@ -92,6 +94,17 @@ struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
        field with its offset from the start of *this* record. They are in
        `members` too (so lookup finds them) but not in `fields`. */
     std::vector<SymbolPtr> promoted;
+
+    /* virtual functions: a polymorphic object holds, at offset 0, a
+       pointer to its class's table of (function, this-adjustment) pairs.
+       The first base shares that pointer when it is polymorphic itself;
+       otherwise the class has its own 4-byte slot before its bases. */
+    bool polymorphic = false;
+    bool ownVptr = false;
+    bool abstract = false;       /* a pure virtual function is left without an overrider */
+    std::vector<Symbol *> virtuals; /* the table's slots, in order: the function that introduced each */
+    std::set<const Symbol *> friendFunctions;
+    std::set<std::string> friendClasses;
 
     long long size = 0;          /* MIPS32 layout, valid once complete */
     int align = 1;
@@ -171,7 +184,7 @@ std::string constantToString(long long v, const TypePtr &t);
 /* How well a value of type `from` converts implicitly to `to`
    (assignment, initialization, argument passing, return). Ranks follow
    C++ overload resolution so the same function also orders overloads. */
-enum class ConvRank { Exact = 0, Promotion = 1, Conversion = 2, Ellipsis = 3, None = 4 };
+enum class ConvRank { Exact = 0, Promotion = 1, Conversion = 2, UserDefined = 3, Ellipsis = 4, None = 5 };
 struct Conversion {
     ConvRank rank = ConvRank::None;
     std::string why; /* explanation when rank == None */

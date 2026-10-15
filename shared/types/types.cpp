@@ -167,6 +167,7 @@ bool isDerivedFrom(const RecordInfo *derived, const RecordInfo *base) {
 bool sameParameterLists(const TypePtr &a, const TypePtr &b) {
     if (!a || !b || !isFunction(a) || !isFunction(b)) return false;
     if (a->variadic != b->variadic || a->params.size() != b->params.size()) return false;
+    if (a->isConst != b->isConst) return false; /* `f()` and `f() const` are different members */
     for (size_t i = 0; i < a->params.size(); ++i) {
         if (!sameType(a->params[i], b->params[i])) return false;
     }
@@ -330,11 +331,12 @@ int alignOf(const TypePtr &t) {
 static long long alignUp(long long v, int a) { return a > 1 ? (v + a - 1) / a * a : v; }
 
 void layoutRecord(RecordInfo &r) {
-    long long offset = 0;
-    int align = 1;
-    for (const auto &b : r.bases) { /* base sub-objects first, in order */
+    long long offset = r.ownVptr ? 4 : 0; /* the table pointer comes first */
+    int align = r.ownVptr ? 4 : 1;
+    for (auto &b : r.bases) { /* base sub-objects next, in order */
         if (!b.record || !b.record->complete) continue;
         offset = alignUp(offset, b.record->align);
+        b.offset = offset;
         offset += b.record->size;
         align = std::max(align, b.record->align);
     }
@@ -424,7 +426,7 @@ static std::string spell(const TypePtr &t, const std::string &inner) {
         case TypeKind::Array:
             return spell(t->elem, inner + "[" + (t->arraySize >= 0 ? std::to_string(t->arraySize) : "") + "]");
         case TypeKind::Function:
-            return spell(t->ret, inner + paramList(t));
+            return spell(t->ret, inner + paramList(t) + (t->isConst ? " const" : ""));
         default: {
             std::string b = quals(t) + baseName(t);
             if (inner.empty()) return b;
