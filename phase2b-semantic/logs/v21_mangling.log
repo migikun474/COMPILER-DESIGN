@@ -60,7 +60,7 @@ age                            INT
 =                              assign_op           
 o                              CLASS_POINTER       
 .                              dot_op              
-age                            IDENTIFIER          
+age                            INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 ~                              tilde_op            
@@ -74,6 +74,16 @@ bark                           PROCEDURE
 (                              open_paren_op       
 )                              close_paren_op      
 {                              open_brace_op       
+}                              close_brace_op      
+int                            int                 
+years                          PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+const                          const               
+{                              open_brace_op       
+return                         return              
+age                            INT                 
+;                              semicolon_op        
 }                              close_brace_op      
 static                         static              
 int                            int                 
@@ -102,7 +112,7 @@ age                            INT
 =                              assign_op           
 o                              CLASS_POINTER       
 .                              dot_op              
-age                            IDENTIFIER          
+age                            INT                 
 ;                              semicolon_op        
 return                         return              
 *                              star_op             
@@ -137,7 +147,7 @@ age                            INT
 ==                             eq_op               
 o                              CLASS_POINTER       
 .                              dot_op              
-age                            IDENTIFIER          
+age                            INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
@@ -697,6 +707,10 @@ Program "translation_unit"
 |   |   `-- CompoundStmt
 |   |-- FunctionDef "bark : _ZN3Dog4barkEv"
 |   |   `-- CompoundStmt
+|   |-- FunctionDef "years : _ZNK3Dog5yearsEv"
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- Identifier "age"
 |   |-- FunctionDef "count : _ZN3Dog5countEi"
 |   |   |-- ParamDecl "n : INT"
 |   |   `-- CompoundStmt
@@ -922,7 +936,7 @@ Point                struct_tag     8      global                       STRUCT  
 Point::x             struct_member  8      global > struct Point        INT                                       0                                
 Point::y             struct_member  8      global > struct Point        INT                                       0                                
 Dog                  class_tag      10     global                       CLASS                                     0                                
-Dog::age             class_member   12     global > class Dog           INT                                       5                                
+Dog::age             class_member   12     global > class Dog           INT                                       6                                
 Dog::Dog             class_method   13     global > class Dog           CONSTRUCTOR                               0         VOID ()                _ZN3DogC1Ev
 Dog::a               parameter      14     global > class Dog > Dog::Dog() INT                                       1                                
 Dog::Dog             class_method   14     global > class Dog           CONSTRUCTOR                               0         VOID (INT)             _ZN3DogC1Ei
@@ -930,103 +944,104 @@ Dog::o               parameter      15     global > class Dog > Dog::Dog() CLASS
 Dog::Dog             class_method   15     global > class Dog           CONSTRUCTOR                               0         VOID (CLASS_POINTER)   _ZN3DogC1ERKS_
 Dog::~Dog            class_method   16     global > class Dog           DESTRUCTOR                                0         VOID ()                _ZN3DogD1Ev
 Dog::bark            class_method   17     global > class Dog           PROCEDURE                                 0         VOID ()                _ZN3Dog4barkEv
-Dog::count           class_method   18     global > class Dog           PROCEDURE        static                   0         INT (INT)              _ZN3Dog5countEi
-Dog::n               parameter      18     global > class Dog > count() INT                                       1                                
-Dog::operator=       class_method   19     global > class Dog           PROCEDURE        *                        0         CLASS_POINTER (CLASS_POINTER) _ZN3DogaSERKS_
-Dog::o               parameter      19     global > class Dog > operator=() CLASS_POINTER                             1                                
-Dog::operator[]      class_method   20     global > class Dog           PROCEDURE                                 0         INT (INT)              _ZN3DogixEi
-Dog::i               parameter      20     global > class Dog > operator[]() INT                                       1                                
-Dog::operator==      class_method   21     global > class Dog           PROCEDURE                                 0         BOOL (CLASS_POINTER)   _ZN3DogeqERKS_
-Dog::o               parameter      21     global > class Dog > operator==() CLASS_POINTER                             1                                
-Dog::operator()      class_method   22     global > class Dog           PROCEDURE                                 0         INT (INT, INT)         _ZN3DogclEii
-Dog::a               parameter      22     global > class Dog > operator()() INT                                       1                                
-Dog::b               parameter      22     global > class Dog > operator()() INT                                       1                                
-Cat                  class_tag      25     global                       CLASS                                     0                                
-Cat::p               parameter      27     global > class Cat > Cat::Cat() STRUCT                                    0                                
-Cat::Cat             class_method   27     global > class Cat           CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
-Cat::meow            class_method   28     global > class Cat           PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
-Cat::p               parameter      30     global > Cat::Cat()          STRUCT                                    0                                
-Cat::Cat             procedure      30     global                       CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
-Cat::meow            procedure      31     global                       PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
-Cat::other           parameter      31     global > meow()              CLASS_POINTER                             0                                
-Cat::where           parameter      31     global > meow()              STRUCT_POINTER                            0                                
-uint                 typedef        33     global                       UNSIGNED_INT                              0                                
-Pt                   typedef        34     global                       STRUCT                                    0                                
-IntPtr               typedef        35     global                       INT_POINTER      *                        0                                
-f0                   procedure      38     global                       PROCEDURE                                 0         VOID ()                _Z2f0v
-f1                   procedure      39     global                       PROCEDURE                                 0         VOID (INT)             _Z2f1i
-a                    parameter      39     global > f1()                INT                                       0                                
-f2                   procedure      40     global                       PROCEDURE                                 0         VOID (CHAR, SHORT, LONG, LONG_LONG) _Z2f2cslx
-a                    parameter      40     global > f2()                CHAR                                      0                                
-b                    parameter      40     global > f2()                SHORT                                     0                                
-c                    parameter      40     global > f2()                LONG                                      0                                
-d                    parameter      40     global > f2()                LONG_LONG                                 0                                
-f3                   procedure      41     global                       PROCEDURE                                 0         VOID (UNSIGNED, UNSIGNED_CHAR, UNSIGNED_SHORT, UNSIGNED_LONG, UNSIGNED_LONG_LONG) _Z2f3jhtmy
-a                    parameter      41     global > f3()                UNSIGNED                                  0                                
-b                    parameter      41     global > f3()                UNSIGNED_CHAR                             0                                
-c                    parameter      41     global > f3()                UNSIGNED_SHORT                            0                                
-d                    parameter      41     global > f3()                UNSIGNED_LONG                             0                                
-e                    parameter      41     global > f3()                UNSIGNED_LONG_LONG                          0                                
-f4                   procedure      42     global                       PROCEDURE                                 0         VOID (FLOAT, DOUBLE, BOOL) _Z2f4fdb
-a                    parameter      42     global > f4()                FLOAT                                     0                                
-b                    parameter      42     global > f4()                DOUBLE                                    0                                
-c                    parameter      42     global > f4()                BOOL                                      0                                
-f5                   procedure      44     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER_POINTER, INT_POINTER, INT_POINTER, CHAR_POINTER, CHAR_POINTER) _Z2f5PiPS_PKiS_PKcS4_
-a                    parameter      44     global > f5()                INT_POINTER                               0                                
-b                    parameter      44     global > f5()                INT_POINTER_POINTER                          0                                
-c                    parameter      44     global > f5()                INT_POINTER                               0                                
-d                    parameter      44     global > f5()                INT_POINTER                               0                                
-e                    parameter      44     global > f5()                CHAR_POINTER                              0                                
-f                    parameter      44     global > f5()                CHAR_POINTER                              0                                
-f6                   procedure      45     global                       PROCEDURE                                 0         VOID (STRUCT, STRUCT_POINTER, STRUCT_POINTER, STRUCT_POINTER) _Z2f65PointPS_RS_RKS_
-a                    parameter      45     global > f6()                STRUCT                                    0                                
-b                    parameter      45     global > f6()                STRUCT_POINTER                            0                                
-c                    parameter      45     global > f6()                STRUCT_POINTER                            0                                
-d                    parameter      45     global > f6()                STRUCT_POINTER                            0                                
-f8                   procedure      46     global                       PROCEDURE                                 0         VOID (CLASS, CLASS_POINTER, CLASS_POINTER) _Z2f83DogPS_RS_
-a                    parameter      46     global > f8()                CLASS                                     0                                
-b                    parameter      46     global > f8()                CLASS_POINTER                             0                                
-c                    parameter      46     global > f8()                CLASS_POINTER                             0                                
-f9                   procedure      48     global                       PROCEDURE                                 0         VOID (UNSIGNED_INT, STRUCT) _Z2f9j5Point
-a                    parameter      48     global > f9()                UNSIGNED_INT                              0                                
-b                    parameter      48     global > f9()                STRUCT                                    0                                
-f25                  procedure      49     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f25PiS_
-a                    parameter      49     global > f25()               INT_POINTER                               0                                
-b                    parameter      49     global > f25()               INT_POINTER                               0                                
-f12                  procedure      51     global                       PROCEDURE                                 0         VOID (INT_ARRAY, CHAR_POINTER_ARRAY) _Z3f12PiPPc
-a                    parameter      51     global > f12()               INT_ARRAY                                 0                                
-argv                 parameter      51     global > f12()               CHAR_POINTER_ARRAY                          0                                
-f13                  procedure      52     global                       PROCEDURE                                 0         VOID (INT_POINTER_ARRAY) _Z3f13PA3_i
-p                    parameter      52     global > f13()               INT_POINTER_ARRAY                          0                                
-f26                  procedure      53     global                       PROCEDURE                                 0         VOID (INT_ARRAY_ARRAY) _Z3f26PA4_i
-a                    parameter      53     global > f26()               INT_ARRAY_ARRAY                           0                                
-f14                  procedure      55     global                       PROCEDURE                                 0         VOID (CHAR_POINTER)    _Z3f14PKcz
-fmt                  parameter      55     global > f14()               CHAR_POINTER                              0                                
-f17                  procedure      56     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f17RiS_
-a                    parameter      56     global > f17()               INT_POINTER                               0                                
-b                    parameter      56     global > f17()               INT_POINTER                               0                                
-f18                  procedure      57     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER, STRUCT) _Z3f18P5PointS0_S_
-a                    parameter      57     global > f18()               STRUCT_POINTER                            0                                
-b                    parameter      57     global > f18()               STRUCT_POINTER                            0                                
-c                    parameter      57     global > f18()               STRUCT                                    0                                
-f19                  procedure      58     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER) _Z3f19PK5PointS1_
-a                    parameter      58     global > f19()               STRUCT_POINTER                            0                                
-b                    parameter      58     global > f19()               STRUCT_POINTER                            0                                
-f24                  procedure      59     global                       PROCEDURE                                 0         VOID (VOID_POINTER, VOID_POINTER) _Z3f24PvPKv
-a                    parameter      59     global > f24()               VOID_POINTER                              0                                
-b                    parameter      59     global > f24()               VOID_POINTER                              0                                
-operator+            procedure      61     global                       PROCEDURE                                 0         STRUCT (STRUCT, STRUCT) _Zpl5PointS_
-a                    parameter      61     global > operator+()         STRUCT                                    1                                
-b                    parameter      61     global > operator+()         STRUCT                                    0                                
-over                 procedure      62     global                       PROCEDURE                                 1         INT (INT)              _Z4overi
-a                    parameter      62     global > over()              INT                                       1                                
-over                 procedure      63     global                       PROCEDURE                                 0         INT (DOUBLE)           _Z4overd
-a                    parameter      63     global > over()              DOUBLE                                    0                                
-over                 procedure      64     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z4overP5Point
-p                    parameter      64     global > over()              STRUCT_POINTER                            0                                
-main                 procedure      66     global                       PROCEDURE                                 0         INT ()                 main
-d                    variable       67     global > main()              CLASS                                     5                                
-z                    variable       68     global > main()              CLASS                                     0                                
-e                    variable       69     global > main()              CLASS                                     3                                
-p                    variable       72     global > main()              STRUCT                                    4                                
-c                    variable       74     global > main()              CLASS                                     2                                
+Dog::years           class_method   18     global > class Dog           PROCEDURE                                 0         INT ()                 _ZNK3Dog5yearsEv
+Dog::count           class_method   19     global > class Dog           PROCEDURE        static                   0         INT (INT)              _ZN3Dog5countEi
+Dog::n               parameter      19     global > class Dog > count() INT                                       1                                
+Dog::operator=       class_method   20     global > class Dog           PROCEDURE        *                        0         CLASS_POINTER (CLASS_POINTER) _ZN3DogaSERKS_
+Dog::o               parameter      20     global > class Dog > operator=() CLASS_POINTER                             1                                
+Dog::operator[]      class_method   21     global > class Dog           PROCEDURE                                 0         INT (INT)              _ZN3DogixEi
+Dog::i               parameter      21     global > class Dog > operator[]() INT                                       1                                
+Dog::operator==      class_method   22     global > class Dog           PROCEDURE                                 0         BOOL (CLASS_POINTER)   _ZN3DogeqERKS_
+Dog::o               parameter      22     global > class Dog > operator==() CLASS_POINTER                             1                                
+Dog::operator()      class_method   23     global > class Dog           PROCEDURE                                 0         INT (INT, INT)         _ZN3DogclEii
+Dog::a               parameter      23     global > class Dog > operator()() INT                                       1                                
+Dog::b               parameter      23     global > class Dog > operator()() INT                                       1                                
+Cat                  class_tag      26     global                       CLASS                                     0                                
+Cat::p               parameter      28     global > class Cat > Cat::Cat() STRUCT                                    0                                
+Cat::Cat             class_method   28     global > class Cat           CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
+Cat::meow            class_method   29     global > class Cat           PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
+Cat::p               parameter      31     global > Cat::Cat()          STRUCT                                    0                                
+Cat::Cat             procedure      31     global                       CONSTRUCTOR                               0         VOID (STRUCT)          _ZN3CatC1E5Point
+Cat::meow            procedure      32     global                       PROCEDURE                                 0         VOID (CLASS_POINTER, STRUCT_POINTER) _ZN3Cat4meowEPS_P5Point
+Cat::other           parameter      32     global > meow()              CLASS_POINTER                             0                                
+Cat::where           parameter      32     global > meow()              STRUCT_POINTER                            0                                
+uint                 typedef        34     global                       UNSIGNED_INT                              0                                
+Pt                   typedef        35     global                       STRUCT                                    0                                
+IntPtr               typedef        36     global                       INT_POINTER      *                        0                                
+f0                   procedure      39     global                       PROCEDURE                                 0         VOID ()                _Z2f0v
+f1                   procedure      40     global                       PROCEDURE                                 0         VOID (INT)             _Z2f1i
+a                    parameter      40     global > f1()                INT                                       0                                
+f2                   procedure      41     global                       PROCEDURE                                 0         VOID (CHAR, SHORT, LONG, LONG_LONG) _Z2f2cslx
+a                    parameter      41     global > f2()                CHAR                                      0                                
+b                    parameter      41     global > f2()                SHORT                                     0                                
+c                    parameter      41     global > f2()                LONG                                      0                                
+d                    parameter      41     global > f2()                LONG_LONG                                 0                                
+f3                   procedure      42     global                       PROCEDURE                                 0         VOID (UNSIGNED, UNSIGNED_CHAR, UNSIGNED_SHORT, UNSIGNED_LONG, UNSIGNED_LONG_LONG) _Z2f3jhtmy
+a                    parameter      42     global > f3()                UNSIGNED                                  0                                
+b                    parameter      42     global > f3()                UNSIGNED_CHAR                             0                                
+c                    parameter      42     global > f3()                UNSIGNED_SHORT                            0                                
+d                    parameter      42     global > f3()                UNSIGNED_LONG                             0                                
+e                    parameter      42     global > f3()                UNSIGNED_LONG_LONG                          0                                
+f4                   procedure      43     global                       PROCEDURE                                 0         VOID (FLOAT, DOUBLE, BOOL) _Z2f4fdb
+a                    parameter      43     global > f4()                FLOAT                                     0                                
+b                    parameter      43     global > f4()                DOUBLE                                    0                                
+c                    parameter      43     global > f4()                BOOL                                      0                                
+f5                   procedure      45     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER_POINTER, INT_POINTER, INT_POINTER, CHAR_POINTER, CHAR_POINTER) _Z2f5PiPS_PKiS_PKcS4_
+a                    parameter      45     global > f5()                INT_POINTER                               0                                
+b                    parameter      45     global > f5()                INT_POINTER_POINTER                          0                                
+c                    parameter      45     global > f5()                INT_POINTER                               0                                
+d                    parameter      45     global > f5()                INT_POINTER                               0                                
+e                    parameter      45     global > f5()                CHAR_POINTER                              0                                
+f                    parameter      45     global > f5()                CHAR_POINTER                              0                                
+f6                   procedure      46     global                       PROCEDURE                                 0         VOID (STRUCT, STRUCT_POINTER, STRUCT_POINTER, STRUCT_POINTER) _Z2f65PointPS_RS_RKS_
+a                    parameter      46     global > f6()                STRUCT                                    0                                
+b                    parameter      46     global > f6()                STRUCT_POINTER                            0                                
+c                    parameter      46     global > f6()                STRUCT_POINTER                            0                                
+d                    parameter      46     global > f6()                STRUCT_POINTER                            0                                
+f8                   procedure      47     global                       PROCEDURE                                 0         VOID (CLASS, CLASS_POINTER, CLASS_POINTER) _Z2f83DogPS_RS_
+a                    parameter      47     global > f8()                CLASS                                     0                                
+b                    parameter      47     global > f8()                CLASS_POINTER                             0                                
+c                    parameter      47     global > f8()                CLASS_POINTER                             0                                
+f9                   procedure      49     global                       PROCEDURE                                 0         VOID (UNSIGNED_INT, STRUCT) _Z2f9j5Point
+a                    parameter      49     global > f9()                UNSIGNED_INT                              0                                
+b                    parameter      49     global > f9()                STRUCT                                    0                                
+f25                  procedure      50     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f25PiS_
+a                    parameter      50     global > f25()               INT_POINTER                               0                                
+b                    parameter      50     global > f25()               INT_POINTER                               0                                
+f12                  procedure      52     global                       PROCEDURE                                 0         VOID (INT_ARRAY, CHAR_POINTER_ARRAY) _Z3f12PiPPc
+a                    parameter      52     global > f12()               INT_ARRAY                                 0                                
+argv                 parameter      52     global > f12()               CHAR_POINTER_ARRAY                          0                                
+f13                  procedure      53     global                       PROCEDURE                                 0         VOID (INT_POINTER_ARRAY) _Z3f13PA3_i
+p                    parameter      53     global > f13()               INT_POINTER_ARRAY                          0                                
+f26                  procedure      54     global                       PROCEDURE                                 0         VOID (INT_ARRAY_ARRAY) _Z3f26PA4_i
+a                    parameter      54     global > f26()               INT_ARRAY_ARRAY                           0                                
+f14                  procedure      56     global                       PROCEDURE                                 0         VOID (CHAR_POINTER)    _Z3f14PKcz
+fmt                  parameter      56     global > f14()               CHAR_POINTER                              0                                
+f17                  procedure      57     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f17RiS_
+a                    parameter      57     global > f17()               INT_POINTER                               0                                
+b                    parameter      57     global > f17()               INT_POINTER                               0                                
+f18                  procedure      58     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER, STRUCT) _Z3f18P5PointS0_S_
+a                    parameter      58     global > f18()               STRUCT_POINTER                            0                                
+b                    parameter      58     global > f18()               STRUCT_POINTER                            0                                
+c                    parameter      58     global > f18()               STRUCT                                    0                                
+f19                  procedure      59     global                       PROCEDURE                                 0         VOID (STRUCT_POINTER, STRUCT_POINTER) _Z3f19PK5PointS1_
+a                    parameter      59     global > f19()               STRUCT_POINTER                            0                                
+b                    parameter      59     global > f19()               STRUCT_POINTER                            0                                
+f24                  procedure      60     global                       PROCEDURE                                 0         VOID (VOID_POINTER, VOID_POINTER) _Z3f24PvPKv
+a                    parameter      60     global > f24()               VOID_POINTER                              0                                
+b                    parameter      60     global > f24()               VOID_POINTER                              0                                
+operator+            procedure      62     global                       PROCEDURE                                 0         STRUCT (STRUCT, STRUCT) _Zpl5PointS_
+a                    parameter      62     global > operator+()         STRUCT                                    1                                
+b                    parameter      62     global > operator+()         STRUCT                                    0                                
+over                 procedure      63     global                       PROCEDURE                                 1         INT (INT)              _Z4overi
+a                    parameter      63     global > over()              INT                                       1                                
+over                 procedure      64     global                       PROCEDURE                                 0         INT (DOUBLE)           _Z4overd
+a                    parameter      64     global > over()              DOUBLE                                    0                                
+over                 procedure      65     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z4overP5Point
+p                    parameter      65     global > over()              STRUCT_POINTER                            0                                
+main                 procedure      67     global                       PROCEDURE                                 0         INT ()                 main
+d                    variable       68     global > main()              CLASS                                     5                                
+z                    variable       69     global > main()              CLASS                                     0                                
+e                    variable       70     global > main()              CLASS                                     3                                
+p                    variable       73     global > main()              STRUCT                                    4                                
+c                    variable       75     global > main()              CLASS                                     2                                

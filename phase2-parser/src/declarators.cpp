@@ -33,6 +33,9 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->isConst = ts.isConst;
     t->isAuto = ts.isAuto;
     t->isTypedef = ts.isTypedefStorage;
+    t->isVirtual = ts.isVirtual;
+    t->isFriend = ts.isFriend;
+    t->isConstMethod = d.isConstMethod;
     t->pointerLevel = d.pointerLevel;
     t->isReference = d.isReference;
     t->arrayDims = d.arrayDims;
@@ -105,7 +108,8 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
     } else if (d.isFunction) {
         std::vector<std::string> paramTypes;
         for (auto &p : d.params) paramTypes.push_back(p.typeStr);
-        std::string mangled = mangle(d.name, paramExprs(d.params), d.isVariadic, currentClassName());
+        std::string mangled = mangle(d.name, paramExprs(d.params), d.isVariadic, ts.isFriend ? "" : currentClassName(),
+                                     d.isConstMethod);
         std::string returnType = computeTypeStr(ts, d.pointerLevel, d.arrayLevel);
 
         SymbolDeclInfo extra;
@@ -117,11 +121,14 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
         extra.returnType = returnType;
         extra.paramTypes = paramTypes;
         extra.mangledName = mangled;
+        extra.aggregateTagName = ts.tagName; /* f().x */
         declareSymbol(d.name, SymKind::PROCEDURE, "PROCEDURE", extra);
         setCategory(d.nameIdx, "PROCEDURE");
 
         auto node = atToken(mkNode(ASTKind::FunctionDecl, d.name + " : " + mangled), d.nameIdx);
         node->typeExpr = makeTypeExpr(ts, d);
+        /* `virtual int area() = 0;`: a pure virtual function */
+        node->typeExpr->isPure = d.initExpr && d.initExpr->kind == ASTKind::IntLiteral && d.initExpr->label == "0";
         for (auto &p : d.params) {
             if (!p.name.empty()) {
                 auto pn = atToken(mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr), p.nameIdx);
@@ -154,7 +161,8 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
 }
 
 ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::vector<DeclInfo> &params,
-                               bool variadic, const std::string &className, const ASTNodePtr &body) {
+                               bool variadic, const std::string &className, const ASTNodePtr &body,
+                               const std::vector<ASTNodePtr> &memInits) {
     std::vector<std::string> paramTypes;
     for (auto &p : params) paramTypes.push_back(p.typeStr);
     std::string mangled = mangle(name, paramExprs(params), variadic, className);
@@ -180,6 +188,7 @@ ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::
             addChild(node, pn);
         }
     }
+    for (const auto &m : memInits) addChild(node, m); /* before the body, which stays the last child */
     if (body) addChild(node, body);
     return node;
 }

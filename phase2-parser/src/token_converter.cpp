@@ -42,6 +42,9 @@ int to_bison_token(TokenType t) {
         case TokenType::STATIC:  return STATIC;
         case TokenType::TYPEDEF: return TYPEDEF;
         case TokenType::AUTO:    return AUTO;
+        case TokenType::VIRTUAL:  return VIRTUAL;
+        case TokenType::EXPLICIT: return EXPLICIT;
+        case TokenType::FRIEND:   return FRIEND;
         case TokenType::EXTERN:  return EXTERN;
 
         // ---- control-flow keywords ----

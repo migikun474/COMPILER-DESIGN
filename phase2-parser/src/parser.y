@@ -48,13 +48,34 @@
         return n;
     }
 
+    /* the struct/class tag of what a postfix expression denotes, so the
+       Token_Type column can classify a member name after it: `p.x`,
+       `arr[0].x`, `a.b.c`, `f().x`, `(*p).x`, `this->x` ("" if unknown) */
+    static std::string aggregateOf(const ASTNodePtr &n) {
+        if (!n) return "";
+        switch (n->kind) {
+            case ASTKind::Identifier: {
+                const Symbol *s = lookupSymbol(n->label);
+                return s ? s->aggregateTagName : "";
+            }
+            case ASTKind::ThisExpr: return currentClassName();
+            case ASTKind::MemberExpr: case ASTKind::ArrowExpr: {
+                const SymbolTableEntry *m = findMember(n->typeExpr ? n->typeExpr->className : aggregateOf(n->children[0]), n->label);
+                return m ? m->aggregateTagName : "";
+            }
+            case ASTKind::IndexExpr: return aggregateOf(n->children[0]);
+            case ASTKind::UnaryExpr: return n->label == "*" ? aggregateOf(n->children[0]) : "";
+            case ASTKind::CallExpr: return n->children.empty() ? "" : aggregateOf(n->children[0]);
+            default: return "";
+        }
+    }
 }
 
 /* ---- keywords ---- */
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
 %token STRUCT CLASS
 %token PUBLIC PRIVATE PROTECTED THIS
-%token STATIC TYPEDEF AUTO EXTERN CONST
+%token STATIC TYPEDEF AUTO EXTERN CONST VIRTUAL EXPLICIT FRIEND
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
@@ -142,7 +163,10 @@ declaration
               auto n = registerDeclarator(d, $1.typeSpec);
               if (n) declNodes.push_back(n);
           }
-          if (declNodes.empty()) {
+          if (declNodes.empty() && $1.typeSpec.isFriend) { /* `friend class Cat;` */
+              std::string who = !$1.typeSpec.tagName.empty() ? $1.typeSpec.tagName : $1.typeSpec.typedefName;
+              $$.node = atToken(mkNode(ASTKind::FriendDecl, who), $1.idx);
+          } else if (declNodes.empty()) {
               $$.node = $1.node; /* bare struct/class declaration */
               /* `struct { int i; float f; };` inside a struct: its members
                  are the enclosing struct's (an anonymous member) */
@@ -172,6 +196,8 @@ declaration_specifiers
           $$.typeSpec.storageClasses += $2.typeSpec.storageClasses;
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
           if ($2.typeSpec.isAuto) $$.typeSpec.isAuto = true;
+          if ($2.typeSpec.isVirtual) $$.typeSpec.isVirtual = true;
+          if ($2.typeSpec.isFriend) $$.typeSpec.isFriend = true;
           if (!$2.typeSpec.tagName.empty()) $$.typeSpec.tagName = $2.typeSpec.tagName;
           if (!$2.typeSpec.typedefName.empty()) $$.typeSpec.typedefName = $2.typeSpec.typedefName;
           if ($2.node) $$.node = $2.node;
@@ -185,6 +211,8 @@ storage_or_type_specifier
     | AUTO     { $$ = ParserValue(); $$.typeSpec.isAuto = true; }
     | TYPEDEF  { $$.typeSpec.isTypedefStorage = true; $$.typeSpec.storageClasses = 1; }
     | CONST    { $$.typeSpec.isConst = true; } /* now actually tracked -- see Symbol/SymbolTableEntry */
+    | VIRTUAL  { $$ = ParserValue(); $$.typeSpec.isVirtual = true; }
+    | FRIEND   { $$ = ParserValue(); $$.typeSpec.isFriend = true; }
     | type_specifier { $$ = $1; }
     ;
 
@@ -385,7 +413,15 @@ member_item
     | function_definition { $$.node = $1.node; }
     | access_specifier ':' { $$ = ParserValue(); $$.str = $1.str; }
     | constructor_def { $$.node = $1.node; }
+    | EXPLICIT constructor_def {
+          $$.node = $2.node;
+          if ($$.node && $$.node->typeExpr) $$.node->typeExpr->isExplicit = true;
+      }
     | destructor_def { $$.node = $1.node; }
+    | VIRTUAL destructor_def {
+          $$.node = $2.node;
+          if ($$.node && $$.node->typeExpr) $$.node->typeExpr->isVirtual = true;
+      }
     ;
 
 /* `Name(params)` inside a class: a constructor, either defined here or
@@ -398,6 +434,7 @@ constructor_head
               if (p.nameIdx >= 0) {
                   SymbolDeclInfo pex;
                   pex.tokenIdx = p.nameIdx;
+                  pex.aggregateTagName = p.typeExpr ? p.typeExpr->tagName : ""; /* p->x */
                   declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, pex);
                   setCategory(p.nameIdx, p.typeStr);
               }
@@ -409,9 +446,10 @@ constructor_head
     ;
 
 constructor_def
-    : constructor_head compound_stmt {
+    : constructor_head mem_init_opt compound_stmt {
           popScope();
-          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), $2.node);
+          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), $3.node,
+                                        $2.nodeList);
       }
     | constructor_head ';' {
           popScope();
@@ -450,13 +488,14 @@ out_of_class_special
               if (p.nameIdx >= 0) {
                   SymbolDeclInfo pex;
                   pex.tokenIdx = p.nameIdx;
+                  pex.aggregateTagName = p.typeExpr ? p.typeExpr->tagName : ""; /* p->x */
                   declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, pex);
                   setCategory(p.nameIdx, p.typeStr);
               }
           }
-      } compound_stmt {
+      } mem_init_opt compound_stmt {
           popScope();
-          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $6.decl.isVariadic, $1.str, $9.node);
+          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $6.decl.isVariadic, $1.str, $10.node, $9.nodeList);
           leaveClass();
       }
     | TYPE_NAME SCOPE_RES '~' TYPE_NAME '(' ')' {
@@ -468,6 +507,34 @@ out_of_class_special
           popScope();
           $$.node = makeDestructorNode($4.str, $4.idx, $1.str, $8.node);
           leaveClass();
+      }
+    ;
+
+/* `Dog(int n) : Animal(4), legs(n) { }`: bases and members built from
+   arguments before the body runs (a base's name before '(' is scanned
+   as FCAST, as in any other `T(...)`) */
+mem_init_opt
+    : /* empty */ { $$ = ParserValue(); }
+    | ':' mem_initializer_list { $$ = $2; }
+    ;
+
+mem_initializer_list
+    : mem_initializer { $$.nodeList.push_back($1.node); }
+    | mem_initializer_list ',' mem_initializer { $$ = $1; $$.nodeList.push_back($3.node); }
+    ;
+
+mem_initializer
+    : IDENTIFIER '(' argument_list_opt ')' {
+          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
+          for (auto &a : $3.nodeList) addChild($$.node, a);
+      }
+    | TYPE_NAME '(' argument_list_opt ')' {
+          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
+          for (auto &a : $3.nodeList) addChild($$.node, a);
+      }
+    | FCAST '(' argument_list_opt ')' {
+          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
+          for (auto &a : $3.nodeList) addChild($$.node, a);
       }
     ;
 
@@ -620,8 +687,9 @@ direct_declarator
           $$.decl.nameIdx = $3.idx;
           $$.decl.className = $1.str;
       }
-    | direct_declarator '(' param_scope parameter_list_opt ')' {
+    | direct_declarator '(' param_scope parameter_list_opt ')' method_cv_opt {
           $$ = $1;
+          $$.decl.isConstMethod = $6.decl.isConstMethod;
           if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) {
               /* `int (*fp)(int)` would declare a pointer to a function;
                  the language has no function pointers, so a parameter
@@ -648,6 +716,12 @@ direct_declarator
       }
     | direct_declarator '[' ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back(nullptr); }
     | direct_declarator '[' assignment_expr ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back($3.node); }
+    ;
+
+/* `int get() const`: a member function that does not change *this */
+method_cv_opt
+    : /* empty */ { $$ = ParserValue(); }
+    | CONST { $$ = ParserValue(); $$.decl.isConstMethod = true; }
     ;
 
 /* `operator+`, `operator==`, `operator[]`, ... as a function name */
@@ -721,7 +795,8 @@ function_definition
           if (outOfClass) enterClass($2.decl.className);
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          std::string owner = $1.typeSpec.isFriend ? "" : currentClassName(); /* a friend is not a member */
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, owner, $2.decl.isConstMethod);
           std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
           SymbolDeclInfo extra;
           extra.tokenIdx = $2.decl.nameIdx;
@@ -732,6 +807,7 @@ function_definition
           extra.returnType = returnType;
           extra.paramTypes = paramTypes;
           extra.mangledName = mangled;
+          extra.aggregateTagName = $1.typeSpec.tagName; /* f().x */
           declareSymbol($2.decl.name, SymKind::PROCEDURE, "PROCEDURE", extra);
           setCategory($2.decl.nameIdx, "PROCEDURE");
           /* deliberately NOT calling leaveClass() here for the
@@ -745,6 +821,7 @@ function_definition
               if (p.nameIdx >= 0) {
                   SymbolDeclInfo pex;
                   pex.tokenIdx = p.nameIdx;
+                  pex.aggregateTagName = p.typeExpr ? p.typeExpr->tagName : ""; /* p->x */
                   declareSymbol(p.name, SymKind::PARAMETER, p.typeStr, pex);
                   setCategory(p.nameIdx, p.typeStr);
               }
@@ -758,7 +835,8 @@ function_definition
              again. */
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic,
+                                       $1.typeSpec.isFriend ? "" : currentClassName(), $2.decl.isConstMethod);
           if (outOfClass) leaveClass();
           auto node = atToken(mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled), $2.decl.nameIdx);
           node->typeExpr = makeTypeExpr($1.typeSpec, $2.decl);
@@ -1080,35 +1158,25 @@ postfix_expr
           $$.node = n;
       }
     | postfix_expr '.' IDENTIFIER {
-          if ($1.node && $1.node->kind == ASTKind::Identifier) {
-              const Symbol *base = lookupSymbol($1.node->label);
-              if (base && !base->aggregateTagName.empty()) {
-                  const SymbolTableEntry *member = findMember(base->aggregateTagName, $3.str);
-                  if (member) setCategory($3.idx, member->typeStr);
-              }
-          }
+          if (const SymbolTableEntry *member = findMember(aggregateOf($1.node), $3.str)) setCategory($3.idx, member->typeStr);
           $$.node = atToken(mkNode(ASTKind::MemberExpr, $3.str, {$1.node}), $3.idx);
       }
     | postfix_expr '.' TYPE_NAME SCOPE_RES IDENTIFIER {
           /* obj.Base::member: the member as class Base declares it, even
              if the object's own class hides it */
+          if (const SymbolTableEntry *member = findMember($3.str, $5.str)) setCategory($5.idx, member->typeStr);
           $$.node = atToken(mkNode(ASTKind::MemberExpr, $5.str, {$1.node}), $5.idx);
           $$.node->typeExpr = std::make_shared<ASTTypeExpr>();
           $$.node->typeExpr->className = $3.str;
       }
     | postfix_expr ARROW TYPE_NAME SCOPE_RES IDENTIFIER {
+          if (const SymbolTableEntry *member = findMember($3.str, $5.str)) setCategory($5.idx, member->typeStr);
           $$.node = atToken(mkNode(ASTKind::ArrowExpr, $5.str, {$1.node}), $5.idx);
           $$.node->typeExpr = std::make_shared<ASTTypeExpr>();
           $$.node->typeExpr->className = $3.str;
       }
     | postfix_expr ARROW IDENTIFIER {
-          if ($1.node && $1.node->kind == ASTKind::Identifier) {
-              const Symbol *base = lookupSymbol($1.node->label);
-              if (base && !base->aggregateTagName.empty()) {
-                  const SymbolTableEntry *member = findMember(base->aggregateTagName, $3.str);
-                  if (member) setCategory($3.idx, member->typeStr);
-              }
-          }
+          if (const SymbolTableEntry *member = findMember(aggregateOf($1.node), $3.str)) setCategory($3.idx, member->typeStr);
           $$.node = atToken(mkNode(ASTKind::ArrowExpr, $3.str, {$1.node}), $3.idx);
       }
     | postfix_expr SCOPE_RES IDENTIFIER { $$.node = atToken(mkNode(ASTKind::ScopeExpr, $3.str, {$1.node}), $3.idx); }

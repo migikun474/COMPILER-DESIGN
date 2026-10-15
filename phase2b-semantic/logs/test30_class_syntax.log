@@ -1,0 +1,238 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test30_class_syntax.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test30_class_syntax.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- VarDecl "id : INT"  <int>  -> Shape::id (field, member)
+|   |-- ConstructorDef "Shape : _ZN5ShapeC1Ei"  -> _ZN5ShapeC1Ei (function)
+|   |   |-- ParamDecl "n : INT"  <int>  -> n.1 (parameter, param)
+|   |   |-- MemInit "id"  -> Shape::id (field, member)
+|   |   |   `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
+|   |   `-- CompoundStmt
+|   |-- FunctionDef "area : _ZNK5Shape4areaEv"  <int (void) const>  -> _ZNK5Shape4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- IntLiteral "0"  <int> =0
+|   |-- FunctionDecl "sides : _ZN5Shape5sidesEv"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|   |-- DestructorDef "Shape : _ZN5ShapeD1Ev"  -> _ZN5ShapeD1Ev (function)
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- BuiltinCallExpr "printf"  <int>
+|   |               |-- StringLiteral ""~Shape%d ""  <char[10]> lvalue
+|   |               `-- Identifier "id"  <int> lvalue  -> Shape::id (field, member)
+|   |-- FunctionDecl "peek : _Z4peekRK5Shape"  <int (const class Shape &)>  -> _Z4peekRK5Shape (function)
+|   |   `-- ParamDecl "s : CLASS_POINTER"
+|   `-- FriendDecl "Inspector"
+|-- ClassDecl "Square : Shape"  <class Square>  -> Square (tag)
+|   |-- VarDecl "side : INT"  <int>  -> Square::side (field, member)
+|   |-- ConstructorDef "Square : _ZN6SquareC1Ei"  -> _ZN6SquareC1Ei (function)
+|   |   |-- ParamDecl "s : INT"  <int>  -> s.2 (parameter, param)
+|   |   |-- MemInit "Shape"  -> Shape (tag)
+|   |   |   `-- IntLiteral "4"  <int> =4
+|   |   |-- MemInit "side"  -> Square::side (field, member)
+|   |   |   `-- Identifier "s"  <int> lvalue  -> s.2 (parameter, param)
+|   |   `-- CompoundStmt
+|   |-- FunctionDef "area : _ZNK6Square4areaEv"  <int (void) const>  -> _ZNK6Square4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"  <int>
+|   |               |-- Identifier "side"  <const int> lvalue  -> Square::side (field, member)
+|   |               `-- Identifier "side"  <const int> lvalue  -> Square::side (field, member)
+|   `-- FunctionDef "sides : _ZN6Square5sidesEv"  <int (void)>  -> _ZN6Square5sidesEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "4"  <int> =4
+|-- FunctionDef "peek : _Z4peekRK5Shape"  -> _Z4peekRK5Shape (function)
+|   |-- ParamDecl "s : CLASS_POINTER"  <const class Shape &>  -> s.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- MemberExpr "id"  <const int> lvalue  -> Shape::id (field, member)
+|               `-- Identifier "s"  <const class Shape> lvalue  -> s.3 (parameter, param)
+|-- FunctionDef "shapes : _Z6shapesv"  <int (void)>  -> _Z6shapesv (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "q : CLASS"  <class Square>  -> q.4 (variable, local)
+|       |   `-- ConstructExpr "CLASS"  <class Square>  -> _ZN6SquareC1Ei (function)
+|       |       `-- IntLiteral "3"  <int> =3
+|       |-- VarDecl "p : CLASS_POINTER"  <class Shape *>  -> p.5 (variable, local)
+|       |   `-- UnaryExpr "&"  <class Square *>
+|       |       `-- Identifier "q"  <class Square> lvalue  -> q.4 (variable, local)
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- CallExpr  <int>  -> _ZNK5Shape4areaEv (function)
+|               |   |   `-- ArrowExpr "area"  <int (void) const>  -> _ZNK5Shape4areaEv (function)
+|               |   |       `-- Identifier "p"  <class Shape *> lvalue  -> p.5 (variable, local)
+|               |   `-- CallExpr  <int>  -> _ZN5Shape5sidesEv (function)
+|               |       `-- ArrowExpr "sides"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|               |           `-- Identifier "p"  <class Shape *> lvalue  -> p.5 (variable, local)
+|               `-- CallExpr  <int>  -> _Z4peekRK5Shape (function)
+|                   |-- Identifier "peek"  <int (const class Shape &)>  -> _Z4peekRK5Shape (function)
+|                   `-- Identifier "q"  <class Square> lvalue  -> q.4 (variable, local)
+|-- StructDecl "In"  <struct In>  -> In (tag)
+|   `-- VarDecl "v : INT"  <int>  -> In::v (field, member)
+|-- StructDecl "P"  <struct P>  -> P (tag)
+|   |-- VarDecl "x : INT"  <int>  -> P::x (field, member)
+|   |-- VarDecl "in : STRUCT"  <struct In>  -> P::in (field, member)
+|   `-- VarDecl "list : STRUCT_ARRAY"  <struct In[2]>  -> P::list (field, member)
+|-- FunctionDef "make : _Z4makev"  <struct P (void)>  -> _Z4makev (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "p : STRUCT"  <struct P>  -> p.6 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "x"  <int> lvalue  -> P::x (field, member)
+|       |       |   `-- Identifier "p"  <struct P> lvalue  -> p.6 (variable, local)
+|       |       `-- IntLiteral "1"  <int> =1
+|       `-- ReturnStmt
+|           `-- Identifier "p"  <struct P> lvalue  -> p.6 (variable, local)
+|-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
+|   |-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
+|   |-- VarDecl "next : CLASS_POINTER"  <class Dog *>  -> Dog::next (field, member)
+|   `-- FunctionDef "get : _ZN3Dog3getEv"  <int (void)>  -> _ZN3Dog3getEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- ArrowExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|                   `-- ThisExpr  <class Dog *>
+|-- FunctionDef "use : _Z3useP1P"  <int (struct P *)>  -> _Z3useP1P (function)
+|   |-- ParamDecl "q : STRUCT_POINTER"  <struct P *>  -> q.7 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- ArrowExpr "x"  <int> lvalue  -> P::x (field, member)
+|               |   `-- Identifier "q"  <struct P *> lvalue  -> q.7 (parameter, param)
+|               `-- MemberExpr "v"  <int> lvalue  -> In::v (field, member)
+|                   `-- ArrowExpr "in"  <struct In> lvalue  -> P::in (field, member)
+|                       `-- Identifier "q"  <struct P *> lvalue  -> q.7 (parameter, param)
+|-- FunctionDef "members : _Z7membersv"  <int (void)>  -> _Z7membersv (function)
+|   `-- CompoundStmt
+|       |-- VarDecl "arr : STRUCT_ARRAY"  <struct P[3]>  -> arr.8 (variable, local)
+|       |-- VarDecl "p : STRUCT_POINTER"  <struct P *>  -> p.9 (variable, local)
+|       |   `-- Identifier "arr"  <struct P[3]> lvalue  -> arr.8 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "x"  <int> lvalue  -> P::x (field, member)
+|       |       |   `-- IndexExpr  <struct P> lvalue
+|       |       |       |-- Identifier "arr"  <struct P[3]> lvalue  -> arr.8 (variable, local)
+|       |       |       `-- IntLiteral "0"  <int> =0
+|       |       `-- IntLiteral "1"  <int> =1
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "v"  <int> lvalue  -> In::v (field, member)
+|       |       |   `-- MemberExpr "in"  <struct In> lvalue  -> P::in (field, member)
+|       |       |       `-- IndexExpr  <struct P> lvalue
+|       |       |           |-- Identifier "arr"  <struct P[3]> lvalue  -> arr.8 (variable, local)
+|       |       |           `-- IntLiteral "1"  <int> =1
+|       |       `-- IntLiteral "2"  <int> =2
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "v"  <int> lvalue  -> In::v (field, member)
+|       |       |   `-- IndexExpr  <struct In> lvalue
+|       |       |       |-- ArrowExpr "list"  <struct In[2]> lvalue  -> P::list (field, member)
+|       |       |       |   `-- Identifier "p"  <struct P *> lvalue  -> p.9 (variable, local)
+|       |       |       `-- IntLiteral "1"  <int> =1
+|       |       `-- IntLiteral "3"  <int> =3
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "x"  <int> lvalue  -> P::x (field, member)
+|       |       |   `-- UnaryExpr "*"  <struct P> lvalue
+|       |       |       `-- Identifier "p"  <struct P *> lvalue  -> p.9 (variable, local)
+|       |       `-- IntLiteral "4"  <int> =4
+|       |-- VarDecl "a : INT"  <int>  -> a.10 (variable, local)
+|       |   `-- MemberExpr "x"  <int>  -> P::x (field, member)
+|       |       `-- CallExpr  <struct P>  -> _Z4makev (function)
+|       |           `-- Identifier "make"  <struct P (void)>  -> _Z4makev (function)
+|       |-- VarDecl "d : CLASS"  <class Dog>  -> d.11 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <class Dog *>
+|       |       |-- MemberExpr "next"  <class Dog *> lvalue  -> Dog::next (field, member)
+|       |       |   `-- Identifier "d"  <class Dog> lvalue  -> d.11 (variable, local)
+|       |       `-- UnaryExpr "&"  <class Dog *>
+|       |           `-- Identifier "d"  <class Dog> lvalue  -> d.11 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- ArrowExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|       |       |   `-- MemberExpr "next"  <class Dog *> lvalue  -> Dog::next (field, member)
+|       |       |       `-- Identifier "d"  <class Dog> lvalue  -> d.11 (variable, local)
+|       |       `-- IntLiteral "4"  <int> =4
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- Identifier "a"  <int> lvalue  -> a.10 (variable, local)
+|               |   `-- CallExpr  <int>  -> _Z3useP1P (function)
+|               |       |-- Identifier "use"  <int (struct P *)>  -> _Z3useP1P (function)
+|               |       `-- Identifier "p"  <struct P *> lvalue  -> p.9 (variable, local)
+|               `-- ArrowExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
+|                   `-- ArrowExpr "next"  <class Dog *> lvalue  -> Dog::next (field, member)
+|                       `-- MemberExpr "next"  <class Dog *> lvalue  -> Dog::next (field, member)
+|                           `-- Identifier "d"  <class Dog> lvalue  -> d.11 (variable, local)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- CallExpr  <int>  -> _Z6shapesv (function)
+                |   `-- Identifier "shapes"  <int (void)>  -> _Z6shapesv (function)
+                `-- CallExpr  <int>  -> _Z7membersv (function)
+                    `-- Identifier "members"  <int (void)>  -> _Z7membersv (function)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Shape              class_tag      class Shape                -        global                         6     -     0     Shape                -                        size 8
+Shape::id          field          int                        member   global > class Shape           8     4     2     Shape::id            -                        public, offset 4
+Shape::Shape       constructor    void (int)                 -        global > class Shape           9     -     1     _ZN5ShapeC1Ei        _ZN5ShapeC1Ei            public
+Shape::area        method         int (void) const           -        global > class Shape           10    -     1     _ZNK5Shape4areaEv    _ZNK5Shape4areaEv        public, defined
+Shape::sides       method         int (void)                 -        global > class Shape           11    -     1     _ZN5Shape5sidesEv    _ZN5Shape5sidesEv        public, declared only
+Shape::~Shape      destructor     void (void)                -        global > class Shape           12    -     0     _ZN5ShapeD1Ev        _ZN5ShapeD1Ev            public
+peek               function       int (const class Shape &)  -        global                         13    -     1     _Z4peekRK5Shape      _Z4peekRK5Shape          defined
+n                  parameter      int                        param    global > class Shape > Shape() 9     4     1     n.1                  -                        
+Square             class_tag      class Square               -        global                         16    -     0     Square               -                        size 12, public base Shape
+Square::side       field          int                        member   global > class Square          17    4     2     Square::side         -                        private, offset 8
+Square::Square     constructor    void (int)                 -        global > class Square          19    -     1     _ZN6SquareC1Ei       _ZN6SquareC1Ei           public
+Square::area       method         int (void) const           -        global > class Square          20    -     0     _ZNK6Square4areaEv   _ZNK6Square4areaEv       public, defined
+Square::sides      method         int (void)                 -        global > class Square          21    -     0     _ZN6Square5sidesEv   _ZN6Square5sidesEv       public, defined
+s                  parameter      int                        param    global > class Square > Square() 19    4     1     s.2                  -                        
+s                  parameter      const class Shape &        param    global > peek()                23    4     1     s.3                  -                        
+shapes             function       int (void)                 -        global                         24    -     1     _Z6shapesv           _Z6shapesv               defined
+q                  variable       class Square               local    global > shapes()              25    12    2     q.4                  -                        
+p                  variable       class Shape *              local    global > shapes()              26    4     2     p.5                  -                        
+In                 struct_tag     struct In                  -        global                         29    -     0     In                   -                        size 4
+In::v              field          int                        member   global > struct In             29    4     3     In::v                -                        public, offset 0
+P                  struct_tag     struct P                   -        global                         30    -     0     P                    -                        size 16
+P::x               field          int                        member   global > struct P              30    4     5     P::x                 -                        public, offset 0
+P::in              field          struct In                  member   global > struct P              30    4     2     P::in                -                        public, offset 4
+P::list            field          struct In[2]               member   global > struct P              30    8     1     P::list              -                        public, offset 8
+make               function       struct P (void)            -        global                         31    -     1     _Z4makev             _Z4makev                 defined
+p                  variable       struct P                   local    global > make()                31    16    2     p.6                  -                        
+Dog                class_tag      class Dog                  -        global                         32    -     0     Dog                  -                        size 8
+Dog::legs          field          int                        member   global > class Dog             32    4     3     Dog::legs            -                        public, offset 0
+Dog::next          field          class Dog *                member   global > class Dog             32    4     4     Dog::next            -                        public, offset 4
+Dog::get           method         int (void)                 -        global > class Dog             32    -     0     _ZN3Dog3getEv        _ZN3Dog3getEv            public, defined
+use                function       int (struct P *)           -        global                         33    -     1     _Z3useP1P            _Z3useP1P                defined
+q                  parameter      struct P *                 param    global > use()                 33    4     2     q.7                  -                        
+members            function       int (void)                 -        global                         34    -     1     _Z7membersv          _Z7membersv              defined
+arr                variable       struct P[3]                local    global > members()             35    48    3     arr.8                -                        
+p                  variable       struct P *                 local    global > members()             36    4     3     p.9                  -                        
+a                  variable       int                        local    global > members()             41    4     1     a.10                 -                        
+d                  variable       class Dog                  local    global > members()             42    8     4     d.11                 -                        
+main               function       int (void)                 -        global                         47    -     0     main                 main                     defined
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 8, align 4
+    +4  int id  [public]
+class Square: size 12, align 4
+    (base Shape, public)
+    +8  int side  [private]
+struct In: size 4, align 4
+    +0  int v  [public]
+struct P: size 16, align 4
+    +0  int x  [public]
+    +4  struct In in  [public]
+    +8  struct In[2] list  [public]
+class Dog: size 8, align 4
+    +0  int legs  [public]
+    +4  class Dog * next  [public]

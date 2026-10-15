@@ -959,6 +959,37 @@ under "Planned". It now shows what is implemented.
 **Result:** semantic 84 passed, TAC 31 passed (raw and `-O1`…`-O3`),
 SPIM 30 passed at `-O0`…`-O3`.
 
+### D32. The last partial features (2026-10-15)
+
+The user asked for the six remaining partial features of
+`docs/FEATURES.md` to be finished and merged. One of them had a real
+design choice, which was put to the user; the rest follow g++.
+
+| Feature | Decision | Why |
+|---|---|---|
+| `virtual` (asked) | **vtable + indirect call** (user's choice over a switch on a class number). One new TAC form, `t = call *t2, n`; the interpreter maps function addresses back to functions, MIPS uses `jalr`, the optimizer treats it like any call (memory barrier, never inlined). Entries are (address, this-adjustment) pairs instead of Itanium thunks. | The standard technique; the pair form handles multiple inheritance without generating thunk functions. |
+| Table pointers | At offset 0 of every polymorphic object, shared with the first base when it is polymorphic, else a slot of its own before the bases; stored by constructors after the bases, re-stored at the start of a destructor, by every copy (slicing), and kept by assignment. | Matches C++ behaviour during construction/destruction and for `Base b = derived;` / `b = derived;`. |
+| `virtual ~T()` | Accepted; never dispatched. | Without `delete` (D31) an object is always destroyed where its exact class is known. |
+| Abstract classes | Variables, members, temporaries, by-value parameters and returns of an abstract type are errors; a pure slot in a table is 0. | C++ rules. |
+| Member initializer lists | Bases and members built in declaration order from the list, everything else default-constructed (and must be default-constructible); reference members now work, accessed through their stored address. | C++ rules; reference members needed the extra dereference to be usable at all. |
+| `const` member functions | Part of the function type (`f()` and `f() const` overload), mangled `_ZNK...`; on a const object only const members can be called, otherwise the non-const overload wins; inside one, `this` is `const T *`. | C++ rules, g++'s mangling. |
+| `friend` | `friend` functions (declared or defined in the class, but file-scope functions) and `friend class X;` may use private and protected members. | C++ rules. |
+| `explicit` | Explicit constructors take no part in implicit conversions (copy-initialization, arguments, returns). | C++ rules. |
+| Converting constructors for arguments and returns | A new rank, `UserDefined`, between standard conversions and `...`; at most one per argument; the chosen constructor builds a temporary (destroyed after the call, like a by-value parameter). | C++ overload ranking. |
+| Slicing | A derived object may initialize, be assigned to, or be passed as its base; only the base part is copied. | Found while testing virtual functions: it was rejected before. |
+| Brace elision into struct members | Semantic analysis rewrites a list into fully braced form (`elideBraces()`); the TAC generator lost its own array-only elision path. | One implementation of the C rule instead of two partial ones. |
+| Flow checks | In the semantic phase: "control reaches end of non-void function on some path" (warning), "code will never be executed" (warning), a `goto` or `case` jumping into the scope of an initialized variable (error, as g++). Skipped in a function that already has errors. | g++'s behaviour; the warnings are structural (a constant condition is the only one evaluated). |
+| Token_Type of member names | `aggregateOf()` follows any postfix expression back to its struct/class tag. | Was limited to a plain identifier before. |
+| Lexer columns | `YY_USER_ACTION` tracks the column of every token; diagnostics print `Line N:C`. | The parser's scanner already did. |
+
+**Known ceilings:** no covariant return types, `override` / `final`,
+or virtual inheritance; a member inherited from a base keeps
+`IDENTIFIER` in the parser's Token_Type table.
+
+**Result:** semantic 87 passed (new `v27`, `e23`, parser `test30`), TAC
+34 passed (new `t31_virtual`, `t32_class_features`, `t33_brace_elision`,
+expected output from g++ / gcc), SPIM 33 passed at `-O0`…`-O3`.
+
 ---
 
 ## Open questions

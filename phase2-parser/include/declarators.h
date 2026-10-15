@@ -42,7 +42,8 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts);
    (`Dog(int n);`), whose definition then appears outside it
    (`Dog::Dog(int n) { ... }`); `className` names the class either way. */
 ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::vector<DeclInfo> &params,
-                               bool variadic, const std::string &className, const ASTNodePtr &body);
+                               bool variadic, const std::string &className, const ASTNodePtr &body,
+                               const std::vector<ASTNodePtr> &memInits = {});
 ASTNodePtr makeDestructorNode(const std::string &name, int nameIdx, const std::string &className,
                               const ASTNodePtr &body);
 

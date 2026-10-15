@@ -99,7 +99,7 @@ void SemanticAnalyzer::analyze(const ASTNodePtr &root) {
                     "undefined-variable");
         }
         if (s->kind == SymbolKind::Function && !s->isDefined && s->useCount > 0 &&
-            !s->isConstructor && !s->isDestructor) {
+            !s->isConstructor && !s->isDestructor && !s->isPure) { /* a pure virtual one is never called directly */
             warning(s->line, s->column, "function '" + s->name + "' is used but never defined",
                     "undefined-function");
         }
@@ -393,6 +393,7 @@ SemanticAnalyzer::Resolved SemanticAnalyzer::resolveType(const ASTTypeExpr &te, 
             t = errorType();
         }
         t = functionType(t, resolveParams(te, at), te.isVariadic);
+        if (te.isConstMethod) t = qualified(t, true); /* `int get() const` */
     } else {
         t = wrapArrays(t, innerDims, te.arrayDims.size());
     }
@@ -518,6 +519,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     /* `int a[] = {1, 2, 3};` / `char s[] = "abc";`: the size comes from the initializer */
     if (isArray(t) && t->arraySize < 0) {
         if (init && init->kind == ASTKind::InitializerList) {
+            elideBraces(t, init); /* `int m[][2] = {1, 2, 3, 4}` has 2 rows */
             long long count = 0, pos = 0;
             for (const auto &c : init->children) {
                 if (c->kind == ASTKind::DesignatedInit && c->label[0] == '[') pos = std::max(0LL, designatorIndex(c));
@@ -526,16 +528,6 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
             if (count == 0) {
                 error(line, col, "zero-size array '" + name + "' (an empty initializer gives the array no elements)",
                       "array-size");
-            }
-            bool flat = isArray(t->elem) && std::none_of(init->children.begin(), init->children.end(),
-                                                         [](const ASTNodePtr &c) { return c->kind == ASTKind::InitializerList; });
-            if (flat) {
-                long long inner = std::max(1LL, sizeOf(t->elem) / std::max(1LL, sizeOf([&] {
-                                                     TypePtr e = t->elem;
-                                                     while (isArray(e)) e = e->elem;
-                                                     return e;
-                                                 }())));
-                count = (count + inner - 1) / inner;
             }
             t = qualified(arrayOf(t->elem, std::max(1LL, count)), t->isConst);
         } else if (init && init->kind == ASTKind::StringLiteral && t->elem && t->elem->kind == TypeKind::Char) {
@@ -549,7 +541,11 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
         }
     }
 
-    if (isVoid(t)) {
+    if (isAbstractType(t) && !declarationOnly) {
+        error(line, col, what + " '" + name + "' cannot have the abstract type " + q(t) + " (it has pure virtual functions)",
+              "abstract");
+        t = errorType();
+    } else if (isVoid(t)) {
         error(line, col, what + " '" + name + "' has incomplete type 'void'", "incomplete-type");
         t = errorType();
     } else if (!isError(t) && !isComplete(t) && !isReference(t) && !declarationOnly) {
@@ -741,9 +737,89 @@ bool SemanticAnalyzer::isConstantInitializer(const ASTNodePtr &n) {
     }
 }
 
+/* ---- brace elision (C11 6.7.9p20) ----
+   An aggregate member whose initializer does not start with `{` takes
+   as many of the following values as it has elements:
+   `struct { int a[2]; int b; } s = {1, 2, 3};` means `{{1, 2}, 3}`.
+   The list is rewritten into that fully braced form, so checking and
+   code generation only ever see braced aggregates.
+   ponytail: the value after a designator must be braced when it names
+   an aggregate (`{.a = 1, 2}` is not elided); gcc accepts that too. */
+static bool isAggregate(const TypePtr &t) {
+    return t && (isArray(t) || (isRecord(t) && t->record && t->record->constructors.empty() && !t->record->polymorphic));
+}
+
+static std::vector<SymbolPtr> memberFields(const TypePtr &t) {
+    std::vector<SymbolPtr> out;
+    for (const auto &f : t->record->fields)
+        if (f->storage == Storage::Member) out.push_back(f);
+    return out;
+}
+
+/* the initializer for one subobject of type `sub`, starting at items[i] */
+ASTNodePtr SemanticAnalyzer::takeElided(const TypePtr &sub, const std::vector<ASTNodePtr> &items, size_t &i) {
+    const ASTNodePtr c = items[i];
+    if (c->kind == ASTKind::InitializerList) {
+        elideBraces(sub, c);
+        ++i;
+        return c;
+    }
+    bool whole = !isAggregate(sub) ||
+                 (c->kind == ASTKind::StringLiteral && isArray(sub) && sub->elem && sub->elem->kind == TypeKind::Char);
+    if (!whole && isRecord(sub) && c->kind != ASTKind::DesignatedInit) { /* `{other, 1}`: a struct value */
+        TypePtr ct = decay(expr(c));
+        whole = isRecord(ct) && (ct->record == sub->record || isDerivedFrom(ct->record.get(), sub->record.get()));
+    }
+    if (whole) {
+        ++i;
+        return c;
+    }
+    ASTNodePtr group = mkNode(ASTKind::InitializerList);
+    group->line = c->line;
+    group->column = c->column;
+    std::vector<SymbolPtr> fields = isRecord(sub) ? memberFields(sub) : std::vector<SymbolPtr>();
+    size_t count = isArray(sub) ? (sub->arraySize < 0 ? items.size() : static_cast<size_t>(sub->arraySize)) : fields.size();
+    for (size_t k = 0; k < count && i < items.size() && items[i]->kind != ASTKind::DesignatedInit; ++k)
+        group->children.push_back(takeElided(isArray(sub) ? sub->elem : fields[k]->type, items, i));
+    if (group->children.empty()) { /* nothing to fill (an empty struct): the value stays where it was */
+        ++i;
+        return c;
+    }
+    return group;
+}
+
+void SemanticAnalyzer::elideBraces(const TypePtr &target, const ASTNodePtr &list) {
+    if (!isAggregate(target) || !list || list->kind != ASTKind::InitializerList) return;
+    std::vector<ASTNodePtr> items = list->children, out;
+    std::vector<SymbolPtr> fields = isRecord(target) ? memberFields(target) : std::vector<SymbolPtr>();
+    size_t i = 0, pos = 0;
+    while (i < items.size()) {
+        const ASTNodePtr &c = items[i];
+        if (c->kind == ASTKind::DesignatedInit) { /* only re-positions; its value is braced or a scalar */
+            TypePtr sub;
+            if (isArray(target) && c->label[0] == '[') {
+                sub = target->elem;
+            } else if (isRecord(target) && c->label[0] == '.') {
+                for (size_t k = 0; k < fields.size(); ++k)
+                    if (fields[k]->name == c->label.substr(1)) sub = fields[k]->type, pos = k;
+            }
+            if (sub && !c->children.empty()) elideBraces(sub, c->children.back());
+            out.push_back(c);
+            ++i;
+            ++pos;
+            continue;
+        }
+        TypePtr sub = isArray(target) ? target->elem : pos < fields.size() ? fields[pos]->type : nullptr;
+        out.push_back(sub ? takeElided(sub, items, i) : items[i++]); /* past the end: an excess element, reported later */
+        ++pos;
+    }
+    list->children = out;
+}
+
 void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr &init, bool requireConstant,
                                         const std::string &what) {
     if (!init) return;
+    elideBraces(target, init);
     if (init->kind == ASTKind::ConstructExpr && !init->typeExpr) { /* `T x(args)` */
         constructorInit(target, init, what);
         if (requireConstant && !isRecord(target) && !isError(target) && !isConstantInitializer(init)) {
@@ -802,24 +878,6 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
                 }
                 return;
             }
-            bool flat = isArray(elem) && std::none_of(items.begin(), items.end(), [](const ASTNodePtr &c) {
-                            return c->kind == ASTKind::InitializerList || c->kind == ASTKind::StringLiteral;
-                        });
-            if (flat) { /* brace elision: `int m[2][2] = {1, 2, 3, 4};` */
-                TypePtr leaf = elem;
-                long long total = target->arraySize;
-                while (isArray(leaf)) {
-                    total = total < 0 ? -1 : total * leaf->arraySize;
-                    leaf = leaf->elem;
-                }
-                if (total >= 0 && static_cast<long long>(items.size()) > total) {
-                    error(items[total].get(), "excess elements in array initializer (" + what + " holds " +
-                                                  std::to_string(total) + " elements)",
-                          "initializer");
-                }
-                for (const auto &c : items) checkInitializer(leaf, c, requireConstant, what);
-                return;
-            }
             if (target->arraySize >= 0 && static_cast<long long>(items.size()) > target->arraySize) {
                 error(items[target->arraySize].get(), "excess elements in array initializer (" + what + " has " +
                                                           std::to_string(target->arraySize) + " elements)",
@@ -830,6 +888,11 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
         }
         if (isRecord(target)) {
             RecordInfo *rec = target->record.get();
+            if (rec->polymorphic) {
+                error(init.get(), "a class with virtual functions (" + q(target) + ") cannot be initialized with a brace list; use a constructor",
+                      "initializer");
+                return;
+            }
             std::vector<SymbolPtr> fields;
             for (const auto &f : rec->fields) {
                 if (f->storage == Storage::Member) fields.push_back(f);
@@ -943,9 +1006,8 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
     if (RecordInfo *rec = isRecord(target) ? target->record.get() : nullptr) {
         /* `Dog d = 4;`: a constructor taking one argument converts */
         RecordInfo *from = isRecord(decay(it)) ? decay(it)->record.get() : nullptr;
-        if (!(from && (from == rec || isDerivedFrom(from, rec))) && !rec->constructors.empty() &&
-            anyViable(rec->constructors, {init})) {
-            init->converter = construct(rec, {init}, init.get());
+        if (!(from && (from == rec || isDerivedFrom(from, rec))) && userConvertible(target, init)) {
+            init->converter = construct(rec, {init}, init.get(), true);
             return;
         }
     }
@@ -1016,6 +1078,11 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     }
     TypePtr ft = r.type;
     if (!isFunction(ft)) return nullptr;
+    for (const auto &p : ft->params)
+        if (isAbstractType(p)) error(line, col, "a parameter of '" + name + "' cannot have the abstract type " + q(p) + "; pass it by reference",
+                                     "abstract");
+    if (isAbstractType(ft->ret))
+        error(line, col, "'" + name + "' cannot return the abstract type " + q(ft->ret) + " by value", "abstract");
     if (isDefinition && ctx != DeclCtx::Member && !isVoid(ft->ret) && !isError(ft->ret) && !isComplete(ft->ret) &&
         !isReference(ft->ret)) {
         error(line, col, "function '" + name + "' has incomplete return type " + q(ft->ret), "incomplete-type");
@@ -1078,10 +1145,21 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     sym->line = line;
     sym->column = col;
     sym->isStatic = te.isStatic;
+    sym->isVirtual = te.isVirtual;
+    sym->isPure = te.isPure;
     sym->declNode = n.get();
+    if (!rec && (te.isVirtual || te.isConstMethod))
+        error(line, col, std::string(te.isVirtual ? "'virtual'" : "a 'const' qualifier") + " is only allowed on member functions ('" +
+                             name + "' is not one)",
+              "invalid-specifier");
+    if (te.isStatic && (te.isVirtual || te.isConstMethod))
+        error(line, col, "static member function '" + name + "' cannot be " + (te.isVirtual ? "virtual" : "const"),
+              "invalid-specifier");
+    if (te.isPure && !te.isVirtual)
+        error(line, col, "'" + name + "' is declared '= 0' but is not virtual", "pure-virtual");
     /* the link name, from the resolved signature (Itanium C++ ABI) */
     sym->mangledName = (name == "main" && ctx == DeclCtx::Global) ? "main"
-                                                                  : mangle(name, ft->params, ft->variadic, rec ? rec->tag : "");
+                                                                  : mangle(name, ft->params, ft->variadic, rec ? rec->tag : "", ft->isConst);
     sym->uniqueName = sym->mangledName;
     /* distinct signatures always mangle differently; this only guards
        the TAC namespace against a declaration that already failed */
@@ -1262,11 +1340,15 @@ void SemanticAnalyzer::functionBody(const ASTNodePtr &n, const SymbolPtr &fnSym,
             const_cast<ASTNode *>(node)->symbol = ls;
         }
         fns.push_back(c);
+        int errorsBefore = errors;
+        if (fnSym->isConstructor && cls) memberInitializers(n, cls);
         blockItems(body); /* the body block shares the parameters' scope, as in C */
         FunctionCtx done = fns.back();
         fns.pop_back();
-        if (!isVoid(ft->ret) && !isError(ft->ret) && !done.sawValueReturn && !c.isConstructorLike &&
-            !(fnSym->name == "main" && !fnSym->isMethod)) {
+        bool needsValue = !isVoid(ft->ret) && !isError(ft->ret) && !c.isConstructorLike &&
+                          !(fnSym->name == "main" && !fnSym->isMethod);
+        if (errors == errorsBefore) flowChecks(body, fnSym.get(), needsValue && done.sawValueReturn); /* not on broken code */
+        if (needsValue && !done.sawValueReturn) {
             warning(fnSym->line, fnSym->column,
                     "non-void function '" + fnSym->name + "' has no return statement (declared to return " +
                         q(ft->ret) + ")",
@@ -1333,7 +1415,7 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
 
     rec->scopeId = st.enterScope(ScopeKind::Record, recordKindName(kind) + " " + tag, rec.get());
     Access defaultAccess = kind == RecordKind::Class ? Access::Private : Access::Public;
-    std::vector<std::pair<ASTNodePtr, SymbolPtr>> bodies;
+    std::vector<std::pair<ASTNodePtr, SymbolPtr>> bodies, friendBodies;
     /* promoted member -> (the unnamed member holding it, the inner field) */
     struct Promotion {
         SymbolPtr promoted, holder, inner;
@@ -1412,12 +1494,23 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 st.declareIn(rec->scopeId, f);
                 break;
             }
+            case ASTKind::FriendDecl: /* `friend class Cat;` */
+                rec->friendClasses.insert(m->label);
+                break;
             case ASTKind::FunctionDecl: {
+                if (m->typeExpr && m->typeExpr->isFriend) {
+                    friendFunction(m, rec.get(), false, friendBodies);
+                    break;
+                }
                 SymbolPtr s = functionSignature(m, DeclCtx::Member, false);
                 if (s) s->access = a;
                 break;
             }
             case ASTKind::FunctionDef: {
+                if (m->typeExpr && m->typeExpr->isFriend) {
+                    friendFunction(m, rec.get(), true, friendBodies);
+                    break;
+                }
                 SymbolPtr s = functionSignature(m, DeclCtx::Member, true);
                 if (!s) break;
                 s->access = a;
@@ -1457,6 +1550,8 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 bool hasBody = !m->children.empty() && m->children.back()->kind == ASTKind::CompoundStmt;
                 s->isConstructor = ctor;
                 s->isDestructor = !ctor;
+                s->isExplicit = m->typeExpr && m->typeExpr->isExplicit;
+                s->isVirtual = m->typeExpr && m->typeExpr->isVirtual;
                 s->isDefined = hasBody; /* else `Dog(int n);`, defined as Dog::Dog(int n) {...} */
                 s->ownerRecord = rec.get();
                 s->access = a;
@@ -1504,6 +1599,7 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
     };
     for (const auto &m : n->children) memberItem(m, defaultAccess, true);
     st.exitScope();
+    virtualFunctions(rec.get(), n);
     layoutRecord(*rec);
     /* a promoted member sits at its holder's offset plus its own */
     for (auto &p : promotions) p.promoted->offset = p.holder->offset + p.inner->offset;
@@ -1511,6 +1607,26 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
 
     /* member function bodies see the complete class (C++ rule) */
     for (auto &[node, sym] : bodies) functionBody(node, sym, rec.get());
+    for (auto &[node, sym] : friendBodies) functionBody(node, sym, nullptr); /* not members: no `this` */
+}
+
+/* `friend int peek(const Shape &);` inside a class: an ordinary function
+   at file scope that may use the class's private and protected members */
+void SemanticAnalyzer::friendFunction(const ASTNodePtr &m, RecordInfo *rec, bool isDefinition,
+                                      std::vector<std::pair<ASTNodePtr, SymbolPtr>> &bodies) {
+    st.reenterScope(0);
+    SymbolPtr s = functionSignature(m, DeclCtx::Global, isDefinition);
+    st.exitScope();
+    if (!s) return;
+    rec->friendFunctions.insert(s.get());
+    if (!isDefinition) return;
+    if (s->isDefined) {
+        error(m.get(), "redefinition of '" + describeSignature(s) + "'", "redefinition");
+        return;
+    }
+    s->isDefined = true;
+    s->declNode = m.get();
+    bodies.push_back({m, s});
 }
 
 } // namespace sem

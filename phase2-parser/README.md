@@ -232,11 +232,24 @@ in the `direct_declarator` action with a syntax error;
 `test/test29_dropped_features.c` shows every dropped construct being
 rejected.
 
-**Not parsed** (syntax errors): constructor member-initializer lists
-(`Dog() : Animal(4) {}`), `virtual`, `const` member functions, `friend`,
-`explicit`, templates, namespaces, `using`, exceptions, `inline`,
-default arguments, bit-fields, compound literals, nested function
-definitions, wide literals.
+**Class syntax added last** (`test/test30_class_syntax.c`): member
+initializer lists (`Dog(int n) : Animal(4), legs(n) { }`, in and out of
+the class; a base's name before `(` arrives as `FCAST`), `virtual` and
+pure virtual functions (`virtual int f() = 0;`), `virtual ~T()`,
+`explicit` constructors, `const` member functions (`method_cv_opt`
+after a parameter list), and `friend` functions and classes. The
+grammar still has no conflicts (`%expect 0`).
+
+**Token_Type of member names**: a member name after `.` or `->` is
+classified with the member's type whatever stands before it
+(`arr[0].x`, `f().x`, `a.b.c`, `(*p).x`, `this->x`, `obj.Base::m`):
+`aggregateOf()` in `parser.y` follows the expression back to a struct or
+class tag through the parse-time symbol table.
+
+**Not parsed** (syntax errors): templates, namespaces, `using`,
+exceptions, `inline`, `override` / `final`, default arguments,
+bit-fields, compound literals, nested function definitions, wide
+literals.
 
 ## Integration
 
@@ -258,12 +271,12 @@ make
 ./run.sh
 ```
 
-`./run.sh` runs the parser over the 36 files in `test/` and prints each
+`./run.sh` runs the parser over the 37 files in `test/` and prints each
 result:
 
 | Kind | Files |
 |---|---|
-| valid (24) | `array`, `funcCall`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`–`test28` |
+| valid (25) | `array`, `funcCall`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`–`test28`, `test30` |
 | deliberate syntax errors (12) | `negative`, `test5`, `test14`–`test21`, `test23`, `test29` (declarations, control flow, `do`-`while` recovery, functions, arrays/pointers, aggregates, expressions/builtins, cascading recovery, forward references, the dropped features) |
 
 The parser corpus is also run end to end by
@@ -275,8 +288,9 @@ stop before semantic analysis and the valid ones are accepted.
 - No semantic checks (by design).
 - Error recovery can produce follow-on `ErrorNode`s after a badly
   broken construct (see the example above).
-- The Token/Token_Type table classifies `p.x` / `p->x` only when the
-  base is a plain identifier (`arr[0].x` keeps `IDENTIFIER`).
+- A member name inherited from a base class keeps `IDENTIFIER` in the
+  Token/Token_Type table (the parse-time table does not follow bases);
+  semantic analysis resolves it.
 - The constructs listed under "Not parsed".
 
 Development history: [`docs/DEVELOPMENT_NOTES.md`](docs/DEVELOPMENT_NOTES.md) (not maintained).

@@ -56,7 +56,7 @@ scanner keeps going until end of file. After the single call,
 
 - `std::vector<Token> tokens` — every recognized token, in order
   (`Token { std::string lexeme; TokenType type; }`).
-- `enum class TokenType` — the whole vocabulary (99 values): literals,
+- `enum class TokenType` — the whole vocabulary (102 values): literals,
   type keywords, qualifiers, aggregate keywords, access modifiers,
   storage classes, control-flow keywords, the language's reserved
   library names, and every operator.
@@ -84,8 +84,11 @@ first rule**. On top of that:
   (character literals). Escape sequences are matched inside both literal
   states, most specific first (`\x41`, `\101`, `\n`; then the malformed
   `\x`, `\8`, `\9`).
-- **Positions**: `%option yylineno`; diagnostics carry the line number
-  (columns are not tracked in this phase).
+- **Positions**: `%option yylineno` for lines; `YY_USER_ACTION` keeps the
+  column of every token (1-based, reset at each newline), so a
+  diagnostic reads `Line 4:15: Illegal character (near '@')` and the
+  report in `logs/` has a `Column` field. A string, character literal or
+  comment that runs on is reported where it started.
 
 ## Features
 

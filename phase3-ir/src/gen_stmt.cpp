@@ -268,7 +268,7 @@ List Generator::stmt(const ASTNodePtr &n) {
             if (child(0)) {
                 if (noValue) rvalue(child(0), true);
                 else if (sem::isReference(ret)) q.a = referenceTo(child(0), ret->elem);
-                else if (sem::isRecord(ret)) q.a = copyOf(child(0), ret, true);
+                else if (sem::isRecord(ret)) q.a = child(0)->converter ? converted(child(0), ret) : copyOf(child(0), ret, true);
                 else q.a = convert(rvalue(child(0)), ret);
                 keep(q.a); /* the result is the caller's to destroy */
             }
@@ -404,12 +404,12 @@ void Generator::initObject(const LValue &obj, const ASTNodePtr &init) {
                strip(init->semType)->record.get() == rec) { /* Dog d(4);  Dog d = Dog(4); */
         constructInto(address(obj), rec, init->symbol.get(), init->children);
     } else if (init->converter) { /* Dog d = 4;  Vec v = other;  a converting constructor */
-        Operand a = address(obj);
-        call(init->converter.get(), a, {init}, {}, false);
+        convertInto(address(obj), init);
     } else {
-        Operand v = rvalue(init);
+        Operand v = sliced(init, rec);
         keep(v); /* T x = f();  the object f made is x */
         store(obj, v);
+        installVptrs(address(obj), rec);
     }
 }
 
@@ -454,19 +454,6 @@ void Generator::initItems(const TypePtr &type, const ASTNodePtr &init, long long
     if (sem::isArray(type)) {
         TypePtr elem = type->elem;
         long long w = std::max(1LL, sem::sizeOf(elem));
-        bool designated = std::any_of(items.begin(), items.end(),
-                                      [](const ASTNodePtr &c) { return c->kind == ASTKind::DesignatedInit; });
-        bool flat = !designated && sem::isArray(elem) &&
-                    std::none_of(items.begin(), items.end(), [](const ASTNodePtr &c) {
-                        return c->kind == ASTKind::InitializerList || c->kind == ASTKind::StringLiteral;
-                    });
-        if (flat) { /* int m[2][2] = {1, 2, 3, 4}; */
-            TypePtr leaf = elem;
-            while (sem::isArray(leaf)) leaf = leaf->elem;
-            long long lw = std::max(1LL, sem::sizeOf(leaf));
-            for (size_t i = 0; i < items.size(); ++i) initItems(leaf, items[i], base + static_cast<long long>(i) * lw, out);
-            return;
-        }
         long long pos = 0;
         for (const auto &c : items) {
             ASTNodePtr value = c;
@@ -797,7 +784,8 @@ void Generator::function(const ASTNodePtr &n) {
         fn->owned.push_back(self);
         fn->thisSym = self.get();
     }
-    if (sym->isConstructor && cls) constructSubobjects(thisOperand(), cls); /* bases and members first */
+    if (sym->isConstructor && cls) constructSubobjects(thisOperand(), cls, n.get()); /* bases and members first */
+    if (sym->isDestructor && cls) installVptrs(thisOperand(), cls); /* while it runs, the object is a `cls` again */
     if (sym->name == "main" && !cls) {
         /* objects with static storage whose constructor must run */
         for (const auto &g : dynamicGlobals) {

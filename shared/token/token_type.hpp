@@ -61,6 +61,9 @@ enum class TokenType {
     STATIC,
     TYPEDEF,
     AUTO,
+    VIRTUAL,
+    EXPLICIT,
+    FRIEND,
     EXTERN,
 
     // ---- control-flow keywords ----

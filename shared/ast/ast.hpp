@@ -11,7 +11,7 @@ enum class ASTKind {
 
     VarDecl, ParamDecl, FunctionDecl, FunctionDef, DeclGroup,
     StructDecl, ClassDecl, TypedefDecl,
-    ConstructorDef, DestructorDef, InitDeclarator, InitializerList,
+    ConstructorDef, DestructorDef, MemInit, FriendDecl, InitDeclarator, InitializerList,
 
     CompoundStmt, IfStmt, WhileStmt, DoWhileStmt, UntilStmt, ForStmt,
     SwitchStmt, CaseStmt, DefaultStmt, LabeledStmt,
@@ -56,6 +56,11 @@ struct ASTTypeExpr {
     bool isConst = false;
     bool isAuto = false;
     bool isTypedef = false;
+    bool isVirtual = false;             /* `virtual` member function / destructor */
+    bool isPure = false;                /* `virtual int f() = 0;` */
+    bool isExplicit = false;            /* `explicit` constructor */
+    bool isFriend = false;              /* `friend` declaration inside a class */
+    bool isConstMethod = false;         /* `int get() const` */
 
     int pointerLevel = 0;               /* counts a leading '&' too, see isReference */
     bool isReference = false;           /* declarator began with '&' */
