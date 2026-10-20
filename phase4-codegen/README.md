@@ -29,6 +29,17 @@ optimizing, to compare the two. SPIM prints a five-line banner before the
 program's output; the program's `return` value from `main` becomes
 SPIM's exit code.
 
+### Logs
+
+Every run of `mips_generator` also writes the assembly to `logs/` in the
+current directory, with a comment header naming the source and the
+optimization: `logs/<file>.s` without optimization, `logs/<file>.O1.s`,
+`.O2.s`, `.O3.s` with `-O1` … (`.stack.O1.s` … with `--stack-only`).
+The log is runnable as it is: `spim -file logs/<file>.O2.s`.
+`./run_tests.sh` keeps, for every test program and level, the assembly
+(`<name>.s`, `<name>.O1.s`, …) and what SPIM printed (`<name>.run`,
+`<name>.O1.run`, …) in `phase4-codegen/logs/`.
+
 ### Running in QtSpim
 
 The same `.s` file is meant for QtSpim (the windowed SPIM, 9.1):

@@ -1,0 +1,15 @@
+1
+0 1 1 0 1 0
+calls after &&: 1
+or taken
+calls after ||: 1
+1 3
+1 0 1 1 1
+double is true
+null pointer is false
+2
+1 0
+1 1
+2
+1 1
+exit: 1

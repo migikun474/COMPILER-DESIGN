@@ -1,0 +1,2214 @@
+# =========================================================================
+#  MIPS ASSEMBLY  --  run with: spim -file <this file>
+# =========================================================================
+#  Source file  : ../phase3-ir/test/t14_optimizer.c
+#  Optimization : no optimization (every value in the stack frame)
+# =========================================================================
+
+# generated for SPIM: `spim -file <this file> [arguments]`
+
+        .data
+        .align 3
+g_g:
+        .byte 1, 0, 0, 0
+str0:
+        .byte 37, 100, 10, 0
+str1:
+        .byte 37, 100, 32, 37, 100, 10, 0
+str2:
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
+str3:
+        .byte 37, 46, 49, 102, 32, 37, 46, 49, 102, 10, 0
+        .align 3
+fc0:  .word 0, 1073217536        # 1.5
+        .align 3
+fc1:  .word 0, 1073741824        # 2
+        .align 3
+fc2:  .word 0, 0        # 0
+        .align 3
+fc3:  .word 0, 1072693248        # 1
+
+        .text
+        .globl main
+main:
+        li    $t0, -8
+        and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        addiu $sp, $sp, -8
+        sw    $a0, 0($sp)             # argc
+        sw    $a1, 4($sp)             # argv
+        jal   main_
+        move  $a0, $v0
+        li    $v0, 17                 # exit with main's result
+        syscall
+
+# bump()
+_Z4bumpv:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -8
+        # t1 = g int+ 10
+        lw    $t0, g_g
+        li    $t1, 10
+        addu  $t0, $t0, $t1
+        sw    $t0, -4($fp)
+        # g = t1
+        lw    $t0, -4($fp)
+        sw    $t0, g_g
+        # return g
+        lw    $v0, g_g
+        j     _Z4bumpv_exit
+_Z4bumpv_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# set(int *, int)
+_Z3setPii:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        # *p = v
+        lw    $t8, 8($fp)
+        lw    $t0, 12($fp)
+        sw    $t0, 0($t8)
+        # return
+        j     _Z3setPii_exit
+_Z3setPii_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# twice(int &)
+_Z5twiceRi:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -8
+        # t1 = *r
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -4($fp)
+        # t2 = t1 int* 2
+        lw    $t0, -4($fp)
+        li    $t1, 2
+        mul   $t0, $t0, $t1
+        sw    $t0, -8($fp)
+        # *r = t2
+        lw    $t8, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
+        # return
+        j     _Z5twiceRi_exit
+_Z5twiceRi_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# fold()
+_Z4foldv:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -128
+        # t1 = 4 int* 2
+        li    $t0, 4
+        li    $t1, 2
+        mul   $t0, $t0, $t1
+        sw    $t0, -36($fp)
+        # t2 = 3 int+ t1
+        li    $t0, 3
+        lw    $t1, -36($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -40($fp)
+        # a = t2
+        lw    $t0, -40($fp)
+        sw    $t0, -4($fp)
+        # t3 = a int<< 1
+        lw    $t0, -4($fp)
+        li    $t1, 1
+        sllv  $t0, $t0, $t1
+        sw    $t0, -44($fp)
+        # t4 = t3 int- 6
+        lw    $t0, -44($fp)
+        li    $t1, 6
+        subu  $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # b = t4
+        lw    $t0, -48($fp)
+        sw    $t0, -8($fp)
+        # t5 = b int/ 4
+        lw    $t0, -8($fp)
+        li    $t1, 4
+        div   $t0, $t1
+        mflo  $t0
+        sw    $t0, -52($fp)
+        # t6 = t5 int% 3
+        lw    $t0, -52($fp)
+        li    $t1, 3
+        div   $t0, $t1
+        mfhi  $t0
+        sw    $t0, -56($fp)
+        # c = t6
+        lw    $t0, -56($fp)
+        sw    $t0, -12($fp)
+        # t7 = 1.5 double* 2.0
+        l.d   $f0, fc0
+        l.d   $f2, fc1
+        mul.d $f0, $f0, $f2
+        s.d   $f0, -64($fp)
+        # t8 = inttodouble a
+        lw    $t0, -4($fp)
+        mtc1  $t0, $f0
+        cvt.d.w $f0, $f0
+        s.d   $f0, -72($fp)
+        # t9 = t7 double+ t8
+        l.d   $f0, -64($fp)
+        l.d   $f2, -72($fp)
+        add.d $f0, $f0, $f2
+        s.d   $f0, -80($fp)
+        # d = t9
+        l.d   $f0, -80($fp)
+        s.d   $f0, -24($fp)
+        # t10 = 4000000000 uint+ 500000000
+        li    $t0, -294967296
+        li    $t1, 500000000
+        addu  $t0, $t0, $t1
+        sw    $t0, -84($fp)
+        # u = t10
+        lw    $t0, -84($fp)
+        sw    $t0, -28($fp)
+        # t11 = 97 int+ 300
+        li    $t0, 97
+        li    $t1, 300
+        addu  $t0, $t0, $t1
+        sw    $t0, -88($fp)
+        # t12 = inttochar t11
+        lw    $t0, -88($fp)
+        sb    $t0, -89($fp)
+        # ch = t12
+        lb    $t0, -89($fp)
+        sb    $t0, -29($fp)
+        # goto 20
+        j     L3_20
+        # a = 99
+        li    $t0, 99
+        sw    $t0, -4($fp)
+L3_20:
+        # goto 21
+        j     L3_21
+L3_21:
+        # t13 = b int+ 1
+        lw    $t0, -8($fp)
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -96($fp)
+        # b = t13
+        lw    $t0, -96($fp)
+        sw    $t0, -8($fp)
+L3_23:
+        # goto 26
+        j     L3_26
+        # c = 99
+        li    $t0, 99
+        sw    $t0, -12($fp)
+        # goto 23
+        j     L3_23
+L3_26:
+        # t14 = a int+ b
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -100($fp)
+        # t15 = t14 int+ c
+        lw    $t0, -100($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -104($fp)
+        # t16 = doubletoint d
+        l.d   $f0, -24($fp)
+        trunc.w.d $f0, $f0
+        mfc1  $t0, $f0
+        sw    $t0, -108($fp)
+        # t17 = t15 int+ t16
+        lw    $t0, -104($fp)
+        lw    $t1, -108($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -112($fp)
+        # t18 = u uint% 1000
+        lw    $t0, -28($fp)
+        li    $t1, 1000
+        divu  $t0, $t1
+        mfhi  $t0
+        sw    $t0, -116($fp)
+        # t19 = t17 int+ t18
+        lw    $t0, -112($fp)
+        lw    $t1, -116($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -120($fp)
+        # t20 = chartoint ch
+        lb    $t0, -29($fp)
+        sw    $t0, -124($fp)
+        # t21 = t19 int+ t20
+        lw    $t0, -120($fp)
+        lw    $t1, -124($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -128($fp)
+        # return t21
+        lw    $v0, -128($fp)
+        j     _Z4foldv_exit
+_Z4foldv_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# common(int, int)
+_Z6commonii:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -120
+        # t1 = x int* y
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -28($fp)
+        # t2 = t1 int+ 3
+        lw    $t0, -28($fp)
+        li    $t1, 3
+        addu  $t0, $t0, $t1
+        sw    $t0, -32($fp)
+        # a = t2
+        lw    $t0, -32($fp)
+        sw    $t0, -4($fp)
+        # t3 = x int* y
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -36($fp)
+        # t4 = t3 int+ 3
+        lw    $t0, -36($fp)
+        li    $t1, 3
+        addu  $t0, $t0, $t1
+        sw    $t0, -40($fp)
+        # b = t4
+        lw    $t0, -40($fp)
+        sw    $t0, -8($fp)
+        # t5 = x int+ y
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -44($fp)
+        # t6 = x int+ y
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # t7 = t5 int* t6
+        lw    $t0, -44($fp)
+        lw    $t1, -48($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -52($fp)
+        # c = t7
+        lw    $t0, -52($fp)
+        sw    $t0, -12($fp)
+        # t8 = y int+ x
+        lw    $t0, 12($fp)
+        lw    $t1, 8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -56($fp)
+        # d = t8
+        lw    $t0, -56($fp)
+        sw    $t0, -16($fp)
+        # t9 = x int* 8
+        lw    $t0, 8($fp)
+        li    $t1, 8
+        mul   $t0, $t0, $t1
+        sw    $t0, -60($fp)
+        # t10 = y int* 1
+        lw    $t0, 12($fp)
+        li    $t1, 1
+        mul   $t0, $t0, $t1
+        sw    $t0, -64($fp)
+        # t11 = t9 int+ t10
+        lw    $t0, -60($fp)
+        lw    $t1, -64($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -68($fp)
+        # t12 = t11 int+ 0
+        lw    $t0, -68($fp)
+        li    $t1, 0
+        addu  $t0, $t0, $t1
+        sw    $t0, -72($fp)
+        # t13 = x int/ 1
+        lw    $t0, 8($fp)
+        li    $t1, 1
+        div   $t0, $t1
+        mflo  $t0
+        sw    $t0, -76($fp)
+        # t14 = t12 int+ t13
+        lw    $t0, -72($fp)
+        lw    $t1, -76($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -80($fp)
+        # t15 = t14 int- 0
+        lw    $t0, -80($fp)
+        li    $t1, 0
+        subu  $t0, $t0, $t1
+        sw    $t0, -84($fp)
+        # e = t15
+        lw    $t0, -84($fp)
+        sw    $t0, -20($fp)
+        # t16 = x int+ 1
+        lw    $t0, 8($fp)
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -88($fp)
+        # x = t16
+        lw    $t0, -88($fp)
+        sw    $t0, 8($fp)
+        # t17 = x int* y
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -92($fp)
+        # t18 = t17 int+ 3
+        lw    $t0, -92($fp)
+        li    $t1, 3
+        addu  $t0, $t0, $t1
+        sw    $t0, -96($fp)
+        # f = t18
+        lw    $t0, -96($fp)
+        sw    $t0, -24($fp)
+        # t19 = a int+ b
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -100($fp)
+        # t20 = t19 int+ c
+        lw    $t0, -100($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -104($fp)
+        # t21 = t20 int+ d
+        lw    $t0, -104($fp)
+        lw    $t1, -16($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -108($fp)
+        # t22 = t21 int+ e
+        lw    $t0, -108($fp)
+        lw    $t1, -20($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -112($fp)
+        # t23 = t22 int+ f
+        lw    $t0, -112($fp)
+        lw    $t1, -24($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -116($fp)
+        # return t23
+        lw    $v0, -116($fp)
+        j     _Z6commonii_exit
+_Z6commonii_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# aliasing()
+_Z8aliasingv:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -192
+        # x = 5
+        li    $t0, 5
+        sw    $t0, -4($fp)
+        # y = 7
+        li    $t0, 7
+        sw    $t0, -8($fp)
+        # t1 = &x
+        addiu $t0, $fp, -4
+        sw    $t0, -64($fp)
+        # p = t1
+        lw    $t0, -64($fp)
+        sw    $t0, -12($fp)
+        # t2 = x int+ y
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -68($fp)
+        # a = t2
+        lw    $t0, -68($fp)
+        sw    $t0, -16($fp)
+        # *p = 20
+        lw    $t8, -12($fp)
+        li    $t0, 20
+        sw    $t0, 0($t8)
+        # t3 = x int+ y
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -72($fp)
+        # b = t3
+        lw    $t0, -72($fp)
+        sw    $t0, -20($fp)
+        # t4 = &y
+        addiu $t0, $fp, -8
+        sw    $t0, -76($fp)
+        # param t4
+        # param 1
+        # call set(int *, int), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -76($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 1
+        sw    $t0, 4($sp)
+        jal   _Z3setPii
+        addiu $sp, $sp, 8
+        # t5 = x int+ y
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -80($fp)
+        # c = t5
+        lw    $t0, -80($fp)
+        sw    $t0, -24($fp)
+        # t6 = &x
+        addiu $t0, $fp, -4
+        sw    $t0, -84($fp)
+        # r = t6
+        lw    $t0, -84($fp)
+        sw    $t0, -28($fp)
+        # t7 = *r
+        lw    $t8, -28($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -88($fp)
+        # t8 = t7 int+ 1
+        lw    $t0, -88($fp)
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -92($fp)
+        # *r = t8
+        lw    $t8, -28($fp)
+        lw    $t0, -92($fp)
+        sw    $t0, 0($t8)
+        # t9 = x int+ y
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -96($fp)
+        # d = t9
+        lw    $t0, -96($fp)
+        sw    $t0, -32($fp)
+        # t10 = &x
+        addiu $t0, $fp, -4
+        sw    $t0, -100($fp)
+        # param t10
+        # call twice(int &), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -100($fp)
+        sw    $t0, 0($sp)
+        jal   _Z5twiceRi
+        addiu $sp, $sp, 8
+        # arr[0] = 1
+        addiu $t8, $fp, -44
+        li    $t9, 0
+        addu  $t8, $t8, $t9
+        li    $t0, 1
+        sw    $t0, 0($t8)
+        # arr[4] = 2
+        addiu $t8, $fp, -44
+        li    $t9, 4
+        addu  $t8, $t8, $t9
+        li    $t0, 2
+        sw    $t0, 0($t8)
+        # arr[8] = 3
+        addiu $t8, $fp, -44
+        li    $t9, 8
+        addu  $t8, $t8, $t9
+        li    $t0, 3
+        sw    $t0, 0($t8)
+        # i = 1
+        li    $t0, 1
+        sw    $t0, -48($fp)
+        # t11 = i int* 4
+        lw    $t0, -48($fp)
+        li    $t1, 4
+        mul   $t0, $t0, $t1
+        sw    $t0, -104($fp)
+        # t12 = arr[t11]
+        addiu $t8, $fp, -44
+        lw    $t9, -104($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -108($fp)
+        # t13 = i int* 4
+        lw    $t0, -48($fp)
+        li    $t1, 4
+        mul   $t0, $t0, $t1
+        sw    $t0, -112($fp)
+        # t14 = arr[t13]
+        addiu $t8, $fp, -44
+        lw    $t9, -112($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -116($fp)
+        # t15 = t12 int+ t14
+        lw    $t0, -108($fp)
+        lw    $t1, -116($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -120($fp)
+        # e = t15
+        lw    $t0, -120($fp)
+        sw    $t0, -52($fp)
+        # t16 = i int* 4
+        lw    $t0, -48($fp)
+        li    $t1, 4
+        mul   $t0, $t0, $t1
+        sw    $t0, -124($fp)
+        # arr[t16] = 9
+        addiu $t8, $fp, -44
+        lw    $t9, -124($fp)
+        addu  $t8, $t8, $t9
+        li    $t0, 9
+        sw    $t0, 0($t8)
+        # t17 = i int* 4
+        lw    $t0, -48($fp)
+        li    $t1, 4
+        mul   $t0, $t0, $t1
+        sw    $t0, -128($fp)
+        # t18 = arr[t17]
+        addiu $t8, $fp, -44
+        lw    $t9, -128($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -132($fp)
+        # t19 = arr[4]
+        addiu $t8, $fp, -44
+        li    $t9, 4
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -136($fp)
+        # t20 = t18 int+ t19
+        lw    $t0, -132($fp)
+        lw    $t1, -136($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -140($fp)
+        # f = t20
+        lw    $t0, -140($fp)
+        sw    $t0, -56($fp)
+        # t21 = &arr
+        addiu $t0, $fp, -44
+        sw    $t0, -144($fp)
+        # q = t21
+        lw    $t0, -144($fp)
+        sw    $t0, -60($fp)
+        # t22 = q ptr+ 8
+        lw    $t0, -60($fp)
+        li    $t1, 8
+        addu  $t0, $t0, $t1
+        sw    $t0, -148($fp)
+        # *t22 = 4
+        lw    $t8, -148($fp)
+        li    $t0, 4
+        sw    $t0, 0($t8)
+        # t23 = b int* 2
+        lw    $t0, -20($fp)
+        li    $t1, 2
+        mul   $t0, $t0, $t1
+        sw    $t0, -152($fp)
+        # t24 = a int+ t23
+        lw    $t0, -16($fp)
+        lw    $t1, -152($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -156($fp)
+        # t25 = c int* 3
+        lw    $t0, -24($fp)
+        li    $t1, 3
+        mul   $t0, $t0, $t1
+        sw    $t0, -160($fp)
+        # t26 = t24 int+ t25
+        lw    $t0, -156($fp)
+        lw    $t1, -160($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -164($fp)
+        # t27 = d int* 5
+        lw    $t0, -32($fp)
+        li    $t1, 5
+        mul   $t0, $t0, $t1
+        sw    $t0, -168($fp)
+        # t28 = t26 int+ t27
+        lw    $t0, -164($fp)
+        lw    $t1, -168($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -172($fp)
+        # t29 = t28 int+ e
+        lw    $t0, -172($fp)
+        lw    $t1, -52($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -176($fp)
+        # t30 = t29 int+ f
+        lw    $t0, -176($fp)
+        lw    $t1, -56($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -180($fp)
+        # t31 = t30 int+ x
+        lw    $t0, -180($fp)
+        lw    $t1, -4($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -184($fp)
+        # t32 = arr[8]
+        addiu $t8, $fp, -44
+        li    $t9, 8
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -188($fp)
+        # t33 = t31 int+ t32
+        lw    $t0, -184($fp)
+        lw    $t1, -188($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -192($fp)
+        # return t33
+        lw    $v0, -192($fp)
+        j     _Z8aliasingv_exit
+_Z8aliasingv_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# globals()
+_Z7globalsv:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -72
+        # t1 = g int+ 1
+        lw    $t0, g_g
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -28($fp)
+        # a = t1
+        lw    $t0, -28($fp)
+        sw    $t0, -4($fp)
+        # t2 = g int+ 1
+        lw    $t0, g_g
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -32($fp)
+        # b = t2
+        lw    $t0, -32($fp)
+        sw    $t0, -8($fp)
+        # call bump(), 0
+        jal   _Z4bumpv
+        # t3 = g int+ 1
+        lw    $t0, g_g
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -36($fp)
+        # c = t3
+        lw    $t0, -36($fp)
+        sw    $t0, -12($fp)
+        # g = 2
+        li    $t0, 2
+        sw    $t0, g_g
+        # t4 = g int+ 1
+        lw    $t0, g_g
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -40($fp)
+        # d = t4
+        lw    $t0, -40($fp)
+        sw    $t0, -16($fp)
+        # v = 3
+        li    $t0, 3
+        sw    $t0, -20($fp)
+        # t5 = v int+ v
+        lw    $t0, -20($fp)
+        lw    $t1, -20($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -44($fp)
+        # e = t5
+        lw    $t0, -44($fp)
+        sw    $t0, -24($fp)
+        # t6 = a int+ b
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # t7 = t6 int+ c
+        lw    $t0, -48($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -52($fp)
+        # t8 = t7 int+ d
+        lw    $t0, -52($fp)
+        lw    $t1, -16($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -56($fp)
+        # t9 = t8 int+ e
+        lw    $t0, -56($fp)
+        lw    $t1, -24($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -60($fp)
+        # t10 = call bump(), 0
+        jal   _Z4bumpv
+        sw    $v0, -64($fp)
+        # t11 = t9 int+ t10
+        lw    $t0, -60($fp)
+        lw    $t1, -64($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -68($fp)
+        # return t11
+        lw    $v0, -68($fp)
+        j     _Z7globalsv_exit
+_Z7globalsv_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# flow(int)
+_Z4flowi:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -48
+        # s = 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
+        # i = 0
+        li    $t0, 0
+        sw    $t0, -8($fp)
+L7_2:
+        # if i int< n goto 4
+        lw    $t0, -8($fp)
+        lw    $t1, 8($fp)
+        blt   $t0, $t1, L7_4
+        # goto 21
+        j     L7_21
+L7_4:
+        # t1 = n int* 2
+        lw    $t0, 8($fp)
+        li    $t1, 2
+        mul   $t0, $t0, $t1
+        sw    $t0, -16($fp)
+        # k = t1
+        lw    $t0, -16($fp)
+        sw    $t0, -12($fp)
+        # t2 = i int% 2
+        lw    $t0, -8($fp)
+        li    $t1, 2
+        div   $t0, $t1
+        mfhi  $t0
+        sw    $t0, -20($fp)
+        # if t2 int== 0 goto 9
+        lw    $t0, -20($fp)
+        li    $t1, 0
+        beq   $t0, $t1, L7_9
+        # goto 12
+        j     L7_12
+L7_9:
+        # t3 = s int+ k
+        lw    $t0, -4($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -24($fp)
+        # s = t3
+        lw    $t0, -24($fp)
+        sw    $t0, -4($fp)
+        # goto 14
+        j     L7_14
+L7_12:
+        # t4 = s int- 1
+        lw    $t0, -4($fp)
+        li    $t1, 1
+        subu  $t0, $t0, $t1
+        sw    $t0, -28($fp)
+        # s = t4
+        lw    $t0, -28($fp)
+        sw    $t0, -4($fp)
+L7_14:
+        # if s int> 1000 goto 16
+        lw    $t0, -4($fp)
+        li    $t1, 1000
+        bgt   $t0, $t1, L7_16
+        # goto 18
+        j     L7_18
+L7_16:
+        # t5 = int- 1
+        li    $t0, 1
+        negu  $t0, $t0
+        sw    $t0, -32($fp)
+        # return t5
+        lw    $v0, -32($fp)
+        j     _Z4flowi_exit
+L7_18:
+        # t6 = i int+ 1
+        lw    $t0, -8($fp)
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -36($fp)
+        # i = t6
+        lw    $t0, -36($fp)
+        sw    $t0, -8($fp)
+        # goto 2
+        j     L7_2
+L7_21:
+        # t7 = n
+        lw    $t0, 8($fp)
+        sw    $t0, -40($fp)
+        # goto 30
+        j     L7_30
+L7_23:
+        # t8 = s int+ 1
+        lw    $t0, -4($fp)
+        li    $t1, 1
+        addu  $t0, $t0, $t1
+        sw    $t0, -44($fp)
+        # s = t8
+        lw    $t0, -44($fp)
+        sw    $t0, -4($fp)
+L7_25:
+        # t9 = s int+ 2
+        lw    $t0, -4($fp)
+        li    $t1, 2
+        addu  $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # s = t9
+        lw    $t0, -48($fp)
+        sw    $t0, -4($fp)
+        # goto 33
+        j     L7_33
+L7_28:
+        # s = 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
+        # goto 33
+        j     L7_33
+L7_30:
+        # if t7 int== 3 goto 23
+        lw    $t0, -40($fp)
+        li    $t1, 3
+        beq   $t0, $t1, L7_23
+        # if t7 int== 4 goto 25
+        lw    $t0, -40($fp)
+        li    $t1, 4
+        beq   $t0, $t1, L7_25
+        # goto 28
+        j     L7_28
+L7_33:
+        # return s
+        lw    $v0, -4($fp)
+        j     _Z4flowi_exit
+        # s = 12345
+        li    $t0, 12345
+        sw    $t0, -4($fp)
+        # return s
+        lw    $v0, -4($fp)
+        j     _Z4flowi_exit
+_Z4flowi_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# divide(int, int)
+_Z6divideii:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -8
+        # if b int== 0 goto 2
+        lw    $t0, 12($fp)
+        li    $t1, 0
+        beq   $t0, $t1, L8_2
+        # goto 4
+        j     L8_4
+L8_2:
+        # t1 = 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
+        # goto 6
+        j     L8_6
+L8_4:
+        # t2 = a int/ b
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        div   $t0, $t1
+        mflo  $t0
+        sw    $t0, -8($fp)
+        # t1 = t2
+        lw    $t0, -8($fp)
+        sw    $t0, -4($fp)
+L8_6:
+        # return t1
+        lw    $v0, -4($fp)
+        j     _Z6divideii_exit
+_Z6divideii_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# main()
+main_:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -88
+        # t1 = call fold(), 0
+        jal   _Z4foldv
+        sw    $v0, -28($fp)
+        # param "%d\n"
+        # param t1
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        lw    $t0, -28($fp)
+        sw    $t0, 4($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # param 3
+        # param 4
+        # t2 = call common(int, int), 2
+        addiu $sp, $sp, -8
+        li    $t0, 3
+        sw    $t0, 0($sp)
+        li    $t0, 4
+        sw    $t0, 4($sp)
+        jal   _Z6commonii
+        addiu $sp, $sp, 8
+        sw    $v0, -32($fp)
+        # param "%d\n"
+        # param t2
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        lw    $t0, -32($fp)
+        sw    $t0, 4($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # t3 = call aliasing(), 0
+        jal   _Z8aliasingv
+        sw    $v0, -36($fp)
+        # param "%d\n"
+        # param t3
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        lw    $t0, -36($fp)
+        sw    $t0, 4($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # t4 = call globals(), 0
+        jal   _Z7globalsv
+        sw    $v0, -40($fp)
+        # total = t4
+        lw    $t0, -40($fp)
+        sw    $t0, -4($fp)
+        # param "%d %d\n"
+        # param total
+        # param g
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        lw    $t0, -4($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, g_g
+        sw    $t0, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # param 3
+        # t5 = call flow(int), 1
+        addiu $sp, $sp, -8
+        li    $t0, 3
+        sw    $t0, 0($sp)
+        jal   _Z4flowi
+        addiu $sp, $sp, 8
+        sw    $v0, -44($fp)
+        # param 4
+        # t6 = call flow(int), 1
+        addiu $sp, $sp, -8
+        li    $t0, 4
+        sw    $t0, 0($sp)
+        jal   _Z4flowi
+        addiu $sp, $sp, 8
+        sw    $v0, -48($fp)
+        # param 5
+        # t7 = call flow(int), 1
+        addiu $sp, $sp, -8
+        li    $t0, 5
+        sw    $t0, 0($sp)
+        jal   _Z4flowi
+        addiu $sp, $sp, 8
+        sw    $v0, -52($fp)
+        # param "%d %d %d\n"
+        # param t5
+        # param t6
+        # param t7
+        # call printf, 4
+        addiu $sp, $sp, -16
+        la    $t0, str2
+        sw    $t0, 0($sp)
+        lw    $t0, -44($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -48($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -52($fp)
+        sw    $t0, 12($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # zero = 0
+        li    $t0, 0
+        sw    $t0, -8($fp)
+        # param 1
+        # param zero
+        # t8 = call divide(int, int), 2
+        addiu $sp, $sp, -8
+        li    $t0, 1
+        sw    $t0, 0($sp)
+        lw    $t0, -8($fp)
+        sw    $t0, 4($sp)
+        jal   _Z6divideii
+        addiu $sp, $sp, 8
+        sw    $v0, -56($fp)
+        # param 9
+        # param 3
+        # t9 = call divide(int, int), 2
+        addiu $sp, $sp, -8
+        li    $t0, 9
+        sw    $t0, 0($sp)
+        li    $t0, 3
+        sw    $t0, 4($sp)
+        jal   _Z6divideii
+        addiu $sp, $sp, 8
+        sw    $v0, -60($fp)
+        # param "%d %d\n"
+        # param t8
+        # param t9
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        lw    $t0, -56($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -60($fp)
+        sw    $t0, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # x = 0.0
+        l.d   $f0, fc2
+        s.d   $f0, -16($fp)
+        # t10 = double- x
+        l.d   $f0, -16($fp)
+        neg.d $f0, $f0
+        s.d   $f0, -72($fp)
+        # y = t10
+        l.d   $f0, -72($fp)
+        s.d   $f0, -24($fp)
+        # t11 = y double+ 0.0
+        l.d   $f0, -24($fp)
+        l.d   $f2, fc2
+        add.d $f0, $f0, $f2
+        s.d   $f0, -80($fp)
+        # t12 = x double* 1.0
+        l.d   $f0, -16($fp)
+        l.d   $f2, fc3
+        mul.d $f0, $f0, $f2
+        s.d   $f0, -88($fp)
+        # param "%.1f %.1f\n"
+        # param t11
+        # param t12
+        # call printf, 3
+        addiu $sp, $sp, -24
+        la    $t0, str3
+        sw    $t0, 0($sp)
+        l.d   $f0, -80($fp)
+        s.d   $f0, 8($sp)
+        l.d   $f0, -88($fp)
+        s.d   $f0, 16($sp)
+        jal   __printf
+        addiu $sp, $sp, 24
+        # return 0
+        li    $v0, 0
+        j     main__exit
+main__exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# =====================================================================
+# Run-time library for the generated code (SPIM has no C library).
+#
+#   __printf __scanf          arguments on the stack, like any function:
+#   __malloc __calloc         0($sp) is the first argument; result in $v0
+#   __realloc __free
+#   __memcpy                  $a0 = to, $a1 = from, $a2 = bytes (registers only)
+#   __divll __modll           64-bit helpers: a in $a1:$a0, b in $a3:$a2,
+#   __udivll __umodll         result in $v1:$v0
+#   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
+#   __dtoll                   double in $f12 -> $v1:$v0
+#
+# The generated code keeps nothing in registers across a call, so these
+# routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
+# =====================================================================
+
+        .data
+__pf_buf:    .space 96
+__pf_digits: .asciiz "0123456789abcdef"
+        .align 2
+__sc_peek:   .word -2                   # a character read ahead; -2 = none, -1 = end of input
+__sc_pos:    .word __sc_line            # the next unread character of the current input line
+__sc_line:   .space 132
+        .align 3
+__c_2p32:    .double 4294967296.0
+__c_2p31:    .double 2147483648.0
+__c_ten:     .double 10.0
+__c_half:    .double 0.5
+__c_zero:    .double 0.0
+
+        .text
+
+# ---------------------------------------------------------------- memory
+__memcpy:
+        beqz  $a2, __memcpy_done
+__memcpy_loop:
+        lbu   $t8, 0($a1)
+        sb    $t8, 0($a0)
+        addiu $a0, $a0, 1
+        addiu $a1, $a1, 1
+        addiu $a2, $a2, -1
+        bnez  $a2, __memcpy_loop
+__memcpy_done:
+        jr    $ra
+
+__malloc:                               # malloc(size)
+        lw    $t0, 0($sp)
+__malloc_n:                             # size in $t0; the block is 8-byte aligned,
+        addiu $a0, $t0, 23              # with its size in the 8 bytes before it
+        li    $t1, -8
+        and   $a0, $a0, $t1
+        li    $v0, 9                    # sbrk
+        syscall
+        addiu $v0, $v0, 7
+        and   $v0, $v0, $t1
+        sw    $t0, 0($v0)
+        addiu $v0, $v0, 8
+        jr    $ra
+
+__calloc:                               # calloc(count, size): fresh memory is already zero
+        lw    $t0, 0($sp)
+        lw    $t1, 4($sp)
+        mul   $t0, $t0, $t1
+        j     __malloc_n
+
+__realloc:                              # realloc(pointer, size): a new block and a copy
+        lw    $t2, 0($sp)
+        lw    $t0, 4($sp)
+        move  $t9, $ra
+        jal   __malloc_n
+        beqz  $t2, __realloc_done
+        lw    $t3, -8($t2)              # the old size
+        sltu  $t4, $t0, $t3
+        beqz  $t4, __realloc_copy
+        move  $t3, $t0
+__realloc_copy:
+        move  $t5, $v0
+        move  $a0, $v0
+        move  $a1, $t2
+        move  $a2, $t3
+        jal   __memcpy
+        move  $v0, $t5
+__realloc_done:
+        jr    $t9
+
+__free:                                 # memory is not reused
+        jr    $ra
+
+# ------------------------------------------------------- 64-bit arithmetic
+__udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        li    $v0, 0
+        li    $v1, 0
+        li    $t8, 0
+        li    $t9, 0
+        li    $t7, 64
+__udm_loop:
+        srl   $t6, $t8, 31              # remainder = remainder * 2 + next bit of a
+        sll   $t9, $t9, 1
+        or    $t9, $t9, $t6
+        sll   $t8, $t8, 1
+        srl   $t6, $a1, 31
+        or    $t8, $t8, $t6
+        srl   $t6, $a0, 31
+        sll   $a1, $a1, 1
+        or    $a1, $a1, $t6
+        sll   $a0, $a0, 1
+        srl   $t6, $v0, 31              # quotient = quotient * 2
+        sll   $v1, $v1, 1
+        or    $v1, $v1, $t6
+        sll   $v0, $v0, 1
+        bltu  $t9, $a3, __udm_next      # if remainder >= b: subtract, quotient bit = 1
+        bne   $t9, $a3, __udm_sub
+        bltu  $t8, $a2, __udm_next
+__udm_sub:
+        sltu  $t6, $t8, $a2
+        subu  $t8, $t8, $a2
+        subu  $t9, $t9, $a3
+        subu  $t9, $t9, $t6
+        ori   $v0, $v0, 1
+__udm_next:
+        addiu $t7, $t7, -1
+        bnez  $t7, __udm_loop
+        jr    $ra
+
+__udivll:
+        j     __udivmodll
+
+__umodll:
+        move  $t5, $ra
+        jal   __udivmodll
+        move  $v0, $t8
+        move  $v1, $t9
+        jr    $t5
+
+__divll:                                # signed: divide the magnitudes, then fix the sign
+        move  $t5, $ra
+        xor   $t4, $a1, $a3             # negative if the signs differ
+        bgez  $a1, __divll_b
+        sltu  $t6, $zero, $a0
+        negu  $a0, $a0
+        negu  $a1, $a1
+        subu  $a1, $a1, $t6
+__divll_b:
+        bgez  $a3, __divll_go
+        sltu  $t6, $zero, $a2
+        negu  $a2, $a2
+        negu  $a3, $a3
+        subu  $a3, $a3, $t6
+__divll_go:
+        jal   __udivmodll
+        bgez  $t4, __divll_done
+        sltu  $t6, $zero, $v0
+        negu  $v0, $v0
+        negu  $v1, $v1
+        subu  $v1, $v1, $t6
+__divll_done:
+        jr    $t5
+
+__modll:                                # the remainder has the sign of a
+        move  $t5, $ra
+        move  $t4, $a1
+        bgez  $a1, __modll_b
+        sltu  $t6, $zero, $a0
+        negu  $a0, $a0
+        negu  $a1, $a1
+        subu  $a1, $a1, $t6
+__modll_b:
+        bgez  $a3, __modll_go
+        sltu  $t6, $zero, $a2
+        negu  $a2, $a2
+        negu  $a3, $a3
+        subu  $a3, $a3, $t6
+__modll_go:
+        jal   __udivmodll
+        move  $v0, $t8
+        move  $v1, $t9
+        bgez  $t4, __modll_done
+        sltu  $t6, $zero, $v0
+        negu  $v0, $v0
+        negu  $v1, $v1
+        subu  $v1, $v1, $t6
+__modll_done:
+        jr    $t5
+
+__shlll:
+        andi  $a2, $a2, 63
+        move  $v0, $a0
+        move  $v1, $a1
+        beqz  $a2, __shift_done
+        slti  $t6, $a2, 32
+        beqz  $t6, __shlll_big
+        li    $t7, 32
+        subu  $t7, $t7, $a2
+        sllv  $v1, $a1, $a2
+        srlv  $t6, $a0, $t7
+        or    $v1, $v1, $t6
+        sllv  $v0, $a0, $a2
+        jr    $ra
+__shlll_big:
+        addiu $t7, $a2, -32
+        sllv  $v1, $a0, $t7
+        li    $v0, 0
+__shift_done:
+        jr    $ra
+
+__shrll:                                # logical
+        andi  $a2, $a2, 63
+        move  $v0, $a0
+        move  $v1, $a1
+        beqz  $a2, __shift_done
+        slti  $t6, $a2, 32
+        beqz  $t6, __shrll_big
+        li    $t7, 32
+        subu  $t7, $t7, $a2
+        srlv  $v0, $a0, $a2
+        sllv  $t6, $a1, $t7
+        or    $v0, $v0, $t6
+        srlv  $v1, $a1, $a2
+        jr    $ra
+__shrll_big:
+        addiu $t7, $a2, -32
+        srlv  $v0, $a1, $t7
+        li    $v1, 0
+        jr    $ra
+
+__sarll:                                # arithmetic
+        andi  $a2, $a2, 63
+        move  $v0, $a0
+        move  $v1, $a1
+        beqz  $a2, __shift_done
+        slti  $t6, $a2, 32
+        beqz  $t6, __sarll_big
+        li    $t7, 32
+        subu  $t7, $t7, $a2
+        srlv  $v0, $a0, $a2
+        sllv  $t6, $a1, $t7
+        or    $v0, $v0, $t6
+        srav  $v1, $a1, $a2
+        jr    $ra
+__sarll_big:
+        addiu $t7, $a2, -32
+        srav  $v0, $a1, $t7
+        sra   $v1, $a1, 31
+        jr    $ra
+
+__dtoll:                                # double -> long long, toward zero
+        l.d   $f14, __c_zero
+        li    $t4, 0
+        c.lt.d $f12, $f14
+        bc1f  __dtoll_abs
+        li    $t4, 1
+        neg.d $f12, $f12
+__dtoll_abs:
+        l.d   $f14, __c_2p32
+        div.d $f16, $f12, $f14          # the high word (assumed below 2^31)
+        trunc.w.d $f18, $f16
+        mfc1  $v1, $f18
+        cvt.d.w $f18, $f18
+        mul.d $f18, $f18, $f14
+        sub.d $f16, $f12, $f18          # the low word, 0 .. 2^32
+        l.d   $f14, __c_2p31
+        c.lt.d $f16, $f14
+        bc1t  __dtoll_small
+        sub.d $f16, $f16, $f14
+        trunc.w.d $f18, $f16
+        mfc1  $v0, $f18
+        lui   $t6, 0x8000
+        addu  $v0, $v0, $t6
+        j     __dtoll_sign
+__dtoll_small:
+        trunc.w.d $f18, $f16
+        mfc1  $v0, $f18
+__dtoll_sign:
+        beqz  $t4, __dtoll_done
+        sltu  $t6, $zero, $v0
+        negu  $v0, $v0
+        negu  $v1, $v1
+        subu  $v1, $v1, $t6
+__dtoll_done:
+        jr    $ra
+
+# ---------------------------------------------------------------- printf
+# %d %i %u %x %X %o %c %s %f %%, with '-' and '0' flags, width, precision
+# (strings and %f), '*', and the lengths l / ll / h.
+#   $s0 format   $s1 next argument   $s2 left-justify   $s3 pad character
+#   $s4 width    $s5 precision       $s6 number of 'l'  $s7 characters written
+__printf:
+        addiu $sp, $sp, -40
+        sw    $ra, 36($sp)
+        sw    $s0, 0($sp)
+        sw    $s1, 4($sp)
+        sw    $s2, 8($sp)
+        sw    $s3, 12($sp)
+        sw    $s4, 16($sp)
+        sw    $s5, 20($sp)
+        sw    $s6, 24($sp)
+        sw    $s7, 28($sp)
+        lw    $s0, 40($sp)
+        addiu $s1, $sp, 44
+        li    $s7, 0
+__pf_loop:
+        lbu   $a0, 0($s0)
+        beqz  $a0, __pf_done
+        addiu $s0, $s0, 1
+        li    $t0, 37                   # '%'
+        beq   $a0, $t0, __pf_spec
+__pf_char:
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        j     __pf_loop
+__pf_spec:
+        li    $s2, 0
+        li    $s3, 32
+        li    $s4, 0
+        li    $s5, -1
+        li    $s6, 0
+__pf_flags:
+        lbu   $t0, 0($s0)
+        li    $t1, 45                   # '-'
+        bne   $t0, $t1, __pf_flag0
+        li    $s2, 1
+        j     __pf_flagnext
+__pf_flag0:
+        li    $t1, 48                   # '0'
+        bne   $t0, $t1, __pf_flagx
+        li    $s3, 48
+        j     __pf_flagnext
+__pf_flagx:
+        li    $t1, 43                   # '+', ' ', '#' are accepted and ignored
+        beq   $t0, $t1, __pf_flagnext
+        li    $t1, 32
+        beq   $t0, $t1, __pf_flagnext
+        li    $t1, 35
+        bne   $t0, $t1, __pf_width
+__pf_flagnext:
+        addiu $s0, $s0, 1
+        j     __pf_flags
+__pf_width:
+        lbu   $t0, 0($s0)
+        li    $t1, 42                   # '*'
+        bne   $t0, $t1, __pf_wdigit
+        lw    $s4, 0($s1)
+        addiu $s1, $s1, 4
+        addiu $s0, $s0, 1
+        bgez  $s4, __pf_prec
+        li    $s2, 1
+        negu  $s4, $s4
+        j     __pf_prec
+__pf_wdigit:
+        lbu   $t0, 0($s0)
+        addiu $t1, $t0, -48
+        sltiu $t2, $t1, 10
+        beqz  $t2, __pf_prec
+        li    $t3, 10
+        mul   $s4, $s4, $t3
+        addu  $s4, $s4, $t1
+        addiu $s0, $s0, 1
+        j     __pf_wdigit
+__pf_prec:
+        lbu   $t0, 0($s0)
+        li    $t1, 46                   # '.'
+        bne   $t0, $t1, __pf_len
+        addiu $s0, $s0, 1
+        li    $s5, 0
+        lbu   $t0, 0($s0)
+        li    $t1, 42
+        bne   $t0, $t1, __pf_pdigit
+        lw    $s5, 0($s1)
+        addiu $s1, $s1, 4
+        addiu $s0, $s0, 1
+        j     __pf_len
+__pf_pdigit:
+        lbu   $t0, 0($s0)
+        addiu $t1, $t0, -48
+        sltiu $t2, $t1, 10
+        beqz  $t2, __pf_len
+        li    $t3, 10
+        mul   $s5, $s5, $t3
+        addu  $s5, $s5, $t1
+        addiu $s0, $s0, 1
+        j     __pf_pdigit
+__pf_len:
+        lbu   $t0, 0($s0)
+        li    $t1, 108                  # 'l'
+        bne   $t0, $t1, __pf_lenh
+        addiu $s6, $s6, 1
+        addiu $s0, $s0, 1
+        j     __pf_len
+__pf_lenh:
+        li    $t1, 104                  # 'h' and 'z' change nothing: the argument is one word
+        beq   $t0, $t1, __pf_lenskip
+        li    $t1, 122
+        bne   $t0, $t1, __pf_conv
+__pf_lenskip:
+        addiu $s0, $s0, 1
+        j     __pf_len
+__pf_conv:
+        lbu   $t0, 0($s0)
+        beqz  $t0, __pf_done
+        addiu $s0, $s0, 1
+        li    $t3, 10                   # base
+        li    $t4, 0                    # upper-case digits?
+        li    $t1, 100
+        beq   $t0, $t1, __pf_d
+        li    $t1, 105
+        beq   $t0, $t1, __pf_d
+        li    $t1, 117
+        beq   $t0, $t1, __pf_u
+        li    $t1, 99
+        beq   $t0, $t1, __pf_c
+        li    $t1, 115
+        beq   $t0, $t1, __pf_s
+        li    $t1, 102
+        beq   $t0, $t1, __pf_f
+        li    $t3, 16
+        li    $t1, 120
+        beq   $t0, $t1, __pf_u
+        li    $t4, 1
+        li    $t1, 88
+        beq   $t0, $t1, __pf_u
+        li    $t4, 0
+        li    $t3, 8
+        li    $t1, 111
+        beq   $t0, $t1, __pf_u
+        move  $a0, $t0                  # "%%" and anything unknown: the character itself
+        j     __pf_char
+
+__pf_d:                                 # signed: magnitude in $t1:$t0, sign character in $t2
+        slti  $t5, $s6, 2
+        bnez  $t5, __pf_d32
+        addiu $s1, $s1, 7
+        li    $t5, -8
+        and   $s1, $s1, $t5
+        lw    $t0, 0($s1)
+        lw    $t1, 4($s1)
+        addiu $s1, $s1, 8
+        j     __pf_dsign
+__pf_d32:
+        lw    $t0, 0($s1)
+        addiu $s1, $s1, 4
+        sra   $t1, $t0, 31
+__pf_dsign:
+        li    $t2, 0
+        bgez  $t1, __pf_num
+        li    $t2, 45
+        sltu  $t5, $zero, $t0
+        negu  $t0, $t0
+        negu  $t1, $t1
+        subu  $t1, $t1, $t5
+        j     __pf_num
+__pf_u:                                 # unsigned, base in $t3
+        li    $t2, 0
+        slti  $t5, $s6, 2
+        bnez  $t5, __pf_u32
+        addiu $s1, $s1, 7
+        li    $t5, -8
+        and   $s1, $s1, $t5
+        lw    $t0, 0($s1)
+        lw    $t1, 4($s1)
+        addiu $s1, $s1, 8
+        j     __pf_num
+__pf_u32:
+        lw    $t0, 0($s1)
+        addiu $s1, $s1, 4
+        li    $t1, 0
+__pf_num:                               # digits into the buffer, last one first
+        la    $s5, __pf_buf+95
+        li    $s6, 0
+        or    $t5, $t0, $t1
+        bnez  $t5, __pf_nloop
+        li    $t5, 0
+        j     __pf_ndigit
+__pf_nloop:
+        or    $t5, $t0, $t1
+        beqz  $t5, __pf_nout
+        bnez  $t1, __pf_n64
+        divu  $t0, $t3
+        mflo  $t0
+        mfhi  $t5
+        j     __pf_ndigit
+__pf_n64:
+        move  $a0, $t0
+        move  $a1, $t1
+        move  $a2, $t3
+        li    $a3, 0
+        jal   __udivmodll
+        move  $t0, $v0
+        move  $t1, $v1
+        move  $t5, $t8
+__pf_ndigit:
+        la    $t8, __pf_digits
+        addu  $t8, $t8, $t5
+        lbu   $t5, 0($t8)
+        beqz  $t4, __pf_nstore
+        slti  $t8, $t5, 97
+        bnez  $t8, __pf_nstore
+        addiu $t5, $t5, -32
+__pf_nstore:
+        addiu $s5, $s5, -1
+        sb    $t5, 0($s5)
+        addiu $s6, $s6, 1
+        j     __pf_nloop
+__pf_nout:
+        move  $t0, $s5
+        move  $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_c:
+        lw    $t5, 0($s1)
+        addiu $s1, $s1, 4
+        la    $t0, __pf_buf
+        sb    $t5, 0($t0)
+        li    $t1, 1
+        li    $t2, 0
+        li    $s3, 32
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_s:
+        lw    $t0, 0($s1)
+        addiu $s1, $s1, 4
+        move  $t3, $t0
+        li    $t1, 0
+__pf_slen:                              # the length, at most the precision
+        lbu   $t5, 0($t3)
+        beqz  $t5, __pf_sgo
+        bltz  $s5, __pf_sinc
+        bge   $t1, $s5, __pf_sgo
+__pf_sinc:
+        addiu $t1, $t1, 1
+        addiu $t3, $t3, 1
+        j     __pf_slen
+__pf_sgo:
+        li    $t2, 0
+        li    $s3, 32
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_f:                                 # fixed notation
+        addiu $s1, $s1, 7
+        li    $t5, -8
+        and   $s1, $s1, $t5
+        l.d   $f12, 0($s1)
+        addiu $s1, $s1, 8
+        bgez  $s5, __pf_fsign
+        li    $s5, 6
+__pf_fsign:
+        li    $t2, 0
+        l.d   $f14, __c_zero
+        c.lt.d $f12, $f14
+        bc1f  __pf_fscale
+        li    $t2, 45
+        neg.d $f12, $f12
+__pf_fscale:                            # N = the value * 10^precision, rounded to nearest (ties to even)
+        l.d   $f18, __c_ten
+        move  $t5, $s5
+__pf_fscale1:
+        blez  $t5, __pf_fscale2
+        mul.d $f12, $f12, $f18
+        addiu $t5, $t5, -1
+        j     __pf_fscale1
+__pf_fscale2:
+        jal   __dtoll                   # $v1:$v0 = N truncated ($f12 is not negative, so it is kept)
+        mtc1  $v1, $f14                 # back to double, to see what was cut off
+        cvt.d.w $f14, $f14
+        l.d   $f16, __c_2p32
+        mul.d $f14, $f14, $f16
+        mtc1  $v0, $f18
+        cvt.d.w $f18, $f18
+        bgez  $v0, __pf_fback
+        add.d $f18, $f18, $f16
+__pf_fback:
+        add.d $f14, $f14, $f18
+        sub.d $f12, $f12, $f14          # the fraction that was cut off
+        l.d   $f16, __c_half
+        c.lt.d $f16, $f12
+        bc1t  __pf_fup
+        c.eq.d $f16, $f12
+        bc1f  __pf_fdigits
+        andi  $t5, $v0, 1               # exactly half: round to the even neighbour
+        beqz  $t5, __pf_fdigits
+__pf_fup:
+        addiu $v0, $v0, 1
+        sltiu $t5, $v0, 1
+        addu  $v1, $v1, $t5
+__pf_fdigits:                           # digits of N, last first, with the point after `precision` of them
+        move  $t0, $v0
+        move  $t1, $v1
+        li    $t3, 10
+        li    $t4, 0                    # digits written
+        la    $s6, __pf_buf+95
+__pf_fdigit:
+        bnez  $t1, __pf_fdiv64
+        divu  $t0, $t3
+        mflo  $t0
+        mfhi  $t5
+        j     __pf_fstore
+__pf_fdiv64:
+        move  $a0, $t0
+        move  $a1, $t1
+        move  $a2, $t3
+        li    $a3, 0
+        jal   __udivmodll
+        move  $t0, $v0
+        move  $t1, $v1
+        move  $t5, $t8
+__pf_fstore:
+        addiu $t5, $t5, 48
+        addiu $s6, $s6, -1
+        sb    $t5, 0($s6)
+        addiu $t4, $t4, 1
+        bne   $t4, $s5, __pf_fmore
+        li    $t5, 46                   # the decimal point
+        addiu $s6, $s6, -1
+        sb    $t5, 0($s6)
+__pf_fmore:
+        or    $t5, $t0, $t1
+        bnez  $t5, __pf_fdigit
+        ble   $t4, $s5, __pf_fdigit     # at least one digit before the point
+        move  $t0, $s6
+        la    $t1, __pf_buf+95
+        subu  $t1, $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_out:                               # $t0 text, $t1 length, $t2 sign character or 0
+        move  $t3, $t1
+        beqz  $t2, __pf_opad
+        addiu $t3, $t3, 1
+__pf_opad:
+        subu  $t4, $s4, $t3             # padding needed
+        bnez  $s2, __pf_osign           # left-justified: pad afterwards
+        li    $t5, 48
+        beq   $s3, $t5, __pf_ozero
+__pf_ospace:
+        blez  $t4, __pf_osign
+        li    $a0, 32
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        addiu $t4, $t4, -1
+        j     __pf_ospace
+__pf_ozero:                             # sign, then zeros
+        beqz  $t2, __pf_ozeros
+        move  $a0, $t2
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        li    $t2, 0
+__pf_ozeros:
+        blez  $t4, __pf_otext
+        li    $a0, 48
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        addiu $t4, $t4, -1
+        j     __pf_ozeros
+__pf_osign:
+        beqz  $t2, __pf_otext
+        move  $a0, $t2
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+__pf_otext:
+        blez  $t1, __pf_otail
+        lbu   $a0, 0($t0)
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        addiu $t0, $t0, 1
+        addiu $t1, $t1, -1
+        j     __pf_otext
+__pf_otail:
+        beqz  $s2, __pf_oret
+__pf_otail1:
+        blez  $t4, __pf_oret
+        li    $a0, 32
+        li    $v0, 11
+        syscall
+        addiu $s7, $s7, 1
+        addiu $t4, $t4, -1
+        j     __pf_otail1
+__pf_oret:
+        jr    $ra
+
+__pf_done:
+        move  $v0, $s7
+        lw    $s0, 0($sp)
+        lw    $s1, 4($sp)
+        lw    $s2, 8($sp)
+        lw    $s3, 12($sp)
+        lw    $s4, 16($sp)
+        lw    $s5, 20($sp)
+        lw    $s6, 24($sp)
+        lw    $s7, 28($sp)
+        lw    $ra, 36($sp)
+        addiu $sp, $sp, 40
+        jr    $ra
+
+# ----------------------------------------------------------------- scanf
+# %d %i %u %c %s %f (with l for double), a width for %s, h / hh / l / ll.
+# Input is taken a line at a time with the read_string system call.
+__sc_getc:                              # the next input character in $v0, -1 at the end
+        lw    $v0, __sc_peek
+        li    $t8, -2
+        beq   $v0, $t8, __sc_read
+        li    $t9, -1
+        beq   $v0, $t9, __sc_ret        # the end of input stays the end
+        sw    $t8, __sc_peek
+__sc_ret:
+        jr    $ra
+__sc_read:                              # from the current line; a new line comes from the console
+        lw    $t8, __sc_pos             # (read_string, so it works in the SPIM terminal and in QtSpim's console)
+        lbu   $v0, 0($t8)
+        bnez  $v0, __sc_take
+        la    $t8, __sc_line
+        sb    $zero, 0($t8)
+        move  $a0, $t8
+        li    $a1, 130
+        li    $v0, 8                    # read_string
+        syscall
+        la    $t8, __sc_line
+        lbu   $v0, 0($t8)
+        beqz  $v0, __sc_eof             # nothing was read: the input has ended
+__sc_take:
+        addiu $t8, $t8, 1
+        sw    $t8, __sc_pos
+        jr    $ra
+__sc_eof:
+        li    $v0, -1
+        sw    $v0, __sc_peek
+        jr    $ra
+
+__sc_skip:                              # skip white space; the next character stays unread
+        move  $t7, $ra
+__sc_skip1:
+        jal   __sc_getc
+        li    $t8, 32
+        beq   $v0, $t8, __sc_skip1
+        li    $t8, 10
+        beq   $v0, $t8, __sc_skip1
+        li    $t8, 9
+        beq   $v0, $t8, __sc_skip1
+        li    $t8, 13
+        beq   $v0, $t8, __sc_skip1
+        sw    $v0, __sc_peek
+        jr    $t7
+
+__scanf:
+        addiu $sp, $sp, -40
+        sw    $ra, 36($sp)
+        sw    $s0, 0($sp)
+        sw    $s1, 4($sp)
+        sw    $s2, 8($sp)
+        sw    $s3, 12($sp)
+        sw    $s4, 16($sp)
+        sw    $s5, 20($sp)
+        sw    $s6, 24($sp)
+        sw    $s7, 28($sp)
+        lw    $s0, 40($sp)
+        addiu $s1, $sp, 44
+        li    $s7, 0                    # conversions stored
+__sf_loop:
+        lbu   $t0, 0($s0)
+        beqz  $t0, __sf_done
+        addiu $s0, $s0, 1
+        li    $t1, 32
+        beq   $t0, $t1, __sf_space
+        li    $t1, 10
+        beq   $t0, $t1, __sf_space
+        li    $t1, 9
+        beq   $t0, $t1, __sf_space
+        li    $t1, 37
+        beq   $t0, $t1, __sf_spec
+        move  $s2, $t0                  # any other character must be the next input character
+        jal   __sc_getc
+        beq   $v0, $s2, __sf_loop
+        sw    $v0, __sc_peek
+        j     __sf_done
+__sf_space:
+        jal   __sc_skip
+        j     __sf_loop
+__sf_spec:
+        li    $s4, 0                    # width
+        li    $s5, 0                    # number of 'h'
+        li    $s6, 0                    # number of 'l'
+__sf_width:
+        lbu   $t0, 0($s0)
+        addiu $t1, $t0, -48
+        sltiu $t2, $t1, 10
+        beqz  $t2, __sf_len
+        li    $t3, 10
+        mul   $s4, $s4, $t3
+        addu  $s4, $s4, $t1
+        addiu $s0, $s0, 1
+        j     __sf_width
+__sf_len:
+        lbu   $t0, 0($s0)
+        li    $t1, 108
+        bne   $t0, $t1, __sf_lenh
+        addiu $s6, $s6, 1
+        addiu $s0, $s0, 1
+        j     __sf_len
+__sf_lenh:
+        li    $t1, 104
+        bne   $t0, $t1, __sf_conv
+        addiu $s5, $s5, 1
+        addiu $s0, $s0, 1
+        j     __sf_len
+__sf_conv:
+        lbu   $t0, 0($s0)
+        beqz  $t0, __sf_done
+        addiu $s0, $s0, 1
+        li    $t1, 99
+        beq   $t0, $t1, __sf_c
+        li    $t1, 115
+        beq   $t0, $t1, __sf_s
+        li    $t1, 100
+        beq   $t0, $t1, __sf_d
+        li    $t1, 105
+        beq   $t0, $t1, __sf_d
+        li    $t1, 117
+        beq   $t0, $t1, __sf_d
+        li    $t1, 102
+        beq   $t0, $t1, __sf_f
+        li    $t1, 101
+        beq   $t0, $t1, __sf_f
+        li    $t1, 103
+        beq   $t0, $t1, __sf_f
+        j     __sf_done
+
+__sf_d:                                 # an optional sign and decimal digits
+        jal   __sc_skip
+        jal   __sc_getc
+        li    $s2, 0
+        li    $t1, 45
+        bne   $v0, $t1, __sf_dplus
+        li    $s2, 1
+        jal   __sc_getc
+        j     __sf_dfirst
+__sf_dplus:
+        li    $t1, 43
+        bne   $v0, $t1, __sf_dfirst
+        jal   __sc_getc
+__sf_dfirst:
+        addiu $t1, $v0, -48
+        sltiu $t2, $t1, 10
+        bnez  $t2, __sf_dstart
+        sw    $v0, __sc_peek
+        j     __sf_done
+__sf_dstart:
+        li    $t4, 0
+__sf_ddigit:
+        li    $t3, 10
+        mul   $t4, $t4, $t3
+        addu  $t4, $t4, $t1
+        jal   __sc_getc
+        addiu $t1, $v0, -48
+        sltiu $t2, $t1, 10
+        bnez  $t2, __sf_ddigit
+        sw    $v0, __sc_peek
+        beqz  $s2, __sf_dstore
+        negu  $t4, $t4
+__sf_dstore:
+        lw    $t5, 0($s1)
+        addiu $s1, $s1, 4
+        li    $t1, 2
+        beq   $s6, $t1, __sf_dll
+        beq   $s5, $t1, __sf_dhh
+        bnez  $s5, __sf_dh
+        sw    $t4, 0($t5)
+        j     __sf_stored
+__sf_dh:
+        sh    $t4, 0($t5)
+        j     __sf_stored
+__sf_dhh:
+        sb    $t4, 0($t5)
+        j     __sf_stored
+__sf_dll:
+        sw    $t4, 0($t5)
+        sra   $t4, $t4, 31
+        sw    $t4, 4($t5)
+__sf_stored:
+        addiu $s7, $s7, 1
+        j     __sf_loop
+
+__sf_c:                                 # one character, white space included
+        jal   __sc_getc
+        bltz  $v0, __sf_done
+        lw    $t5, 0($s1)
+        addiu $s1, $s1, 4
+        sb    $v0, 0($t5)
+        j     __sf_stored
+
+__sf_s:                                 # a word, at most `width` characters
+        jal   __sc_skip
+        jal   __sc_getc
+        bltz  $v0, __sf_done
+        lw    $t5, 0($s1)
+        addiu $s1, $s1, 4
+        li    $t4, 0
+__sf_schar:
+        sb    $v0, 0($t5)
+        addiu $t5, $t5, 1
+        addiu $t4, $t4, 1
+        beqz  $s4, __sf_snext
+        bge   $t4, $s4, __sf_send
+__sf_snext:
+        jal   __sc_getc
+        bltz  $v0, __sf_sstop
+        li    $t1, 32
+        beq   $v0, $t1, __sf_sstop
+        li    $t1, 10
+        beq   $v0, $t1, __sf_sstop
+        li    $t1, 9
+        beq   $v0, $t1, __sf_sstop
+        li    $t1, 13
+        beq   $v0, $t1, __sf_sstop
+        j     __sf_schar
+__sf_sstop:
+        sw    $v0, __sc_peek
+__sf_send:
+        sb    $zero, 0($t5)
+        j     __sf_stored
+
+__sf_f:                                 # [sign] digits [. digits] [e [sign] digits]
+        jal   __sc_skip
+        jal   __sc_getc
+        li    $s2, 0
+        li    $t1, 45
+        bne   $v0, $t1, __sf_fplus
+        li    $s2, 1
+        jal   __sc_getc
+        j     __sf_fstart
+__sf_fplus:
+        li    $t1, 43
+        bne   $v0, $t1, __sf_fstart
+        jal   __sc_getc
+__sf_fstart:
+        l.d   $f4, __c_zero             # the value, as an integer of all digits read
+        l.d   $f8, __c_ten
+        li    $t6, 0                    # digits seen
+        li    $t7, 0                    # digits after the point
+        li    $t5, 0                    # past the point?
+__sf_fdigit:
+        addiu $t1, $v0, -48
+        sltiu $t2, $t1, 10
+        beqz  $t2, __sf_fpoint
+        mul.d $f4, $f4, $f8
+        mtc1  $t1, $f6
+        cvt.d.w $f6, $f6
+        add.d $f4, $f4, $f6
+        addiu $t6, $t6, 1
+        addu  $t7, $t7, $t5
+        jal   __sc_getc
+        j     __sf_fdigit
+__sf_fpoint:
+        li    $t1, 46
+        bne   $v0, $t1, __sf_fexp
+        bnez  $t5, __sf_fexp
+        li    $t5, 1
+        jal   __sc_getc
+        j     __sf_fdigit
+__sf_fexp:
+        bnez  $t6, __sf_fexp1
+        sw    $v0, __sc_peek            # no digits at all
+        j     __sf_done
+__sf_fexp1:
+        li    $t4, 0                    # exponent
+        li    $t3, 0                    # exponent negative?
+        li    $t1, 101
+        beq   $v0, $t1, __sf_fexp2
+        li    $t1, 69
+        bne   $v0, $t1, __sf_fscale
+__sf_fexp2:
+        jal   __sc_getc
+        li    $t1, 45
+        bne   $v0, $t1, __sf_fexp3
+        li    $t3, 1
+        jal   __sc_getc
+        j     __sf_fexp4
+__sf_fexp3:
+        li    $t1, 43
+        bne   $v0, $t1, __sf_fexp4
+        jal   __sc_getc
+__sf_fexp4:
+        addiu $t1, $v0, -48
+        sltiu $t2, $t1, 10
+        beqz  $t2, __sf_fexp5
+        li    $t0, 10
+        mul   $t4, $t4, $t0
+        addu  $t4, $t4, $t1
+        jal   __sc_getc
+        j     __sf_fexp4
+__sf_fexp5:
+        beqz  $t3, __sf_fscale
+        negu  $t4, $t4
+__sf_fscale:
+        sw    $v0, __sc_peek
+        subu  $t4, $t4, $t7             # power of ten still to apply
+__sf_fup:
+        blez  $t4, __sf_fdown
+        mul.d $f4, $f4, $f8
+        addiu $t4, $t4, -1
+        j     __sf_fup
+__sf_fdown:
+        bgez  $t4, __sf_fsign
+        div.d $f4, $f4, $f8
+        addiu $t4, $t4, 1
+        j     __sf_fdown
+__sf_fsign:
+        beqz  $s2, __sf_fstore
+        neg.d $f4, $f4
+__sf_fstore:
+        lw    $t5, 0($s1)
+        addiu $s1, $s1, 4
+        bnez  $s6, __sf_fdouble
+        cvt.s.d $f4, $f4
+        s.s   $f4, 0($t5)
+        j     __sf_stored
+__sf_fdouble:
+        s.d   $f4, 0($t5)
+        j     __sf_stored
+
+__sf_done:
+        move  $v0, $s7
+        bnez  $s7, __sf_ret
+        lw    $t0, __sc_peek            # nothing stored and the input is exhausted: EOF
+        li    $t1, -1
+        bne   $t0, $t1, __sf_ret
+        li    $v0, -1
+__sf_ret:
+        lw    $s0, 0($sp)
+        lw    $s1, 4($sp)
+        lw    $s2, 8($sp)
+        lw    $s3, 12($sp)
+        lw    $s4, 16($sp)
+        lw    $s5, 20($sp)
+        lw    $s6, 24($sp)
+        lw    $s7, 28($sp)
+        lw    $ra, 36($sp)
+        addiu $sp, $sp, 40
+        jr    $ra
