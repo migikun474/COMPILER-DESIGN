@@ -421,6 +421,7 @@ std::string storageName(Storage s);
 void printSemanticSymbolTable(const SymbolTable &st, std::ostream &out);
 
 /* MIPS32 size/alignment/field offsets of every complete struct/class */
+void printSymbolTableByScope(const SymbolTable &st, std::ostream &out);
 void printRecordLayouts(const SymbolTable &st, std::ostream &out);
 
 } // namespace sem

@@ -857,6 +857,42 @@ void printSemanticSymbolTable(const SymbolTable &st, std::ostream &out) {
     }
 }
 
+/* the same symbols, grouped by scope and narrower: for the TAC logs */
+void printSymbolTableByScope(const SymbolTable &st, std::ostream &out) {
+    std::vector<std::string> order;
+    std::map<std::string, std::vector<const Symbol *>> byScope;
+    for (const auto &sp : st.allSymbols()) {
+        if (!byScope.count(sp->scopePath)) order.push_back(sp->scopePath);
+        byScope[sp->scopePath].push_back(sp.get());
+    }
+    char line[512];
+    for (const auto &scope : order) {
+        out << " scope: " << (scope.empty() ? "global" : scope) << "\n";
+        snprintf(line, sizeof line, "   %-18s %-13s %-26s %-7s %5s %4s %4s  %s\n", "name", "kind", "type", "storage",
+                 "line", "size", "uses", "TAC name / notes");
+        out << line;
+        snprintf(line, sizeof line, "   %-18s %-13s %-26s %-7s %5s %4s %4s  %s\n", std::string(18, '-').c_str(),
+                 std::string(13, '-').c_str(), std::string(26, '-').c_str(), "-------", "-----", "----", "----",
+                 "----------------");
+        out << line;
+        for (const Symbol *p : byScope[scope]) {
+            const Symbol &s = *p;
+            long long size = (s.kind == SymbolKind::Variable || s.kind == SymbolKind::Parameter || s.kind == SymbolKind::Field)
+                                 ? sizeOf(s.type)
+                                 : -1;
+            std::string name = s.name.empty() ? "(unnamed)" : s.name;
+            std::string extra = s.uniqueName == s.name ? "" : s.uniqueName;
+            std::string n = notes(s);
+            if (!n.empty()) extra += (extra.empty() ? "" : "; ") + n;
+            snprintf(line, sizeof line, "   %-18s %-13s %-26s %-7s %5s %4s %4d  %s\n", name.c_str(), kindLabel(s).c_str(),
+                     typeLabel(s).c_str(), storageName(s.storage).c_str(), displayLine(s.line).c_str(),
+                     size >= 0 ? std::to_string(size).c_str() : "-", s.useCount, extra.c_str());
+            out << line;
+        }
+        out << "\n";
+    }
+}
+
 void printRecordLayouts(const SymbolTable &st, std::ostream &out) {
     bool any = false;
     for (const auto &sp : st.allSymbols()) {
