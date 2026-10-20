@@ -13,12 +13,16 @@
 #
 # test/diagnostics/<name>.c must produce exactly the warnings in <name>.err.
 #
+# Every program's TAC, with its symbol tables, is kept in logs/:
+# <name>.tac without optimization, <name>.O1.tac, .O2.tac and .O3.tac.
+#
 # --update rewrites the expected files from the current build.
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 [ -x ./tac_generator ] || { echo "Build it first with 'make'."; exit 1; }
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 pass=0; fail=0
+mkdir -p logs
 for f in test/*.c; do
     n="$(basename "$f" .c)"
     args=""; [ -f "test/$n.args" ] && args="$(cat "test/$n.args")"
@@ -36,6 +40,9 @@ for f in test/*.c; do
         (cd "$TMP" && "$OLDPWD/tac_generator" -O$level --run -q "$OLDPWD/$f" $args < "$in" > out1 2> err1; echo "exit: $?" >> out1)
         cmp -s "$TMP/out1" "test/expected/$n.out" || ok=0
         gain="$gain  -O$level $(grep -o '[0-9]*% fewer' "$TMP/err1")"
+    done
+    for l in "$TMP"/logs/"$n".*tac; do # logs/<name>.tac, .O1.tac, .O2.tac, .O3.tac
+        [ -f "$l" ] && sed "s|$PWD/||g" "$l" > "logs/$(basename "$l")"
     done
     raw="$(grep -o '[0-9]* instructions executed' "$TMP/err" | grep -o '[0-9]*')"
     cmp -s "$TMP/out" "test/expected/$n.out" || ok=0

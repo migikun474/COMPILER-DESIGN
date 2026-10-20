@@ -2,7 +2,8 @@
    unchanged) -> three address code. TAC is only generated for a program
    with no lexical, syntax or semantic errors.
 
-     tac_generator file.c              print the TAC (also written to logs/file.tac)
+     tac_generator file.c              print the TAC (also written to logs/file.tac,
+                                       with the symbol tables; -O<n>: logs/file.O<n>.tac)
      tac_generator --run file.c [args] print the TAC, then execute it
      tac_generator --run -q file.c     execute only: the program's own output
      tac_generator -O1 file.c          optimize (-O2: also across basic blocks); with
@@ -31,16 +32,23 @@
 extern FILE *yyin;
 namespace fs = std::filesystem;
 
-static void writeLog(const std::string &sourceFile, const std::string &status, const std::string &body,
-                     const std::string &suffix = ".tac") {
+/* logs/<file>.tac (unoptimized) or logs/<file>.O<n>.tac: the TAC, then
+   the semantic symbol table and record layouts it was generated from */
+static void writeLog(const std::string &sourceFile, int level, const std::string &status, const std::string &body,
+                     const std::string &symbols = "") {
     fs::create_directories("logs");
+    std::string suffix = level > 0 ? ".O" + std::to_string(level) + ".tac" : ".tac";
     std::ofstream log("logs/" + fs::path(sourceFile).stem().string() + suffix);
     if (!log) return;
+    static const char *what[] = {"no optimization", "-O1: optimized inside basic blocks",
+                                 "-O2: -O1 plus data flow across blocks", "-O3: -O2 plus inlining and loop optimizations"};
     log << "=========================================\n";
     log << "         THREE ADDRESS CODE\n";
     log << "=========================================\n\n";
-    log << "Source File : " << sourceFile << "\n\n";
+    log << "Source File  : " << sourceFile << "\n";
+    log << "Optimization : " << what[level < 0 || level > 3 ? 0 : level] << "\n\n";
     log << status << "\n\n" << body;
+    if (!symbols.empty()) log << "\n" << symbols;
 }
 
 int main(int argc, char **argv) {
@@ -103,7 +111,7 @@ int main(int argc, char **argv) {
         std::string status = std::string(syntaxFailed ? "Syntax analysis" : "Semantic analysis") + " failed: " +
                              std::to_string(errorDiagnostics().size()) + " error(s); no code was generated.";
         fprintf(stderr, "%s\n\n%s", status.c_str(), shown.str().c_str());
-        writeLog(path, status, plain.str());
+        writeLog(path, level, status, plain.str());
         return 1;
     }
     if (!g_diagnostics.empty()) { /* warnings */
@@ -135,7 +143,12 @@ int main(int argc, char **argv) {
                  " -> " + std::to_string(stats.after) + " instruction(s) for '" + std::string(path) + "'.";
     }
     if (!quiet) printf("%s\n\n%s", status.c_str(), body.str().c_str());
-    writeLog(path, status, body.str(), level > 0 ? ".O" + std::to_string(level) + ".tac" : ".tac");
+    std::ostringstream symbols;
+    symbols << "=== Semantic Symbol Table ===\n";
+    sem::printSemanticSymbolTable(table, symbols);
+    symbols << "\n=== Record Layouts ===\n";
+    sem::printRecordLayouts(table, symbols);
+    writeLog(path, level, status, body.str(), symbols.str());
     if (!runIt) return 0;
 
     bool readsInput = false;

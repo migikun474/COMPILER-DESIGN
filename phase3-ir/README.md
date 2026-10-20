@@ -349,6 +349,17 @@ written), computed on the unoptimized code at every `-O` level. Only
 scalars whose address is never taken are tracked: arrays, objects,
 globals and anything reached through a pointer are not.
 
+## Logs
+
+Every run writes the listing to `logs/` in the current directory:
+`logs/<file>.tac` without optimization and `logs/<file>.O1.tac`,
+`.O2.tac`, `.O3.tac` with `-O1`, `-O2`, `-O3`. Each log has the TAC of
+every function with its frame (name, kind, type, width, offset), the
+globals, then the semantic symbol table (every scope and symbol) and the
+record layouts. With `-O<n>` it starts with the optimization summary.
+`./run_tests.sh` keeps all four logs of every test program in
+`phase3-ir/logs/`.
+
 ## Limitations
 
 - Without an `-O` flag the output is deliberately unoptimized (decision D16).
