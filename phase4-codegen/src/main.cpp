@@ -92,6 +92,19 @@ int main(int argc, char **argv) {
     for (const auto &w : tac::uninitializedReads(program))
         fprintf(stderr, "%s:%s: warning: %s [uninitialized]\n", path, displayLine(w.first).c_str(), w.second.c_str());
     if (level > 0) tac::optimize(program, level);
-    fputs(mips::generate(program, runtime.str(), level > 0 && machine).c_str(), stdout);
+    std::string assembly = mips::generate(program, runtime.str(), level > 0 && machine);
+    fputs(assembly.c_str(), stdout);
+    /* also logs/<file>.s, or .O1.s ... (.stack.O1.s with --stack-only): runnable as it is */
+    fs::create_directories("logs");
+    std::string suffix = (level > 0 && !machine ? ".stack" : "") + std::string(level > 0 ? ".O" + std::to_string(level) : "") + ".s";
+    std::ofstream log("logs/" + fs::path(path).stem().string() + suffix);
+    static const char *what[] = {"no optimization (every value in the stack frame)", "-O1", "-O2", "-O3"};
+    log << "# =========================================================================\n"
+        << "#  MIPS ASSEMBLY  --  run with: spim -file <this file>\n"
+        << "# =========================================================================\n"
+        << "#  Source file  : " << path << "\n"
+        << "#  Optimization : " << what[level] << (level > 0 ? (machine ? " (TAC optimizations, registers, peephole)" : " (TAC optimizations only, --stack-only)") : "") << "\n"
+        << "# =========================================================================\n\n"
+        << assembly;
     return 0;
 }

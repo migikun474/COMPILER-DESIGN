@@ -1,0 +1,21 @@
+Animal()
+Tag()
+Dog(3)
+39 4 1
+4
+~Dog(4)
+~Tag()
+~Animal()
+--
+Animal()
+Tag()
+Dog(5)
+46 2
+~Dog(5)
+~Tag()
+~Animal()
+--
+4 6 -4 6 5 6
+0 1 5 16 39
+0 9
+exit: 11

@@ -1,0 +1,10 @@
+for: 8 26
+while: 120
+do: 10
+until: 22
+100 22 24 6 -1 -1 
+00 10 11 20 21 22 
+goto: 4
+medium
+x: 0
+exit: 26
