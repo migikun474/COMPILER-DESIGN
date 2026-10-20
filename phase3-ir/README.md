@@ -353,10 +353,13 @@ globals and anything reached through a pointer are not.
 
 Every run writes the listing to `logs/` in the current directory:
 `logs/<file>.tac` without optimization and `logs/<file>.O1.tac`,
-`.O2.tac`, `.O3.tac` with `-O1`, `-O2`, `-O3`. Each log has the TAC of
-every function with its frame (name, kind, type, width, offset), the
-globals, then the semantic symbol table (every scope and symbol) and the
-record layouts. With `-O<n>` it starts with the optimization summary.
+`.O2.tac`, `.O3.tac` with `-O1`, `-O2`, `-O3`. Each log is in sections:
+a header (source, optimization level, instruction count), the
+optimization summary (with `-O<n>`), the globals, one section per
+function (its symbol table -- name, kind, type, width, offset -- then its
+numbered code with labels), the semantic symbol table grouped by scope,
+and the record layouts. Temporaries the optimized code no longer uses
+are left out of a function's table (a line says how many).
 `./run_tests.sh` keeps all four logs of every test program in
 `phase3-ir/logs/`.
 

@@ -42,12 +42,15 @@ static void writeLog(const std::string &sourceFile, int level, const std::string
     if (!log) return;
     static const char *what[] = {"no optimization", "-O1: optimized inside basic blocks",
                                  "-O2: -O1 plus data flow across blocks", "-O3: -O2 plus inlining and loop optimizations"};
-    log << "=========================================\n";
-    log << "         THREE ADDRESS CODE\n";
-    log << "=========================================\n\n";
-    log << "Source File  : " << sourceFile << "\n";
-    log << "Optimization : " << what[level < 0 || level > 3 ? 0 : level] << "\n\n";
-    log << status << "\n\n" << body;
+    std::string heavy(76, '=');
+    log << heavy << "\n THREE ADDRESS CODE\n" << heavy << "\n\n";
+    log << "   Source file   : " << sourceFile << "\n";
+    log << "   Optimization  : " << what[level < 0 || level > 3 ? 0 : level] << "\n";
+    log << "   Result        : " << status.substr(0, status.find(" for '")) << "\n\n";
+    log << "   Contents      : " << (level > 0 ? "optimization summary, " : "") << "globals, one section per function\n"
+        << "                   (its symbol table, then its code), the semantic symbol table,\n"
+        << "                   record layouts\n\n"
+        << body;
     if (!symbols.empty()) log << "\n" << symbols;
 }
 
@@ -144,9 +147,10 @@ int main(int argc, char **argv) {
     }
     if (!quiet) printf("%s\n\n%s", status.c_str(), body.str().c_str());
     std::ostringstream symbols;
-    symbols << "=== Semantic Symbol Table ===\n";
-    sem::printSemanticSymbolTable(table, symbols);
-    symbols << "\n=== Record Layouts ===\n";
+    std::string rule(76, '-');
+    symbols << rule << "\n SEMANTIC SYMBOL TABLE (every scope and symbol of the program)\n" << rule << "\n\n";
+    sem::printSymbolTableByScope(table, symbols);
+    symbols << rule << "\n RECORD LAYOUTS (MIPS32 sizes and offsets)\n" << rule << "\n\n";
     sem::printRecordLayouts(table, symbols);
     writeLog(path, level, status, body.str(), symbols.str());
     if (!runIt) return 0;

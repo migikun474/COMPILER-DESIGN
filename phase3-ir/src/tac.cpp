@@ -2,6 +2,7 @@
 #include "tac.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <map>
 #include <set>
 #include <sstream>
@@ -205,25 +206,49 @@ std::vector<std::string> assignLabels(const Function &f, int &nextLabel) {
     return labels;
 }
 
+static const std::string RULE(76, '-');
+static const std::string HEAVY(76, '=');
+
 void printFunctionWith(const Program &p, const Function &f, std::ostream &out, int &nextLabel) {
     Names names(p, f);
     std::vector<std::string> labels = assignLabels(f, nextLabel);
 
-    out << "function " << f.signature;
-    if (f.linkName != f.signature) out << "        link name: " << f.linkName;
-    out << "\n";
+    out << HEAVY << "\n FUNCTION " << f.signature;
+    if (f.linkName != f.signature) out << "        (link name " << f.linkName << ")";
+    out << "\n" << HEAVY << "\n\n";
     if (!f.frame.empty()) {
-        out << "  symbol table (name, kind, type, width, offset)\n";
+        /* after optimization many temporaries are no longer used: only the ones the code names are listed */
+        std::set<int> used;
+        for (const auto &q : f.quads)
+            for (const Operand *o : {&q.a, &q.b, &q.r})
+                if (o->kind == Operand::Temp) used.insert(o->temp);
+        int locals = 0, temps = 0, hidden = 0;
         for (const auto &e : f.frame) {
-            char line[256];
+            if (e.kind != "temp") ++locals;
+            else if (used.count(std::atoi(e.name.c_str() + 1))) ++temps;
+            else ++hidden;
+        }
+        char line[256];
+        out << " Symbol table: " << locals << " parameter(s)/local(s), " << temps << " temporar" << (temps == 1 ? "y" : "ies")
+            << ", frame " << f.frameWidth << " bytes\n\n";
+        snprintf(line, sizeof line, "   %-16s %-7s %-26s %6s %7s\n", "name", "kind", "type", "width", "offset");
+        out << line;
+        snprintf(line, sizeof line, "   %-16s %-7s %-26s %6s %7s\n", std::string(16, '-').c_str(), "-------",
+                 std::string(26, '-').c_str(), "------", "-------");
+        out << line;
+        for (const auto &e : f.frame) {
+            if (e.kind == "temp" && !used.count(std::atoi(e.name.c_str() + 1))) continue;
             std::string name = e.sym && !e.sym->name.empty() ? names.of(e.sym) : e.name;
-            snprintf(line, sizeof line, "    %-14s %-6s %-22s %5lld %6lld\n", name.c_str(), e.kind.c_str(),
+            snprintf(line, sizeof line, "   %-16s %-7s %-26s %6lld %7lld\n", name.c_str(), e.kind.c_str(),
                      sem::typeToString(e.type).c_str(), e.width, e.offset);
             out << line;
         }
-        out << "    total width " << f.frameWidth << "\n";
+        if (hidden)
+            out << "   (" << hidden << " temporar" << (hidden == 1 ? "y" : "ies")
+                << " no longer used after optimization not shown)\n";
+        out << "\n";
     }
-    out << "  code\n";
+    out << " Code: " << f.quads.size() << " instruction(s)\n\n";
     size_t labelWidth = 0;
     for (const auto &l : labels) labelWidth = std::max(labelWidth, l.size());
     for (size_t i = 0; i < f.quads.size(); ++i) {
@@ -231,7 +256,7 @@ void printFunctionWith(const Program &p, const Function &f, std::ostream &out, i
         std::string text = quadTextWith(p, names, q, labels);
         std::string label = labels[i].empty() ? std::string() : labels[i] + ":";
         char head[64];
-        snprintf(head, sizeof head, "%4d: %-*s ", f.firstIndex + static_cast<int>(i),
+        snprintf(head, sizeof head, "   %4d  %-*s  ", f.firstIndex + static_cast<int>(i),
                  static_cast<int>(labelWidth + 1), label.c_str());
         out << head << text;
         if (!q.note.empty()) {
@@ -242,7 +267,6 @@ void printFunctionWith(const Program &p, const Function &f, std::ostream &out, i
     }
     out << "\n";
 }
-
 } // namespace
 
 std::string quadText(const Program &p, const Function &f, const Quad &q,
@@ -258,10 +282,15 @@ void printFunction(const Program &p, const Function &f, std::ostream &out) {
 
 void printProgram(const Program &p, std::ostream &out) {
     if (!p.globals.empty()) {
-        out << "globals (name, type, width, initial value)\n";
+        char line[256];
+        out << RULE << "\n GLOBALS: " << p.globals.size() << " object(s) in static storage\n" << RULE << "\n\n";
+        snprintf(line, sizeof line, "   %-16s %-26s %6s  %s\n", "name", "type", "width", "initial value");
+        out << line;
+        snprintf(line, sizeof line, "   %-16s %-26s %6s  %s\n", std::string(16, '-').c_str(), std::string(26, '-').c_str(),
+                 "------", "-------------");
+        out << line;
         for (const auto &g : p.globals) {
-            char line[256];
-            snprintf(line, sizeof line, "    %-14s %-22s %5lld  ", g.sym->uniqueName.c_str(),
+            snprintf(line, sizeof line, "   %-16s %-26s %6lld  ", g.sym->uniqueName.c_str(),
                      sem::typeToString(g.sym->type).c_str(), sem::sizeOf(g.sym->type));
             out << line;
             if (g.init.empty()) {
