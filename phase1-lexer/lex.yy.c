@@ -622,7 +622,10 @@ char *yytext;
 
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
-static int tokStartLine;
+static int tokStartLine, tokStartCol;
+/* column of the current token, and of the next character (1-based) */
+static int tokCol = 1, nextCol = 1;
+#define YY_USER_ACTION { tokCol = nextCol; for (int i = 0; i < yyleng; ++i) nextCol = yytext[i] == '\n' ? 1 : nextCol + 1; }
 static bool litHadError;
 static int chrCharCount;   /* how many actual characters seen in the
                                current char literal (an escape counts
@@ -631,19 +634,19 @@ static int chrCharCount;   /* how many actual characters seen in the
 static const char* SIMPLE_ESCAPES = "ntr\\'\"abfv?";
 
 /* this phase's errors and warnings go into the shared diagnostics list */
-static void reportError(int line, const std::string &lexeme, const std::string &message) {
-    reportDiagnostic(line, 0, lexeme, message, "Lexical error");
+static void reportError(int line, int col, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, col, lexeme, message, "Lexical error");
 }
-static void reportWarning(int line, const std::string &lexeme, const std::string &message) {
-    reportDiagnostic(line, 0, lexeme, message, "Lexical warning");
+static void reportWarning(int line, int col, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, col, lexeme, message, "Lexical warning");
 }
 
 static void invalidEscape(const char* text, int line) {
-    reportError(line, text, "Invalid escape sequence");
+    reportError(line, tokCol, text, "Invalid escape sequence");
     litHadError = true;
 }
-#line 646 "lex.yy.c"
-#line 52 "src/lexer.l"
+#line 649 "lex.yy.c"
+#line 55 "src/lexer.l"
  /* integer suffixes: u/U (unsigned), l/L (long), ll/LL (long long),
     in either order, matching the real-C grammar -- ll/LL must be the
     SAME case (lL / Ll are not valid; see the design-decision note in
@@ -655,7 +658,7 @@ static void invalidEscape(const char* text, int line) {
 
 
 
-#line 659 "lex.yy.c"
+#line 662 "lex.yy.c"
 
 #define INITIAL 0
 #define STRSTATE 1
@@ -873,10 +876,10 @@ YY_DECL
 		}
 
 	{
-#line 71 "src/lexer.l"
+#line 74 "src/lexer.l"
 
 
-#line 880 "lex.yy.c"
+#line 883 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -945,36 +948,36 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 73 "src/lexer.l"
-{ tokStartLine = yylineno; BEGIN(COMMENTSTATE); }
+#line 76 "src/lexer.l"
+{ tokStartLine = yylineno; tokStartCol = tokCol; BEGIN(COMMENTSTATE); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 74 "src/lexer.l"
+#line 77 "src/lexer.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 75 "src/lexer.l"
+#line 78 "src/lexer.l"
 { /* keep counting via yylineno automatically */ }
 	YY_BREAK
 case YY_STATE_EOF(COMMENTSTATE):
-#line 76 "src/lexer.l"
+#line 79 "src/lexer.l"
 {
-                                    reportError( tokStartLine,  "/*",  "Unterminated block comment");
+                                    reportError(tokStartLine, tokStartCol, "/*",  "Unterminated block comment");
                                     BEGIN(INITIAL);
                                     yyterminate();
                                   }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 81 "src/lexer.l"
+#line 84 "src/lexer.l"
 { /* skip comment body */ }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 83 "src/lexer.l"
+#line 86 "src/lexer.l"
 { /* line comment, skip */ }
 	YY_BREAK
 /* ---- identifiers AND keywords share one rule: the matched text is
@@ -984,7 +987,7 @@ YY_RULE_SETUP
     old per-category flex-alternation rules. ---- */
 case 6:
 YY_RULE_SETUP
-#line 90 "src/lexer.l"
+#line 93 "src/lexer.l"
 {
                                        auto kw = reserved_word(yytext);
                                        if (kw.has_value()) {
@@ -997,14 +1000,14 @@ YY_RULE_SETUP
 /* ---- string literals ---- */
 case 7:
 YY_RULE_SETUP
-#line 100 "src/lexer.l"
-{ strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }
+#line 103 "src/lexer.l"
+{ strbuf = "\""; tokStartLine = yylineno; tokStartCol = tokCol; litHadError = false; BEGIN(STRSTATE); }
 	YY_BREAK
 /* ---- char literals ---- */
 case 8:
 YY_RULE_SETUP
-#line 103 "src/lexer.l"
-{ strbuf = "'"; tokStartLine = yylineno; litHadError = false; chrCharCount = 0; BEGIN(CHRSTATE); }
+#line 106 "src/lexer.l"
+{ strbuf = "'"; tokStartLine = yylineno; tokStartCol = tokCol; litHadError = false; chrCharCount = 0; BEGIN(CHRSTATE); }
 	YY_BREAK
 /* ---- escape sequences: rules shared by strings and char literals.
     Ordered most-specific first so maximal munch does the right thing:
@@ -1013,27 +1016,27 @@ YY_RULE_SETUP
     "\x"/"\8"/"\9" rules instead, which flag it precisely. ---- */
 case 9:
 YY_RULE_SETUP
-#line 110 "src/lexer.l"
+#line 113 "src/lexer.l"
 { strbuf += yytext; chrCharCount++; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 111 "src/lexer.l"
+#line 114 "src/lexer.l"
 { strbuf += yytext; chrCharCount++; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 112 "src/lexer.l"
+#line 115 "src/lexer.l"
 { invalidEscape(yytext, yylineno); strbuf += yytext; chrCharCount++; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 113 "src/lexer.l"
+#line 116 "src/lexer.l"
 { invalidEscape(yytext, yylineno); strbuf += yytext; chrCharCount++; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 114 "src/lexer.l"
+#line 117 "src/lexer.l"
 {
                                         if (strchr(SIMPLE_ESCAPES, yytext[1]) == nullptr) invalidEscape(yytext, yylineno);
                                         strbuf += yytext;
@@ -1042,35 +1045,35 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 120 "src/lexer.l"
+#line 123 "src/lexer.l"
 { strbuf += "\""; if (!litHadError) addToken(TokenType::STRING_LITERAL, strbuf); BEGIN(INITIAL); }
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 121 "src/lexer.l"
-{reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
+#line 124 "src/lexer.l"
+{reportError(tokStartLine, tokStartCol, strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(STRSTATE):
-#line 122 "src/lexer.l"
-{reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
+#line 125 "src/lexer.l"
+{reportError(tokStartLine, tokStartCol, strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 123 "src/lexer.l"
+#line 126 "src/lexer.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 125 "src/lexer.l"
+#line 128 "src/lexer.l"
 {
                                        strbuf += "'";
                                        if (chrCharCount == 0) {
-                                           reportError(tokStartLine, strbuf, "Empty character literal");
+                                           reportError(tokStartLine, tokStartCol, strbuf, "Empty character literal");
                                        } else if (chrCharCount > 1) {
                                            /* accepted, as gcc/clang do: an int-valued,
                                               implementation-defined constant */
-                                           reportWarning(tokStartLine, strbuf, "Multi-character character constant (has type int)");
+                                           reportWarning(tokStartLine, tokStartCol, strbuf, "Multi-character character constant (has type int)");
                                            if (!litHadError) addToken(TokenType::CHAR_LITERAL, strbuf);
                                        } else if (!litHadError) {
                                            addToken(TokenType::CHAR_LITERAL, strbuf);
@@ -1081,67 +1084,67 @@ YY_RULE_SETUP
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 139 "src/lexer.l"
-{ reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
+#line 142 "src/lexer.l"
+{ reportError(tokStartLine, tokStartCol, strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(CHRSTATE):
-#line 140 "src/lexer.l"
-{ reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
+#line 143 "src/lexer.l"
+{ reportError(tokStartLine, tokStartCol, strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 141 "src/lexer.l"
+#line 144 "src/lexer.l"
 { strbuf += yytext; chrCharCount++; }
 	YY_BREAK
 /* ---- numeric constants ---- */
 case 20:
 YY_RULE_SETUP
-#line 144 "src/lexer.l"
+#line 147 "src/lexer.l"
 { addToken(TokenType::INT_LITERAL, yytext); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 145 "src/lexer.l"
-{ reportError(yylineno, yytext, "Invalid hex literal: expected at least one hex digit after 0x"); }
+#line 148 "src/lexer.l"
+{ reportError(yylineno, tokCol, yytext, "Invalid hex literal: expected at least one hex digit after 0x"); }
 	YY_BREAK
 case 22:
-YY_RULE_SETUP
-#line 146 "src/lexer.l"
-{ addToken(TokenType::INT_LITERAL, yytext); }
-	YY_BREAK
-case 23:
-YY_RULE_SETUP
-#line 147 "src/lexer.l"
-{ reportError(yylineno, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
-	YY_BREAK
-case 24:
-YY_RULE_SETUP
-#line 148 "src/lexer.l"
-{ reportError(yylineno, yytext, "Invalid binary literal: expected at least one binary digit after 0b"); }
-	YY_BREAK
-case 25:
 YY_RULE_SETUP
 #line 149 "src/lexer.l"
 { addToken(TokenType::INT_LITERAL, yytext); }
 	YY_BREAK
-case 26:
+case 23:
 YY_RULE_SETUP
 #line 150 "src/lexer.l"
-{ reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
+{ reportError(yylineno, tokCol, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 151 "src/lexer.l"
+{ reportError(yylineno, tokCol, yytext, "Invalid binary literal: expected at least one binary digit after 0b"); }
+	YY_BREAK
+case 25:
+YY_RULE_SETUP
+#line 152 "src/lexer.l"
+{ addToken(TokenType::INT_LITERAL, yytext); }
+	YY_BREAK
+case 26:
+YY_RULE_SETUP
+#line 153 "src/lexer.l"
+{ reportError(yylineno, tokCol, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 151 "src/lexer.l"
+#line 154 "src/lexer.l"
 { addToken(TokenType::FLOAT_LITERAL, yytext); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 152 "src/lexer.l"
+#line 155 "src/lexer.l"
 { addToken(TokenType::FLOAT_LITERAL, yytext); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 153 "src/lexer.l"
+#line 156 "src/lexer.l"
 { addToken(TokenType::INT_LITERAL, yytext); }
 	YY_BREAK
 /* ---- multi-character operators (longest first). Flex's longest-match
@@ -1152,117 +1155,117 @@ YY_RULE_SETUP
     pattern itself already identifies exactly which operator matched). ---- */
 case 30:
 YY_RULE_SETUP
-#line 161 "src/lexer.l"
+#line 164 "src/lexer.l"
 { addToken(TokenType::ELLIPSIS_OP, yytext); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 162 "src/lexer.l"
+#line 165 "src/lexer.l"
 { addToken(TokenType::SCOPE_RESOLUTION_OP, yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 163 "src/lexer.l"
+#line 166 "src/lexer.l"
 { addToken(TokenType::ARROW_OP, yytext); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 164 "src/lexer.l"
+#line 167 "src/lexer.l"
 { addToken(TokenType::INCREMENT_OP, yytext); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 165 "src/lexer.l"
+#line 168 "src/lexer.l"
 { addToken(TokenType::DECREMENT_OP, yytext); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 166 "src/lexer.l"
+#line 169 "src/lexer.l"
 { addToken(TokenType::LSHIFT_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 167 "src/lexer.l"
+#line 170 "src/lexer.l"
 { addToken(TokenType::RSHIFT_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 168 "src/lexer.l"
+#line 171 "src/lexer.l"
 { addToken(TokenType::LSHIFT_OP, yytext); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 169 "src/lexer.l"
+#line 172 "src/lexer.l"
 { addToken(TokenType::RSHIFT_OP, yytext); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 170 "src/lexer.l"
+#line 173 "src/lexer.l"
 { addToken(TokenType::LE_OP, yytext); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 171 "src/lexer.l"
+#line 174 "src/lexer.l"
 { addToken(TokenType::GE_OP, yytext); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 172 "src/lexer.l"
+#line 175 "src/lexer.l"
 { addToken(TokenType::EQ_OP, yytext); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 173 "src/lexer.l"
+#line 176 "src/lexer.l"
 { addToken(TokenType::NE_OP, yytext); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 174 "src/lexer.l"
+#line 177 "src/lexer.l"
 { addToken(TokenType::LOGICAL_AND_OP, yytext); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 175 "src/lexer.l"
+#line 178 "src/lexer.l"
 { addToken(TokenType::LOGICAL_OR_OP, yytext); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 176 "src/lexer.l"
+#line 179 "src/lexer.l"
 { addToken(TokenType::PLUS_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 177 "src/lexer.l"
+#line 180 "src/lexer.l"
 { addToken(TokenType::MINUS_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 178 "src/lexer.l"
+#line 181 "src/lexer.l"
 { addToken(TokenType::STAR_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 179 "src/lexer.l"
+#line 182 "src/lexer.l"
 { addToken(TokenType::DIVIDE_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 180 "src/lexer.l"
+#line 183 "src/lexer.l"
 { addToken(TokenType::MOD_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 181 "src/lexer.l"
+#line 184 "src/lexer.l"
 { addToken(TokenType::AMPERSAND_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 182 "src/lexer.l"
+#line 185 "src/lexer.l"
 { addToken(TokenType::PIPE_ASSIGN_OP, yytext); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 183 "src/lexer.l"
+#line 186 "src/lexer.l"
 { addToken(TokenType::CARET_ASSIGN_OP, yytext); }
 	YY_BREAK
 /* ---- single-character operators AND punctuation, in one rule: since
@@ -1271,38 +1274,38 @@ YY_RULE_SETUP
     time, mirroring how the reference handles this. ---- */
 case 53:
 YY_RULE_SETUP
-#line 189 "src/lexer.l"
+#line 192 "src/lexer.l"
 {
                                         auto op = operator_token(yytext);
                                         if (op.has_value()) {
                                             addToken(op.value(), yytext);
                                         } else {
-                                            reportError(yylineno, yytext, "Illegal character");
+                                            reportError(yylineno, tokCol, yytext, "Illegal character");
                                         }
                                    }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 198 "src/lexer.l"
+#line 201 "src/lexer.l"
 { /* skip whitespace */ }
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 199 "src/lexer.l"
+#line 202 "src/lexer.l"
 { /* newline: yylineno auto-increments */ }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 201 "src/lexer.l"
-{ reportError(  yylineno,  yytext,  "Illegal character"); }
+#line 204 "src/lexer.l"
+{ reportError(yylineno, tokCol, yytext,  "Illegal character"); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 203 "src/lexer.l"
+#line 206 "src/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1306 "lex.yy.c"
+#line 1309 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2278,7 +2281,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 203 "src/lexer.l"
+#line 206 "src/lexer.l"
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -2302,19 +2305,19 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Lexical analysis failed: %zu error(s) found in '%s'.\n",
                 errors.size(), argv[1]);
         for (const auto &d : errors) {
-            fprintf(stderr, "Line %s: %s (near '%s')\n",
-                    displayLine(d.line).c_str(), d.message.c_str(), d.near_text.c_str());
+            fprintf(stderr, "Line %s:%d: %s (near '%s')\n",
+                    displayLine(d.line).c_str(), d.column, d.message.c_str(), d.near_text.c_str());
         }
         for (const auto &w : warnings) {
-            fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
-                    displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+            fprintf(stderr, "Line %s:%d: warning: %s (near '%s')\n",
+                    displayLine(w.line).c_str(), w.column, w.message.c_str(), w.near_text.c_str());
         }
         return 1;
     }
 
     for (const auto &w : warnings) {
-        fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
-                displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+        fprintf(stderr, "Line %s:%d: warning: %s (near '%s')\n",
+                displayLine(w.line).c_str(), w.column, w.message.c_str(), w.near_text.c_str());
     }
 
     printf("%-30s %-20s\n", "Lexeme", "Token");

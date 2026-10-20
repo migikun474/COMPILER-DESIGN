@@ -5,7 +5,7 @@ every static rule of the language, and annotates the tree with types,
 lvalue-ness, constant values and resolved symbols — the representation
 the (future) IR phase will lower.
 
-> Status: **implemented and tested** (84 automated checks, all
+> Status: **implemented and tested** (87 automated checks, all
 > passing). This is the last implemented phase: nothing consumes its
 > output yet.
 
@@ -259,7 +259,8 @@ specifier combinations (`int char`, `signed unsigned`); missing type
 specifier (warning, defaults to `int`); `auto` without initializer;
 reference without initializer; file-scope and `static` initializers must
 be compile-time constants; initializer lists (excess elements, nested
-lists, brace elision for arrays, struct member order, string
+lists, brace elision into arrays and struct members (the list is
+rewritten in fully braced form by `elideBraces()`), struct member order, string
 literals into `char` arrays, size inference for `int a[] = {...}`);
 designators (`.field` must name a field, `[N]` must be inside the array);
 typedef redefinition with a different type; storage classes (`extern` with an initializer in a block,
@@ -367,15 +368,15 @@ make
 
 `run_tests.sh` is self-checking and runs three groups:
 
-1. **`test/valid/`** — 26 programs that must be accepted (`v01`–`v26`:
+1. **`test/valid/`** — 27 programs that must be accepted (`v01`–`v27`:
    declarations, expressions, scopes, functions, arrays, pointers,
    structs, control flow, built-ins, classes, overloading and
    references, `main` arguments, warnings, declarators, name resolution,
    constructors and operators, preprocessor, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
    rules).
-2. **`test/invalid/`** — 22 programs that must be rejected (`e01`–`e22`).
-3. **End to end** — the 36 programs of `../phase2-parser/test`: the 12
+2. **`test/invalid/`** — 23 programs that must be rejected (`e01`–`e23`).
+3. **End to end** — the 37 programs of `../phase2-parser/test`: the 12
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which
    g++ also rejects, and which must fail with the expected message).
@@ -389,19 +390,20 @@ int over(double a) { return 0; }    // mangled: _Z4overd
 ```
 
 The runner requires each annotated message on its line **and** fails on
-any diagnostic that is not annotated. Result today: `passed: 84 failed: 0`.
+any diagnostic that is not annotated. Result today: `passed: 87 failed: 0`.
 `./run.sh` just prints the output for every test.
 
 ## Limitations
 
-- **No flow analysis**: "missing return" only when a function has no
-  `return` at all; no unreachable-code diagnostics; `goto`/`case`
-  jumping over an initialization is not reported. Reads of uninitialized
-  locals are reported one phase later, by `tac_generator` (it has the
-  flow graph).
-- Brace elision into struct members is not supported (arrays only).
-- Converting constructors apply in initialization, not to arguments or
-  returns.
+- **Flow checks are structural**: "control reaches end of non-void
+  function on some path", "code will never be executed" and the jumps
+  over an initialization come from the shape of the statements
+  (`completes()`, `jumpScopes()` in `statements.cpp`); a condition is
+  only known when it is a constant. Reads of uninitialized locals are
+  reported one phase later, by `tac_generator` (it has the flow graph).
+- A function that already has errors gets no flow warnings.
+- An override must return the same type as the function it overrides
+  (no covariant returns); `override` and `final` are not parsed.
 - A class declared inside a function body can see that function's locals.
 - `long double` is rejected (an invalid combination of specifiers).
 - The sequence-point check tracks named variables and members, not what

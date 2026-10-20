@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 30 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 33 test programs are
 > generated, executed raw and at both levels, and compared with gcc/g++
-> (`./run_tests.sh`: 31 passed, the 30 programs and one warnings check).
+> (`./run_tests.sh`: 34 passed, the 33 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -156,7 +156,8 @@ a type or an overload.
 | references | hold an address: `r = &x`, a use is `*r` |
 | member functions | `this` is a hidden first parameter; fields are `this ptr+ offset` |
 | inheritance | base sub-object offset added to `this` and to converted pointers |
-| constructors, destructors | calls with the object's address; bases and members first in a constructor, last (reversed) in a destructor; locals destroyed at scope exit |
+| constructors, destructors | calls with the object's address; bases and members first in a constructor (from the member initializer list when it names them, in declaration order), last (reversed) in a destructor; locals destroyed at scope exit |
+| virtual functions | `t1 = *p ; t2 = t1[8k] ; t3 = t1[8k+4] ; t4 = p ptr+ t3 ; param t4 ; ... ; call *t2, n` -- see "Virtual functions" below |
 | operator overloading | a call to `operator<op>` |
 | `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
 | variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
@@ -273,8 +274,46 @@ the output of the same source compiled with gcc/g++.
 | `t27_object_semantics` | what the second code review found: copy constructors for by-value arguments and results, converting constructors, `?:` as an lvalue, arrays of objects, static objects destroyed at exit |
 | `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, invariants and non-invariants in loops, a division that must stay, values reused or not across branches and stores |
 | `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
+| `t31_virtual` | virtual functions: overriding at several levels, a second polymorphic base (this-adjustment), virtual calls from constructors and destructors, through references and `this`, qualified (non-virtual) calls, slicing on copy and assignment, abstract classes |
+| `t32_class_features` | member initializer lists (members without a default constructor, a reference member, `count()`), friends, `const` member functions and overloading on const, `explicit`, converting constructors for arguments, `const &` arguments and returns |
+| `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
 | `t30_temporaries` | unnamed class objects destroyed at the end of their full expression, the cases where they are kept (initializing a variable, the function result, a reference), by-value parameters, `obj.Base::member`, `long long` arithmetic in a loop |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
+
+## Virtual functions
+
+A class is polymorphic when it declares a virtual function (or a
+function that overrides one) or has a polymorphic base. Its objects hold
+a pointer to a table at offset 0: the first base's pointer when that base
+is polymorphic (the tables extend each other), otherwise a 4-byte slot
+of its own placed before the bases. Each other polymorphic base
+sub-object keeps its own pointer.
+
+The tables are globals named `_ZTV<class>` (plus `_<offset>` for a
+sub-object's table), listed with the other globals. Each slot is two
+words: the final overrider's address and how far `this` moves from the
+sub-object the table belongs to, to the class that defines the overrider
+(negative when a second base's function is overridden by the derived
+class):
+
+```
+_ZTV4Seal_8    unsigned int[4]   16  { +0: &Seal::swim(), +4: -8, +8: &Swimmer::dive(int), +12: 0 }
+```
+
+A call `p->f()` loads the table, the address and the adjustment, adds the
+adjustment to `p`, and calls through the address: `t5 = call *t2, 1`.
+The interpreter gives every function an address (from 0x00400000, 16
+bytes apart) for this; MIPS (on `main`) uses the label and `jalr`. A call is virtual
+only when the object's class may differ from its static type: through a
+pointer, a reference, `*p` or an implicit `this`; `obj.f()` on an object
+and `Base::f()` are direct calls.
+
+Constructors store the table pointers after the bases are built and
+before the members, so a virtual call made while a constructor (or
+destructor) runs reaches that class's function, as in C++. A copy of an
+object gets its own class's table pointers (a derived object copied into
+a base object is sliced); an assignment changes the members and keeps
+the target's table pointers.
 
 ## Unnamed class objects
 
@@ -309,6 +348,17 @@ variable live at the entry of the function is read before it is
 written), computed on the unoptimized code at every `-O` level. Only
 scalars whose address is never taken are tracked: arrays, objects,
 globals and anything reached through a pointer are not.
+
+## Logs
+
+Every run writes the listing to `logs/` in the current directory:
+`logs/<file>.tac` without optimization and `logs/<file>.O1.tac`,
+`.O2.tac`, `.O3.tac` with `-O1`, `-O2`, `-O3`. Each log has the TAC of
+every function with its frame (name, kind, type, width, offset), the
+globals, then the semantic symbol table (every scope and symbol) and the
+record layouts. With `-O<n>` it starts with the optimization summary.
+`./run_tests.sh` keeps all four logs of every test program in
+`phase3-ir/logs/`.
 
 ## Limitations
 

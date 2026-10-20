@@ -195,6 +195,7 @@ struct SymbolTableEntry {
     int arrayLevel = 0;
     std::string returnType;              /* callables only */
     std::vector<std::string> paramTypes; /* callables only */
+    std::string aggregateTagName;        /* struct/class tag of its type (or return type), if any */
     int useCount = 0; /* how many times this name was referenced after
                           being declared -- see recordUsage() */
 };
@@ -226,10 +227,10 @@ extern std::vector<SymbolTableEntry> g_symbolTable;
    declaration (parseTimeType), so both symbol tables show the same name.
    ===================================================================== */
 std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className = "");
+                   const std::string &className = "", bool constMethod = false);
 /* the parser's entry point: parameters as written (ASTTypeExpr) */
 std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className = "");
+                   const std::string &className = "", bool constMethod = false);
 /* a type as the parser sees it: specifiers, tags, typedefs (through this
    table), pointers, references, arrays and function types -- no checks,
    that is the semantic phase's job. Parameters decay like in C. */
@@ -321,6 +322,10 @@ struct Symbol {
     bool isMethod = false;
     bool isConstructor = false;
     bool isDestructor = false;
+    bool isExplicit = false;  /* `explicit` constructor: never an implicit conversion */
+    bool isVirtual = false;   /* declared `virtual`, or overrides a virtual function */
+    bool isPure = false;      /* `= 0` */
+    int vtableIndex = -1;     /* its slot in its class's table */
     std::string mangledName;
     std::vector<SymbolPtr> params; /* in order; unnamed ones too */
     std::vector<SymbolPtr> locals; /* every local / static local in the body */

@@ -90,10 +90,12 @@ Program "translation_unit"
         |           `-- IntLiteral "1"  <int> =1
         |-- VarDecl "flat : INT_ARRAY_ARRAY"  <int[2][2]>  -> flat.12 (variable, local)
         |   `-- InitializerList  <int[2][2]>
-        |       |-- IntLiteral "1"  <int> =1
-        |       |-- IntLiteral "2"  <int> =2
-        |       |-- IntLiteral "3"  <int> =3
-        |       `-- IntLiteral "4"  <int> =4
+        |       |-- InitializerList  <int[2]>
+        |       |   |-- IntLiteral "1"  <int> =1
+        |       |   `-- IntLiteral "2"  <int> =2
+        |       `-- InitializerList  <int[2]>
+        |           |-- IntLiteral "3"  <int> =3
+        |           `-- IntLiteral "4"  <int> =4
         |-- VarDecl "cube : INT_ARRAY_ARRAY_ARRAY"  <int[2][3][4]>  -> cube.13 (variable, local)
         |-- VarDecl "i : INT"  <int>  -> i.14 (variable, local)
         |   `-- IntLiteral "2"  <int> =2

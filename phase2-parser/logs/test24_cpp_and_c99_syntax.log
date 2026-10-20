@@ -76,7 +76,7 @@ value                          INT
 +                              plus_op             
 o                              CLASS               
 .                              dot_op              
-value                          IDENTIFIER          
+value                          INT                 
 )                              close_paren_op      
 ;                              semicolon_op        
 }                              close_brace_op      
@@ -88,7 +88,7 @@ get                            PROCEDURE
 return                         return              
 this                           this                
 ->                             arrow_op            
-value                          IDENTIFIER          
+value                          INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 }                              close_brace_op      

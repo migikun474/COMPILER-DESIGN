@@ -76,7 +76,7 @@ d                              CLASS
 return                         return              
 d                              CLASS               
 .                              dot_op              
-legs                           IDENTIFIER          
+legs                           INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 

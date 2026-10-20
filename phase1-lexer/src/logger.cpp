@@ -51,6 +51,10 @@ void writeLexerLog(const std::string &sourceFile)
                     displayLine(d.line).c_str());
 
             fprintf(log,
+                    "Column  : %d\n",
+                    d.column);
+
+            fprintf(log,
                     "Lexeme  : %s\n",
                     d.near_text.c_str());
 
@@ -72,8 +76,8 @@ void writeLexerLog(const std::string &sourceFile)
         fprintf(log, "\nWarnings:\n");
         for (const auto &w : warnings)
         {
-            fprintf(log, "Line %s: %s (near '%s')\n",
-                    displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+            fprintf(log, "Line %s:%d: %s (near '%s')\n",
+                    displayLine(w.line).c_str(), w.column, w.message.c_str(), w.near_text.c_str());
         }
     }
 

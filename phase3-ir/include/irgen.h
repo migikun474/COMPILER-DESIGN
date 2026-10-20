@@ -125,7 +125,13 @@ class Generator {
     /* ---- objects ---- */
     bool needsConstruction(const sem::TypePtr &t);
     void defaultConstruct(const Operand &addr, const sem::TypePtr &t);
-    void constructSubobjects(const Operand &addr, sem::RecordInfo *rec);
+    void constructSubobjects(const Operand &addr, sem::RecordInfo *rec, const ASTNode *ctor = nullptr);
+    /* virtual functions: one table per (complete class, sub-object offset) */
+    std::map<std::pair<sem::RecordInfo *, long long>, sem::SymbolPtr> vtables;
+    sem::Symbol *vtable(sem::RecordInfo *rec, const std::vector<std::pair<sem::RecordInfo *, long long>> &path);
+    void installVptrs(const Operand &addr, sem::RecordInfo *rec);
+    std::vector<Operand> saveVptrs(const Operand &addr, sem::RecordInfo *rec);
+    void restoreVptrs(const Operand &addr, sem::RecordInfo *rec, const std::vector<Operand> &saved);
     void constructInto(const Operand &addr, sem::RecordInfo *rec, sem::Symbol *ctor,
                        const std::vector<ASTNodePtr> &args);
     void destroy(const Operand &addr, sem::RecordInfo *rec);
@@ -139,6 +145,7 @@ class Generator {
     /* ---- expressions ---- */
     Operand rvalue(const ASTNodePtr &n, bool discard = false);
     LValue lvalue(const ASTNodePtr &n);
+    LValue throughReference(LValue field, const sem::Symbol *s);
     LValue lvalueOrTemp(const ASTNodePtr &n);
     LValue indexLValue(const ASTNodePtr &n);
     void cond(const ASTNodePtr &n, List &trueList, List &falseList);
@@ -154,7 +161,7 @@ class Generator {
     Operand callExpr(const ASTNodePtr &n, bool discard);
     Operand overloaded(const ASTNodePtr &n);
     Operand call(sem::Symbol *callee, const Operand &thisArg, const std::vector<ASTNodePtr> &args,
-                 const std::vector<Operand> &extraArgs, bool wantResult);
+                 const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch = false);
     bool isOverloaded(const ASTNodePtr &n) const;
     bool isLValueKind(const ASTNodePtr &n) const;
 
@@ -167,6 +174,8 @@ class Generator {
     Operand scaled(const Operand &index, long long width, const std::string &note = "");
     Operand convert(const Operand &v, const sem::TypePtr &to);
     Operand argumentFor(const sem::TypePtr &param, const ASTNodePtr &arg);
+    Operand converted(const ASTNodePtr &n, const sem::TypePtr &type);
+    void convertInto(const Operand &addr, const ASTNodePtr &n);
     Operand promoteVariadic(const Operand &v);
     Operand referenceTo(const ASTNodePtr &n, const sem::TypePtr &elem);
     Operand copyOf(const ASTNodePtr &n, const sem::TypePtr &type, bool returned);
@@ -175,6 +184,7 @@ class Generator {
     void keep(const Operand &t);
     void destroyTemporaries(size_t from = 0);
     bool isExisting(const ASTNodePtr &n) const;
+    Operand sliced(const ASTNodePtr &n, sem::RecordInfo *to);
     bool inMain() const { return fn && fn->sym && fn->sym->name == "main" && !fn->sym->ownerRecord; }
     sem::RecordInfo *currentClass() const;
 };

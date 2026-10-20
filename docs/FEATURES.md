@@ -51,11 +51,11 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | while loop | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:loops, S:v08 | all phases |
 | do-while loop | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:loops test16, S:v08 | all phases |
 | switch / case / default (fall-through, multiple labels) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test2, P:test4, S:v08 e08 | all phases |
-| break / continue / goto / labels | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | L:test2, P:test10, S:v08 e08 | all phases; jumps over initializations are not checked |
+| break / continue / goto / labels | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test2, P:test10, S:v08 e08 e23 | all phases; a jump over an initialization is an error, as in C++ |
 | int, char, void (+ short, long, long long, float, double, bool, signed/unsigned) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test7, S:v01 | all phases (`long double` is rejected) |
 | Integer and char arrays | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:array, S:v05 e05 | all phases |
 | Pointers | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:pointers, S:v06 e06 | all phases |
-| Structures (nested) | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | P:test2 test11, S:v07 e07 | all phases; no brace elision into struct members |
+| Structures (nested) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test2 test11, S:v07 e07 v27 | all phases; brace elision into members (`{1, 2, 3}` for `{{1, 2}, 3}`) |
 | printf / scanf | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:printf_scanf, S:v09 e10 v24 e20 | all phases (reserved words; format strings checked) |
 | Function declaration / definition / call / arguments / return | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:funcCall test1, S:v04 e04 | all phases |
 | static keyword | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test2, P:test28, S:v01 | all phases |
@@ -77,19 +77,20 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Classes, objects, `this`, methods, static members | ✓ | ◐ | ✓ | ◐ | ✓ | ✓ | P:test7 test8 test13, S:v10 e09 | TAC done; front end partial: no constructor initializer lists, `virtual`, `const` methods, `friend`, `explicit` |
+| Classes, objects, `this`, methods, static members, `const` member functions, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test7 test8 test13 test30, S:v10 e09 v27 e23 | all phases |
 | Inheritance (single, multiple), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
 | Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
-| Constructors / destructors (in-class, out-of-class) | ✓ | ◐ | ✓ | ✓ | ◐ | ◐ | P:test24, S:v17 e15 | TAC done; front end partial: no member-initializer lists |
+| Constructors / destructors (in-class, out-of-class), member initializer lists, `explicit` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24 test30, S:v17 e15 v27 e23 | all phases |
+| Virtual functions, pure virtual functions, abstract classes, virtual destructors | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test30, S:v27 e23 | all phases (a table of (function, this-adjustment) pairs per class and sub-object; `call *t, n` in TAC, `jalr` in MIPS) |
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v17 e15 | all phases |
-| Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | P:test12, S:v11 v16 e04 | all phases; converting constructors only in initialization |
+| Function overloading (C++ ranking, ambiguity, converting constructors for arguments and returns) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test12, S:v11 v16 e04 v27 | all phases |
 | Preprocessor (`#define` object/function-like, `#` `##` `__VA_ARGS__`, `#undef`, `#if/#ifdef/#ifndef/#elif/#else/#endif`, `#include "…"`, `#error`, `#pragma once`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test11, P:test26, S:v20 e16 e17 | front end complete; `#include <…>` system headers are accepted and ignored |
 | `const`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
 | `extern` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test28, S:v24 e20 | all phases (linkage, composite types) |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test25, S:v19 | all phases |
 | `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 v22 v24 | all phases |
 | Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 | all phases |
-| Initializer lists, designated `.x = 1`, `[2] = 7`, empty `{}` | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | P:test24, S:v05 v18 | all phases; brace elision for arrays only |
+| Initializer lists, designated `.x = 1`, `[2] = 7`, empty `{}`, brace elision | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v05 v18 v27 | all phases |
 | Unnamed structs/classes, anonymous struct members | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test27, S:v22 e18 | all phases |
 | Numeric literals: hex, octal, binary, suffixes `U L LL`, floats `.5` `5.` `1e3f` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test5 test7 | all phases |
 | String/char literals, escapes, adjacent string concatenation | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test6, P:array | all phases |
@@ -144,14 +145,12 @@ layouts, gcc-style printf/scanf format checking).
 
 ### D. Partial features
 
-| Feature | What is missing | Component |
-|---|---|---|
-| Classes | constructor member-initializer lists (`Dog() : Animal(4) {}` is a syntax error), `virtual` / polymorphism, `const` member functions, `friend`, `explicit` | grammar (`parser.y`) |
-| Struct initialization | brace elision into struct members: `struct { int a[2]; int b; } s = {1, 2, 3};` is rejected (and the message calls `s` an "array variable") | `checkInitializer()` |
-| Control-flow checks | no flow analysis in the semantic phase: "missing return" only when a non-`void` function has no `return` at all; no unreachable-code diagnostics; uninitialized reads are warned about by the TAC phase (liveness); a `goto`/`case` jumping over an initialization is not reported | `statements.cpp` |
-| Overloading | converting constructors are applied in initialization (`Dog d = 4;`) but not to arguments or returns | `argumentConversion()` |
-| Parser member classification | the Token_Type table resolves `p.x` / `p->x` only when the base is a plain identifier (`arr[0].x` stays `IDENTIFIER`); semantic analysis types every form correctly | `parser.y` |
-| Phase-1 lexer positions | line numbers only, no columns (the parser's scanner does report columns) | `lexer.l` |
+None left. The six listed here until 2026-10-15 (class features,
+brace elision into struct members, flow checks, converting constructors
+for arguments and returns, member-name classification in the parser's
+Token_Type table, columns in the phase-1 lexer) are implemented; see
+decision D32 in [`DESIGN_LOG.md`](DESIGN_LOG.md). What remains outside
+the language is listed under G.
 
 ### E. Parser-only features
 
@@ -198,7 +197,7 @@ specifiers" (S:e19).
 **Never implemented:**
 
 Bit-fields, default arguments, templates, namespaces, `using` aliases,
-exceptions (`try`/`catch`/`throw`), `inline`, `virtual`, `friend`,
-`explicit`, `const` member functions, compound literals
+exceptions (`try`/`catch`/`throw`), `inline`, `override` / `final`,
+covariant return types, virtual inheritance, compound literals
 (`(struct P){1, 2}`), nested function definitions, `wchar_t` and wide
 literals (`L'a'`, `L"..."`).

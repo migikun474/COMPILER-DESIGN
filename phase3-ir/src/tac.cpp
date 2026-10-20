@@ -178,7 +178,7 @@ std::string quadTextWith(const Program &p, const Names &names, const Quad &q,
         case Op::Store: s = "*" + T(q.a) + " = " + T(q.r); break;
         case Op::Param: s = "param " + T(q.a); break;
         case Op::Call: {
-            std::string callee = q.callee ? signatureOf(*q.callee) : q.calleeName;
+            std::string callee = q.callee ? signatureOf(*q.callee) : !q.a.isNone() ? "*" + T(q.a) : q.calleeName;
             s = (q.r.isNone() ? std::string() : T(q.r) + " = ") + "call " + callee + ", " + std::to_string(q.nargs);
             break;
         }

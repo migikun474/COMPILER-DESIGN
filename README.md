@@ -108,11 +108,11 @@ Abridged; the full matrix with test evidence for every row is in
 | Arithmetic, logical, relational, bitwise, assignment, unary operators | ✓ | ✓ | ✓ | ✓ | all phases |
 | if-else, for, while, do-while, `until` | ✓ | ✓ | ✓ | ✓ | all phases |
 | switch/case/default | ✓ | ✓ | ✓ | ✓ | all phases |
-| goto, labels, break, continue | ✓ | ✓ | ◐ | ✓ | jumps over initializations not checked |
+| goto, labels, break, continue | ✓ | ✓ | ✓ | ✓ | all phases; a jump over an initialization is an error |
 | int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | ✓ | all phases |
 | Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | ✓ | all phases |
 | Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | ✓ | all phases |
-| Structures, unnamed structs, anonymous struct members | ✓ | ✓ | ◐ | ✓ | no brace elision into struct members |
+| Structures, unnamed structs, anonymous struct members, brace elision | ✓ | ✓ | ✓ | ✓ | all phases |
 | Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | ✓ | all phases |
 | printf / scanf | ✓ | ✓ | ✓ | ✓ | all phases (format strings checked) |
 | static, extern, const | ✓ | ✓ | ✓ | ✓ | all phases |
@@ -120,9 +120,10 @@ Abridged; the full matrix with test evidence for every row is in
 | Dynamic memory (`malloc` … `free`) | ✓ | ✓ | ✓ | ✓ | all phases |
 | Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | ✓ | all phases |
 | typedef, references | ✓ | ✓ | ✓ | ✓ | all phases |
-| Classes, inheritance, access modifiers | ✓ | ◐ | ◐ | ✓ | no constructor initializer lists, `virtual`, `const` methods |
-| Constructors/destructors, operator overloading | ✓ | ◐ | ✓ | ✓ | no member-initializer lists |
-| Function overloading | ✓ | ✓ | ◐ | ✓ | converting constructors only in initialization |
+| Classes, inheritance, access modifiers, `const` methods, `friend` | ✓ | ✓ | ✓ | ✓ | all phases |
+| Constructors/destructors, member initializer lists, `explicit`, operator overloading | ✓ | ✓ | ✓ | ✓ | all phases |
+| Virtual functions, abstract classes | ✓ | ✓ | ✓ | ✓ | all phases (vtables, `call *t`) |
+| Function overloading, converting constructors | ✓ | ✓ | ✓ | ✓ | all phases |
 | Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | runs before the other phases |
 
 ## Implemented basic features
@@ -171,20 +172,15 @@ from every phase and are covered by the same two test files.
 
 ## Partially implemented
 
-- **Classes**: constructor member-initializer lists (`Dog() : Animal(4) {}`),
-  `virtual`, `const` member functions, `friend` and `explicit` are not
-  parsed.
-- **Struct initialization**: brace elision works for arrays, not for
-  struct members.
-- **Control-flow analysis**: no flow analysis — "missing return" only
-  when a non-`void` function has no `return` at all; no unreachable-code
-  diagnostics; `goto`/`case` jumping over an initialization is not
-  reported. A read of an uninitialized local is reported as a warning by
-  `tac_generator` (it needs the flow graph), not by
-  `semantic_analyzer`.
-- **Phase 1 lexer**: reports line numbers but no columns.
-
-Details: [`docs/FEATURES.md#d-partial-features`](docs/FEATURES.md#d-partial-features).
+Nothing. The last six partial features (class features, brace elision
+into struct members, flow checks, converting constructors for arguments
+and returns, member classification in the Token_Type table, columns in
+the phase-1 lexer) were finished on 2026-10-15 (decision D32 in
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md)). The semantic phase now
+warns about a missing `return` on some path and about unreachable code,
+and rejects a `goto` or `case` that jumps over an initialization; a read
+of an uninitialized local is warned about one phase later, by
+`tac_generator`, which has the flow graph.
 
 ## Planned
 
@@ -273,6 +269,10 @@ and not, and the two runs must behave the same.
 | `-O3` | `-O2` plus inlining, tail recursion, global common subexpressions, loop-invariant code motion |
 | `--run`, `-q` | execute the code; `-q` prints only what the program prints |
 
+Each run writes `logs/<file>.tac` (or `logs/<file>.O1.tac` … with `-O1` …):
+the TAC with every function's frame, the globals, the semantic symbol
+table and the record layouts.
+
 Example — a program with a semantic error:
 
 ```c
@@ -299,10 +299,10 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 
 | Suite | Command | Contents |
 |---|---|---|
-| Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning |
-| Parser | `cd phase2-parser && ./run.sh` | 36 programs: 24 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 26 valid + 22 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 36 parser programs end to end — **84 checks, all passing** |
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 30 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **31 checks, all passing** |
+| Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
+| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 25 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 23 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **87 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **34 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -311,14 +311,17 @@ program's output or exit code).
 
 ## Known limitations
 
-- The partial features listed above.
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers, `new`/`delete`, `register`, `volatile`,
   `long double`.
 - Constructs rejected as syntax errors: bit-fields, default arguments,
-  templates, namespaces, `using`, exceptions, `inline`, `virtual`,
-  `friend`, `explicit`, `const` member functions, compound literals,
-  nested function definitions, `wchar_t` / wide literals.
+  templates, namespaces, `using`, exceptions, `inline`, `override` /
+  `final`, virtual inheritance, compound literals, nested function
+  definitions, `wchar_t` / wide literals.
+- Virtual functions: a destructor may be `virtual` but is never called
+  through the table (there is no `delete`, so every object is destroyed
+  where its exact class is known); an override must return the same
+  type (no covariant returns).
 - `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
   reserved words of this language (they cannot be used as identifiers);
   `#include <stdio.h>` and other system headers are accepted and ignored.
@@ -328,8 +331,6 @@ program's output or exit code).
 Everything in the agreed plan is implemented. What a next version could
 add, in order of value:
 
-1. **Remaining language features** — constructor initializer lists,
-   `virtual` functions, brace elision for structs.
-2. **Flow analysis in the semantic phase** — a missing `return` on some
-   paths, unreachable code, jumps over an initialization.
-3. **MIPS code generation** — already done on `main`.
+1. **MIPS code generation** — already done on `main`.
+2. **More of C++** — `override` / `final`, covariant return types,
+   default arguments.

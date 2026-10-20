@@ -1,0 +1,64 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c
+
+Semantic analysis failed: 14 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:5:9: semantic error: 'plain' is declared '= 0' but is not virtual [pure-virtual]
+ 5 |     int plain() = 0;                          // error: is declared '= 0' but is not virtual
+   |         ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:7:13: semantic error: 'virtual' is only allowed on member functions ('loose' is not one) [invalid-specifier]
+ 7 | virtual int loose();                          // error: 'virtual' is only allowed on member functions
+   |             ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:8:5: semantic error: a 'const' qualifier is only allowed on member functions ('freeConst' is not one) [invalid-specifier]
+ 8 | int freeConst() const;                        // error: a 'const' qualifier is only allowed on member functions
+   |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:10:42: semantic error: 'Bad::f' overrides a virtual function but its return type differs ('double' vs 'int') [virtual]
+ 10 | class Bad : public Base { public: double f() { return 2; } };   // error: overrides a virtual function but its return type differs
+    |                                          ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:17:22: semantic error: 'missing' in the member initializer list is neither a member nor a direct base of 'class Holder' [member-init]
+ 17 |     Holder() : n(0), missing(2) { }           // error: is neither a member nor a direct base
+    |                      ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:21:24: semantic error: 'struct Point' has no default constructor (declared: Point(int)); pass constructor arguments, e.g. 'Point x(...)' [constructor]
+ 21 | struct Line { Point a; Line() { } };          // error: has no default constructor
+    |                        ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:23:32: semantic error: 'hidden' is a private member of 'class Secret' and is not accessible outside the class [access]
+ 23 | int peek(Secret &s) { return s.hidden; }      // error: is a private member
+    |                                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:25:17: semantic error: jump to label 'out' crosses the initialization of 'y' (line 26) [jump-over-init]
+ 25 |     if (k) goto out;                          // error: jump to label 'out' crosses the initialization of 'y'
+    |                 ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:35:5: semantic error: jump to case label crosses the initialization of 'z' (line 33); put the case's declarations in a block [jump-over-init]
+ 35 |     case 2:                                   // error: jump to case label crosses the initialization of 'z'
+    |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:41:11: semantic error: variable 's' cannot have the abstract type 'class Shape' (it has pure virtual functions) [abstract]
+ 41 |     Shape s;                                  // error: cannot have the abstract type
+    |           ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:42:16: semantic error: type mismatch: cannot initialize variable 'm' of type 'class Meters' with a value of type 'int' [type-mismatch]
+ 42 |     Meters m = 5;                             // error: cannot initialize variable 'm'
+    |                ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:43:17: semantic error: type mismatch: argument 1 of 'use' expects 'class Meters' but got 'int' (no conversion between these types) [argument-type]
+ 43 |     int r = use(4);                           // error: argument 1 of 'use'
+    |                 ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:45:11: semantic error: 'value' is not a const member function, so it cannot be called on a const object [const-method]
+ 45 |     r = h.value();                            // error: is not a const member function
+    |           ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:46:14: semantic error: a class with virtual functions ('class Poly') cannot be initialized with a brace list; use a constructor [initializer]
+ 46 |     Poly p = {};                              // error: cannot be initialized with a brace list
+    |              ^
+

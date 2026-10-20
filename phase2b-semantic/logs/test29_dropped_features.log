@@ -38,26 +38,26 @@ Syntax analysis failed: 17 error(s); semantic analysis was not run.
  46 |     auto get = [&]() { return x; };
     |                ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:52:23: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:52:24: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
  52 |     int (*fp)(int, int);
-    |                       ^
+    |                        ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:57:49: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:57:50: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
  57 | int t08_function_pointer_parameter(int (*op)(int), int v) { return v; }
-    |                                                 ^
+    |                                                  ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:60:34: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:60:35: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
  60 | typedef int (*T09_BinOp)(int, int);
-    |                                  ^
+    |                                   ^
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:65:17: syntax error: syntax error, unexpected '(', expecting ')'
  65 |     x = (int (*)(int)) x;
     |                 ^
     | note: insert ')' here
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:71:29: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:71:30: syntax error: syntax error, unexpected '(' after a parenthesized pointer declarator
  71 |     int (*table[2])(int, int);
-    |                             ^
+    |                              ^
 
 /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:82:18: syntax error: syntax error, unexpected INT, expecting ';'
  82 |     int *p = new int;

@@ -4,7 +4,11 @@
 
 Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test10_forward_references.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test10_forward_references.c'.
+Semantic analysis successful: 0 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test10_forward_references.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test10_forward_references.c:5:9: semantic warning: code will never be executed [unreachable-code]
+ 5 |     int x;
+   |         ^
 
 === Annotated AST ===
 Program "translation_unit"

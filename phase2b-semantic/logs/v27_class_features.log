@@ -1,0 +1,221 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v27_class_features.c
+
+Semantic analysis successful: 0 error(s), 2 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v27_class_features.c'.
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v27_class_features.c:28:5: semantic warning: control reaches end of non-void function 'sign' on some path [return-type]
+ 28 |     if (x < 0) return -1;                         // warning: control reaches end of non-void function 'sign' on some path
+    |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v27_class_features.c:32:6: semantic warning: code will never be executed [unreachable-code]
+ 32 |     x++;                                          // warning: code will never be executed
+    |      ^
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- FunctionDecl "area : _ZNK5Shape4areaEv"  <int (void) const>  -> _ZNK5Shape4areaEv (function)
+|   |-- FunctionDef "sides : _ZNK5Shape5sidesEv"  <int (void) const>  -> _ZNK5Shape5sidesEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- IntLiteral "0"  <int> =0
+|   `-- DestructorDef "Shape : _ZN5ShapeD1Ev"  -> _ZN5ShapeD1Ev (function)
+|       `-- CompoundStmt
+|-- ClassDecl "Square : Shape"  <class Square>  -> Square (tag)
+|   |-- VarDecl "side : INT"  <int>  -> Square::side (field, member)
+|   |-- ConstructorDef "Square : _ZN6SquareC1Ei"  -> _ZN6SquareC1Ei (function)
+|   |   |-- ParamDecl "s : INT"  <int>  -> s.1 (parameter, param)
+|   |   |-- MemInit "side"  -> Square::side (field, member)
+|   |   |   `-- Identifier "s"  <int> lvalue  -> s.1 (parameter, param)
+|   |   `-- CompoundStmt
+|   |-- FunctionDef "area : _ZNK6Square4areaEv"  <int (void) const>  -> _ZNK6Square4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"  <int>
+|   |               |-- Identifier "side"  <const int> lvalue  -> Square::side (field, member)
+|   |               `-- Identifier "side"  <const int> lvalue  -> Square::side (field, member)
+|   |-- FunctionDecl "peek : _Z4peekRK6Square"  <int (const class Square &)>  -> _Z4peekRK6Square (function)
+|   |   `-- ParamDecl "q : CLASS_POINTER"
+|   `-- FriendDecl "Auditor"
+|-- FunctionDef "peek : _Z4peekRK6Square"  -> _Z4peekRK6Square (function)
+|   |-- ParamDecl "q : CLASS_POINTER"  <const class Square &>  -> q.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- MemberExpr "side"  <const int> lvalue  -> Square::side (field, member)
+|               `-- Identifier "q"  <const class Square> lvalue  -> q.2 (parameter, param)
+|-- ClassDecl "Auditor"  <class Auditor>  -> Auditor (tag)
+|   `-- FunctionDef "check : _ZN7Auditor5checkERK6Square"  <int (const class Square &)>  -> _ZN7Auditor5checkERK6Square (function)
+|       |-- ParamDecl "q : CLASS_POINTER"  <const class Square &>  -> q.3 (parameter, param)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- MemberExpr "side"  <const int> lvalue  -> Square::side (field, member)
+|                   `-- Identifier "q"  <const class Square> lvalue  -> q.3 (parameter, param)
+|-- ClassDecl "Meters"  <class Meters>  -> Meters (tag)
+|   |-- VarDecl "v : INT"  <int>  -> Meters::v (field, member)
+|   `-- ConstructorDef "Meters : _ZN6MetersC1Ei"  -> _ZN6MetersC1Ei (function)
+|       |-- ParamDecl "x : INT"  <int>  -> x.4 (parameter, param)
+|       |-- MemInit "v"  -> Meters::v (field, member)
+|       |   `-- Identifier "x"  <int> lvalue  -> x.4 (parameter, param)
+|       `-- CompoundStmt
+|-- FunctionDef "twice : _Z5twice6Meters"  <int (class Meters)>  -> _Z5twice6Meters (function)
+|   |-- ParamDecl "m : CLASS"  <class Meters>  -> m.5 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "*"  <int>
+|               |-- MemberExpr "v"  <int> lvalue  -> Meters::v (field, member)
+|               |   `-- Identifier "m"  <class Meters> lvalue  -> m.5 (parameter, param)
+|               `-- IntLiteral "2"  <int> =2
+|-- FunctionDef "back : _Z4backi"  <class Meters (int)>  -> _Z4backi (function)
+|   |-- ParamDecl "k : INT"  <int>  -> k.6 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "k"  <int> lvalue  -> k.6 (parameter, param)
+|-- StructDecl "Pair"  <struct Pair>  -> Pair (tag)
+|   |-- VarDecl "a : INT_ARRAY"  <int[2]>  -> Pair::a (field, member)
+|   `-- VarDecl "b : INT"  <int>  -> Pair::b (field, member)
+|-- VarDecl "global : STRUCT"  <struct Pair>  -> global (variable, global)
+|   `-- InitializerList  <struct Pair>
+|       |-- InitializerList  <int[2]>
+|       |   |-- IntLiteral "1"  <int> =1
+|       |   `-- IntLiteral "2"  <int> =2
+|       `-- IntLiteral "3"  <int> =3
+|-- VarDecl "grid : INT_ARRAY_ARRAY"  <int[2][2]>  -> grid (variable, global)
+|   `-- InitializerList  <int[2][2]>
+|       |-- InitializerList  <int[2]>
+|       |   |-- IntLiteral "1"  <int> =1
+|       |   `-- IntLiteral "2"  <int> =2
+|       `-- InitializerList  <int[2]>
+|           |-- IntLiteral "3"  <int> =3
+|           `-- IntLiteral "4"  <int> =4
+|-- FunctionDef "sign : _Z4signi"  <int (int)>  -> _Z4signi (function)
+|   |-- ParamDecl "x : INT"  <int>  -> x.7 (parameter, param)
+|   `-- CompoundStmt
+|       |-- IfStmt
+|       |   |-- BinaryExpr ">"  <int>
+|       |   |   |-- Identifier "x"  <int> lvalue  -> x.7 (parameter, param)
+|       |   |   `-- IntLiteral "0"  <int> =0
+|       |   `-- ReturnStmt
+|       |       `-- IntLiteral "1"  <int> =1
+|       `-- IfStmt
+|           |-- BinaryExpr "<"  <int>
+|           |   |-- Identifier "x"  <int> lvalue  -> x.7 (parameter, param)
+|           |   `-- IntLiteral "0"  <int> =0
+|           `-- ReturnStmt
+|               `-- UnaryExpr "-"  <int> =-1
+|                   `-- IntLiteral "1"  <int> =1
+|-- FunctionDef "dead : _Z4deadi"  <int (int)>  -> _Z4deadi (function)
+|   |-- ParamDecl "x : INT"  <int>  -> x.8 (parameter, param)
+|   `-- CompoundStmt
+|       |-- ReturnStmt
+|       |   `-- Identifier "x"  <int> lvalue  -> x.8 (parameter, param)
+|       `-- ExprStmt
+|           `-- PostfixOpExpr "++"  <int>
+|               `-- Identifier "x"  <int> lvalue  -> x.8 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "q : CLASS"  <class Square>  -> q.9 (variable, local)
+        |   `-- ConstructExpr "CLASS"  <class Square>  -> _ZN6SquareC1Ei (function)
+        |       `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "s : CLASS_POINTER"  <const class Shape &>  -> s.10 (variable, local)
+        |   `-- Identifier "q"  <class Square> lvalue  -> q.9 (variable, local)
+        |-- VarDecl "a : CLASS"  <class Auditor>  -> a.11 (variable, local)
+        |-- VarDecl "r : INT"  <int>  -> r.12 (variable, local)
+        |   `-- BinaryExpr "+"  <int>
+        |       |-- BinaryExpr "+"  <int>
+        |       |   |-- BinaryExpr "+"  <int>
+        |       |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |   |   |-- BinaryExpr "+"  <int>
+        |       |   |   |   |   |   |   |-- CallExpr  <int>  -> _ZNK5Shape4areaEv (function)
+        |       |   |   |   |   |   |   |   `-- MemberExpr "area"  <int (void) const>  -> _ZNK5Shape4areaEv (function)
+        |       |   |   |   |   |   |   |       `-- Identifier "s"  <const class Shape> lvalue  -> s.10 (variable, local)
+        |       |   |   |   |   |   |   `-- CallExpr  <int>  -> _ZNK5Shape5sidesEv (function)
+        |       |   |   |   |   |   |       `-- MemberExpr "sides"  <int (void) const>  -> _ZNK5Shape5sidesEv (function)
+        |       |   |   |   |   |   |           `-- Identifier "s"  <const class Shape> lvalue  -> s.10 (variable, local)
+        |       |   |   |   |   |   `-- CallExpr  <int>  -> _Z4peekRK6Square (function)
+        |       |   |   |   |   |       |-- Identifier "peek"  <int (const class Square &)>  -> _Z4peekRK6Square (function)
+        |       |   |   |   |   |       `-- Identifier "q"  <class Square> lvalue  -> q.9 (variable, local)
+        |       |   |   |   |   `-- CallExpr  <int>  -> _ZN7Auditor5checkERK6Square (function)
+        |       |   |   |   |       |-- MemberExpr "check"  <int (const class Square &)>  -> _ZN7Auditor5checkERK6Square (function)
+        |       |   |   |   |       |   `-- Identifier "a"  <class Auditor> lvalue  -> a.11 (variable, local)
+        |       |   |   |   |       `-- Identifier "q"  <class Square> lvalue  -> q.9 (variable, local)
+        |       |   |   |   `-- CallExpr  <int>  -> _Z5twice6Meters (function)
+        |       |   |   |       |-- Identifier "twice"  <int (class Meters)>  -> _Z5twice6Meters (function)
+        |       |   |   |       `-- IntLiteral "4"  <int> =4
+        |       |   |   `-- MemberExpr "v"  <int>  -> Meters::v (field, member)
+        |       |   |       `-- CallExpr  <class Meters>  -> _Z4backi (function)
+        |       |   |           |-- Identifier "back"  <class Meters (int)>  -> _Z4backi (function)
+        |       |   |           `-- IntLiteral "5"  <int> =5
+        |       |   `-- MemberExpr "b"  <int> lvalue  -> Pair::b (field, member)
+        |       |       `-- Identifier "global"  <struct Pair> lvalue  -> global (variable, global)
+        |       `-- IndexExpr  <int> lvalue
+        |           |-- IndexExpr  <int[2]> lvalue
+        |           |   |-- Identifier "grid"  <int[2][2]> lvalue  -> grid (variable, global)
+        |           |   `-- IntLiteral "1"  <int> =1
+        |           `-- IntLiteral "1"  <int> =1
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- Identifier "r"  <int> lvalue  -> r.12 (variable, local)
+                |   `-- CallExpr  <int>  -> _Z4signi (function)
+                |       |-- Identifier "sign"  <int (int)>  -> _Z4signi (function)
+                |       `-- IntLiteral "0"  <int> =0
+                `-- CallExpr  <int>  -> _Z4deadi (function)
+                    |-- Identifier "dead"  <int (int)>  -> _Z4deadi (function)
+                    `-- IntLiteral "1"  <int> =1
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Shape              class_tag      class Shape                -        global                         4     -     0     Shape                -                        size 4
+Shape::area        method         int (void) const           -        global > class Shape           6     -     1     _ZNK5Shape4areaEv    _ZNK5Shape4areaEv        public, declared only
+Shape::sides       method         int (void) const           -        global > class Shape           7     -     1     _ZNK5Shape5sidesEv   _ZNK5Shape5sidesEv       public, defined
+Shape::~Shape      destructor     void (void)                -        global > class Shape           8     -     0     _ZN5ShapeD1Ev        _ZN5ShapeD1Ev            public
+Square             class_tag      class Square               -        global                         10    -     0     Square               -                        size 8, public base Shape
+Square::side       field          int                        member   global > class Square          11    4     4     Square::side         -                        private, offset 4
+Square::Square     constructor    void (int)                 -        global > class Square          13    -     1     _ZN6SquareC1Ei       _ZN6SquareC1Ei           public
+Square::area       method         int (void) const           -        global > class Square          14    -     0     _ZNK6Square4areaEv   _ZNK6Square4areaEv       public, defined
+peek               function       int (const class Square &) -        global                         15    -     1     _Z4peekRK6Square     _Z4peekRK6Square         defined
+s                  parameter      int                        param    global > class Square > Square() 13    4     1     s.1                  -                        
+q                  parameter      const class Square &       param    global > peek()                18    4     1     q.2                  -                        
+Auditor            class_tag      class Auditor              -        global                         19    -     0     Auditor              -                        size 1
+Auditor::check     method         int (const class Square &) -        global > class Auditor         19    -     1     _ZN7Auditor5checkERK6Square _ZN7Auditor5checkERK6Square public, defined
+q                  parameter      const class Square &       param    global > class Auditor > check() 19    4     1     q.3                  -                        
+Meters             class_tag      class Meters               -        global                         20    -     0     Meters               -                        size 4
+Meters::v          field          int                        member   global > class Meters          20    4     2     Meters::v            -                        public, offset 0
+Meters::Meters     constructor    void (int)                 -        global > class Meters          20    -     2     _ZN6MetersC1Ei       _ZN6MetersC1Ei           public
+x                  parameter      int                        param    global > class Meters > Meters() 20    4     1     x.4                  -                        
+twice              function       int (class Meters)         -        global                         21    -     1     _Z5twice6Meters      _Z5twice6Meters          defined
+m                  parameter      class Meters               param    global > twice()               21    4     1     m.5                  -                        
+back               function       class Meters (int)         -        global                         22    -     1     _Z4backi             _Z4backi                 defined
+k                  parameter      int                        param    global > back()                22    4     1     k.6                  -                        
+Pair               struct_tag     struct Pair                -        global                         23    -     0     Pair                 -                        size 12
+Pair::a            field          int[2]                     member   global > struct Pair           23    8     0     Pair::a              -                        public, offset 0
+Pair::b            field          int                        member   global > struct Pair           23    4     1     Pair::b              -                        public, offset 8
+global             variable       struct Pair                global   global                         24    12    1     global               -                        
+grid               variable       int[2][2]                  global   global                         25    16    1     grid                 -                        
+sign               function       int (int)                  -        global                         26    -     1     _Z4signi             _Z4signi                 defined
+x                  parameter      int                        param    global > sign()                26    4     2     x.7                  -                        
+dead               function       int (int)                  -        global                         30    -     1     _Z4deadi             _Z4deadi                 defined
+x                  parameter      int                        param    global > dead()                30    4     2     x.8                  -                        
+main               function       int (void)                 -        global                         34    -     0     main                 main                     defined
+q                  variable       class Square               local    global > main()                35    8     3     q.9                  -                        
+s                  variable       const class Shape &        local    global > main()                36    4     2     s.10                 -                        
+a                  variable       class Auditor              local    global > main()                37    1     1     a.11                 -                        
+r                  variable       int                        local    global > main()                38    4     1     r.12                 -                        
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 4, align 4
+class Square: size 8, align 4
+    (base Shape, public)
+    +4  int side  [private]
+class Auditor: size 1, align 1
+class Meters: size 4, align 4
+    +0  int v  [public]
+struct Pair: size 12, align 4
+    +0  int[2] a  [public]
+    +8  int b  [public]

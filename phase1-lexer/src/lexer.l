@@ -19,7 +19,10 @@
 
 /* buffer used while scanning strings/chars/comments that may run to EOF */
 static std::string strbuf;
-static int tokStartLine;
+static int tokStartLine, tokStartCol;
+/* column of the current token, and of the next character (1-based) */
+static int tokCol = 1, nextCol = 1;
+#define YY_USER_ACTION { tokCol = nextCol; for (int i = 0; i < yyleng; ++i) nextCol = yytext[i] == '\n' ? 1 : nextCol + 1; }
 static bool litHadError;
 static int chrCharCount;   /* how many actual characters seen in the
                                current char literal (an escape counts
@@ -28,15 +31,15 @@ static int chrCharCount;   /* how many actual characters seen in the
 static const char* SIMPLE_ESCAPES = "ntr\\'\"abfv?";
 
 /* this phase's errors and warnings go into the shared diagnostics list */
-static void reportError(int line, const std::string &lexeme, const std::string &message) {
-    reportDiagnostic(line, 0, lexeme, message, "Lexical error");
+static void reportError(int line, int col, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, col, lexeme, message, "Lexical error");
 }
-static void reportWarning(int line, const std::string &lexeme, const std::string &message) {
-    reportDiagnostic(line, 0, lexeme, message, "Lexical warning");
+static void reportWarning(int line, int col, const std::string &lexeme, const std::string &message) {
+    reportDiagnostic(line, col, lexeme, message, "Lexical warning");
 }
 
 static void invalidEscape(const char* text, int line) {
-    reportError(line, text, "Invalid escape sequence");
+    reportError(line, tokCol, text, "Invalid escape sequence");
     litHadError = true;
 }
 %}
@@ -69,11 +72,11 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 %%
 
-"/*"                            { tokStartLine = yylineno; BEGIN(COMMENTSTATE); }
+"/*"                            { tokStartLine = yylineno; tokStartCol = tokCol; BEGIN(COMMENTSTATE); }
 <COMMENTSTATE>"*/"               { BEGIN(INITIAL); }
 <COMMENTSTATE>\n                 { /* keep counting via yylineno automatically */ }
 <COMMENTSTATE><<EOF>>            {
-                                    reportError( tokStartLine,  "/*",  "Unterminated block comment");
+                                    reportError(tokStartLine, tokStartCol, "/*",  "Unterminated block comment");
                                     BEGIN(INITIAL);
                                     yyterminate();
                                   }
@@ -96,10 +99,10 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                    }
 
  /* ---- string literals ---- */
-\"                                { strbuf = "\""; tokStartLine = yylineno; litHadError = false; BEGIN(STRSTATE); }
+\"                                { strbuf = "\""; tokStartLine = yylineno; tokStartCol = tokCol; litHadError = false; BEGIN(STRSTATE); }
 
  /* ---- char literals ---- */
-'                                  { strbuf = "'"; tokStartLine = yylineno; litHadError = false; chrCharCount = 0; BEGIN(CHRSTATE); }
+'                                  { strbuf = "'"; tokStartLine = yylineno; tokStartCol = tokCol; litHadError = false; chrCharCount = 0; BEGIN(CHRSTATE); }
 
  /* ---- escape sequences: rules shared by strings and char literals.
     Ordered most-specific first so maximal munch does the right thing:
@@ -117,36 +120,36 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                      }
 
 <STRSTATE>\"                      { strbuf += "\""; if (!litHadError) addToken(TokenType::STRING_LITERAL, strbuf); BEGIN(INITIAL); }
-<STRSTATE>\n                      {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
-<STRSTATE><<EOF>>                 {reportError(  tokStartLine,  strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
+<STRSTATE>\n                      {reportError(tokStartLine, tokStartCol, strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyless(0); }
+<STRSTATE><<EOF>>                 {reportError(tokStartLine, tokStartCol, strbuf, "Unterminated string literal"); BEGIN(INITIAL); yyterminate(); }
 <STRSTATE>.                       { strbuf += yytext; }
 
 <CHRSTATE>'                       {
                                        strbuf += "'";
                                        if (chrCharCount == 0) {
-                                           reportError(tokStartLine, strbuf, "Empty character literal");
+                                           reportError(tokStartLine, tokStartCol, strbuf, "Empty character literal");
                                        } else if (chrCharCount > 1) {
                                            /* accepted, as gcc/clang do: an int-valued,
                                               implementation-defined constant */
-                                           reportWarning(tokStartLine, strbuf, "Multi-character character constant (has type int)");
+                                           reportWarning(tokStartLine, tokStartCol, strbuf, "Multi-character character constant (has type int)");
                                            if (!litHadError) addToken(TokenType::CHAR_LITERAL, strbuf);
                                        } else if (!litHadError) {
                                            addToken(TokenType::CHAR_LITERAL, strbuf);
                                        }
                                        BEGIN(INITIAL);
                                    }
-<CHRSTATE>\n                      { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
-<CHRSTATE><<EOF>>                 { reportError( tokStartLine,  strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
+<CHRSTATE>\n                      { reportError(tokStartLine, tokStartCol, strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyless(0); }
+<CHRSTATE><<EOF>>                 { reportError(tokStartLine, tokStartCol, strbuf,  "Unterminated character literal"); BEGIN(INITIAL); yyterminate(); }
 <CHRSTATE>.                       { strbuf += yytext; chrCharCount++; }
 
  /* ---- numeric constants ---- */
 0[xX]{HEXDIGIT}+{INT_SUFFIX}?                              { addToken(TokenType::INT_LITERAL, yytext); }
-0[xX]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, yytext, "Invalid hex literal: expected at least one hex digit after 0x"); }
+0[xX]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, tokCol, yytext, "Invalid hex literal: expected at least one hex digit after 0x"); }
 0[bB]{BINDIGIT}+{INT_SUFFIX}?                               { addToken(TokenType::INT_LITERAL, yytext); }
-0[bB][0-9]*[2-9][0-9]*                                      { reportError(yylineno, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
-0[bB]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, yytext, "Invalid binary literal: expected at least one binary digit after 0b"); }
+0[bB][0-9]*[2-9][0-9]*                                      { reportError(yylineno, tokCol, yytext, "Invalid binary literal: only digits 0/1 allowed after 0b"); }
+0[bB]({LETTER}({LETTER}|{DIGIT})*)?                         { reportError(yylineno, tokCol, yytext, "Invalid binary literal: expected at least one binary digit after 0b"); }
 0{OCTDIGIT}+{INT_SUFFIX}?                                   { addToken(TokenType::INT_LITERAL, yytext); }
-0[0-9]*[89][0-9]*                                           { reportError(yylineno, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
+0[0-9]*[89][0-9]*                                           { reportError(yylineno, tokCol, yytext, "Invalid octal literal: digits 8/9 not allowed after a leading 0"); }
 {FRAC}([eE][+-]?{DIGIT}+)?[fF]?                             { addToken(TokenType::FLOAT_LITERAL, yytext); }
 {DIGIT}+[eE][+-]?{DIGIT}+[fF]?                             { addToken(TokenType::FLOAT_LITERAL, yytext); }
 {DIGIT}+{INT_SUFFIX}?                                       { addToken(TokenType::INT_LITERAL, yytext); }
@@ -190,14 +193,14 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
                                         if (op.has_value()) {
                                             addToken(op.value(), yytext);
                                         } else {
-                                            reportError(yylineno, yytext, "Illegal character");
+                                            reportError(yylineno, tokCol, yytext, "Illegal character");
                                         }
                                    }
 
 [ \t\r]+                          { /* skip whitespace */ }
 \n                                 { /* newline: yylineno auto-increments */ }
 
-.                                  { reportError(  yylineno,  yytext,  "Illegal character"); }
+.                                  { reportError(yylineno, tokCol, yytext,  "Illegal character"); }
 
 %%
 int main(int argc, char** argv) {
@@ -222,19 +225,19 @@ int main(int argc, char** argv) {
         fprintf(stderr, "Lexical analysis failed: %zu error(s) found in '%s'.\n",
                 errors.size(), argv[1]);
         for (const auto &d : errors) {
-            fprintf(stderr, "Line %s: %s (near '%s')\n",
-                    displayLine(d.line).c_str(), d.message.c_str(), d.near_text.c_str());
+            fprintf(stderr, "Line %s:%d: %s (near '%s')\n",
+                    displayLine(d.line).c_str(), d.column, d.message.c_str(), d.near_text.c_str());
         }
         for (const auto &w : warnings) {
-            fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
-                    displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+            fprintf(stderr, "Line %s:%d: warning: %s (near '%s')\n",
+                    displayLine(w.line).c_str(), w.column, w.message.c_str(), w.near_text.c_str());
         }
         return 1;
     }
 
     for (const auto &w : warnings) {
-        fprintf(stderr, "Line %s: warning: %s (near '%s')\n",
-                displayLine(w.line).c_str(), w.message.c_str(), w.near_text.c_str());
+        fprintf(stderr, "Line %s:%d: warning: %s (near '%s')\n",
+                displayLine(w.line).c_str(), w.column, w.message.c_str(), w.near_text.c_str());
     }
 
     printf("%-30s %-20s\n", "Lexeme", "Token");
