@@ -1188,26 +1188,37 @@ std::vector<std::pair<int, std::string>> uninitializedReads(Program &program) {
 }
 
 void printStats(const OptStats &s, std::ostream &out) {
-    out << "optimization summary (-O" << s.level << ")\n"
-        << "    instructions                " << s.before << " -> " << s.after;
+    std::string rule(76, '-');
+    out << rule << "\n OPTIMIZATION SUMMARY (-O" << s.level << ")\n" << rule << "\n\n";
+    auto row = [&](const char *what, long long n) {
+        char line[128];
+        snprintf(line, sizeof line, "   %-34s %6lld\n", what, n);
+        out << line;
+    };
+    char line[128];
+    snprintf(line, sizeof line, "   %-34s %6lld -> %lld", "instructions", static_cast<long long>(s.before),
+             static_cast<long long>(s.after));
+    out << line;
     if (s.before) out << "   (" << (100 * (s.before - s.after) / s.before) << "% fewer)";
-    out << "\n"
-        << "    constants folded            " << s.folded << "\n"
-        << "    algebraic simplifications   " << s.simplified << "\n"
-        << "    common subexpressions       " << s.common << "\n"
-        << "    copies / constants forwarded " << s.copies << "\n"
-        << "    temporaries merged away     " << s.coalesced << "\n"
-        << "    dead instructions removed   " << s.dead << "\n"
-        << "    jumps removed or redirected " << s.jumps << "\n"
-        << "    unreachable instructions    " << s.unreachable << "\n";
-    if (s.level >= 2)
-        out << "    propagated across blocks    " << s.global << "\n"
-            << "    dead assignments removed    " << s.deadAssignments << "\n";
-    if (s.level >= 3)
-        out << "    calls inlined               " << s.inlined << "\n"
-            << "    tail calls turned to jumps  " << s.tailCalls << "\n"
-            << "    common across blocks        " << s.globalCommon << "\n"
-            << "    moved out of loops          " << s.hoisted << "\n";
+    out << "\n\n";
+    row("constants folded", s.folded);
+    row("algebraic simplifications", s.simplified);
+    row("common subexpressions", s.common);
+    row("copies / constants forwarded", s.copies);
+    row("temporaries merged away", s.coalesced);
+    row("dead instructions removed", s.dead);
+    row("jumps removed or redirected", s.jumps);
+    row("unreachable instructions removed", s.unreachable);
+    if (s.level >= 2) {
+        row("propagated across blocks", s.global);
+        row("dead assignments removed", s.deadAssignments);
+    }
+    if (s.level >= 3) {
+        row("calls inlined", s.inlined);
+        row("tail calls turned into jumps", s.tailCalls);
+        row("common subexpressions across blocks", s.globalCommon);
+        row("instructions moved out of loops", s.hoisted);
+    }
     out << "\n";
 }
 
