@@ -351,6 +351,9 @@ globals and anything reached through a pointer are not.
 
 ## Syntax-directed translation (Lectures 25–27)
 
+A walk-through with flowcharts of every construct is in
+[`../docs/TRANSLATION.md`](../docs/TRANSLATION.md).
+
 The translation is the slides' syntax-directed translation scheme. The
 semantic rules are run during a walk over the annotated syntax tree
 rather than inside the parser's actions (decision D10 in

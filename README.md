@@ -38,6 +38,14 @@ Back end
 gcc / g++, and the TAC interpreter must print exactly what that binary
 prints.
 
+**How the translation works, with diagrams:**
+[`docs/TRANSLATION.md`](docs/TRANSLATION.md) explains why this is a
+multi-pass compiler, how the syntax-directed translation of Lectures 25–27
+is implemented, and, construct by construct (`if`, `if-else`, `while`,
+`do-while`, `for`, `switch`, `&&`, `||`, `!`, `break` / `continue`,
+`goto`, arrays, calls), the rule, the code that implements it, a
+flowchart of the generated code and the real TAC it produces.
+
 ## Compiler architecture
 
 ![Compiler architecture](docs/diagrams/compiler-architecture.svg)
@@ -85,6 +93,7 @@ a report to `logs/` in the current directory (`logs/<file>.log`, or
 ├── docs/
 │   ├── project_description.md    the project specification
 │   ├── FEATURES.md               feature audit: matrix and catalog
+│   ├── TRANSLATION.md            how source becomes TAC: passes, SDT rules, flowcharts
 │   ├── DESIGN_LOG.md             every design decision (D1–D31) with its reason
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
 │   ├── examples/                 example programs used in the docs
