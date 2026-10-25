@@ -540,7 +540,10 @@ Generator::LValue Generator::lvalueOrTemp(const ASTNodePtr &n) {
     return lv;
 }
 
-/* A[i1][i2]...: the slides' row-major formula, ((i1 * n2) + i2) * w */
+/* SDT (Lecture 25), arrays:
+     L -> id [ E ]   { L.array = id; L.offset = newtemp(); gen(L.offset '=' E.place '*' width) }
+     L -> L1 [ E ]   { t = newtemp(); gen(t '=' L1.offset_so_far '*' n_k); gen(t '=' t '+' E.place); ... }
+   i.e. the row-major formula ((i1 * n2) + i2) * w, then x = L.array[L.offset] */
 Generator::LValue Generator::indexLValue(const ASTNodePtr &n) {
     std::vector<ASTNodePtr> indices;
     ASTNodePtr node = n;
@@ -648,6 +651,12 @@ Operand Generator::rvalue(const ASTNodePtr &n, bool discard) {
     }
 }
 
+/* SDT (Lecture 25):
+     E -> E1 op E2   { E.place = newtemp();
+                       E.code  = E1.code || E2.code || gen(E.place '=' E1.place op E2.place) }
+   with the type rules applied first: both operands converted to the
+   result type (`t = inttodouble a`), and pointer arithmetic scaled by
+   the element width. */
 Operand Generator::binary(const ASTNodePtr &n) {
     const std::string &op = n->label;
     if (op == "&&" || op == "||" || isRelational(op)) return boolValue(n);
@@ -679,6 +688,10 @@ Operand Generator::binary(const ASTNodePtr &n) {
     return emitBinary(o, a, b, T);
 }
 
+/* SDT (Lecture 25):
+     E -> - E1       { E.place = newtemp(); E.code = E1.code || gen(E.place '=' 'minus' E1.place) }
+     E -> ( E1 )     { E.place = E1.place; E.code = E1.code }      (no node: the parser drops the parentheses)
+     E -> & E1 | * E1 { address of E1 / value at E1.place } */
 Operand Generator::unary(const ASTNodePtr &n, bool discard) {
     const std::string &op = n->label;
     const ASTNodePtr &c = n->children[0];
@@ -722,6 +735,10 @@ Operand Generator::incDec(const ASTNodePtr &operand, bool increment, bool prefix
     return prefix ? updated : old;
 }
 
+/* SDT (Lecture 25):
+     S -> id = E     { gen(id.place '=' E.place) }
+     S -> L = E      { gen(L.array '[' L.offset ']' '=' E.place) }    (indexed copy, see indexLValue)
+   `a op= b` is `a = a op b` with a evaluated once. */
 Operand Generator::assignment(const ASTNodePtr &n, bool discard) {
     (void)discard;
     const std::string &op = n->label;
@@ -762,6 +779,9 @@ Operand Generator::assignment(const ASTNodePtr &n, bool discard) {
     return v;
 }
 
+/* E -> B ? M1 E1 N : M2 E2   { backpatch(B.truelist, M1.quad); backpatch(B.falselist, M2.quad);
+                               E.place = newtemp(); t = E1.place in one branch, t = E2.place in the other,
+                               N: goto past the second branch } */
 Operand Generator::ternary(const ASTNodePtr &n, bool discard) {
     const ASTNodePtr &C = n->children[0], &A = n->children[1], &B = n->children[2];
     TypePtr T = n->semType;
@@ -790,7 +810,11 @@ Operand Generator::ternary(const ASTNodePtr &n, bool discard) {
 
 /* ---------------- boolean expressions (Lecture 27) ---------------- */
 
-/* `if a relop b goto _`: returns the index of the jump to backpatch */
+/* SDT (Lecture 27):
+     B -> E1 relop E2 { B.truelist  = makelist(nextquad);
+                        B.falselist = makelist(nextquad + 1);
+                        gen('if' E1.place relop E2.place 'goto _'); gen('goto _') }
+   this emits the first of the two jumps and returns its index */
 int Generator::relJump(const ASTNodePtr &n) {
     const ASTNodePtr &L = n->children[0], &R = n->children[1];
     TypePtr lt = sem::decay(L->semType), rt = sem::decay(R->semType);
@@ -809,7 +833,17 @@ int Generator::relJump(const ASTNodePtr &n) {
     return emit(q);
 }
 
-/* control-flow translation: E.true and E.false are backpatch lists */
+/* SDT with backpatching (Lecture 27): B.truelist / B.falselist are the
+   two backpatch lists; a marker M -> e { M.quad = nextquad } is a call
+   to nextQuad() at the point where the grammar would reduce M.
+     B -> B1 || M B2 { backpatch(B1.falselist, M.quad);
+                       B.truelist = merge(B1.truelist, B2.truelist); B.falselist = B2.falselist }
+     B -> B1 && M B2 { backpatch(B1.truelist, M.quad);
+                       B.truelist = B2.truelist; B.falselist = merge(B1.falselist, B2.falselist) }
+     B -> ! B1       { B.truelist = B1.falselist; B.falselist = B1.truelist }
+     B -> E1 relop E2   see relJump()
+     B -> true | false { B.truelist / B.falselist = makelist(nextquad); gen('goto _') }
+     B -> E          { gen('if' E.place '!= 0 goto _'); gen('goto _') }   (any other value) */
 void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
     if (n->line) curLine = n->line;
     if (!isOverloaded(n)) {
@@ -855,8 +889,11 @@ void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
     falseList.push_back(emitGoto());
 }
 
-/* a boolean used as a value: the slides' pattern
-       if a relop b goto +3 ; t = 0 ; goto +2 ; t = 1                */
+/* SDT (Lecture 26), a boolean used as a value, the slides' pattern:
+     E -> E1 relop E2 { E.place = newtemp();
+                        gen('if' E1.place relop E2.place 'goto' nextquad+3);
+                        gen(E.place '= 0'); gen('goto' nextquad+2); gen(E.place '= 1') }
+   (&&, || and ! go through cond() and land on the same two assignments) */
 Operand Generator::boolValue(const ASTNodePtr &n) {
     Operand t = newTemp(sem::intType());
     List trueList, falseList;
@@ -1003,6 +1040,11 @@ Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
     return convert(rvalue(arg), param);
 }
 
+/* SDT (Lecture 25), procedure calls:
+     S -> call id ( Elist ) { for each item p on queue: gen('param' p); gen('call' id.place ',' n) }
+     Elist -> Elist , E     { append E.place to queue }
+   all arguments are evaluated before the first `param` (an argument may
+   itself contain a call); a method gets `this` as its first parameter */
 Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std::vector<ASTNodePtr> &args,
                         const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch) {
     Operand thisArg = thisArgIn;

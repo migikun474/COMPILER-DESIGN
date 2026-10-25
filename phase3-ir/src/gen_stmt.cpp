@@ -81,6 +81,9 @@ void Generator::scanLabels(const ASTNodePtr &n, std::vector<const ASTNode *> &ch
     if (opens) chain.pop_back();
 }
 
+/* SDT (Lecture 27):
+     S -> { L }      { S.nextlist = L.nextlist }
+     L -> L1 M S     { backpatch(L1.nextlist, M.quad); L.nextlist = S.nextlist } */
 List Generator::block(const ASTNodePtr &n) {
     scopes.push_back({n.get(), {}});
     List next;
@@ -107,6 +110,21 @@ List Generator::block(const ASTNodePtr &n) {
     return next;
 }
 
+/* SDT with backpatching (Lecture 27); each case returns S.nextlist:
+     S -> if ( B ) M S1          { backpatch(B.truelist, M.quad); S.nextlist = merge(B.falselist, S1.nextlist) }
+     S -> if ( B ) M1 S1 N else M2 S2
+                                 { backpatch(B.truelist, M1.quad); backpatch(B.falselist, M2.quad);
+                                   S.nextlist = merge(S1.nextlist, N.nextlist, S2.nextlist) }
+     S -> while M1 ( B ) M2 S1   { backpatch(S1.nextlist, M1.quad); backpatch(B.truelist, M2.quad);
+                                   S.nextlist = B.falselist; gen('goto' M1.quad) }
+     S -> do M1 S1 while M2 ( B ) { backpatch(B.truelist, M1.quad); backpatch(S1.nextlist, M2.quad);
+                                   S.nextlist = B.falselist }
+     S -> for ( S1 ; M1 B ; M2 E N ) M3 S2
+                                 { the while rule, with E (the step) between the body and the jump back }
+     S -> switch ( E ) S1        { t = E.place; goto test; S1; goto next;
+                                   test: if t == v1 goto L1 ... goto Ldefault }   (Lecture 27's switch)
+     S -> break | continue       { S.nextlist = makelist(nextquad); gen('goto _') }  (patched by the loop)
+     N -> e                      { N.nextlist = makelist(nextquad); gen('goto _') }   */
 List Generator::stmt(const ASTNodePtr &n) {
     if (!n) return {};
     if (n->line) curLine = n->line;
