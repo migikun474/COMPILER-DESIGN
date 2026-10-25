@@ -31,7 +31,7 @@ pass per phase, each over the result of the one before:
 
 ```mermaid
 flowchart LR
-    SRC(["source.c"]) --> PP["1 · Preprocessor<br/><code>#define, #include, #if</code>"]
+    SRC(["source.c"]) --> PP["1 · Preprocessor<br/>define, include, if"]
     PP --> PARSE["2 · Lexer + parser<br/>builds the syntax tree"]
     PARSE --> SEM["3 · Semantic analysis<br/>types, symbols, offsets"]
     SEM --> TAC["4 · TAC generation<br/>the SDT rules"]
@@ -83,14 +83,13 @@ The rules are the slides' rules. What changes is *when* they run.
 flowchart TB
     subgraph SLIDES["The slides: one pass"]
         direction LR
-        G1["grammar rule<br/><code>E → E1 + E2 { gen(...) }</code>"] --> R1["the parser reduces it<br/>and runs the action"] --> Q1["quads"]
+        G1["grammar rule<br/>E → E1 + E2 { gen(...) }"] --> R1["the parser reduces it<br/>and runs the action"] --> Q1["quads"]
     end
     subgraph OURS["This compiler: two stages"]
         direction LR
-        G2["grammar rule in <code>parser.y</code><br/>action: build a node"] --> N2["<code>BinaryExpr</code> node<br/>in the syntax tree"]
-        N2 --> F2["TAC walk calls <code>binary()</code><br/>= the slides' action"] --> Q2["the same quads"]
+        G2["grammar rule in parser.y<br/>action: build a node"] --> N2["BinaryExpr node<br/>in the syntax tree"]
+        N2 --> F2["TAC walk calls binary()<br/>= the slides' action"] --> Q2["the same quads"]
     end
-    SLIDES ~~~ OURS
 
     classDef step fill:#ffffff,stroke:#2d3142,color:#2d3142
     classDef focal fill:#fdf0ea,stroke:#eb6c36,color:#2d3142,stroke-width:2px
@@ -253,7 +252,7 @@ B.falselist = merge(B1.falselist, B2.falselist)
 
 ```mermaid
 flowchart TB
-    B1["B1: if a < b goto _<br/>goto _"] -->|true| M["M.quad → B2: if c < d goto _<br/>goto _"]
+    B1["B1: if a #lt; b goto _<br/>goto _"] -->|true| M["M.quad → B2: if c #lt; d goto _<br/>goto _"]
     B1 -->|false| F(["B.falselist"])
     M -->|true| T(["B.truelist"])
     M -->|false| F
@@ -287,7 +286,7 @@ B.falselist = B2.falselist
 
 ```mermaid
 flowchart TB
-    B1["B1: if a < b goto _<br/>goto _"] -->|false| M["M.quad → B2: if c < d goto _<br/>goto _"]
+    B1["B1: if a #lt; b goto _<br/>goto _"] -->|false| M["M.quad → B2: if c #lt; d goto _<br/>goto _"]
     B1 -->|true| T(["B.truelist"])
     M -->|true| T
     M -->|false| F(["B.falselist"])
