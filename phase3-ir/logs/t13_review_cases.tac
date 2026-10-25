@@ -19,6 +19,11 @@
    Cnt::made        int                             4  5
    chosen           double                          8  2.5
 
+ As three address code (initial values, in place before main runs):
+
+    Cnt::made = 5
+    chosen = 2.5
+
 ============================================================================
  FUNCTION half(const double &)        (link name _Z4halfRKd)
 ============================================================================

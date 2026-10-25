@@ -19,6 +19,14 @@
    keeper           class Dog                       4  0
    primes           const int[4]                   16  { +0: 2, +4: 3, +8: 5, +12: 7 }
 
+ As three address code (initial values, in place before main runs):
+
+    keeper[...] = 0                (zero-initialized)
+    primes[0] = 2
+    primes[4] = 3
+    primes[8] = 5
+    primes[12] = 7
+
 ============================================================================
  FUNCTION Counted::Counted(int)        (link name _ZN7CountedC1Ei)
 ============================================================================

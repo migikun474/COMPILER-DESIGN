@@ -18,6 +18,10 @@
    ---------------- -------------------------- ------  -------------
    Shape::live      int                             4  0
 
+ As three address code (initial values, in place before main runs):
+
+    Shape::live = 0
+
 ============================================================================
  FUNCTION Shape::Shape()        (link name _ZN5ShapeC1Ev)
 ============================================================================

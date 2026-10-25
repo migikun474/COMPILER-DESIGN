@@ -37,6 +37,14 @@
    n.1              int                             4  10
    calls.2          int                             4  0
 
+ As three address code (initial values, in place before main runs):
+
+    x = 100
+    counter = 0
+    hidden = 7
+    n.1 = 10
+    calls.2 = 0               (zero-initialized)
+
 ============================================================================
  FUNCTION next()        (link name _Z4nextv)
 ============================================================================
