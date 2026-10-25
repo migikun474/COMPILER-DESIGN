@@ -990,6 +990,21 @@ or virtual inheritance; a member inherited from a base keeps
 34 passed (new `t31_virtual`, `t32_class_features`, `t33_brace_elision`,
 expected output from g++ / gcc), SPIM 33 passed at `-O0`…`-O3`.
 
+### D33. `%e` and `%g` in the MIPS `printf` (2026-10-25)
+
+The user asked for the two formats left out in D23. `runtime.s` now has
+`%e`, `%E`, `%g` and `%G` with the same flags, width and precision as
+`%f`. The `%f` digit generation became a routine of its own
+(`__pf_fixed`) that all three use; `%e` normalizes the value to one digit
+before the point (repeated division or multiplication by 10, then a check
+whether rounding carries it to 10, as in `9.9999996` -> `1.000000e+01`)
+and writes `e+XX` (at least two digits) after the mantissa; `%g` takes
+the `%e` style when the exponent is below -4 or not below the precision,
+otherwise `%f` with precision - 1 - exponent decimals, and removes
+trailing zeros and a lone point. Checked against gcc on 140 values
+(new test `t34_float_formats`). Same ceiling as `%f`: the scaled value
+must stay below about 9·10¹⁸.
+
 ---
 
 ## Open questions

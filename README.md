@@ -335,7 +335,6 @@ program's output or exit code).
 
 ## Known limitations
 
-- `printf` in the SPIM run-time has no `%e`/`%g`.
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers, `new`/`delete`, `register`, `volatile`,
   `long double`.
@@ -357,6 +356,5 @@ Everything in the agreed plan is implemented. What a next version could
 add, in order of value:
 
 1. **One driver** that runs every phase and SPIM in a single command.
-2. **`printf` `%e` / `%g`** in the MIPS run-time library.
-3. **More of C++** — `override` / `final`, covariant return types,
+2. **More of C++** — `override` / `final`, covariant return types,
    default arguments.

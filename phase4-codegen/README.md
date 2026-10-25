@@ -203,8 +203,8 @@ programs of the semantic and parser suites were compiled at `-O0` and
 
 ## Limitations
 
-- `printf` has no `%e` / `%g`; `%f` needs a value below about 9·10¹⁸
-  after scaling by the precision. `scanf` has no `%x`.
+- `%f`, `%e` and `%g` need the value, scaled by the precision, below
+  about 9·10¹⁸ (they convert through a 64-bit integer). `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.
 - `free` does not reuse memory.
 - The limits of the TAC generator apply unchanged (see
