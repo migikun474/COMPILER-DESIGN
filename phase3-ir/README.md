@@ -349,6 +349,67 @@ written), computed on the unoptimized code at every `-O` level. Only
 scalars whose address is never taken are tracked: arrays, objects,
 globals and anything reached through a pointer are not.
 
+## Syntax-directed translation (Lectures 25–27)
+
+The translation is the slides' syntax-directed translation scheme. The
+semantic rules are run during a walk over the annotated syntax tree
+rather than inside the parser's actions (decision D10 in
+`docs/DESIGN_LOG.md`: the types, overloads and offsets the rules need
+only exist after semantic analysis). The attributes and helpers keep
+their names:
+
+| Slides | Here |
+|---|---|
+| `E.place` | the `Operand` an expression function returns |
+| `E.code` | the instructions it `emit()`s, in order |
+| `newtemp()`, `gen()` / `emit()` | `newTemp()`, `emit()` |
+| `makelist`, `merge`, `backpatch` | `makelist()`, `merge()`, `backpatch()` |
+| `nextquad`, marker `M -> e { M.quad = nextquad }` | `nextQuad()`, called where `M` would be reduced |
+| `N -> e { N.nextlist = makelist(nextquad); gen('goto _') }` | `emitGoto()` with its index kept in a list |
+| `B.truelist`, `B.falselist`, `S.nextlist` | the lists `cond()` fills and `stmt()` returns |
+
+Each production, and where its semantic rules are:
+
+| Production (slides) | Function |
+|---|---|
+| `E -> E1 op E2` | `binary()` in `src/gen_expr.cpp` |
+| `E -> - E1`, `E -> ( E1 )`, `& E1`, `* E1` | `unary()` |
+| `S -> id = E`, `S -> L = E` | `assignment()` |
+| `L -> id [ E ]`, `L -> L1 [ E ]` (row-major, `((i1*n2)+i2)*w`) | `indexLValue()` |
+| `B -> E1 relop E2` | `relJump()` (called by `cond()`) |
+| `B -> B1 \|\| M B2`, `B -> B1 && M B2`, `B -> ! B1`, `B -> true / false` | `cond()` |
+| boolean as a value (`if a < b goto +3 ; t = 0 ; goto +2 ; t = 1`) | `boolValue()` |
+| `E -> B ? E1 : E2` | `ternary()` |
+| `S -> call id ( Elist )`, `Elist -> Elist , E` | `call()` |
+| `S -> { L }`, `L -> L1 M S` | `block()` in `src/gen_stmt.cpp` |
+| `S -> if ( B ) M S1`, `if ... else`, `while`, `do-while`, `for`, `switch`, `break`, `continue`, `return`, `goto` | the cases of `stmt()` |
+
+The rule each function implements is written in the comment above it,
+in the slides' notation.
+
+Because jump targets are filled in by backpatching, the TAC of a
+function comes out in a single walk, with no second pass to fix the
+jumps. The compiler as a whole is not single-pass: parsing, semantic
+analysis and this walk are separate passes.
+
+## Quadruples
+
+Each TAC instruction is stored as a quadruple (the slides' "quad"), a
+record with four fields: `op`, `arg1`, `arg2`, `result` -- `struct Quad`
+in `include/tac.h` (`op`, `a`, `b`, `r`, plus the jump target and the
+callee). The instructions of a function are an array of quads, numbered
+from 100 as in the slides; a jump's target is the index of a quad, which
+is what `backpatch()` writes.
+
+| TAC | op | arg1 | arg2 | result |
+|---|---|---|---|---|
+| `t1 = a int+ b` | `int+` | `a` | `b` | `t1` |
+| `t2 = minus c` | `minus` | `c` | | `t2` |
+| `x = t1` | `=` | `t1` | | `x` |
+| `if a < b goto 104` | `if <` | `a` | `b` | `104` |
+| `param t2` | `param` | `t2` | | |
+| `t3 = call f, 2` | `call` | `f` | `2` | `t3` |
+
 ## Logs
 
 Every run writes the listing to `logs/` in the current directory:
