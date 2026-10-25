@@ -19,6 +19,16 @@
    squares          int[5]                         20  0
    table            int[2][3]                      24  { +0: 1, +4: 2, +8: 3, +12: 4, +16: 5, +20: 6 }
 
+ As three address code (initial values, in place before main runs):
+
+    squares[...] = 0               (zero-initialized)
+    table[0] = 1
+    table[4] = 2
+    table[8] = 3
+    table[12] = 4
+    table[16] = 5
+    table[20] = 6
+
 ============================================================================
  FUNCTION total(int *, int)        (link name _Z5totalPii)
 ============================================================================

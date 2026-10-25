@@ -47,6 +47,47 @@
    _ZTV4Rect        unsigned int[4]                16  { +0: &Rect::area(), +4: 0, +8: &Rect::sides(), +12: 0 }
    _ZTV6Square      unsigned int[4]                16  { +0: &Square::area(), +4: 0, +8: &Rect::sides(), +12: 0 }
 
+ As three address code (initial values, in place before main runs):
+
+    _ZTV6Animal[0] = &Animal::name()
+    _ZTV6Animal[4] = 0
+    _ZTV6Animal[8] = &Animal::speed()
+    _ZTV6Animal[12] = 0
+    _ZTV3Dog[0] = &Dog::name()
+    _ZTV3Dog[4] = 0
+    _ZTV3Dog[8] = &Dog::speed()
+    _ZTV3Dog[12] = 0
+    _ZTV5Puppy[0] = &Puppy::name()
+    _ZTV5Puppy[4] = 0
+    _ZTV5Puppy[8] = &Dog::speed()
+    _ZTV5Puppy[12] = 0
+    _ZTV7Swimmer[0] = &Swimmer::swim()
+    _ZTV7Swimmer[4] = 0
+    _ZTV7Swimmer[8] = &Swimmer::dive(int)
+    _ZTV7Swimmer[12] = 0
+    _ZTV4Seal[0] = &Seal::name()
+    _ZTV4Seal[4] = 0
+    _ZTV4Seal[8] = &Animal::speed()
+    _ZTV4Seal[12] = 0
+    _ZTV4Seal[16] = &Seal::swim()
+    _ZTV4Seal[20] = 0
+    _ZTV4Seal_8[0] = &Seal::swim()
+    _ZTV4Seal_8[4] = -8
+    _ZTV4Seal_8[8] = &Swimmer::dive(int)
+    _ZTV4Seal_8[12] = 0
+    _ZTV5Shape[0] = 0
+    _ZTV5Shape[4] = 0
+    _ZTV5Shape[8] = &Shape::sides()
+    _ZTV5Shape[12] = 0
+    _ZTV4Rect[0] = &Rect::area()
+    _ZTV4Rect[4] = 0
+    _ZTV4Rect[8] = &Rect::sides()
+    _ZTV4Rect[12] = 0
+    _ZTV6Square[0] = &Square::area()
+    _ZTV6Square[4] = 0
+    _ZTV6Square[8] = &Rect::sides()
+    _ZTV6Square[12] = 0
+
 ============================================================================
  FUNCTION Animal::Animal(int)        (link name _ZN6AnimalC1Ei)
 ============================================================================

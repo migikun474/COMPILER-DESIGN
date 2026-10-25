@@ -37,6 +37,12 @@
    global           int                             4  10
    ratio            double                          8  2.5
 
+ As three address code (initial values, in place before main runs):
+
+    calls.25 = 0
+    global = 10
+    ratio = 2.5
+
 ============================================================================
  FUNCTION fact(int)        (link name _Z4facti)
 ============================================================================
