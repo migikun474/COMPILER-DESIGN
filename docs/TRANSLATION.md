@@ -22,6 +22,11 @@ How to read the diagrams: boxes are blocks of generated code, arrows are
 the jumps between them, and the **orange** box is the point that
 backpatching fills in, the instruction number a marker `M` records.
 
+How to read the code: every section shows the function that implements
+the rule, shortened to its translation logic (type checks, destructors and
+other bookkeeping left out), with each line's comment naming the part of
+the slide rule it is.
+
 ---
 
 ## 1. A multi-pass compiler
@@ -233,6 +238,16 @@ gen('if' E1.place relop E2.place 'goto _')
 gen('goto _')
 ```
 
+```cpp
+// cond(), relational case
+trueList.push_back(relJump(n));            // B.truelist  = makelist(nextquad); gen('if' E1 relop E2 'goto _')
+falseList.push_back(emitGoto());           // B.falselist = makelist(nextquad+1); gen('goto _')
+
+// relJump(): both sides converted to their common type, then one IfRel quad
+q.op = Op::IfRel;  q.a = E1.place;  q.b = E2.place;  q.relop = "<";
+return emit(q);                            // its index, kept in B.truelist
+```
+
 Two jumps, both still open; for `if (a < b) x = 1;`:
 
 ```
@@ -263,6 +278,14 @@ flowchart TB
     class B1 code
     class M focal
     class T,F list
+```
+
+```cpp
+// cond(), case &&
+List leftTrue;
+cond(B1, leftTrue, falseList);             // B1; its false jumps go straight into B.falselist
+backpatch(leftTrue, nextQuad());           // M: backpatch(B1.truelist, M.quad)
+cond(B2, trueList, falseList);             // B2: B.truelist = B2.truelist, B2's false jumps join B.falselist
 ```
 
 `if (a < b && c < d) x = 1;`
@@ -299,6 +322,14 @@ flowchart TB
     class T,F list
 ```
 
+```cpp
+// cond(), case ||
+List leftFalse;
+cond(B1, trueList, leftFalse);             // B1; its true jumps go straight into B.truelist
+backpatch(leftFalse, nextQuad());          // M: backpatch(B1.falselist, M.quad)
+cond(B2, trueList, falseList);             // B2: B2's true jumps join B.truelist, B.falselist = B2.falselist
+```
+
 `if (a < b || c < d) x = 1;`
 
 ```
@@ -316,6 +347,11 @@ No code at all: the two lists swap.
 
 ```
 B.truelist = B1.falselist      B.falselist = B1.truelist
+```
+
+```cpp
+// cond(), case !
+cond(B1, falseList, trueList);             // the two lists passed the other way round: no code
 ```
 
 `if (!(a < b)) x = 1;` — the `if` now goes to `x = 1` on the *false* jump:
@@ -336,6 +372,19 @@ four-instruction pattern turns the two exits into 1 and 0 (`boolValue()`):
 E.place = newtemp()
 gen('if' E1.place relop E2.place 'goto' nextquad+3)
 gen(E.place '= 0');  gen('goto' nextquad+2);  gen(E.place '= 1')
+```
+
+```cpp
+// boolValue()
+Operand t = newTemp(intType());            // E.place = newtemp()
+trueList.push_back(relJump(n));            // if E1 relop E2 goto _   (patched below)
+backpatch(falseList, nextQuad());
+emitAssign(t, icon(0));                    // t = 0
+int skip = emitGoto();                     // goto _   (over the next line)
+backpatch(trueList, nextQuad());           // the true jump lands here
+emitAssign(t, icon(1));                    // t = 1
+backpatch(makelist(skip), nextQuad());
+return t;
 ```
 
 ```
@@ -484,6 +533,17 @@ return merge(falseList, breaks);           // S.nextlist
 This language's `until` loop (a `while` that runs *until* the condition
 becomes true): the same rule as `while` with the two lists of `B` swapped.
 
+```cpp
+// stmt(), case UntilStmt: the while code, with cond()'s two lists passed swapped
+int begin = nextQuad();                    // M1
+cond(B, falseList, trueList);              // until: B true = leave, B false = run the body
+backpatch(trueList, nextQuad());           // M2
+List bodyNext = stmt(S1);
+backpatch(merge(bodyNext, continues), begin);
+emitGoto(begin);                           // gen('goto' M1.quad)
+return merge(falseList, breaks);           // S.nextlist
+```
+
 `until (i >= 10) i = i + 1;`
 
 ```
@@ -520,6 +580,16 @@ flowchart TB
 The body comes first, so it always runs once; there is no `goto` back,
 the condition's true jump is the loop.
 
+```cpp
+// stmt(), case DoWhileStmt
+int begin = nextQuad();                    // M1: the body starts here
+List bodyNext = stmt(S1);                  // S1
+backpatch(merge(bodyNext, continues), nextQuad());  // M2: backpatch(S1.nextlist, M2.quad); continue → the test
+cond(B, trueList, falseList);              // B
+backpatch(trueList, begin);                // backpatch(B.truelist, M1.quad): true jumps back to the body
+return merge(falseList, breaks);           // S.nextlist = B.falselist (+ the breaks)
+```
+
 `do { i = i + 1; } while (i < 10);`
 
 ```
@@ -550,6 +620,19 @@ flowchart TB
     class I,S1,E,J code
     class B focal
     class NEXT list
+```
+
+```cpp
+// stmt(), case ForStmt
+backpatch(stmt(S0), nextQuad());           // S0: the initialization
+int begin = nextQuad();                    // M1: the test starts here
+cond(B, trueList, falseList);              // B
+backpatch(trueList, nextQuad());           // M3: true → the body
+List bodyNext = stmt(S1);                  // S1
+backpatch(merge(bodyNext, continues), nextQuad());  // M2: body end and continue → the step
+rvalue(E, true);                           // E: the step
+emitGoto(begin);                           // N: goto M1.quad
+return merge(falseList, breaks);           // S.nextlist = B.falselist (+ the breaks)
 ```
 
 `for (int i = 0; i < 10; i = i + 1) s = s + i;`
@@ -601,6 +684,24 @@ flowchart TB
     class NEXT list
 ```
 
+```cpp
+// stmt(), case SwitchStmt
+Operand t = newTemp(T);
+emitAssign(t, E.place);                    // t = E.place
+int toTests = emitGoto();                  // goto test
+List bodyNext = stmt(S1);                  // S1: each case / default records nextQuad() as its position
+bodyNext.push_back(emitGoto());            // goto next (the end of the last case)
+backpatch(makelist(toTests), nextQuad());  // test:
+for (auto &c : cases)                      //   if t == v_i goto L_i
+    emit(IfRel(t, "==", c.value, /*target*/ c.position));
+if (defaultPos >= 0) emitGoto(defaultPos); //   goto Ldefault
+return merge(bodyNext, breaks);            // S.nextlist
+
+// stmt(), case CaseStmt: no code, only the position
+cases.push_back({value, nextQuad()});
+return stmt(child);
+```
+
 `switch (k) { case 1: x = 10; break; case 2: x = 20; case 3: x = x + 1; break; default: x = -1; }`
 
 ```
@@ -635,6 +736,20 @@ jumps; when the loop is finished, `break`s join `S.nextlist` and
 (`for`). Objects with destructors in the blocks being left are destroyed
 before the jump.
 
+```cpp
+// stmt(), case BreakStmt
+destroyScopes(loop.scopeDepth);            // objects of the blocks being left
+loop.breaks.push_back(emitGoto());         // S.nextlist = makelist(nextquad); gen('goto _')
+
+// stmt(), case ContinueStmt
+destroyScopes(loop.scopeDepth);
+loop.continues.push_back(emitGoto());      // gen('goto _'), patched by the loop to its test or step
+
+// and in the loop (while / for / do-while), when its body is done:
+backpatch(merge(bodyNext, loop.continues), testOrStep);
+return merge(falseList, loop.breaks);      // breaks leave with the loop's S.nextlist
+```
+
 `while (i < 100) { i = i + 1; if (i == 5) continue; if (i > 8) break; s = s + i; }`
 
 ```
@@ -660,6 +775,19 @@ A label records its instruction number when it is reached; a `goto`
 emits `goto _` with that number, or, for a label further down, is kept in
 a pending list and patched when the label is reached.
 
+```cpp
+// stmt(), case LabeledStmt
+labels[label] = nextQuad();                // the label's instruction number
+for (auto &g : pendingGotos)               // gotos written before the label:
+    if (g.label == label) quads[g.jump].target = nextQuad();   // backpatch them now
+return stmt(child);
+
+// stmt(), case GotoStmt
+destroyScopes(blocksLeft);                 // objects of the blocks the jump leaves
+int j = emitGoto(known ? labels[label] : -1);   // goto L (or goto _ if L is further down)
+if (!known) pendingGotos.push_back({label, j});
+```
+
 `again: i = i + 1; if (i < 3) goto again;`
 
 ```
@@ -677,6 +805,22 @@ a pending list and patched when the label is reached.
 then the destructors of the objects still alive run, then the `return`.
 Falling off the end of `main` adds `return 0`.
 
+```cpp
+// stmt(), case ReturnStmt
+q.op = Op::Return;
+q.a = convert(rvalue(E), returnType);      // E.place, in the function's return type
+destroyTemporaries();                      // objects made while computing E
+destroyScopes(0);                          // every local object still alive
+emit(q);                                   // gen('return' E.place)
+```
+
+`int f(int k) { return k * 2; }`
+
+```
+100       t1 = k int* 2
+101       return t1
+```
+
 ---
 
 ## 7. Expressions with their own rules
@@ -685,6 +829,21 @@ Falling off the end of `main` adds `return 0`.
 
 `gen(id.place '=' E.place)`, after converting `E` to the variable's type
 (`assignment()`). `a op= b` is `a = a op b` with `a` evaluated once.
+
+```cpp
+// assignment(), case =
+LValue lv = lvalue(L);                     // id, a[off], or *p
+Operand v = convert(rvalue(E), lv.type);   // E.place, in the variable's type
+store(lv, v);                              // gen(id '=' E.place) / a[off] = v / *p = v
+return v;
+
+// assignment(), case op=
+Operand cur = load(lv);                    // a, read once
+Operand r = emitBinary(op, cur, rvalue(E), type);   // t = a op E.place
+store(lv, convert(r, lv.type));            // a = t
+```
+
+`x = a + b * c;`: see [section 3](#3-one-expression-end-to-end).
 
 ### 7.2 Arrays: `L → id [ E ]`, `L → L1 [ E ]`
 
@@ -702,6 +861,18 @@ flowchart LR
     classDef focal fill:#fdf0ea,stroke:#eb6c36,color:#2d3142,stroke-width:2px
     class I1,M1,A1,S code
     class W focal
+```
+
+```cpp
+// indexLValue(): A[i1][i2]...[ik]
+Operand acc = rvalue(i1);                              // i1
+for (k = 2; k <= dims; ++k) {
+    acc = emitBinary(Mul, acc, icon(n_k), int);        // t = acc * n_k        "(n2 = 4)"
+    acc = emitBinary(Add, acc, rvalue(i_k), int);      // t = t + i_k
+}
+Operand off = scaled(acc, w);                          // t = acc * w          "(w = 4)"
+return addOffset(base, off, elemType);                 // L.array = a, L.offset = off
+// then load(): x = a[off]   or   store(): a[off] = x
 ```
 
 `int a[3][4]; a[i][j] = 7; x = a[i][j];`
@@ -722,6 +893,19 @@ flowchart LR
 
 `B` as jumping code, each branch stores into one temporary, an `N` jump
 skips the second branch (`ternary()`).
+
+```cpp
+// ternary()
+Operand t = newTemp(T);                    // E.place = newtemp()
+cond(B, trueList, falseList);              // B
+backpatch(trueList, nextQuad());           // M1
+emitAssign(t, rvalue(E1));                 // t = E1.place
+int skip = emitGoto();                     // N: goto _ over E2
+backpatch(falseList, nextQuad());          // M2
+emitAssign(t, rvalue(E2));                 // t = E2.place
+backpatch(makelist(skip), nextQuad());     // N lands after E2
+return t;
+```
 
 `m = a > b ? a : b;`
 
@@ -744,6 +928,19 @@ S → call id ( Elist ) { for each p on queue: gen('param' p);  gen('call' id.pl
 All arguments are evaluated before the first `param` (an argument may
 itself contain a call); a method gets the object's address, `this`, as its
 first parameter (`call()`).
+
+```cpp
+// call()
+std::vector<Operand> queue;
+for (auto &arg : args)                     // Elist → Elist , E { append E.place to queue }
+    queue.push_back(argumentFor(paramType, arg));      // evaluated and converted, all first
+if (method) emit(Param(thisPointer));      // param this
+for (auto &v : queue) emit(Param(v));      // for each p on queue: gen('param' p)
+Quad q;  q.op = Op::Call;  q.callee = f;  q.nargs = n;
+q.r = newTemp(returnType);                 // the result's place
+emit(q);                                   // gen('call' id.place ',' n)
+return q.r;
+```
 
 `x = add(2, 3);`
 
