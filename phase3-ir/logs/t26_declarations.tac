@@ -23,6 +23,28 @@
    table            double[3]                      24  { +16: 9.5, +0: 1.5 }
    kept.17          int                             4  3
 
+ As three address code (initial values, in place before main runs):
+
+    primes[0] = 2
+    primes[4] = 3
+    primes[8] = 5
+    primes[12] = 7
+    matrix[0] = 1
+    matrix[4] = 2
+    matrix[8] = 3
+    matrix[12] = 4
+    matrix[16] = 5
+    matrix[20] = 6
+    letters[0] = 111
+    letters[1] = 107
+    letters[2] = 0
+    stock[0] = 115
+    stock[8] = 2.5
+    stock[16] = 3
+    table[16] = 9.5
+    table[0] = 1.5
+    kept.17 = 3
+
 ============================================================================
  FUNCTION sum(const int *)        (link name _Z3sumPKi)
 ============================================================================

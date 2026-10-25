@@ -306,6 +306,21 @@ void printProgram(const Program &p, std::ostream &out) {
             }
             out << "\n";
         }
+        /* the same values as TAC statements: static data, stored before main runs */
+        out << "\n As three address code (initial values, in place before main runs):\n\n";
+        for (const auto &g : p.globals) {
+            const std::string &name = g.sym->uniqueName;
+            bool scalar = !sem::isArray(g.sym->type) && !sem::isRecord(g.sym->type);
+            if (g.init.empty()) {
+                out << "    " << name << (scalar ? "" : "[...]") << " = 0" << std::string(name.size() < 20 ? 20 - name.size() : 1, ' ')
+                    << "  (zero-initialized)\n";
+                continue;
+            }
+            for (const auto &i : g.init) {
+                if (scalar && i.offset == 0) out << "    " << name << " = " << i.value << "\n";
+                else out << "    " << name << "[" << i.offset << "] = " << i.value << "\n";
+            }
+        }
         out << "\n";
     }
     int nextLabel = 1;
