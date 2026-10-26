@@ -446,15 +446,15 @@
    i.32             local   int                             4      64
    upper            local   char[8]                         8      68
    i.34             local   int                             4      76
-   t1               temp    char (*)[32]                    4      80
-   t2               temp    char (*)[32]                    4      84
-   t3               temp    char (*)[32]                    4      88
+   t1               temp    char *                          4      80
+   t2               temp    char *                          4      84
+   t3               temp    char *                          4      88
    t4               temp    int                             4      92
-   t5               temp    char (*)[32]                    4      96
-   t6               temp    char (*)[32]                    4     100
-   t7               temp    char (*)[32]                    4     104
+   t5               temp    char *                          4      96
+   t6               temp    char *                          4     100
+   t7               temp    char *                          4     104
    t8               temp    int                             4     108
-   t9               temp    char (*)[32]                    4     112
+   t9               temp    char *                          4     112
    t10              temp    int                             4     116
    t11              temp    int                             4     120
    t12              temp    int                             4     124
@@ -474,9 +474,9 @@
    t26              temp    char                            1     180
    t27              temp    int                             4     184
    t28              temp    int                             4     188
-   t29              temp    char (*)[16]                    4     192
-   t30              temp    char (*)[16]                    4     196
-   t31              temp    char (*)[16]                    4     200
+   t29              temp    char *                          4     192
+   t30              temp    char *                          4     196
+   t31              temp    char *                          4     200
    t32              temp    int                             4     204
    t33              temp    int                             4     208
    t34              temp    int                             4     212
@@ -494,7 +494,7 @@
    t46              temp    int                             4     256
    t47              temp    char                            1     260
    t48              temp    int                             4     264
-   t49              temp    char (*)[8]                     4     268
+   t49              temp    char *                          4     268
    t50              temp    const char *                    4     272
    t51              temp    int                             4     276
    t52              temp    char                            1     280

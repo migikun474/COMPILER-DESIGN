@@ -143,7 +143,7 @@ struct Program {
 };
 
 /* a floating constant as the listing prints it: shortest text that reads back equal */
-std::string floatText(double v);
+std::string floatText(double v, bool asFloat = false);
 
 /* a callee's source-level signature: `add(int, int)`, `Dog::bark(int)` */
 std::string signatureOf(const sem::Symbol &fn);

@@ -734,7 +734,7 @@ L7_69:
         li    $t0, 1
         sw    $t0, -268($fp)
 L7_70:
-        # if g float< 0.3400000035762787 goto 73
+        # if g float< 0.34 goto 73
         l.s   $f0, -28($fp)
         l.s   $f2, fc22
         c.lt.s $f0, $f2

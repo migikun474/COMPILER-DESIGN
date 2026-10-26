@@ -398,7 +398,7 @@
    i.32             local   int                             4      64
    upper            local   char[8]                         8      68
    i.34             local   int                             4      76
-   t1               temp    char (*)[32]                    4      80
+   t1               temp    char *                          4      80
    t4               temp    int                             4      92
    t8               temp    int                             4     108
    t10              temp    int                             4     116
@@ -418,7 +418,7 @@
    t25              temp    const char *                    4     176
    t26              temp    char                            1     180
    t27              temp    int                             4     184
-   t29              temp    char (*)[16]                    4     192
+   t29              temp    char *                          4     192
    t32              temp    int                             4     204
    t33              temp    int                             4     208
    t34              temp    int                             4     212
@@ -435,7 +435,7 @@
    t45              temp    int                             4     252
    t46              temp    int                             4     256
    t47              temp    char                            1     260
-   t49              temp    char (*)[8]                     4     268
+   t49              temp    char *                          4     268
    t50              temp    const char *                    4     272
    t51              temp    int                             4     276
    t52              temp    char                            1     280

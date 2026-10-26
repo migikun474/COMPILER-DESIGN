@@ -372,7 +372,7 @@
    t38              temp    double                          8     240
    t40              temp    double                          8     256
    t41              temp    double                          8     264
-   t42              temp    const int (*)[4]                4     272
+   t42              temp    const int *                     4     272
    t43              temp    int                             4     276
    t44              temp    class Dog (*)[3]                4     280
    t45              temp    class Dog (*)[3]                4     284

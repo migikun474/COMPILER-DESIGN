@@ -270,16 +270,16 @@
    t6               temp    int *                           4     136
    t7               temp    int                             4     140
    t8               temp    int                             4     144
-   t9               temp    int (*)[5]                      4     148
+   t9               temp    int *                           4     148
    t10              temp    int *                           4     152
    t11              temp    int *                           4     156
-   t12              temp    int (*)[5]                      4     160
+   t12              temp    int *                           4     160
    t13              temp    int &                           4     164
-   t14              temp    int (*)[5]                      4     168
+   t14              temp    int *                           4     168
    t15              temp    int &                           4     172
    t16              temp    int                             4     176
    t17              temp    int                             4     180
-   t18              temp    int (*)[5]                      4     184
+   t18              temp    int *                           4     184
    t19              temp    int **                          4     188
    t20              temp    int                             4     192
    t21              temp    int                             4     196

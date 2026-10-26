@@ -177,7 +177,7 @@
    t24              temp    int                             4     356
    t25              temp    int                             4     360
    t26              temp    int                             4     364
-   t27              temp    int (*)[5]                      4     368
+   t27              temp    int *                           4     368
    t29              temp    int                             4     376
    t34              temp    int                             4     396
    t35              temp    int                             4     400
@@ -190,8 +190,8 @@
    t42              temp    int                             4     428
    t43              temp    int                             4     432
    t44              temp    int                             4     436
-   t46              temp    char (*)[6]                     4     444
-   t47              temp    char (*)[8]                     4     448
+   t46              temp    char *                          4     444
+   t47              temp    char *                          4     448
    t51              temp    double                          8     464
    t52              temp    double                          8     472
    t53              temp    double                          8     480

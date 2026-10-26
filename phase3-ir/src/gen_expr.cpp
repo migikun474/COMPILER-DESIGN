@@ -330,6 +330,7 @@ Operand Generator::load(const LValue &lv) {
     if (sem::isArray(lv.type)) { /* an array used as a value is the address of its first element */
         Operand p = address(lv);
         p.type = sem::pointerTo(lv.type->elem);
+        if (p.kind == Operand::Temp) fn->temps[p.temp - 1] = p.type; /* so the frame lists it as `float *` */
         return p;
     }
     switch (lv.kind) {
