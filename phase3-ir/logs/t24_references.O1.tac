@@ -278,7 +278,7 @@
    t5               temp    int *                           4     132
    t6               temp    int *                           4     136
    t7               temp    int                             4     140
-   t9               temp    int (*)[5]                      4     148
+   t9               temp    int *                           4     148
    t10              temp    int *                           4     152
    t11              temp    int *                           4     156
    t13              temp    int &                           4     164

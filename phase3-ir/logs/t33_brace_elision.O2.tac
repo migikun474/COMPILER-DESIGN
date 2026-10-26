@@ -76,21 +76,21 @@
    t4               temp    int                             4     104
    t5               temp    int                             4     108
    t6               temp    char (*)[4]                     4     112
-   t7               temp    char (*)[4]                     4     116
+   t7               temp    char *                          4     116
    t8               temp    int                             4     120
    t9               temp    int                             4     124
    t10              temp    int                             4     128
    t11              temp    int                             4     132
    t12              temp    int                             4     136
    t13              temp    char (*)[4]                     4     140
-   t14              temp    char (*)[4]                     4     144
+   t14              temp    char *                          4     144
    t15              temp    int                             4     148
    t16              temp    int                             4     152
    t17              temp    int                             4     156
    t18              temp    int                             4     160
    t19              temp    int                             4     164
    t20              temp    char (*)[4]                     4     168
-   t21              temp    char (*)[4]                     4     172
+   t21              temp    char *                          4     172
    t23              temp    int                             4     180
    t24              temp    int                             4     184
    t25              temp    int                             4     188

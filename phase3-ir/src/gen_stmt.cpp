@@ -684,7 +684,7 @@ void Generator::globalInit(Global &g, const TypePtr &type, const ASTNodePtr &ini
             } else if (isFloatCls(gi.cls)) {
                 gi.kind = GlobalInit::Floating;
                 gi.f = gi.cls == Cls::Float ? static_cast<float>(c.asDouble()) : c.asDouble();
-                gi.value = floatText(gi.f);
+                gi.value = floatText(gi.f, gi.cls == Cls::Float);
             } else {
                 gi.i = c.isFloat ? static_cast<long long>(c.f) : c.i;
                 if (sem::isIntegral(item.type)) gi.i = sem::wrapToType(gi.i, item.type);

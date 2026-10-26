@@ -197,7 +197,7 @@
    t9               temp    int                             4      92
    t12              temp    int                             4     104
    t15              temp    int                             4     116
-   t21              temp    int (*)[3]                      4     140
+   t21              temp    int *                           4     140
    t22              temp    int *                           4     144
    t23              temp    int                             4     148
    t24              temp    int                             4     152

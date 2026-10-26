@@ -64,15 +64,17 @@ std::string signatureOf(const sem::Symbol &fn) {
     return s + ")";
 }
 
-std::string floatText(double v) {
+std::string floatText(double v, bool asFloat) {
     char buf[64];
     snprintf(buf, sizeof buf, "%.17g", v);
     std::string s = buf;
-    /* the shortest spelling that reads back as the same double */
+    /* the shortest spelling that reads back as the same double -- or, for a
+       float constant, as the same float: 10.1f prints as 10.1, not 10.100000381469727 */
     for (int prec = 1; prec < 17; ++prec) {
         char shortBuf[64];
         snprintf(shortBuf, sizeof shortBuf, "%.*g", prec, v);
-        if (std::stod(shortBuf) == v) { s = shortBuf; break; }
+        bool same = asFloat ? std::strtof(shortBuf, nullptr) == static_cast<float>(v) : std::stod(shortBuf) == v;
+        if (same) { s = shortBuf; break; }
     }
     if (s.find_first_of(".einf") == std::string::npos) s += ".0";
     return s;
@@ -138,7 +140,7 @@ std::string operandText(const Program &p, const Names &names, const Operand &o) 
         case Operand::None: return "_";
         case Operand::IntConst:
             return sem::constantToString(o.ival, o.type);
-        case Operand::FloatConst: return floatText(o.fval);
+        case Operand::FloatConst: return floatText(o.fval, classOf(o.type) == Cls::Float);
         case Operand::Temp: return "t" + std::to_string(o.temp);
         case Operand::Var: return names.of(o.sym);
         case Operand::Str: return o.str >= 0 && o.str < static_cast<int>(p.strings.size()) ? p.strings[o.str] : "\"?\"";

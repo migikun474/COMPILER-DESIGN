@@ -359,7 +359,7 @@
    t4               temp    int                             4      28
    t5               temp    int                             4      32
    t6               temp    int                             4      36
-   t7               temp    char (*)[4]                     4      40
+   t7               temp    char *                          4      40
    t8               temp    int                             4      44
    t9               temp    int                             4      48
    t10              temp    int                             4      52

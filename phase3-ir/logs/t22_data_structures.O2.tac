@@ -380,7 +380,7 @@
    t71              temp    int *                           4     436
    t72              temp    int *                           4     440
    t73              temp    int *                           4     444
-   t74              temp    int *(*)[3]                     4     448
+   t74              temp    int **                          4     448
    t75              temp    int *                           4     452
    t76              temp    int *                           4     456
    t77              temp    int                             4     460
