@@ -450,8 +450,8 @@
    x                local   int[2][3]                      24      72
    y                local   int[3][2]                      24      96
    z                local   int[2][2]                      16     120
-   t3               temp    int (*)[8]                      4     144
-   t4               temp    int (*)[8]                      4     148
+   t3               temp    int *                           4     144
+   t4               temp    int *                           4     148
    t5               temp    int                             4     152
    t6               temp    int                             4     156
    t8               temp    int                             4     164
@@ -460,9 +460,9 @@
    t14              temp    int                             4     188
    t17              temp    int                             4     200
    t18              temp    int                             4     204
-   t20              temp    int (*)[2][3]                   4     212
-   t21              temp    int (*)[3][2]                   4     216
-   t22              temp    int (*)[2][2]                   4     220
+   t20              temp    int (*)[3]                      4     212
+   t21              temp    int (*)[2]                      4     216
+   t22              temp    int (*)[2]                      4     220
    t23              temp    int                             4     224
    t24              temp    int                             4     228
    t25              temp    int                             4     232

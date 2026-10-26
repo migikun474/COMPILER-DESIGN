@@ -102,9 +102,9 @@
    deduced          local   int                             4     264
    t1               temp    int                             4     268
    t2               temp    int                             4     272
-   t3               temp    int (*)[4]                      4     276
+   t3               temp    int *                           4     276
    t4               temp    int                             4     280
-   t5               temp    const int (*)[4]                4     284
+   t5               temp    const int *                     4     284
    t6               temp    int                             4     288
    t7               temp    int                             4     292
    t8               temp    int                             4     296
@@ -146,7 +146,7 @@
    t44              temp    char                            1     480
    t45              temp    int                             4     484
    t46              temp    int                             4     488
-   t47              temp    char (*)[3]                     4     492
+   t47              temp    char *                          4     492
    t48              temp    double                          8     496
    t49              temp    double                          8     504
    t50              temp    double                          8     512
@@ -162,7 +162,7 @@
    t60              temp    const char *                    4     556
    t61              temp    char                            1     560
    t62              temp    int                             4     564
-   t63              temp    char (*)[6]                     4     568
+   t63              temp    char *                          4     568
    t64              temp    unsigned int                    4     572
    t65              temp    int                             4     576
    t66              temp    int                             4     580

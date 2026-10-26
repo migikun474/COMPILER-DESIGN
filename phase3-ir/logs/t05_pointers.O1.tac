@@ -114,7 +114,7 @@
    t13              temp    int                             4     160
    t14              temp    int                             4     164
    t16              temp    int *                           4     172
-   t17              temp    int (*)[5]                      4     176
+   t17              temp    int *                           4     176
    t18              temp    int *                           4     180
    t19              temp    int *                           4     184
    t21              temp    int *                           4     192
@@ -133,15 +133,15 @@
    t40              temp    int                             4     268
    t42              temp    int *                           4     276
    t43              temp    int                             4     280
-   t44              temp    int (*)[5]                      4     284
+   t44              temp    int *                           4     284
    t45              temp    int                             4     288
-   t46              temp    int (*)[5]                      4     292
+   t46              temp    int *                           4     292
    t47              temp    int *                           4     296
    t48              temp    int *                           4     300
    t49              temp    int *                           4     304
    t50              temp    char                            1     308
    t51              temp    int                             4     312
-   t52              temp    int (*)[2][3]                   4     316
+   t52              temp    int (*)[3]                      4     316
    t53              temp    int (*)[3]                      4     320
    t54              temp    int (*)[3]                      4     324
    t55              temp    int                             4     328
@@ -150,7 +150,7 @@
    t59              temp    double                          8     344
    t60              temp    double                          8     352
    t62              temp    char                            1     364
-   t64              temp    char (*)[8]                     4     372
+   t64              temp    char *                          4     372
    t65              temp    int                             4     376
    t66              temp    char *                          4     380
    t67              temp    char                            1     384

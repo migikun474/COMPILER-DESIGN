@@ -277,6 +277,7 @@ the output of the same source compiled with gcc/g++.
 | `t31_virtual` | virtual functions: overriding at several levels, a second polymorphic base (this-adjustment), virtual calls from constructors and destructors, through references and `this`, qualified (non-virtual) calls, slicing on copy and assignment, abstract classes |
 | `t32_class_features` | member initializer lists (members without a default constructor, a reference member, `count()`), friends, `const` member functions and overloading on const, `explicit`, converting constructors for arguments, `const &` arguments and returns |
 | `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
+| `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t30_temporaries` | unnamed class objects destroyed at the end of their full expression, the cases where they are kept (initializing a variable, the function result, a reference), by-value parameters, `obj.Base::member`, `long long` arithmetic in a loop |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 

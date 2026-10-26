@@ -467,7 +467,7 @@
    c                local   int                             4      36
    t1               temp    int *                           4      40
    t2               temp    int *                           4      44
-   t3               temp    int (*)[4]                      4      48
+   t3               temp    int *                           4      48
    t4               temp    int                             4      52
    t5               temp    int                             4      56
    t6               temp    int                             4      60

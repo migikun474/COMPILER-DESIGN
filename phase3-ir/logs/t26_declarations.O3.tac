@@ -149,7 +149,7 @@
    t43              temp    double                          8     472
    t44              temp    char                            1     480
    t45              temp    int                             4     484
-   t47              temp    char (*)[3]                     4     492
+   t47              temp    char *                          4     492
    t48              temp    double                          8     496
    t49              temp    double                          8     504
    t50              temp    double                          8     512
@@ -163,7 +163,7 @@
    t60              temp    const char *                    4     556
    t61              temp    char                            1     560
    t62              temp    int                             4     564
-   t63              temp    char (*)[6]                     4     568
+   t63              temp    char *                          4     568
    t66              temp    int                             4     580
    t67              temp    const int *                     4     584
    t68              temp    int                             4     588
