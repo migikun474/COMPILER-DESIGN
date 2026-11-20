@@ -74,21 +74,21 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -352
+        addiu $sp, $sp, -136
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        s.d   $f20, -328($fp)
-        s.d   $f22, -336($fp)
-        sw    $s0, -312($fp)
-        sw    $s1, -316($fp)
-        sw    $s2, -320($fp)
-        sw    $s3, -344($fp)
-        sw    $s4, -340($fp)
-        sw    $s5, -348($fp)
-        sw    $s6, -308($fp)
+        s.d   $f20, -112($fp)
+        s.d   $f22, -120($fp)
+        sw    $s0, -96($fp)
+        sw    $s1, -100($fp)
+        sw    $s2, -104($fp)
+        sw    $s3, -128($fp)
+        sw    $s4, -124($fp)
+        sw    $s5, -132($fp)
+        sw    $s6, -92($fp)
         # t1 = &keeper
         la    $s6, g_keeper
         # t47 = t1 ptr+ 4
@@ -118,13 +118,13 @@ M1_0:
         li    $t0, 1
         sw    $t0, 0($s0)
         # t49 = a
-        addiu $a0, $fp, -216
+        addiu $a0, $fp, -84
         addiu $a1, $fp, -4
         li    $a2, 4
         jal   __memcpy
         # t49[0] = 50
         li    $t0, 50
-        sw    $t0, -216($fp)
+        sw    $t0, -84($fp)
         # t4 = a[0]
         lw    $s1, -4($fp)
         # param "%d %d\n"
@@ -148,7 +148,7 @@ M1_0:
         li    $t0, 7
         sw    $t0, -8($fp)
         # t54 = &t53
-        addiu $s0, $fp, -220
+        addiu $s0, $fp, -88
         # param t54
         # call Counted::Counted(), 1
         addiu $sp, $sp, -8
@@ -157,10 +157,10 @@ M1_0:
         addiu $sp, $sp, 8
         # t53[0] = 5
         li    $t0, 5
-        sw    $t0, -220($fp)
+        sw    $t0, -88($fp)
         # c = t53
         addiu $a0, $fp, -12
-        addiu $a1, $fp, -220
+        addiu $a1, $fp, -88
         li    $a2, 4
         jal   __memcpy
         # t8 = a[0]
@@ -466,15 +466,15 @@ L1_126:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -328($fp)
-        l.d   $f22, -336($fp)
-        lw    $s0, -312($fp)
-        lw    $s1, -316($fp)
-        lw    $s2, -320($fp)
-        lw    $s3, -344($fp)
-        lw    $s4, -340($fp)
-        lw    $s5, -348($fp)
-        lw    $s6, -308($fp)
+        l.d   $f20, -112($fp)
+        l.d   $f22, -120($fp)
+        lw    $s0, -96($fp)
+        lw    $s1, -100($fp)
+        lw    $s2, -104($fp)
+        lw    $s3, -128($fp)
+        lw    $s4, -124($fp)
+        lw    $s5, -132($fp)
+        lw    $s6, -92($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

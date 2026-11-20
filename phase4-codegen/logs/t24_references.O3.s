@@ -56,15 +56,15 @@ _Z6minmaxPKiiRiS1_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
-        sw    $s0, -44($fp)
-        sw    $s1, -72($fp)
-        sw    $s2, -64($fp)
-        sw    $s3, -68($fp)
-        sw    $s4, -48($fp)
-        sw    $s5, -52($fp)
-        sw    $s6, -56($fp)
-        sw    $s7, -60($fp)
+        addiu $sp, $sp, -48
+        sw    $s0, -16($fp)
+        sw    $s1, -44($fp)
+        sw    $s2, -36($fp)
+        sw    $s3, -40($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -24($fp)
+        sw    $s6, -28($fp)
+        sw    $s7, -32($fp)
         lw    $s2, 16($fp)
         lw    $s3, 20($fp)
         # t1 = *values
@@ -98,17 +98,17 @@ L0_4:
 L0_12:
         # t11 = *t3
         lw    $t0, 0($s0)
-        sw    $t0, -32($fp)
+        sw    $t0, -4($fp)
         # t12 = *hi
         lw    $t0, 0($s3)
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # if t11 int<= t12 goto 17
-        lw    $t0, -32($fp)
-        lw    $t1, -36($fp)
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
         ble   $t0, $t1, L0_17
         # t15 = *t3
         lw    $t0, 0($s0)
-        sw    $t0, -40($fp)
+        sw    $t0, -12($fp)
         # *hi = t15
         sw    $t0, 0($s3)
 L0_17:
@@ -135,17 +135,17 @@ L0_17:
 L0_26:
         # t11 = *t3
         lw    $t0, 0($s0)
-        sw    $t0, -32($fp)
+        sw    $t0, -4($fp)
         # t12 = *hi
         lw    $t0, 0($s3)
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # if t11 int<= t12 goto 31
-        lw    $t0, -32($fp)
-        lw    $t1, -36($fp)
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
         ble   $t0, $t1, L0_31
         # t15 = *t3
         lw    $t0, 0($s0)
-        sw    $t0, -40($fp)
+        sw    $t0, -12($fp)
         # *hi = t15
         sw    $t0, 0($s3)
 L0_31:
@@ -157,14 +157,14 @@ L0_33:
         # return
         j     _Z6minmaxPKiiRiS1__exit
 _Z6minmaxPKiiRiS1__exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -72($fp)
-        lw    $s2, -64($fp)
-        lw    $s3, -68($fp)
-        lw    $s4, -48($fp)
-        lw    $s5, -52($fp)
-        lw    $s6, -56($fp)
-        lw    $s7, -60($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -44($fp)
+        lw    $s2, -36($fp)
+        lw    $s3, -40($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -24($fp)
+        lw    $s6, -28($fp)
+        lw    $s7, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -176,22 +176,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -568
+        addiu $sp, $sp, -184
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        s.d   $f20, -544($fp)
-        s.d   $f22, -552($fp)
-        s.d   $f24, -568($fp)
-        sw    $s0, -520($fp)
-        sw    $s1, -528($fp)
-        sw    $s2, -524($fp)
-        sw    $s3, -532($fp)
-        sw    $s4, -536($fp)
-        sw    $s5, -556($fp)
-        sw    $s6, -560($fp)
+        s.d   $f20, -160($fp)
+        s.d   $f22, -168($fp)
+        s.d   $f24, -184($fp)
+        sw    $s0, -132($fp)
+        sw    $s1, -140($fp)
+        sw    $s2, -136($fp)
+        sw    $s3, -144($fp)
+        sw    $s4, -148($fp)
+        sw    $s5, -172($fp)
+        sw    $s6, -176($fp)
         # x = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -245,24 +245,24 @@ M1_0:
         addiu $sp, $sp, 24
         # data[0] = 8
         li    $t0, 8
-        sw    $t0, -40($fp)
+        sw    $t0, -32($fp)
         # data[4] = -3
         li    $t0, -3
-        sw    $t0, -36($fp)
+        sw    $t0, -28($fp)
         # data[8] = 15
         li    $t0, 15
-        sw    $t0, -32($fp)
+        sw    $t0, -24($fp)
         # data[12] = 0
-        sw    $zero, -28($fp)
+        sw    $zero, -20($fp)
         # data[16] = 7
         li    $t0, 7
-        sw    $t0, -24($fp)
+        sw    $t0, -16($fp)
         # t9 = &data
-        addiu $s1, $fp, -40
+        addiu $s1, $fp, -32
         # t10 = &lo
-        addiu $s2, $fp, -44
+        addiu $s2, $fp, -36
         # t11 = &hi
-        addiu $s3, $fp, -48
+        addiu $s3, $fp, -40
         # param t9
         # param 5
         # param t10
@@ -289,9 +289,9 @@ M1_0:
         sw    $s3, 0($s1)
         # p = t9
         move  $t0, $s1
-        sw    $t0, -52($fp)
+        sw    $t0, -44($fp)
         # t19 = &p
-        addiu $s1, $fp, -52
+        addiu $s1, $fp, -44
         # t78 = *t19
         lw    $s2, 0($s1)
         # t80 = t78 ptr+ 8
@@ -299,19 +299,19 @@ M1_0:
         # *t19 = t80
         sw    $s3, 0($s1)
         # t20 = *p
-        lw    $t8, -52($fp)
+        lw    $t8, -44($fp)
         lw    $s1, 0($t8)
         # t21 = t20 int+ 1
         addiu $s2, $s1, 1
         # *p = t21
-        lw    $t8, -52($fp)
+        lw    $t8, -44($fp)
         sw    $s2, 0($t8)
         # t22 = data[12]
-        lw    $s1, -28($fp)
+        lw    $s1, -20($fp)
         # t23 = data[0]
-        lw    $s2, -40($fp)
+        lw    $s2, -32($fp)
         # t24 = data[8]
-        lw    $s3, -32($fp)
+        lw    $s3, -24($fp)
         # param "%d %d %d %d %d\n"
         # param lo
         # param hi
@@ -322,9 +322,9 @@ M1_0:
         addiu $sp, $sp, -24
         la    $t0, str1
         sw    $t0, 0($sp)
-        lw    $t0, -44($fp)
+        lw    $t0, -36($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -48($fp)
+        lw    $t0, -40($fp)
         sw    $t0, 8($sp)
         sw    $s1, 12($sp)
         sw    $s2, 16($sp)
@@ -333,18 +333,18 @@ M1_0:
         addiu $sp, $sp, 24
         # a[0] = 1
         li    $t0, 1
-        sw    $t0, -72($fp)
+        sw    $t0, -64($fp)
         # a[8] = 100.5
         l.d   $f0, fc0
-        s.d   $f0, -64($fp)
+        s.d   $f0, -56($fp)
         # b[0] = 2
         li    $t0, 2
-        sw    $t0, -88($fp)
+        sw    $t0, -80($fp)
         # b[8] = 2.5e+02
         l.d   $f0, fc1
-        s.d   $f0, -80($fp)
+        s.d   $f0, -72($fp)
         # t25 = &a
-        addiu $s1, $fp, -72
+        addiu $s1, $fp, -64
         # t83 = t25 ptr+ 8
         addiu $s3, $s1, 8
         # t84 = *t83
@@ -357,7 +357,7 @@ M1_0:
         mov.d $f0, $f20
         s.d   $f0, 0($s3)
         # t27 = &b
-        addiu $s2, $fp, -88
+        addiu $s2, $fp, -80
         # t90 = t27 ptr+ 8
         addiu $s5, $s2, 8
         # t91 = *t90
@@ -409,10 +409,10 @@ L1_84:
         move  $s3, $s2
 L1_85:
         # t36 = a[8]
-        l.d   $f0, -64($fp)
+        l.d   $f0, -56($fp)
         mov.d $f20, $f0
         # t37 = b[8]
-        l.d   $f0, -80($fp)
+        l.d   $f0, -72($fp)
         mov.d $f22, $f0
         # t38 = *t99
         lw    $s1, 0($s3)
@@ -441,14 +441,14 @@ L1_85:
         addiu $sp, $sp, 40
         # limit = 40
         li    $t0, 40
-        sw    $t0, -96($fp)
+        sw    $t0, -84($fp)
         # rate = 1.25
         l.d   $f0, fc4
-        s.d   $f0, -104($fp)
+        s.d   $f0, -96($fp)
         # t40 = &limit
-        addiu $s1, $fp, -96
+        addiu $s1, $fp, -84
         # t41 = &rate
-        addiu $s2, $fp, -104
+        addiu $s2, $fp, -96
         # t105 = *t40
         lw    $s3, 0($s1)
         # t106 = inttodouble t105
@@ -468,14 +468,14 @@ L1_85:
         move  $s3, $t0
         # t43 = 7
         li    $t0, 7
-        sw    $t0, -248($fp)
+        sw    $t0, -100($fp)
         # t45 = &t43
-        addiu $s1, $fp, -248
+        addiu $s1, $fp, -100
         # t46 = 2.0
         l.d   $f0, fc5
-        s.d   $f0, -264($fp)
+        s.d   $f0, -112($fp)
         # t47 = &t46
-        addiu $s2, $fp, -264
+        addiu $s2, $fp, -112
         # t112 = *t45
         lw    $s4, 0($s1)
         # t113 = inttodouble t112
@@ -495,14 +495,14 @@ L1_85:
         move  $s4, $t0
         # t49 = 7
         li    $t0, 7
-        sw    $t0, -272($fp)
+        sw    $t0, -116($fp)
         # t51 = &t49
-        addiu $s1, $fp, -272
+        addiu $s1, $fp, -116
         # t52 = 0.5
         l.d   $f0, fc6
-        s.d   $f0, -288($fp)
+        s.d   $f0, -128($fp)
         # t53 = &t52
-        addiu $s2, $fp, -288
+        addiu $s2, $fp, -128
         # t119 = *t51
         lw    $s5, 0($s1)
         # t120 = inttodouble t119
@@ -561,22 +561,22 @@ L1_85:
         # t60 = *t1
         lw    $s1, 0($s0)
         # t61 = t60 int+ lo
-        lw    $t1, -44($fp)
+        lw    $t1, -36($fp)
         addu  $s0, $s1, $t1
         # return t61
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -544($fp)
-        l.d   $f22, -552($fp)
-        l.d   $f24, -568($fp)
-        lw    $s0, -520($fp)
-        lw    $s1, -528($fp)
-        lw    $s2, -524($fp)
-        lw    $s3, -532($fp)
-        lw    $s4, -536($fp)
-        lw    $s5, -556($fp)
-        lw    $s6, -560($fp)
+        l.d   $f20, -160($fp)
+        l.d   $f22, -168($fp)
+        l.d   $f24, -184($fp)
+        lw    $s0, -132($fp)
+        lw    $s1, -140($fp)
+        lw    $s2, -136($fp)
+        lw    $s3, -144($fp)
+        lw    $s4, -148($fp)
+        lw    $s5, -172($fp)
+        lw    $s6, -176($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

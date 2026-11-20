@@ -55,10 +55,10 @@ _Z4halfRKd:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        sw    $s0, -36($fp)
+        addiu $sp, $sp, -24
+        s.d   $f20, -8($fp)
+        s.d   $f22, -16($fp)
+        sw    $s0, -20($fp)
         lw    $s0, 8($fp)
         # t1 = *v
         l.d   $f0, 0($s0)
@@ -70,9 +70,9 @@ _Z4halfRKd:
         mov.d $f0, $f22
         j     _Z4halfRKd_exit
 _Z4halfRKd_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        lw    $s0, -36($fp)
+        l.d   $f20, -8($fp)
+        l.d   $f22, -16($fp)
+        lw    $s0, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -103,9 +103,9 @@ _ZN1A2gaEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = *this
         lw    $s0, 0($s1)
@@ -113,8 +113,8 @@ _ZN1A2gaEv:
         move  $v0, $s0
         j     _ZN1A2gaEv_exit
 _ZN1A2gaEv_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -126,14 +126,14 @@ _ZN1BC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # param this
         # call A::A(), 1
@@ -149,8 +149,8 @@ M3_0:
         # return
         j     _ZN1BC1Ev_exit
 _ZN1BC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -162,9 +162,9 @@ _ZN1B2gbEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = this ptr+ 4
         addiu $s0, $s1, 4
@@ -174,8 +174,8 @@ _ZN1B2gbEv:
         move  $v0, $s1
         j     _ZN1B2gbEv_exit
 _ZN1B2gbEv_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -187,14 +187,14 @@ _ZN1CC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M5_0
         j     __stack_overflow
 M5_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # param this
         # call B::B(), 1
@@ -210,8 +210,8 @@ M5_0:
         # return
         j     _ZN1CC1Ev_exit
 _ZN1CC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -223,11 +223,11 @@ _ZN1C3sumEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -44($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -16($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
         lw    $s0, 8($fp)
         # t1 = *this
         lw    $s1, 0($s0)
@@ -247,10 +247,10 @@ _ZN1C3sumEv:
         move  $v0, $s1
         j     _ZN1C3sumEv_exit
 _ZN1C3sumEv_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -261,9 +261,9 @@ _Z5takeBP1B:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s0, 8($fp)
         # if p ptr== 0 goto 4
         beq   $s0, $zero, L7_4
@@ -281,8 +281,8 @@ L7_5:
         move  $v0, $s0
         j     _Z5takeBP1B_exit
 _Z5takeBP1B_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -293,9 +293,9 @@ _ZN3CntC1Ev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = Cnt::made int+ 1
         lw    $t0, g_Cnt__made
@@ -308,8 +308,8 @@ _ZN3CntC1Ev:
         # return
         j     _ZN3CntC1Ev_exit
 _ZN3CntC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -320,11 +320,11 @@ _Z4vsumiPv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -8($fp)
         lw    $s0, 8($fp)
         # s = 0
         li    $s1, 0
@@ -349,10 +349,10 @@ L9_7:
         move  $v0, $s1
         j     _Z4vsumiPv_exit
 _Z4vsumiPv_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -364,13 +364,13 @@ _Z5totaliz:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M10_0
         j     __stack_overflow
 M10_0:
-        sw    $s0, -16($fp)
+        sw    $s0, -8($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -390,7 +390,7 @@ M10_0:
         move  $v0, $s0
         j     _Z5totaliz_exit
 _Z5totaliz_exit:
-        lw    $s0, -16($fp)
+        lw    $s0, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -417,25 +417,25 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -200
+        addiu $sp, $sp, -88
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M12_0
         j     __stack_overflow
 M12_0:
-        s.d   $f20, -168($fp)
-        s.d   $f22, -176($fp)
-        sw    $s0, -160($fp)
-        sw    $s1, -180($fp)
-        sw    $s2, -184($fp)
-        sw    $s3, -188($fp)
-        sw    $s4, -192($fp)
-        sw    $s5, -196($fp)
+        s.d   $f20, -56($fp)
+        s.d   $f22, -64($fp)
+        sw    $s0, -44($fp)
+        sw    $s1, -68($fp)
+        sw    $s2, -72($fp)
+        sw    $s3, -76($fp)
+        sw    $s4, -80($fp)
+        sw    $s5, -84($fp)
         # t1 = 5.0
         l.d   $f0, fc1
-        s.d   $f0, -56($fp)
+        s.d   $f0, -32($fp)
         # t3 = &t1
-        addiu $s0, $fp, -56
+        addiu $s0, $fp, -32
         # param t3
         # t4 = call half(const double &), 1
         addiu $sp, $sp, -8
@@ -445,9 +445,9 @@ M12_0:
         mov.d $f20, $f0
         # t5 = 3.0
         l.d   $f0, fc2
-        s.d   $f0, -80($fp)
+        s.d   $f0, -40($fp)
         # t6 = &t5
-        addiu $s0, $fp, -80
+        addiu $s0, $fp, -40
         # param t6
         # t7 = call half(const double &), 1
         addiu $sp, $sp, -8
@@ -469,7 +469,7 @@ M12_0:
         jal   __printf
         addiu $sp, $sp, 24
         # t8 = &c
-        addiu $s0, $fp, -16
+        addiu $s0, $fp, -12
         # param t8
         # call C::C(), 1
         addiu $sp, $sp, -8
@@ -538,7 +538,7 @@ M12_0:
         jal   __printf
         addiu $sp, $sp, 32
         # t22 = &first
-        addiu $s0, $fp, -32
+        addiu $s0, $fp, -16
         # param t22
         # call A::A(), 1
         addiu $sp, $sp, -8
@@ -546,9 +546,9 @@ M12_0:
         jal   _ZN1AC1Ev
         addiu $sp, $sp, 8
         # t23 = c[0]
-        lw    $s0, -16($fp)
+        lw    $s0, -12($fp)
         # first[0] = t23
-        sw    $s0, -32($fp)
+        sw    $s0, -16($fp)
         # param "%d %d\n"
         # param t23
         # param 77
@@ -562,7 +562,7 @@ M12_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t25 = &x
-        addiu $s0, $fp, -40
+        addiu $s0, $fp, -20
         # param t25
         # call Cnt::Cnt(), 1
         addiu $sp, $sp, -8
@@ -570,7 +570,7 @@ M12_0:
         jal   _ZN3CntC1Ev
         addiu $sp, $sp, 8
         # t26 = &y
-        addiu $s0, $fp, -44
+        addiu $s0, $fp, -24
         # param t26
         # call Cnt::Cnt(), 1
         addiu $sp, $sp, -8
@@ -578,9 +578,9 @@ M12_0:
         jal   _ZN3CntC1Ev
         addiu $sp, $sp, 8
         # t27 = x[0]
-        lw    $s0, -40($fp)
+        lw    $s0, -20($fp)
         # t28 = y[0]
-        lw    $s1, -44($fp)
+        lw    $s1, -24($fp)
         # param "%d %d %d\n"
         # param Cnt::made
         # param t27
@@ -637,14 +637,14 @@ M12_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -168($fp)
-        l.d   $f22, -176($fp)
-        lw    $s0, -160($fp)
-        lw    $s1, -180($fp)
-        lw    $s2, -184($fp)
-        lw    $s3, -188($fp)
-        lw    $s4, -192($fp)
-        lw    $s5, -196($fp)
+        l.d   $f20, -56($fp)
+        l.d   $f22, -64($fp)
+        lw    $s0, -44($fp)
+        lw    $s1, -68($fp)
+        lw    $s2, -72($fp)
+        lw    $s3, -76($fp)
+        lw    $s4, -80($fp)
+        lw    $s5, -84($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

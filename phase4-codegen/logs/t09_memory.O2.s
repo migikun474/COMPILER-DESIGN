@@ -40,15 +40,15 @@ _Z4pushP4Nodei:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         lw    $s1, 12($fp)
         # param 8
@@ -69,9 +69,9 @@ M0_0:
         move  $v0, $s0
         j     _Z4pushP4Nodei_exit
 _Z4pushP4Nodei_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -84,22 +84,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -296
+        addiu $sp, $sp, -64
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        s.d   $f20, -280($fp)
-        s.d   $f22, -288($fp)
-        sw    $s0, -256($fp)
-        sw    $s1, -244($fp)
-        sw    $s2, -292($fp)
-        sw    $s3, -248($fp)
-        sw    $s4, -252($fp)
-        sw    $s5, -260($fp)
-        sw    $s6, -264($fp)
-        sw    $s7, -268($fp)
+        s.d   $f20, -48($fp)
+        s.d   $f22, -56($fp)
+        sw    $s0, -24($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -60($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -28($fp)
+        sw    $s6, -32($fp)
+        sw    $s7, -36($fp)
         # param 20
         # a = call malloc, 1
         addiu $sp, $sp, -8
@@ -137,20 +137,20 @@ L1_10:
         sw    $t0, 4($sp)
         jal   __calloc
         addiu $sp, $sp, 8
-        sw    $v0, -68($fp)
+        sw    $v0, -4($fp)
         # t8 = a ptr+ 16
         addiu $s0, $s2, 16
         # t9 = *t8
         lw    $s1, 0($s0)
         # t10 = t7 ptr+ 4
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $s0, $t0, 4
         # t11 = *t10
         lw    $s3, 0($s0)
         # t12 = t9 int+ t11
         addu  $s0, $s1, $s3
         # t13 = t7 ptr+ 8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $s1, $t0, 8
         # *t13 = t12
         sw    $s0, 0($s1)
@@ -184,7 +184,7 @@ L1_24:
         lw    $s7, 0($s6)
         # t24 = t23 int+ 100
         addiu $t0, $s7, 100
-        sw    $t0, -120($fp)
+        sw    $t0, -8($fp)
         # *t19 = t24
         sw    $t0, 0($s3)
         # i.8 = i.8 int+ 1
@@ -201,12 +201,12 @@ L1_35:
         # t29 = *t28
         lw    $s3, 0($s0)
         # t30 = t7 ptr+ 8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $s0, $t0, 8
         # t31 = *t30
         lw    $s4, 0($s0)
         # t32 = *t7
-        lw    $t8, -68($fp)
+        lw    $t8, -4($fp)
         lw    $s0, 0($t8)
         # param "%d %d %d %d\n"
         # param t27
@@ -405,7 +405,7 @@ L1_79:
         # param t7
         # call free, 1
         addiu $sp, $sp, -8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
@@ -417,16 +417,16 @@ L1_79:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -280($fp)
-        l.d   $f22, -288($fp)
-        lw    $s0, -256($fp)
-        lw    $s1, -244($fp)
-        lw    $s2, -292($fp)
-        lw    $s3, -248($fp)
-        lw    $s4, -252($fp)
-        lw    $s5, -260($fp)
-        lw    $s6, -264($fp)
-        lw    $s7, -268($fp)
+        l.d   $f20, -48($fp)
+        l.d   $f22, -56($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -60($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -28($fp)
+        lw    $s6, -32($fp)
+        lw    $s7, -36($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

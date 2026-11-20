@@ -45,11 +45,11 @@ _Z8popcountj:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -8($fp)
         lw    $s0, 8($fp)
         # n = 0
         li    $s1, 0
@@ -71,10 +71,10 @@ L0_7:
         move  $v0, $s1
         j     _Z8popcountj_exit
 _Z8popcountj_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -85,12 +85,12 @@ _Z11reverseBitsj:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -20($fp)
-        sw    $s4, -24($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -20($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -4($fp)
+        sw    $s4, -8($fp)
         lw    $s1, 8($fp)
         # r = 0
         li    $s2, 0
@@ -117,11 +117,11 @@ L1_9:
         move  $v0, $s2
         j     _Z11reverseBitsj_exit
 _Z11reverseBitsj_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -20($fp)
-        lw    $s4, -24($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -4($fp)
+        lw    $s4, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -132,10 +132,10 @@ _Z12isPowerOfTwoj:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s0, 8($fp)
         # if v uint== 0 goto 4
         beq   $s0, $zero, L2_4
@@ -158,9 +158,9 @@ L2_7:
         move  $v0, $s0
         j     _Z12isPowerOfTwoj_exit
 _Z12isPowerOfTwoj_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -171,9 +171,9 @@ _Z10highestBitj:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s0, 8($fp)
         # n = -1
         li    $s1, -1
@@ -191,8 +191,8 @@ L3_5:
         move  $v0, $s1
         j     _Z10highestBitj_exit
 _Z10highestBitj_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -203,11 +203,11 @@ _Z4rotlji:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -20($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -32($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         lw    $s3, 8($fp)
         lw    $s2, 12($fp)
         # t1 = v uint<< k
@@ -223,10 +223,10 @@ _Z4rotlji:
         move  $v0, $s1
         j     _Z4rotlji_exit
 _Z4rotlji_exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -32($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -237,10 +237,10 @@ _Z4signi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s1, 8($fp)
         # if v int> 0 goto 3
         slt   $s0, $zero, $s1
@@ -254,9 +254,9 @@ L5_8:
         move  $v0, $s2
         j     _Z4signi_exit
 _Z4signi_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -268,17 +268,17 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -96
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M6_0
         j     __stack_overflow
 M6_0:
-        sw    $s0, -76($fp)
-        sw    $s1, -80($fp)
-        sw    $s2, -84($fp)
-        sw    $s3, -88($fp)
-        sw    $s4, -92($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
         # param 4042265140
         # t1 = call popcount(unsigned int), 1
         addiu $sp, $sp, -8
@@ -547,11 +547,11 @@ M6_0:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        lw    $s0, -76($fp)
-        lw    $s1, -80($fp)
-        lw    $s2, -84($fp)
-        lw    $s3, -88($fp)
-        lw    $s4, -92($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

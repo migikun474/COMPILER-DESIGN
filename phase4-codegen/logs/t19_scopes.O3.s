@@ -50,16 +50,16 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -104
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -92($fp)
-        sw    $s1, -96($fp)
-        sw    $s2, -100($fp)
-        sw    $s3, -104($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         # t17 = x int+ hidden
         lw    $t0, g_x
         lw    $t1, g_hidden
@@ -243,10 +243,10 @@ L0_53:
         li    $v0, 5
         j     main__exit
 main__exit:
-        lw    $s0, -92($fp)
-        lw    $s1, -96($fp)
-        lw    $s2, -100($fp)
-        lw    $s3, -104($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

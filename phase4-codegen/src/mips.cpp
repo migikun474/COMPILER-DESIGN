@@ -767,6 +767,23 @@ struct Emitter {
         homeClass.clear();
         homeHi.clear();
         if (optimize) assignRegisters(f, incoming);
+        /* the layout again, now that registers are known: a slot only for a
+           name that is read or written in memory -- not one held in a
+           register, not one no instruction mentions any more */
+        depth = 0;
+        std::set<const sem::Symbol *> mentioned;
+        for (const auto &q : f.quads)
+            for (const Operand *o : {&q.a, &q.b, &q.r})
+                if (o->kind == Operand::Var) mentioned.insert(o->sym);
+        for (const auto &l : f.sym->locals) {
+            if (l->storage != sem::Storage::Local) continue;
+            if (mentioned.count(l.get()) && !home.count(Key(l.get(), 0))) varOff[l.get()] = place(l->type);
+            else varOff.erase(l.get());
+        }
+        for (int t : used) {
+            if (!home.count(Key(nullptr, t))) tempOff[t] = place(f.temps[t - 1]);
+            else tempOff.erase(t);
+        }
         std::map<std::string, int> saved;
         for (const auto *pairs : {&home, &homeHi})
             for (const auto &h : *pairs)

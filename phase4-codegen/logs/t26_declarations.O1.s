@@ -81,13 +81,13 @@ _Z3sumPKi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -44($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -36($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -24($fp)
+        sw    $s1, -20($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -8($fp)
+        sw    $s4, -12($fp)
+        sw    $s5, -16($fp)
         lw    $s5, 8($fp)
         # s = 0
         li    $s1, 0
@@ -114,12 +114,12 @@ L0_9:
         move  $v0, $s1
         j     _Z3sumPKi_exit
 _Z3sumPKi_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -36($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -20($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -8($fp)
+        lw    $s4, -12($fp)
+        lw    $s5, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -131,22 +131,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -592
+        addiu $sp, $sp, -296
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        s.d   $f20, -560($fp)
-        s.d   $f22, -552($fp)
-        s.d   $f24, -568($fp)
-        s.d   $f26, -576($fp)
-        sw    $s0, -532($fp)
-        sw    $s1, -536($fp)
-        sw    $s2, -540($fp)
-        sw    $s3, -580($fp)
-        sw    $s4, -584($fp)
-        sw    $s5, -588($fp)
+        s.d   $f20, -264($fp)
+        s.d   $f22, -256($fp)
+        s.d   $f24, -272($fp)
+        s.d   $f26, -280($fp)
+        sw    $s0, -236($fp)
+        sw    $s1, -240($fp)
+        sw    $s2, -244($fp)
+        sw    $s3, -284($fp)
+        sw    $s4, -288($fp)
+        sw    $s5, -292($fp)
         # r[0] = 4
         li    $t0, 4
         sw    $t0, -16($fp)
@@ -244,62 +244,62 @@ L1_17:
         addiu $sp, $sp, 16
         # box[0] = 97
         li    $t0, 97
-        sb    $t0, -104($fp)
+        sb    $t0, -96($fp)
         # box[8] = 1.5
         l.d   $f0, fc0
-        s.d   $f0, -96($fp)
+        s.d   $f0, -88($fp)
         # box[16] = 2
         li    $t0, 2
-        sh    $t0, -88($fp)
+        sh    $t0, -80($fp)
         # box[24] = 98
         li    $t0, 98
-        sb    $t0, -80($fp)
+        sb    $t0, -72($fp)
         # box[32] = 2.5
         l.d   $f0, fc1
-        s.d   $f0, -72($fp)
+        s.d   $f0, -64($fp)
         # box[40] = 4
         li    $t0, 4
-        sh    $t0, -64($fp)
+        sh    $t0, -56($fp)
         # box[48] = 99
         li    $t0, 99
-        sb    $t0, -56($fp)
+        sb    $t0, -48($fp)
         # box[56] = 0.0
         l.d   $f0, fc2
-        s.d   $f0, -48($fp)
+        s.d   $f0, -40($fp)
         # box[64] = 8
         li    $t0, 8
-        sh    $t0, -40($fp)
+        sh    $t0, -32($fp)
         # box[72] = 0
-        sw    $zero, -32($fp)
+        sw    $zero, -24($fp)
         # t13 = box[16]
-        lh    $s0, -88($fp)
+        lh    $s0, -80($fp)
         # t14 = shorttoint t13
         move  $t0, $s0
         move  $s1, $t0
         # t15 = box[40]
-        lh    $s0, -64($fp)
+        lh    $s0, -56($fp)
         # t16 = shorttoint t15
         move  $t0, $s0
         move  $s2, $t0
         # t17 = t14 int+ t16
         addu  $s0, $s1, $s2
         # t18 = box[64]
-        lh    $s1, -40($fp)
+        lh    $s1, -32($fp)
         # t19 = shorttoint t18
         move  $t0, $s1
         move  $s2, $t0
         # t20 = t17 int+ t19
         addu  $s1, $s0, $s2
         # box[72] = t20
-        sw    $s1, -32($fp)
+        sw    $s1, -24($fp)
         # t21 = &box
-        addiu $s1, $fp, -104
+        addiu $s1, $fp, -96
         # t22 = t21 ptr+ 48
         addiu $s0, $s1, 48
         # it = t22
         move  $s1, $s0
         # t23 = box[32]
-        l.d   $f0, -72($fp)
+        l.d   $f0, -64($fp)
         mov.d $f22, $f0
         # t24 = t23 double* 2.0
         l.d   $f2, fc3
@@ -310,9 +310,9 @@ L1_17:
         mov.d $f0, $f20
         s.d   $f0, 0($s1)
         # t26 = box[72]
-        lw    $s0, -32($fp)
+        lw    $s0, -24($fp)
         # t29 = box[48]
-        lb    $s1, -56($fp)
+        lb    $s1, -48($fp)
         # t30 = chartoint t29
         move  $t0, $s1
         move  $s2, $t0
@@ -349,52 +349,52 @@ L1_17:
         addiu $sp, $sp, 32
         # m[0] = 120
         li    $t0, 120
-        sb    $t0, -144($fp)
+        sb    $t0, -128($fp)
         # m[4] = 1
         li    $t0, 1
-        sw    $t0, -140($fp)
+        sw    $t0, -124($fp)
         # m[8] = 121
         li    $t0, 121
-        sb    $t0, -136($fp)
+        sb    $t0, -120($fp)
         # m[10] = 2
         li    $t0, 2
-        sh    $t0, -134($fp)
+        sh    $t0, -118($fp)
         # m[16] = 3.5
         l.d   $f0, fc4
-        s.d   $f0, -128($fp)
+        s.d   $f0, -112($fp)
         # m[24] = 122
         li    $t0, 122
-        sb    $t0, -120($fp)
+        sb    $t0, -104($fp)
         # copy = m
-        addiu $a0, $fp, -176
-        addiu $a1, $fp, -144
+        addiu $a0, $fp, -160
+        addiu $a1, $fp, -128
         li    $a2, 32
         jal   __memcpy
         # copy[4] = 100
         li    $t0, 100
-        sw    $t0, -172($fp)
+        sw    $t0, -156($fp)
         # t35 = m[0]
-        lb    $s0, -144($fp)
+        lb    $s0, -128($fp)
         # t36 = chartoint t35
         move  $t0, $s0
         move  $s1, $t0
         # t37 = m[4]
-        lw    $s0, -140($fp)
+        lw    $s0, -124($fp)
         # t38 = m[8]
-        lb    $s2, -136($fp)
+        lb    $s2, -120($fp)
         # t39 = chartoint t38
         move  $t0, $s2
         move  $s3, $t0
         # t40 = m[10]
-        lh    $s2, -134($fp)
+        lh    $s2, -118($fp)
         # t41 = shorttoint t40
         move  $t0, $s2
         move  $s4, $t0
         # t42 = m[16]
-        l.d   $f0, -128($fp)
+        l.d   $f0, -112($fp)
         mov.d $f20, $f0
         # t43 = m[24]
-        lb    $s2, -120($fp)
+        lb    $s2, -104($fp)
         # t44 = chartoint t43
         move  $t0, $s2
         move  $s5, $t0
@@ -465,31 +465,31 @@ L1_17:
         addiu $sp, $sp, 40
         # grid[0] = 1
         li    $t0, 1
-        sw    $t0, -224($fp)
+        sw    $t0, -208($fp)
         # grid[4] = 0
-        sw    $zero, -220($fp)
+        sw    $zero, -204($fp)
         # grid[8] = 0
-        sw    $zero, -216($fp)
+        sw    $zero, -200($fp)
         # grid[12] = 0
-        sw    $zero, -212($fp)
+        sw    $zero, -196($fp)
         # grid[16] = 0
-        sw    $zero, -208($fp)
+        sw    $zero, -192($fp)
         # grid[20] = 2
         li    $t0, 2
-        sw    $t0, -204($fp)
+        sw    $t0, -188($fp)
         # grid[24] = 0
-        sw    $zero, -200($fp)
+        sw    $zero, -184($fp)
         # grid[28] = 0
-        sw    $zero, -196($fp)
+        sw    $zero, -180($fp)
         # grid[32] = 0
-        sw    $zero, -192($fp)
+        sw    $zero, -176($fp)
         # grid[36] = 0
-        sw    $zero, -188($fp)
+        sw    $zero, -172($fp)
         # grid[40] = 3
         li    $t0, 3
-        sw    $t0, -184($fp)
+        sw    $t0, -168($fp)
         # grid[44] = 0
-        sw    $zero, -180($fp)
+        sw    $zero, -164($fp)
         # trace = 0
         li    $s1, 0
         # i = 0
@@ -505,7 +505,7 @@ L1_127:
         # t55 = t54 int<< 2
         sll   $s4, $s3, 2
         # t56 = grid[t55]
-        addiu $t8, $fp, -224
+        addiu $t8, $fp, -208
         addu  $t8, $t8, $s4
         lw    $s5, 0($t8)
         # trace = trace int+ t56
@@ -517,51 +517,51 @@ L1_127:
 L1_135:
         # words[0] = "one"
         la    $t0, str5
-        sw    $t0, -244($fp)
+        sw    $t0, -220($fp)
         # words[4] = "two"
         la    $t0, str6
-        sw    $t0, -240($fp)
+        sw    $t0, -216($fp)
         # words[8] = "three"
         la    $t0, str7
-        sw    $t0, -236($fp)
+        sw    $t0, -212($fp)
         # rows[0] = 97
         li    $t0, 97
-        sb    $t0, -256($fp)
+        sb    $t0, -232($fp)
         # rows[1] = 98
         li    $t0, 98
-        sb    $t0, -255($fp)
+        sb    $t0, -231($fp)
         # rows[2] = 0
-        sb    $zero, -254($fp)
+        sb    $zero, -230($fp)
         # rows[3] = 0
-        sb    $zero, -253($fp)
+        sb    $zero, -229($fp)
         # rows[4] = 0
-        sb    $zero, -252($fp)
+        sb    $zero, -228($fp)
         # rows[5] = 0
-        sb    $zero, -251($fp)
+        sb    $zero, -227($fp)
         # rows[6] = 99
         li    $t0, 99
-        sb    $t0, -250($fp)
+        sb    $t0, -226($fp)
         # rows[7] = 100
         li    $t0, 100
-        sb    $t0, -249($fp)
+        sb    $t0, -225($fp)
         # rows[8] = 101
         li    $t0, 101
-        sb    $t0, -248($fp)
+        sb    $t0, -224($fp)
         # rows[9] = 0
-        sb    $zero, -247($fp)
+        sb    $zero, -223($fp)
         # rows[10] = 0
-        sb    $zero, -246($fp)
+        sb    $zero, -222($fp)
         # rows[11] = 0
-        sb    $zero, -245($fp)
+        sb    $zero, -221($fp)
         # t59 = words[8]
-        lw    $s0, -236($fp)
+        lw    $s0, -212($fp)
         # t60 = rows[8]
-        lb    $s2, -248($fp)
+        lb    $s2, -224($fp)
         # t61 = chartoint t60
         move  $t0, $s2
         move  $s3, $t0
         # t62 = &rows
-        addiu $s2, $fp, -256
+        addiu $s2, $fp, -232
         # param "%d %s %c %s %d\n"
         # param trace
         # param t59
@@ -594,16 +594,16 @@ L1_135:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -560($fp)
-        l.d   $f22, -552($fp)
-        l.d   $f24, -568($fp)
-        l.d   $f26, -576($fp)
-        lw    $s0, -532($fp)
-        lw    $s1, -536($fp)
-        lw    $s2, -540($fp)
-        lw    $s3, -580($fp)
-        lw    $s4, -584($fp)
-        lw    $s5, -588($fp)
+        l.d   $f20, -264($fp)
+        l.d   $f22, -256($fp)
+        l.d   $f24, -272($fp)
+        l.d   $f26, -280($fp)
+        lw    $s0, -236($fp)
+        lw    $s1, -240($fp)
+        lw    $s2, -244($fp)
+        lw    $s3, -284($fp)
+        lw    $s4, -288($fp)
+        lw    $s5, -292($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

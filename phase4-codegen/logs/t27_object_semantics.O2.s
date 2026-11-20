@@ -127,8 +127,8 @@ _Z5freshi:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
         lw    $s1, 8($fp)
         # t1 = &local
         addiu $s0, $fp, -4
@@ -144,8 +144,8 @@ M3_0:
         addiu $v0, $fp, -4
         j     _Z5freshi_exit
 _Z5freshi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -158,14 +158,14 @@ _ZN3DogC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M4_0
         j     __stack_overflow
 M4_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = this ptr+ 4
         addiu $s0, $s1, 4
@@ -184,8 +184,8 @@ M4_0:
         # return
         j     _ZN3DogC1Ev_exit
 _ZN3DogC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -197,9 +197,9 @@ _Z4peekRK3Dog:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = *d
         lw    $s0, 0($s1)
@@ -207,8 +207,8 @@ _Z4peekRK3Dog:
         move  $v0, $s0
         j     _Z4peekRK3Dog_exit
 _Z4peekRK3Dog_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -219,13 +219,13 @@ _Z3sumPKi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -44($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -36($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -24($fp)
+        sw    $s1, -20($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -8($fp)
+        sw    $s4, -12($fp)
+        sw    $s5, -16($fp)
         lw    $s5, 8($fp)
         # s = 0
         li    $s1, 0
@@ -252,12 +252,12 @@ L6_9:
         move  $v0, $s1
         j     _Z3sumPKi_exit
 _Z3sumPKi_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -36($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -20($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -8($fp)
+        lw    $s4, -12($fp)
+        lw    $s5, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -268,12 +268,12 @@ _Z6richerR7AccountS0_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
-        s.d   $f20, -48($fp)
-        s.d   $f22, -56($fp)
-        sw    $s0, -36($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -64($fp)
+        addiu $sp, $sp, -32
+        s.d   $f20, -16($fp)
+        s.d   $f22, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -28($fp)
+        sw    $s2, -32($fp)
         lw    $s1, 8($fp)
         lw    $s2, 12($fp)
         # t2 = a ptr+ 8
@@ -304,11 +304,11 @@ L7_9:
         move  $v0, $s0
         j     _Z6richerR7AccountS0__exit
 _Z6richerR7AccountS0__exit:
-        l.d   $f20, -48($fp)
-        l.d   $f22, -56($fp)
-        lw    $s0, -36($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -64($fp)
+        l.d   $f20, -16($fp)
+        l.d   $f22, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -28($fp)
+        lw    $s2, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -320,9 +320,9 @@ _Z4pickiRiS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        sw    $s2, -16($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s0, 8($fp)
         lw    $s1, 12($fp)
         lw    $s2, 16($fp)
@@ -340,9 +340,9 @@ L8_4:
         move  $v0, $s0
         j     _Z4pickiRiS__exit
 _Z4pickiRiS__exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        lw    $s2, -16($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -354,18 +354,18 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -288
+        addiu $sp, $sp, -120
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M9_0
         j     __stack_overflow
 M9_0:
-        s.d   $f20, -272($fp)
-        s.d   $f22, -280($fp)
-        sw    $s0, -252($fp)
-        sw    $s1, -256($fp)
-        sw    $s2, -260($fp)
-        sw    $s3, -284($fp)
+        s.d   $f20, -104($fp)
+        s.d   $f22, -112($fp)
+        sw    $s0, -84($fp)
+        sw    $s1, -88($fp)
+        sw    $s2, -92($fp)
+        sw    $s3, -116($fp)
         # t1 = &keeper
         la    $s0, g_keeper
         # param t1
@@ -686,12 +686,12 @@ L9_93:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -272($fp)
-        l.d   $f22, -280($fp)
-        lw    $s0, -252($fp)
-        lw    $s1, -256($fp)
-        lw    $s2, -260($fp)
-        lw    $s3, -284($fp)
+        l.d   $f20, -104($fp)
+        l.d   $f22, -112($fp)
+        lw    $s0, -84($fp)
+        lw    $s1, -88($fp)
+        lw    $s2, -92($fp)
+        lw    $s3, -116($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

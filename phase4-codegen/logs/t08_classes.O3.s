@@ -119,9 +119,9 @@ _ZN3VecC1Ev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # *this = 0
         sw    $zero, 0($s1)
@@ -132,8 +132,8 @@ _ZN3VecC1Ev:
         # return
         j     _ZN3VecC1Ev_exit
 _ZN3VecC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -144,11 +144,11 @@ _Z4makeii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -20($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -32($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -24($fp)
         lw    $s2, 8($fp)
         lw    $s3, 12($fp)
         # t1 = &v
@@ -167,10 +167,10 @@ _Z4makeii:
         addiu $v0, $fp, -8
         j     _Z4makeii_exit
 _Z4makeii_exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -32($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -24($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -182,20 +182,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -536
+        addiu $sp, $sp, -200
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M4_0
         j     __stack_overflow
 M4_0:
-        sw    $s0, -508($fp)
-        sw    $s1, -512($fp)
-        sw    $s2, -516($fp)
-        sw    $s3, -536($fp)
-        sw    $s4, -520($fp)
-        sw    $s5, -524($fp)
-        sw    $s6, -528($fp)
-        sw    $s7, -532($fp)
+        sw    $s0, -172($fp)
+        sw    $s1, -176($fp)
+        sw    $s2, -180($fp)
+        sw    $s3, -200($fp)
+        sw    $s4, -184($fp)
+        sw    $s5, -188($fp)
+        sw    $s6, -192($fp)
+        sw    $s7, -196($fp)
         # t1 = &rex
         addiu $s0, $fp, -12
         # param t1
@@ -280,7 +280,7 @@ M4_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t10 = &other
-        addiu $s0, $fp, -28
+        addiu $s0, $fp, -24
         # param t10
         # call Animal::Animal(), 1
         addiu $sp, $sp, -8
@@ -312,7 +312,7 @@ M4_0:
         addiu $sp, $sp, 8
         # other[4] = 5
         li    $t0, 5
-        sw    $t0, -24($fp)
+        sw    $t0, -20($fp)
         # t70 = *t67
         lw    $s3, 0($s2)
         # t71 = t70 int* 7
@@ -346,7 +346,7 @@ M4_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t80 = &t79
-        addiu $s0, $fp, -228
+        addiu $s0, $fp, -96
         # param t80
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -355,17 +355,17 @@ M4_0:
         addiu $sp, $sp, 8
         # t79[0] = 1
         li    $t0, 1
-        sw    $t0, -228($fp)
+        sw    $t0, -96($fp)
         # t79[4] = 2
         li    $t0, 2
-        sw    $t0, -224($fp)
+        sw    $t0, -92($fp)
         # a = t79
-        addiu $a0, $fp, -36
-        addiu $a1, $fp, -228
+        addiu $a0, $fp, -32
+        addiu $a1, $fp, -96
         li    $a2, 8
         jal   __memcpy
         # t84 = &t83
-        addiu $s0, $fp, -240
+        addiu $s0, $fp, -104
         # param t84
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -374,17 +374,17 @@ M4_0:
         addiu $sp, $sp, 8
         # t83[0] = 3
         li    $t0, 3
-        sw    $t0, -240($fp)
+        sw    $t0, -104($fp)
         # t83[4] = 4
         li    $t0, 4
-        sw    $t0, -236($fp)
+        sw    $t0, -100($fp)
         # b = t83
-        addiu $a0, $fp, -44
-        addiu $a1, $fp, -240
+        addiu $a0, $fp, -40
+        addiu $a1, $fp, -104
         li    $a2, 8
         jal   __memcpy
         # t15 = &c
-        addiu $s2, $fp, -52
+        addiu $s2, $fp, -48
         # *t15 = 0
         sw    $zero, 0($s2)
         # t86 = t15 ptr+ 4
@@ -392,14 +392,14 @@ M4_0:
         # *t86 = 0
         sw    $zero, 0($s3)
         # t16 = &a
-        addiu $s0, $fp, -36
+        addiu $s0, $fp, -32
         # t88 = b
-        addiu $a0, $fp, -256
-        addiu $a1, $fp, -44
+        addiu $a0, $fp, -112
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         # t90 = &t89
-        addiu $s1, $fp, -264
+        addiu $s1, $fp, -120
         # param t90
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -409,28 +409,28 @@ M4_0:
         # t91 = *t16
         lw    $s1, 0($s0)
         # t92 = t88[0]
-        lw    $s4, -256($fp)
+        lw    $s4, -112($fp)
         # t93 = t91 int+ t92
         addu  $s5, $s1, $s4
         # t89[0] = t93
-        sw    $s5, -264($fp)
+        sw    $s5, -120($fp)
         # t94 = t16 ptr+ 4
         addiu $s1, $s0, 4
         # t95 = *t94
         lw    $s4, 0($s1)
         # t96 = t88[4]
-        lw    $s5, -252($fp)
+        lw    $s5, -108($fp)
         # t97 = t95 int+ t96
         addu  $s6, $s4, $s5
         # t89[4] = t97
-        sw    $s6, -260($fp)
+        sw    $s6, -116($fp)
         # c = t89
-        addiu $a0, $fp, -52
-        addiu $a1, $fp, -264
+        addiu $a0, $fp, -48
+        addiu $a1, $fp, -120
         li    $a2, 8
         jal   __memcpy
         # t100 = &t99
-        addiu $s4, $fp, -304
+        addiu $s4, $fp, -128
         # param t100
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -442,30 +442,30 @@ M4_0:
         # t102 = int- t101
         negu  $s5, $s4
         # t99[0] = t102
-        sw    $s5, -304($fp)
+        sw    $s5, -128($fp)
         # t104 = *t86
         lw    $s4, 0($s3)
         # t105 = int- t104
         negu  $s5, $s4
         # t99[4] = t105
-        sw    $s5, -300($fp)
+        sw    $s5, -124($fp)
         # d = t99
-        addiu $a0, $fp, -60
-        addiu $a1, $fp, -304
+        addiu $a0, $fp, -56
+        addiu $a1, $fp, -128
         li    $a2, 8
         jal   __memcpy
         # t106 = a
-        addiu $a0, $fp, -332
-        addiu $a1, $fp, -36
+        addiu $a0, $fp, -136
+        addiu $a1, $fp, -32
         li    $a2, 8
         jal   __memcpy
         # t108 = t106[0]
-        lw    $s4, -332($fp)
+        lw    $s4, -136($fp)
         # t109 = t108 int* 3
         li    $t1, 3
         mul   $s5, $s4, $t1
         # t110 = t106[4]
-        lw    $s4, -328($fp)
+        lw    $s4, -132($fp)
         # t111 = t110 int* 3
         li    $t1, 3
         mul   $s6, $s4, $t1
@@ -478,18 +478,18 @@ M4_0:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -68
+        addiu $a0, $fp, -64
         li    $a2, 8
         jal   __memcpy
         # t114 = b
-        addiu $a0, $fp, -356
-        addiu $a1, $fp, -44
+        addiu $a0, $fp, -144
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         # t115 = *t16
         lw    $s4, 0($s0)
         # t116 = t114[0]
-        lw    $s5, -356($fp)
+        lw    $s5, -144($fp)
         # t117 = t115 int+ t116
         addu  $s6, $s4, $s5
         # *t16 = t117
@@ -497,7 +497,7 @@ M4_0:
         # t119 = *t94
         lw    $s4, 0($s1)
         # t120 = t114[4]
-        lw    $s5, -352($fp)
+        lw    $s5, -140($fp)
         # t121 = t119 int+ t120
         addu  $s6, $s4, $s5
         # *t94 = t121
@@ -509,19 +509,19 @@ M4_0:
         # *t16 = t124
         sw    $s5, 0($s0)
         # t25 = c[0]
-        lw    $s4, -52($fp)
+        lw    $s4, -48($fp)
         # t26 = c[4]
-        lw    $s5, -48($fp)
+        lw    $s5, -44($fp)
         # t27 = d[0]
-        lw    $s6, -60($fp)
+        lw    $s6, -56($fp)
         # t28 = e[4]
-        lw    $s7, -64($fp)
+        lw    $s7, -60($fp)
         # t29 = a[0]
-        lw    $t0, -36($fp)
-        sw    $t0, -128($fp)
-        # t30 = a[4]
         lw    $t0, -32($fp)
-        sw    $t0, -132($fp)
+        sw    $t0, -84($fp)
+        # t30 = a[4]
+        lw    $t0, -28($fp)
+        sw    $t0, -88($fp)
         # param "%d %d %d %d %d %d\n"
         # param t25
         # param t26
@@ -537,27 +537,27 @@ M4_0:
         sw    $s5, 8($sp)
         sw    $s6, 12($sp)
         sw    $s7, 16($sp)
-        lw    $t0, -128($fp)
+        lw    $t0, -84($fp)
         sw    $t0, 20($sp)
-        lw    $t0, -132($fp)
+        lw    $t0, -88($fp)
         sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # t126 = b
-        addiu $a0, $fp, -396
-        addiu $a1, $fp, -44
+        addiu $a0, $fp, -152
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         # t127 = *t16
         lw    $s4, 0($s0)
         # t128 = t126[0]
-        lw    $s5, -396($fp)
+        lw    $s5, -152($fp)
         # if t127 int!= t128 goto 137
         bne   $s4, $s5, L4_137
         # t130 = *t94
         lw    $s4, 0($s1)
         # t131 = t126[4]
-        lw    $s5, -392($fp)
+        lw    $s5, -148($fp)
         # if t130 int== t131 goto 139
         beq   $s4, $s5, L4_139
 L4_137:
@@ -570,20 +570,20 @@ L4_139:
         li    $s4, 1
 L4_140:
         # t134 = c
-        addiu $a0, $fp, -424
-        addiu $a1, $fp, -52
+        addiu $a0, $fp, -160
+        addiu $a1, $fp, -48
         li    $a2, 8
         jal   __memcpy
         # t135 = *t15
         lw    $s5, 0($s2)
         # t136 = t134[0]
-        lw    $s2, -424($fp)
+        lw    $s2, -160($fp)
         # if t135 int!= t136 goto 147
         bne   $s5, $s2, L4_147
         # t138 = *t86
         lw    $s2, 0($s3)
         # t139 = t134[4]
-        lw    $s3, -420($fp)
+        lw    $s3, -156($fp)
         # if t138 int== t139 goto 149
         beq   $s2, $s3, L4_149
 L4_147:
@@ -604,20 +604,20 @@ L4_150:
         # t151 = t148 int+ t150
         addu  $s7, $s5, $s6
         # t153 = b
-        addiu $a0, $fp, -468
-        addiu $a1, $fp, -44
+        addiu $a0, $fp, -168
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         # t154 = *t16
         lw    $s5, 0($s0)
         # t155 = t153[0]
-        lw    $s0, -468($fp)
+        lw    $s0, -168($fp)
         # t156 = t154 int* t155
         mul   $s6, $s5, $s0
         # t158 = *t94
         lw    $s0, 0($s1)
         # t159 = t153[4]
-        lw    $s1, -464($fp)
+        lw    $s1, -164($fp)
         # t160 = t158 int* t159
         mul   $s5, $s0, $s1
         # t161 = t156 int+ t160
@@ -640,7 +640,7 @@ L4_150:
         jal   __printf
         addiu $sp, $sp, 24
         # t41 = &row
-        addiu $s0, $fp, -84
+        addiu $s0, $fp, -80
         # *t41 = 0
         sw    $zero, 0($s0)
         # t163 = t41 ptr+ 4
@@ -657,9 +657,9 @@ L4_150:
         sw    $zero, 0($s0)
         # row[8] = 9
         li    $t0, 9
-        sw    $t0, -76($fp)
+        sw    $t0, -72($fp)
         # t43 = row[0]
-        lw    $s0, -84($fp)
+        lw    $s0, -80($fp)
         # param "%d %d\n"
         # param t43
         # param 9
@@ -673,7 +673,7 @@ L4_150:
         jal   __printf
         addiu $sp, $sp, 16
         # t45 = c[0]
-        lw    $s0, -52($fp)
+        lw    $s0, -48($fp)
         # t46 = 7 int+ t45
         li    $t0, 7
         addu  $s1, $t0, $s0
@@ -681,14 +681,14 @@ L4_150:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        lw    $s0, -508($fp)
-        lw    $s1, -512($fp)
-        lw    $s2, -516($fp)
-        lw    $s3, -536($fp)
-        lw    $s4, -520($fp)
-        lw    $s5, -524($fp)
-        lw    $s6, -528($fp)
-        lw    $s7, -532($fp)
+        lw    $s0, -172($fp)
+        lw    $s1, -176($fp)
+        lw    $s2, -180($fp)
+        lw    $s3, -200($fp)
+        lw    $s4, -184($fp)
+        lw    $s5, -188($fp)
+        lw    $s6, -192($fp)
+        lw    $s7, -196($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

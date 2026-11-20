@@ -102,9 +102,9 @@ _Z8absoluted:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        s.d   $f20, -16($fp)
-        s.d   $f22, -24($fp)
+        addiu $sp, $sp, -16
+        s.d   $f20, -8($fp)
+        s.d   $f22, -16($fp)
         l.d   $f22, 8($fp)
         # if v double< 0.0 goto 2
         l.d   $f2, fc0
@@ -125,8 +125,8 @@ L0_5:
         mov.d $f0, $f20
         j     _Z8absoluted_exit
 _Z8absoluted_exit:
-        l.d   $f20, -16($fp)
-        l.d   $f22, -24($fp)
+        l.d   $f20, -8($fp)
+        l.d   $f22, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -137,12 +137,12 @@ _Z4rootd:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
-        s.d   $f20, -64($fp)
-        s.d   $f22, -40($fp)
-        s.d   $f24, -48($fp)
-        s.d   $f26, -56($fp)
-        sw    $s0, -68($fp)
+        addiu $sp, $sp, -40
+        s.d   $f20, -32($fp)
+        s.d   $f22, -8($fp)
+        s.d   $f24, -16($fp)
+        s.d   $f26, -24($fp)
+        sw    $s0, -36($fp)
         l.d   $f26, 8($fp)
         # guess = v double/ 2.0
         l.d   $f2, fc1
@@ -169,11 +169,11 @@ L1_8:
         mov.d $f0, $f20
         j     _Z4rootd_exit
 _Z4rootd_exit:
-        l.d   $f20, -64($fp)
-        l.d   $f22, -40($fp)
-        l.d   $f24, -48($fp)
-        l.d   $f26, -56($fp)
-        lw    $s0, -68($fp)
+        l.d   $f20, -32($fp)
+        l.d   $f22, -8($fp)
+        l.d   $f24, -16($fp)
+        l.d   $f26, -24($fp)
+        lw    $s0, -36($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -184,15 +184,15 @@ _Z6seriesi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -112
-        s.d   $f20, -88($fp)
-        s.d   $f22, -104($fp)
-        s.d   $f24, -72($fp)
-        s.d   $f26, -80($fp)
-        sw    $s0, -108($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -64($fp)
-        sw    $s3, -92($fp)
+        addiu $sp, $sp, -56
+        s.d   $f20, -32($fp)
+        s.d   $f22, -48($fp)
+        s.d   $f24, -16($fp)
+        s.d   $f26, -24($fp)
+        sw    $s0, -52($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -36($fp)
         lw    $s3, 8($fp)
         # sum = 0.0
         l.d   $f22, fc0
@@ -230,14 +230,14 @@ L2_12:
         mov.d $f0, $f20
         j     _Z6seriesi_exit
 _Z6seriesi_exit:
-        l.d   $f20, -88($fp)
-        l.d   $f22, -104($fp)
-        l.d   $f24, -72($fp)
-        l.d   $f26, -80($fp)
-        lw    $s0, -108($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -64($fp)
-        lw    $s3, -92($fp)
+        l.d   $f20, -32($fp)
+        l.d   $f22, -48($fp)
+        l.d   $f24, -16($fp)
+        l.d   $f26, -24($fp)
+        lw    $s0, -52($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -36($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -248,11 +248,11 @@ _Z5powerdi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -40($fp)
-        s.d   $f22, -24($fp)
-        sw    $s0, -28($fp)
-        sw    $s1, -16($fp)
+        addiu $sp, $sp, -32
+        s.d   $f20, -32($fp)
+        s.d   $f22, -16($fp)
+        sw    $s0, -20($fp)
+        sw    $s1, -4($fp)
         l.d   $f22, 8($fp)
         lw    $s0, 16($fp)
         # r = 1.0
@@ -273,10 +273,10 @@ L3_6:
         mov.d $f0, $f20
         j     _Z5powerdi_exit
 _Z5powerdi_exit:
-        l.d   $f20, -40($fp)
-        l.d   $f22, -24($fp)
-        lw    $s0, -28($fp)
-        lw    $s1, -16($fp)
+        l.d   $f20, -32($fp)
+        l.d   $f22, -16($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -287,11 +287,11 @@ _Z7averagefff:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        s.d   $f24, -40($fp)
-        s.d   $f26, -48($fp)
+        addiu $sp, $sp, -32
+        s.d   $f20, -8($fp)
+        s.d   $f22, -16($fp)
+        s.d   $f24, -24($fp)
+        s.d   $f26, -32($fp)
         l.s   $f22, 8($fp)
         l.s   $f24, 12($fp)
         l.s   $f26, 16($fp)
@@ -306,10 +306,10 @@ _Z7averagefff:
         mov.s $f0, $f20
         j     _Z7averagefff_exit
 _Z7averagefff_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        l.d   $f24, -40($fp)
-        l.d   $f26, -48($fp)
+        l.d   $f20, -8($fp)
+        l.d   $f22, -16($fp)
+        l.d   $f24, -24($fp)
+        l.d   $f26, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -320,10 +320,10 @@ _Z10roundToIntd:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -24($fp)
-        s.d   $f22, -40($fp)
-        sw    $s0, -28($fp)
+        addiu $sp, $sp, -24
+        s.d   $f20, -8($fp)
+        s.d   $f22, -24($fp)
+        sw    $s0, -12($fp)
         l.d   $f22, 8($fp)
         # if v double< 0.0 goto 2
         l.d   $f2, fc0
@@ -351,9 +351,9 @@ L5_5:
         move  $v0, $s0
         j     _Z10roundToIntd_exit
 _Z10roundToIntd_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -40($fp)
-        lw    $s0, -28($fp)
+        l.d   $f20, -8($fp)
+        l.d   $f22, -24($fp)
+        lw    $s0, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -364,10 +364,10 @@ _Z4polyd:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
-        s.d   $f20, -72($fp)
-        s.d   $f22, -56($fp)
-        s.d   $f24, -64($fp)
+        addiu $sp, $sp, -24
+        s.d   $f20, -24($fp)
+        s.d   $f22, -8($fp)
+        s.d   $f24, -16($fp)
         l.d   $f20, 8($fp)
         # t1 = 2.0 double* x
         l.d   $f0, fc1
@@ -389,9 +389,9 @@ _Z4polyd:
         mov.d $f0, $f20
         j     _Z4polyd_exit
 _Z4polyd_exit:
-        l.d   $f20, -72($fp)
-        l.d   $f22, -56($fp)
-        l.d   $f24, -64($fp)
+        l.d   $f20, -24($fp)
+        l.d   $f22, -8($fp)
+        l.d   $f24, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -403,18 +403,18 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -264
+        addiu $sp, $sp, -40
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M7_0
         j     __stack_overflow
 M7_0:
-        s.d   $f20, -232($fp)
-        s.d   $f22, -240($fp)
-        s.d   $f24, -248($fp)
-        sw    $s0, -252($fp)
-        sw    $s1, -256($fp)
-        sw    $s2, -260($fp)
+        s.d   $f20, -8($fp)
+        s.d   $f22, -16($fp)
+        s.d   $f24, -24($fp)
+        sw    $s0, -28($fp)
+        sw    $s1, -32($fp)
+        sw    $s2, -36($fp)
         # param "%.3f %.3f %.3f %.4f\n"
         # param 2.5
         # param 3.0
@@ -717,12 +717,12 @@ L7_74:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -232($fp)
-        l.d   $f22, -240($fp)
-        l.d   $f24, -248($fp)
-        lw    $s0, -252($fp)
-        lw    $s1, -256($fp)
-        lw    $s2, -260($fp)
+        l.d   $f20, -8($fp)
+        l.d   $f22, -16($fp)
+        l.d   $f24, -24($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -32($fp)
+        lw    $s2, -36($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

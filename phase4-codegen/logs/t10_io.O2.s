@@ -60,19 +60,19 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -136
+        addiu $sp, $sp, -80
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -120($fp)
-        s.d   $f22, -128($fp)
-        sw    $s0, -100($fp)
-        sw    $s1, -132($fp)
-        sw    $s2, -104($fp)
-        sw    $s3, -108($fp)
-        sw    $s4, -112($fp)
+        s.d   $f20, -64($fp)
+        s.d   $f22, -72($fp)
+        sw    $s0, -44($fp)
+        sw    $s1, -76($fp)
+        sw    $s2, -48($fp)
+        sw    $s3, -52($fp)
+        sw    $s4, -56($fp)
         # total = 0
         li    $s1, 0
         # t1 = &n
@@ -105,7 +105,7 @@ L0_12:
         lw    $t1, -4($fp)
         bge   $s0, $t1, L0_20
         # t5 = &v
-        addiu $s2, $fp, -44
+        addiu $s2, $fp, -40
         # param "%d"
         # param t5
         # call scanf, 2
@@ -116,7 +116,7 @@ L0_12:
         jal   __scanf
         addiu $sp, $sp, 8
         # total = total int+ v
-        lw    $t1, -44($fp)
+        lw    $t1, -40($fp)
         addu  $s1, $s1, $t1
         # i = i int+ 1
         addiu $s0, $s0, 1
@@ -237,13 +237,13 @@ L0_20:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        l.d   $f20, -120($fp)
-        l.d   $f22, -128($fp)
-        lw    $s0, -100($fp)
-        lw    $s1, -132($fp)
-        lw    $s2, -104($fp)
-        lw    $s3, -108($fp)
-        lw    $s4, -112($fp)
+        l.d   $f20, -64($fp)
+        l.d   $f22, -72($fp)
+        lw    $s0, -44($fp)
+        lw    $s1, -76($fp)
+        lw    $s2, -48($fp)
+        lw    $s3, -52($fp)
+        lw    $s4, -56($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

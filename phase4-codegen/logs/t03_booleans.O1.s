@@ -97,21 +97,21 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -224
+        addiu $sp, $sp, -64
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        s.d   $f20, -224($fp)
-        sw    $s0, -196($fp)
-        sw    $s1, -216($fp)
-        sw    $s2, -204($fp)
-        sw    $s3, -208($fp)
-        sw    $s4, -212($fp)
-        sw    $s5, -200($fp)
-        sw    $s6, -188($fp)
-        sw    $s7, -192($fp)
+        s.d   $f20, -64($fp)
+        sw    $s0, -36($fp)
+        sw    $s1, -56($fp)
+        sw    $s2, -44($fp)
+        sw    $s3, -48($fp)
+        sw    $s4, -52($fp)
+        sw    $s5, -40($fp)
+        sw    $s6, -28($fp)
+        sw    $s7, -32($fp)
         # a = 1
         li    $s3, 1
         # b = 2
@@ -120,7 +120,7 @@ M2_0:
         li    $s4, 3
         # d = 4
         li    $t0, 4
-        sw    $t0, -16($fp)
+        sw    $t0, -4($fp)
         # e = 5
         li    $s0, 5
         # f = 6
@@ -145,7 +145,7 @@ M2_0:
         li    $s7, 1
         # t5 = 0
         li    $t0, 0
-        sw    $t0, -72($fp)
+        sw    $t0, -16($fp)
         # if b int>= 2 goto 17
         li    $t1, 2
         slt   $s0, $s2, $t1
@@ -170,7 +170,7 @@ L2_22:
         sw    $s1, 4($sp)
         sw    $s6, 8($sp)
         sw    $s7, 12($sp)
-        lw    $t0, -72($fp)
+        lw    $t0, -16($fp)
         sw    $t0, 16($sp)
         sw    $s0, 20($sp)
         sw    $s5, 24($sp)
@@ -287,20 +287,20 @@ L2_60:
         l.d   $f20, fc0
         # ch = 0
         li    $t0, 0
-        sb    $t0, -41($fp)
+        sb    $t0, -5($fp)
         # p = 0
         li    $t0, 0
-        sw    $t0, -48($fp)
+        sw    $t0, -12($fp)
         # t16 = 1
         li    $s6, 1
         # t17 = 0
         li    $s7, 0
         # t18 = 1
         li    $t0, 1
-        sw    $t0, -124($fp)
+        sw    $t0, -20($fp)
         # t19 = 1
         li    $t0, 1
-        sw    $t0, -128($fp)
+        sw    $t0, -24($fp)
         # if c int!= 0 goto 76
         xor   $s5, $s4, $zero
         sltu  $s5, $zero, $s5
@@ -317,9 +317,9 @@ L2_77:
         sw    $t0, 0($sp)
         sw    $s6, 4($sp)
         sw    $s7, 8($sp)
-        lw    $t0, -124($fp)
+        lw    $t0, -20($fp)
         sw    $t0, 12($sp)
-        lw    $t0, -128($fp)
+        lw    $t0, -24($fp)
         sw    $t0, 16($sp)
         sw    $s5, 20($sp)
         jal   __printf
@@ -340,7 +340,7 @@ L2_86:
         addiu $sp, $sp, 8
 L2_88:
         # if p ptr!= 0 goto 91
-        lw    $t0, -48($fp)
+        lw    $t0, -12($fp)
         bne   $t0, $zero, L2_91
         # param "null pointer is false\n"
         # call printf, 1
@@ -392,7 +392,7 @@ L2_114:
         # if x int!= 0 goto 119
         bne   $s0, $zero, L2_119
         # if ch char!= 0 goto 119
-        lb    $t0, -41($fp)
+        lb    $t0, -5($fp)
         bne   $t0, $zero, L2_119
         # t27 = 0
         li    $s2, 0
@@ -426,7 +426,7 @@ L2_132:
         # if t29 bool== 0 goto 135
         beq   $s2, $zero, L2_135
         # if d int!= 0 goto 137
-        lw    $t0, -16($fp)
+        lw    $t0, -4($fp)
         bne   $t0, $zero, L2_137
 L2_135:
         # t30 = 0
@@ -503,15 +503,15 @@ L2_153:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        l.d   $f20, -224($fp)
-        lw    $s0, -196($fp)
-        lw    $s1, -216($fp)
-        lw    $s2, -204($fp)
-        lw    $s3, -208($fp)
-        lw    $s4, -212($fp)
-        lw    $s5, -200($fp)
-        lw    $s6, -188($fp)
-        lw    $s7, -192($fp)
+        l.d   $f20, -64($fp)
+        lw    $s0, -36($fp)
+        lw    $s1, -56($fp)
+        lw    $s2, -44($fp)
+        lw    $s3, -48($fp)
+        lw    $s4, -52($fp)
+        lw    $s5, -40($fp)
+        lw    $s6, -28($fp)
+        lw    $s7, -32($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

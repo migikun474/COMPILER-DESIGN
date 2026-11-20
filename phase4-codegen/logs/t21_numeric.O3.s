@@ -95,20 +95,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -352
+        addiu $sp, $sp, -56
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -328($fp)
-        s.d   $f22, -320($fp)
-        s.d   $f24, -312($fp)
-        s.d   $f26, -304($fp)
-        s.d   $f28, -352($fp)
-        sw    $s0, -332($fp)
-        sw    $s1, -336($fp)
-        sw    $s2, -340($fp)
+        s.d   $f20, -32($fp)
+        s.d   $f22, -24($fp)
+        s.d   $f24, -16($fp)
+        s.d   $f26, -8($fp)
+        s.d   $f28, -56($fp)
+        sw    $s0, -36($fp)
+        sw    $s1, -40($fp)
+        sw    $s2, -44($fp)
         # param "%.3f %.3f %.3f %.4f\n"
         # param 2.5
         # param 3.0
@@ -498,14 +498,14 @@ L0_133:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -328($fp)
-        l.d   $f22, -320($fp)
-        l.d   $f24, -312($fp)
-        l.d   $f26, -304($fp)
-        l.d   $f28, -352($fp)
-        lw    $s0, -332($fp)
-        lw    $s1, -336($fp)
-        lw    $s2, -340($fp)
+        l.d   $f20, -32($fp)
+        l.d   $f22, -24($fp)
+        l.d   $f24, -16($fp)
+        l.d   $f26, -8($fp)
+        l.d   $f28, -56($fp)
+        lw    $s0, -36($fp)
+        lw    $s1, -40($fp)
+        lw    $s2, -44($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

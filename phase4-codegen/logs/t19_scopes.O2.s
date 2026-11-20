@@ -50,7 +50,7 @@ _Z4nextv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = n.1 int+ 5
         lw    $t0, g_n_1
         addiu $s0, $t0, 5
@@ -61,7 +61,7 @@ _Z4nextv:
         move  $v0, $s0
         j     _Z4nextv_exit
 _Z4nextv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -72,9 +72,9 @@ _Z5twicev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         # t1 = calls.2 int+ 1
         lw    $t0, g_calls_2
         addiu $s0, $t0, 1
@@ -87,8 +87,8 @@ _Z5twicev:
         move  $v0, $s1
         j     _Z5twicev_exit
 _Z5twicev_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -99,10 +99,10 @@ _Z6shadowi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -32($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -40($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # t1 = x.3 int+ 3
         addiu $s0, $s2, 3
@@ -116,9 +116,9 @@ _Z6shadowi:
         move  $v0, $s1
         j     _Z6shadowi_exit
 _Z6shadowi_exit:
-        lw    $s0, -32($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -40($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -130,7 +130,7 @@ _Z9useGlobalv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = x int+ hidden
         lw    $t0, g_x
         lw    $t1, g_hidden
@@ -139,7 +139,7 @@ _Z9useGlobalv:
         move  $v0, $s0
         j     _Z9useGlobalv_exit
 _Z9useGlobalv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -171,11 +171,11 @@ _Z5loopsv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -28($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         # total = 0
         li    $s1, 0
         # i.8 = 0
@@ -212,10 +212,10 @@ L5_12:
         move  $v0, $s0
         j     _Z5loopsv_exit
 _Z5loopsv_exit:
-        lw    $s0, -28($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -227,15 +227,15 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -80
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M6_0
         j     __stack_overflow
 M6_0:
-        sw    $s0, -68($fp)
-        sw    $s1, -72($fp)
-        sw    $s2, -76($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         # param 1
         # t1 = call shadow(int), 1
         addiu $sp, $sp, -8
@@ -358,9 +358,9 @@ M6_0:
         li    $v0, 5
         j     main__exit
 main__exit:
-        lw    $s0, -68($fp)
-        lw    $s1, -72($fp)
-        lw    $s2, -76($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -85,9 +85,9 @@ _ZN6Animal5countEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = *this
         lw    $s0, 0($s1)
@@ -95,8 +95,8 @@ _ZN6Animal5countEv:
         move  $v0, $s0
         j     _ZN6Animal5countEv_exit
 _ZN6Animal5countEv_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -142,14 +142,14 @@ _ZN3DogC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
         lw    $s0, 8($fp)
         # param this
         # call Animal::Animal(), 1
@@ -183,8 +183,8 @@ M3_0:
         # return
         j     _ZN3DogC1Ev_exit
 _ZN3DogC1Ev_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -196,11 +196,11 @@ _ZN3Dog5humanEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -48($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -40($fp)
-        sw    $s3, -44($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -16($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
         lw    $s0, 8($fp)
         # t1 = this ptr+ 4
         addiu $s1, $s0, 4
@@ -223,10 +223,10 @@ _ZN3Dog5humanEv:
         move  $v0, $s1
         j     _ZN3Dog5humanEv_exit
 _ZN3Dog5humanEv_exit:
-        lw    $s0, -48($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -40($fp)
-        lw    $s3, -44($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -251,10 +251,10 @@ _ZN3Dog8birthdayEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s1, 8($fp)
         # t1 = this ptr+ 4
         addiu $s0, $s1, 4
@@ -267,9 +267,9 @@ _ZN3Dog8birthdayEv:
         # return
         j     _ZN3Dog8birthdayEv_exit
 _ZN3Dog8birthdayEv_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -280,9 +280,9 @@ _ZN3VecC1Ev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # *this = 0
         sw    $zero, 0($s1)
@@ -293,8 +293,8 @@ _ZN3VecC1Ev:
         # return
         j     _ZN3VecC1Ev_exit
 _ZN3VecC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -306,16 +306,16 @@ _ZN3VecplES_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M8_0
         j     __stack_overflow
 M8_0:
-        sw    $s0, -44($fp)
-        sw    $s1, -48($fp)
-        sw    $s2, -52($fp)
-        sw    $s3, -56($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -24($fp)
         lw    $s3, 8($fp)
         # t1 = &r
         addiu $s0, $fp, -8
@@ -347,10 +347,10 @@ M8_0:
         addiu $v0, $fp, -8
         j     _ZN3VecplES__exit
 _ZN3VecplES__exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -48($fp)
-        lw    $s2, -52($fp)
-        lw    $s3, -56($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -363,15 +363,15 @@ _ZN3VecmiEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M9_0
         j     __stack_overflow
 M9_0:
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -44($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
         lw    $s2, 8($fp)
         # t1 = &r
         addiu $s0, $fp, -8
@@ -399,9 +399,9 @@ M9_0:
         addiu $v0, $fp, -8
         j     _ZN3VecmiEv_exit
 _ZN3VecmiEv_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -44($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -413,10 +413,10 @@ _ZN3VeceqES_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -28($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # t2 = *this
         lw    $s0, 0($s2)
@@ -445,9 +445,9 @@ L10_10:
         move  $v0, $s0
         j     _ZN3VeceqES__exit
 _ZN3VeceqES__exit:
-        lw    $s0, -28($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -458,10 +458,10 @@ _ZN3VecixEi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         lw    $s0, 12($fp)
         # if i int!= 0 goto 3
@@ -480,9 +480,9 @@ L11_5:
         move  $v0, $s0
         j     _ZN3VecixEi_exit
 _ZN3VecixEi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -493,12 +493,12 @@ _ZN3VecpLES_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -48($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
-        sw    $s4, -44($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -20($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
+        sw    $s4, -16($fp)
         lw    $s0, 8($fp)
         # t1 = *this
         lw    $s1, 0($s0)
@@ -522,11 +522,11 @@ _ZN3VecpLES_:
         move  $v0, $s0
         j     _ZN3VecpLES__exit
 _ZN3VecpLES__exit:
-        lw    $s0, -48($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
-        lw    $s4, -44($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
+        lw    $s4, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -537,10 +537,10 @@ _ZN3VecppEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -20($fp)
-        sw    $s1, -12($fp)
-        sw    $s2, -16($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -12($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
         lw    $s0, 8($fp)
         # t1 = *this
         lw    $s1, 0($s0)
@@ -552,9 +552,9 @@ _ZN3VecppEv:
         move  $v0, $s0
         j     _ZN3VecppEv_exit
 _ZN3VecppEv_exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -12($fp)
-        lw    $s2, -16($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -565,11 +565,11 @@ _ZN3VecclEi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -36($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         lw    $s2, 8($fp)
         lw    $s3, 12($fp)
         # t1 = *this
@@ -586,10 +586,10 @@ _ZN3VecclEi:
         move  $v0, $s0
         j     _ZN3VecclEi_exit
 _ZN3VecclEi_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -36($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -600,11 +600,11 @@ _ZN3Vec3dotES_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -44($fp)
-        sw    $s3, -48($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         lw    $s3, 8($fp)
         # t1 = *this
         lw    $s0, 0($s3)
@@ -626,10 +626,10 @@ _ZN3Vec3dotES_:
         move  $v0, $s0
         j     _ZN3Vec3dotES__exit
 _ZN3Vec3dotES__exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -44($fp)
-        lw    $s3, -48($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -647,9 +647,9 @@ _Z4makeii:
         beqz  $t8, M16_0
         j     __stack_overflow
 M16_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
         lw    $s1, 8($fp)
         lw    $s2, 12($fp)
         # t1 = &v
@@ -668,9 +668,9 @@ M16_0:
         addiu $v0, $fp, -8
         j     _Z4makeii_exit
 _Z4makeii_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -683,16 +683,16 @@ _Zml3Veci:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M17_0
         j     __stack_overflow
 M17_0:
-        sw    $s0, -28($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -24($fp)
         lw    $s3, 16($fp)
         # t1 = v[0]
         lw    $s0, 8($fp)
@@ -711,17 +711,17 @@ M17_0:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -24
+        addiu $a0, $fp, -8
         li    $a2, 8
         jal   __memcpy
         # return t5
-        addiu $v0, $fp, -24
+        addiu $v0, $fp, -8
         j     _Zml3Veci_exit
 _Zml3Veci_exit:
-        lw    $s0, -28($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -734,20 +734,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -224
+        addiu $sp, $sp, -112
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M18_0
         j     __stack_overflow
 M18_0:
-        sw    $s0, -192($fp)
-        sw    $s1, -196($fp)
-        sw    $s2, -200($fp)
-        sw    $s3, -204($fp)
-        sw    $s4, -208($fp)
-        sw    $s5, -212($fp)
-        sw    $s6, -216($fp)
-        sw    $s7, -220($fp)
+        sw    $s0, -84($fp)
+        sw    $s1, -88($fp)
+        sw    $s2, -92($fp)
+        sw    $s3, -96($fp)
+        sw    $s4, -100($fp)
+        sw    $s5, -104($fp)
+        sw    $s6, -108($fp)
+        sw    $s7, -112($fp)
         # t1 = &rex
         addiu $s0, $fp, -12
         # param t1
@@ -814,7 +814,7 @@ M18_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t10 = &other
-        addiu $s0, $fp, -28
+        addiu $s0, $fp, -24
         # param t10
         # call Dog::Dog(), 1
         addiu $sp, $sp, -8
@@ -823,7 +823,7 @@ M18_0:
         addiu $sp, $sp, 8
         # other[4] = 5
         li    $t0, 5
-        sw    $t0, -24($fp)
+        sw    $t0, -20($fp)
         # param t10
         # t12 = call Dog::human(), 1
         addiu $sp, $sp, -8
@@ -861,7 +861,7 @@ M18_0:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -36
+        addiu $a0, $fp, -32
         li    $a2, 8
         jal   __memcpy
         # param 3
@@ -875,11 +875,11 @@ M18_0:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -44
+        addiu $a0, $fp, -40
         li    $a2, 8
         jal   __memcpy
         # t15 = &c
-        addiu $s1, $fp, -52
+        addiu $s1, $fp, -48
         # param t15
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -887,20 +887,20 @@ M18_0:
         jal   _ZN3VecC1Ev
         addiu $sp, $sp, 8
         # t16 = &a
-        addiu $s0, $fp, -36
+        addiu $s0, $fp, -32
         # param t16
         # param b
         # c = call Vec::operator+(class Vec), 2
         addiu $sp, $sp, -16
         sw    $s0, 0($sp)
         addiu $a0, $sp, 4
-        addiu $a1, $fp, -44
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         jal   _ZN3VecplES_
         addiu $sp, $sp, 16
         move  $a1, $v0
-        addiu $a0, $fp, -52
+        addiu $a0, $fp, -48
         li    $a2, 8
         jal   __memcpy
         # param t15
@@ -910,7 +910,7 @@ M18_0:
         jal   _ZN3VecmiEv
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -60
+        addiu $a0, $fp, -56
         li    $a2, 8
         jal   __memcpy
         # param a
@@ -918,7 +918,7 @@ M18_0:
         # e = call operator*(class Vec, int), 2
         addiu $sp, $sp, -16
         addiu $a0, $sp, 0
-        addiu $a1, $fp, -36
+        addiu $a1, $fp, -32
         li    $a2, 8
         jal   __memcpy
         li    $t0, 3
@@ -926,7 +926,7 @@ M18_0:
         jal   _Zml3Veci
         addiu $sp, $sp, 16
         move  $a1, $v0
-        addiu $a0, $fp, -68
+        addiu $a0, $fp, -64
         li    $a2, 8
         jal   __memcpy
         # param t16
@@ -935,7 +935,7 @@ M18_0:
         addiu $sp, $sp, -16
         sw    $s0, 0($sp)
         addiu $a0, $sp, 4
-        addiu $a1, $fp, -44
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         jal   _ZN3VecpLES_
@@ -947,17 +947,17 @@ M18_0:
         jal   _ZN3VecppEv
         addiu $sp, $sp, 8
         # t25 = c[0]
-        lw    $s2, -52($fp)
+        lw    $s2, -48($fp)
         # t26 = c[4]
-        lw    $s3, -48($fp)
+        lw    $s3, -44($fp)
         # t27 = d[0]
-        lw    $s4, -60($fp)
+        lw    $s4, -56($fp)
         # t28 = e[4]
-        lw    $s5, -64($fp)
+        lw    $s5, -60($fp)
         # t29 = a[0]
-        lw    $s6, -36($fp)
+        lw    $s6, -32($fp)
         # t30 = a[4]
-        lw    $s7, -32($fp)
+        lw    $s7, -28($fp)
         # param "%d %d %d %d %d %d\n"
         # param t25
         # param t26
@@ -983,7 +983,7 @@ M18_0:
         addiu $sp, $sp, -16
         sw    $s0, 0($sp)
         addiu $a0, $sp, 4
-        addiu $a1, $fp, -44
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         jal   _ZN3VeceqES_
@@ -995,7 +995,7 @@ M18_0:
         addiu $sp, $sp, -16
         sw    $s1, 0($sp)
         addiu $a0, $sp, 4
-        addiu $a1, $fp, -52
+        addiu $a1, $fp, -48
         li    $a2, 8
         jal   __memcpy
         jal   _ZN3VeceqES_
@@ -1026,7 +1026,7 @@ M18_0:
         addiu $sp, $sp, -16
         sw    $s0, 0($sp)
         addiu $a0, $sp, 4
-        addiu $a1, $fp, -44
+        addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
         jal   _ZN3Vec3dotES_
@@ -1050,7 +1050,7 @@ M18_0:
         jal   __printf
         addiu $sp, $sp, 24
         # t41 = &row
-        addiu $s0, $fp, -84
+        addiu $s0, $fp, -80
         # param t41
         # call Vec::Vec(), 1
         addiu $sp, $sp, -8
@@ -1067,9 +1067,9 @@ M18_0:
         addiu $sp, $sp, 8
         # row[8] = 9
         li    $t0, 9
-        sw    $t0, -76($fp)
+        sw    $t0, -72($fp)
         # t43 = row[0]
-        lw    $s0, -84($fp)
+        lw    $s0, -80($fp)
         # param "%d %d\n"
         # param t43
         # param 9
@@ -1083,7 +1083,7 @@ M18_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t45 = c[0]
-        lw    $s0, -52($fp)
+        lw    $s0, -48($fp)
         # t46 = 7 int+ t45
         li    $t0, 7
         addu  $s1, $t0, $s0
@@ -1091,14 +1091,14 @@ M18_0:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        lw    $s0, -192($fp)
-        lw    $s1, -196($fp)
-        lw    $s2, -200($fp)
-        lw    $s3, -204($fp)
-        lw    $s4, -208($fp)
-        lw    $s5, -212($fp)
-        lw    $s6, -216($fp)
-        lw    $s7, -220($fp)
+        lw    $s0, -84($fp)
+        lw    $s1, -88($fp)
+        lw    $s2, -92($fp)
+        lw    $s3, -96($fp)
+        lw    $s4, -100($fp)
+        lw    $s5, -104($fp)
+        lw    $s6, -108($fp)
+        lw    $s7, -112($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

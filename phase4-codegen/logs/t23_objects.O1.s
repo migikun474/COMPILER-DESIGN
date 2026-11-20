@@ -48,14 +48,14 @@ _ZN5ShapeC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # t1 = Shape::live int+ 1
         lw    $t0, g_Shape__live
@@ -77,8 +77,8 @@ M0_0:
         # return
         j     _ZN5ShapeC1Ev_exit
 _ZN5ShapeC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -119,14 +119,14 @@ _ZN4RectC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
         lw    $s0, 8($fp)
         # param this
         # call Shape::Shape(), 1
@@ -147,8 +147,8 @@ M3_0:
         # return
         j     _ZN4RectC1Ev_exit
 _ZN4RectC1Ev_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -160,11 +160,11 @@ _ZN4Rect3setEii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
         lw    $s1, 8($fp)
         lw    $s2, 12($fp)
         lw    $s3, 16($fp)
@@ -179,10 +179,10 @@ _ZN4Rect3setEii:
         # return
         j     _ZN4Rect3setEii_exit
 _ZN4Rect3setEii_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -193,10 +193,10 @@ _ZN4Rect4areaEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # t1 = this ptr+ 4
         addiu $s0, $s2, 4
@@ -212,9 +212,9 @@ _ZN4Rect4areaEv:
         move  $v0, $s0
         j     _ZN4Rect4areaEv_exit
 _ZN4Rect4areaEv_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -225,10 +225,10 @@ _ZN4Rect9perimeterEv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -28($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # t1 = this ptr+ 4
         addiu $s0, $s2, 4
@@ -246,9 +246,9 @@ _ZN4Rect9perimeterEv:
         move  $v0, $s1
         j     _ZN4Rect9perimeterEv_exit
 _ZN4Rect9perimeterEv_exit:
-        lw    $s0, -28($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -310,9 +310,9 @@ _ZN5PointC1Ev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         # *this = 0
         sw    $zero, 0($s1)
@@ -323,8 +323,8 @@ _ZN5PointC1Ev:
         # return
         j     _ZN5PointC1Ev_exit
 _ZN5PointC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -335,12 +335,12 @@ _ZN5PointpLERKS_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
-        sw    $s0, -52($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -40($fp)
-        sw    $s3, -44($fp)
-        sw    $s4, -48($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -20($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
+        sw    $s4, -16($fp)
         lw    $s0, 8($fp)
         lw    $s4, 12($fp)
         # t1 = *this
@@ -367,11 +367,11 @@ _ZN5PointpLERKS_:
         move  $v0, $s0
         j     _ZN5PointpLERKS__exit
 _ZN5PointpLERKS__exit:
-        lw    $s0, -52($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -40($fp)
-        lw    $s3, -44($fp)
-        lw    $s4, -48($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
+        lw    $s4, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -383,17 +383,17 @@ _ZN5PointmiERKS_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M11_0
         j     __stack_overflow
 M11_0:
-        sw    $s0, -48($fp)
-        sw    $s1, -52($fp)
-        sw    $s2, -56($fp)
-        sw    $s3, -60($fp)
-        sw    $s4, -64($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -24($fp)
+        sw    $s4, -28($fp)
         lw    $s4, 8($fp)
         lw    $s3, 12($fp)
         # t1 = &r
@@ -428,11 +428,11 @@ M11_0:
         addiu $v0, $fp, -8
         j     _ZN5PointmiERKS__exit
 _ZN5PointmiERKS__exit:
-        lw    $s0, -48($fp)
-        lw    $s1, -52($fp)
-        lw    $s2, -56($fp)
-        lw    $s3, -60($fp)
-        lw    $s4, -64($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -24($fp)
+        lw    $s4, -28($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -444,12 +444,12 @@ _ZN5PointltERKS_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -80
-        sw    $s0, -60($fp)
-        sw    $s1, -64($fp)
-        sw    $s2, -68($fp)
-        sw    $s3, -72($fp)
-        sw    $s4, -76($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
         lw    $s3, 8($fp)
         lw    $s4, 12($fp)
         # t2 = *this
@@ -488,11 +488,11 @@ L12_20:
         move  $v0, $s0
         j     _ZN5PointltERKS__exit
 _ZN5PointltERKS__exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -64($fp)
-        lw    $s2, -68($fp)
-        lw    $s3, -72($fp)
-        lw    $s4, -76($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -503,9 +503,9 @@ _ZN5PointixEi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         lw    $s1, 8($fp)
         lw    $s0, 12($fp)
         # if i int!= 0 goto 3
@@ -522,8 +522,8 @@ L13_4:
         move  $v0, $s0
         j     _ZN5PointixEi_exit
 _ZN5PointixEi_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -541,9 +541,9 @@ _Z2atii:
         beqz  $t8, M14_0
         j     __stack_overflow
 M14_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
         lw    $s1, 8($fp)
         lw    $s2, 12($fp)
         # t1 = &p
@@ -562,9 +562,9 @@ M14_0:
         addiu $v0, $fp, -8
         j     _Z2atii_exit
 _Z2atii_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -583,11 +583,11 @@ _ZN7Segment3setEiiii:
         beqz  $t8, M15_0
         j     __stack_overflow
 M15_0:
-        sw    $s0, -24($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -32($fp)
-        sw    $s4, -36($fp)
+        sw    $s0, -20($fp)
+        sw    $s1, -36($fp)
+        sw    $s2, -24($fp)
+        sw    $s3, -28($fp)
+        sw    $s4, -32($fp)
         lw    $s1, 8($fp)
         lw    $s0, 12($fp)
         lw    $s2, 16($fp)
@@ -632,11 +632,11 @@ M15_0:
         # return
         j     _ZN7Segment3setEiiii_exit
 _ZN7Segment3setEiiii_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -32($fp)
-        lw    $s4, -36($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -36($fp)
+        lw    $s2, -24($fp)
+        lw    $s3, -28($fp)
+        lw    $s4, -32($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -649,15 +649,15 @@ _ZN7Segment7length2Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M16_0
         j     __stack_overflow
 M16_0:
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -44($fp)
+        sw    $s0, -12($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
         lw    $s1, 8($fp)
         # t1 = this ptr+ 8
         addiu $s0, $s1, 8
@@ -687,9 +687,9 @@ M16_0:
         move  $v0, $s0
         j     _ZN7Segment7length2Ev_exit
 _ZN7Segment7length2Ev_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -44($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -702,15 +702,15 @@ _Z5totalR4Rect:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M17_0
         j     __stack_overflow
 M17_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # param r
         # t1 = call Rect::area(), 1
@@ -727,9 +727,9 @@ M17_0:
         move  $v0, $s2
         j     _Z5totalR4Rect_exit
 _Z5totalR4Rect_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -742,15 +742,15 @@ _Z7throughP5Shape:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M18_0
         j     __stack_overflow
 M18_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         lw    $s2, 8($fp)
         # param s
         # t1 = call Shape::area(), 1
@@ -772,9 +772,9 @@ M18_0:
         move  $v0, $s2
         j     _Z7throughP5Shape_exit
 _Z7throughP5Shape_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -786,12 +786,12 @@ _Z4growP4Recti:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -28($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
-        sw    $s4, -44($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
         lw    $s3, 8($fp)
         lw    $s4, 12($fp)
         # t1 = r ptr+ 4
@@ -813,11 +813,11 @@ _Z4growP4Recti:
         # return
         j     _Z4growP4Recti_exit
 _Z4growP4Recti_exit:
-        lw    $s0, -28($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
-        lw    $s4, -44($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -829,20 +829,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -312
+        addiu $sp, $sp, -136
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M20_0
         j     __stack_overflow
 M20_0:
-        sw    $s0, -284($fp)
-        sw    $s1, -280($fp)
-        sw    $s2, -288($fp)
-        sw    $s3, -292($fp)
-        sw    $s4, -296($fp)
-        sw    $s5, -300($fp)
-        sw    $s6, -304($fp)
-        sw    $s7, -308($fp)
+        sw    $s0, -108($fp)
+        sw    $s1, -104($fp)
+        sw    $s2, -112($fp)
+        sw    $s3, -116($fp)
+        sw    $s4, -120($fp)
+        sw    $s5, -124($fp)
+        sw    $s6, -128($fp)
+        sw    $s7, -132($fp)
         # t1 = &r
         addiu $s1, $fp, -12
         # param t1
@@ -1004,7 +1004,7 @@ M20_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t25 = &pair
-        addiu $s0, $fp, -56
+        addiu $s0, $fp, -48
         # param t25
         # call Rect::Rect(), 1
         addiu $sp, $sp, -8
@@ -1021,7 +1021,7 @@ M20_0:
         addiu $sp, $sp, 8
         # pair[16] = 6
         li    $t0, 6
-        sw    $t0, -40($fp)
+        sw    $t0, -32($fp)
         # param t25
         # t28 = call Rect::area(), 1
         addiu $sp, $sp, -8
@@ -1039,7 +1039,7 @@ M20_0:
         # t32 = t28 int+ t31
         addu  $s1, $s2, $s0
         # t33 = pair[12]
-        lw    $s0, -44($fp)
+        lw    $s0, -36($fp)
         # param "%d %d %d\n"
         # param t32
         # param t33
@@ -1075,7 +1075,7 @@ M20_0:
         jal   _Z2atii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -64
+        addiu $a0, $fp, -56
         li    $a2, 8
         jal   __memcpy
         # param 1
@@ -1089,13 +1089,13 @@ M20_0:
         jal   _Z2atii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -72
+        addiu $a0, $fp, -64
         li    $a2, 8
         jal   __memcpy
         # t36 = &a
-        addiu $s0, $fp, -64
+        addiu $s0, $fp, -56
         # t37 = &b
-        addiu $s1, $fp, -72
+        addiu $s1, $fp, -64
         # param t36
         # param t37
         # call Point::operator+=(const class Point &), 2
@@ -1155,17 +1155,17 @@ M20_0:
         jal   _ZN5PointmiERKS_
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -80
+        addiu $a0, $fp, -72
         li    $a2, 8
         jal   __memcpy
         # t53 = a[0]
-        lw    $s2, -64($fp)
+        lw    $s2, -56($fp)
         # t54 = a[4]
-        lw    $s3, -60($fp)
+        lw    $s3, -52($fp)
         # t55 = c[0]
-        lw    $s4, -80($fp)
+        lw    $s4, -72($fp)
         # t56 = c[4]
-        lw    $s5, -76($fp)
+        lw    $s5, -68($fp)
         # param t37
         # param t36
         # t59 = call Point::operator<(const class Point &), 2
@@ -1212,7 +1212,7 @@ M20_0:
         jal   __printf
         addiu $sp, $sp, 32
         # t65 = &s
-        addiu $s0, $fp, -96
+        addiu $s0, $fp, -88
         # param t65
         # call Point::Point(), 1
         addiu $sp, $sp, -8
@@ -1253,7 +1253,7 @@ M20_0:
         addiu $sp, $sp, 8
         move  $s1, $v0
         # t70 = s[12]
-        lw    $s0, -84($fp)
+        lw    $s0, -76($fp)
         # param "%d %d\n"
         # param t69
         # param t70
@@ -1266,7 +1266,7 @@ M20_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t71 = &last
-        addiu $s0, $fp, -108
+        addiu $s0, $fp, -100
         # param t71
         # call Rect::Rect(), 1
         addiu $sp, $sp, -8
@@ -1320,14 +1320,14 @@ M20_0:
         lw    $v0, g_Shape__live
         j     main__exit
 main__exit:
-        lw    $s0, -284($fp)
-        lw    $s1, -280($fp)
-        lw    $s2, -288($fp)
-        lw    $s3, -292($fp)
-        lw    $s4, -296($fp)
-        lw    $s5, -300($fp)
-        lw    $s6, -304($fp)
-        lw    $s7, -308($fp)
+        lw    $s0, -108($fp)
+        lw    $s1, -104($fp)
+        lw    $s2, -112($fp)
+        lw    $s3, -116($fp)
+        lw    $s4, -120($fp)
+        lw    $s5, -124($fp)
+        lw    $s6, -128($fp)
+        lw    $s7, -132($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -46,18 +46,18 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -120
+        addiu $sp, $sp, -24
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -96($fp)
-        sw    $s1, -104($fp)
-        sw    $s2, -100($fp)
-        sw    $s3, -108($fp)
-        sw    $s4, -112($fp)
-        sw    $s5, -116($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -24($fp)
         # t74 = 4042265140
         li    $s0, -252702156
         # t75 = 0
@@ -360,12 +360,12 @@ L0_112:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        lw    $s0, -96($fp)
-        lw    $s1, -104($fp)
-        lw    $s2, -100($fp)
-        lw    $s3, -108($fp)
-        lw    $s4, -112($fp)
-        lw    $s5, -116($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

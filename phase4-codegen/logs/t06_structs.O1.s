@@ -77,11 +77,11 @@ _Z4area4Rect:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -40($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -44($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -12($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -16($fp)
         # t1 = r[8]
         lw    $s1, 16($fp)
         # t2 = r[0]
@@ -102,10 +102,10 @@ _Z4area4Rect:
         move  $v0, $s1
         j     _Z4area4Rect_exit
 _Z4area4Rect_exit:
-        lw    $s0, -40($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -44($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -116,11 +116,11 @@ _Z4moveP5Pointi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        sw    $s3, -24($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         lw    $s2, 8($fp)
         lw    $s3, 12($fp)
         # t1 = *p
@@ -132,10 +132,10 @@ _Z4moveP5Pointi:
         # return
         j     _Z4moveP5Pointi_exit
 _Z4moveP5Pointi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        lw    $s3, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -146,10 +146,10 @@ _Z3add7ComplexS_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -88
-        s.d   $f20, -72($fp)
-        s.d   $f22, -80($fp)
-        s.d   $f24, -88($fp)
+        addiu $sp, $sp, -40
+        s.d   $f20, -24($fp)
+        s.d   $f22, -32($fp)
+        s.d   $f24, -40($fp)
         # t1 = a[0]
         l.d   $f0, 8($fp)
         mov.d $f20, $f0
@@ -176,9 +176,9 @@ _Z3add7ComplexS_:
         addiu $v0, $fp, -16
         j     _Z3add7ComplexS__exit
 _Z3add7ComplexS__exit:
-        l.d   $f20, -72($fp)
-        l.d   $f22, -80($fp)
-        l.d   $f24, -88($fp)
+        l.d   $f20, -24($fp)
+        l.d   $f22, -32($fp)
+        l.d   $f24, -40($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -189,10 +189,10 @@ _Z6lengthP4Node:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -12($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -4($fp)
         lw    $s0, 8($fp)
         # n = 0
         li    $s1, 0
@@ -212,9 +212,9 @@ L4_6:
         move  $v0, $s1
         j     _Z6lengthP4Node_exit
 _Z6lengthP4Node_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -12($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -226,18 +226,18 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -432
+        addiu $sp, $sp, -216
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M5_0
         j     __stack_overflow
 M5_0:
-        s.d   $f20, -424($fp)
-        s.d   $f22, -432($fp)
-        sw    $s0, -400($fp)
-        sw    $s1, -404($fp)
-        sw    $s2, -408($fp)
-        sw    $s3, -412($fp)
+        s.d   $f20, -208($fp)
+        s.d   $f22, -216($fp)
+        sw    $s0, -188($fp)
+        sw    $s1, -192($fp)
+        sw    $s2, -196($fp)
+        sw    $s3, -200($fp)
         # r[0] = 1
         li    $t0, 1
         sw    $t0, -20($fp)
@@ -334,14 +334,14 @@ L5_27:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -224
+        addiu $a0, $fp, -168
         li    $a2, 8
         jal   __memcpy
         # pts[t10] = t12
         addiu $t8, $fp, -64
         addu  $t8, $t8, $s1
         addiu $a0, $t8, 0
-        addiu $a1, $fp, -224
+        addiu $a1, $fp, -168
         li    $a2, 8
         jal   __memcpy
         # i = i int+ 1
@@ -389,11 +389,11 @@ L5_36:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -268
+        addiu $a0, $fp, -176
         li    $a2, 8
         jal   __memcpy
         # t26 = t25[4]
-        lw    $s3, -264($fp)
+        lw    $s3, -172($fp)
         # param "%d %d %d %d\n"
         # param t22
         # param t23
@@ -436,12 +436,12 @@ L5_36:
         jal   _Z4makeii
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -300
+        addiu $a0, $fp, -184
         li    $a2, 8
         jal   __memcpy
         # *t27 = t33
         addiu $a0, $s0, 0
-        addiu $a1, $fp, -300
+        addiu $a1, $fp, -184
         li    $a2, 8
         jal   __memcpy
         # t34 = r[8]
@@ -467,39 +467,39 @@ L5_36:
         addiu $sp, $sp, 16
         # a[0] = 1.5
         l.d   $f0, fc0
-        s.d   $f0, -96($fp)
+        s.d   $f0, -80($fp)
         # a[8] = 2.0
         l.d   $f0, fc1
-        s.d   $f0, -88($fp)
+        s.d   $f0, -72($fp)
         # b[0] = 1.0
         l.d   $f0, fc2
-        s.d   $f0, -112($fp)
+        s.d   $f0, -96($fp)
         # b[8] = 0.5
         l.d   $f0, fc3
-        s.d   $f0, -104($fp)
+        s.d   $f0, -88($fp)
         # param a
         # param b
         # c = call add(Complex, Complex), 2
         addiu $sp, $sp, -32
         addiu $a0, $sp, 0
-        addiu $a1, $fp, -96
+        addiu $a1, $fp, -80
         li    $a2, 16
         jal   __memcpy
         addiu $a0, $sp, 16
-        addiu $a1, $fp, -112
+        addiu $a1, $fp, -96
         li    $a2, 16
         jal   __memcpy
         jal   _Z3add7ComplexS_
         addiu $sp, $sp, 32
         move  $a1, $v0
-        addiu $a0, $fp, -128
+        addiu $a0, $fp, -112
         li    $a2, 16
         jal   __memcpy
         # t39 = c[0]
-        l.d   $f0, -128($fp)
+        l.d   $f0, -112($fp)
         mov.d $f20, $f0
         # t40 = c[8]
-        l.d   $f0, -120($fp)
+        l.d   $f0, -104($fp)
         mov.d $f22, $f0
         # param "%.1f %.1f\n"
         # param t39
@@ -516,25 +516,25 @@ L5_36:
         addiu $sp, $sp, 24
         # n1[0] = 1
         li    $t0, 1
-        sw    $t0, -136($fp)
+        sw    $t0, -120($fp)
         # t41 = &n2
-        addiu $s0, $fp, -144
+        addiu $s0, $fp, -128
         # n1[4] = t41
-        sw    $s0, -132($fp)
+        sw    $s0, -116($fp)
         # n2[0] = 2
         li    $t0, 2
-        sw    $t0, -144($fp)
+        sw    $t0, -128($fp)
         # t42 = &n3
-        addiu $s0, $fp, -152
+        addiu $s0, $fp, -136
         # n2[4] = t42
-        sw    $s0, -140($fp)
+        sw    $s0, -124($fp)
         # n3[0] = 3
         li    $t0, 3
-        sw    $t0, -152($fp)
+        sw    $t0, -136($fp)
         # n3[4] = 0
-        sw    $zero, -148($fp)
+        sw    $zero, -132($fp)
         # t43 = &n1
-        addiu $s0, $fp, -136
+        addiu $s0, $fp, -120
         # param t43
         # t44 = call length(struct Node *), 1
         addiu $sp, $sp, -8
@@ -543,7 +543,7 @@ L5_36:
         addiu $sp, $sp, 8
         move  $s1, $v0
         # t45 = n1[4]
-        lw    $s0, -132($fp)
+        lw    $s0, -116($fp)
         # t46 = t45 ptr+ 4
         addiu $s2, $s0, 4
         # t47 = *t46
@@ -563,30 +563,30 @@ L5_36:
         addiu $sp, $sp, 16
         # k[0] = 1
         li    $t0, 1
-        sw    $t0, -168($fp)
+        sw    $t0, -152($fp)
         # k[4] = 16909060
         li    $t0, 16909060
-        sw    $t0, -164($fp)
+        sw    $t0, -148($fp)
         # k[8] = 0
-        sb    $zero, -160($fp)
+        sb    $zero, -144($fp)
         # k[9] = 0
-        sb    $zero, -159($fp)
+        sb    $zero, -143($fp)
         # k[10] = 0
-        sb    $zero, -158($fp)
+        sb    $zero, -142($fp)
         # k[11] = 0
-        sb    $zero, -157($fp)
+        sb    $zero, -141($fp)
         # k[12] = 9
         li    $t0, 9
-        sh    $t0, -156($fp)
+        sh    $t0, -140($fp)
         # k[9] = 120
         li    $t0, 120
-        sb    $t0, -159($fp)
+        sb    $t0, -143($fp)
         # t49 = k[0]
-        lw    $s0, -168($fp)
+        lw    $s0, -152($fp)
         # t50 = k[4]
-        lw    $s1, -164($fp)
+        lw    $s1, -148($fp)
         # t53 = k[12]
-        lh    $s2, -156($fp)
+        lh    $s2, -140($fp)
         # t54 = shorttoint t53
         move  $t0, $s2
         move  $s3, $t0
@@ -610,11 +610,11 @@ L5_36:
         jal   __printf
         addiu $sp, $sp, 24
         # zero[0] = 0
-        sw    $zero, -176($fp)
+        sw    $zero, -160($fp)
         # zero[4] = 0
-        sw    $zero, -172($fp)
+        sw    $zero, -156($fp)
         # t55 = zero[0]
-        lw    $s0, -176($fp)
+        lw    $s0, -160($fp)
         # t56 = pts[16]
         lw    $s1, -48($fp)
         # t57 = t55 int+ t56
@@ -623,12 +623,12 @@ L5_36:
         move  $v0, $s2
         j     main__exit
 main__exit:
-        l.d   $f20, -424($fp)
-        l.d   $f22, -432($fp)
-        lw    $s0, -400($fp)
-        lw    $s1, -404($fp)
-        lw    $s2, -408($fp)
-        lw    $s3, -412($fp)
+        l.d   $f20, -208($fp)
+        l.d   $f22, -216($fp)
+        lw    $s0, -188($fp)
+        lw    $s1, -192($fp)
+        lw    $s2, -196($fp)
+        lw    $s3, -200($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

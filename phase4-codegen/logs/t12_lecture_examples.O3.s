@@ -29,8 +29,8 @@ main_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -144
-        sw    $s0, -144($fp)
+        addiu $sp, $sp, -96
+        sw    $s0, -92($fp)
         # a = -12
         li    $s0, -12
 L0_1:
@@ -48,14 +48,14 @@ L0_1:
         j     L0_1
 L0_6:
         # t12 = arr[4]
-        lw    $s0, -72($fp)
+        lw    $s0, -36($fp)
         # m[24] = t12
-        sw    $s0, -100($fp)
+        sw    $s0, -64($fp)
         # return 1
         li    $v0, 1
         j     main__exit
 main__exit:
-        lw    $s0, -144($fp)
+        lw    $s0, -92($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8

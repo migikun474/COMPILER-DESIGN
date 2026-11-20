@@ -40,22 +40,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -304
+        addiu $sp, $sp, -64
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -288($fp)
-        s.d   $f22, -296($fp)
-        sw    $s0, -264($fp)
-        sw    $s1, -252($fp)
-        sw    $s2, -256($fp)
-        sw    $s3, -300($fp)
-        sw    $s4, -260($fp)
-        sw    $s5, -268($fp)
-        sw    $s6, -272($fp)
-        sw    $s7, -276($fp)
+        s.d   $f20, -48($fp)
+        s.d   $f22, -56($fp)
+        sw    $s0, -28($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -60($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -32($fp)
+        sw    $s6, -36($fp)
+        sw    $s7, -40($fp)
         # param 20
         # a = call malloc, 1
         addiu $sp, $sp, -8
@@ -106,22 +106,22 @@ L0_16:
         sw    $t0, 4($sp)
         jal   __calloc
         addiu $sp, $sp, 8
-        sw    $v0, -68($fp)
+        sw    $v0, -4($fp)
         # t8 = a ptr+ 16
         addiu $s0, $s3, 16
         # t9 = *t8
         lw    $s1, 0($s0)
         # t10 = t7 ptr+ 4
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $s0, $t0, 4
         # t11 = *t10
         lw    $s2, 0($s0)
         # t12 = t9 int+ t11
         addu  $s0, $s1, $s2
         # t13 = t7 ptr+ 8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $t0, $t0, 8
-        sw    $t0, -92($fp)
+        sw    $t0, -8($fp)
         # *t13 = t12
         move  $t8, $t0
         sw    $s0, 0($t8)
@@ -155,7 +155,7 @@ L0_30:
         lw    $s7, 0($s6)
         # t24 = t23 int+ 100
         addiu $t0, $s7, 100
-        sw    $t0, -120($fp)
+        sw    $t0, -12($fp)
         # *t19 = t24
         sw    $t0, 0($s2)
         # i.8 = i.8 int+ 1
@@ -177,7 +177,7 @@ L0_30:
         lw    $s7, 0($s6)
         # t24 = t23 int+ 100
         addiu $t0, $s7, 100
-        sw    $t0, -120($fp)
+        sw    $t0, -12($fp)
         # *t19 = t24
         sw    $t0, 0($s2)
         # i.8 = i.8 int+ 1
@@ -194,10 +194,10 @@ L0_51:
         # t29 = *t28
         lw    $s2, 0($s0)
         # t31 = *t13
-        lw    $t8, -92($fp)
+        lw    $t8, -8($fp)
         lw    $s0, 0($t8)
         # t32 = *t7
-        lw    $t8, -68($fp)
+        lw    $t8, -4($fp)
         lw    $s4, 0($t8)
         # param "%d %d %d %d\n"
         # param t27
@@ -451,7 +451,7 @@ L0_117:
         # param t7
         # call free, 1
         addiu $sp, $sp, -8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
@@ -463,16 +463,16 @@ L0_117:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -288($fp)
-        l.d   $f22, -296($fp)
-        lw    $s0, -264($fp)
-        lw    $s1, -252($fp)
-        lw    $s2, -256($fp)
-        lw    $s3, -300($fp)
-        lw    $s4, -260($fp)
-        lw    $s5, -268($fp)
-        lw    $s6, -272($fp)
-        lw    $s7, -276($fp)
+        l.d   $f20, -48($fp)
+        l.d   $f22, -56($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -60($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -32($fp)
+        lw    $s6, -36($fp)
+        lw    $s7, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

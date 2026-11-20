@@ -60,12 +60,12 @@ _Z6lengthPKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -20($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
+        sw    $s4, -16($fp)
         lw    $s4, 8($fp)
         # n = 0
         li    $s0, 0
@@ -99,11 +99,11 @@ L0_12:
         move  $v0, $s0
         j     _Z6lengthPKc_exit
 _Z6lengthPKc_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
+        lw    $s4, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -114,15 +114,15 @@ _Z8toNumberPKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -88
-        sw    $s0, -80($fp)
-        sw    $s1, -84($fp)
-        sw    $s2, -56($fp)
-        sw    $s3, -60($fp)
-        sw    $s4, -64($fp)
-        sw    $s5, -68($fp)
-        sw    $s6, -72($fp)
-        sw    $s7, -76($fp)
+        addiu $sp, $sp, -48
+        sw    $s0, -40($fp)
+        sw    $s1, -44($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -20($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -28($fp)
+        sw    $s6, -32($fp)
+        sw    $s7, -36($fp)
         lw    $s0, 8($fp)
         # sign = 1
         li    $t0, 1
@@ -166,10 +166,10 @@ L1_7:
         lb    $s7, 0($s0)
         # t11 = chartoint t10
         move  $t0, $s7
-        sw    $t0, -44($fp)
+        sw    $t0, -8($fp)
         # t12 = t11 int- 48
         addiu $t0, $t0, -48
-        sw    $t0, -48($fp)
+        sw    $t0, -12($fp)
         # v = t9 int+ t12
         move  $t1, $t0
         addu  $s1, $s6, $t1
@@ -198,10 +198,10 @@ L1_7:
         lb    $s7, 0($s0)
         # t11 = chartoint t10
         move  $t0, $s7
-        sw    $t0, -44($fp)
+        sw    $t0, -8($fp)
         # t12 = t11 int- 48
         addiu $t0, $t0, -48
-        sw    $t0, -48($fp)
+        sw    $t0, -12($fp)
         # v = t9 int+ t12
         move  $t1, $t0
         addu  $s1, $s6, $t1
@@ -217,14 +217,14 @@ L1_32:
         move  $v0, $s0
         j     _Z8toNumberPKc_exit
 _Z8toNumberPKc_exit:
-        lw    $s0, -80($fp)
-        lw    $s1, -84($fp)
-        lw    $s2, -56($fp)
-        lw    $s3, -60($fp)
-        lw    $s4, -64($fp)
-        lw    $s5, -68($fp)
-        lw    $s6, -72($fp)
-        lw    $s7, -76($fp)
+        lw    $s0, -40($fp)
+        lw    $s1, -44($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -20($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -28($fp)
+        lw    $s6, -32($fp)
+        lw    $s7, -36($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -235,25 +235,25 @@ _Z6toTextiPc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -96
-        sw    $s0, -92($fp)
-        sw    $s1, -84($fp)
-        sw    $s2, -88($fp)
-        sw    $s3, -80($fp)
-        sw    $s4, -64($fp)
-        sw    $s5, -68($fp)
-        sw    $s6, -72($fp)
-        sw    $s7, -76($fp)
+        addiu $sp, $sp, -48
+        sw    $s0, -48($fp)
+        sw    $s1, -40($fp)
+        sw    $s2, -44($fp)
+        sw    $s3, -36($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -24($fp)
+        sw    $s6, -28($fp)
+        sw    $s7, -32($fp)
         lw    $s1, 8($fp)
         lw    $s2, 12($fp)
         # n = 0
         li    $s0, 0
         # if v int< 0 goto 4
         slt   $t0, $s1, $zero
-        sw    $t0, -24($fp)
+        sw    $t0, -16($fp)
 L2_5:
         # if t1 int== 0 goto 7
-        lw    $t0, -24($fp)
+        lw    $t0, -16($fp)
         beq   $t0, $zero, L2_7
         # v = int- v
         negu  $s1, $s1
@@ -287,7 +287,7 @@ L2_7:
         # if t8 int> 0 goto 7
         bgt   $s3, $zero, L2_7
         # if t1 int== 0 goto 20
-        lw    $t0, -24($fp)
+        lw    $t0, -16($fp)
         beq   $t0, $zero, L2_20
         # t9 = n
         move  $s1, $s0
@@ -339,14 +339,14 @@ L2_35:
         # return
         j     _Z6toTextiPc_exit
 _Z6toTextiPc_exit:
-        lw    $s0, -92($fp)
-        lw    $s1, -84($fp)
-        lw    $s2, -88($fp)
-        lw    $s3, -80($fp)
-        lw    $s4, -64($fp)
-        lw    $s5, -68($fp)
-        lw    $s6, -72($fp)
-        lw    $s7, -76($fp)
+        lw    $s0, -48($fp)
+        lw    $s1, -40($fp)
+        lw    $s2, -44($fp)
+        lw    $s3, -36($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -24($fp)
+        lw    $s6, -28($fp)
+        lw    $s7, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -357,15 +357,15 @@ _Z12isPalindromePKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -88
-        sw    $s0, -60($fp)
-        sw    $s1, -88($fp)
-        sw    $s2, -80($fp)
-        sw    $s3, -64($fp)
-        sw    $s4, -68($fp)
-        sw    $s5, -84($fp)
-        sw    $s6, -72($fp)
-        sw    $s7, -76($fp)
+        addiu $sp, $sp, -48
+        sw    $s0, -16($fp)
+        sw    $s1, -44($fp)
+        sw    $s2, -36($fp)
+        sw    $s3, -20($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -40($fp)
+        sw    $s6, -28($fp)
+        sw    $s7, -32($fp)
         lw    $s5, 8($fp)
         # i = 0
         li    $s1, 0
@@ -419,14 +419,14 @@ L3_14:
         addiu $s2, $s2, -1
         # t10 = s ptr+ t8
         addu  $t0, $s5, $s7
-        sw    $t0, -32($fp)
+        sw    $t0, -4($fp)
         # t11 = *t10
         move  $t8, $t0
         lb    $t0, 0($t8)
-        sb    $t0, -33($fp)
+        sb    $t0, -5($fp)
         # t12 = chartoint t11
-        lb    $t0, -33($fp)
-        sw    $t0, -40($fp)
+        lb    $t0, -5($fp)
+        sw    $t0, -12($fp)
         # if t7 int== t12 goto 14
         move  $t1, $t0
         beq   $s6, $t1, L3_14
@@ -438,14 +438,14 @@ L3_27:
         li    $v0, 1
         j     _Z12isPalindromePKc_exit
 _Z12isPalindromePKc_exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -88($fp)
-        lw    $s2, -80($fp)
-        lw    $s3, -64($fp)
-        lw    $s4, -68($fp)
-        lw    $s5, -84($fp)
-        lw    $s6, -72($fp)
-        lw    $s7, -76($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -44($fp)
+        lw    $s2, -36($fp)
+        lw    $s3, -20($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -40($fp)
+        lw    $s6, -28($fp)
+        lw    $s7, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -456,15 +456,15 @@ _Z10countWordsPKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
-        sw    $s0, -48($fp)
-        sw    $s1, -56($fp)
-        sw    $s2, -52($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -36($fp)
-        sw    $s6, -40($fp)
-        sw    $s7, -44($fp)
+        addiu $sp, $sp, -32
+        sw    $s0, -24($fp)
+        sw    $s1, -32($fp)
+        sw    $s2, -28($fp)
+        sw    $s3, -4($fp)
+        sw    $s4, -8($fp)
+        sw    $s5, -12($fp)
+        sw    $s6, -16($fp)
+        sw    $s7, -20($fp)
         lw    $s0, 8($fp)
         # words = 0
         li    $s2, 0
@@ -548,14 +548,14 @@ L4_31:
         move  $v0, $s2
         j     _Z10countWordsPKc_exit
 _Z10countWordsPKc_exit:
-        lw    $s0, -48($fp)
-        lw    $s1, -56($fp)
-        lw    $s2, -52($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -36($fp)
-        lw    $s6, -40($fp)
-        lw    $s7, -44($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -32($fp)
+        lw    $s2, -28($fp)
+        lw    $s3, -4($fp)
+        lw    $s4, -8($fp)
+        lw    $s5, -12($fp)
+        lw    $s6, -16($fp)
+        lw    $s7, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -567,20 +567,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -552
+        addiu $sp, $sp, -152
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M5_0
         j     __stack_overflow
 M5_0:
-        sw    $s0, -520($fp)
-        sw    $s1, -532($fp)
-        sw    $s2, -536($fp)
-        sw    $s3, -540($fp)
-        sw    $s4, -544($fp)
-        sw    $s5, -548($fp)
-        sw    $s6, -524($fp)
-        sw    $s7, -528($fp)
+        sw    $s0, -124($fp)
+        sw    $s1, -136($fp)
+        sw    $s2, -140($fp)
+        sw    $s3, -144($fp)
+        sw    $s4, -148($fp)
+        sw    $s5, -152($fp)
+        sw    $s6, -128($fp)
+        sw    $s7, -132($fp)
         # names[0] = "delta"
         la    $t0, str0
         sw    $t0, -60($fp)
@@ -900,7 +900,7 @@ L5_133:
         move  $s1, $t0
         # t13 = t110 int- t112
         subu  $t0, $s0, $s1
-        sw    $t0, -100($fp)
+        sw    $t0, -76($fp)
         # t114 = "b"
         la    $s0, str9
         # t115 = "abc"
@@ -973,7 +973,7 @@ L5_168:
         la    $t0, str6
         sw    $t0, 0($sp)
         sw    $s7, 4($sp)
-        lw    $t0, -100($fp)
+        lw    $t0, -76($fp)
         sw    $t0, 8($sp)
         sw    $s0, 12($sp)
         jal   __printf
@@ -989,27 +989,27 @@ L5_175:
         bge   $s7, $t1, L5_210
         # t16 = i.32 int<< 2
         sll   $t0, $s7, 2
-        sw    $t0, -108($fp)
+        sw    $t0, -80($fp)
         # t17 = names[t16]
         addiu $t8, $fp, -60
-        lw    $t9, -108($fp)
+        lw    $t9, -80($fp)
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -112($fp)
+        sw    $t0, -84($fp)
         # t18 = smallest int<< 2
         lw    $t0, -64($fp)
         sll   $t0, $t0, 2
-        sw    $t0, -116($fp)
+        sw    $t0, -88($fp)
         # t19 = names[t18]
         addiu $t8, $fp, -60
-        lw    $t9, -116($fp)
+        lw    $t9, -88($fp)
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -120($fp)
+        sw    $t0, -92($fp)
         # t126 = t17
-        lw    $s0, -112($fp)
+        lw    $s0, -84($fp)
         # t127 = t19
-        lw    $s1, -120($fp)
+        lw    $s1, -92($fp)
 L5_182:
         # t128 = *t126
         lb    $s2, 0($s0)
@@ -1056,21 +1056,21 @@ L5_182:
 L5_201:
         # t133 = *t126
         lb    $t0, 0($s0)
-        sb    $t0, -477($fp)
+        sb    $t0, -102($fp)
         # t134 = chartoint t133
-        lb    $t0, -477($fp)
-        sw    $t0, -484($fp)
+        lb    $t0, -102($fp)
+        sw    $t0, -108($fp)
         # t135 = *t127
         lb    $t0, 0($s1)
-        sb    $t0, -485($fp)
+        sb    $t0, -109($fp)
         # t136 = chartoint t135
-        lb    $t0, -485($fp)
-        sw    $t0, -492($fp)
+        lb    $t0, -109($fp)
+        sw    $t0, -116($fp)
         # t137 = t134 int- t136
-        lw    $t0, -484($fp)
-        lw    $t1, -492($fp)
+        lw    $t0, -108($fp)
+        lw    $t1, -116($fp)
         subu  $t0, $t0, $t1
-        sw    $t0, -496($fp)
+        sw    $t0, -120($fp)
         # if t137 int>= 0 goto 208
         bge   $t0, $zero, L5_208
         # smallest = i.32
@@ -1189,36 +1189,36 @@ L5_210:
         addiu $sp, $sp, 16
         # upper[0] = 109
         li    $t0, 109
-        sb    $t0, -76($fp)
+        sb    $t0, -72($fp)
         # upper[1] = 105
         li    $t0, 105
-        sb    $t0, -75($fp)
+        sb    $t0, -71($fp)
         # upper[2] = 120
         li    $t0, 120
-        sb    $t0, -74($fp)
+        sb    $t0, -70($fp)
         # upper[3] = 101
         li    $t0, 101
-        sb    $t0, -73($fp)
+        sb    $t0, -69($fp)
         # upper[4] = 100
         li    $t0, 100
-        sb    $t0, -72($fp)
+        sb    $t0, -68($fp)
         # upper[5] = 0
-        sb    $zero, -71($fp)
+        sb    $zero, -67($fp)
         # upper[6] = 0
-        sb    $zero, -70($fp)
+        sb    $zero, -66($fp)
         # upper[7] = 0
-        sb    $zero, -69($fp)
+        sb    $zero, -65($fp)
         # i.34 = 0
         li    $s0, 0
 L5_254:
         # t38 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s1, 0($t8)
         # if t38 char== 0 goto 285
         beq   $s1, $zero, L5_285
         # t39 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s2, 0($t8)
         # t40 = chartoint t39
@@ -1228,7 +1228,7 @@ L5_254:
         li    $t1, 97
         blt   $s3, $t1, L5_268
         # t41 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s4, 0($t8)
         # t42 = chartoint t41
@@ -1238,7 +1238,7 @@ L5_254:
         li    $t1, 122
         bgt   $s5, $t1, L5_268
         # t43 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s6, 0($t8)
         # t44 = chartoint t43
@@ -1246,28 +1246,28 @@ L5_254:
         move  $s7, $t0
         # t45 = t44 int- 97
         addiu $t0, $s7, -97
-        sw    $t0, -200($fp)
+        sw    $t0, -96($fp)
         # t46 = t45 int+ 65
         addiu $t0, $t0, 65
-        sw    $t0, -204($fp)
+        sw    $t0, -100($fp)
         # t47 = inttochar t46
-        sb    $t0, -205($fp)
+        sb    $t0, -101($fp)
         # upper[i.34] = t47
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
-        lb    $t0, -205($fp)
+        lb    $t0, -101($fp)
         sb    $t0, 0($t8)
 L5_268:
         # i.34 = i.34 int+ 1
         addiu $s0, $s0, 1
         # t38 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s1, 0($t8)
         # if t38 char== 0 goto 285
         beq   $s1, $zero, L5_285
         # t39 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s2, 0($t8)
         # t40 = chartoint t39
@@ -1277,7 +1277,7 @@ L5_268:
         li    $t1, 97
         blt   $s3, $t1, L5_283
         # t41 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s4, 0($t8)
         # t42 = chartoint t41
@@ -1287,7 +1287,7 @@ L5_268:
         li    $t1, 122
         bgt   $s5, $t1, L5_283
         # t43 = upper[i.34]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
         lb    $s6, 0($t8)
         # t44 = chartoint t43
@@ -1295,16 +1295,16 @@ L5_268:
         move  $s7, $t0
         # t45 = t44 int- 97
         addiu $t0, $s7, -97
-        sw    $t0, -200($fp)
+        sw    $t0, -96($fp)
         # t46 = t45 int+ 65
         addiu $t0, $t0, 65
-        sw    $t0, -204($fp)
+        sw    $t0, -100($fp)
         # t47 = inttochar t46
-        sb    $t0, -205($fp)
+        sb    $t0, -101($fp)
         # upper[i.34] = t47
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -72
         addu  $t8, $t8, $s0
-        lb    $t0, -205($fp)
+        lb    $t0, -101($fp)
         sb    $t0, 0($t8)
 L5_283:
         # i.34 = i.34 int+ 1
@@ -1313,7 +1313,7 @@ L5_283:
         j     L5_254
 L5_285:
         # t49 = &upper
-        addiu $s0, $fp, -76
+        addiu $s0, $fp, -72
         # param "%s %d\n"
         # param t49
         # param 8
@@ -1367,14 +1367,14 @@ L5_303:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        lw    $s0, -520($fp)
-        lw    $s1, -532($fp)
-        lw    $s2, -536($fp)
-        lw    $s3, -540($fp)
-        lw    $s4, -544($fp)
-        lw    $s5, -548($fp)
-        lw    $s6, -524($fp)
-        lw    $s7, -528($fp)
+        lw    $s0, -124($fp)
+        lw    $s1, -136($fp)
+        lw    $s2, -140($fp)
+        lw    $s3, -144($fp)
+        lw    $s4, -148($fp)
+        lw    $s5, -152($fp)
+        lw    $s6, -128($fp)
+        lw    $s7, -132($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

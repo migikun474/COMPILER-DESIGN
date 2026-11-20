@@ -53,9 +53,9 @@ _Z8classifyi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -8($fp)
+        addiu $sp, $sp, -8
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
         lw    $s0, 8($fp)
         # t1 = n
         move  $s1, $s0
@@ -97,8 +97,8 @@ L0_13:
         move  $v0, $s0
         j     _Z8classifyi_exit
 _Z8classifyi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -8($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -110,16 +110,16 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        sw    $s0, -52($fp)
-        sw    $s1, -56($fp)
-        sw    $s2, -48($fp)
-        sw    $s3, -60($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -16($fp)
         # total = 0
         li    $s3, 0
         # i = 0
@@ -345,10 +345,10 @@ L1_71:
         move  $v0, $s3
         j     main__exit
 main__exit:
-        lw    $s0, -52($fp)
-        lw    $s1, -56($fp)
-        lw    $s2, -48($fp)
-        lw    $s3, -60($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

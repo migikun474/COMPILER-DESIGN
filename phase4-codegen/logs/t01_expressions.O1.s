@@ -70,19 +70,19 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -120
+        addiu $sp, $sp, -40
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -104($fp)
-        s.d   $f22, -112($fp)
-        sw    $s0, -92($fp)
-        sw    $s1, -88($fp)
-        sw    $s2, -96($fp)
-        sw    $s3, -116($fp)
-        sw    $s4, -120($fp)
+        s.d   $f20, -24($fp)
+        s.d   $f22, -32($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -36($fp)
+        sw    $s4, -40($fp)
         # a = 7
         li    $s2, 7
         # b = 3
@@ -394,13 +394,13 @@ M0_0:
         li    $v0, 12
         j     main__exit
 main__exit:
-        l.d   $f20, -104($fp)
-        l.d   $f22, -112($fp)
-        lw    $s0, -92($fp)
-        lw    $s1, -88($fp)
-        lw    $s2, -96($fp)
-        lw    $s3, -116($fp)
-        lw    $s4, -120($fp)
+        l.d   $f20, -24($fp)
+        l.d   $f22, -32($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -36($fp)
+        lw    $s4, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -34,20 +34,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
+        addiu $sp, $sp, -40
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -68($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -48($fp)
-        sw    $s3, -64($fp)
-        sw    $s4, -40($fp)
-        sw    $s5, -44($fp)
-        sw    $s6, -52($fp)
-        sw    $s7, -56($fp)
+        sw    $s0, -36($fp)
+        sw    $s1, -28($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -32($fp)
+        sw    $s4, -8($fp)
+        sw    $s5, -12($fp)
+        sw    $s6, -20($fp)
+        sw    $s7, -24($fp)
         # letters = 0
         li    $s1, 0
         # i = 1
@@ -82,7 +82,7 @@ L0_11:
         addu  $s7, $t0, $s6
         # t9 = *t8
         lw    $t0, 0($s7)
-        sw    $t0, -36($fp)
+        sw    $t0, -4($fp)
         # param "%d: %s\n"
         # param i
         # param t9
@@ -91,7 +91,7 @@ L0_11:
         la    $t0, str0
         sw    $t0, 0($sp)
         sw    $s3, 4($sp)
-        lw    $t0, -36($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
@@ -116,14 +116,14 @@ L0_20:
         lw    $v0, 8($fp)
         j     main__exit
 main__exit:
-        lw    $s0, -68($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -48($fp)
-        lw    $s3, -64($fp)
-        lw    $s4, -40($fp)
-        lw    $s5, -44($fp)
-        lw    $s6, -52($fp)
-        lw    $s7, -56($fp)
+        lw    $s0, -36($fp)
+        lw    $s1, -28($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -32($fp)
+        lw    $s4, -8($fp)
+        lw    $s5, -12($fp)
+        lw    $s6, -20($fp)
+        lw    $s7, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

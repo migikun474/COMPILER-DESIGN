@@ -41,7 +41,7 @@ _Z5touchv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = g int+ 1
         lw    $t0, g_g
         addiu $s0, $t0, 1
@@ -52,7 +52,7 @@ _Z5touchv:
         move  $v0, $s0
         j     _Z5touchv_exit
 _Z5touchv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -63,11 +63,11 @@ _Z5jumpsi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -32($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -16($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -12($fp)
         lw    $s1, 8($fp)
         # k = 0
         li    $s3, 0
@@ -115,10 +115,10 @@ L1_14:
         move  $v0, $s2
         j     _Z5jumpsi_exit
 _Z5jumpsi_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -32($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -130,17 +130,17 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -152
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        sw    $s0, -144($fp)
-        sw    $s1, -148($fp)
-        sw    $s2, -152($fp)
-        sw    $s3, -136($fp)
-        sw    $s4, -140($fp)
+        sw    $s0, -24($fp)
+        sw    $s1, -28($fp)
+        sw    $s2, -32($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
         # param "%d %d\n"
         # param 13
         # param 13
@@ -293,24 +293,24 @@ L2_44:
         addiu $sp, $sp, 16
         # t53 = 1
         li    $t0, 1
-        sw    $t0, -104($fp)
+        sw    $t0, -4($fp)
         # t54 = &t53
-        addiu $s0, $fp, -104
+        addiu $s0, $fp, -4
         # t53 = 10
         li    $t0, 10
-        sw    $t0, -104($fp)
+        sw    $t0, -4($fp)
         # t55 = *t54
         lw    $s1, 0($s0)
         # t56 = t55 int+ 1
         addiu $s0, $s1, 1
         # t57[0] = 3
         li    $t0, 3
-        sw    $t0, -124($fp)
+        sw    $t0, -12($fp)
         # t57[4] = 4
         li    $t0, 4
-        sw    $t0, -120($fp)
+        sw    $t0, -8($fp)
         # t58 = t57[0]
-        lw    $s1, -124($fp)
+        lw    $s1, -12($fp)
         # t59 = t56 int+ t58
         addu  $s2, $s0, $s1
         # param "%d\n"
@@ -373,11 +373,11 @@ L2_44:
         lw    $v0, g_g
         j     main__exit
 main__exit:
-        lw    $s0, -144($fp)
-        lw    $s1, -148($fp)
-        lw    $s2, -152($fp)
-        lw    $s3, -136($fp)
-        lw    $s4, -140($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -28($fp)
+        lw    $s2, -32($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

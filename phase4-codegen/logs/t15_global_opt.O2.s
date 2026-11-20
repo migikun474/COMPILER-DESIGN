@@ -41,7 +41,7 @@ _Z5touchv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = g int+ 1
         lw    $t0, g_g
         addiu $s0, $t0, 1
@@ -52,7 +52,7 @@ _Z5touchv:
         move  $v0, $s0
         j     _Z5touchv_exit
 _Z5touchv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -63,10 +63,10 @@ _Z8branchesi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -32($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -28($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -4($fp)
         lw    $s2, 8($fp)
         # if c int== 0 goto 3
         beq   $s2, $zero, L1_3
@@ -94,9 +94,9 @@ L1_7:
         move  $v0, $s0
         j     _Z8branchesi_exit
 _Z8branchesi_exit:
-        lw    $s0, -32($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -28($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -107,11 +107,11 @@ _Z4loopi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -48($fp)
-        sw    $s3, -44($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -12($fp)
         lw    $s3, 8($fp)
         # sum = 0
         li    $s1, 0
@@ -139,10 +139,10 @@ L2_8:
         move  $v0, $s1
         j     _Z4loopi_exit
 _Z4loopi_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -48($fp)
-        lw    $s3, -44($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -154,15 +154,15 @@ _Z9rewritteni:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -36($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -40($fp)
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -12($fp)
         lw    $s0, 8($fp)
         # b = a
         move  $s2, $s0
@@ -187,9 +187,9 @@ L3_3:
         move  $v0, $s1
         j     _Z9rewritteni_exit
 _Z9rewritteni_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -40($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -201,10 +201,10 @@ _Z10viaPointerv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
-        sw    $s0, -44($fp)
-        sw    $s1, -48($fp)
-        sw    $s2, -52($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -16($fp)
+        sw    $s1, -20($fp)
+        sw    $s2, -24($fp)
         # x = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -219,21 +219,21 @@ _Z10viaPointerv:
         addiu $s0, $s1, 1
         # s[0] = 3
         li    $t0, 3
-        sw    $t0, -20($fp)
+        sw    $t0, -12($fp)
         # s[4] = 4
         li    $t0, 4
-        sw    $t0, -16($fp)
+        sw    $t0, -8($fp)
         # t4 = s[0]
-        lw    $s1, -20($fp)
+        lw    $s1, -12($fp)
         # t5 = t3 int+ t4
         addu  $s2, $s0, $s1
         # return t5
         move  $v0, $s2
         j     _Z10viaPointerv_exit
 _Z10viaPointerv_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -48($fp)
-        lw    $s2, -52($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -20($fp)
+        lw    $s2, -24($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -244,11 +244,11 @@ _Z5jumpsi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -32($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -16($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -12($fp)
         lw    $s1, 8($fp)
         # k = 0
         li    $s3, 0
@@ -296,10 +296,10 @@ L5_14:
         move  $v0, $s2
         j     _Z5jumpsi_exit
 _Z5jumpsi_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -32($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -311,16 +311,16 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M6_0
         j     __stack_overflow
 M6_0:
-        sw    $s0, -60($fp)
-        sw    $s1, -64($fp)
-        sw    $s2, -68($fp)
-        sw    $s3, -72($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         # param 0
         # t1 = call branches(int), 1
         addiu $sp, $sp, -8
@@ -476,10 +476,10 @@ M6_0:
         lw    $v0, g_g
         j     main__exit
 main__exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -64($fp)
-        lw    $s2, -68($fp)
-        lw    $s3, -72($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

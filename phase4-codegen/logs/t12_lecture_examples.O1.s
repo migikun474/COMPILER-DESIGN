@@ -31,17 +31,17 @@ main_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -216
-        s.d   $f20, -216($fp)
-        s.d   $f22, -184($fp)
-        sw    $s0, -176($fp)
-        sw    $s1, -188($fp)
-        sw    $s2, -172($fp)
-        sw    $s3, -192($fp)
-        sw    $s4, -208($fp)
-        sw    $s5, -196($fp)
-        sw    $s6, -200($fp)
-        sw    $s7, -204($fp)
+        addiu $sp, $sp, -144
+        s.d   $f20, -144($fp)
+        s.d   $f22, -112($fp)
+        sw    $s0, -104($fp)
+        sw    $s1, -116($fp)
+        sw    $s2, -100($fp)
+        sw    $s3, -120($fp)
+        sw    $s4, -136($fp)
+        sw    $s5, -124($fp)
+        sw    $s6, -128($fp)
+        sw    $s7, -132($fp)
         # b = 2
         li    $s1, 2
         # c = 3
@@ -52,7 +52,7 @@ main_:
         li    $s7, 5
         # f = 6
         li    $t0, 6
-        sw    $t0, -24($fp)
+        sw    $t0, -4($fp)
         # i = 1
         li    $s3, 1
         # r = 1.5
@@ -82,13 +82,13 @@ L0_15:
 L0_19:
         # y = t7
         move  $t0, $s2
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # if a int< b goto 25
         blt   $s0, $s1, L0_25
         # if c int>= d goto 23
         bge   $s5, $s6, L0_23
         # if e int< f goto 25
-        lw    $t1, -24($fp)
+        lw    $t1, -4($fp)
         blt   $s7, $t1, L0_25
 L0_23:
         # t8 = 0
@@ -101,7 +101,7 @@ L0_25:
 L0_26:
         # y = t8
         move  $t0, $s0
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # t9 = inttodouble i
         move  $t0, $s3
         mtc1  $t0, $f0
@@ -112,7 +112,7 @@ L0_26:
         # t11 = i int<< 2
         sll   $s1, $s3, 2
         # t12 = arr[t11]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -48
         addu  $t8, $t8, $s1
         lw    $s2, 0($t8)
         # x = t12
@@ -122,23 +122,23 @@ L0_26:
         # t15 = t14 int<< 2
         sll   $s1, $s3, 2
         # m[t15] = t12
-        addiu $t8, $fp, -124
+        addiu $t8, $fp, -96
         addu  $t8, $t8, $s1
         sw    $s2, 0($t8)
         # return t8
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -216($fp)
-        l.d   $f22, -184($fp)
-        lw    $s0, -176($fp)
-        lw    $s1, -188($fp)
-        lw    $s2, -172($fp)
-        lw    $s3, -192($fp)
-        lw    $s4, -208($fp)
-        lw    $s5, -196($fp)
-        lw    $s6, -200($fp)
-        lw    $s7, -204($fp)
+        l.d   $f20, -144($fp)
+        l.d   $f22, -112($fp)
+        lw    $s0, -104($fp)
+        lw    $s1, -116($fp)
+        lw    $s2, -100($fp)
+        lw    $s3, -120($fp)
+        lw    $s4, -136($fp)
+        lw    $s5, -124($fp)
+        lw    $s6, -128($fp)
+        lw    $s7, -132($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8

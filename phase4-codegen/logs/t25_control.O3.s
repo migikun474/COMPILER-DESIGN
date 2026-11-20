@@ -61,14 +61,14 @@ _Z8classifyPKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
-        sw    $s0, -60($fp)
-        sw    $s1, -44($fp)
-        sw    $s2, -52($fp)
-        sw    $s3, -48($fp)
-        sw    $s4, -56($fp)
-        sw    $s5, -36($fp)
-        sw    $s6, -40($fp)
+        addiu $sp, $sp, -32
+        sw    $s0, -28($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -4($fp)
+        sw    $s6, -8($fp)
         lw    $s4, 8($fp)
         # state = 0
         li    $s0, 0
@@ -184,13 +184,13 @@ L0_40:
         move  $v0, $s0
         j     _Z8classifyPKc_exit
 _Z8classifyPKc_exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -44($fp)
-        lw    $s2, -52($fp)
-        lw    $s3, -48($fp)
-        lw    $s4, -56($fp)
-        lw    $s5, -36($fp)
-        lw    $s6, -40($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -4($fp)
+        lw    $s6, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -201,13 +201,13 @@ _Z6daysInii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -40($fp)
-        sw    $s3, -24($fp)
-        sw    $s4, -28($fp)
-        sw    $s5, -32($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -20($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -24($fp)
+        sw    $s3, -8($fp)
+        sw    $s4, -12($fp)
+        sw    $s5, -16($fp)
         lw    $s0, 8($fp)
         lw    $s2, 12($fp)
         # goto 13
@@ -271,12 +271,12 @@ L1_13:
         # goto 12
         j     L1_12
 _Z6daysInii_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -40($fp)
-        lw    $s3, -24($fp)
-        lw    $s4, -28($fp)
-        lw    $s5, -32($fp)
+        lw    $s0, -20($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -24($fp)
+        lw    $s3, -8($fp)
+        lw    $s4, -12($fp)
+        lw    $s5, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -288,19 +288,19 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -232
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        sw    $s0, -204($fp)
-        sw    $s1, -208($fp)
-        sw    $s2, -212($fp)
-        sw    $s3, -216($fp)
-        sw    $s4, -220($fp)
-        sw    $s5, -224($fp)
-        sw    $s6, -228($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -24($fp)
+        sw    $s6, -28($fp)
         # param "1234"
         # t1 = call classify(const char *), 1
         addiu $sp, $sp, -8
@@ -837,13 +837,13 @@ L2_191:
         move  $v0, $s3
         j     main__exit
 main__exit:
-        lw    $s0, -204($fp)
-        lw    $s1, -208($fp)
-        lw    $s2, -212($fp)
-        lw    $s3, -216($fp)
-        lw    $s4, -220($fp)
-        lw    $s5, -224($fp)
-        lw    $s6, -228($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -24($fp)
+        lw    $s6, -28($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

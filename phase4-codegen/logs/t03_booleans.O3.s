@@ -57,13 +57,13 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -64($fp)
+        sw    $s0, -4($fp)
         # param "%d\n"
         # param 1
         # call printf, 2
@@ -278,7 +278,7 @@ L0_61:
         li    $v0, 1
         j     main__exit
 main__exit:
-        lw    $s0, -64($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -41,16 +41,16 @@ _Z4facti:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -20($fp)
-        sw    $s3, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
         lw    $s1, 8($fp)
         # if n int> 1 goto 3
         li    $t1, 1
@@ -76,10 +76,10 @@ L0_7:
         move  $v0, $s0
         j     _Z4facti_exit
 _Z4facti_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -20($fp)
-        lw    $s3, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -91,15 +91,15 @@ _Z6nestedii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -168
-        sw    $s0, -160($fp)
-        sw    $s1, -164($fp)
-        sw    $s2, -156($fp)
-        sw    $s3, -168($fp)
-        sw    $s4, -140($fp)
-        sw    $s5, -144($fp)
-        sw    $s6, -148($fp)
-        sw    $s7, -152($fp)
+        addiu $sp, $sp, -120
+        sw    $s0, -108($fp)
+        sw    $s1, -112($fp)
+        sw    $s2, -104($fp)
+        sw    $s3, -116($fp)
+        sw    $s4, -88($fp)
+        sw    $s5, -92($fp)
+        sw    $s6, -96($fp)
+        sw    $s7, -100($fp)
         lw    $s1, 12($fp)
         # s = 0
         li    $s3, 0
@@ -125,11 +125,11 @@ L1_4:
         mul   $s7, $s2, $s1
         # t5 = t4 int+ c.33
         addu  $t0, $s7, $s0
-        sw    $t0, -120($fp)
+        sw    $t0, -84($fp)
         # grid[t3] = t5
         addiu $t8, $fp, -80
         addu  $t8, $t8, $s6
-        lw    $t0, -120($fp)
+        lw    $t0, -84($fp)
         sw    $t0, 0($t8)
         # c.33 = c.33 int+ 1
         addiu $s0, $s0, 1
@@ -146,11 +146,11 @@ L1_4:
         mul   $s7, $s2, $s1
         # t5 = t4 int+ c.33
         addu  $t0, $s7, $s0
-        sw    $t0, -120($fp)
+        sw    $t0, -84($fp)
         # grid[t3] = t5
         addiu $t8, $fp, -80
         addu  $t8, $t8, $s6
-        lw    $t0, -120($fp)
+        lw    $t0, -84($fp)
         sw    $t0, 0($t8)
         # c.33 = c.33 int+ 1
         addiu $s0, $s0, 1
@@ -217,14 +217,14 @@ L1_43:
         move  $v0, $s3
         j     _Z6nestedii_exit
 _Z6nestedii_exit:
-        lw    $s0, -160($fp)
-        lw    $s1, -164($fp)
-        lw    $s2, -156($fp)
-        lw    $s3, -168($fp)
-        lw    $s4, -140($fp)
-        lw    $s5, -144($fp)
-        lw    $s6, -148($fp)
-        lw    $s7, -152($fp)
+        lw    $s0, -108($fp)
+        lw    $s1, -112($fp)
+        lw    $s2, -104($fp)
+        lw    $s3, -116($fp)
+        lw    $s4, -88($fp)
+        lw    $s5, -92($fp)
+        lw    $s6, -96($fp)
+        lw    $s7, -100($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -235,12 +235,12 @@ _Z6memoryi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -96
-        sw    $s0, -88($fp)
-        sw    $s1, -80($fp)
-        sw    $s2, -84($fp)
-        sw    $s3, -92($fp)
-        sw    $s4, -96($fp)
+        addiu $sp, $sp, -40
+        sw    $s0, -28($fp)
+        sw    $s1, -20($fp)
+        sw    $s2, -24($fp)
+        sw    $s3, -32($fp)
+        sw    $s4, -36($fp)
         lw    $s3, 8($fp)
         # arr[0] = 1
         li    $t0, 1
@@ -294,11 +294,11 @@ _Z6memoryi:
         move  $v0, $s1
         j     _Z6memoryi_exit
 _Z6memoryi_exit:
-        lw    $s0, -88($fp)
-        lw    $s1, -80($fp)
-        lw    $s2, -84($fp)
-        lw    $s3, -92($fp)
-        lw    $s4, -96($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -20($fp)
+        lw    $s2, -24($fp)
+        lw    $s3, -32($fp)
+        lw    $s4, -36($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -310,18 +310,18 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -264
+        addiu $sp, $sp, -56
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_6
         j     __stack_overflow
 M3_6:
-        sw    $s0, -240($fp)
-        sw    $s1, -244($fp)
-        sw    $s2, -248($fp)
-        sw    $s3, -252($fp)
-        sw    $s4, -256($fp)
-        sw    $s5, -260($fp)
+        sw    $s0, -32($fp)
+        sw    $s1, -36($fp)
+        sw    $s2, -40($fp)
+        sw    $s3, -44($fp)
+        sw    $s4, -48($fp)
+        sw    $s5, -52($fp)
         # x = 5
         li    $t0, 5
         sw    $t0, -4($fp)
@@ -340,33 +340,33 @@ M3_6:
         li    $t0, 2
         sw    $t0, -8($fp)
         # t37 = p
-        addiu $a0, $fp, -76
+        addiu $a0, $fp, -20
         addiu $a1, $fp, -12
         li    $a2, 8
         jal   __memcpy
         # t38 = t37[0]
-        lw    $s1, -76($fp)
+        lw    $s1, -20($fp)
         # t39 = t38 int+ 1
         addiu $s0, $s1, 1
         # t37[0] = t39
-        sw    $s0, -76($fp)
+        sw    $s0, -20($fp)
         # t40 = t37[4]
-        lw    $s1, -72($fp)
+        lw    $s1, -16($fp)
         # t41 = t39 int+ t40
         addu  $s2, $s0, $s1
         # t42 = p
-        addiu $a0, $fp, -100
+        addiu $a0, $fp, -28
         addiu $a1, $fp, -12
         li    $a2, 8
         jal   __memcpy
         # t43 = t42[0]
-        lw    $s1, -100($fp)
+        lw    $s1, -28($fp)
         # t44 = t43 int+ 1
         addiu $s0, $s1, 1
         # t42[0] = t44
-        sw    $s0, -100($fp)
+        sw    $s0, -28($fp)
         # t45 = t42[4]
-        lw    $s1, -96($fp)
+        lw    $s1, -24($fp)
         # t46 = t44 int+ t45
         addu  $s3, $s0, $s1
         # t5 = t41 int+ t46
@@ -820,12 +820,12 @@ L3_161:
         lw    $v0, g_calls
         j     main__exit
 main__exit:
-        lw    $s0, -240($fp)
-        lw    $s1, -244($fp)
-        lw    $s2, -248($fp)
-        lw    $s3, -252($fp)
-        lw    $s4, -256($fp)
-        lw    $s5, -260($fp)
+        lw    $s0, -32($fp)
+        lw    $s1, -36($fp)
+        lw    $s2, -40($fp)
+        lw    $s3, -44($fp)
+        lw    $s4, -48($fp)
+        lw    $s5, -52($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
