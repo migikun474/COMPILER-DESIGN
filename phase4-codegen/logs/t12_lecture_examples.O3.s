@@ -34,14 +34,19 @@ main_:
         # a = -12
         li    $s0, -12
 L0_1:
-        # if a int>= 2 goto 4
+        # if a int>= 2 goto 6
         li    $t1, 2
-        bge   $s0, $t1, L0_4
+        bge   $s0, $t1, L0_6
+        # a = a int+ 1
+        addiu $s0, $s0, 1
+        # if a int>= 2 goto 6
+        li    $t1, 2
+        bge   $s0, $t1, L0_6
         # a = a int+ 1
         addiu $s0, $s0, 1
         # goto 1
         j     L0_1
-L0_4:
+L0_6:
         # t12 = arr[4]
         lw    $s0, -72($fp)
         # m[24] = t12

@@ -211,6 +211,29 @@ struct FunctionPass {
         auto is = [&](const Operand &o, long long v) {
             return o.kind == Operand::IntConst ? o.ival == v : o.kind == Operand::FloatConst && o.fval == static_cast<double>(v);
         };
+        if (isIntCls(q.cls)) { /* identities exact for integers only (x - x is NaN for x = inf) */
+            Val zero, ones;
+            ones.i = -1;
+            bool same = sameName(q.a, q.b);
+            switch (q.op) {
+                case Op::Sub: case Op::BitXor:
+                    if (same) { becomeCopy(q, constant(zero, q.r)); return true; } /* x - x, x ^ x */
+                    break;
+                case Op::BitAnd:
+                    if (same || (bNum && is(q.b, -1))) { becomeCopy(q, q.a); return true; } /* x & x, x & ~0 */
+                    if (bNum && is(q.b, 0)) { becomeCopy(q, constant(zero, q.r)); return true; }
+                    break;
+                case Op::BitOr:
+                    if (same) { becomeCopy(q, q.a); return true; }                            /* x | x */
+                    if (bNum && is(q.b, -1)) { becomeCopy(q, constant(ones, q.r)); return true; }
+                    break;
+                case Op::Mod:
+                    if (bNum && (is(q.b, 1) || is(q.b, -1))) { becomeCopy(q, constant(zero, q.r)); return true; }
+                    break;
+                default:
+                    break;
+            }
+        }
         switch (q.op) {
             case Op::Add: case Op::BitOr: case Op::BitXor:
                 if (isFloat) return false; /* x + 0.0 is not x for x = -0.0 */
@@ -680,19 +703,93 @@ struct FunctionPass {
         return liveIn;
     }
 
-    /* a scalar local that is live when the function starts is read on
-       some path before anything was assigned to it */
-    std::vector<const sem::Symbol *> readBeforeAssigned() const {
-        std::vector<const sem::Symbol *> found;
-        if (fn.quads.empty()) return found;
-        std::vector<std::set<Name>> liveIn = liveness(flowGraph()); /* kept: the loop refers into it */
-        for (const Name &n : liveIn[0]) {
-            if (!n.first || n.first->storage != sem::Storage::Local || sem::isArray(n.first->type)) continue;
+    /* reaching definitions (Dragon Book 9.2.4): forward, union at joins.
+       A definition is a quad that assigns a name; each scalar local also
+       gets a pseudo-definition "no value yet" at the function's entry.
+       Returns the definitions (name, quad; quad -1 = the entry one) and the
+       set reaching the entry of each block. */
+    struct Definition {
+        Name name;
+        int quad;
+    };
+    std::vector<std::set<int>> reachingDefinitions(const std::vector<Block> &blocks, std::vector<Definition> &defs) const {
+        std::map<Name, std::vector<int>> byName;
+        auto addDef = [&](const Name &n, int quad) {
+            byName[n].push_back(static_cast<int>(defs.size()));
+            defs.push_back({n, quad});
+        };
+        for (const auto &l : fn.sym ? fn.sym->locals : std::vector<sem::SymbolPtr>{}) {
             Operand o;
             o.kind = Operand::Var;
-            o.sym = const_cast<sem::Symbol *>(n.first);
-            o.type = n.first->type;
-            if (isPrivate(o)) found.push_back(n.first);
+            o.sym = l.get();
+            o.type = l->type;
+            if (l->storage == sem::Storage::Local && !sem::isArray(l->type) && isPrivate(o)) addDef(nameOf(o), -1);
+        }
+        size_t entryDefs = defs.size();
+        for (size_t i = 0; i < fn.quads.size(); ++i) {
+            Operand r = defined(fn.quads[i]);
+            if (isName(r)) addDef(nameOf(r), static_cast<int>(i));
+        }
+        std::vector<std::set<int>> gen(blocks.size()), kill(blocks.size()), in(blocks.size()), out(blocks.size());
+        for (size_t k = 0; k < blocks.size(); ++k)
+            for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
+                Operand r = defined(fn.quads[i]);
+                if (!isName(r)) continue;
+                for (int d : byName[nameOf(r)]) { /* this definition replaces every other one of the name */
+                    gen[k].erase(d);
+                    kill[k].insert(d);
+                }
+                for (int d : byName[nameOf(r)])
+                    if (defs[d].quad == static_cast<int>(i)) gen[k].insert(d), kill[k].erase(d);
+            }
+        for (bool changed = true; changed;) {
+            changed = false;
+            for (size_t k = 0; k < blocks.size(); ++k) {
+                std::set<int> now;
+                if (k == 0)
+                    for (size_t d = 0; d < entryDefs; ++d) now.insert(static_cast<int>(d));
+                for (int p : blocks[k].pred) now.insert(out[p].begin(), out[p].end()); /* IN = U OUT[pred] */
+                std::set<int> o = gen[k];                                               /* OUT = gen U (IN - kill) */
+                for (int d : now)
+                    if (!kill[k].count(d)) o.insert(d);
+                if (now != in[k] || o != out[k]) changed = true;
+                in[k] = now;
+                out[k] = o;
+            }
+        }
+        return in;
+    }
+
+    /* scalar locals some path reads before anything was assigned to them:
+       the use is reached by the entry pseudo-definition. (variable, line of
+       its first such use) */
+    std::vector<std::pair<const sem::Symbol *, int>> readBeforeAssigned() const {
+        std::vector<std::pair<const sem::Symbol *, int>> found;
+        if (fn.quads.empty()) return found;
+        std::vector<Block> blocks = flowGraph();
+        std::vector<Definition> defs;
+        std::vector<std::set<int>> in = reachingDefinitions(blocks, defs);
+        std::set<const sem::Symbol *> reported;
+        for (size_t k = 0; k < blocks.size(); ++k) {
+            std::set<int> reach = in[k];
+            for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
+                Quad q = fn.quads[i];
+                forEachValueUse(q, [&](Operand &o) {
+                    if (o.kind != Operand::Var || reported.count(o.sym)) return;
+                    for (int d : reach)
+                        if (defs[d].quad < 0 && defs[d].name == nameOf(o)) {
+                            found.push_back({o.sym, q.line ? q.line : o.sym->line});
+                            reported.insert(o.sym);
+                            return;
+                        }
+                });
+                Operand r = defined(fn.quads[i]);
+                if (!isName(r)) continue;
+                for (auto it = reach.begin(); it != reach.end();) /* this quad's definition replaces the name's others */
+                    it = defs[*it].name == nameOf(r) ? reach.erase(it) : std::next(it);
+                for (size_t d = 0; d < defs.size(); ++d)
+                    if (defs[d].quad == static_cast<int>(i)) reach.insert(static_cast<int>(d));
+            }
         }
         return found;
     }
@@ -876,6 +973,59 @@ struct FunctionPass {
         std::vector<Loop> result;
         for (const auto &e : byHeader) result.push_back(e.second);
         return result;
+    }
+
+    /* loop unrolling by two: `H: test; body; goto H` becomes `H: test; body;
+       H2: test; body; goto H`. Each copy keeps its own exit test, so no trip
+       count is needed; a pass saves the jump back every other iteration.
+       ponytail: only small contiguous loops (header first, the single back
+       edge last); unrolling by more, or without the second test when the
+       trip count is known, would need induction-variable analysis */
+    bool unrollLoops() {
+        const size_t MAX_BODY = 24;
+        std::vector<Block> blocks = flowGraph();
+        std::vector<Loop> all = loops(blocks);
+        /* last loop first: a rewrite only moves quads after the loop's start, so
+           the loops before it keep their indices; each loop is unrolled once */
+        std::sort(all.begin(), all.end(), [&](const Loop &x, const Loop &y) {
+            return blocks[x.header].begin > blocks[y.header].begin;
+        });
+        bool changed = false;
+        size_t floor = fn.quads.size(); /* quads from here on belong to a loop already unrolled */
+        for (const Loop &l : all) {
+            size_t lo = blocks[l.header].begin, hi = lo, size = 0;
+            for (int b : l.blocks) {
+                lo = std::min(lo, blocks[b].begin);
+                hi = std::max(hi, blocks[b].end);
+                size += blocks[b].end - blocks[b].begin;
+            }
+            const Quad &back = fn.quads[hi - 1];
+            if (lo != blocks[l.header].begin || size != hi - lo || hi - lo > MAX_BODY || back.op != Op::Goto ||
+                back.target != static_cast<int>(lo) || hi > floor)
+                continue;
+            floor = lo;
+            size_t len = hi - lo, copy = hi - 1; /* where the second copy starts */
+            auto moved = [&](int t) { /* an old index in the new list (the old back edge leads to the copy) */
+                if (t < static_cast<int>(hi) - 1) return t;
+                return t + static_cast<int>(len) - 1;
+            };
+            std::vector<Quad> out(fn.quads.begin(), fn.quads.begin() + static_cast<long>(hi - 1));
+            for (size_t i = lo; i < hi; ++i) {
+                Quad q = fn.quads[i];
+                if (isJump(q) && q.target >= static_cast<int>(lo) && q.target < static_cast<int>(hi))
+                    q.target = static_cast<int>(copy + (q.target - lo)); /* inside the loop: the copy's own quads */
+                else if (isJump(q)) q.target = moved(q.target);
+                out.push_back(q);
+            }
+            out.back().target = static_cast<int>(lo); /* the copy's back edge: to the first header */
+            for (size_t i = hi; i < fn.quads.size(); ++i) out.push_back(fn.quads[i]);
+            for (size_t i = 0; i < out.size(); ++i) /* every jump outside the copy: old indices to new */
+                if ((i < copy || i >= copy + len) && isJump(out[i])) out[i].target = moved(out[i].target);
+            fn.quads.swap(out);
+            ++stats.unrolled;
+            changed = true;
+        }
+        return changed;
     }
 
     /* `return f(args);` inside f itself: assign the arguments and jump to the start */
@@ -1095,7 +1245,33 @@ OptStats optimize(Program &program, int level) {
     }
     if (level >= 3) { /* small functions into their callers, then everything again on the larger bodies */
         inlineCalls(program, stats);
-        for (auto &f : program.functions) FunctionPass(f, stats).runLoops();
+        for (auto &f : program.functions) {
+            FunctionPass pass(f, stats);
+            pass.runLoops();
+            if (pass.unrollLoops()) pass.run(); /* once: unrolling again would double the copies */
+        }
+        /* dead functions: keep only what main reaches through calls (there are no
+           function pointers, so every use of a function is a `call`) */
+        std::set<const sem::Symbol *> live;
+        std::vector<const Function *> work;
+        for (const auto &f : program.functions)
+            if (f.sym && f.sym->name == "main" && !f.sym->ownerRecord) work.push_back(&f);
+        while (!work.empty()) {
+            const Function *f = work.back();
+            work.pop_back();
+            if (!live.insert(f->sym.get()).second) continue;
+            for (const auto &q : f->quads)
+                if (q.op == Op::Call && q.callee)
+                    for (const auto &g : program.functions)
+                        if (g.sym.get() == q.callee) work.push_back(&g);
+        }
+        if (!live.empty()) {
+            size_t before = program.functions.size();
+            program.functions.erase(std::remove_if(program.functions.begin(), program.functions.end(),
+                                                   [&](const Function &f) { return !live.count(f.sym.get()); }),
+                                    program.functions.end());
+            stats.deadFunctions += static_cast<int>(before - program.functions.size());
+        }
     }
     int index = 100;
     for (auto &f : program.functions) {
@@ -1110,8 +1286,8 @@ std::vector<std::pair<int, std::string>> uninitializedReads(Program &program) {
     std::vector<std::pair<int, std::string>> out;
     OptStats unused;
     for (auto &f : program.functions)
-        for (const sem::Symbol *v : FunctionPass(f, unused).readBeforeAssigned())
-            out.push_back({v->line, "variable '" + v->name + "' may be used uninitialized in function '" + f.signature + "'"});
+        for (const auto &[v, line] : FunctionPass(f, unused).readBeforeAssigned())
+            out.push_back({line, "variable '" + v->name + "' may be used uninitialized in function '" + f.signature + "'"});
     std::sort(out.begin(), out.end());
     return out;
 }
@@ -1146,6 +1322,8 @@ void printStats(const OptStats &s, std::ostream &out) {
         row("calls inlined", s.inlined);
         row("tail calls turned into jumps", s.tailCalls);
         row("common subexpressions across blocks", s.globalCommon);
+        row("loops unrolled", s.unrolled);
+        row("unreachable functions removed", s.deadFunctions);
     }
     out << "\n";
 }

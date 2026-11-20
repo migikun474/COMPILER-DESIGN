@@ -34,81 +34,6 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# swap(int *, int *)
-_Z4swapPiS_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
-        # t1 = *a
-        lw    $s0, 0($s2)
-        # t2 = *b
-        lw    $s1, 0($s3)
-        # *a = t2
-        sw    $s1, 0($s2)
-        # *b = t1
-        sw    $s0, 0($s3)
-        # return
-        j     _Z4swapPiS__exit
-_Z4swapPiS__exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# sum(int *, int *)
-_Z3sumPiS_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
-        sw    $s4, -28($fp)
-        lw    $s0, 8($fp)
-        lw    $s4, 12($fp)
-        # s = 0
-        li    $s1, 0
-L1_1:
-        # if first ptr>= last goto 7
-        bgeu  $s0, $s4, L1_7
-        # t1 = first
-        move  $s2, $s0
-        # first = first ptr+ 4
-        addiu $s0, $s0, 4
-        # t3 = *t1
-        lw    $s3, 0($s2)
-        # s = s int+ t3
-        addu  $s1, $s1, $s3
-        # goto 1
-        j     L1_1
-L1_7:
-        # return s
-        move  $v0, $s1
-        j     _Z3sumPiS__exit
-_Z3sumPiS__exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
-        lw    $s4, -28($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -118,9 +43,9 @@ main_:
         addiu $sp, $sp, -400
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M2_0
+        beqz  $t8, M0_0
         j     __stack_overflow
-M2_0:
+M0_0:
         s.d   $f20, -392($fp)
         s.d   $f22, -400($fp)
         sw    $s0, -356($fp)
@@ -257,9 +182,19 @@ M2_0:
         move  $s0, $s5
         # t76 = 0
         li    $s1, 0
-L2_49:
-        # if t74 ptr>= t27 goto 55
-        bgeu  $s0, $s4, L2_55
+L0_49:
+        # if t74 ptr>= t27 goto 60
+        bgeu  $s0, $s4, L0_60
+        # t77 = t74
+        move  $s2, $s0
+        # t74 = t74 ptr+ 4
+        addiu $s0, $s0, 4
+        # t78 = *t77
+        lw    $s3, 0($s2)
+        # t76 = t76 int+ t78
+        addu  $s1, $s1, $s3
+        # if t74 ptr>= t27 goto 60
+        bgeu  $s0, $s4, L0_60
         # t77 = t74
         move  $s2, $s0
         # t74 = t74 ptr+ 4
@@ -269,8 +204,8 @@ L2_49:
         # t76 = t76 int+ t78
         addu  $s1, $s1, $s3
         # goto 49
-        j     L2_49
-L2_55:
+        j     L0_49
+L0_60:
         # param "%d %d %d\n"
         # param t24
         # param t23
@@ -317,18 +252,18 @@ L2_55:
         addiu $sp, $sp, 16
         # t42 = t17 ptr+ 12
         addiu $s1, $s5, 12
-        # if t31 ptr== t42 goto 76
+        # if t31 ptr== t42 goto 81
         xor   $s1, $s0, $s1
         sltiu $s1, $s1, 1
-L2_77:
-        # if t31 ptr!= t17 goto 80
+L0_82:
+        # if t31 ptr!= t17 goto 85
         xor   $s2, $s0, $s5
         sltu  $s2, $zero, $s2
-L2_81:
-        # if t31 ptr< t21 goto 84
+L0_86:
+        # if t31 ptr< t21 goto 89
         lw    $t1, -188($fp)
         sltu  $s0, $s0, $t1
-L2_85:
+L0_90:
         # param "%d %d %d\n"
         # param t40
         # param t43
@@ -446,16 +381,22 @@ L2_85:
         sb    $zero, -101($fp)
         # t = &text
         addiu $s0, $fp, -108
-L2_128:
+L0_133:
         # t62 = *t
         lb    $s1, 0($s0)
-        # if t62 char== 0 goto 132
-        beq   $s1, $zero, L2_132
+        # if t62 char== 0 goto 140
+        beq   $s1, $zero, L0_140
         # t = t ptr+ 1
         addiu $s0, $s0, 1
-        # goto 128
-        j     L2_128
-L2_132:
+        # t62 = *t
+        lb    $s1, 0($s0)
+        # if t62 char== 0 goto 140
+        beq   $s1, $zero, L0_140
+        # t = t ptr+ 1
+        addiu $s0, $s0, 1
+        # goto 133
+        j     L0_133
+L0_140:
         # t64 = &text
         addiu $s1, $fp, -108
         # t65 = t ptr- t64

@@ -4,7 +4,7 @@
 
    Source file   : test/t24_references.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 217 -> 199 instruction(s)
+   Result        : Optimized three address code (-O3): 217 -> 174 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          217 -> 199   (8% fewer)
+   instructions                          217 -> 174   (19% fewer)
 
    constants folded                        6
    algebraic simplifications               7
@@ -29,76 +29,8 @@
    calls inlined                          11
    tail calls turned into jumps            0
    common subexpressions across blocks      8
-
-============================================================================
- FUNCTION deposit(struct Account &, double)        (link name _Z7depositR7Accountd)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 3 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   struct Account &                4       0
-   amount           param   double                          8       8
-   t1               temp    struct Account *                4      16
-   t2               temp    double                          8      24
-   t3               temp    double                          8      32
-   (1 temporary no longer used after optimization not shown)
-
- Code: 5 instruction(s)
-
-    100     t1 = a ptr+ 8
-    101     t2 = *t1
-    102     t3 = t2 double+ amount
-    103     *t1 = t3
-    104     return
-
-============================================================================
- FUNCTION peek(const struct Account &)        (link name _Z4peekRK7Account)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   const struct Account &          4       0
-   t1               temp    const struct Account *          4       4
-   t2               temp    double                          8       8
-
- Code: 3 instruction(s)
-
-    105     t1 = a ptr+ 8
-    106     t2 = *t1
-    107     return t2
-
-============================================================================
- FUNCTION richer(struct Account &, struct Account &)        (link name _Z6richerR7AccountS0_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 40 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   struct Account &                4       0
-   b                param   struct Account &                4       4
-   t1               temp    struct Account *                4       8
-   t2               temp    struct Account *                4      12
-   t3               temp    double                          8      16
-   t4               temp    struct Account *                4      24
-   t5               temp    double                          8      32
-
- Code: 10 instruction(s)
-
-    108       t2 = a ptr+ 8
-    109       t3 = *t2
-    110       t4 = b ptr+ 8
-    111       t5 = *t4
-    112       if t3 double>= t5 goto L1
-    113       goto L2
-    114  L1:  t1 = a
-    115       goto L3
-    116  L2:  t1 = b
-    117  L3:  return t1
+   loops unrolled                          1
+   unreachable functions removed           7
 
 ============================================================================
  FUNCTION minmax(const int *, int, int &, int &)        (link name _Z6minmaxPKiiRiS1_)
@@ -124,120 +56,42 @@
    t15              temp    int                             4      76
    (7 temporaries no longer used after optimization not shown)
 
- Code: 20 instruction(s)
+ Code: 34 instruction(s)
 
-    118       t1 = *values
-    119       *hi = t1
-    120       *lo = t1
-    121       i = 1
-    122  L4:  if i int>= n goto L7
-    123       t2 = i int<< 2
-    124       t3 = values ptr+ t2
-    125       t4 = *t3
-    126       t5 = *lo
-    127       if t4 int>= t5 goto L5
-    128       t8 = *t3
-    129       *lo = t8
-    130  L5:  t11 = *t3
-    131       t12 = *hi
-    132       if t11 int<= t12 goto L6
-    133       t15 = *t3
-    134       *hi = t15
-    135  L6:  i = i int+ 1
-    136       goto L4
-    137  L7:  return
-
-============================================================================
- FUNCTION advance(int *&, int)        (link name _Z7advanceRPii)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 3 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   p                param   int *&                          4       0
-   steps            param   int                             4       4
-   t1               temp    int *                           4       8
-   t2               temp    int                             4      12
-   t3               temp    int *                           4      16
-
- Code: 5 instruction(s)
-
-    138     t1 = *p
-    139     t2 = steps int<< 2
-    140     t3 = t1 ptr+ t2
-    141     *p = t3
-    142     return
-
-============================================================================
- FUNCTION element(int *, int)        (link name _Z7elementPii)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   int *                           4       0
-   i                param   int                             4       4
-   t1               temp    int                             4       8
-   t2               temp    int *                           4      12
-
- Code: 3 instruction(s)
-
-    143     t1 = i int<< 2
-    144     t2 = a ptr+ t1
-    145     return t2
-
-============================================================================
- FUNCTION scale(const int &, const double &)        (link name _Z5scaleRKiRKd)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   const int &                     4       0
-   factor           param   const double &                  4       4
-   t1               temp    int                             4       8
-   t2               temp    double                          8      16
-   t3               temp    double                          8      24
-   t4               temp    double                          8      32
-   t5               temp    int                             4      40
-
- Code: 6 instruction(s)
-
-    146     t1 = *v
-    147     t2 = inttodouble t1
-    148     t3 = *factor
-    149     t4 = t2 double* t3
-    150     t5 = doubletoint t4
-    151     return t5
-
-============================================================================
- FUNCTION rotate(int &, int &, int &)        (link name _Z6rotateRiS_S_)
-============================================================================
-
- Symbol table: 4 parameter(s)/local(s), 3 temporaries, frame 28 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   int &                           4       0
-   b                param   int &                           4       4
-   c                param   int &                           4       8
-   t                local   int                             4      12
-   t1               temp    int                             4      16
-   t2               temp    int                             4      20
-   t3               temp    int                             4      24
-
- Code: 7 instruction(s)
-
-    152     t1 = *a
-    153     t2 = *b
-    154     *a = t2
-    155     t3 = *c
-    156     *b = t3
-    157     *c = t1
-    158     return
+    100       t1 = *values
+    101       *hi = t1
+    102       *lo = t1
+    103       i = 1
+    104  L1:  if i int>= n goto L6
+    105       t2 = i int<< 2
+    106       t3 = values ptr+ t2
+    107       t4 = *t3
+    108       t5 = *lo
+    109       if t4 int>= t5 goto L2
+    110       t8 = *t3
+    111       *lo = t8
+    112  L2:  t11 = *t3
+    113       t12 = *hi
+    114       if t11 int<= t12 goto L3
+    115       t15 = *t3
+    116       *hi = t15
+    117  L3:  i = i int+ 1
+    118       if i int>= n goto L6
+    119       t2 = i int<< 2
+    120       t3 = values ptr+ t2
+    121       t4 = *t3
+    122       t5 = *lo
+    123       if t4 int>= t5 goto L4
+    124       t8 = *t3
+    125       *lo = t8
+    126  L4:  t11 = *t3
+    127       t12 = *hi
+    128       if t11 int<= t12 goto L5
+    129       t15 = *t3
+    130       *hi = t15
+    131  L5:  i = i int+ 1
+    132       goto L1
+    133  L6:  return
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -341,146 +195,146 @@
 
  Code: 140 instruction(s)
 
-    159        x = 1
-    160        y = 2
-    161        z = 3
-    162        t1 = &x
-    163        t2 = *t1
-    164        t3 = t2 int+ 10
-    165        *t1 = t3
-    166        t5 = &y
-    167        t6 = &z
-    168        t66 = *t5
-    169        *t1 = t66
-    170        t67 = *t6
-    171        *t5 = t67
-    172        *t6 = t3
-    173        t7 = *t1
-    174        param "%d %d %d %d\n"
-    175        param x
-    176        param y
-    177        param z
-    178        param t7
-    179        call printf, 5
-    180        data[0] = 8
-    181        data[4] = -3
-    182        data[8] = 15
-    183        data[12] = 0
-    184        data[16] = 7
-    185        t9 = &data
-    186        t10 = &lo
-    187        t11 = &hi
-    188        param t9
-    189        param 5
-    190        param t10
-    191        param t11
-    192        call minmax(const int *, int, int &, int &), 4
-    193        t71 = t9 ptr+ 12
-    194        *t71 = 99
-    195        t16 = *t9
-    196        t17 = t16 int+ 1
-    197        *t9 = t17
-    198        p = t9
-    199        t19 = &p
-    200        t78 = *t19
-    201        t80 = t78 ptr+ 8
-    202        *t19 = t80
-    203        t20 = *p
-    204        t21 = t20 int+ 1
-    205        *p = t21
-    206        t22 = data[12]
-    207        t23 = data[0]
-    208        t24 = data[8]
-    209        param "%d %d %d %d %d\n"
-    210        param lo
-    211        param hi
-    212        param t22
-    213        param t23
-    214        param t24
-    215        call printf, 6
-    216        a[0] = 1
-    217        a[8] = 100.5
-    218        b[0] = 2
-    219        b[8] = 2.5e+02
-    220        t25 = &a
-    221        t83 = t25 ptr+ 8
-    222        t84 = *t83
-    223        t85 = t84 double+ 2e+02
-    224        *t83 = t85
-    225        t27 = &b
-    226        t90 = t27 ptr+ 8
-    227        t91 = *t90
-    228        if t85 double>= t91 goto L8
-    229        goto L9
-    230  L8:   t92 = t25
-    231        goto L10
-    232  L9:   t92 = t27
-    233  L10:  t29 = t92 ptr+ 8
-    234        t30 = *t29
-    235        t31 = t30 double- 5e+01
-    236        *t29 = t31
-    237        t96 = *t83
-    238        t98 = *t90
-    239        if t96 double>= t98 goto L11
-    240        goto L12
-    241  L11:  t99 = t25
-    242        goto L13
-    243  L12:  t99 = t27
-    244  L13:  t36 = a[8]
-    245        t37 = b[8]
-    246        t38 = *t99
-    247        t101 = t99 ptr+ 8
-    248        t102 = *t101
-    249        param "%.1f %.1f %d %.1f\n"
-    250        param t36
-    251        param t37
-    252        param t38
-    253        param t102
-    254        call printf, 5
-    255        limit = 40
-    256        rate = 1.25
-    257        t40 = &limit
-    258        t41 = &rate
-    259        t105 = *t40
-    260        t106 = inttodouble t105
-    261        t107 = *t41
-    262        t108 = t106 double* t107
-    263        t109 = doubletoint t108
-    264        t43 = 7
-    265        t45 = &t43
-    266        t46 = 2.0
-    267        t47 = &t46
-    268        t112 = *t45
-    269        t113 = inttodouble t112
-    270        t114 = *t47
-    271        t115 = t113 double* t114
-    272        t116 = doubletoint t115
-    273        t49 = 7
-    274        t51 = &t49
-    275        t52 = 0.5
-    276        t53 = &t52
-    277        t119 = *t51
-    278        t120 = inttodouble t119
-    279        t121 = *t53
-    280        t122 = t120 double* t121
-    281        t123 = doubletoint t122
-    282        param "%d %d %d\n"
-    283        param t109
-    284        param t116
-    285        param t123
-    286        call printf, 4
-    287        t55 = *"const data"
-    288        t56 = chartoint t55
-    289        t57 = "const data" ptr+ 6
-    290        t58 = *t57
-    291        t59 = chartoint t58
-    292        param "%c %c\n"
-    293        param t56
-    294        param t59
-    295        call printf, 3
-    296        t60 = *t1
-    297        t61 = t60 int+ lo
-    298        return t61
+    134        x = 1
+    135        y = 2
+    136        z = 3
+    137        t1 = &x
+    138        t2 = *t1
+    139        t3 = t2 int+ 10
+    140        *t1 = t3
+    141        t5 = &y
+    142        t6 = &z
+    143        t66 = *t5
+    144        *t1 = t66
+    145        t67 = *t6
+    146        *t5 = t67
+    147        *t6 = t3
+    148        t7 = *t1
+    149        param "%d %d %d %d\n"
+    150        param x
+    151        param y
+    152        param z
+    153        param t7
+    154        call printf, 5
+    155        data[0] = 8
+    156        data[4] = -3
+    157        data[8] = 15
+    158        data[12] = 0
+    159        data[16] = 7
+    160        t9 = &data
+    161        t10 = &lo
+    162        t11 = &hi
+    163        param t9
+    164        param 5
+    165        param t10
+    166        param t11
+    167        call minmax(const int *, int, int &, int &), 4
+    168        t71 = t9 ptr+ 12
+    169        *t71 = 99
+    170        t16 = *t9
+    171        t17 = t16 int+ 1
+    172        *t9 = t17
+    173        p = t9
+    174        t19 = &p
+    175        t78 = *t19
+    176        t80 = t78 ptr+ 8
+    177        *t19 = t80
+    178        t20 = *p
+    179        t21 = t20 int+ 1
+    180        *p = t21
+    181        t22 = data[12]
+    182        t23 = data[0]
+    183        t24 = data[8]
+    184        param "%d %d %d %d %d\n"
+    185        param lo
+    186        param hi
+    187        param t22
+    188        param t23
+    189        param t24
+    190        call printf, 6
+    191        a[0] = 1
+    192        a[8] = 100.5
+    193        b[0] = 2
+    194        b[8] = 2.5e+02
+    195        t25 = &a
+    196        t83 = t25 ptr+ 8
+    197        t84 = *t83
+    198        t85 = t84 double+ 2e+02
+    199        *t83 = t85
+    200        t27 = &b
+    201        t90 = t27 ptr+ 8
+    202        t91 = *t90
+    203        if t85 double>= t91 goto L7
+    204        goto L8
+    205  L7:   t92 = t25
+    206        goto L9
+    207  L8:   t92 = t27
+    208  L9:   t29 = t92 ptr+ 8
+    209        t30 = *t29
+    210        t31 = t30 double- 5e+01
+    211        *t29 = t31
+    212        t96 = *t83
+    213        t98 = *t90
+    214        if t96 double>= t98 goto L10
+    215        goto L11
+    216  L10:  t99 = t25
+    217        goto L12
+    218  L11:  t99 = t27
+    219  L12:  t36 = a[8]
+    220        t37 = b[8]
+    221        t38 = *t99
+    222        t101 = t99 ptr+ 8
+    223        t102 = *t101
+    224        param "%.1f %.1f %d %.1f\n"
+    225        param t36
+    226        param t37
+    227        param t38
+    228        param t102
+    229        call printf, 5
+    230        limit = 40
+    231        rate = 1.25
+    232        t40 = &limit
+    233        t41 = &rate
+    234        t105 = *t40
+    235        t106 = inttodouble t105
+    236        t107 = *t41
+    237        t108 = t106 double* t107
+    238        t109 = doubletoint t108
+    239        t43 = 7
+    240        t45 = &t43
+    241        t46 = 2.0
+    242        t47 = &t46
+    243        t112 = *t45
+    244        t113 = inttodouble t112
+    245        t114 = *t47
+    246        t115 = t113 double* t114
+    247        t116 = doubletoint t115
+    248        t49 = 7
+    249        t51 = &t49
+    250        t52 = 0.5
+    251        t53 = &t52
+    252        t119 = *t51
+    253        t120 = inttodouble t119
+    254        t121 = *t53
+    255        t122 = t120 double* t121
+    256        t123 = doubletoint t122
+    257        param "%d %d %d\n"
+    258        param t109
+    259        param t116
+    260        param t123
+    261        call printf, 4
+    262        t55 = *"const data"
+    263        t56 = chartoint t55
+    264        t57 = "const data" ptr+ 6
+    265        t58 = *t57
+    266        t59 = chartoint t58
+    267        param "%c %c\n"
+    268        param t56
+    269        param t59
+    270        call printf, 3
+    271        t60 = *t1
+    272        t61 = t60 int+ lo
+    273        return t61
 
 
 ----------------------------------------------------------------------------

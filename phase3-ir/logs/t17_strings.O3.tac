@@ -4,7 +4,7 @@
 
    Source file   : test/t17_strings.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 348 -> 395 instruction(s)
+   Result        : Optimized three address code (-O3): 348 -> 451 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,12 +14,12 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          348 -> 395   (-13% fewer)
+   instructions                          348 -> 451   (-29% fewer)
 
    constants folded                        5
    algebraic simplifications               3
    common subexpressions                  10
-   copies / constants forwarded           27
+   copies / constants forwarded           28
    temporaries merged away                25
    dead instructions removed              23
    jumps removed or redirected            26
@@ -29,6 +29,8 @@
    calls inlined                          12
    tail calls turned into jumps            0
    common subexpressions across blocks      1
+   loops unrolled                         16
+   unreachable functions removed           4
 
 ============================================================================
  FUNCTION length(const char *)        (link name _Z6lengthPKc)
@@ -45,7 +47,7 @@
    t3               temp    int                             4      16
    (1 temporary no longer used after optimization not shown)
 
- Code: 8 instruction(s)
+ Code: 13 instruction(s)
 
     100       n = 0
     101  L1:  t1 = s ptr+ n
@@ -53,155 +55,13 @@
     103       t3 = chartoint t2
     104       if t3 int== 0 goto L2
     105       n = n int+ 1
-    106       goto L1
-    107  L2:  return n
-
-============================================================================
- FUNCTION copy(char *, const char *)        (link name _Z4copyPcPKc)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 4 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   to               param   char *                          4       0
-   from             param   const char *                    4       4
-   t1               temp    char *                          4       8
-   t3               temp    const char *                    4      16
-   t5               temp    char                            1      24
-   t6               temp    int                             4      28
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 9 instruction(s)
-
-    108  L3:  t1 = to
-    109       to = to ptr+ 1
-    110       t3 = from
-    111       from = from ptr+ 1
-    112       t5 = *t3
-    113       *t1 = t5
-    114       t6 = chartoint t5
-    115       if t6 int!= 0 goto L3
-    116       return
-
-============================================================================
- FUNCTION compare(const char *, const char *)        (link name _Z7comparePKcS0_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 10 temporaries, frame 52 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   const char *                    4       0
-   b                param   const char *                    4       4
-   t1               temp    char                            1       8
-   t2               temp    char                            1       9
-   t3               temp    int                             4      12
-   t4               temp    char                            1      16
-   t5               temp    int                             4      20
-   t8               temp    char                            1      32
-   t9               temp    int                             4      36
-   t10              temp    char                            1      40
-   t11              temp    int                             4      44
-   t12              temp    int                             4      48
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 16 instruction(s)
-
-    117  L4:  t1 = *a
-    118       if t1 char== 0 goto L5
-    119       t2 = *a
-    120       t3 = chartoint t2
-    121       t4 = *b
-    122       t5 = chartoint t4
-    123       if t3 int!= t5 goto L5
-    124       a = a ptr+ 1
-    125       b = b ptr+ 1
-    126       goto L4
-    127  L5:  t8 = *a
-    128       t9 = chartoint t8
-    129       t10 = *b
-    130       t11 = chartoint t10
-    131       t12 = t9 int- t11
-    132       return t12
-
-============================================================================
- FUNCTION reverse(char *)        (link name _Z7reversePc)
-============================================================================
-
- Symbol table: 4 parameter(s)/local(s), 8 temporaries, frame 76 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   s                param   char *                          4       0
-   i                local   int                             4       4
-   j                local   int                             4       8
-   t                local   char                            1      12
-   t3               temp    char *                          4      24
-   t4               temp    char                            1      28
-   t6               temp    char *                          4      36
-   t7               temp    char                            1      40
-   t12              temp    int                             4      60
-   t13              temp    const char *                    4      64
-   t14              temp    char                            1      68
-   t15              temp    int                             4      72
-   (7 temporaries no longer used after optimization not shown)
-
- Code: 20 instruction(s)
-
-    133       i = 0
-    134       t12 = 0
-    135  L6:  t13 = s ptr+ t12
-    136       t14 = *t13
-    137       t15 = chartoint t14
-    138       if t15 int== 0 goto L7
-    139       t12 = t12 int+ 1
-    140       goto L6
-    141  L7:  j = t12 int- 1
-    142  L8:  if i int>= j goto L9
-    143       t3 = s ptr+ i
-    144       t4 = *t3
-    145       t6 = s ptr+ j
-    146       t7 = *t6
-    147       *t3 = t7
-    148       *t6 = t4
-    149       i = i int+ 1
-    150       j = j int- 1
-    151       goto L8
-    152  L9:  return
-
-============================================================================
- FUNCTION find(const char *, char)        (link name _Z4findPKcc)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 5 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   text             param   const char *                    4       0
-   c                param   char                            1       4
-   i                local   int                             4       8
-   t1               temp    const char *                    4      12
-   t2               temp    char                            1      16
-   t4               temp    char                            1      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 12 instruction(s)
-
-    153        i = 0
-    154  L10:  t1 = text ptr+ i
-    155        t2 = *t1
-    156        if t2 char== 0 goto L12
-    157        t4 = *t1
-    158        t5 = chartoint t4
-    159        t6 = chartoint c
-    160        if t5 int!= t6 goto L11
-    161        return i
-    162  L11:  i = i int+ 1
-    163        goto L10
-    164  L12:  return -1
+    106       t1 = s ptr+ n
+    107       t2 = *t1
+    108       t3 = chartoint t2
+    109       if t3 int== 0 goto L2
+    110       n = n int+ 1
+    111       goto L1
+    112  L2:  return n
 
 ============================================================================
  FUNCTION toNumber(const char *)        (link name _Z8toNumberPKc)
@@ -227,30 +87,42 @@
    t15              temp    int                             4      68
    (4 temporaries no longer used after optimization not shown)
 
- Code: 22 instruction(s)
+ Code: 34 instruction(s)
 
-    165        sign = 1
-    166        v = 0
-    167        t1 = *s
-    168        t2 = chartoint t1
-    169        if t2 int!= 45 goto L13
-    170        sign = -1
-    171        s = s ptr+ 1
-    172  L13:  t5 = *s
-    173        t6 = chartoint t5
-    174        if t6 int< 48 goto L14
-    175        t7 = *s
-    176        t8 = chartoint t7
-    177        if t8 int> 57 goto L14
-    178        t9 = v int* 10
-    179        t10 = *s
-    180        t11 = chartoint t10
-    181        t12 = t11 int- 48
-    182        v = t9 int+ t12
-    183        s = s ptr+ 1
-    184        goto L13
-    185  L14:  t15 = sign int* v
-    186        return t15
+    113       sign = 1
+    114       v = 0
+    115       t1 = *s
+    116       t2 = chartoint t1
+    117       if t2 int!= 45 goto L3
+    118       sign = -1
+    119       s = s ptr+ 1
+    120  L3:  t5 = *s
+    121       t6 = chartoint t5
+    122       if t6 int< 48 goto L4
+    123       t7 = *s
+    124       t8 = chartoint t7
+    125       if t8 int> 57 goto L4
+    126       t9 = v int* 10
+    127       t10 = *s
+    128       t11 = chartoint t10
+    129       t12 = t11 int- 48
+    130       v = t9 int+ t12
+    131       s = s ptr+ 1
+    132       t5 = *s
+    133       t6 = chartoint t5
+    134       if t6 int< 48 goto L4
+    135       t7 = *s
+    136       t8 = chartoint t7
+    137       if t8 int> 57 goto L4
+    138       t9 = v int* 10
+    139       t10 = *s
+    140       t11 = chartoint t10
+    141       t12 = t11 int- 48
+    142       v = t9 int+ t12
+    143       s = s ptr+ 1
+    144       goto L3
+    145  L4:  t15 = sign int* v
+    146       return t15
 
 ============================================================================
  FUNCTION toText(int, char *)        (link name _Z6toTextiPc)
@@ -277,38 +149,45 @@
    t14              temp    char                            1      80
    (4 temporaries no longer used after optimization not shown)
 
- Code: 30 instruction(s)
+ Code: 37 instruction(s)
 
-    187        n = 0
-    188        if v int< 0 goto L15
-    189        t1 = 0
-    190        goto L16
-    191  L15:  t1 = 1
-    192  L16:  if t1 int== 0 goto L17
-    193        v = int- v
-    194  L17:  t3 = n
-    195        n = n int+ 1
-    196        t5 = v int% 10
-    197        t6 = 48 int+ t5
-    198        t7 = inttochar t6
-    199        tmp[t3] = t7
-    200        t8 = v int/ 10
-    201        v = t8
-    202        if t8 int> 0 goto L17
-    203        if t1 int== 0 goto L18
-    204        t9 = n
-    205        n = n int+ 1
-    206        tmp[t9] = 45
-    207  L18:  if n int<= 0 goto L19
-    208        t11 = out
-    209        out = out ptr+ 1
-    210        t13 = n int- 1
-    211        n = t13
-    212        t14 = tmp[t13]
-    213        *t11 = t14
-    214        goto L18
-    215  L19:  *out = 0
-    216        return
+    147       n = 0
+    148       if v int< 0 goto L5
+    149       t1 = 0
+    150       goto L6
+    151  L5:  t1 = 1
+    152  L6:  if t1 int== 0 goto L7
+    153       v = int- v
+    154  L7:  t3 = n
+    155       n = n int+ 1
+    156       t5 = v int% 10
+    157       t6 = 48 int+ t5
+    158       t7 = inttochar t6
+    159       tmp[t3] = t7
+    160       t8 = v int/ 10
+    161       v = t8
+    162       if t8 int> 0 goto L7
+    163       if t1 int== 0 goto L8
+    164       t9 = n
+    165       n = n int+ 1
+    166       tmp[t9] = 45
+    167  L8:  if n int<= 0 goto L9
+    168       t11 = out
+    169       out = out ptr+ 1
+    170       t13 = n int- 1
+    171       n = t13
+    172       t14 = tmp[t13]
+    173       *t11 = t14
+    174       if t13 int<= 0 goto L9
+    175       t11 = out
+    176       out = out ptr+ 1
+    177       t13 = n int- 1
+    178       n = t13
+    179       t14 = tmp[t13]
+    180       *t11 = t14
+    181       goto L8
+    182  L9:  *out = 0
+    183       return
 
 ============================================================================
  FUNCTION isPalindrome(const char *)        (link name _Z12isPalindromePKc)
@@ -335,31 +214,36 @@
    t17              temp    int                             4      76
    (5 temporaries no longer used after optimization not shown)
 
- Code: 23 instruction(s)
+ Code: 28 instruction(s)
 
-    217        i = 0
-    218        t14 = 0
-    219  L20:  t15 = s ptr+ t14
-    220        t16 = *t15
-    221        t17 = chartoint t16
-    222        if t17 int== 0 goto L21
-    223        t14 = t14 int+ 1
-    224        goto L20
-    225  L21:  j = t14 int- 1
-    226  L22:  if i int>= j goto L23
-    227        t3 = i
-    228        i = i int+ 1
-    229        t5 = s ptr+ t3
-    230        t6 = *t5
-    231        t7 = chartoint t6
-    232        t8 = j
-    233        j = j int- 1
-    234        t10 = s ptr+ t8
-    235        t11 = *t10
-    236        t12 = chartoint t11
-    237        if t7 int== t12 goto L22
-    238        return 0
-    239  L23:  return 1
+    184        i = 0
+    185        t14 = 0
+    186  L10:  t15 = s ptr+ t14
+    187        t16 = *t15
+    188        t17 = chartoint t16
+    189        if t17 int== 0 goto L11
+    190        t14 = t14 int+ 1
+    191        t15 = s ptr+ t14
+    192        t16 = *t15
+    193        t17 = chartoint t16
+    194        if t17 int== 0 goto L11
+    195        t14 = t14 int+ 1
+    196        goto L10
+    197  L11:  j = t14 int- 1
+    198  L12:  if i int>= j goto L13
+    199        t3 = i
+    200        i = i int+ 1
+    201        t5 = s ptr+ t3
+    202        t6 = *t5
+    203        t7 = chartoint t6
+    204        t8 = j
+    205        j = j int- 1
+    206        t10 = s ptr+ t8
+    207        t11 = *t10
+    208        t12 = chartoint t11
+    209        if t7 int== t12 goto L12
+    210        return 0
+    211  L13:  return 1
 
 ============================================================================
  FUNCTION countWords(const char *)        (link name _Z10countWordsPKc)
@@ -379,26 +263,40 @@
    t5               temp    int                             4      24
    (2 temporaries no longer used after optimization not shown)
 
- Code: 18 instruction(s)
+ Code: 32 instruction(s)
 
-    240        words = 0
-    241        inside = 0
-    242  L24:  t1 = *s
-    243        if t1 char== 0 goto L28
-    244        t2 = *s
-    245        t3 = chartoint t2
-    246        if t3 int== 32 goto L25
-    247        t4 = *s
-    248        t5 = chartoint t4
-    249        if t5 int!= 9 goto L26
-    250  L25:  inside = 0
-    251        goto L27
-    252  L26:  if inside int!= 0 goto L27
-    253        inside = 1
-    254        words = words int+ 1
-    255  L27:  s = s ptr+ 1
-    256        goto L24
-    257  L28:  return words
+    212        words = 0
+    213        inside = 0
+    214  L14:  t1 = *s
+    215        if t1 char== 0 goto L21
+    216        t2 = *s
+    217        t3 = chartoint t2
+    218        if t3 int== 32 goto L15
+    219        t4 = *s
+    220        t5 = chartoint t4
+    221        if t5 int!= 9 goto L16
+    222  L15:  inside = 0
+    223        goto L17
+    224  L16:  if inside int!= 0 goto L17
+    225        inside = 1
+    226        words = words int+ 1
+    227  L17:  s = s ptr+ 1
+    228        t1 = *s
+    229        if t1 char== 0 goto L21
+    230        t2 = *s
+    231        t3 = chartoint t2
+    232        if t3 int== 32 goto L18
+    233        t4 = *s
+    234        t5 = chartoint t4
+    235        if t5 int!= 9 goto L19
+    236  L18:  inside = 0
+    237        goto L20
+    238  L19:  if inside int!= 0 goto L20
+    239        inside = 1
+    240        words = words int+ 1
+    241  L20:  s = s ptr+ 1
+    242        goto L14
+    243  L21:  return words
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -533,38 +431,52 @@
    t142             temp    int                             4     640
    (26 temporaries no longer used after optimization not shown)
 
- Code: 237 instruction(s)
+ Code: 307 instruction(s)
 
-    258        names[0] = "delta"
-    259        names[4] = "alpha"
-    260        names[8] = "charlie"
-    261        t1 = &buf
-    262        t55 = t1
-    263        t56 = "compiler"
-    264  L29:  t57 = t55
-    265        t55 = t55 ptr+ 1
-    266        t58 = t56
-    267        t56 = t56 ptr+ 1
-    268        t59 = *t58
-    269        *t57 = t59
-    270        t60 = chartoint t59
-    271        if t60 int!= 0 goto L29
-    272        t62 = 0
-    273  L30:  t63 = t1 ptr+ t62
-    274        t64 = *t63
-    275        t65 = chartoint t64
-    276        if t65 int== 0 goto L31
-    277        t62 = t62 int+ 1
-    278        goto L30
-    279  L31:  param "%s %d\n"
-    280        param t1
-    281        param t62
-    282        call printf, 3
-    283        t67 = 0
-    284        param t1
-    285        t68 = call length(const char *), 1
-    286        t69 = t68 int- 1
-    287  L32:  if t67 int>= t69 goto L33
+    244        names[0] = "delta"
+    245        names[4] = "alpha"
+    246        names[8] = "charlie"
+    247        t1 = &buf
+    248        t55 = t1
+    249        t56 = "compiler"
+    250  L22:  t57 = t55
+    251        t55 = t55 ptr+ 1
+    252        t58 = t56
+    253        t56 = t56 ptr+ 1
+    254        t59 = *t58
+    255        *t57 = t59
+    256        t60 = chartoint t59
+    257        if t60 int!= 0 goto L22
+    258        t62 = 0
+    259  L23:  t63 = t1 ptr+ t62
+    260        t64 = *t63
+    261        t65 = chartoint t64
+    262        if t65 int== 0 goto L24
+    263        t62 = t62 int+ 1
+    264        t63 = t1 ptr+ t62
+    265        t64 = *t63
+    266        t65 = chartoint t64
+    267        if t65 int== 0 goto L24
+    268        t62 = t62 int+ 1
+    269        goto L23
+    270  L24:  param "%s %d\n"
+    271        param t1
+    272        param t62
+    273        call printf, 3
+    274        t67 = 0
+    275        param t1
+    276        t68 = call length(const char *), 1
+    277        t69 = t68 int- 1
+    278  L25:  if t67 int>= t69 goto L26
+    279        t70 = t1 ptr+ t67
+    280        t71 = *t70
+    281        t72 = t1 ptr+ t69
+    282        t73 = *t72
+    283        *t70 = t73
+    284        *t72 = t71
+    285        t67 = t67 int+ 1
+    286        t69 = t69 int- 1
+    287        if t67 int>= t69 goto L26
     288        t70 = t1 ptr+ t67
     289        t71 = *t70
     290        t72 = t1 ptr+ t69
@@ -573,205 +485,261 @@
     293        *t72 = t71
     294        t67 = t67 int+ 1
     295        t69 = t69 int- 1
-    296        goto L32
-    297  L33:  t76 = 0
-    298  L34:  t77 = t1 ptr+ t76
+    296        goto L25
+    297  L26:  t76 = 0
+    298  L27:  t77 = t1 ptr+ t76
     299        t78 = *t77
-    300        if t78 char== 0 goto L36
+    300        if t78 char== 0 goto L29
     301        t79 = *t77
     302        t80 = chartoint t79
-    303        if t80 int!= 112 goto L35
+    303        if t80 int!= 112 goto L28
     304        t8 = t76
-    305        goto L37
-    306  L35:  t76 = t76 int+ 1
-    307        goto L34
-    308  L36:  t8 = -1
-    309  L37:  t84 = 0
-    310  L38:  t85 = t1 ptr+ t84
+    305        goto L30
+    306  L28:  t76 = t76 int+ 1
+    307        goto L27
+    308  L29:  t8 = -1
+    309  L30:  t84 = 0
+    310  L31:  t85 = t1 ptr+ t84
     311        t86 = *t85
-    312        if t86 char== 0 goto L40
+    312        if t86 char== 0 goto L33
     313        t87 = *t85
     314        t88 = chartoint t87
-    315        if t88 int!= 122 goto L39
+    315        if t88 int!= 122 goto L32
     316        t10 = t84
-    317        goto L41
-    318  L39:  t84 = t84 int+ 1
-    319        goto L38
-    320  L40:  t10 = -1
-    321  L41:  param "%s %d %d\n"
+    317        goto L34
+    318  L32:  t84 = t84 int+ 1
+    319        goto L31
+    320  L33:  t10 = -1
+    321  L34:  param "%s %d %d\n"
     322        param t1
     323        param t8
     324        param t10
     325        call printf, 4
     326        t90 = "abc"
     327        t91 = "abd"
-    328  L42:  t92 = *t90
-    329        if t92 char== 0 goto L43
+    328  L35:  t92 = *t90
+    329        if t92 char== 0 goto L36
     330        t93 = *t90
     331        t94 = chartoint t93
     332        t95 = *t91
     333        t96 = chartoint t95
-    334        if t94 int!= t96 goto L43
+    334        if t94 int!= t96 goto L36
     335        t90 = t90 ptr+ 1
     336        t91 = t91 ptr+ 1
-    337        goto L42
-    338  L43:  t97 = *t90
-    339        t98 = chartoint t97
-    340        t99 = *t91
-    341        t100 = chartoint t99
-    342        t101 = t98 int- t100
-    343        if t101 int< 0 goto L44
-    344        t11 = 0
-    345        goto L45
-    346  L44:  t11 = 1
-    347  L45:  t102 = "abc"
-    348        t103 = "abc"
-    349  L46:  t104 = *t102
-    350        if t104 char== 0 goto L47
-    351        t105 = *t102
-    352        t106 = chartoint t105
-    353        t107 = *t103
-    354        t108 = chartoint t107
-    355        if t106 int!= t108 goto L47
-    356        t102 = t102 ptr+ 1
-    357        t103 = t103 ptr+ 1
-    358        goto L46
-    359  L47:  t109 = *t102
-    360        t110 = chartoint t109
-    361        t111 = *t103
-    362        t112 = chartoint t111
-    363        t13 = t110 int- t112
-    364        t114 = "b"
-    365        t115 = "abc"
-    366  L48:  t116 = *t114
-    367        if t116 char== 0 goto L49
-    368        t117 = *t114
-    369        t118 = chartoint t117
-    370        t119 = *t115
-    371        t120 = chartoint t119
-    372        if t118 int!= t120 goto L49
-    373        t114 = t114 ptr+ 1
-    374        t115 = t115 ptr+ 1
-    375        goto L48
-    376  L49:  t121 = *t114
-    377        t122 = chartoint t121
-    378        t123 = *t115
-    379        t124 = chartoint t123
-    380        t125 = t122 int- t124
-    381        if t125 int> 0 goto L50
-    382        t14 = 0
-    383        goto L51
-    384  L50:  t14 = 1
-    385  L51:  param "%d %d %d\n"
-    386        param t11
-    387        param t13
-    388        param t14
-    389        call printf, 4
-    390        smallest = 0
-    391        i.32 = 1
-    392  L52:  if i.32 int>= 3 goto L56
-    393        t16 = i.32 int<< 2                  (w = 4)
-    394        t17 = names[t16]
-    395        t18 = smallest int<< 2              (w = 4)
-    396        t19 = names[t18]
-    397        t126 = t17
-    398        t127 = t19
-    399  L53:  t128 = *t126
-    400        if t128 char== 0 goto L54
-    401        t129 = *t126
-    402        t130 = chartoint t129
-    403        t131 = *t127
-    404        t132 = chartoint t131
-    405        if t130 int!= t132 goto L54
-    406        t126 = t126 ptr+ 1
-    407        t127 = t127 ptr+ 1
-    408        goto L53
-    409  L54:  t133 = *t126
-    410        t134 = chartoint t133
-    411        t135 = *t127
-    412        t136 = chartoint t135
-    413        t137 = t134 int- t136
-    414        if t137 int>= 0 goto L55
-    415        smallest = i.32
-    416  L55:  i.32 = i.32 int+ 1
-    417        goto L52
-    418  L56:  t22 = smallest int<< 2              (w = 4)
-    419        t23 = names[t22]
-    420        t24 = names[8]
-    421        t25 = t24 ptr+ 3
-    422        t26 = *t25
-    423        t27 = chartoint t26
-    424        param "%s %c\n"
-    425        param t23
-    426        param t27
-    427        call printf, 3
-    428        t29 = &num
-    429        param -40213
-    430        param t29
-    431        call toText(int, char *), 2
-    432        param t29
-    433        t32 = call toNumber(const char *), 1
-    434        t33 = t32 int+ 1
-    435        param "77x"
-    436        t34 = call toNumber(const char *), 1
-    437        param "%s %d %d\n"
-    438        param t29
-    439        param t33
-    440        param t34
-    441        call printf, 4
-    442        param "level"
-    443        t35 = call isPalindrome(const char *), 1
-    444        param "lever"
-    445        t36 = call isPalindrome(const char *), 1
-    446        param "  the quick  brown fox "
-    447        t37 = call countWords(const char *), 1
-    448        param "%d %d %d\n"
-    449        param t35
-    450        param t36
-    451        param t37
-    452        call printf, 4
-    453        upper[0] = 109
-    454        upper[1] = 105
-    455        upper[2] = 120
-    456        upper[3] = 101
-    457        upper[4] = 100
-    458        upper[5] = 0
-    459        upper[6] = 0
-    460        upper[7] = 0
-    461        i.34 = 0
-    462  L57:  t38 = upper[i.34]
-    463        if t38 char== 0 goto L59
-    464        t39 = upper[i.34]
-    465        t40 = chartoint t39
-    466        if t40 int< 97 goto L58
-    467        t41 = upper[i.34]
-    468        t42 = chartoint t41
-    469        if t42 int> 122 goto L58
-    470        t43 = upper[i.34]
-    471        t44 = chartoint t43
-    472        t45 = t44 int- 97
-    473        t46 = t45 int+ 65
-    474        t47 = inttochar t46
-    475        upper[i.34] = t47
-    476  L58:  i.34 = i.34 int+ 1
-    477        goto L57
-    478  L59:  t49 = &upper
-    479        param "%s %d\n"
-    480        param t49
-    481        param 8
-    482        call printf, 3
-    483        t138 = names[4]
-    484        t139 = 0
-    485  L60:  t140 = t138 ptr+ t139
-    486        t141 = *t140
-    487        t142 = chartoint t141
-    488        if t142 int== 0 goto L61
-    489        t139 = t139 int+ 1
-    490        goto L60
-    491  L61:  t52 = buf[0]
-    492        t53 = chartoint t52
-    493        t54 = t139 int+ t53
-    494        return t54
+    337        t92 = *t90
+    338        if t92 char== 0 goto L36
+    339        t93 = *t90
+    340        t94 = chartoint t93
+    341        t95 = *t91
+    342        t96 = chartoint t95
+    343        if t94 int!= t96 goto L36
+    344        t90 = t90 ptr+ 1
+    345        t91 = t91 ptr+ 1
+    346        goto L35
+    347  L36:  t97 = *t90
+    348        t98 = chartoint t97
+    349        t99 = *t91
+    350        t100 = chartoint t99
+    351        t101 = t98 int- t100
+    352        if t101 int< 0 goto L37
+    353        t11 = 0
+    354        goto L38
+    355  L37:  t11 = 1
+    356  L38:  t102 = "abc"
+    357        t103 = "abc"
+    358  L39:  t104 = *t102
+    359        if t104 char== 0 goto L40
+    360        t105 = *t102
+    361        t106 = chartoint t105
+    362        t107 = *t103
+    363        t108 = chartoint t107
+    364        if t106 int!= t108 goto L40
+    365        t102 = t102 ptr+ 1
+    366        t103 = t103 ptr+ 1
+    367        t104 = *t102
+    368        if t104 char== 0 goto L40
+    369        t105 = *t102
+    370        t106 = chartoint t105
+    371        t107 = *t103
+    372        t108 = chartoint t107
+    373        if t106 int!= t108 goto L40
+    374        t102 = t102 ptr+ 1
+    375        t103 = t103 ptr+ 1
+    376        goto L39
+    377  L40:  t109 = *t102
+    378        t110 = chartoint t109
+    379        t111 = *t103
+    380        t112 = chartoint t111
+    381        t13 = t110 int- t112
+    382        t114 = "b"
+    383        t115 = "abc"
+    384  L41:  t116 = *t114
+    385        if t116 char== 0 goto L42
+    386        t117 = *t114
+    387        t118 = chartoint t117
+    388        t119 = *t115
+    389        t120 = chartoint t119
+    390        if t118 int!= t120 goto L42
+    391        t114 = t114 ptr+ 1
+    392        t115 = t115 ptr+ 1
+    393        t116 = *t114
+    394        if t116 char== 0 goto L42
+    395        t117 = *t114
+    396        t118 = chartoint t117
+    397        t119 = *t115
+    398        t120 = chartoint t119
+    399        if t118 int!= t120 goto L42
+    400        t114 = t114 ptr+ 1
+    401        t115 = t115 ptr+ 1
+    402        goto L41
+    403  L42:  t121 = *t114
+    404        t122 = chartoint t121
+    405        t123 = *t115
+    406        t124 = chartoint t123
+    407        t125 = t122 int- t124
+    408        if t125 int> 0 goto L43
+    409        t14 = 0
+    410        goto L44
+    411  L43:  t14 = 1
+    412  L44:  param "%d %d %d\n"
+    413        param t11
+    414        param t13
+    415        param t14
+    416        call printf, 4
+    417        smallest = 0
+    418        i.32 = 1
+    419  L45:  if i.32 int>= 3 goto L49
+    420        t16 = i.32 int<< 2                  (w = 4)
+    421        t17 = names[t16]
+    422        t18 = smallest int<< 2              (w = 4)
+    423        t19 = names[t18]
+    424        t126 = t17
+    425        t127 = t19
+    426  L46:  t128 = *t126
+    427        if t128 char== 0 goto L47
+    428        t129 = *t126
+    429        t130 = chartoint t129
+    430        t131 = *t127
+    431        t132 = chartoint t131
+    432        if t130 int!= t132 goto L47
+    433        t126 = t126 ptr+ 1
+    434        t127 = t127 ptr+ 1
+    435        t128 = *t126
+    436        if t128 char== 0 goto L47
+    437        t129 = *t126
+    438        t130 = chartoint t129
+    439        t131 = *t127
+    440        t132 = chartoint t131
+    441        if t130 int!= t132 goto L47
+    442        t126 = t126 ptr+ 1
+    443        t127 = t127 ptr+ 1
+    444        goto L46
+    445  L47:  t133 = *t126
+    446        t134 = chartoint t133
+    447        t135 = *t127
+    448        t136 = chartoint t135
+    449        t137 = t134 int- t136
+    450        if t137 int>= 0 goto L48
+    451        smallest = i.32
+    452  L48:  i.32 = i.32 int+ 1
+    453        goto L45
+    454  L49:  t22 = smallest int<< 2              (w = 4)
+    455        t23 = names[t22]
+    456        t24 = names[8]
+    457        t25 = t24 ptr+ 3
+    458        t26 = *t25
+    459        t27 = chartoint t26
+    460        param "%s %c\n"
+    461        param t23
+    462        param t27
+    463        call printf, 3
+    464        t29 = &num
+    465        param -40213
+    466        param t29
+    467        call toText(int, char *), 2
+    468        param t29
+    469        t32 = call toNumber(const char *), 1
+    470        t33 = t32 int+ 1
+    471        param "77x"
+    472        t34 = call toNumber(const char *), 1
+    473        param "%s %d %d\n"
+    474        param t29
+    475        param t33
+    476        param t34
+    477        call printf, 4
+    478        param "level"
+    479        t35 = call isPalindrome(const char *), 1
+    480        param "lever"
+    481        t36 = call isPalindrome(const char *), 1
+    482        param "  the quick  brown fox "
+    483        t37 = call countWords(const char *), 1
+    484        param "%d %d %d\n"
+    485        param t35
+    486        param t36
+    487        param t37
+    488        call printf, 4
+    489        upper[0] = 109
+    490        upper[1] = 105
+    491        upper[2] = 120
+    492        upper[3] = 101
+    493        upper[4] = 100
+    494        upper[5] = 0
+    495        upper[6] = 0
+    496        upper[7] = 0
+    497        i.34 = 0
+    498  L50:  t38 = upper[i.34]
+    499        if t38 char== 0 goto L53
+    500        t39 = upper[i.34]
+    501        t40 = chartoint t39
+    502        if t40 int< 97 goto L51
+    503        t41 = upper[i.34]
+    504        t42 = chartoint t41
+    505        if t42 int> 122 goto L51
+    506        t43 = upper[i.34]
+    507        t44 = chartoint t43
+    508        t45 = t44 int- 97
+    509        t46 = t45 int+ 65
+    510        t47 = inttochar t46
+    511        upper[i.34] = t47
+    512  L51:  i.34 = i.34 int+ 1
+    513        t38 = upper[i.34]
+    514        if t38 char== 0 goto L53
+    515        t39 = upper[i.34]
+    516        t40 = chartoint t39
+    517        if t40 int< 97 goto L52
+    518        t41 = upper[i.34]
+    519        t42 = chartoint t41
+    520        if t42 int> 122 goto L52
+    521        t43 = upper[i.34]
+    522        t44 = chartoint t43
+    523        t45 = t44 int- 97
+    524        t46 = t45 int+ 65
+    525        t47 = inttochar t46
+    526        upper[i.34] = t47
+    527  L52:  i.34 = i.34 int+ 1
+    528        goto L50
+    529  L53:  t49 = &upper
+    530        param "%s %d\n"
+    531        param t49
+    532        param 8
+    533        call printf, 3
+    534        t138 = names[4]
+    535        t139 = 0
+    536  L54:  t140 = t138 ptr+ t139
+    537        t141 = *t140
+    538        t142 = chartoint t141
+    539        if t142 int== 0 goto L55
+    540        t139 = t139 int+ 1
+    541        t140 = t138 ptr+ t139
+    542        t141 = *t140
+    543        t142 = chartoint t141
+    544        if t142 int== 0 goto L55
+    545        t139 = t139 int+ 1
+    546        goto L54
+    547  L55:  t52 = buf[0]
+    548        t53 = chartoint t52
+    549        t54 = t139 int+ t53
+    550        return t54
 
 
 ----------------------------------------------------------------------------

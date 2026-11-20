@@ -51,42 +51,6 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# yes()
-_Z3yesv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        # calls = calls int+ 1
-        lw    $t0, g_calls
-        addiu $t0, $t0, 1
-        sw    $t0, g_calls
-        # return 1
-        li    $v0, 1
-        j     _Z3yesv_exit
-_Z3yesv_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# no()
-_Z2nov:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        # calls = calls int+ 1
-        lw    $t0, g_calls
-        addiu $t0, $t0, 1
-        sw    $t0, g_calls
-        # return 0
-        li    $v0, 0
-        j     _Z2nov_exit
-_Z2nov_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -96,9 +60,9 @@ main_:
         addiu $sp, $sp, -64
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M2_0
+        beqz  $t8, M0_0
         j     __stack_overflow
-M2_0:
+M0_0:
         sw    $s0, -64($fp)
         # param "%d\n"
         # param 1
@@ -268,18 +232,26 @@ M2_0:
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-L2_54:
-        # if x int>= 3 goto 58
+L0_54:
+        # if x int>= 3 goto 61
         li    $t1, 3
-        bge   $s0, $t1, L2_58
-        # if x int== 2 goto 58
+        bge   $s0, $t1, L0_61
+        # if x int== 2 goto 61
         li    $t1, 2
-        beq   $s0, $t1, L2_58
+        beq   $s0, $t1, L0_61
+        # x = x int+ 1
+        addiu $s0, $s0, 1
+        # if x int>= 3 goto 61
+        li    $t1, 3
+        bge   $s0, $t1, L0_61
+        # if x int== 2 goto 61
+        li    $t1, 2
+        beq   $s0, $t1, L0_61
         # x = x int+ 1
         addiu $s0, $s0, 1
         # goto 54
-        j     L2_54
-L2_58:
+        j     L0_54
+L0_61:
         # param "%d\n"
         # param x
         # call printf, 2

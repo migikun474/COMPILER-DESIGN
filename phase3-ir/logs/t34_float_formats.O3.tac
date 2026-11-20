@@ -4,7 +4,7 @@
 
    Source file   : test/t34_float_formats.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 63 -> 37 instruction(s)
+   Result        : Optimized three address code (-O3): 63 -> 53 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                           63 -> 37   (41% fewer)
+   instructions                           63 -> 53   (15% fewer)
 
    constants folded                        4
    algebraic simplifications              10
@@ -29,6 +29,8 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      0
+   loops unrolled                          1
+   unreachable functions removed           0
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -46,7 +48,7 @@
    t3               temp    double                          8     136
    (23 temporaries no longer used after optimization not shown)
 
- Code: 37 instruction(s)
+ Code: 53 instruction(s)
 
     100       v[0] = 1234.5678
     101       v[8] = 0.000123456
@@ -78,13 +80,29 @@
     127       param t3
     128       call printf, 11
     129       i = i int+ 1
-    130       goto L1
-    131  L2:  param "%e %g %f\n"
-    132       param 2.5
-    133       param 2.5
-    134       param 2.5
-    135       call printf, 4
-    136       return 0
+    130       if i int>= 13 goto L2
+    131       t2 = i int<< 3                      (w = 8)
+    132       t3 = v[t2]
+    133       param "[%e] [%E] [%.2e] [%.0e] [%g] [%G] [%.3g] [%12.4e] [%-12g] [%012.3e]\n"
+    134       param t3
+    135       param t3
+    136       param t3
+    137       param t3
+    138       param t3
+    139       param t3
+    140       param t3
+    141       param t3
+    142       param t3
+    143       param t3
+    144       call printf, 11
+    145       i = i int+ 1
+    146       goto L1
+    147  L2:  param "%e %g %f\n"
+    148       param 2.5
+    149       param 2.5
+    150       param 2.5
+    151       call printf, 4
+    152       return 0
 
 
 ----------------------------------------------------------------------------

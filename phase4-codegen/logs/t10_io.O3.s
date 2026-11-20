@@ -101,9 +101,28 @@ M0_0:
         # i = 0
         li    $s0, 0
 L0_12:
-        # if i int>= n goto 20
+        # if i int>= n goto 27
         lw    $t1, -4($fp)
-        bge   $s0, $t1, L0_20
+        bge   $s0, $t1, L0_27
+        # t5 = &v
+        addiu $s2, $fp, -44
+        # param "%d"
+        # param t5
+        # call scanf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        sw    $s2, 4($sp)
+        jal   __scanf
+        addiu $sp, $sp, 8
+        # total = total int+ v
+        lw    $t1, -44($fp)
+        addu  $s1, $s1, $t1
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # if i int>= n goto 27
+        lw    $t1, -4($fp)
+        bge   $s0, $t1, L0_27
         # t5 = &v
         addiu $s2, $fp, -44
         # param "%d"
@@ -122,7 +141,7 @@ L0_12:
         addiu $s0, $s0, 1
         # goto 12
         j     L0_12
-L0_20:
+L0_27:
         # t9 = chartoint grade
         lb    $t0, -33($fp)
         move  $s0, $t0

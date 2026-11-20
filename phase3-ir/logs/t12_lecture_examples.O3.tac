@@ -4,7 +4,7 @@
 
    Source file   : test/t12_lecture_examples.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 49 -> 7 instruction(s)
+   Result        : Optimized three address code (-O3): 49 -> 9 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                           49 -> 7   (85% fewer)
+   instructions                           49 -> 9   (81% fewer)
 
    constants folded                       10
    algebraic simplifications               3
@@ -29,6 +29,8 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      0
+   loops unrolled                          1
+   unreachable functions removed           0
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -53,15 +55,17 @@
    t12              temp    int                             4     188
    (14 temporaries no longer used after optimization not shown)
 
- Code: 7 instruction(s)
+ Code: 9 instruction(s)
 
     100       a = -12
     101  L1:  if a int>= 2 goto L2
     102       a = a int+ 1
-    103       goto L1
-    104  L2:  t12 = arr[4]
-    105       m[24] = t12
-    106       return 1
+    103       if a int>= 2 goto L2
+    104       a = a int+ 1
+    105       goto L1
+    106  L2:  t12 = arr[4]
+    107       m[24] = t12
+    108       return 1
 
 
 ----------------------------------------------------------------------------

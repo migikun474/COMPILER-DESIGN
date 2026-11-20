@@ -4,7 +4,7 @@
 
    Source file   : test/t02_control_flow.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 140 -> 105 instruction(s)
+   Result        : Optimized three address code (-O3): 140 -> 129 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          140 -> 105   (25% fewer)
+   instructions                          140 -> 129   (7% fewer)
 
    constants folded                        3
    algebraic simplifications               1
@@ -29,33 +29,8 @@
    calls inlined                           1
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-
-============================================================================
- FUNCTION classify(int)        (link name _Z8classifyi)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
-   (4 temporaries no longer used after optimization not shown)
-
- Code: 13 instruction(s)
-
-    100       goto L5
-    101  L1:  return 100
-    102  L2:  n = n int+ 10
-    103  L3:  n = n int<< 1
-    104       goto L6
-    105  L4:  n = -1
-    106       goto L6
-    107  L5:  if n int== 0 goto L1
-    108       if n int== 1 goto L2
-    109       if n int== 2 goto L2
-    110       if n int== 3 goto L3
-    111       goto L4
-    112  L6:  return n
+   loops unrolled                          5
+   unreachable functions removed           1
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -79,100 +54,137 @@
    t14              temp    int                             4      80
    (9 temporaries no longer used after optimization not shown)
 
- Code: 92 instruction(s)
+ Code: 129 instruction(s)
 
-    113        total = 0
-    114        i = 0
-    115  L7:   if i int>= 10 goto L9
-    116        if i int== 2 goto L8
-    117        if i int== 8 goto L9
-    118        total = total int+ i
-    119  L8:   i = i int+ 1
-    120        goto L7
-    121  L9:   param "for: %d %d\n"
-    122        param i
-    123        param total
-    124        call printf, 3
-    125        n = 5
-    126        fact = 1
-    127  L10:  if n int<= 1 goto L11
-    128        fact = fact int* n
-    129        n = n int- 1
-    130        goto L10
-    131  L11:  param "while: %d\n"
-    132        param fact
-    133        call printf, 2
-    134  L12:  t5 = n int+ 3
-    135        n = t5
-    136        if t5 int< 10 goto L12
-    137        param "do: %d\n"
-    138        param t5
-    139        call printf, 2
-    140  L13:  if n int>= 20 goto L14
-    141        n = n int+ 4
-    142        goto L13
-    143  L14:  param "until: %d\n"
-    144        param n
-    145        call printf, 2
-    146        i = 0
-    147  L15:  if i int>= 6 goto L23
-    148        t14 = i
-    149        goto L20
-    150  L16:  t7 = 100
-    151        goto L22
-    152  L17:  t14 = i int+ 10
-    153  L18:  t14 = t14 int<< 1
-    154        goto L21
-    155  L19:  t14 = -1
-    156        goto L21
-    157  L20:  if i int== 0 goto L16
-    158        if i int== 1 goto L17
-    159        if i int== 2 goto L17
-    160        if i int== 3 goto L18
-    161        goto L19
-    162  L21:  t7 = t14
-    163  L22:  param "%d "
-    164        param t7
-    165        call printf, 2
-    166        i = i int+ 1
-    167        goto L15
-    168  L23:  param "\n"
-    169        call printf, 1
-    170        i = 0
-    171  L24:  if i int>= 3 goto L27
-    172        j = 0
-    173  L25:  if j int>= 3 goto L26
-    174        if j int> i goto L26
-    175        param "%d%d "
-    176        param i
-    177        param j
-    178        call printf, 3
-    179        j = j int+ 1
-    180        goto L25
-    181  L26:  i = i int+ 1
-    182        goto L24
-    183  L27:  param "\n"
-    184        call printf, 1
-    185        count = 0
-    186  L28:  t11 = count int+ 1
-    187        count = t11
-    188        if t11 int< 4 goto L28
-    189        if t11 int== 4 goto L29
-    190        count = 99
-    191  L29:  param "goto: %d\n"
-    192        param count
-    193        call printf, 2
-    194        x = 3
-    195        param "medium\n"
-    196        call printf, 1
-    197  L30:  t12 = x int- 1
-    198        x = t12
-    199        if t12 int== 1 goto L30
-    200        if t12 int> 0 goto L30
-    201        param "x: %d\n"
-    202        param t12
-    203        call printf, 2
-    204        return total
+    100        total = 0
+    101        i = 0
+    102  L1:   if i int>= 10 goto L4
+    103        if i int== 2 goto L2
+    104        if i int== 8 goto L4
+    105        total = total int+ i
+    106  L2:   i = i int+ 1
+    107        if i int>= 10 goto L4
+    108        if i int== 2 goto L3
+    109        if i int== 8 goto L4
+    110        total = total int+ i
+    111  L3:   i = i int+ 1
+    112        goto L1
+    113  L4:   param "for: %d %d\n"
+    114        param i
+    115        param total
+    116        call printf, 3
+    117        n = 5
+    118        fact = 1
+    119  L5:   if n int<= 1 goto L6
+    120        fact = fact int* n
+    121        n = n int- 1
+    122        if n int<= 1 goto L6
+    123        fact = fact int* n
+    124        n = n int- 1
+    125        goto L5
+    126  L6:   param "while: %d\n"
+    127        param fact
+    128        call printf, 2
+    129  L7:   t5 = n int+ 3
+    130        n = t5
+    131        if t5 int< 10 goto L7
+    132        param "do: %d\n"
+    133        param t5
+    134        call printf, 2
+    135  L8:   if n int>= 20 goto L9
+    136        n = n int+ 4
+    137        if n int>= 20 goto L9
+    138        n = n int+ 4
+    139        goto L8
+    140  L9:   param "until: %d\n"
+    141        param n
+    142        call printf, 2
+    143        i = 0
+    144  L10:  if i int>= 6 goto L25
+    145        t14 = i
+    146        goto L15
+    147  L11:  t7 = 100
+    148        goto L17
+    149  L12:  t14 = i int+ 10
+    150  L13:  t14 = t14 int<< 1
+    151        goto L16
+    152  L14:  t14 = -1
+    153        goto L16
+    154  L15:  if i int== 0 goto L11
+    155        if i int== 1 goto L12
+    156        if i int== 2 goto L12
+    157        if i int== 3 goto L13
+    158        goto L14
+    159  L16:  t7 = t14
+    160  L17:  param "%d "
+    161        param t7
+    162        call printf, 2
+    163        i = i int+ 1
+    164        if i int>= 6 goto L25
+    165        t14 = i
+    166        goto L22
+    167  L18:  t7 = 100
+    168        goto L24
+    169  L19:  t14 = i int+ 10
+    170  L20:  t14 = t14 int<< 1
+    171        goto L23
+    172  L21:  t14 = -1
+    173        goto L23
+    174  L22:  if i int== 0 goto L18
+    175        if i int== 1 goto L19
+    176        if i int== 2 goto L19
+    177        if i int== 3 goto L20
+    178        goto L21
+    179  L23:  t7 = t14
+    180  L24:  param "%d "
+    181        param t7
+    182        call printf, 2
+    183        i = i int+ 1
+    184        goto L10
+    185  L25:  param "\n"
+    186        call printf, 1
+    187        i = 0
+    188  L26:  if i int>= 3 goto L29
+    189        j = 0
+    190  L27:  if j int>= 3 goto L28
+    191        if j int> i goto L28
+    192        param "%d%d "
+    193        param i
+    194        param j
+    195        call printf, 3
+    196        j = j int+ 1
+    197        if j int>= 3 goto L28
+    198        if j int> i goto L28
+    199        param "%d%d "
+    200        param i
+    201        param j
+    202        call printf, 3
+    203        j = j int+ 1
+    204        goto L27
+    205  L28:  i = i int+ 1
+    206        goto L26
+    207  L29:  param "\n"
+    208        call printf, 1
+    209        count = 0
+    210  L30:  t11 = count int+ 1
+    211        count = t11
+    212        if t11 int< 4 goto L30
+    213        if t11 int== 4 goto L31
+    214        count = 99
+    215  L31:  param "goto: %d\n"
+    216        param count
+    217        call printf, 2
+    218        x = 3
+    219        param "medium\n"
+    220        call printf, 1
+    221  L32:  t12 = x int- 1
+    222        x = t12
+    223        if t12 int== 1 goto L32
+    224        if t12 int> 0 goto L32
+    225        param "x: %d\n"
+    226        param t12
+    227        call printf, 2
+    228        return total
 
 
 ----------------------------------------------------------------------------

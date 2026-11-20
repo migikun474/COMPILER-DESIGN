@@ -54,8 +54,8 @@ M0_0:
         # i = 1
         li    $s3, 1
 L0_2:
-        # if i int>= argc goto 18
-        bge   $s3, $s7, L0_18
+        # if i int>= argc goto 22
+        bge   $s3, $s7, L0_22
         # t1 = i int<< 2
         sll   $s5, $s3, 2
         # t2 = argv ptr+ t1
@@ -66,15 +66,23 @@ L0_2:
 L0_6:
         # t4 = *s
         lb    $s2, 0($s0)
-        # if t4 char== 0 goto 11
-        beq   $s2, $zero, L0_11
+        # if t4 char== 0 goto 15
+        beq   $s2, $zero, L0_15
+        # letters = letters int+ 1
+        addiu $s1, $s1, 1
+        # s = s ptr+ 1
+        addiu $s0, $s0, 1
+        # t4 = *s
+        lb    $s2, 0($s0)
+        # if t4 char== 0 goto 15
+        beq   $s2, $zero, L0_15
         # letters = letters int+ 1
         addiu $s1, $s1, 1
         # s = s ptr+ 1
         addiu $s0, $s0, 1
         # goto 6
         j     L0_6
-L0_11:
+L0_15:
         # t9 = *t2
         lw    $s6, 0($s4)
         # param "%d: %s\n"
@@ -92,7 +100,7 @@ L0_11:
         addiu $s3, $s3, 1
         # goto 2
         j     L0_2
-L0_18:
+L0_22:
         # param "%d %d\n"
         # param argc
         # param letters

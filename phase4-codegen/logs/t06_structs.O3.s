@@ -47,179 +47,6 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# make(int, int)
-_Z4makeii:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        # p[0] = x
-        sw    $s0, -8($fp)
-        # p[4] = y
-        sw    $s1, -4($fp)
-        # return p
-        addiu $v0, $fp, -8
-        j     _Z4makeii_exit
-_Z4makeii_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# area(struct Rect)
-_Z4area4Rect:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -40($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -44($fp)
-        # t1 = r[8]
-        lw    $s1, 16($fp)
-        # t2 = r[0]
-        lw    $s2, 8($fp)
-        # t3 = t1 int- t2
-        subu  $s0, $s1, $s2
-        # r[8] = t3
-        sw    $s0, 16($fp)
-        # t5 = r[12]
-        lw    $s1, 20($fp)
-        # t6 = r[4]
-        lw    $s2, 12($fp)
-        # t7 = t5 int- t6
-        subu  $s3, $s1, $s2
-        # t8 = t3 int* t7
-        mul   $s1, $s0, $s3
-        # return t8
-        move  $v0, $s1
-        j     _Z4area4Rect_exit
-_Z4area4Rect_exit:
-        lw    $s0, -40($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -44($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# move(struct Point *, int)
-_Z4moveP5Pointi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        sw    $s3, -24($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
-        # t1 = *p
-        lw    $s0, 0($s2)
-        # t2 = t1 int+ dx
-        addu  $s1, $s0, $s3
-        # *p = t2
-        sw    $s1, 0($s2)
-        # return
-        j     _Z4moveP5Pointi_exit
-_Z4moveP5Pointi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        lw    $s3, -24($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# add(Complex, Complex)
-_Z3add7ComplexS_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -88
-        s.d   $f20, -72($fp)
-        s.d   $f22, -80($fp)
-        s.d   $f24, -88($fp)
-        # t1 = a[0]
-        l.d   $f0, 8($fp)
-        mov.d $f20, $f0
-        # t2 = b[0]
-        l.d   $f0, 24($fp)
-        mov.d $f22, $f0
-        # t3 = t1 double+ t2
-        add.d $f24, $f20, $f22
-        # c[0] = t3
-        mov.d $f0, $f24
-        s.d   $f0, -16($fp)
-        # t4 = a[8]
-        l.d   $f0, 16($fp)
-        mov.d $f20, $f0
-        # t5 = b[8]
-        l.d   $f0, 32($fp)
-        mov.d $f22, $f0
-        # t6 = t4 double+ t5
-        add.d $f24, $f20, $f22
-        # c[8] = t6
-        mov.d $f0, $f24
-        s.d   $f0, -8($fp)
-        # return c
-        addiu $v0, $fp, -16
-        j     _Z3add7ComplexS__exit
-_Z3add7ComplexS__exit:
-        l.d   $f20, -72($fp)
-        l.d   $f22, -80($fp)
-        l.d   $f24, -88($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# length(struct Node *)
-_Z6lengthP4Node:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -12($fp)
-        lw    $s0, 8($fp)
-        # n = 0
-        li    $s1, 0
-L4_1:
-        # if head ptr== 0 goto 6
-        beq   $s0, $zero, L4_6
-        # n = n int+ 1
-        addiu $s1, $s1, 1
-        # t2 = head ptr+ 4
-        addiu $s2, $s0, 4
-        # head = *t2
-        lw    $s0, 0($s2)
-        # goto 1
-        j     L4_1
-L4_6:
-        # return n
-        move  $v0, $s1
-        j     _Z6lengthP4Node_exit
-_Z6lengthP4Node_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -12($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -229,9 +56,9 @@ main_:
         addiu $sp, $sp, -624
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M5_0
+        beqz  $t8, M0_0
         j     __stack_overflow
-M5_0:
+M0_0:
         s.d   $f20, -600($fp)
         s.d   $f22, -608($fp)
         s.d   $f24, -624($fp)
@@ -330,10 +157,35 @@ M5_0:
         addiu $sp, $sp, 16
         # i = 0
         li    $s0, 0
-L5_34:
-        # if i int>= 3 goto 43
+L0_34:
+        # if i int>= 3 goto 51
         li    $t1, 3
-        bge   $s0, $t1, L5_43
+        bge   $s0, $t1, L0_51
+        # t10 = i int<< 3
+        sll   $s1, $s0, 3
+        # t11 = i int* i
+        mul   $s2, $s0, $s0
+        # t68[0] = i
+        sw    $s0, -436($fp)
+        # t68[4] = t11
+        sw    $s2, -432($fp)
+        # t12 = t68
+        addiu $a0, $fp, -220
+        addiu $a1, $fp, -436
+        li    $a2, 8
+        jal   __memcpy
+        # pts[t10] = t12
+        addiu $t8, $fp, -64
+        addu  $t8, $t8, $s1
+        addiu $a0, $t8, 0
+        addiu $a1, $fp, -220
+        li    $a2, 8
+        jal   __memcpy
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # if i int>= 3 goto 51
+        li    $t1, 3
+        bge   $s0, $t1, L0_51
         # t10 = i int<< 3
         sll   $s1, $s0, 3
         # t11 = i int* i
@@ -357,8 +209,8 @@ L5_34:
         # i = i int+ 1
         addiu $s0, $s0, 1
         # goto 34
-        j     L5_34
-L5_43:
+        j     L0_34
+L0_51:
         # t14 = &pts
         addiu $s0, $fp, -64
         # t15 = t14 ptr+ 8
@@ -553,18 +405,26 @@ L5_43:
         addiu $s0, $fp, -136
         # t89 = 0
         li    $s1, 0
-L5_116:
-        # if t88 ptr== 0 goto 121
-        beq   $s0, $zero, L5_121
+L0_124:
+        # if t88 ptr== 0 goto 133
+        beq   $s0, $zero, L0_133
         # t89 = t89 int+ 1
         addiu $s1, $s1, 1
         # t90 = t88 ptr+ 4
         addiu $s2, $s0, 4
         # t88 = *t90
         lw    $s0, 0($s2)
-        # goto 116
-        j     L5_116
-L5_121:
+        # if t88 ptr== 0 goto 133
+        beq   $s0, $zero, L0_133
+        # t89 = t89 int+ 1
+        addiu $s1, $s1, 1
+        # t90 = t88 ptr+ 4
+        addiu $s2, $s0, 4
+        # t88 = *t90
+        lw    $s0, 0($s2)
+        # goto 124
+        j     L0_124
+L0_133:
         # t45 = n1[4]
         lw    $s0, -132($fp)
         # t46 = t45 ptr+ 4

@@ -76,55 +76,6 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# sum(const int *)
-_Z3sumPKi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -44($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -36($fp)
-        lw    $s5, 8($fp)
-        # s = 0
-        li    $s1, 0
-        # i = 0
-        li    $s0, 0
-L0_2:
-        # if i int>= 4 goto 9
-        li    $t1, 4
-        bge   $s0, $t1, L0_9
-        # t1 = i int<< 2
-        sll   $s2, $s0, 2
-        # t2 = r ptr+ t1
-        addu  $s3, $s5, $s2
-        # t3 = *t2
-        lw    $s4, 0($s3)
-        # s = s int+ t3
-        addu  $s1, $s1, $s4
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 2
-        j     L0_2
-L0_9:
-        # return s
-        move  $v0, $s1
-        j     _Z3sumPKi_exit
-_Z3sumPKi_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -36($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -134,9 +85,9 @@ main_:
         addiu $sp, $sp, -624
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M1_0
+        beqz  $t8, M0_0
         j     __stack_overflow
-M1_0:
+M0_0:
         s.d   $f20, -592($fp)
         s.d   $f22, -584($fp)
         s.d   $f24, -600($fp)
@@ -166,10 +117,23 @@ M1_0:
         li    $s1, 0
         # t68 = 0
         li    $s0, 0
-L1_7:
-        # if t68 int>= 4 goto 14
+L0_7:
+        # if t68 int>= 4 goto 20
         li    $t1, 4
-        bge   $s0, $t1, L1_14
+        bge   $s0, $t1, L0_20
+        # t69 = t68 int<< 2
+        sll   $s2, $s0, 2
+        # t70 = t66 ptr+ t69
+        addu  $s3, $s5, $s2
+        # t71 = *t70
+        lw    $s4, 0($s3)
+        # t67 = t67 int+ t71
+        addu  $s1, $s1, $s4
+        # t68 = t68 int+ 1
+        addiu $s0, $s0, 1
+        # if t68 int>= 4 goto 20
+        li    $t1, 4
+        bge   $s0, $t1, L0_20
         # t69 = t68 int<< 2
         sll   $s2, $s0, 2
         # t70 = t66 ptr+ t69
@@ -181,18 +145,18 @@ L1_7:
         # t68 = t68 int+ 1
         addiu $s0, $s0, 1
         # goto 7
-        j     L1_7
-L1_14:
+        j     L0_7
+L0_20:
         # t72 = &primes
         la    $s6, g_primes
         # t73 = 0
         li    $s2, 0
         # t74 = 0
         li    $s0, 0
-L1_17:
-        # if t74 int>= 4 goto 24
+L0_23:
+        # if t74 int>= 4 goto 36
         li    $t1, 4
-        bge   $s0, $t1, L1_24
+        bge   $s0, $t1, L0_36
         # t75 = t74 int<< 2
         sll   $s3, $s0, 2
         # t76 = t72 ptr+ t75
@@ -203,22 +167,35 @@ L1_17:
         addu  $s2, $s2, $s5
         # t74 = t74 int+ 1
         addiu $s0, $s0, 1
-        # goto 17
-        j     L1_17
-L1_24:
+        # if t74 int>= 4 goto 36
+        li    $t1, 4
+        bge   $s0, $t1, L0_36
+        # t75 = t74 int<< 2
+        sll   $s3, $s0, 2
+        # t76 = t72 ptr+ t75
+        addu  $s4, $s6, $s3
+        # t77 = *t76
+        lw    $s5, 0($s4)
+        # t73 = t73 int+ t77
+        addu  $s2, $s2, $s5
+        # t74 = t74 int+ 1
+        addiu $s0, $s0, 1
+        # goto 23
+        j     L0_23
+L0_36:
         # t7 = t67 int+ t73
         addu  $s0, $s1, $s2
-        # if t7 int<= 100 goto 28
+        # if t7 int<= 100 goto 40
         li    $t1, 100
-        ble   $s0, $t1, L1_28
+        ble   $s0, $t1, L0_40
         # t11 = t7
         move  $s1, $s0
-        # goto 29
-        j     L1_29
-L1_28:
+        # goto 41
+        j     L0_41
+L0_40:
         # t11 = 100
         li    $s1, 100
-L1_29:
+L0_41:
         # param "%d %d %d\n"
         # param t7
         # param 9
@@ -518,10 +495,10 @@ L1_29:
         li    $s1, 0
         # i = 0
         li    $s0, 0
-L1_138:
-        # if i int>= 3 goto 146
+L0_150:
+        # if i int>= 3 goto 165
         li    $t1, 3
-        bge   $s0, $t1, L1_146
+        bge   $s0, $t1, L0_165
         # t53 = i int<< 2
         sll   $s2, $s0, 2
         # t54 = t53 int+ i
@@ -536,9 +513,26 @@ L1_138:
         addu  $s1, $s1, $s5
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 138
-        j     L1_138
-L1_146:
+        # if i int>= 3 goto 165
+        li    $t1, 3
+        bge   $s0, $t1, L0_165
+        # t53 = i int<< 2
+        sll   $s2, $s0, 2
+        # t54 = t53 int+ i
+        addu  $s3, $s2, $s0
+        # t55 = t54 int<< 2
+        sll   $s4, $s3, 2
+        # t56 = grid[t55]
+        addiu $t8, $fp, -224
+        addu  $t8, $t8, $s4
+        lw    $s5, 0($t8)
+        # trace = trace int+ t56
+        addu  $s1, $s1, $s5
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # goto 150
+        j     L0_150
+L0_165:
         # words[0] = "one"
         la    $t0, str5
         sw    $t0, -244($fp)

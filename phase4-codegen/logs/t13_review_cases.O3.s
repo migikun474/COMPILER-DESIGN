@@ -29,9 +29,9 @@ str5:
         .byte 97, 102, 116, 101, 114, 32, 116, 104, 101, 32, 98, 108, 111, 99, 107, 10
         .byte 0
         .align 3
-fc0:  .word 0, 1073741824        # 2
+fc0:  .word 0, 1075052544        # 5
         .align 3
-fc1:  .word 0, 1075052544        # 5
+fc1:  .word 0, 1073741824        # 2
         .align 3
 fc2:  .word 0, 1074266112        # 3
 
@@ -49,76 +49,6 @@ main:
         move  $a0, $v0
         li    $v0, 17                 # exit with main's result
         syscall
-
-# half(const double &)
-_Z4halfRKd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        sw    $s0, -36($fp)
-        lw    $s0, 8($fp)
-        # t1 = *v
-        l.d   $f0, 0($s0)
-        mov.d $f20, $f0
-        # t2 = t1 double/ 2.0
-        l.d   $f2, fc0
-        div.d $f22, $f20, $f2
-        # return t2
-        mov.d $f0, $f22
-        j     _Z4halfRKd_exit
-_Z4halfRKd_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        lw    $s0, -36($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# A::A()
-_ZN1AC1Ev:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
-        # *this = 1
-        li    $t0, 1
-        sw    $t0, 0($s0)
-        # return
-        j     _ZN1AC1Ev_exit
-_ZN1AC1Ev_exit:
-        lw    $s0, -4($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# A::ga()
-_ZN1A2gaEv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        lw    $s1, 8($fp)
-        # t1 = *this
-        lw    $s0, 0($s1)
-        # return t1
-        move  $v0, $s0
-        j     _ZN1A2gaEv_exit
-_ZN1A2gaEv_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
 
 # B::B()
 _ZN1BC1Ev:
@@ -147,169 +77,6 @@ _ZN1BC1Ev_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# B::gb()
-_ZN1B2gbEv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        lw    $s1, 8($fp)
-        # t1 = this ptr+ 4
-        addiu $s0, $s1, 4
-        # t2 = *t1
-        lw    $s1, 0($s0)
-        # return t2
-        move  $v0, $s1
-        j     _ZN1B2gbEv_exit
-_ZN1B2gbEv_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# C::C()
-_ZN1CC1Ev:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        lw    $t8, __stack_limit
-        sltu  $t8, $sp, $t8
-        beqz  $t8, M5_0
-        j     __stack_overflow
-M5_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -12($fp)
-        lw    $s0, 8($fp)
-        # param this
-        # call A::A(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        jal   _ZN1AC1Ev
-        addiu $sp, $sp, 8
-        # t3 = this ptr+ 4
-        addiu $s1, $s0, 4
-        # *t3 = 2
-        li    $t0, 2
-        sw    $t0, 0($s1)
-        # t1 = this ptr+ 8
-        addiu $s1, $s0, 8
-        # *t1 = 3
-        li    $t0, 3
-        sw    $t0, 0($s1)
-        # return
-        j     _ZN1CC1Ev_exit
-_ZN1CC1Ev_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -12($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# C::sum()
-_ZN1C3sumEv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -44($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -40($fp)
-        lw    $s0, 8($fp)
-        # t1 = *this
-        lw    $s1, 0($s0)
-        # t2 = this ptr+ 4
-        addiu $s2, $s0, 4
-        # t3 = *t2
-        lw    $s3, 0($s2)
-        # t4 = t1 int+ t3
-        addu  $s2, $s1, $s3
-        # t5 = this ptr+ 8
-        addiu $s1, $s0, 8
-        # t6 = *t5
-        lw    $s0, 0($s1)
-        # t7 = t4 int+ t6
-        addu  $s1, $s2, $s0
-        # return t7
-        move  $v0, $s1
-        j     _ZN1C3sumEv_exit
-_ZN1C3sumEv_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -40($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# takeB(class B *)
-_Z5takeBP1B:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        lw    $s0, 8($fp)
-        # if p ptr== 0 goto 4
-        beq   $s0, $zero, L7_4
-        # t2 = p ptr+ 4
-        addiu $s1, $s0, 4
-        # t1 = *t2
-        lw    $s0, 0($s1)
-        # goto 5
-        j     L7_5
-L7_4:
-        # t1 = -1
-        li    $s0, -1
-L7_5:
-        # return t1
-        move  $v0, $s0
-        j     _Z5takeBP1B_exit
-_Z5takeBP1B_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Cnt::Cnt()
-_ZN3CntC1Ev:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        lw    $s1, 8($fp)
-        # t1 = Cnt::made int+ 1
-        lw    $t0, g_Cnt__made
-        addiu $s0, $t0, 1
-        # Cnt::made = t1
-        move  $t0, $s0
-        sw    $t0, g_Cnt__made
-        # *this = t1
-        sw    $s0, 0($s1)
-        # return
-        j     _ZN3CntC1Ev_exit
-_ZN3CntC1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # vsum(int, va_list)
 _Z4vsumiPv:
         addiu $sp, $sp, -8
@@ -323,13 +90,26 @@ _Z4vsumiPv:
         lw    $s0, 8($fp)
         # s = 0
         li    $s1, 0
-L9_1:
+L1_1:
         # t1 = n
         move  $s2, $s0
         # n = n int- 1
         addiu $s0, $s0, -1
-        # if t1 int<= 0 goto 7
-        ble   $s2, $zero, L9_7
+        # if t1 int<= 0 goto 12
+        ble   $s2, $zero, L1_12
+        # t3 = va_arg ap, int
+        lw    $t8, 12($fp)
+        addiu $t9, $t8, 4
+        sw    $t9, 12($fp)
+        lw    $s3, 0($t8)
+        # s = s int+ t3
+        addu  $s1, $s1, $s3
+        # t1 = n
+        move  $s2, $s0
+        # n = n int- 1
+        addiu $s0, $s0, -1
+        # if t1 int<= 0 goto 12
+        ble   $s2, $zero, L1_12
         # t3 = va_arg ap, int
         lw    $t8, 12($fp)
         addiu $t9, $t8, 4
@@ -338,8 +118,8 @@ L9_1:
         # s = s int+ t3
         addu  $s1, $s1, $s3
         # goto 1
-        j     L9_1
-L9_7:
+        j     L1_1
+L1_12:
         # return s
         move  $v0, $s1
         j     _Z4vsumiPv_exit
@@ -362,9 +142,9 @@ _Z5totaliz:
         addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M10_0
+        beqz  $t8, M2_0
         j     __stack_overflow
-M10_0:
+M2_0:
         sw    $s0, -16($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
@@ -392,20 +172,6 @@ _Z5totaliz_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# one()
-_Z3onev:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        # return 1
-        li    $v0, 1
-        j     _Z3onev_exit
-_Z3onev_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -415,9 +181,9 @@ main_:
         addiu $sp, $sp, -232
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M12_0
+        beqz  $t8, M3_0
         j     __stack_overflow
-M12_0:
+M3_0:
         s.d   $f20, -208($fp)
         s.d   $f22, -216($fp)
         s.d   $f24, -224($fp)
@@ -428,7 +194,7 @@ M12_0:
         sw    $s4, -192($fp)
         sw    $s5, -232($fp)
         # t1 = 5.0
-        l.d   $f0, fc1
+        l.d   $f0, fc0
         s.d   $f0, -56($fp)
         # t3 = &t1
         addiu $s0, $fp, -56
@@ -436,7 +202,7 @@ M12_0:
         l.d   $f0, 0($s0)
         mov.d $f20, $f0
         # t32 = t31 double/ 2.0
-        l.d   $f2, fc0
+        l.d   $f2, fc1
         div.d $f22, $f20, $f2
         # t5 = 3.0
         l.d   $f0, fc2
@@ -447,7 +213,7 @@ M12_0:
         l.d   $f0, 0($s0)
         mov.d $f20, $f0
         # t35 = t34 double/ 2.0
-        l.d   $f2, fc0
+        l.d   $f2, fc1
         div.d $f24, $f20, $f2
         # param "%.2f %.2f\n"
         # param t32
@@ -486,15 +252,15 @@ M12_0:
         # t11 = t42 int+ 3
         addiu $s4, $s5, 3
         # if t8 ptr== 0 goto 25
-        beq   $s0, $zero, L12_25
+        beq   $s0, $zero, L3_25
         # t51 = *t40
         lw    $s3, 0($s2)
         # goto 26
-        j     L12_26
-L12_25:
+        j     L3_26
+L3_25:
         # t51 = -1
         li    $s3, -1
-L12_26:
+L3_26:
         # t19 = *t8
         lw    $s2, 0($s0)
         # param "%d %d %d %d %d %d %d\n"

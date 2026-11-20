@@ -26,6 +26,8 @@
      - inlining of small functions (at most 16 instructions, not
        recursive, not variadic) and tail recursion turned into a jump;
      - common subexpressions across blocks (available expressions);
+     - small loops unrolled by two (each copy keeps its exit test);
+     - functions main no longer reaches (after inlining) are removed;
 
    Nothing here may change what a program prints or returns: the test
    suite runs every program before and after and compares.
@@ -56,6 +58,8 @@ struct OptStats {
     int inlined = 0;           /* -O3: calls replaced by the callee's body */
     int tailCalls = 0;         /* -O3: `return f(...)` in f turned into a jump */
     int globalCommon = 0;      /* -O3: expressions reused from another block */
+    int unrolled = 0;          /* -O3: loops unrolled by two */
+    int deadFunctions = 0;     /* -O3: functions main never reaches after inlining */
 };
 
 OptStats optimize(Program &program, int level);

@@ -4,7 +4,7 @@
 
    Source file   : test/t22_data_structures.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 321 -> 303 instruction(s)
+   Result        : Optimized three address code (-O3): 321 -> 330 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,12 +14,12 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          321 -> 303   (5% fewer)
+   instructions                          321 -> 330   (-2% fewer)
 
    constants folded                        5
    algebraic simplifications              11
    common subexpressions                   9
-   copies / constants forwarded           47
+   copies / constants forwarded           49
    temporaries merged away                15
    dead instructions removed              22
    jumps removed or redirected            15
@@ -29,95 +29,8 @@
    calls inlined                           6
    tail calls turned into jumps            1
    common subexpressions across blocks      0
-
-============================================================================
- FUNCTION prepend(struct Node *, int)        (link name _Z7prependP4Nodei)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 2 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   head             param   struct Node *                   4       0
-   v                param   int                             4       4
-   n                local   struct Node *                   4       8
-   t1               temp    void *                          4      12
-   t2               temp    struct Node *                   4      16
-
- Code: 6 instruction(s)
-
-    100     param 8
-    101     t1 = call malloc, 1
-    102     *t1 = v
-    103     t2 = t1 ptr+ 4
-    104     *t2 = head
-    105     return t1
-
-============================================================================
- FUNCTION reverse(struct Node *)        (link name _Z7reverseP4Node)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 2 temporaries, frame 24 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   head             param   struct Node *                   4       0
-   prev             local   struct Node *                   4       4
-   next             local   struct Node *                   4       8
-   t1               temp    struct Node *                   4      12
-   t2               temp    struct Node *                   4      16
-   (1 temporary no longer used after optimization not shown)
-
- Code: 9 instruction(s)
-
-    106       prev = 0
-    107  L1:  if head ptr== 0 goto L2
-    108       t1 = head ptr+ 4
-    109       t2 = *t1
-    110       *t1 = prev
-    111       prev = head
-    112       head = t2
-    113       goto L1
-    114  L2:  return prev
-
-============================================================================
- FUNCTION removeValue(struct Node **, int)        (link name _Z11removeValuePP4Nodei)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 7 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   link             param   struct Node **                  4       0
-   v                param   int                             4       4
-   dead             local   struct Node *                   4       8
-   t1               temp    struct Node *                   4      12
-   t2               temp    struct Node *                   4      16
-   t3               temp    int                             4      20
-   t4               temp    struct Node *                   4      24
-   t5               temp    struct Node *                   4      28
-   t6               temp    struct Node *                   4      32
-   t7               temp    struct Node *                   4      36
-   (1 temporary no longer used after optimization not shown)
-
- Code: 16 instruction(s)
-
-    115  L3:  t1 = *link
-    116       if t1 ptr== 0 goto L5
-    117       t2 = *link
-    118       t3 = *t2
-    119       if t3 int!= v goto L4
-    120       t4 = *link
-    121       t5 = t4 ptr+ 4
-    122       t6 = *t5
-    123       *link = t6
-    124       param t4
-    125       call free, 1
-    126       goto L3
-    127  L4:  t7 = *link
-    128       link = t7 ptr+ 4
-    129       goto L3
-    130  L5:  return
+   loops unrolled                         10
+   unreachable functions removed           5
 
 ============================================================================
  FUNCTION insert(struct Tree *, int)        (link name _Z6insertP4Treei)
@@ -143,32 +56,32 @@
 
  Code: 26 instruction(s)
 
-    131       if t ptr!= 0 goto L6
-    132       param 12
-    133       t1 = call malloc, 1
-    134       t = t1
-    135       *t1 = key
-    136       t2 = t1 ptr+ 8
-    137       *t2 = 0
-    138       t3 = t1 ptr+ 4
-    139       *t3 = 0
-    140       goto L8
-    141  L6:  t4 = *t
-    142       if key int>= t4 goto L7
-    143       t5 = t ptr+ 4
-    144       t6 = *t5
-    145       param t6
-    146       param key
-    147       t7 = call insert(struct Tree *, int), 2
-    148       *t5 = t7
-    149       goto L8
-    150  L7:  t9 = t ptr+ 8
-    151       t10 = *t9
-    152       param t10
-    153       param key
-    154       t11 = call insert(struct Tree *, int), 2
-    155       *t9 = t11
-    156  L8:  return t
+    100       if t ptr!= 0 goto L1
+    101       param 12
+    102       t1 = call malloc, 1
+    103       t = t1
+    104       *t1 = key
+    105       t2 = t1 ptr+ 8
+    106       *t2 = 0
+    107       t3 = t1 ptr+ 4
+    108       *t3 = 0
+    109       goto L3
+    110  L1:  t4 = *t
+    111       if key int>= t4 goto L2
+    112       t5 = t ptr+ 4
+    113       t6 = *t5
+    114       param t6
+    115       param key
+    116       t7 = call insert(struct Tree *, int), 2
+    117       *t5 = t7
+    118       goto L3
+    119  L2:  t9 = t ptr+ 8
+    120       t10 = *t9
+    121       param t10
+    122       param key
+    123       t11 = call insert(struct Tree *, int), 2
+    124       *t9 = t11
+    125  L3:  return t
 
 ============================================================================
  FUNCTION inorder(struct Tree *)        (link name _Z7inorderP4Tree)
@@ -187,19 +100,19 @@
 
  Code: 13 instruction(s)
 
-    157  L9:   if t ptr!= 0 goto L10
-    158        return
-    159  L10:  t1 = t ptr+ 4
-    160        t2 = *t1
-    161        param t2
-    162        call inorder(struct Tree *), 1
-    163        t3 = *t
-    164        param "%d "
-    165        param t3
-    166        call printf, 2
-    167        t4 = t ptr+ 8
-    168        t = *t4
-    169        goto L9
+    126  L4:  if t ptr!= 0 goto L5
+    127       return
+    128  L5:  t1 = t ptr+ 4
+    129       t2 = *t1
+    130       param t2
+    131       call inorder(struct Tree *), 1
+    132       t3 = *t
+    133       param "%d "
+    134       param t3
+    135       call printf, 2
+    136       t4 = t ptr+ 8
+    137       t = *t4
+    138       goto L4
 
 ============================================================================
  FUNCTION height(struct Tree *)        (link name _Z6heightP4Tree)
@@ -223,78 +136,22 @@
 
  Code: 16 instruction(s)
 
-    170        if t ptr!= 0 goto L11
-    171        return 0
-    172  L11:  t1 = t ptr+ 4
-    173        t2 = *t1
-    174        param t2
-    175        t3 = call height(struct Tree *), 1
-    176        t4 = t ptr+ 8
-    177        t5 = *t4
-    178        param t5
-    179        t6 = call height(struct Tree *), 1
-    180        if t3 int<= t6 goto L12
-    181        t7 = t3
-    182        goto L13
-    183  L12:  t7 = t6
-    184  L13:  t8 = 1 int+ t7
-    185        return t8
-
-============================================================================
- FUNCTION push(Stack *, int)        (link name _Z4pushP5Stacki)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   s                param   Stack *                         4       0
-   v                param   int                             4       4
-   t1               temp    Stack *                         4       8
-   t2               temp    int                             4      12
-   t3               temp    int                             4      16
-   t5               temp    int                             4      24
-   t6               temp    Stack *                         4      28
-   (1 temporary no longer used after optimization not shown)
-
- Code: 8 instruction(s)
-
-    186     t1 = s ptr+ 32
-    187     t2 = *t1
-    188     t3 = t2 int+ 1
-    189     *t1 = t3
-    190     t5 = t2 int<< 2                     (w = 4)
-    191     t6 = s ptr+ t5
-    192     *t6 = v
-    193     return
-
-============================================================================
- FUNCTION pop(Stack *)        (link name _Z3popP5Stack)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 6 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   s                param   Stack *                         4       0
-   t1               temp    Stack *                         4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-   t5               temp    int                             4      20
-   t6               temp    Stack *                         4      24
-   t7               temp    int                             4      28
-   (1 temporary no longer used after optimization not shown)
-
- Code: 8 instruction(s)
-
-    194     t1 = s ptr+ 32
-    195     t2 = *t1
-    196     t3 = t2 int- 1
-    197     *t1 = t3
-    198     t5 = t3 int<< 2                     (w = 4)
-    199     t6 = s ptr+ t5
-    200     t7 = *t6
-    201     return t7
+    139       if t ptr!= 0 goto L6
+    140       return 0
+    141  L6:  t1 = t ptr+ 4
+    142       t2 = *t1
+    143       param t2
+    144       t3 = call height(struct Tree *), 1
+    145       t4 = t ptr+ 8
+    146       t5 = *t4
+    147       param t5
+    148       t6 = call height(struct Tree *), 1
+    149       if t3 int<= t6 goto L7
+    150       t7 = t3
+    151       goto L8
+    152  L7:  t7 = t6
+    153  L8:  t8 = 1 int+ t7
+    154       return t8
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -419,209 +276,283 @@
    t120             temp    int                             4     632
    (30 temporaries no longer used after optimization not shown)
 
- Code: 201 instruction(s)
+ Code: 275 instruction(s)
 
-    202        list = 0
-    203        i.20 = 1
-    204  L14:  if i.20 int> 6 goto L15
-    205        t1 = i.20 int* i.20
-    206        t2 = t1 int% 7
-    207        t83 = list
-    208        param 8
-    209        t85 = call malloc, 1
-    210        *t85 = t2
-    211        t86 = t85 ptr+ 4
-    212        *t86 = t83
-    213        list = t85
-    214        i.20 = i.20 int+ 1
-    215        goto L14
-    216  L15:  t87 = list
-    217        t88 = 0
-    218  L16:  if t87 ptr== 0 goto L17
-    219        t89 = t87 ptr+ 4
-    220        t90 = *t89
-    221        *t89 = t88
-    222        t88 = t87
-    223        t87 = t90
-    224        goto L16
-    225  L17:  list = t88
-    226        t91 = &list
-    227  L18:  t93 = *t91
-    228        if t93 ptr== 0 goto L20
-    229        t94 = *t91
-    230        t95 = *t94
-    231        if t95 int!= 2 goto L19
-    232        t96 = *t91
-    233        t97 = t96 ptr+ 4
-    234        t98 = *t97
-    235        *t91 = t98
-    236        param t96
-    237        call free, 1
-    238        goto L18
-    239  L19:  t99 = *t91
-    240        t91 = t99 ptr+ 4
+    155        list = 0
+    156        i.20 = 1
+    157  L9:   if i.20 int> 6 goto L10
+    158        t1 = i.20 int* i.20
+    159        t2 = t1 int% 7
+    160        t83 = list
+    161        param 8
+    162        t85 = call malloc, 1
+    163        *t85 = t2
+    164        t86 = t85 ptr+ 4
+    165        *t86 = t83
+    166        list = t85
+    167        i.20 = i.20 int+ 1
+    168        if i.20 int> 6 goto L10
+    169        t1 = i.20 int* i.20
+    170        t2 = t1 int% 7
+    171        t83 = list
+    172        param 8
+    173        t85 = call malloc, 1
+    174        *t85 = t2
+    175        t86 = t85 ptr+ 4
+    176        *t86 = t83
+    177        list = t85
+    178        i.20 = i.20 int+ 1
+    179        goto L9
+    180  L10:  t87 = list
+    181        t88 = 0
+    182  L11:  if t87 ptr== 0 goto L12
+    183        t89 = t87 ptr+ 4
+    184        t90 = *t89
+    185        *t89 = t88
+    186        t88 = t87
+    187        t87 = t90
+    188        if t90 ptr== 0 goto L12
+    189        t89 = t87 ptr+ 4
+    190        t90 = *t89
+    191        *t89 = t88
+    192        t88 = t87
+    193        t87 = t90
+    194        goto L11
+    195  L12:  list = t88
+    196        t91 = &list
+    197  L13:  t93 = *t91
+    198        if t93 ptr== 0 goto L17
+    199        t94 = *t91
+    200        t95 = *t94
+    201        if t95 int!= 2 goto L14
+    202        t96 = *t91
+    203        t97 = t96 ptr+ 4
+    204        t98 = *t97
+    205        *t91 = t98
+    206        param t96
+    207        call free, 1
+    208        goto L13
+    209  L14:  t99 = *t91
+    210        t91 = t99 ptr+ 4
+    211  L15:  t93 = *t91
+    212        if t93 ptr== 0 goto L17
+    213        t94 = *t91
+    214        t95 = *t94
+    215        if t95 int!= 2 goto L16
+    216        t96 = *t91
+    217        t97 = t96 ptr+ 4
+    218        t98 = *t97
+    219        *t91 = t98
+    220        param t96
+    221        call free, 1
+    222        goto L15
+    223  L16:  t99 = *t91
+    224        t91 = t99 ptr+ 4
+    225        goto L13
+    226  L17:  p = list
+    227  L18:  if p ptr== 0 goto L19
+    228        t7 = *p
+    229        param "%d "
+    230        param t7
+    231        call printf, 2
+    232        t8 = p ptr+ 4
+    233        p = *t8
+    234        if p ptr== 0 goto L19
+    235        t7 = *p
+    236        param "%d "
+    237        param t7
+    238        call printf, 2
+    239        t8 = p ptr+ 4
+    240        p = *t8
     241        goto L18
-    242  L20:  p = list
-    243  L21:  if p ptr== 0 goto L22
-    244        t7 = *p
-    245        param "%d "
-    246        param t7
-    247        call printf, 2
-    248        t8 = p ptr+ 4
-    249        p = *t8
-    250        goto L21
-    251  L22:  param "\n"
-    252        call printf, 1
-    253        root = 0
-    254        keys[0] = 50
-    255        keys[4] = 30
-    256        keys[8] = 70
-    257        keys[12] = 20
-    258        keys[16] = 40
-    259        keys[20] = 60
-    260        keys[24] = 80
-    261        i.24 = 0
-    262  L23:  if i.24 int>= 7 goto L24
-    263        t10 = i.24 int<< 2                  (w = 4)
-    264        t11 = keys[t10]
-    265        param root
-    266        param t11
-    267        root = call insert(struct Tree *, int), 2
-    268        i.24 = i.24 int+ 1
-    269        goto L23
-    270  L24:  param root
-    271        param 10
-    272        t14 = call insert(struct Tree *, int), 2
+    242  L19:  param "\n"
+    243        call printf, 1
+    244        root = 0
+    245        keys[0] = 50
+    246        keys[4] = 30
+    247        keys[8] = 70
+    248        keys[12] = 20
+    249        keys[16] = 40
+    250        keys[20] = 60
+    251        keys[24] = 80
+    252        i.24 = 0
+    253  L20:  if i.24 int>= 7 goto L21
+    254        t10 = i.24 int<< 2                  (w = 4)
+    255        t11 = keys[t10]
+    256        param root
+    257        param t11
+    258        root = call insert(struct Tree *, int), 2
+    259        i.24 = i.24 int+ 1
+    260        if i.24 int>= 7 goto L21
+    261        t10 = i.24 int<< 2                  (w = 4)
+    262        t11 = keys[t10]
+    263        param root
+    264        param t11
+    265        root = call insert(struct Tree *, int), 2
+    266        i.24 = i.24 int+ 1
+    267        goto L20
+    268  L21:  param root
+    269        param 10
+    270        t14 = call insert(struct Tree *, int), 2
+    271        param t14
+    272        call inorder(struct Tree *), 1
     273        param t14
-    274        call inorder(struct Tree *), 1
-    275        param t14
-    276        t15 = call height(struct Tree *), 1
-    277        t16 = t14 ptr+ 4
-    278        t17 = *t16
-    279        t18 = t17 ptr+ 4
-    280        t19 = *t18
-    281        t20 = t19 ptr+ 4
-    282        t21 = *t20
-    283        t22 = *t21
-    284        t23 = t14 ptr+ 8
-    285        t24 = *t23
-    286        t25 = t24 ptr+ 4
-    287        t26 = *t25
-    288        t27 = *t26
-    289        param "\n%d %d %d\n"
-    290        param t15
-    291        param t22
-    292        param t27
-    293        call printf, 4
-    294        s[32] = 0
-    295        i.26 = 0
-    296  L25:  if i.26 int>= 5 goto L26
-    297        t28 = &s
-    298        t29 = i.26 int* 3
-    299        t102 = t28 ptr+ 32
-    300        t103 = *t102
-    301        t104 = t103 int+ 1
-    302        *t102 = t104
-    303        t105 = t103 int<< 2                 (w = 4)
-    304        t106 = t28 ptr+ t105
-    305        *t106 = t29
-    306        i.26 = i.26 int+ 1
-    307        goto L25
-    308  L26:  t31 = &s
-    309        t108 = t31 ptr+ 32
-    310        t109 = *t108
-    311        t110 = t109 int- 1
-    312        *t108 = t110
-    313        t111 = t110 int<< 2                 (w = 4)
-    314        t112 = t31 ptr+ t111
-    315        t113 = *t112
-    316        t117 = t110 int- 1
-    317        *t108 = t117
-    318        t118 = t117 int<< 2                 (w = 4)
-    319        t119 = t31 ptr+ t118
-    320        t120 = *t119
-    321        t35 = s[32]
-    322        param "%d %d %d\n"
-    323        param t113
-    324        param t120
-    325        param t35
-    326        call printf, 4
-    327        param 12
-    328        table = call malloc, 1
-    329        r.32 = 0
-    330  L27:  if r.32 int>= 3 goto L30
-    331        t38 = r.32 int<< 2
-    332        t39 = table ptr+ t38
-    333        param 16
-    334        t41 = call malloc, 1
-    335        *t39 = t41
-    336        c = 0
-    337  L28:  if c int>= 4 goto L29
-    338        t42 = r.32 int<< 2
-    339        t43 = table ptr+ t42
-    340        t44 = *t43
-    341        t45 = c int<< 2
-    342        t46 = t44 ptr+ t45
-    343        t47 = r.32 int* 10
-    344        t48 = t47 int+ c
-    345        *t46 = t48
-    346        c = c int+ 1
-    347        goto L28
-    348  L29:  r.32 = r.32 int+ 1
-    349        goto L27
-    350  L30:  diagonal = 0
-    351        r.35 = 0
-    352  L31:  if r.35 int>= 3 goto L32
-    353        t51 = r.35 int<< 2
-    354        t52 = table ptr+ t51
-    355        t53 = *t52
-    356        t55 = t53 ptr+ t51
-    357        t56 = *t55
-    358        diagonal = diagonal int+ t56
-    359        r.35 = r.35 int+ 1
-    360        goto L31
-    361  L32:  t61 = table ptr+ 8
-    362        t62 = *t61
-    363        t64 = t62 ptr+ 16
-    364        t65 = t64 ptr- 4
-    365        t66 = *t65
-    366        t67 = table ptr+ 4
-    367        t68 = *t67
-    368        t69 = t68 ptr+ 8
-    369        t70 = *t69
-    370        param "%d %d %d\n"
-    371        param diagonal
-    372        param t66
-    373        param t70
-    374        call printf, 4
-    375        v1 = 1
-    376        v2 = 2
-    377        v3 = 3
-    378        t71 = &v3
-    379        t72 = &v1
-    380        t73 = &v2
-    381        ptrs[0] = t71
-    382        ptrs[4] = t72
-    383        ptrs[8] = t73
-    384        t74 = &ptrs
-    385        t75 = *t74
-    386        *t75 = 30
-    387        t76 = ptrs[8]
-    388        t77 = *t76
-    389        t78 = t77 int+ 5
-    390        *t76 = t78
-    391        t79 = t74 ptr+ 4
-    392        t80 = *t79
-    393        t81 = *t80
-    394        param "%d %d %d %d\n"
-    395        param v1
-    396        param v2
-    397        param v3
-    398        param t81
-    399        call printf, 5
-    400        param t14
-    401        t82 = call height(struct Tree *), 1
-    402        return t82
+    274        t15 = call height(struct Tree *), 1
+    275        t16 = t14 ptr+ 4
+    276        t17 = *t16
+    277        t18 = t17 ptr+ 4
+    278        t19 = *t18
+    279        t20 = t19 ptr+ 4
+    280        t21 = *t20
+    281        t22 = *t21
+    282        t23 = t14 ptr+ 8
+    283        t24 = *t23
+    284        t25 = t24 ptr+ 4
+    285        t26 = *t25
+    286        t27 = *t26
+    287        param "\n%d %d %d\n"
+    288        param t15
+    289        param t22
+    290        param t27
+    291        call printf, 4
+    292        s[32] = 0
+    293        i.26 = 0
+    294  L22:  if i.26 int>= 5 goto L23
+    295        t28 = &s
+    296        t29 = i.26 int* 3
+    297        t102 = t28 ptr+ 32
+    298        t103 = *t102
+    299        t104 = t103 int+ 1
+    300        *t102 = t104
+    301        t105 = t103 int<< 2                 (w = 4)
+    302        t106 = t28 ptr+ t105
+    303        *t106 = t29
+    304        i.26 = i.26 int+ 1
+    305        if i.26 int>= 5 goto L23
+    306        t28 = &s
+    307        t29 = i.26 int* 3
+    308        t102 = t28 ptr+ 32
+    309        t103 = *t102
+    310        t104 = t103 int+ 1
+    311        *t102 = t104
+    312        t105 = t103 int<< 2                 (w = 4)
+    313        t106 = t28 ptr+ t105
+    314        *t106 = t29
+    315        i.26 = i.26 int+ 1
+    316        goto L22
+    317  L23:  t31 = &s
+    318        t108 = t31 ptr+ 32
+    319        t109 = *t108
+    320        t110 = t109 int- 1
+    321        *t108 = t110
+    322        t111 = t110 int<< 2                 (w = 4)
+    323        t112 = t31 ptr+ t111
+    324        t113 = *t112
+    325        t117 = t110 int- 1
+    326        *t108 = t117
+    327        t118 = t117 int<< 2                 (w = 4)
+    328        t119 = t31 ptr+ t118
+    329        t120 = *t119
+    330        t35 = s[32]
+    331        param "%d %d %d\n"
+    332        param t113
+    333        param t120
+    334        param t35
+    335        call printf, 4
+    336        param 12
+    337        table = call malloc, 1
+    338        r.32 = 0
+    339  L24:  if r.32 int>= 3 goto L27
+    340        t38 = r.32 int<< 2
+    341        t39 = table ptr+ t38
+    342        param 16
+    343        t41 = call malloc, 1
+    344        *t39 = t41
+    345        c = 0
+    346  L25:  if c int>= 4 goto L26
+    347        t42 = r.32 int<< 2
+    348        t43 = table ptr+ t42
+    349        t44 = *t43
+    350        t45 = c int<< 2
+    351        t46 = t44 ptr+ t45
+    352        t47 = r.32 int* 10
+    353        t48 = t47 int+ c
+    354        *t46 = t48
+    355        c = c int+ 1
+    356        if c int>= 4 goto L26
+    357        t42 = r.32 int<< 2
+    358        t43 = table ptr+ t42
+    359        t44 = *t43
+    360        t45 = c int<< 2
+    361        t46 = t44 ptr+ t45
+    362        t47 = r.32 int* 10
+    363        t48 = t47 int+ c
+    364        *t46 = t48
+    365        c = c int+ 1
+    366        goto L25
+    367  L26:  r.32 = r.32 int+ 1
+    368        goto L24
+    369  L27:  diagonal = 0
+    370        r.35 = 0
+    371  L28:  if r.35 int>= 3 goto L29
+    372        t51 = r.35 int<< 2
+    373        t52 = table ptr+ t51
+    374        t53 = *t52
+    375        t55 = t53 ptr+ t51
+    376        t56 = *t55
+    377        diagonal = diagonal int+ t56
+    378        r.35 = r.35 int+ 1
+    379        if r.35 int>= 3 goto L29
+    380        t51 = r.35 int<< 2
+    381        t52 = table ptr+ t51
+    382        t53 = *t52
+    383        t55 = t53 ptr+ t51
+    384        t56 = *t55
+    385        diagonal = diagonal int+ t56
+    386        r.35 = r.35 int+ 1
+    387        goto L28
+    388  L29:  t61 = table ptr+ 8
+    389        t62 = *t61
+    390        t64 = t62 ptr+ 16
+    391        t65 = t64 ptr- 4
+    392        t66 = *t65
+    393        t67 = table ptr+ 4
+    394        t68 = *t67
+    395        t69 = t68 ptr+ 8
+    396        t70 = *t69
+    397        param "%d %d %d\n"
+    398        param diagonal
+    399        param t66
+    400        param t70
+    401        call printf, 4
+    402        v1 = 1
+    403        v2 = 2
+    404        v3 = 3
+    405        t71 = &v3
+    406        t72 = &v1
+    407        t73 = &v2
+    408        ptrs[0] = t71
+    409        ptrs[4] = t72
+    410        ptrs[8] = t73
+    411        t74 = &ptrs
+    412        t75 = *t74
+    413        *t75 = 30
+    414        t76 = ptrs[8]
+    415        t77 = *t76
+    416        t78 = t77 int+ 5
+    417        *t76 = t78
+    418        t79 = t74 ptr+ 4
+    419        t80 = *t79
+    420        t81 = *t80
+    421        param "%d %d %d %d\n"
+    422        param v1
+    423        param v2
+    424        param v3
+    425        param t81
+    426        call printf, 5
+    427        param t14
+    428        t82 = call height(struct Tree *), 1
+    429        return t82
 
 
 ----------------------------------------------------------------------------

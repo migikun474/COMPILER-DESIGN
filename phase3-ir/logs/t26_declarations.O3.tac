@@ -4,7 +4,7 @@
 
    Source file   : test/t26_declarations.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 197 -> 184 instruction(s)
+   Result        : Optimized three address code (-O3): 197 -> 193 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          197 -> 184   (6% fewer)
+   instructions                          197 -> 193   (2% fewer)
 
    constants folded                        8
    algebraic simplifications               3
@@ -29,6 +29,8 @@
    calls inlined                           2
    tail calls turned into jumps            0
    common subexpressions across blocks      0
+   loops unrolled                          4
+   unreachable functions removed           1
 
 ----------------------------------------------------------------------------
  GLOBALS: 6 object(s) in static storage
@@ -64,35 +66,6 @@
     table[16] = 9.5
     table[0] = 1.5
     kept.17 = 3
-
-============================================================================
- FUNCTION sum(const int *)        (link name _Z3sumPKi)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 3 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   r                param   const int *                     4       0
-   s                local   int                             4       4
-   i                local   int                             4       8
-   t1               temp    int                             4      12
-   t2               temp    const int *                     4      16
-   t3               temp    int                             4      20
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 10 instruction(s)
-
-    100       s = 0
-    101       i = 0
-    102  L1:  if i int>= 4 goto L2
-    103       t1 = i int<< 2
-    104       t2 = r ptr+ t1
-    105       t3 = *t2
-    106       s = s int+ t3
-    107       i = i int+ 1
-    108       goto L1
-    109  L2:  return s
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -178,182 +151,201 @@
    t77              temp    int                             4     628
    (17 temporaries no longer used after optimization not shown)
 
- Code: 174 instruction(s)
+ Code: 193 instruction(s)
 
-    110        r[0] = 4
-    111        r[4] = 9
-    112        r[8] = 2
-    113        r[12] = 4
-    114        t66 = &r
-    115        t67 = 0
-    116        t68 = 0
-    117  L3:   if t68 int>= 4 goto L4
-    118        t69 = t68 int<< 2
-    119        t70 = t66 ptr+ t69
-    120        t71 = *t70
-    121        t67 = t67 int+ t71
-    122        t68 = t68 int+ 1
-    123        goto L3
-    124  L4:   t72 = &primes
-    125        t73 = 0
-    126        t74 = 0
-    127  L5:   if t74 int>= 4 goto L6
-    128        t75 = t74 int<< 2
-    129        t76 = t72 ptr+ t75
-    130        t77 = *t76
-    131        t73 = t73 int+ t77
-    132        t74 = t74 int+ 1
-    133        goto L5
-    134  L6:   t7 = t67 int+ t73
-    135        if t7 int<= 100 goto L7
-    136        t11 = t7
-    137        goto L8
-    138  L7:   t11 = 100
-    139  L8:   param "%d %d %d\n"
-    140        param t7
-    141        param 9
-    142        param t11
-    143        call printf, 4
-    144        param "%d %d %d %d\n"
-    145        param 24
-    146        param 80
-    147        param 32
-    148        param 16
-    149        call printf, 5
-    150        param "%d %d %d\n"
-    151        param 24
-    152        param 2
-    153        param 3
-    154        call printf, 4
-    155        box[0] = 97
-    156        box[8] = 1.5
-    157        box[16] = 2
-    158        box[24] = 98
-    159        box[32] = 2.5
-    160        box[40] = 4
-    161        box[48] = 99
-    162        box[56] = 0.0
-    163        box[64] = 8
-    164        box[72] = 0
-    165        t13 = box[16]
-    166        t14 = shorttoint t13
-    167        t15 = box[40]
-    168        t16 = shorttoint t15
-    169        t17 = t14 int+ t16
-    170        t18 = box[64]
-    171        t19 = shorttoint t18
-    172        t20 = t17 int+ t19
-    173        box[72] = t20
-    174        t21 = &box
-    175        t22 = t21 ptr+ 48
-    176        t23 = box[32]
-    177        t24 = t23 double* 2.0
-    178        t25 = t22 ptr+ 8
-    179        *t25 = t24
-    180        t26 = box[72]
-    181        t29 = box[48]
-    182        t30 = chartoint t29
-    183        t31 = stock[8]
-    184        t32 = stock[16]
-    185        t33 = shorttodouble t32
-    186        t34 = t31 double* t33
-    187        param "%d %.1f %c %.1f\n"
-    188        param t26
-    189        param t24
-    190        param t30
-    191        param t34
-    192        call printf, 5
-    193        m[0] = 120
-    194        m[4] = 1
-    195        m[8] = 121
-    196        m[10] = 2
-    197        m[16] = 3.5
-    198        m[24] = 122
-    199        copy = m
-    200        copy[4] = 100
-    201        t35 = m[0]
-    202        t36 = chartoint t35
-    203        t37 = m[4]
-    204        t38 = m[8]
-    205        t39 = chartoint t38
-    206        t40 = m[10]
-    207        t41 = shorttoint t40
-    208        t42 = m[16]
-    209        t43 = m[24]
-    210        t44 = chartoint t43
-    211        param "%c %d %c %d %.1f %c %d\n"
-    212        param t36
-    213        param t37
-    214        param t39
-    215        param t41
-    216        param t42
-    217        param t44
-    218        param 100
-    219        call printf, 8
-    220        t46 = &letters
-    221        t47 = table[0]
-    222        t48 = table[8]
-    223        t49 = table[16]
-    224        t50 = matrix[20]
-    225        t51 = matrix[0]
-    226        t52 = t50 int- t51
-    227        param "%s %.1f %.1f %.1f %d\n"
-    228        param t46
-    229        param t47
-    230        param t48
-    231        param t49
-    232        param t52
-    233        call printf, 6
-    234        grid[0] = 1
-    235        grid[4] = 0
-    236        grid[8] = 0
-    237        grid[12] = 0
-    238        grid[16] = 0
-    239        grid[20] = 2
-    240        grid[24] = 0
-    241        grid[28] = 0
-    242        grid[32] = 0
-    243        grid[36] = 0
-    244        grid[40] = 3
-    245        grid[44] = 0
-    246        trace = 0
-    247        i = 0
-    248  L9:   if i int>= 3 goto L10
-    249        t53 = i int<< 2                     (n2 = 4)
-    250        t54 = t53 int+ i
-    251        t55 = t54 int<< 2                   (w = 4)
-    252        t56 = grid[t55]
-    253        trace = trace int+ t56
-    254        i = i int+ 1
-    255        goto L9
-    256  L10:  words[0] = "one"
-    257        words[4] = "two"
-    258        words[8] = "three"
-    259        rows[0] = 97
-    260        rows[1] = 98
-    261        rows[2] = 0
-    262        rows[3] = 0
-    263        rows[4] = 0
-    264        rows[5] = 0
-    265        rows[6] = 99
-    266        rows[7] = 100
-    267        rows[8] = 101
-    268        rows[9] = 0
-    269        rows[10] = 0
-    270        rows[11] = 0
-    271        t59 = words[8]
-    272        t60 = rows[8]
-    273        t61 = chartoint t60
-    274        t62 = &rows
-    275        param "%d %s %c %s %d\n"
-    276        param trace
-    277        param t59
-    278        param t61
-    279        param t62
-    280        param 3
-    281        call printf, 6
-    282        t65 = 10 int+ kept.17
-    283        return t65
+    100       r[0] = 4
+    101       r[4] = 9
+    102       r[8] = 2
+    103       r[12] = 4
+    104       t66 = &r
+    105       t67 = 0
+    106       t68 = 0
+    107  L1:  if t68 int>= 4 goto L2
+    108       t69 = t68 int<< 2
+    109       t70 = t66 ptr+ t69
+    110       t71 = *t70
+    111       t67 = t67 int+ t71
+    112       t68 = t68 int+ 1
+    113       if t68 int>= 4 goto L2
+    114       t69 = t68 int<< 2
+    115       t70 = t66 ptr+ t69
+    116       t71 = *t70
+    117       t67 = t67 int+ t71
+    118       t68 = t68 int+ 1
+    119       goto L1
+    120  L2:  t72 = &primes
+    121       t73 = 0
+    122       t74 = 0
+    123  L3:  if t74 int>= 4 goto L4
+    124       t75 = t74 int<< 2
+    125       t76 = t72 ptr+ t75
+    126       t77 = *t76
+    127       t73 = t73 int+ t77
+    128       t74 = t74 int+ 1
+    129       if t74 int>= 4 goto L4
+    130       t75 = t74 int<< 2
+    131       t76 = t72 ptr+ t75
+    132       t77 = *t76
+    133       t73 = t73 int+ t77
+    134       t74 = t74 int+ 1
+    135       goto L3
+    136  L4:  t7 = t67 int+ t73
+    137       if t7 int<= 100 goto L5
+    138       t11 = t7
+    139       goto L6
+    140  L5:  t11 = 100
+    141  L6:  param "%d %d %d\n"
+    142       param t7
+    143       param 9
+    144       param t11
+    145       call printf, 4
+    146       param "%d %d %d %d\n"
+    147       param 24
+    148       param 80
+    149       param 32
+    150       param 16
+    151       call printf, 5
+    152       param "%d %d %d\n"
+    153       param 24
+    154       param 2
+    155       param 3
+    156       call printf, 4
+    157       box[0] = 97
+    158       box[8] = 1.5
+    159       box[16] = 2
+    160       box[24] = 98
+    161       box[32] = 2.5
+    162       box[40] = 4
+    163       box[48] = 99
+    164       box[56] = 0.0
+    165       box[64] = 8
+    166       box[72] = 0
+    167       t13 = box[16]
+    168       t14 = shorttoint t13
+    169       t15 = box[40]
+    170       t16 = shorttoint t15
+    171       t17 = t14 int+ t16
+    172       t18 = box[64]
+    173       t19 = shorttoint t18
+    174       t20 = t17 int+ t19
+    175       box[72] = t20
+    176       t21 = &box
+    177       t22 = t21 ptr+ 48
+    178       t23 = box[32]
+    179       t24 = t23 double* 2.0
+    180       t25 = t22 ptr+ 8
+    181       *t25 = t24
+    182       t26 = box[72]
+    183       t29 = box[48]
+    184       t30 = chartoint t29
+    185       t31 = stock[8]
+    186       t32 = stock[16]
+    187       t33 = shorttodouble t32
+    188       t34 = t31 double* t33
+    189       param "%d %.1f %c %.1f\n"
+    190       param t26
+    191       param t24
+    192       param t30
+    193       param t34
+    194       call printf, 5
+    195       m[0] = 120
+    196       m[4] = 1
+    197       m[8] = 121
+    198       m[10] = 2
+    199       m[16] = 3.5
+    200       m[24] = 122
+    201       copy = m
+    202       copy[4] = 100
+    203       t35 = m[0]
+    204       t36 = chartoint t35
+    205       t37 = m[4]
+    206       t38 = m[8]
+    207       t39 = chartoint t38
+    208       t40 = m[10]
+    209       t41 = shorttoint t40
+    210       t42 = m[16]
+    211       t43 = m[24]
+    212       t44 = chartoint t43
+    213       param "%c %d %c %d %.1f %c %d\n"
+    214       param t36
+    215       param t37
+    216       param t39
+    217       param t41
+    218       param t42
+    219       param t44
+    220       param 100
+    221       call printf, 8
+    222       t46 = &letters
+    223       t47 = table[0]
+    224       t48 = table[8]
+    225       t49 = table[16]
+    226       t50 = matrix[20]
+    227       t51 = matrix[0]
+    228       t52 = t50 int- t51
+    229       param "%s %.1f %.1f %.1f %d\n"
+    230       param t46
+    231       param t47
+    232       param t48
+    233       param t49
+    234       param t52
+    235       call printf, 6
+    236       grid[0] = 1
+    237       grid[4] = 0
+    238       grid[8] = 0
+    239       grid[12] = 0
+    240       grid[16] = 0
+    241       grid[20] = 2
+    242       grid[24] = 0
+    243       grid[28] = 0
+    244       grid[32] = 0
+    245       grid[36] = 0
+    246       grid[40] = 3
+    247       grid[44] = 0
+    248       trace = 0
+    249       i = 0
+    250  L7:  if i int>= 3 goto L8
+    251       t53 = i int<< 2                     (n2 = 4)
+    252       t54 = t53 int+ i
+    253       t55 = t54 int<< 2                   (w = 4)
+    254       t56 = grid[t55]
+    255       trace = trace int+ t56
+    256       i = i int+ 1
+    257       if i int>= 3 goto L8
+    258       t53 = i int<< 2                     (n2 = 4)
+    259       t54 = t53 int+ i
+    260       t55 = t54 int<< 2                   (w = 4)
+    261       t56 = grid[t55]
+    262       trace = trace int+ t56
+    263       i = i int+ 1
+    264       goto L7
+    265  L8:  words[0] = "one"
+    266       words[4] = "two"
+    267       words[8] = "three"
+    268       rows[0] = 97
+    269       rows[1] = 98
+    270       rows[2] = 0
+    271       rows[3] = 0
+    272       rows[4] = 0
+    273       rows[5] = 0
+    274       rows[6] = 99
+    275       rows[7] = 100
+    276       rows[8] = 101
+    277       rows[9] = 0
+    278       rows[10] = 0
+    279       rows[11] = 0
+    280       t59 = words[8]
+    281       t60 = rows[8]
+    282       t61 = chartoint t60
+    283       t62 = &rows
+    284       param "%d %s %c %s %d\n"
+    285       param trace
+    286       param t59
+    287       param t61
+    288       param t62
+    289       param 3
+    290       call printf, 6
+    291       t65 = 10 int+ kept.17
+    292       return t65
 
 
 ----------------------------------------------------------------------------

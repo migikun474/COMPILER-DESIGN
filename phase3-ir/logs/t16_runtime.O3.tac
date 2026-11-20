@@ -4,7 +4,7 @@
 
    Source file   : test/t16_runtime.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 308 -> 226 instruction(s)
+   Result        : Optimized three address code (-O3): 308 -> 222 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          308 -> 226   (26% fewer)
+   instructions                          308 -> 222   (27% fewer)
 
    constants folded                       51
    algebraic simplifications               1
@@ -29,6 +29,8 @@
    calls inlined                           1
    tail calls turned into jumps            0
    common subexpressions across blocks      0
+   loops unrolled                          2
+   unreachable functions removed           1
 
 ============================================================================
  FUNCTION make(int)        (link name _Z4makei)
@@ -52,7 +54,7 @@
    t10              temp    long long                       8     104
    (1 temporary no longer used after optimization not shown)
 
- Code: 18 instruction(s)
+ Code: 24 instruction(s)
 
     100       t1 = inttodouble k
     101       t2 = t1 double* 1.5
@@ -64,57 +66,20 @@
     107       t5 = k int+ i
     108       b[t4] = t5
     109       i = i int+ 1
-    110       goto L1
-    111  L2:  t7 = 65 int+ k
-    112       t8 = inttochar t7
-    113       b[28] = t8
-    114       t9 = inttollong k
-    115       t10 = t9 llong* 10000000000
-    116       b[32] = t10
-    117       return b
-
-============================================================================
- FUNCTION weigh(struct Big, double, char, long long)        (link name _Z5weigh3Bigdcx)
-============================================================================
-
- Symbol table: 4 parameter(s)/local(s), 13 temporaries, frame 168 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   b                param   struct Big                     40       0
-   scale            param   double                          8      40
-   c                param   char                            1      48
-   extra            param   long long                       8      56
-   t1               temp    double                          8      64
-   t2               temp    double                          8      72
-   t3               temp    int                             4      80
-   t4               temp    double                          8      88
-   t5               temp    double                          8      96
-   t6               temp    double                          8     104
-   t7               temp    double                          8     112
-   t8               temp    long long                       8     120
-   t9               temp    long long                       8     128
-   t10              temp    double                          8     136
-   t11              temp    double                          8     144
-   t12              temp    double                          8     152
-   t13              temp    double                          8     160
-
- Code: 14 instruction(s)
-
-    118     t1 = b[0]
-    119     t2 = t1 double* scale
-    120     t3 = b[24]
-    121     t4 = inttodouble t3
-    122     t5 = t2 double+ t4
-    123     t6 = chartodouble c
-    124     t7 = t5 double+ t6
-    125     t8 = b[32]
-    126     t9 = t8 llong/ 1000000000
-    127     t10 = llongtodouble t9
-    128     t11 = t7 double+ t10
-    129     t12 = llongtodouble extra
-    130     t13 = t11 double+ t12
-    131     return t13
+    110       if i int>= 5 goto L2
+    111       t3 = i int<< 2                      (w = 4)
+    112       t4 = 8 int+ t3
+    113       t5 = k int+ i
+    114       b[t4] = t5
+    115       i = i int+ 1
+    116       goto L1
+    117  L2:  t7 = 65 int+ k
+    118       t8 = inttochar t7
+    119       b[28] = t8
+    120       t9 = inttollong k
+    121       t10 = t9 llong* 10000000000
+    122       b[32] = t10
+    123       return b
 
 ============================================================================
  FUNCTION average(int, ...)        (link name _Z7averageiz)
@@ -137,26 +102,30 @@
    t7               temp    double                          8      88
    (2 temporaries no longer used after optimization not shown)
 
- Code: 18 instruction(s)
+ Code: 22 instruction(s)
 
-    132       va_start ap, count
-    133       total = 0.0
-    134       i = 0
-    135  L3:  if i int>= count goto L4
-    136       t1 = va_arg ap, double
-    137       total = total double+ t1
-    138       i = i int+ 1
-    139       goto L3
-    140  L4:  t4 = va_arg ap, llong
-    141       t5 = va_arg ap, ptr
-    142       va_end ap
-    143       param "%s %lld\n"
-    144       param t5
-    145       param t4
-    146       call printf, 3
-    147       t6 = inttodouble count
-    148       t7 = total double/ t6
-    149       return t7
+    124       va_start ap, count
+    125       total = 0.0
+    126       i = 0
+    127  L3:  if i int>= count goto L4
+    128       t1 = va_arg ap, double
+    129       total = total double+ t1
+    130       i = i int+ 1
+    131       if i int>= count goto L4
+    132       t1 = va_arg ap, double
+    133       total = total double+ t1
+    134       i = i int+ 1
+    135       goto L3
+    136  L4:  t4 = va_arg ap, llong
+    137       t5 = va_arg ap, ptr
+    138       va_end ap
+    139       param "%s %lld\n"
+    140       param t5
+    141       param t4
+    142       call printf, 3
+    143       t6 = inttodouble count
+    144       t7 = total double/ t6
+    145       return t7
 
 ============================================================================
  FUNCTION power(long long, int)        (link name _Z5powerxi)
@@ -175,15 +144,15 @@
 
  Code: 9 instruction(s)
 
-    150       if n int!= 0 goto L5
-    151       t1 = 1
-    152       goto L6
-    153  L5:  t2 = n int- 1
-    154       param base
-    155       param t2
-    156       t3 = call power(long long, int), 2
-    157       t1 = base llong* t3
-    158  L6:  return t1
+    146       if n int!= 0 goto L5
+    147       t1 = 1
+    148       goto L6
+    149  L5:  t2 = n int- 1
+    150       param base
+    151       param t2
+    152       t3 = call power(long long, int), 2
+    153       t1 = base llong* t3
+    154  L6:  return t1
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -247,173 +216,173 @@
 
  Code: 167 instruction(s)
 
-    159       param "%lld %lld %lld\n"
-    160       param 123455801358024
-    161       param 123457776666666
-    162       param 370370367037035
-    163       call printf, 4
-    164       param "%lld %lld %lld %lld\n"
-    165       param 123456789012
-    166       param 345
-    167       param -124999
-    168       param 986541666
-    169       call printf, 5
-    170       param "%lld %lld\n"
-    171       param -141093474
-    172       param -3
-    173       call printf, 3
-    174       param "%llu %llu %llu\n"
-    175       param 1800000000000000000
-    176       param 0
-    177       param 2250000000000000000
-    178       call printf, 4
-    179       param "%lld %lld %lld %lld\n"
-    180       param 3950617248395040
-    181       param 964506164158
-    182       param -61728396
-    183       param 1099511627776
-    184       call printf, 5
-    185       param "%d %d %d %d\n"
-    186       param 1
-    187       param 1
-    188       param 1
-    189       param 1
-    190       call printf, 5
-    191       param 3
-    192       param 30
-    193       t22 = call power(long long, int), 2
-    194       param "%lld %llx\n"
-    195       param t22
-    196       param 18000000000000000000
+    155       param "%lld %lld %lld\n"
+    156       param 123455801358024
+    157       param 123457776666666
+    158       param 370370367037035
+    159       call printf, 4
+    160       param "%lld %lld %lld %lld\n"
+    161       param 123456789012
+    162       param 345
+    163       param -124999
+    164       param 986541666
+    165       call printf, 5
+    166       param "%lld %lld\n"
+    167       param -141093474
+    168       param -3
+    169       call printf, 3
+    170       param "%llu %llu %llu\n"
+    171       param 1800000000000000000
+    172       param 0
+    173       param 2250000000000000000
+    174       call printf, 4
+    175       param "%lld %lld %lld %lld\n"
+    176       param 3950617248395040
+    177       param 964506164158
+    178       param -61728396
+    179       param 1099511627776
+    180       call printf, 5
+    181       param "%d %d %d %d\n"
+    182       param 1
+    183       param 1
+    184       param 1
+    185       param 1
+    186       call printf, 5
+    187       param 3
+    188       param 30
+    189       t22 = call power(long long, int), 2
+    190       param "%lld %llx\n"
+    191       param t22
+    192       param 18000000000000000000
+    193       call printf, 3
+    194       param "%lld %lld\n"
+    195       param -123456789012345
+    196       param -123456789012346
     197       call printf, 3
-    198       param "%lld %lld\n"
-    199       param -123456789012345
-    200       param -123456789012346
-    201       call printf, 3
-    202       param "%.1f %.1f %.1f %.1f\n"
-    203       param -7.0
-    204       param 3e+09
-    205       param 123456789012345.0
-    206       param 3e+09
-    207       call printf, 5
-    208       param "%d %u %lld %d\n"
-    209       param 3
-    210       param 3000000000
-    211       param 12345678901
-    212       param -2
-    213       call printf, 5
-    214       param "%lld %d %d\n"
-    215       param -5000000000
-    216       param -56
-    217       param 4464
-    218       call printf, 4
-    219       param "%.2f %.2f %.2f %.2f %d\n"
-    220       param 3.75
-    221       param 3.375
-    222       param 0.6666666865348816
-    223       param -1.5
-    224       param 1
-    225       call printf, 6
-    226       param "[%6.2f] [%-8.3f] [%08.2f] [%.0f] [%f]\n"
-    227       param 3.14159
-    228       param -2.5
-    229       param 7.125
-    230       param 2.5
-    231       param 0.1
-    232       call printf, 6
-    233       param "[%5d] [%-5d] [%05d] [%x] [%X] [%o] [%5s] [%-5s] [%c] [%%]\n"
-    234       param -42
-    235       param 42
-    236       param -42
-    237       param 255
-    238       param 255
-    239       param 8
-    240       param "ab"
-    241       param "cd"
-    242       param 122
-    243       call printf, 10
-    244       param "[%*d] [%.*f] [%3s]\n"
-    245       param 6
-    246       param 12
+    198       param "%.1f %.1f %.1f %.1f\n"
+    199       param -7.0
+    200       param 3e+09
+    201       param 123456789012345.0
+    202       param 3e+09
+    203       call printf, 5
+    204       param "%d %u %lld %d\n"
+    205       param 3
+    206       param 3000000000
+    207       param 12345678901
+    208       param -2
+    209       call printf, 5
+    210       param "%lld %d %d\n"
+    211       param -5000000000
+    212       param -56
+    213       param 4464
+    214       call printf, 4
+    215       param "%.2f %.2f %.2f %.2f %d\n"
+    216       param 3.75
+    217       param 3.375
+    218       param 0.6666666865348816
+    219       param -1.5
+    220       param 1
+    221       call printf, 6
+    222       param "[%6.2f] [%-8.3f] [%08.2f] [%.0f] [%f]\n"
+    223       param 3.14159
+    224       param -2.5
+    225       param 7.125
+    226       param 2.5
+    227       param 0.1
+    228       call printf, 6
+    229       param "[%5d] [%-5d] [%05d] [%x] [%X] [%o] [%5s] [%-5s] [%c] [%%]\n"
+    230       param -42
+    231       param 42
+    232       param -42
+    233       param 255
+    234       param 255
+    235       param 8
+    236       param "ab"
+    237       param "cd"
+    238       param 122
+    239       call printf, 10
+    240       param "[%*d] [%.*f] [%3s]\n"
+    241       param 6
+    242       param 12
+    243       param 2
+    244       param 1.23456
+    245       param "long string"
+    246       call printf, 6
     247       param 2
-    248       param 1.23456
-    249       param "long string"
-    250       call printf, 6
-    251       param 2
-    252       s = call make(int), 1
-    253       t = s
-    254       t[24] = 100
-    255       t48 = s[0]
-    256       t49 = s[24]
-    257       t51 = s[28]
-    258       t52 = chartoint t51
-    259       t53 = s[32]
-    260       param "%.1f %d %d %c %lld\n"
-    261       param t48
-    262       param t49
-    263       param 100
-    264       param t52
-    265       param t53
-    266       call printf, 6
-    267       t76 = s
-    268       t80 = t76[0]
-    269       t81 = t80 double* 2.0
-    270       t82 = t76[24]
-    271       t83 = inttodouble t82
-    272       t84 = t81 double+ t83
-    273       t86 = t84 double+ 97.0
-    274       t87 = t76[32]
-    275       t88 = t87 llong/ 1000000000
-    276       t89 = llongtodouble t88
-    277       t90 = t86 double+ t89
-    278       t92 = t90 double+ 5.0
-    279       param "%.1f\n"
-    280       param t92
-    281       call printf, 2
-    282       param 3
-    283       param 1.0
-    284       param 2.5
-    285       param 4.0
-    286       param 77
-    287       param "tail"
-    288       t55 = call average(int, ...), 6
-    289       param "%.2f\n"
-    290       param t55
-    291       call printf, 2
-    292       param 12
-    293       t57 = call malloc, 1
-    294       *t57 = 1
-    295       t58 = t57 ptr+ 4
-    296       *t58 = 2
-    297       t59 = t57 ptr+ 8
-    298       *t59 = 3
-    299       param t57
-    300       param 24
-    301       t61 = call realloc, 2
-    302       param 4
-    303       param 4
-    304       t62 = call calloc, 2
-    305       t63 = *t61
-    306       t64 = t61 ptr+ 4
-    307       t65 = *t64
-    308       t66 = t63 int+ t65
-    309       t67 = t61 ptr+ 8
-    310       t68 = *t67
-    311       t69 = t66 int+ t68
-    312       t70 = *t62
-    313       t71 = t62 ptr+ 12
-    314       t72 = *t71
-    315       if t61 ptr!= t62 goto L7
-    316       t73 = 0
-    317       goto L8
-    318  L7:  t73 = 1
-    319  L8:  param "%d %d %d %d\n"
-    320       param t69
-    321       param t70
-    322       param t72
-    323       param t73
-    324       call printf, 5
-    325       return 45
+    248       s = call make(int), 1
+    249       t = s
+    250       t[24] = 100
+    251       t48 = s[0]
+    252       t49 = s[24]
+    253       t51 = s[28]
+    254       t52 = chartoint t51
+    255       t53 = s[32]
+    256       param "%.1f %d %d %c %lld\n"
+    257       param t48
+    258       param t49
+    259       param 100
+    260       param t52
+    261       param t53
+    262       call printf, 6
+    263       t76 = s
+    264       t80 = t76[0]
+    265       t81 = t80 double* 2.0
+    266       t82 = t76[24]
+    267       t83 = inttodouble t82
+    268       t84 = t81 double+ t83
+    269       t86 = t84 double+ 97.0
+    270       t87 = t76[32]
+    271       t88 = t87 llong/ 1000000000
+    272       t89 = llongtodouble t88
+    273       t90 = t86 double+ t89
+    274       t92 = t90 double+ 5.0
+    275       param "%.1f\n"
+    276       param t92
+    277       call printf, 2
+    278       param 3
+    279       param 1.0
+    280       param 2.5
+    281       param 4.0
+    282       param 77
+    283       param "tail"
+    284       t55 = call average(int, ...), 6
+    285       param "%.2f\n"
+    286       param t55
+    287       call printf, 2
+    288       param 12
+    289       t57 = call malloc, 1
+    290       *t57 = 1
+    291       t58 = t57 ptr+ 4
+    292       *t58 = 2
+    293       t59 = t57 ptr+ 8
+    294       *t59 = 3
+    295       param t57
+    296       param 24
+    297       t61 = call realloc, 2
+    298       param 4
+    299       param 4
+    300       t62 = call calloc, 2
+    301       t63 = *t61
+    302       t64 = t61 ptr+ 4
+    303       t65 = *t64
+    304       t66 = t63 int+ t65
+    305       t67 = t61 ptr+ 8
+    306       t68 = *t67
+    307       t69 = t66 int+ t68
+    308       t70 = *t62
+    309       t71 = t62 ptr+ 12
+    310       t72 = *t71
+    311       if t61 ptr!= t62 goto L7
+    312       t73 = 0
+    313       goto L8
+    314  L7:  t73 = 1
+    315  L8:  param "%d %d %d %d\n"
+    316       param t69
+    317       param t70
+    318       param t72
+    319       param t73
+    320       call printf, 5
+    321       return 45
 
 
 ----------------------------------------------------------------------------

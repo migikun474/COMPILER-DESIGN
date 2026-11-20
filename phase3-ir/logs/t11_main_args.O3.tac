@@ -4,7 +4,7 @@
 
    Source file   : test/t11_main_args.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 31 -> 23 instruction(s)
+   Result        : Optimized three address code (-O3): 31 -> 27 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                           31 -> 23   (25% fewer)
+   instructions                           31 -> 27   (12% fewer)
 
    constants folded                        0
    algebraic simplifications               2
@@ -29,6 +29,8 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      2
+   loops unrolled                          1
+   unreachable functions removed           0
 
 ============================================================================
  FUNCTION main(int, char **)        (link name main)
@@ -49,7 +51,7 @@
    t9               temp    char *                          4      52
    (6 temporaries no longer used after optimization not shown)
 
- Code: 23 instruction(s)
+ Code: 27 instruction(s)
 
     100       letters = 0
     101       i = 1
@@ -61,19 +63,23 @@
     107       if t4 char== 0 goto L3
     108       letters = letters int+ 1
     109       s = s ptr+ 1
-    110       goto L2
-    111  L3:  t9 = *t2
-    112       param "%d: %s\n"
-    113       param i
-    114       param t9
-    115       call printf, 3
-    116       i = i int+ 1
-    117       goto L1
-    118  L4:  param "%d %d\n"
-    119       param argc
-    120       param letters
-    121       call printf, 3
-    122       return argc
+    110       t4 = *s
+    111       if t4 char== 0 goto L3
+    112       letters = letters int+ 1
+    113       s = s ptr+ 1
+    114       goto L2
+    115  L3:  t9 = *t2
+    116       param "%d: %s\n"
+    117       param i
+    118       param t9
+    119       call printf, 3
+    120       i = i int+ 1
+    121       goto L1
+    122  L4:  param "%d %d\n"
+    123       param argc
+    124       param letters
+    125       call printf, 3
+    126       return argc
 
 
 ----------------------------------------------------------------------------

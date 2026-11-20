@@ -58,186 +58,6 @@ _Z5touchv_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# branches(int)
-_Z8branchesi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -32($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -28($fp)
-        lw    $s2, 8($fp)
-        # if c int== 0 goto 3
-        beq   $s2, $zero, L1_3
-        # y = 6
-        li    $s0, 6
-        # goto 4
-        j     L1_4
-L1_3:
-        # y = 7
-        li    $s0, 7
-L1_4:
-        # z = 1
-        li    $s1, 1
-        # if c int== 0 goto 7
-        beq   $s2, $zero, L1_7
-        # z = 2
-        li    $s1, 2
-L1_7:
-        # t4 = 5 int+ y
-        li    $t0, 5
-        addu  $s2, $t0, $s0
-        # t5 = t4 int+ z
-        addu  $s0, $s2, $s1
-        # return t5
-        move  $v0, $s0
-        j     _Z8branchesi_exit
-_Z8branchesi_exit:
-        lw    $s0, -32($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -28($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# loop(int)
-_Z4loopi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -48($fp)
-        sw    $s3, -44($fp)
-        lw    $s3, 8($fp)
-        # sum = 0
-        li    $s1, 0
-        # last = 0
-        li    $s2, 0
-        # i.10 = 0
-        li    $s0, 0
-L2_3:
-        # if i.10 int>= n goto 8
-        bge   $s0, $s3, L2_8
-        # sum = sum int+ 3
-        addiu $s1, $s1, 3
-        # last = i.10
-        move  $s2, $s0
-        # i.10 = i.10 int+ 1
-        addiu $s0, $s0, 1
-        # goto 3
-        j     L2_3
-L2_8:
-        # t4 = sum int+ last
-        addu  $s0, $s1, $s2
-        # t5 = t4 int+ 100
-        addiu $s1, $s0, 100
-        # return t5
-        move  $v0, $s1
-        j     _Z4loopi_exit
-_Z4loopi_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -48($fp)
-        lw    $s3, -44($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# rewritten(int)
-_Z9rewritteni:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -40($fp)
-        sw    $s1, -44($fp)
-        sw    $s2, -36($fp)
-        lw    $s0, 8($fp)
-        # b = a
-        move  $s1, $s0
-        # if a int<= 3 goto 3
-        li    $t1, 3
-        ble   $s0, $t1, L3_3
-        # a = 0
-        li    $s0, 0
-L3_3:
-        # t1 = b int+ a
-        addu  $s2, $s1, $s0
-        # t6 = g int+ 1
-        lw    $t0, g_g
-        addiu $s0, $t0, 1
-        # g = t6
-        move  $t0, $s0
-        sw    $t0, g_g
-        # t7 = t6 int+ 1
-        addiu $s1, $s0, 1
-        # g = t7
-        move  $t0, $s1
-        sw    $t0, g_g
-        # t4 = t1 int+ 8
-        addiu $s0, $s2, 8
-        # t5 = t4 int+ t7
-        addu  $s2, $s0, $s1
-        # return t5
-        move  $v0, $s2
-        j     _Z9rewritteni_exit
-_Z9rewritteni_exit:
-        lw    $s0, -40($fp)
-        lw    $s1, -44($fp)
-        lw    $s2, -36($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# viaPointer()
-_Z10viaPointerv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -56
-        sw    $s0, -44($fp)
-        sw    $s1, -48($fp)
-        sw    $s2, -52($fp)
-        # x = 1
-        li    $t0, 1
-        sw    $t0, -4($fp)
-        # t1 = &x
-        addiu $s0, $fp, -4
-        # x = 10
-        li    $t0, 10
-        sw    $t0, -4($fp)
-        # t2 = *t1
-        lw    $s1, 0($s0)
-        # t3 = t2 int+ 1
-        addiu $s0, $s1, 1
-        # s[0] = 3
-        li    $t0, 3
-        sw    $t0, -20($fp)
-        # s[4] = 4
-        li    $t0, 4
-        sw    $t0, -16($fp)
-        # t4 = s[0]
-        lw    $s1, -20($fp)
-        # t5 = t3 int+ t4
-        addu  $s2, $s0, $s1
-        # return t5
-        move  $v0, $s2
-        j     _Z10viaPointerv_exit
-_Z10viaPointerv_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -48($fp)
-        lw    $s2, -52($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # jumps(int)
 _Z5jumpsi:
         addiu $sp, $sp, -8
@@ -253,39 +73,39 @@ _Z5jumpsi:
         li    $s3, 0
         # t = 9
         li    $s0, 9
-L5_2:
+L1_2:
         # t1 = k int+ 1
         addiu $s2, $s3, 1
         # k = t1
         move  $s3, $s2
         # if t1 int< n goto 2
-        blt   $s2, $s1, L5_2
+        blt   $s2, $s1, L1_2
         # goto 11
-        j     L5_11
-L5_6:
+        j     L1_11
+L1_6:
         # t = 1
         li    $s0, 1
         # goto 14
-        j     L5_14
-L5_8:
+        j     L1_14
+L1_8:
         # t = 2
         li    $s0, 2
-L5_9:
+L1_9:
         # t = t int+ 10
         addiu $s0, $s0, 10
         # goto 14
-        j     L5_14
-L5_11:
+        j     L1_14
+L1_11:
         # if n int== 1 goto 6
         li    $t1, 1
-        beq   $s1, $t1, L5_6
+        beq   $s1, $t1, L1_6
         # if n int== 2 goto 8
         li    $t1, 2
-        beq   $s1, $t1, L5_8
+        beq   $s1, $t1, L1_8
         # if n int== 3 goto 9
         li    $t1, 3
-        beq   $s1, $t1, L5_9
-L5_14:
+        beq   $s1, $t1, L1_9
+L1_14:
         # t4 = t1 int* 100
         li    $t1, 100
         mul   $s1, $s2, $t1
@@ -313,9 +133,9 @@ main_:
         addiu $sp, $sp, -152
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M6_0
+        beqz  $t8, M2_0
         j     __stack_overflow
-M6_0:
+M2_0:
         sw    $s0, -144($fp)
         sw    $s1, -148($fp)
         sw    $s2, -152($fp)
@@ -340,9 +160,17 @@ M6_0:
         li    $s2, 0
         # t26 = 0
         li    $s0, 0
-L6_7:
-        # if t26 int>= 0 goto 12
-        bge   $s0, $zero, L6_12
+L2_7:
+        # if t26 int>= 0 goto 16
+        bge   $s0, $zero, L2_16
+        # t24 = t24 int+ 3
+        addiu $s1, $s1, 3
+        # t25 = t26
+        move  $s2, $s0
+        # t26 = t26 int+ 1
+        addiu $s0, $s0, 1
+        # if t26 int>= 0 goto 16
+        bge   $s0, $zero, L2_16
         # t24 = t24 int+ 3
         addiu $s1, $s1, 3
         # t25 = t26
@@ -350,8 +178,8 @@ L6_7:
         # t26 = t26 int+ 1
         addiu $s0, $s0, 1
         # goto 7
-        j     L6_7
-L6_12:
+        j     L2_7
+L2_16:
         # t27 = t24 int+ t25
         addu  $s0, $s1, $s2
         # t3 = t27 int+ 100
@@ -362,19 +190,28 @@ L6_12:
         li    $s2, 0
         # t32 = 0
         li    $s0, 0
-L6_17:
-        # if t32 int>= 1 goto 22
+L2_21:
+        # if t32 int>= 1 goto 30
         li    $t1, 1
-        bge   $s0, $t1, L6_22
+        bge   $s0, $t1, L2_30
         # t30 = t30 int+ 3
         addiu $s1, $s1, 3
         # t31 = t32
         move  $s2, $s0
         # t32 = t32 int+ 1
         addiu $s0, $s0, 1
-        # goto 17
-        j     L6_17
-L6_22:
+        # if t32 int>= 1 goto 30
+        li    $t1, 1
+        bge   $s0, $t1, L2_30
+        # t30 = t30 int+ 3
+        addiu $s1, $s1, 3
+        # t31 = t32
+        move  $s2, $s0
+        # t32 = t32 int+ 1
+        addiu $s0, $s0, 1
+        # goto 21
+        j     L2_21
+L2_30:
         # t33 = t30 int+ t31
         addu  $s0, $s1, $s2
         # t4 = t33 int+ 100
@@ -385,19 +222,28 @@ L6_22:
         li    $s2, 0
         # t38 = 0
         li    $s0, 0
-L6_27:
-        # if t38 int>= 4 goto 32
+L2_35:
+        # if t38 int>= 4 goto 44
         li    $t1, 4
-        bge   $s0, $t1, L6_32
+        bge   $s0, $t1, L2_44
         # t36 = t36 int+ 3
         addiu $s1, $s1, 3
         # t37 = t38
         move  $s2, $s0
         # t38 = t38 int+ 1
         addiu $s0, $s0, 1
-        # goto 27
-        j     L6_27
-L6_32:
+        # if t38 int>= 4 goto 44
+        li    $t1, 4
+        bge   $s0, $t1, L2_44
+        # t36 = t36 int+ 3
+        addiu $s1, $s1, 3
+        # t37 = t38
+        move  $s2, $s0
+        # t38 = t38 int+ 1
+        addiu $s0, $s0, 1
+        # goto 35
+        j     L2_35
+L2_44:
         # t39 = t36 int+ t37
         addu  $s0, $s1, $s2
         # t40 = t39 int+ 100

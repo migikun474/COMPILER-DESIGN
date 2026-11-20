@@ -117,9 +117,58 @@ M0_0:
         # i = 0
         li    $s0, 0
 L0_14:
-        # if i int>= 13 goto 31
+        # if i int>= 13 goto 47
         li    $t1, 13
-        bge   $s0, $t1, L0_31
+        bge   $s0, $t1, L0_47
+        # t2 = i int<< 3
+        sll   $s1, $s0, 3
+        # t3 = v[t2]
+        addiu $t8, $fp, -104
+        addu  $t8, $t8, $s1
+        l.d   $f0, 0($t8)
+        mov.d $f20, $f0
+        # param "[%e] [%E] [%.2e] [%.0e] [%g] [%G] [%.3g] [%12.4e] [%-12g] [%012.3e]\n"
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # param t3
+        # call printf, 11
+        addiu $sp, $sp, -88
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 8($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 16($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 24($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 32($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 40($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 48($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 56($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 64($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 72($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 80($sp)
+        jal   __printf
+        addiu $sp, $sp, 88
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # if i int>= 13 goto 47
+        li    $t1, 13
+        bge   $s0, $t1, L0_47
         # t2 = i int<< 3
         sll   $s1, $s0, 3
         # t3 = v[t2]
@@ -168,7 +217,7 @@ L0_14:
         addiu $s0, $s0, 1
         # goto 14
         j     L0_14
-L0_31:
+L0_47:
         # param "%e %g %f\n"
         # param 2.5
         # param 2.5

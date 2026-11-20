@@ -60,131 +60,6 @@ _Z4bumpv_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# set(int *, int)
-_Z3setPii:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        # *p = v
-        sw    $s1, 0($s0)
-        # return
-        j     _Z3setPii_exit
-_Z3setPii_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# twice(int &)
-_Z5twiceRi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        lw    $s2, 8($fp)
-        # t1 = *r
-        lw    $s0, 0($s2)
-        # t2 = t1 int<< 1
-        sll   $s1, $s0, 1
-        # *r = t2
-        sw    $s1, 0($s2)
-        # return
-        j     _Z5twiceRi_exit
-_Z5twiceRi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# fold()
-_Z4foldv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        # return 632
-        li    $v0, 632
-        j     _Z4foldv_exit
-_Z4foldv_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# common(int, int)
-_Z6commonii:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -112
-        sw    $s0, -108($fp)
-        sw    $s1, -88($fp)
-        sw    $s2, -112($fp)
-        sw    $s3, -92($fp)
-        sw    $s4, -96($fp)
-        sw    $s5, -100($fp)
-        sw    $s6, -104($fp)
-        lw    $s0, 8($fp)
-        lw    $s2, 12($fp)
-        # t1 = x int* y
-        mul   $s1, $s0, $s2
-        # t2 = t1 int+ 3
-        addiu $s3, $s1, 3
-        # t5 = x int+ y
-        addu  $s1, $s0, $s2
-        # t7 = t5 int* t5
-        mul   $s4, $s1, $s1
-        # t9 = x int<< 3
-        sll   $s5, $s0, 3
-        # t11 = t9 int+ y
-        addu  $s6, $s5, $s2
-        # t14 = t11 int+ x
-        addu  $s5, $s6, $s0
-        # t16 = x int+ 1
-        addiu $s6, $s0, 1
-        # t17 = t16 int* y
-        mul   $s0, $s6, $s2
-        # t18 = t17 int+ 3
-        addiu $s2, $s0, 3
-        # t19 = t2 int+ t2
-        addu  $s0, $s3, $s3
-        # t20 = t19 int+ t7
-        addu  $s3, $s0, $s4
-        # t21 = t20 int+ t5
-        addu  $s0, $s3, $s1
-        # t22 = t21 int+ t14
-        addu  $s1, $s0, $s5
-        # t23 = t22 int+ t18
-        addu  $s0, $s1, $s2
-        # return t23
-        move  $v0, $s0
-        j     _Z6commonii_exit
-_Z6commonii_exit:
-        lw    $s0, -108($fp)
-        lw    $s1, -88($fp)
-        lw    $s2, -112($fp)
-        lw    $s3, -92($fp)
-        lw    $s4, -96($fp)
-        lw    $s5, -100($fp)
-        lw    $s6, -104($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # aliasing()
 _Z8aliasingv:
         addiu $sp, $sp, -8
@@ -303,54 +178,6 @@ _Z8aliasingv_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# globals()
-_Z7globalsv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -72
-        sw    $s0, -60($fp)
-        sw    $s1, -68($fp)
-        sw    $s2, -64($fp)
-        # t1 = g int+ 1
-        lw    $t0, g_g
-        addiu $s0, $t0, 1
-        # t12 = g int+ 10
-        lw    $t0, g_g
-        addiu $s1, $t0, 10
-        # g = t12
-        move  $t0, $s1
-        sw    $t0, g_g
-        # t3 = t12 int+ 1
-        addiu $s2, $s1, 1
-        # g = 2
-        li    $t0, 2
-        sw    $t0, g_g
-        # t6 = t1 int+ t1
-        addu  $s1, $s0, $s0
-        # t7 = t6 int+ t3
-        addu  $s0, $s1, $s2
-        # t8 = t7 int+ 3
-        addiu $s1, $s0, 3
-        # t9 = t8 int+ 6
-        addiu $s0, $s1, 6
-        # g = 12
-        li    $t0, 12
-        sw    $t0, g_g
-        # t11 = t9 int+ 12
-        addiu $s1, $s0, 12
-        # return t11
-        move  $v0, $s1
-        j     _Z7globalsv_exit
-_Z7globalsv_exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -68($fp)
-        lw    $s2, -64($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # flow(int)
 _Z4flowi:
         addiu $sp, $sp, -8
@@ -367,9 +194,9 @@ _Z4flowi:
         li    $s0, 0
         # i = 0
         li    $s2, 0
-L7_2:
+L2_2:
         # if i int>= n goto 18
-        bge   $s2, $s1, L7_18
+        bge   $s2, $s1, L2_18
         # k = n int<< 1
         sll   $s4, $s1, 1
         # t2 = i int% 2
@@ -377,49 +204,49 @@ L7_2:
         div   $s2, $t1
         mfhi  $s3
         # if t2 int!= 0 goto 8
-        bne   $s3, $zero, L7_8
+        bne   $s3, $zero, L2_8
         # s = s int+ k
         addu  $s0, $s0, $s4
         # goto 9
-        j     L7_9
-L7_8:
+        j     L2_9
+L2_8:
         # s = s int- 1
         addiu $s0, $s0, -1
-L7_9:
+L2_9:
         # if s int<= 1000 goto 11
         li    $t1, 1000
-        ble   $s0, $t1, L7_11
+        ble   $s0, $t1, L2_11
         # return -1
         li    $v0, -1
         j     _Z4flowi_exit
-L7_11:
+L2_11:
         # i = i int+ 1
         addiu $s2, $s2, 1
         # goto 2
-        j     L7_2
-L7_13:
+        j     L2_2
+L2_13:
         # s = s int+ 1
         addiu $s0, $s0, 1
-L7_14:
+L2_14:
         # s = s int+ 2
         addiu $s0, $s0, 2
         # goto 21
-        j     L7_21
-L7_16:
+        j     L2_21
+L2_16:
         # s = 0
         li    $s0, 0
         # goto 21
-        j     L7_21
-L7_18:
+        j     L2_21
+L2_18:
         # if n int== 3 goto 13
         li    $t1, 3
-        beq   $s1, $t1, L7_13
+        beq   $s1, $t1, L2_13
         # if n int== 4 goto 14
         li    $t1, 4
-        beq   $s1, $t1, L7_14
+        beq   $s1, $t1, L2_14
         # goto 16
-        j     L7_16
-L7_21:
+        j     L2_16
+L2_21:
         # return s
         move  $v0, $s0
         j     _Z4flowi_exit
@@ -434,50 +261,6 @@ _Z4flowi_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# divide(int, int)
-_Z6divideii:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        lw    $t8, __stack_limit
-        sltu  $t8, $sp, $t8
-        beqz  $t8, M8_1
-        j     __stack_overflow
-M8_1:
-        sw    $s0, -8($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -12($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
-        # if b int!= 0 goto 3
-        bne   $s1, $zero, L8_3
-        # t1 = 0
-        li    $s0, 0
-        # goto 4
-        j     L8_4
-L8_3:
-        # t1 = a int/ b
-        bnez  $s1, M8_0
-        jal   __div_by_zero
-M8_0:
-        div   $s2, $s1
-        mflo  $s0
-L8_4:
-        # return t1
-        move  $v0, $s0
-        j     _Z6divideii_exit
-_Z6divideii_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -12($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -487,9 +270,9 @@ main_:
         addiu $sp, $sp, -88
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M9_0
+        beqz  $t8, M3_0
         j     __stack_overflow
-M9_0:
+M3_0:
         sw    $s0, -76($fp)
         sw    $s1, -80($fp)
         sw    $s2, -84($fp)

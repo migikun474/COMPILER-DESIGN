@@ -51,120 +51,6 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# deposit(struct Account &, double)
-_Z7depositR7Accountd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -64
-        s.d   $f20, -40($fp)
-        s.d   $f22, -48($fp)
-        s.d   $f24, -56($fp)
-        sw    $s0, -28($fp)
-        sw    $s1, -60($fp)
-        lw    $s1, 8($fp)
-        l.d   $f24, 16($fp)
-        # t1 = a ptr+ 8
-        addiu $s0, $s1, 8
-        # t2 = *t1
-        l.d   $f0, 0($s0)
-        mov.d $f20, $f0
-        # t3 = t2 double+ amount
-        add.d $f22, $f20, $f24
-        # *t1 = t3
-        mov.d $f0, $f22
-        s.d   $f0, 0($s0)
-        # return
-        j     _Z7depositR7Accountd_exit
-_Z7depositR7Accountd_exit:
-        l.d   $f20, -40($fp)
-        l.d   $f22, -48($fp)
-        l.d   $f24, -56($fp)
-        lw    $s0, -28($fp)
-        lw    $s1, -60($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# peek(const struct Account &)
-_Z4peekRK7Account:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -32($fp)
-        sw    $s0, -20($fp)
-        sw    $s1, -36($fp)
-        lw    $s1, 8($fp)
-        # t1 = a ptr+ 8
-        addiu $s0, $s1, 8
-        # t2 = *t1
-        l.d   $f0, 0($s0)
-        mov.d $f20, $f0
-        # return t2
-        mov.d $f0, $f20
-        j     _Z4peekRK7Account_exit
-_Z4peekRK7Account_exit:
-        l.d   $f20, -32($fp)
-        lw    $s0, -20($fp)
-        lw    $s1, -36($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# richer(struct Account &, struct Account &)
-_Z6richerR7AccountS0_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -64
-        s.d   $f20, -48($fp)
-        s.d   $f22, -56($fp)
-        sw    $s0, -36($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -64($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
-        # t2 = a ptr+ 8
-        addiu $s0, $s1, 8
-        # t3 = *t2
-        l.d   $f0, 0($s0)
-        mov.d $f20, $f0
-        # t4 = b ptr+ 8
-        addiu $s0, $s2, 8
-        # t5 = *t4
-        l.d   $f0, 0($s0)
-        mov.d $f22, $f0
-        # if t3 double>= t5 goto 6
-        c.le.d $f22, $f20
-        bc1t  L2_6
-        # goto 8
-        j     L2_8
-L2_6:
-        # t1 = a
-        move  $s0, $s1
-        # goto 9
-        j     L2_9
-L2_8:
-        # t1 = b
-        move  $s0, $s2
-L2_9:
-        # return t1
-        move  $v0, $s0
-        j     _Z6richerR7AccountS0__exit
-_Z6richerR7AccountS0__exit:
-        l.d   $f20, -48($fp)
-        l.d   $f22, -56($fp)
-        lw    $s0, -36($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -64($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # minmax(const int *, int, int &, int &)
 _Z6minmaxPKiiRiS1_:
         addiu $sp, $sp, -8
@@ -190,10 +76,10 @@ _Z6minmaxPKiiRiS1_:
         sw    $s0, 0($s2)
         # i = 1
         li    $s1, 1
-L3_4:
-        # if i int>= n goto 19
+L0_4:
+        # if i int>= n goto 33
         lw    $t1, 12($fp)
-        bge   $s1, $t1, L3_19
+        bge   $s1, $t1, L0_33
         # t2 = i int<< 2
         sll   $s4, $s1, 2
         # t3 = values ptr+ t2
@@ -204,12 +90,12 @@ L3_4:
         # t5 = *lo
         lw    $s6, 0($s2)
         # if t4 int>= t5 goto 12
-        bge   $s5, $s6, L3_12
+        bge   $s5, $s6, L0_12
         # t8 = *t3
         lw    $s7, 0($s0)
         # *lo = t8
         sw    $s7, 0($s2)
-L3_12:
+L0_12:
         # t11 = *t3
         lw    $t0, 0($s0)
         sw    $t0, -32($fp)
@@ -219,18 +105,55 @@ L3_12:
         # if t11 int<= t12 goto 17
         lw    $t0, -32($fp)
         lw    $t1, -36($fp)
-        ble   $t0, $t1, L3_17
+        ble   $t0, $t1, L0_17
         # t15 = *t3
         lw    $t0, 0($s0)
         sw    $t0, -40($fp)
         # *hi = t15
         sw    $t0, 0($s3)
-L3_17:
+L0_17:
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # if i int>= n goto 33
+        lw    $t1, 12($fp)
+        bge   $s1, $t1, L0_33
+        # t2 = i int<< 2
+        sll   $s4, $s1, 2
+        # t3 = values ptr+ t2
+        lw    $t0, 8($fp)
+        addu  $s0, $t0, $s4
+        # t4 = *t3
+        lw    $s5, 0($s0)
+        # t5 = *lo
+        lw    $s6, 0($s2)
+        # if t4 int>= t5 goto 26
+        bge   $s5, $s6, L0_26
+        # t8 = *t3
+        lw    $s7, 0($s0)
+        # *lo = t8
+        sw    $s7, 0($s2)
+L0_26:
+        # t11 = *t3
+        lw    $t0, 0($s0)
+        sw    $t0, -32($fp)
+        # t12 = *hi
+        lw    $t0, 0($s3)
+        sw    $t0, -36($fp)
+        # if t11 int<= t12 goto 31
+        lw    $t0, -32($fp)
+        lw    $t1, -36($fp)
+        ble   $t0, $t1, L0_31
+        # t15 = *t3
+        lw    $t0, 0($s0)
+        sw    $t0, -40($fp)
+        # *hi = t15
+        sw    $t0, 0($s3)
+L0_31:
         # i = i int+ 1
         addiu $s1, $s1, 1
         # goto 4
-        j     L3_4
-L3_19:
+        j     L0_4
+L0_33:
         # return
         j     _Z6minmaxPKiiRiS1__exit
 _Z6minmaxPKiiRiS1__exit:
@@ -247,150 +170,6 @@ _Z6minmaxPKiiRiS1__exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# advance(int *&, int)
-_Z7advanceRPii:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        lw    $s3, 8($fp)
-        lw    $s2, 12($fp)
-        # t1 = *p
-        lw    $s0, 0($s3)
-        # t2 = steps int<< 2
-        sll   $s1, $s2, 2
-        # t3 = t1 ptr+ t2
-        addu  $s2, $s0, $s1
-        # *p = t3
-        sw    $s2, 0($s3)
-        # return
-        j     _Z7advanceRPii_exit
-_Z7advanceRPii_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# element(int *, int)
-_Z7elementPii:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
-        # t1 = i int<< 2
-        sll   $s0, $s1, 2
-        # t2 = a ptr+ t1
-        addu  $s1, $s2, $s0
-        # return t2
-        move  $v0, $s1
-        j     _Z7elementPii_exit
-_Z7elementPii_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# scale(const int &, const double &)
-_Z5scaleRKiRKd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -72
-        s.d   $f20, -48($fp)
-        s.d   $f22, -56($fp)
-        s.d   $f24, -64($fp)
-        sw    $s0, -40($fp)
-        sw    $s1, -68($fp)
-        sw    $s2, -72($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
-        # t1 = *v
-        lw    $s0, 0($s1)
-        # t2 = inttodouble t1
-        move  $t0, $s0
-        mtc1  $t0, $f0
-        cvt.d.w $f0, $f0
-        mov.d $f20, $f0
-        # t3 = *factor
-        l.d   $f0, 0($s2)
-        mov.d $f22, $f0
-        # t4 = t2 double* t3
-        mul.d $f24, $f20, $f22
-        # t5 = doubletoint t4
-        mov.d $f0, $f24
-        trunc.w.d $f0, $f0
-        mfc1  $t0, $f0
-        move  $s0, $t0
-        # return t5
-        move  $v0, $s0
-        j     _Z5scaleRKiRKd_exit
-_Z5scaleRKiRKd_exit:
-        l.d   $f20, -48($fp)
-        l.d   $f22, -56($fp)
-        l.d   $f24, -64($fp)
-        lw    $s0, -40($fp)
-        lw    $s1, -68($fp)
-        lw    $s2, -72($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# rotate(int &, int &, int &)
-_Z6rotateRiS_S_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -20($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -32($fp)
-        sw    $s4, -36($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
-        lw    $s4, 16($fp)
-        # t1 = *a
-        lw    $s0, 0($s2)
-        # t2 = *b
-        lw    $s1, 0($s3)
-        # *a = t2
-        sw    $s1, 0($s2)
-        # t3 = *c
-        lw    $s1, 0($s4)
-        # *b = t3
-        sw    $s1, 0($s3)
-        # *c = t1
-        sw    $s0, 0($s4)
-        # return
-        j     _Z6rotateRiS_S__exit
-_Z6rotateRiS_S__exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -32($fp)
-        lw    $s4, -36($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
@@ -400,9 +179,9 @@ main_:
         addiu $sp, $sp, -568
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M8_0
+        beqz  $t8, M1_0
         j     __stack_overflow
-M8_0:
+M1_0:
         s.d   $f20, -544($fp)
         s.d   $f22, -552($fp)
         s.d   $f24, -568($fp)
@@ -586,18 +365,18 @@ M8_0:
         mov.d $f22, $f0
         # if t85 double>= t91 goto 71
         c.le.d $f22, $f20
-        bc1t  L8_71
+        bc1t  L1_71
         # goto 73
-        j     L8_73
-L8_71:
+        j     L1_73
+L1_71:
         # t92 = t25
         move  $s6, $s1
         # goto 74
-        j     L8_74
-L8_73:
+        j     L1_74
+L1_73:
         # t92 = t27
         move  $s6, $s2
-L8_74:
+L1_74:
         # t29 = t92 ptr+ 8
         addiu $s4, $s6, 8
         # t30 = *t29
@@ -617,18 +396,18 @@ L8_74:
         mov.d $f22, $f0
         # if t96 double>= t98 goto 82
         c.le.d $f22, $f20
-        bc1t  L8_82
+        bc1t  L1_82
         # goto 84
-        j     L8_84
-L8_82:
+        j     L1_84
+L1_82:
         # t99 = t25
         move  $s3, $s1
         # goto 85
-        j     L8_85
-L8_84:
+        j     L1_85
+L1_84:
         # t99 = t27
         move  $s3, $s2
-L8_85:
+L1_85:
         # t36 = a[8]
         l.d   $f0, -64($fp)
         mov.d $f20, $f0

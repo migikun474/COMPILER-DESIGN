@@ -4,7 +4,7 @@
 
    Source file   : test/t25_control.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 298 -> 250 instruction(s)
+   Result        : Optimized three address code (-O3): 298 -> 255 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          298 -> 250   (16% fewer)
+   instructions                          298 -> 255   (14% fewer)
 
    constants folded                       10
    algebraic simplifications               0
@@ -29,6 +29,8 @@
    calls inlined                           7
    tail calls turned into jumps            0
    common subexpressions across blocks      5
+   loops unrolled                          8
+   unreachable functions removed           2
 
 ============================================================================
  FUNCTION classify(const char *)        (link name _Z8classifyPKc)
@@ -133,68 +135,6 @@
     159        goto L23
 
 ============================================================================
- FUNCTION grade(int)        (link name _Z5gradei)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   score            param   int                             4       0
-   t1               temp    char *                          4       4
-   t2               temp    char *                          4       8
-   t3               temp    char *                          4      12
-
- Code: 13 instruction(s)
-
-    160        if score int< 90 goto L25
-    161        t1 = "A"
-    162        goto L30
-    163  L25:  if score int< 75 goto L26
-    164        t2 = "B"
-    165        goto L29
-    166  L26:  if score int< 60 goto L27
-    167        t3 = "C"
-    168        goto L28
-    169  L27:  t3 = "F"
-    170  L28:  t2 = t3
-    171  L29:  t1 = t2
-    172  L30:  return t1
-
-============================================================================
- FUNCTION firstPair(int)        (link name _Z9firstPairi)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 3 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   target           param   int                             4       0
-   i                local   int                             4       4
-   j                local   int                             4       8
-   t1               temp    int                             4      12
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 14 instruction(s)
-
-    173        i = 1
-    174  L31:  if i int>= 10 goto L34
-    175        j = i
-    176  L32:  if j int>= 10 goto L33
-    177        t1 = i int* j
-    178        if t1 int== target goto L35
-    179        j = j int+ 1
-    180        goto L32
-    181  L33:  i = i int+ 1
-    182        goto L31
-    183  L34:  return -1
-    184  L35:  t5 = i int* 10
-    185        t6 = t5 int+ j
-    186        return t6
-
-============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
@@ -254,171 +194,203 @@
    t73              temp    int                             4     340
    (37 temporaries no longer used after optimization not shown)
 
- Code: 163 instruction(s)
+ Code: 195 instruction(s)
 
-    187        param "1234"
-    188        t1 = call classify(const char *), 1
-    189        param "12.5"
-    190        t2 = call classify(const char *), 1
-    191        param "x_9"
-    192        t3 = call classify(const char *), 1
-    193        param "9x"
-    194        t4 = call classify(const char *), 1
-    195        param ""
-    196        t5 = call classify(const char *), 1
-    197        param "%d %d %d %d %d\n"
-    198        param t1
-    199        param t2
-    200        param t3
-    201        param t4
-    202        param t5
-    203        call printf, 6
-    204        param 2
-    205        param 2024
-    206        t6 = call daysIn(int, int), 2
-    207        param 2
-    208        param 1900
-    209        t7 = call daysIn(int, int), 2
-    210        param 2
-    211        param 2000
-    212        t8 = call daysIn(int, int), 2
-    213        param 11
-    214        param 2023
-    215        t9 = call daysIn(int, int), 2
-    216        param "%d %d %d %d\n"
-    217        param t6
-    218        param t7
-    219        param t8
-    220        param t9
-    221        call printf, 5
-    222        param "%s %s %s %s\n"
-    223        param "A"
-    224        param "B"
-    225        param "C"
-    226        param "F"
-    227        call printf, 5
-    228        t58 = 1
-    229  L36:  if t58 int>= 10 goto L39
-    230        t59 = t58
-    231  L37:  if t59 int>= 10 goto L38
-    232        t60 = t58 int* t59
-    233        if t60 int== 24 goto L40
-    234        t59 = t59 int+ 1
-    235        goto L37
-    236  L38:  t58 = t58 int+ 1
-    237        goto L36
-    238  L39:  t14 = -1
-    239        goto L41
-    240  L40:  t61 = t58 int* 10
-    241        t14 = t61 int+ t59
-    242  L41:  t64 = 1
-    243  L42:  if t64 int>= 10 goto L45
-    244        t65 = t64
-    245  L43:  if t65 int>= 10 goto L44
-    246        t66 = t64 int* t65
-    247        if t66 int== 49 goto L46
-    248        t65 = t65 int+ 1
-    249        goto L43
-    250  L44:  t64 = t64 int+ 1
-    251        goto L42
-    252  L45:  t15 = -1
-    253        goto L47
-    254  L46:  t67 = t64 int* 10
-    255        t15 = t67 int+ t65
-    256  L47:  t70 = 1
-    257  L48:  if t70 int>= 10 goto L51
-    258        t71 = t70
-    259  L49:  if t71 int>= 10 goto L50
-    260        t72 = t70 int* t71
-    261        if t72 int== 97 goto L52
-    262        t71 = t71 int+ 1
-    263        goto L49
-    264  L50:  t70 = t70 int+ 1
-    265        goto L48
-    266  L51:  t16 = -1
-    267        goto L53
-    268  L52:  t73 = t70 int* 10
-    269        t16 = t73 int+ t71
-    270  L53:  param "%d %d %d\n"
-    271        param t14
-    272        param t15
-    273        param t16
-    274        call printf, 4
-    275        triangle = 0
-    276        skipped = 0
-    277        i = 1
-    278  L54:  if i int> 6 goto L59
-    279        if i int!= 4 goto L55
-    280        skipped = skipped int+ 1
-    281        goto L58
-    282  L55:  j = 1
-    283  L56:  if j int> 6 goto L58
-    284        if j int> i goto L58
-    285        t18 = i int+ j
-    286        t19 = t18 int% 2
-    287        if t19 int!= 0 goto L57
-    288        t20 = i int* j
-    289        triangle = triangle int+ t20
-    290  L57:  j = j int+ 1
-    291        goto L56
-    292  L58:  i = i int+ 1
-    293        goto L54
-    294  L59:  param "%d %d\n"
-    295        param triangle
-    296        param skipped
-    297        call printf, 3
-    298        n = 0
-    299        digits = 0
-    300        value = 90210
-    301  L60:  digits = digits int+ 1
-    302        t25 = value int/ 10
-    303        value = t25
-    304        if t25 int!= 0 goto L60
-    305  L61:  t26 = n int* n
-    306        if t26 int> 200 goto L62
-    307        n = n int+ 1
-    308        goto L61
-    309  L62:  a = 0
-    310        b = 10
-    311  L63:  if a int>= b goto L64
-    312        a = a int+ 1
-    313        b = b int- 1
-    314        goto L63
-    315  L64:  t30 = a int+ 1
-    316        t31 = b int+ 2
-    317        t32 = t30 int+ t31
-    318        param "%d %d %d %d %d\n"
-    319        param digits
-    320        param n
-    321        param t30
-    322        param t31
-    323        param t32
-    324        call printf, 6
-    325        steps = 0
-    326        k = 27
-    327  L65:  if k int== 1 goto L68
-    328        t34 = k int% 2
-    329        if t34 int== 0 goto L66
-    330        t35 = k int* 3
-    331        t33 = t35 int+ 1
-    332        goto L67
-    333  L66:  t33 = k int/ 2
-    334  L67:  k = t33
-    335        t38 = steps int+ 1
-    336        steps = t38
-    337        if t38 int<= 200 goto L65
-    338  L68:  countdown = 3
-    339  L69:  t39 = countdown
-    340        countdown = countdown int- 1
-    341        if t39 int<= 0 goto L70
-    342        param "%d "
-    343        param countdown
-    344        call printf, 2
-    345        goto L69
-    346  L70:  param "\n%d\n"
-    347        param steps
-    348        call printf, 2
-    349        return digits
+    160        param "1234"
+    161        t1 = call classify(const char *), 1
+    162        param "12.5"
+    163        t2 = call classify(const char *), 1
+    164        param "x_9"
+    165        t3 = call classify(const char *), 1
+    166        param "9x"
+    167        t4 = call classify(const char *), 1
+    168        param ""
+    169        t5 = call classify(const char *), 1
+    170        param "%d %d %d %d %d\n"
+    171        param t1
+    172        param t2
+    173        param t3
+    174        param t4
+    175        param t5
+    176        call printf, 6
+    177        param 2
+    178        param 2024
+    179        t6 = call daysIn(int, int), 2
+    180        param 2
+    181        param 1900
+    182        t7 = call daysIn(int, int), 2
+    183        param 2
+    184        param 2000
+    185        t8 = call daysIn(int, int), 2
+    186        param 11
+    187        param 2023
+    188        t9 = call daysIn(int, int), 2
+    189        param "%d %d %d %d\n"
+    190        param t6
+    191        param t7
+    192        param t8
+    193        param t9
+    194        call printf, 5
+    195        param "%s %s %s %s\n"
+    196        param "A"
+    197        param "B"
+    198        param "C"
+    199        param "F"
+    200        call printf, 5
+    201        t58 = 1
+    202  L25:  if t58 int>= 10 goto L28
+    203        t59 = t58
+    204  L26:  if t59 int>= 10 goto L27
+    205        t60 = t58 int* t59
+    206        if t60 int== 24 goto L29
+    207        t59 = t59 int+ 1
+    208        if t59 int>= 10 goto L27
+    209        t60 = t58 int* t59
+    210        if t60 int== 24 goto L29
+    211        t59 = t59 int+ 1
+    212        goto L26
+    213  L27:  t58 = t58 int+ 1
+    214        goto L25
+    215  L28:  t14 = -1
+    216        goto L30
+    217  L29:  t61 = t58 int* 10
+    218        t14 = t61 int+ t59
+    219  L30:  t64 = 1
+    220  L31:  if t64 int>= 10 goto L34
+    221        t65 = t64
+    222  L32:  if t65 int>= 10 goto L33
+    223        t66 = t64 int* t65
+    224        if t66 int== 49 goto L35
+    225        t65 = t65 int+ 1
+    226        if t65 int>= 10 goto L33
+    227        t66 = t64 int* t65
+    228        if t66 int== 49 goto L35
+    229        t65 = t65 int+ 1
+    230        goto L32
+    231  L33:  t64 = t64 int+ 1
+    232        goto L31
+    233  L34:  t15 = -1
+    234        goto L36
+    235  L35:  t67 = t64 int* 10
+    236        t15 = t67 int+ t65
+    237  L36:  t70 = 1
+    238  L37:  if t70 int>= 10 goto L40
+    239        t71 = t70
+    240  L38:  if t71 int>= 10 goto L39
+    241        t72 = t70 int* t71
+    242        if t72 int== 97 goto L41
+    243        t71 = t71 int+ 1
+    244        if t71 int>= 10 goto L39
+    245        t72 = t70 int* t71
+    246        if t72 int== 97 goto L41
+    247        t71 = t71 int+ 1
+    248        goto L38
+    249  L39:  t70 = t70 int+ 1
+    250        goto L37
+    251  L40:  t16 = -1
+    252        goto L42
+    253  L41:  t73 = t70 int* 10
+    254        t16 = t73 int+ t71
+    255  L42:  param "%d %d %d\n"
+    256        param t14
+    257        param t15
+    258        param t16
+    259        call printf, 4
+    260        triangle = 0
+    261        skipped = 0
+    262        i = 1
+    263  L43:  if i int> 6 goto L49
+    264        if i int!= 4 goto L44
+    265        skipped = skipped int+ 1
+    266        goto L48
+    267  L44:  j = 1
+    268  L45:  if j int> 6 goto L48
+    269        if j int> i goto L48
+    270        t18 = i int+ j
+    271        t19 = t18 int% 2
+    272        if t19 int!= 0 goto L46
+    273        t20 = i int* j
+    274        triangle = triangle int+ t20
+    275  L46:  j = j int+ 1
+    276        if j int> 6 goto L48
+    277        if j int> i goto L48
+    278        t18 = i int+ j
+    279        t19 = t18 int% 2
+    280        if t19 int!= 0 goto L47
+    281        t20 = i int* j
+    282        triangle = triangle int+ t20
+    283  L47:  j = j int+ 1
+    284        goto L45
+    285  L48:  i = i int+ 1
+    286        goto L43
+    287  L49:  param "%d %d\n"
+    288        param triangle
+    289        param skipped
+    290        call printf, 3
+    291        n = 0
+    292        digits = 0
+    293        value = 90210
+    294  L50:  digits = digits int+ 1
+    295        t25 = value int/ 10
+    296        value = t25
+    297        if t25 int!= 0 goto L50
+    298  L51:  t26 = n int* n
+    299        if t26 int> 200 goto L52
+    300        n = n int+ 1
+    301        t26 = n int* n
+    302        if t26 int> 200 goto L52
+    303        n = n int+ 1
+    304        goto L51
+    305  L52:  a = 0
+    306        b = 10
+    307  L53:  if a int>= b goto L54
+    308        a = a int+ 1
+    309        b = b int- 1
+    310        if a int>= b goto L54
+    311        a = a int+ 1
+    312        b = b int- 1
+    313        goto L53
+    314  L54:  t30 = a int+ 1
+    315        t31 = b int+ 2
+    316        t32 = t30 int+ t31
+    317        param "%d %d %d %d %d\n"
+    318        param digits
+    319        param n
+    320        param t30
+    321        param t31
+    322        param t32
+    323        call printf, 6
+    324        steps = 0
+    325        k = 27
+    326  L55:  if k int== 1 goto L58
+    327        t34 = k int% 2
+    328        if t34 int== 0 goto L56
+    329        t35 = k int* 3
+    330        t33 = t35 int+ 1
+    331        goto L57
+    332  L56:  t33 = k int/ 2
+    333  L57:  k = t33
+    334        t38 = steps int+ 1
+    335        steps = t38
+    336        if t38 int<= 200 goto L55
+    337  L58:  countdown = 3
+    338  L59:  t39 = countdown
+    339        countdown = countdown int- 1
+    340        if t39 int<= 0 goto L60
+    341        param "%d "
+    342        param countdown
+    343        call printf, 2
+    344        t39 = countdown
+    345        countdown = countdown int- 1
+    346        if t39 int<= 0 goto L60
+    347        param "%d "
+    348        param countdown
+    349        call printf, 2
+    350        goto L59
+    351  L60:  param "\n%d\n"
+    352        param steps
+    353        call printf, 2
+    354        return digits
 
 
 ----------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 
    Source file   : test/t08_classes.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 261 -> 318 instruction(s)
+   Result        : Optimized three address code (-O3): 261 -> 205 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          261 -> 318   (-21% fewer)
+   instructions                          261 -> 205   (21% fewer)
 
    constants folded                        1
    algebraic simplifications               1
@@ -29,6 +29,8 @@
    calls inlined                          28
    tail calls turned into jumps            0
    common subexpressions across blocks      3
+   loops unrolled                          0
+   unreachable functions removed          14
 
 ----------------------------------------------------------------------------
  GLOBALS: 1 object(s) in static storage
@@ -60,22 +62,6 @@
     103     return
 
 ============================================================================
- FUNCTION Animal::count()        (link name _ZN6Animal5countEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Animal *                  4       0
-   t1               temp    int                             4       4
-
- Code: 2 instruction(s)
-
-    104     t1 = *this
-    105     return t1
-
-============================================================================
  FUNCTION Tag::Tag()        (link name _ZN3TagC1Ev)
 ============================================================================
 
@@ -87,99 +73,10 @@
 
  Code: 4 instruction(s)
 
-    106     *this = 7
-    107     param "Tag()\n"
-    108     call printf, 1
-    109     return
-
-============================================================================
- FUNCTION Dog::Dog()        (link name _ZN3DogC1Ev)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 24 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    class Dog *                     4       8
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 13 instruction(s)
-
-    110     *this = 4
-    111     param "Animal()\n"
-    112     call printf, 1
-    113     t1 = this ptr+ 8
-    114     *t1 = 7
-    115     param "Tag()\n"
-    116     call printf, 1
-    117     t2 = this ptr+ 4
-    118     *t2 = 0
-    119     Dog::made = Dog::made int+ 1
-    120     param "Dog()\n"
-    121     call printf, 1
-    122     return
-
-============================================================================
- FUNCTION Dog::human()        (link name _ZN3Dog5humanEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 8 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-   t4               temp    int                             4      16
-   t5               temp    int                             4      20
-   t6               temp    class Dog *                     4      24
-   t7               temp    int                             4      28
-   t8               temp    int                             4      32
-
- Code: 9 instruction(s)
-
-    123     t1 = this ptr+ 4
-    124     t2 = *t1
-    125     t3 = t2 int* 7
-    126     t4 = *this
-    127     t5 = t3 int+ t4
-    128     t6 = this ptr+ 8
-    129     t7 = *t6
-    130     t8 = t5 int+ t7
-    131     return t8
-
-============================================================================
- FUNCTION Dog::total()        (link name _ZN3Dog5totalEv)
-============================================================================
-
- Code: 1 instruction(s)
-
-    132     return Dog::made
-
-============================================================================
- FUNCTION Dog::birthday()        (link name _ZN3Dog8birthdayEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-   (1 temporary no longer used after optimization not shown)
-
- Code: 5 instruction(s)
-
-    133     t1 = this ptr+ 4
-    134     t2 = *t1
-    135     t3 = t2 int+ 1
-    136     *t1 = t3
-    137     return
+    104     *this = 7
+    105     param "Tag()\n"
+    106     call printf, 1
+    107     return
 
 ============================================================================
  FUNCTION Vec::Vec()        (link name _ZN3VecC1Ev)
@@ -194,244 +91,10 @@
 
  Code: 4 instruction(s)
 
-    138     *this = 0
-    139     t1 = this ptr+ 4
-    140     *t1 = 0
-    141     return
-
-============================================================================
- FUNCTION Vec::operator+(class Vec)        (link name _ZN3VecplES_)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 9 temporaries, frame 60 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   r                local   class Vec                       8      12
-   t1               temp    class Vec *                     4      20
-   t2               temp    int                             4      24
-   t3               temp    int                             4      28
-   t4               temp    int                             4      32
-   t5               temp    class Vec *                     4      36
-   t6               temp    int                             4      40
-   t7               temp    int                             4      44
-   t8               temp    int                             4      48
-   t10              temp    class Vec *                     4      56
-   (1 temporary no longer used after optimization not shown)
-
- Code: 14 instruction(s)
-
-    142     t1 = &r
-    143     *t1 = 0
-    144     t10 = t1 ptr+ 4
-    145     *t10 = 0
-    146     t2 = *this
-    147     t3 = o[0]
-    148     t4 = t2 int+ t3
-    149     r[0] = t4
-    150     t5 = this ptr+ 4
-    151     t6 = *t5
-    152     t7 = o[4]
-    153     t8 = t6 int+ t7
-    154     r[4] = t8
-    155     return r
-
-============================================================================
- FUNCTION Vec::operator-()        (link name _ZN3VecmiEv)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 7 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   r                local   class Vec                       8       4
-   t1               temp    class Vec *                     4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   t8               temp    class Vec *                     4      40
-   (1 temporary no longer used after optimization not shown)
-
- Code: 12 instruction(s)
-
-    156     t1 = &r
-    157     *t1 = 0
-    158     t8 = t1 ptr+ 4
-    159     *t8 = 0
-    160     t2 = *this
-    161     t3 = int- t2
-    162     r[0] = t3
-    163     t4 = this ptr+ 4
-    164     t5 = *t4
-    165     t6 = int- t5
-    166     r[4] = t6
-    167     return r
-
-============================================================================
- FUNCTION Vec::operator==(class Vec)        (link name _ZN3VeceqES_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 6 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-
- Code: 11 instruction(s)
-
-    168       t2 = *this
-    169       t3 = o[0]
-    170       if t2 int!= t3 goto L1
-    171       t4 = this ptr+ 4
-    172       t5 = *t4
-    173       t6 = o[4]
-    174       if t5 int== t6 goto L2
-    175  L1:  t1 = 0
-    176       goto L3
-    177  L2:  t1 = 1
-    178  L3:  return t1
-
-============================================================================
- FUNCTION Vec::operator[](int)        (link name _ZN3VecixEi)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 24 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   i                param   int                             4       4
-   t1               temp    int                             4       8
-   t3               temp    class Vec *                     4      16
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 6 instruction(s)
-
-    179       if i int!= 0 goto L4
-    180       t1 = *this
-    181       goto L5
-    182  L4:  t3 = this ptr+ 4
-    183       t1 = *t3
-    184  L5:  return t1
-
-============================================================================
- FUNCTION Vec::operator+=(class Vec)        (link name _ZN3VecpLES_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 7 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   t7               temp    int                             4      36
-   (1 temporary no longer used after optimization not shown)
-
- Code: 10 instruction(s)
-
-    185     t1 = *this
-    186     t2 = o[0]
-    187     t3 = t1 int+ t2
-    188     *this = t3
-    189     t4 = this ptr+ 4
-    190     t5 = *t4
-    191     t6 = o[4]
-    192     t7 = t5 int+ t6
-    193     *t4 = t7
-    194     return this
-
-============================================================================
- FUNCTION Vec::operator++()        (link name _ZN3VecppEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   t1               temp    int                             4       4
-   t2               temp    int                             4       8
-
- Code: 4 instruction(s)
-
-    195     t1 = *this
-    196     t2 = t1 int+ 1
-    197     *this = t2
-    198     return this
-
-============================================================================
- FUNCTION Vec::operator()(int)        (link name _ZN3VecclEi)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 28 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   k                param   int                             4       4
-   t1               temp    int                             4       8
-   t2               temp    int                             4      12
-   t3               temp    class Vec *                     4      16
-   t4               temp    int                             4      20
-   t5               temp    int                             4      24
-
- Code: 6 instruction(s)
-
-    199     t1 = *this
-    200     t2 = t1 int* k
-    201     t3 = this ptr+ 4
-    202     t4 = *t3
-    203     t5 = t2 int+ t4
-    204     return t5
-
-============================================================================
- FUNCTION Vec::dot(class Vec)        (link name _ZN3Vec3dotES_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 8 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   t7               temp    int                             4      36
-   t8               temp    int                             4      40
-
- Code: 9 instruction(s)
-
-    205     t1 = *this
-    206     t2 = o[0]
-    207     t3 = t1 int* t2
-    208     t4 = this ptr+ 4
-    209     t5 = *t4
-    210     t6 = o[4]
-    211     t7 = t5 int* t6
-    212     t8 = t3 int+ t7
-    213     return t8
+    108     *this = 0
+    109     t1 = this ptr+ 4
+    110     *t1 = 0
+    111     return
 
 ============================================================================
  FUNCTION make(int, int)        (link name _Z4makeii)
@@ -450,46 +113,13 @@
 
  Code: 7 instruction(s)
 
-    214     t1 = &v
-    215     *t1 = 0
-    216     t3 = t1 ptr+ 4
-    217     *t3 = 0
-    218     v[0] = a
-    219     v[4] = b
-    220     return v
-
-============================================================================
- FUNCTION operator*(class Vec, int)        (link name _Zml3Veci)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 7 temporaries, frame 56 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   class Vec                       8       0
-   k                param   int                             4       8
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    int                             4      24
-   t5               temp    class Vec                       8      28
-   t8               temp    class Vec                       8      44
-   t9               temp    class Vec *                     4      52
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 11 instruction(s)
-
-    221     t1 = v[0]
-    222     t2 = t1 int* k
-    223     t3 = v[4]
-    224     t4 = t3 int* k
-    225     t9 = &t8
-    226     param t9                            (this)
-    227     call Vec::Vec(), 1
-    228     t8[0] = t2
-    229     t8[4] = t4
-    230     t5 = t8
-    231     return t5
+    112     t1 = &v
+    113     *t1 = 0
+    114     t3 = t1 ptr+ 4
+    115     *t3 = 0
+    116     v[0] = a
+    117     v[4] = b
+    118     return v
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -607,192 +237,192 @@
 
  Code: 186 instruction(s)
 
-    232        t1 = &rex
-    233        param t1                            (this)
-    234        call Animal::Animal(), 1
-    235        t48 = t1 ptr+ 8
-    236        param t48                           (this)
-    237        call Tag::Tag(), 1
-    238        t49 = t1 ptr+ 4
-    239        *t49 = 0
-    240        Dog::made = Dog::made int+ 1
-    241        param "Dog()\n"
-    242        call printf, 1
-    243        rex[4] = 3
-    244        t52 = *t49
-    245        t53 = t52 int+ 1
-    246        *t49 = t53
-    247        t57 = t53 int* 7
-    248        t58 = *t1
-    249        t59 = t57 int+ t58
-    250        t61 = *t48
-    251        t62 = t59 int+ t61
-    252        param "%d %d %d\n"
-    253        param t62
-    254        param t58
-    255        param Dog::made
-    256        call printf, 4
-    257        t9 = *t1
-    258        param "%d\n"
-    259        param t9
-    260        call printf, 2
-    261        param "--\n"
-    262        call printf, 1
-    263        t10 = &other
-    264        param t10                           (this)
-    265        call Animal::Animal(), 1
-    266        t66 = t10 ptr+ 8
-    267        param t66                           (this)
-    268        call Tag::Tag(), 1
-    269        t67 = t10 ptr+ 4
-    270        *t67 = 0
-    271        Dog::made = Dog::made int+ 1
-    272        param "Dog()\n"
-    273        call printf, 1
-    274        other[4] = 5
-    275        t70 = *t67
-    276        t71 = t70 int* 7
-    277        t72 = *t10
-    278        t73 = t71 int+ t72
-    279        t75 = *t66
-    280        t76 = t73 int+ t75
-    281        param "%d %d\n"
-    282        param t76
-    283        param Dog::made
-    284        call printf, 3
-    285        param "--\n"
-    286        call printf, 1
-    287        t80 = &t79
-    288        param t80                           (this)
-    289        call Vec::Vec(), 1
-    290        t79[0] = 1
-    291        t79[4] = 2
-    292        a = t79
-    293        t84 = &t83
-    294        param t84                           (this)
-    295        call Vec::Vec(), 1
-    296        t83[0] = 3
-    297        t83[4] = 4
-    298        b = t83
-    299        t15 = &c
-    300        *t15 = 0
-    301        t86 = t15 ptr+ 4
-    302        *t86 = 0
-    303        t16 = &a
-    304        t88 = b
-    305        t90 = &t89
-    306        param t90                           (this)
-    307        call Vec::Vec(), 1
-    308        t91 = *t16
-    309        t92 = t88[0]
-    310        t93 = t91 int+ t92
-    311        t89[0] = t93
-    312        t94 = t16 ptr+ 4
-    313        t95 = *t94
-    314        t96 = t88[4]
-    315        t97 = t95 int+ t96
-    316        t89[4] = t97
-    317        c = t89
-    318        t100 = &t99
-    319        param t100                          (this)
-    320        call Vec::Vec(), 1
-    321        t101 = *t15
-    322        t102 = int- t101
-    323        t99[0] = t102
-    324        t104 = *t86
-    325        t105 = int- t104
-    326        t99[4] = t105
-    327        d = t99
-    328        t106 = a
-    329        t108 = t106[0]
-    330        t109 = t108 int* 3
-    331        t110 = t106[4]
-    332        t111 = t110 int* 3
-    333        param t109
-    334        param t111
-    335        e = call make(int, int), 2
-    336        t114 = b
-    337        t115 = *t16
-    338        t116 = t114[0]
-    339        t117 = t115 int+ t116
-    340        *t16 = t117
-    341        t119 = *t94
-    342        t120 = t114[4]
-    343        t121 = t119 int+ t120
-    344        *t94 = t121
-    345        t123 = *t16
-    346        t124 = t123 int+ 1
-    347        *t16 = t124
-    348        t25 = c[0]
-    349        t26 = c[4]
-    350        t27 = d[0]
-    351        t28 = e[4]
-    352        t29 = a[0]
-    353        t30 = a[4]
-    354        param "%d %d %d %d %d %d\n"
-    355        param t25
-    356        param t26
-    357        param t27
-    358        param t28
-    359        param t29
-    360        param t30
-    361        call printf, 7
-    362        t126 = b
-    363        t127 = *t16
-    364        t128 = t126[0]
-    365        if t127 int!= t128 goto L6
-    366        t130 = *t94
-    367        t131 = t126[4]
-    368        if t130 int== t131 goto L7
-    369  L6:   t132 = 0
-    370        goto L8
-    371  L7:   t132 = 1
-    372  L8:   t134 = c
-    373        t135 = *t15
-    374        t136 = t134[0]
-    375        if t135 int!= t136 goto L9
-    376        t138 = *t86
-    377        t139 = t134[4]
-    378        if t138 int== t139 goto L10
-    379  L9:   t140 = 0
-    380        goto L11
-    381  L10:  t140 = 1
-    382  L11:  t143 = *t16
-    383        t148 = t143 int<< 1
-    384        t150 = *t94
-    385        t151 = t148 int+ t150
-    386        t153 = b
-    387        t154 = *t16
-    388        t155 = t153[0]
-    389        t156 = t154 int* t155
-    390        t158 = *t94
-    391        t159 = t153[4]
-    392        t160 = t158 int* t159
-    393        t161 = t156 int+ t160
-    394        param "%d %d %d %d %d\n"
-    395        param t132
-    396        param t140
-    397        param t143
-    398        param t151
-    399        param t161
-    400        call printf, 6
-    401        t41 = &row
-    402        *t41 = 0
-    403        t163 = t41 ptr+ 4
-    404        *t163 = 0
-    405        t42 = t41 ptr+ 8
-    406        *t42 = 0
-    407        t165 = t42 ptr+ 4
-    408        *t165 = 0
-    409        row[8] = 9
-    410        t43 = row[0]
-    411        param "%d %d\n"
-    412        param t43
-    413        param 9
-    414        call printf, 3
-    415        t45 = c[0]
-    416        t46 = 7 int+ t45
-    417        return t46
+    119       t1 = &rex
+    120       param t1                            (this)
+    121       call Animal::Animal(), 1
+    122       t48 = t1 ptr+ 8
+    123       param t48                           (this)
+    124       call Tag::Tag(), 1
+    125       t49 = t1 ptr+ 4
+    126       *t49 = 0
+    127       Dog::made = Dog::made int+ 1
+    128       param "Dog()\n"
+    129       call printf, 1
+    130       rex[4] = 3
+    131       t52 = *t49
+    132       t53 = t52 int+ 1
+    133       *t49 = t53
+    134       t57 = t53 int* 7
+    135       t58 = *t1
+    136       t59 = t57 int+ t58
+    137       t61 = *t48
+    138       t62 = t59 int+ t61
+    139       param "%d %d %d\n"
+    140       param t62
+    141       param t58
+    142       param Dog::made
+    143       call printf, 4
+    144       t9 = *t1
+    145       param "%d\n"
+    146       param t9
+    147       call printf, 2
+    148       param "--\n"
+    149       call printf, 1
+    150       t10 = &other
+    151       param t10                           (this)
+    152       call Animal::Animal(), 1
+    153       t66 = t10 ptr+ 8
+    154       param t66                           (this)
+    155       call Tag::Tag(), 1
+    156       t67 = t10 ptr+ 4
+    157       *t67 = 0
+    158       Dog::made = Dog::made int+ 1
+    159       param "Dog()\n"
+    160       call printf, 1
+    161       other[4] = 5
+    162       t70 = *t67
+    163       t71 = t70 int* 7
+    164       t72 = *t10
+    165       t73 = t71 int+ t72
+    166       t75 = *t66
+    167       t76 = t73 int+ t75
+    168       param "%d %d\n"
+    169       param t76
+    170       param Dog::made
+    171       call printf, 3
+    172       param "--\n"
+    173       call printf, 1
+    174       t80 = &t79
+    175       param t80                           (this)
+    176       call Vec::Vec(), 1
+    177       t79[0] = 1
+    178       t79[4] = 2
+    179       a = t79
+    180       t84 = &t83
+    181       param t84                           (this)
+    182       call Vec::Vec(), 1
+    183       t83[0] = 3
+    184       t83[4] = 4
+    185       b = t83
+    186       t15 = &c
+    187       *t15 = 0
+    188       t86 = t15 ptr+ 4
+    189       *t86 = 0
+    190       t16 = &a
+    191       t88 = b
+    192       t90 = &t89
+    193       param t90                           (this)
+    194       call Vec::Vec(), 1
+    195       t91 = *t16
+    196       t92 = t88[0]
+    197       t93 = t91 int+ t92
+    198       t89[0] = t93
+    199       t94 = t16 ptr+ 4
+    200       t95 = *t94
+    201       t96 = t88[4]
+    202       t97 = t95 int+ t96
+    203       t89[4] = t97
+    204       c = t89
+    205       t100 = &t99
+    206       param t100                          (this)
+    207       call Vec::Vec(), 1
+    208       t101 = *t15
+    209       t102 = int- t101
+    210       t99[0] = t102
+    211       t104 = *t86
+    212       t105 = int- t104
+    213       t99[4] = t105
+    214       d = t99
+    215       t106 = a
+    216       t108 = t106[0]
+    217       t109 = t108 int* 3
+    218       t110 = t106[4]
+    219       t111 = t110 int* 3
+    220       param t109
+    221       param t111
+    222       e = call make(int, int), 2
+    223       t114 = b
+    224       t115 = *t16
+    225       t116 = t114[0]
+    226       t117 = t115 int+ t116
+    227       *t16 = t117
+    228       t119 = *t94
+    229       t120 = t114[4]
+    230       t121 = t119 int+ t120
+    231       *t94 = t121
+    232       t123 = *t16
+    233       t124 = t123 int+ 1
+    234       *t16 = t124
+    235       t25 = c[0]
+    236       t26 = c[4]
+    237       t27 = d[0]
+    238       t28 = e[4]
+    239       t29 = a[0]
+    240       t30 = a[4]
+    241       param "%d %d %d %d %d %d\n"
+    242       param t25
+    243       param t26
+    244       param t27
+    245       param t28
+    246       param t29
+    247       param t30
+    248       call printf, 7
+    249       t126 = b
+    250       t127 = *t16
+    251       t128 = t126[0]
+    252       if t127 int!= t128 goto L1
+    253       t130 = *t94
+    254       t131 = t126[4]
+    255       if t130 int== t131 goto L2
+    256  L1:  t132 = 0
+    257       goto L3
+    258  L2:  t132 = 1
+    259  L3:  t134 = c
+    260       t135 = *t15
+    261       t136 = t134[0]
+    262       if t135 int!= t136 goto L4
+    263       t138 = *t86
+    264       t139 = t134[4]
+    265       if t138 int== t139 goto L5
+    266  L4:  t140 = 0
+    267       goto L6
+    268  L5:  t140 = 1
+    269  L6:  t143 = *t16
+    270       t148 = t143 int<< 1
+    271       t150 = *t94
+    272       t151 = t148 int+ t150
+    273       t153 = b
+    274       t154 = *t16
+    275       t155 = t153[0]
+    276       t156 = t154 int* t155
+    277       t158 = *t94
+    278       t159 = t153[4]
+    279       t160 = t158 int* t159
+    280       t161 = t156 int+ t160
+    281       param "%d %d %d %d %d\n"
+    282       param t132
+    283       param t140
+    284       param t143
+    285       param t151
+    286       param t161
+    287       call printf, 6
+    288       t41 = &row
+    289       *t41 = 0
+    290       t163 = t41 ptr+ 4
+    291       *t163 = 0
+    292       t42 = t41 ptr+ 8
+    293       *t42 = 0
+    294       t165 = t42 ptr+ 4
+    295       *t165 = 0
+    296       row[8] = 9
+    297       t43 = row[0]
+    298       param "%d %d\n"
+    299       param t43
+    300       param 9
+    301       call printf, 3
+    302       t45 = c[0]
+    303       t46 = 7 int+ t45
+    304       return t46
 
 
 ----------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 
    Source file   : test/t18_algorithms.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 401 -> 330 instruction(s)
+   Result        : Optimized three address code (-O3): 401 -> 395 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,12 +14,12 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          401 -> 330   (17% fewer)
+   instructions                          401 -> 395   (1% fewer)
 
    constants folded                        4
    algebraic simplifications              24
    common subexpressions                  13
-   copies / constants forwarded           51
+   copies / constants forwarded           53
    temporaries merged away                28
    dead instructions removed              45
    jumps removed or redirected            28
@@ -29,6 +29,8 @@
    calls inlined                           3
    tail calls turned into jumps            4
    common subexpressions across blocks     13
+   loops unrolled                         13
+   unreachable functions removed           2
 
 ----------------------------------------------------------------------------
  GLOBALS: 1 object(s) in static storage
@@ -69,15 +71,15 @@
    t19              temp    int                             4      92
    (12 temporaries no longer used after optimization not shown)
 
- Code: 24 instruction(s)
+ Code: 40 instruction(s)
 
     100       i = 0
     101  L1:  t1 = n int- 1
-    102       if i int>= t1 goto L5
+    102       if i int>= t1 goto L6
     103       j = 0
     104  L2:  t2 = n int- 1
     105       t3 = t2 int- i
-    106       if j int>= t3 goto L4
+    106       if j int>= t3 goto L5
     107       t4 = j int<< 2
     108       t5 = a ptr+ t4
     109       t6 = *t5
@@ -91,10 +93,26 @@
     117       *t5 = t19
     118       *t9 = t13
     119  L3:  j = j int+ 1
-    120       goto L2
-    121  L4:  i = i int+ 1
-    122       goto L1
-    123  L5:  return
+    120       t2 = n int- 1
+    121       t3 = t2 int- i
+    122       if j int>= t3 goto L5
+    123       t4 = j int<< 2
+    124       t5 = a ptr+ t4
+    125       t6 = *t5
+    126       t7 = j int+ 1
+    127       t8 = t7 int<< 2
+    128       t9 = a ptr+ t8
+    129       t10 = *t9
+    130       if t6 int<= t10 goto L4
+    131       t13 = *t5
+    132       t19 = *t9
+    133       *t5 = t19
+    134       *t9 = t13
+    135  L4:  j = j int+ 1
+    136       goto L2
+    137  L5:  i = i int+ 1
+    138       goto L1
+    139  L6:  return
 
 ============================================================================
  FUNCTION quick(int *, int, int)        (link name _Z5quickPiii)
@@ -125,44 +143,54 @@
    t21              temp    int                             4     108
    (16 temporaries no longer used after optimization not shown)
 
- Code: 36 instruction(s)
+ Code: 46 instruction(s)
 
-    124  L6:   if lo int< hi goto L7
-    125        return
-    126  L7:   t1 = lo int+ hi
-    127        t2 = t1 int/ 2
-    128        t3 = t2 int<< 2
-    129        t4 = a ptr+ t3
-    130        pivot = *t4
-    131        i = lo
-    132        j = hi
-    133  L8:   if i int> j goto L12
-    134  L9:   t6 = i int<< 2
-    135        t7 = a ptr+ t6
-    136        t8 = *t7
-    137        if t8 int>= pivot goto L10
-    138        i = i int+ 1
-    139        goto L9
-    140  L10:  t10 = j int<< 2
-    141        t11 = a ptr+ t10
-    142        t12 = *t11
-    143        if t12 int<= pivot goto L11
-    144        j = j int- 1
-    145        goto L10
-    146  L11:  if i int> j goto L8
-    147        t16 = *t7
-    148        t21 = *t11
-    149        *t7 = t21
-    150        *t11 = t16
-    151        i = i int+ 1
-    152        j = j int- 1
-    153        goto L8
-    154  L12:  param a
-    155        param lo
-    156        param j
-    157        call quick(int *, int, int), 3
-    158        lo = i
-    159        goto L6
+    140  L7:   if lo int< hi goto L8
+    141        return
+    142  L8:   t1 = lo int+ hi
+    143        t2 = t1 int/ 2
+    144        t3 = t2 int<< 2
+    145        t4 = a ptr+ t3
+    146        pivot = *t4
+    147        i = lo
+    148        j = hi
+    149  L9:   if i int> j goto L13
+    150  L10:  t6 = i int<< 2
+    151        t7 = a ptr+ t6
+    152        t8 = *t7
+    153        if t8 int>= pivot goto L11
+    154        i = i int+ 1
+    155        t6 = i int<< 2
+    156        t7 = a ptr+ t6
+    157        t8 = *t7
+    158        if t8 int>= pivot goto L11
+    159        i = i int+ 1
+    160        goto L10
+    161  L11:  t10 = j int<< 2
+    162        t11 = a ptr+ t10
+    163        t12 = *t11
+    164        if t12 int<= pivot goto L12
+    165        j = j int- 1
+    166        t10 = j int<< 2
+    167        t11 = a ptr+ t10
+    168        t12 = *t11
+    169        if t12 int<= pivot goto L12
+    170        j = j int- 1
+    171        goto L11
+    172  L12:  if i int> j goto L9
+    173        t16 = *t7
+    174        t21 = *t11
+    175        *t7 = t21
+    176        *t11 = t16
+    177        i = i int+ 1
+    178        j = j int- 1
+    179        goto L9
+    180  L13:  param a
+    181        param lo
+    182        param j
+    183        call quick(int *, int, int), 3
+    184        lo = i
+    185        goto L7
 
 ============================================================================
  FUNCTION search(int *, int, int)        (link name _Z6searchPiii)
@@ -189,24 +217,24 @@
 
  Code: 18 instruction(s)
 
-    160        lo = 0
-    161        hi = n int- 1
-    162  L13:  if lo int> hi goto L16
-    163        t2 = hi int- lo
-    164        t3 = t2 int/ 2
-    165        t4 = lo int+ t3
-    166        t5 = t4 int<< 2
-    167        t6 = a ptr+ t5
-    168        t7 = *t6
-    169        if t7 int!= key goto L14
-    170        return t4
-    171  L14:  t10 = *t6
-    172        if t10 int>= key goto L15
-    173        lo = t4 int+ 1
-    174        goto L13
-    175  L15:  hi = t4 int- 1
-    176        goto L13
-    177  L16:  return -1
+    186        lo = 0
+    187        hi = n int- 1
+    188  L14:  if lo int> hi goto L17
+    189        t2 = hi int- lo
+    190        t3 = t2 int/ 2
+    191        t4 = lo int+ t3
+    192        t5 = t4 int<< 2
+    193        t6 = a ptr+ t5
+    194        t7 = *t6
+    195        if t7 int!= key goto L15
+    196        return t4
+    197  L15:  t10 = *t6
+    198        if t10 int>= key goto L16
+    199        lo = t4 int+ 1
+    200        goto L14
+    201  L16:  hi = t4 int- 1
+    202        goto L14
+    203  L17:  return -1
 
 ============================================================================
  FUNCTION hanoi(int, int, int, int)        (link name _Z5hanoiiiii)
@@ -226,20 +254,20 @@
 
  Code: 14 instruction(s)
 
-    178  L17:  if n int!= 0 goto L18
-    179        return
-    180  L18:  t1 = n int- 1
-    181        param t1
-    182        param from
-    183        param via
-    184        param to
-    185        call hanoi(int, int, int, int), 4
-    186        moves = moves int+ 1
-    187        t7 = from
-    188        n = t1
-    189        from = via
-    190        via = t7
-    191        goto L17
+    204  L18:  if n int!= 0 goto L19
+    205        return
+    206  L19:  t1 = n int- 1
+    207        param t1
+    208        param from
+    209        param via
+    210        param to
+    211        call hanoi(int, int, int, int), 4
+    212        moves = moves int+ 1
+    213        t7 = from
+    214        n = t1
+    215        from = via
+    216        via = t7
+    217        goto L18
 
 ============================================================================
  FUNCTION ackermann(int, int)        (link name _Z9ackermannii)
@@ -259,21 +287,21 @@
 
  Code: 15 instruction(s)
 
-    192  L19:  if m int!= 0 goto L20
-    193        t1 = n int+ 1
-    194        return t1
-    195  L20:  if n int!= 0 goto L21
-    196        m = m int- 1
-    197        n = 1
-    198        goto L19
-    199  L21:  t4 = m int- 1
-    200        t5 = n int- 1
-    201        param m
-    202        param t5
-    203        t6 = call ackermann(int, int), 2
-    204        m = t4
-    205        n = t6
-    206        goto L19
+    218  L20:  if m int!= 0 goto L21
+    219        t1 = n int+ 1
+    220        return t1
+    221  L21:  if n int!= 0 goto L22
+    222        m = m int- 1
+    223        n = 1
+    224        goto L20
+    225  L22:  t4 = m int- 1
+    226        t5 = n int- 1
+    227        param m
+    228        param t5
+    229        t6 = call ackermann(int, int), 2
+    230        m = t4
+    231        n = t6
+    232        goto L20
 
 ============================================================================
  FUNCTION multiply(int (*)[3], int (*)[2], int (*)[2])        (link name _Z8multiplyPA3_iPA2_iS2_)
@@ -311,43 +339,62 @@
    t21              temp    int                             4     104
    (4 temporaries no longer used after optimization not shown)
 
- Code: 35 instruction(s)
+ Code: 54 instruction(s)
 
-    207        i = 0
-    208  L22:  if i int>= 2 goto L27
-    209        j = 0
-    210  L23:  if j int>= 2 goto L26
-    211        t1 = i int<< 3
-    212        t2 = c ptr+ t1
-    213        t3 = j int<< 2                      (w = 4)
-    214        t4 = t2 ptr+ t3
-    215        *t4 = 0
-    216        k = 0
-    217  L24:  if k int>= 3 goto L25
-    218        t5 = i int<< 3
-    219        t6 = c ptr+ t5
-    220        t7 = j int<< 2                      (w = 4)
-    221        t8 = t6 ptr+ t7
-    222        t9 = *t8
-    223        t10 = i int* 12
-    224        t11 = a ptr+ t10
-    225        t12 = k int<< 2                     (w = 4)
-    226        t13 = t11 ptr+ t12
-    227        t14 = *t13
-    228        t15 = k int<< 3
-    229        t16 = b ptr+ t15
-    230        t18 = t16 ptr+ t7
-    231        t19 = *t18
-    232        t20 = t14 int* t19
-    233        t21 = t9 int+ t20
-    234        *t8 = t21
-    235        k = k int+ 1
-    236        goto L24
-    237  L25:  j = j int+ 1
-    238        goto L23
-    239  L26:  i = i int+ 1
-    240        goto L22
-    241  L27:  return
+    233        i = 0
+    234  L23:  if i int>= 2 goto L28
+    235        j = 0
+    236  L24:  if j int>= 2 goto L27
+    237        t1 = i int<< 3
+    238        t2 = c ptr+ t1
+    239        t3 = j int<< 2                      (w = 4)
+    240        t4 = t2 ptr+ t3
+    241        *t4 = 0
+    242        k = 0
+    243  L25:  if k int>= 3 goto L26
+    244        t5 = i int<< 3
+    245        t6 = c ptr+ t5
+    246        t7 = j int<< 2                      (w = 4)
+    247        t8 = t6 ptr+ t7
+    248        t9 = *t8
+    249        t10 = i int* 12
+    250        t11 = a ptr+ t10
+    251        t12 = k int<< 2                     (w = 4)
+    252        t13 = t11 ptr+ t12
+    253        t14 = *t13
+    254        t15 = k int<< 3
+    255        t16 = b ptr+ t15
+    256        t18 = t16 ptr+ t7
+    257        t19 = *t18
+    258        t20 = t14 int* t19
+    259        t21 = t9 int+ t20
+    260        *t8 = t21
+    261        k = k int+ 1
+    262        if k int>= 3 goto L26
+    263        t5 = i int<< 3
+    264        t6 = c ptr+ t5
+    265        t7 = j int<< 2                      (w = 4)
+    266        t8 = t6 ptr+ t7
+    267        t9 = *t8
+    268        t10 = i int* 12
+    269        t11 = a ptr+ t10
+    270        t12 = k int<< 2                     (w = 4)
+    271        t13 = t11 ptr+ t12
+    272        t14 = *t13
+    273        t15 = k int<< 3
+    274        t16 = b ptr+ t15
+    275        t18 = t16 ptr+ t7
+    276        t19 = *t18
+    277        t20 = t14 int* t19
+    278        t21 = t9 int+ t20
+    279        *t8 = t21
+    280        k = k int+ 1
+    281        goto L25
+    282  L26:  j = j int+ 1
+    283        goto L24
+    284  L27:  i = i int+ 1
+    285        goto L23
+    286  L28:  return
 
 ============================================================================
  FUNCTION primes(int)        (link name _Z6primesi)
@@ -366,83 +413,33 @@
    t2               temp    char                            1     128
    (5 temporaries no longer used after optimization not shown)
 
- Code: 19 instruction(s)
+ Code: 25 instruction(s)
 
-    242        count = 0
-    243        i.34 = 0
-    244  L28:  if i.34 int> limit goto L29
-    245        composite[i.34] = 0
-    246        i.34 = i.34 int+ 1
-    247        goto L28
-    248  L29:  i.35 = 2
-    249  L30:  if i.35 int> limit goto L33
-    250        t2 = composite[i.35]
-    251        if t2 char!= 0 goto L32
-    252        count = count int+ 1
-    253        j = i.35 int* i.35
-    254  L31:  if j int> limit goto L32
-    255        composite[j] = 1
-    256        j = j int+ i.35
-    257        goto L31
-    258  L32:  i.35 = i.35 int+ 1
-    259        goto L30
-    260  L33:  return count
-
-============================================================================
- FUNCTION power(int, int)        (link name _Z5powerii)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 1 temporary, frame 28 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   base             param   int                             4       0
-   exp              param   int                             4       4
-   result           local   int                             4       8
-   t1               temp    int                             4      12
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 9 instruction(s)
-
-    261        result = 1
-    262  L34:  if exp int<= 0 goto L36
-    263        t1 = exp int& 1
-    264        if t1 int== 0 goto L35
-    265        result = result int* base
-    266  L35:  base = base int* base
-    267        exp = exp int>> 1
-    268        goto L34
-    269  L36:  return result
-
-============================================================================
- FUNCTION collatz(int)        (link name _Z7collatzi)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 3 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
-   steps            local   int                             4       4
-   t1               temp    int                             4       8
-   t2               temp    int                             4      12
-   t3               temp    int                             4      16
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 12 instruction(s)
-
-    270        steps = 0
-    271  L37:  if n int== 1 goto L40
-    272        t2 = n int% 2
-    273        if t2 int== 0 goto L38
-    274        t3 = n int* 3
-    275        t1 = t3 int+ 1
-    276        goto L39
-    277  L38:  t1 = n int/ 2
-    278  L39:  n = t1
-    279        steps = steps int+ 1
-    280        goto L37
-    281  L40:  return steps
+    287        count = 0
+    288        i.34 = 0
+    289  L29:  if i.34 int> limit goto L30
+    290        composite[i.34] = 0
+    291        i.34 = i.34 int+ 1
+    292        if i.34 int> limit goto L30
+    293        composite[i.34] = 0
+    294        i.34 = i.34 int+ 1
+    295        goto L29
+    296  L30:  i.35 = 2
+    297  L31:  if i.35 int> limit goto L34
+    298        t2 = composite[i.35]
+    299        if t2 char!= 0 goto L33
+    300        count = count int+ 1
+    301        j = i.35 int* i.35
+    302  L32:  if j int> limit goto L33
+    303        composite[j] = 1
+    304        j = j int+ i.35
+    305        if j int> limit goto L33
+    306        composite[j] = 1
+    307        j = j int+ i.35
+    308        goto L32
+    309  L33:  i.35 = i.35 int+ 1
+    310        goto L31
+    311  L34:  return count
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -493,156 +490,191 @@
    t44              temp    int                             4     308
    (12 temporaries no longer used after optimization not shown)
 
- Code: 148 instruction(s)
+ Code: 183 instruction(s)
 
-    282        a[0] = 42
-    283        a[4] = 7
-    284        a[8] = 19
-    285        a[12] = 3
-    286        a[16] = 25
-    287        a[20] = 7
-    288        a[24] = 88
-    289        a[28] = 1
-    290        b[0] = 5
-    291        b[4] = -2
-    292        b[8] = 9
-    293        b[12] = 0
-    294        b[16] = 9
-    295        b[20] = 14
-    296        b[24] = -7
-    297        b[28] = 3
-    298        t3 = &a
-    299        param t3
-    300        param 8
-    301        call bubble(int *, int), 2
-    302        t4 = &b
-    303        param t4
-    304        param 0
-    305        param 7
-    306        call quick(int *, int, int), 3
-    307        i.44 = 0
-    308  L41:  if i.44 int>= 8 goto L42
-    309        t5 = i.44 int<< 2                   (w = 4)
-    310        t6 = a[t5]
-    311        param "%d "
-    312        param t6
-    313        call printf, 2
-    314        i.44 = i.44 int+ 1
-    315        goto L41
-    316  L42:  param "\n"
-    317        call printf, 1
-    318        i.45 = 0
-    319  L43:  if i.45 int>= 8 goto L44
-    320        t8 = i.45 int<< 2                   (w = 4)
-    321        t9 = b[t8]
-    322        param "%d "
-    323        param t9
-    324        call printf, 2
-    325        i.45 = i.45 int+ 1
-    326        goto L43
-    327  L44:  param t3
-    328        param 8
-    329        param 25
-    330        t12 = call search(int *, int, int), 3
-    331        param t3
-    332        param 8
-    333        param 26
-    334        t14 = call search(int *, int, int), 3
-    335        param t4
-    336        param 8
-    337        param -7
-    338        t17 = call search(int *, int, int), 3
-    339        param "\n%d %d %d\n"
-    340        param t12
-    341        param t14
-    342        param t17
-    343        call printf, 4
-    344        param 6
-    345        param 1
-    346        param 3
-    347        param 2
-    348        call hanoi(int, int, int, int), 4
-    349        param 2
-    350        param 3
-    351        t18 = call ackermann(int, int), 2
-    352        t32 = 27
-    353        t33 = 0
-    354  L45:  if t32 int== 1 goto L48
-    355        t34 = t32 int% 2
-    356        if t34 int== 0 goto L46
-    357        t35 = t32 int* 3
-    358        t36 = t35 int+ 1
-    359        goto L47
-    360  L46:  t36 = t32 int/ 2
-    361  L47:  t32 = t36
-    362        t33 = t33 int+ 1
-    363        goto L45
-    364  L48:  param "%d %d %d\n"
-    365        param moves
-    366        param t18
-    367        param t33
-    368        call printf, 4
-    369        x[0] = 1
-    370        x[4] = 2
-    371        x[8] = 3
-    372        x[12] = 4
-    373        x[16] = 5
-    374        x[20] = 6
-    375        y[0] = 7
-    376        y[4] = 8
-    377        y[8] = 9
-    378        y[12] = 10
-    379        y[16] = 11
-    380        y[20] = 12
-    381        t20 = &x
-    382        t21 = &y
-    383        t22 = &z
-    384        param t20
-    385        param t21
-    386        param t22
-    387        call multiply(int (*)[3], int (*)[2], int (*)[2]), 3
-    388        t23 = z[0]
-    389        t24 = z[4]
-    390        t25 = z[8]
-    391        t26 = z[12]
-    392        param "%d %d %d %d\n"
-    393        param t23
-    394        param t24
-    395        param t25
-    396        param t26
-    397        call printf, 5
-    398        param 100
-    399        t27 = call primes(int), 1
-    400        t37 = 3
-    401        t38 = 13
-    402        t39 = 1
-    403  L49:  if t38 int<= 0 goto L51
-    404        t40 = t38 int& 1
-    405        if t40 int== 0 goto L50
-    406        t39 = t39 int* t37
-    407  L50:  t37 = t37 int* t37
-    408        t38 = t38 int>> 1
-    409        goto L49
-    410  L51:  t41 = 2
-    411        t42 = 10
-    412        t43 = 1
-    413  L52:  if t42 int<= 0 goto L54
-    414        t44 = t42 int& 1
-    415        if t44 int== 0 goto L53
-    416        t43 = t43 int* t41
-    417  L53:  t41 = t41 int* t41
-    418        t42 = t42 int>> 1
-    419        goto L52
-    420  L54:  param "%d %d %d\n"
-    421        param t27
-    422        param t39
-    423        param t43
-    424        call printf, 4
-    425        param t3
-    426        param 8
-    427        param 88
-    428        t31 = call search(int *, int, int), 3
-    429        return t31
+    312        a[0] = 42
+    313        a[4] = 7
+    314        a[8] = 19
+    315        a[12] = 3
+    316        a[16] = 25
+    317        a[20] = 7
+    318        a[24] = 88
+    319        a[28] = 1
+    320        b[0] = 5
+    321        b[4] = -2
+    322        b[8] = 9
+    323        b[12] = 0
+    324        b[16] = 9
+    325        b[20] = 14
+    326        b[24] = -7
+    327        b[28] = 3
+    328        t3 = &a
+    329        param t3
+    330        param 8
+    331        call bubble(int *, int), 2
+    332        t4 = &b
+    333        param t4
+    334        param 0
+    335        param 7
+    336        call quick(int *, int, int), 3
+    337        i.44 = 0
+    338  L35:  if i.44 int>= 8 goto L36
+    339        t5 = i.44 int<< 2                   (w = 4)
+    340        t6 = a[t5]
+    341        param "%d "
+    342        param t6
+    343        call printf, 2
+    344        i.44 = i.44 int+ 1
+    345        if i.44 int>= 8 goto L36
+    346        t5 = i.44 int<< 2                   (w = 4)
+    347        t6 = a[t5]
+    348        param "%d "
+    349        param t6
+    350        call printf, 2
+    351        i.44 = i.44 int+ 1
+    352        goto L35
+    353  L36:  param "\n"
+    354        call printf, 1
+    355        i.45 = 0
+    356  L37:  if i.45 int>= 8 goto L38
+    357        t8 = i.45 int<< 2                   (w = 4)
+    358        t9 = b[t8]
+    359        param "%d "
+    360        param t9
+    361        call printf, 2
+    362        i.45 = i.45 int+ 1
+    363        if i.45 int>= 8 goto L38
+    364        t8 = i.45 int<< 2                   (w = 4)
+    365        t9 = b[t8]
+    366        param "%d "
+    367        param t9
+    368        call printf, 2
+    369        i.45 = i.45 int+ 1
+    370        goto L37
+    371  L38:  param t3
+    372        param 8
+    373        param 25
+    374        t12 = call search(int *, int, int), 3
+    375        param t3
+    376        param 8
+    377        param 26
+    378        t14 = call search(int *, int, int), 3
+    379        param t4
+    380        param 8
+    381        param -7
+    382        t17 = call search(int *, int, int), 3
+    383        param "\n%d %d %d\n"
+    384        param t12
+    385        param t14
+    386        param t17
+    387        call printf, 4
+    388        param 6
+    389        param 1
+    390        param 3
+    391        param 2
+    392        call hanoi(int, int, int, int), 4
+    393        param 2
+    394        param 3
+    395        t18 = call ackermann(int, int), 2
+    396        t32 = 27
+    397        t33 = 0
+    398  L39:  if t32 int== 1 goto L44
+    399        t34 = t32 int% 2
+    400        if t34 int== 0 goto L40
+    401        t35 = t32 int* 3
+    402        t36 = t35 int+ 1
+    403        goto L41
+    404  L40:  t36 = t32 int/ 2
+    405  L41:  t32 = t36
+    406        t33 = t33 int+ 1
+    407        if t36 int== 1 goto L44
+    408        t34 = t32 int% 2
+    409        if t34 int== 0 goto L42
+    410        t35 = t32 int* 3
+    411        t36 = t35 int+ 1
+    412        goto L43
+    413  L42:  t36 = t32 int/ 2
+    414  L43:  t32 = t36
+    415        t33 = t33 int+ 1
+    416        goto L39
+    417  L44:  param "%d %d %d\n"
+    418        param moves
+    419        param t18
+    420        param t33
+    421        call printf, 4
+    422        x[0] = 1
+    423        x[4] = 2
+    424        x[8] = 3
+    425        x[12] = 4
+    426        x[16] = 5
+    427        x[20] = 6
+    428        y[0] = 7
+    429        y[4] = 8
+    430        y[8] = 9
+    431        y[12] = 10
+    432        y[16] = 11
+    433        y[20] = 12
+    434        t20 = &x
+    435        t21 = &y
+    436        t22 = &z
+    437        param t20
+    438        param t21
+    439        param t22
+    440        call multiply(int (*)[3], int (*)[2], int (*)[2]), 3
+    441        t23 = z[0]
+    442        t24 = z[4]
+    443        t25 = z[8]
+    444        t26 = z[12]
+    445        param "%d %d %d %d\n"
+    446        param t23
+    447        param t24
+    448        param t25
+    449        param t26
+    450        call printf, 5
+    451        param 100
+    452        t27 = call primes(int), 1
+    453        t37 = 3
+    454        t38 = 13
+    455        t39 = 1
+    456  L45:  if t38 int<= 0 goto L48
+    457        t40 = t38 int& 1
+    458        if t40 int== 0 goto L46
+    459        t39 = t39 int* t37
+    460  L46:  t37 = t37 int* t37
+    461        t38 = t38 int>> 1
+    462        if t38 int<= 0 goto L48
+    463        t40 = t38 int& 1
+    464        if t40 int== 0 goto L47
+    465        t39 = t39 int* t37
+    466  L47:  t37 = t37 int* t37
+    467        t38 = t38 int>> 1
+    468        goto L45
+    469  L48:  t41 = 2
+    470        t42 = 10
+    471        t43 = 1
+    472  L49:  if t42 int<= 0 goto L52
+    473        t44 = t42 int& 1
+    474        if t44 int== 0 goto L50
+    475        t43 = t43 int* t41
+    476  L50:  t41 = t41 int* t41
+    477        t42 = t42 int>> 1
+    478        if t42 int<= 0 goto L52
+    479        t44 = t42 int& 1
+    480        if t44 int== 0 goto L51
+    481        t43 = t43 int* t41
+    482  L51:  t41 = t41 int* t41
+    483        t42 = t42 int>> 1
+    484        goto L49
+    485  L52:  param "%d %d %d\n"
+    486        param t27
+    487        param t39
+    488        param t43
+    489        call printf, 4
+    490        param t3
+    491        param 8
+    492        param 88
+    493        t31 = call search(int *, int, int), 3
+    494        return t31
 
 
 ----------------------------------------------------------------------------

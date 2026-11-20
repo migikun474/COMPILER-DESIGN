@@ -1082,6 +1082,27 @@ analysis (`loops()`) stays, for the loop unrolling planned next.
   for every simulated call and crashed near 50,000 calls; it now caps the
   depth at 10,000 with the same message.
 
+### D38. Optimizer additions: algebra, unrolling, dead functions, reaching definitions (2026-11-21)
+
+- **More algebraic rules** (`simplify()`, integers only): `x - x` and
+  `x ^ x` are 0, `x & x` and `x & -1` are `x`, `x & 0` is 0, `x | x` is
+  `x`, `x | -1` is -1, `x % 1` and `x % -1` are 0. None hold for
+  floating point (`x - x` is NaN for infinite `x`).
+- **Loop unrolling** (`-O3`, `unrollLoops()`): a small contiguous natural
+  loop (header first, at most 24 quads, its single back edge last)
+  becomes two copies, each keeping its exit test, so no trip count is
+  needed; a pass saves the jump back every other iteration. Loops are
+  taken last first so earlier loops keep their indices, and each is
+  unrolled once.
+- **Dead function elimination** (`-O3`, after inlining): only the
+  functions `main` reaches through calls are kept. With no function
+  pointers, every use of a function is a `call`.
+- **Reaching definitions** (`reachingDefinitions()`): forward, union at
+  joins, gen/kill per block, plus an entry pseudo-definition "no value
+  yet" for each scalar local. The uninitialized-variable warning now
+  uses it instead of liveness: a read reached by the entry definition is
+  reported, at the line of that read rather than of the declaration.
+
 ---
 
 ## Open questions

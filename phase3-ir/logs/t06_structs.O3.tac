@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 182 -> 186 instruction(s)
+   Result        : Optimized three address code (-O3): 182 -> 166 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          182 -> 186   (-2% fewer)
+   instructions                          182 -> 166   (8% fewer)
 
    constants folded                        1
    algebraic simplifications               1
@@ -29,6 +29,8 @@
    calls inlined                           7
    tail calls turned into jumps            0
    common subexpressions across blocks      0
+   loops unrolled                          3
+   unreachable functions removed           5
 
 ----------------------------------------------------------------------------
  GLOBALS: 1 object(s) in static storage
@@ -42,127 +44,6 @@
 
     origin[0] = 3
     origin[4] = 4
-
-============================================================================
- FUNCTION make(int, int)        (link name _Z4makeii)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 0 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   x                param   int                             4       0
-   y                param   int                             4       4
-   p                local   struct Point                    8       8
-
- Code: 3 instruction(s)
-
-    100     p[0] = x
-    101     p[4] = y
-    102     return p
-
-============================================================================
- FUNCTION area(struct Rect)        (link name _Z4area4Rect)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 7 temporaries, frame 52 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   r                param   struct Rect                    20       0
-   t1               temp    int                             4      20
-   t2               temp    int                             4      24
-   t3               temp    int                             4      28
-   t5               temp    int                             4      36
-   t6               temp    int                             4      40
-   t7               temp    int                             4      44
-   t8               temp    int                             4      48
-   (1 temporary no longer used after optimization not shown)
-
- Code: 9 instruction(s)
-
-    103     t1 = r[8]
-    104     t2 = r[0]
-    105     t3 = t1 int- t2
-    106     r[8] = t3
-    107     t5 = r[12]
-    108     t6 = r[4]
-    109     t7 = t5 int- t6
-    110     t8 = t3 int* t7
-    111     return t8
-
-============================================================================
- FUNCTION move(struct Point *, int)        (link name _Z4moveP5Pointi)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   p                param   struct Point *                  4       0
-   dx               param   int                             4       4
-   t1               temp    int                             4       8
-   t2               temp    int                             4      12
-
- Code: 4 instruction(s)
-
-    112     t1 = *p
-    113     t2 = t1 int+ dx
-    114     *p = t2
-    115     return
-
-============================================================================
- FUNCTION add(Complex, Complex)        (link name _Z3add7ComplexS_)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 6 temporaries, frame 96 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   Complex                        16       0
-   b                param   Complex                        16      16
-   c                local   Complex                        16      32
-   t1               temp    double                          8      48
-   t2               temp    double                          8      56
-   t3               temp    double                          8      64
-   t4               temp    double                          8      72
-   t5               temp    double                          8      80
-   t6               temp    double                          8      88
-
- Code: 9 instruction(s)
-
-    116     t1 = a[0]
-    117     t2 = b[0]
-    118     t3 = t1 double+ t2
-    119     c[0] = t3
-    120     t4 = a[8]
-    121     t5 = b[8]
-    122     t6 = t4 double+ t5
-    123     c[8] = t6
-    124     return c
-
-============================================================================
- FUNCTION length(struct Node *)        (link name _Z6lengthP4Node)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 1 temporary, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   head             param   struct Node *                   4       0
-   n                local   int                             4       4
-   t2               temp    struct Node *                   4      12
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 7 instruction(s)
-
-    125       n = 0
-    126  L1:  if head ptr== 0 goto L2
-    127       n = n int+ 1
-    128       t2 = head ptr+ 4
-    129       head = *t2
-    130       goto L1
-    131  L2:  return n
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -259,162 +140,174 @@
    t90              temp    struct Node *                   4     656
    (19 temporaries no longer used after optimization not shown)
 
- Code: 154 instruction(s)
+ Code: 166 instruction(s)
 
-    132       r[0] = 1
-    133       r[4] = 2
-    134       r[8] = 5
-    135       r[12] = 8
-    136       r[16] = 114
-    137       copy = r
-    138       copy[0] = 100
-    139       t1 = r[0]
-    140       t58 = r
-    141       t59 = t58[8]
-    142       t60 = t58[0]
-    143       t61 = t59 int- t60
-    144       t58[8] = t61
-    145       t62 = t58[12]
-    146       t63 = t58[4]
-    147       t64 = t62 int- t63
-    148       t65 = t61 int* t64
-    149       t4 = r[16]
-    150       t5 = chartoint t4
-    151       param "%d %d %d %c\n"
-    152       param t1
-    153       param 100
-    154       param t65
-    155       param t5
-    156       call printf, 5
-    157       t6 = r[8]
-    158       t7 = origin[0]
-    159       t8 = origin[4]
-    160       t9 = t7 int* t8
-    161       param "%d %d\n"
-    162       param t6
-    163       param t9
-    164       call printf, 3
-    165       i = 0
-    166  L3:  if i int>= 3 goto L4
-    167       t10 = i int<< 3                     (w = 8)
-    168       t11 = i int* i
-    169       t68[0] = i
-    170       t68[4] = t11
-    171       t12 = t68
-    172       pts[t10] = t12
-    173       i = i int+ 1
-    174       goto L3
-    175  L4:  t14 = &pts
-    176       t15 = t14 ptr+ 8
-    177       t71 = *t15
-    178       t72 = t71 int+ 10
-    179       *t15 = t72
-    180       t17 = t14 ptr+ 16
-    181       t18 = t17 ptr+ 4
-    182       t19 = *t18
-    183       t20 = t19 int+ 1
-    184       *t18 = t20
-    185       t22 = pts[8]
-    186       t23 = pts[12]
-    187       t24 = pts[20]
-    188       t75[0] = 3
-    189       t75[4] = 4
-    190       t25 = t75
-    191       t26 = t25[4]
-    192       param "%d %d %d %d\n"
-    193       param t22
-    194       param t23
-    195       param t24
-    196       param t26
-    197       call printf, 5
-    198       t27 = &r
-    199       t28 = t27 ptr+ 8
-    200       t29 = t28 ptr+ 4
-    201       t30 = *t29
-    202       t31 = t30 int+ 1
-    203       *t28 = t31
-    204       t78[0] = 7
-    205       t78[4] = 7
-    206       t33 = t78
-    207       *t27 = t33
-    208       t34 = r[8]
-    209       t35 = *t27
-    210       t36 = t27 ptr+ 12
-    211       t37 = *t36
-    212       param "%d %d %d\n"
-    213       param t34
-    214       param t35
-    215       param t37
-    216       call printf, 4
-    217       a[0] = 1.5
-    218       a[8] = 2.0
-    219       b[0] = 1.0
-    220       b[8] = 0.5
-    221       t79 = a
-    222       t80 = b
-    223       t81 = t79[0]
-    224       t82 = t80[0]
-    225       t83 = t81 double+ t82
-    226       t84[0] = t83
-    227       t85 = t79[8]
-    228       t86 = t80[8]
-    229       t87 = t85 double+ t86
-    230       t84[8] = t87
-    231       c = t84
-    232       t39 = c[0]
-    233       t40 = c[8]
-    234       param "%.1f %.1f\n"
-    235       param t39
-    236       param t40
-    237       call printf, 3
-    238       n1[0] = 1
-    239       t41 = &n2
-    240       n1[4] = t41
-    241       n2[0] = 2
-    242       t42 = &n3
-    243       n2[4] = t42
-    244       n3[0] = 3
-    245       n3[4] = 0
-    246       t88 = &n1
-    247       t89 = 0
-    248  L5:  if t88 ptr== 0 goto L6
-    249       t89 = t89 int+ 1
-    250       t90 = t88 ptr+ 4
-    251       t88 = *t90
-    252       goto L5
-    253  L6:  t45 = n1[4]
-    254       t46 = t45 ptr+ 4
-    255       t47 = *t46
-    256       t48 = *t47
-    257       param "%d %d\n"
-    258       param t89
-    259       param t48
-    260       call printf, 3
-    261       k[0] = 1
-    262       k[4] = 16909060
-    263       k[8] = 0
-    264       k[9] = 0
-    265       k[10] = 0
-    266       k[11] = 0
-    267       k[12] = 9
-    268       k[9] = 120
-    269       t49 = k[0]
-    270       t50 = k[4]
-    271       t53 = k[12]
-    272       t54 = shorttoint t53
-    273       param "%d %d %c %d %d\n"
-    274       param t49
-    275       param t50
-    276       param 120
-    277       param t54
-    278       param 16
-    279       call printf, 6
-    280       zero[0] = 0
-    281       zero[4] = 0
-    282       t55 = zero[0]
-    283       t56 = pts[16]
-    284       t57 = t55 int+ t56
-    285       return t57
+    100       r[0] = 1
+    101       r[4] = 2
+    102       r[8] = 5
+    103       r[12] = 8
+    104       r[16] = 114
+    105       copy = r
+    106       copy[0] = 100
+    107       t1 = r[0]
+    108       t58 = r
+    109       t59 = t58[8]
+    110       t60 = t58[0]
+    111       t61 = t59 int- t60
+    112       t58[8] = t61
+    113       t62 = t58[12]
+    114       t63 = t58[4]
+    115       t64 = t62 int- t63
+    116       t65 = t61 int* t64
+    117       t4 = r[16]
+    118       t5 = chartoint t4
+    119       param "%d %d %d %c\n"
+    120       param t1
+    121       param 100
+    122       param t65
+    123       param t5
+    124       call printf, 5
+    125       t6 = r[8]
+    126       t7 = origin[0]
+    127       t8 = origin[4]
+    128       t9 = t7 int* t8
+    129       param "%d %d\n"
+    130       param t6
+    131       param t9
+    132       call printf, 3
+    133       i = 0
+    134  L1:  if i int>= 3 goto L2
+    135       t10 = i int<< 3                     (w = 8)
+    136       t11 = i int* i
+    137       t68[0] = i
+    138       t68[4] = t11
+    139       t12 = t68
+    140       pts[t10] = t12
+    141       i = i int+ 1
+    142       if i int>= 3 goto L2
+    143       t10 = i int<< 3                     (w = 8)
+    144       t11 = i int* i
+    145       t68[0] = i
+    146       t68[4] = t11
+    147       t12 = t68
+    148       pts[t10] = t12
+    149       i = i int+ 1
+    150       goto L1
+    151  L2:  t14 = &pts
+    152       t15 = t14 ptr+ 8
+    153       t71 = *t15
+    154       t72 = t71 int+ 10
+    155       *t15 = t72
+    156       t17 = t14 ptr+ 16
+    157       t18 = t17 ptr+ 4
+    158       t19 = *t18
+    159       t20 = t19 int+ 1
+    160       *t18 = t20
+    161       t22 = pts[8]
+    162       t23 = pts[12]
+    163       t24 = pts[20]
+    164       t75[0] = 3
+    165       t75[4] = 4
+    166       t25 = t75
+    167       t26 = t25[4]
+    168       param "%d %d %d %d\n"
+    169       param t22
+    170       param t23
+    171       param t24
+    172       param t26
+    173       call printf, 5
+    174       t27 = &r
+    175       t28 = t27 ptr+ 8
+    176       t29 = t28 ptr+ 4
+    177       t30 = *t29
+    178       t31 = t30 int+ 1
+    179       *t28 = t31
+    180       t78[0] = 7
+    181       t78[4] = 7
+    182       t33 = t78
+    183       *t27 = t33
+    184       t34 = r[8]
+    185       t35 = *t27
+    186       t36 = t27 ptr+ 12
+    187       t37 = *t36
+    188       param "%d %d %d\n"
+    189       param t34
+    190       param t35
+    191       param t37
+    192       call printf, 4
+    193       a[0] = 1.5
+    194       a[8] = 2.0
+    195       b[0] = 1.0
+    196       b[8] = 0.5
+    197       t79 = a
+    198       t80 = b
+    199       t81 = t79[0]
+    200       t82 = t80[0]
+    201       t83 = t81 double+ t82
+    202       t84[0] = t83
+    203       t85 = t79[8]
+    204       t86 = t80[8]
+    205       t87 = t85 double+ t86
+    206       t84[8] = t87
+    207       c = t84
+    208       t39 = c[0]
+    209       t40 = c[8]
+    210       param "%.1f %.1f\n"
+    211       param t39
+    212       param t40
+    213       call printf, 3
+    214       n1[0] = 1
+    215       t41 = &n2
+    216       n1[4] = t41
+    217       n2[0] = 2
+    218       t42 = &n3
+    219       n2[4] = t42
+    220       n3[0] = 3
+    221       n3[4] = 0
+    222       t88 = &n1
+    223       t89 = 0
+    224  L3:  if t88 ptr== 0 goto L4
+    225       t89 = t89 int+ 1
+    226       t90 = t88 ptr+ 4
+    227       t88 = *t90
+    228       if t88 ptr== 0 goto L4
+    229       t89 = t89 int+ 1
+    230       t90 = t88 ptr+ 4
+    231       t88 = *t90
+    232       goto L3
+    233  L4:  t45 = n1[4]
+    234       t46 = t45 ptr+ 4
+    235       t47 = *t46
+    236       t48 = *t47
+    237       param "%d %d\n"
+    238       param t89
+    239       param t48
+    240       call printf, 3
+    241       k[0] = 1
+    242       k[4] = 16909060
+    243       k[8] = 0
+    244       k[9] = 0
+    245       k[10] = 0
+    246       k[11] = 0
+    247       k[12] = 9
+    248       k[9] = 120
+    249       t49 = k[0]
+    250       t50 = k[4]
+    251       t53 = k[12]
+    252       t54 = shorttoint t53
+    253       param "%d %d %c %d %d\n"
+    254       param t49
+    255       param t50
+    256       param 120
+    257       param t54
+    258       param 16
+    259       call printf, 6
+    260       zero[0] = 0
+    261       zero[4] = 0
+    262       t55 = zero[0]
+    263       t56 = pts[16]
+    264       t57 = t55 int+ t56
+    265       return t57
 
 
 ----------------------------------------------------------------------------
