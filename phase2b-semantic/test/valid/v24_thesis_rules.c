@@ -1,6 +1,5 @@
 /* Rules from Papaspyrou's formal semantics of C, checked at compile time.
    A wrong constant makes an array dimension negative. */
-#include <stdio.h>
 
 /* constants have values of their own type (val[tau]) */
 int u1[-1 < 0u ? -1 : 1];                       /* -1 converts to 4294967295u: false */

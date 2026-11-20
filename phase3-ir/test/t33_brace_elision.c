@@ -1,4 +1,3 @@
-#include <stdio.h>
 struct In { int x, y; };
 struct S { int a[2]; int b; struct In in; char name[4]; };
 struct S g = {1, 2, 3, 4, 5, "ab"};

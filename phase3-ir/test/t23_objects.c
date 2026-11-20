@@ -1,7 +1,6 @@
 /* t23 -- classes used together: an inheritance chain, objects holding
    objects, arrays of objects, objects through pointers and references,
    operators returning references */
-#include <stdio.h>
 
 class Shape {
 public:

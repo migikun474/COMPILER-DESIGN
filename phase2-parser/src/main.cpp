@@ -9,7 +9,6 @@
 #include "ast/ast.hpp"
 #include "diagnostics/diagnostics.hpp"
 #include "parser.tab.hpp"
-#include "preprocessor/preprocessor.hpp"
 #include "symbol_table/symbol_table.hpp"
 #include "token/token_log.hpp"
 
@@ -72,7 +71,7 @@ int main(int argc, char **argv) {
     }
 
     /* the scanner reads the preprocessed text (#define, #include, #if ...) */
-    FILE *f = openPreprocessed(argv[1]);
+    FILE *f = openSource(argv[1]);
     if (!f) {
         fprintf(stderr, "Error: could not open file '%s'\n", argv[1]);
         return 1;
@@ -126,7 +125,7 @@ int main(int argc, char **argv) {
     }
 
     printf("Syntax analysis successful: no errors found in '%s'.\n\n", argv[1]);
-    if (!g_diagnostics.empty()) { /* preprocessor warnings */
+    if (!g_diagnostics.empty()) { /* warnings from the scanner */
         std::ostringstream warns;
         for (const auto &w : g_diagnostics) printDiagnostic(warns, argv[1], w, useColor(stderr));
         fputs(warns.str().c_str(), stderr);

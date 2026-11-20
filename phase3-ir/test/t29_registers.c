@@ -2,7 +2,6 @@
    across calls and recursion, more live values than registers,
    arguments computed before a call, char / short / bool and float /
    double kept in registers, loops built from goto */
-#include <stdio.h>
 
 int depth(int n) {                               /* every level has its own a, b, c in the same registers */
     int a = n * 2, b = n + 7, c = a - b;

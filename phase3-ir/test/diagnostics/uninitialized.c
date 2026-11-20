@@ -1,6 +1,4 @@
 /* a variable read on some path before anything was stored in it */
-#include <stdio.h>
-#include <stdarg.h>
 
 int pick(int which) {
     int x;

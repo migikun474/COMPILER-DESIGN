@@ -2,7 +2,6 @@
    copy constructors for by-value arguments and results, converting
    constructors from another class, c ? a : b as an lvalue, const on a
    typedef'd array, arrays of objects, destructors of static objects */
-#include <stdio.h>
 
 class Counted {
 public:

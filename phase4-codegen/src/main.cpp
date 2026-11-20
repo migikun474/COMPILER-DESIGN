@@ -18,7 +18,6 @@
 #include "mips.h"
 #include "opt.h"
 #include "parser.tab.hpp"
-#include "preprocessor/preprocessor.hpp"
 #include "semantic.h"
 #include "symbol_table/symbol_table.hpp"
 
@@ -52,7 +51,7 @@ int main(int argc, char **argv) {
     std::stringstream runtime;
     runtime << rt.rdbuf();
 
-    FILE *f = openPreprocessed(path);
+    FILE *f = openSource(path);
     if (!f) {
         fprintf(stderr, "Error: could not open file '%s'\n", path);
         return 1;

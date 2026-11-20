@@ -2,8 +2,6 @@
    emits for the same declaration (checked with g++ -c + nm); the test
    runner requires exactly these link names in both the parser's and the
    semantic symbol table. */
-#include <stdio.h>
-#include <stdarg.h>
 
 struct Point { int x; int y; };
 

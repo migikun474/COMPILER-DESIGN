@@ -25,20 +25,15 @@ bool hasErrors() {
     return false;
 }
 
-std::vector<std::string> g_sourceFiles;
-std::vector<LineOrigin> g_lineOrigins;
-
-static const LineOrigin *originOf(int line) {
-    if (line < 1 || line > static_cast<int>(g_lineOrigins.size())) return nullptr;
-    return &g_lineOrigins[line - 1];
+FILE *openSource(const std::string &path) {
+    std::ifstream in(path);
+    if (!in) return nullptr;
+    g_sourceLines.clear();
+    for (std::string line; std::getline(in, line);) g_sourceLines.push_back(line);
+    return std::fopen(path.c_str(), "r");
 }
 
-std::string displayLine(int line) {
-    const LineOrigin *o = originOf(line);
-    if (!o) return std::to_string(line);
-    if (o->file == 0 || o->file >= static_cast<int>(g_sourceFiles.size())) return std::to_string(o->line);
-    return g_sourceFiles[o->file] + ":" + std::to_string(o->line);
-}
+std::string displayLine(int line) { return std::to_string(line); }
 
 std::vector<Diagnostic> errorDiagnostics() {
     std::vector<Diagnostic> out;
@@ -97,13 +92,8 @@ void printDiagnostic(std::ostream &out, const std::string &sourceFile,
     if (!label.empty()) label[0] = static_cast<char>(std::tolower(label[0]));
 
     bool isWarning = d.kind.find("warning") != std::string::npos;
-    /* report the position the user wrote: file and line through the
-       preprocessor's line map */
-    const LineOrigin *origin = originOf(d.line);
-    std::string file = (origin && origin->file > 0 && origin->file < static_cast<int>(g_sourceFiles.size()))
-                           ? g_sourceFiles[origin->file]
-                           : sourceFile;
-    int shownLine = origin ? origin->line : d.line;
+    const std::string &file = sourceFile;
+    int shownLine = d.line;
     if (color) {
         out << col::BOLD << file << ":" << shownLine << ":" << d.column << ": "
             << col::RESET << (isWarning ? col::MAGENTA : col::RED) << label << ": " << col::RESET
@@ -141,17 +131,6 @@ void printDiagnostic(std::ostream &out, const std::string &sourceFile,
             } else {
                 out << "note: insert '" << fixit << "' here\n";
             }
-        }
-        /* the line quoted above is the macro-expanded one (that is where
-           the column points); show what was actually written too */
-        if (origin && origin->expanded) {
-            std::string written = origin->text;
-            written.erase(0, written.find_first_not_of(" \t"));
-            out << " " << gutter << " | ";
-            if (color) out << col::GREEN;
-            out << "note: shown after macro expansion; the source line is: " << written;
-            if (color) out << col::RESET;
-            out << "\n";
         }
     }
     out << "\n";

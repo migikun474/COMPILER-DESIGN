@@ -1,6 +1,5 @@
 /* t17 -- character arrays and strings handled by hand: length, copy,
    compare, reverse, search, number <-> text */
-#include <stdio.h>
 
 int length(const char *s) { int n = 0; while (s[n] != '\0') n++; return n; }
 

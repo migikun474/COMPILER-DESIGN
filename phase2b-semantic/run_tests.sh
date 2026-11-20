@@ -14,7 +14,7 @@
 #     void main(int x) {  // error: must return 'int'  // error: invalid parameter list
 #
 # The text after "error:"/"warning:" must appear (case-insensitively) in
-# a semantic or preprocessor diagnostic of that kind reported on that line. Any diagnostic the
+# a semantic or lexical diagnostic of that kind reported on that line. Any diagnostic the
 # file does not announce is a failure too, so spurious errors are caught
 # as reliably as missing ones.
 #
@@ -65,7 +65,7 @@ check_file() {
         }
     }' "$f" >> "$TMP/expected"
     printf '%s\n' "$out" |
-        sed -n -E 's#^.*:([0-9]+):[0-9]+: (semantic|preprocessor) (error|warning): (.*)$#\1\t\3\t\4#p' > "$TMP/actual"
+        sed -n -E 's#^.*:([0-9]+):[0-9]+: (semantic|lexical) (error|warning): (.*)$#\1\t\3\t\4#p' > "$TMP/actual"
 
     local report
     report="$(awk -F'\t' '

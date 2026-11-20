@@ -1,7 +1,5 @@
 /* t13 -- cases found by the code review of the generator: each one was
    wrong before it was fixed */
-#include <stdio.h>
-#include <stdarg.h>
 
 double half(const double &v) { return v / 2; }       /* const T & bound to another type */
 

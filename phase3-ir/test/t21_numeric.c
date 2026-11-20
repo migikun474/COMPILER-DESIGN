@@ -1,6 +1,5 @@
 /* t21 -- floating point: float and double arithmetic, conversions,
    comparisons, simple numerical methods */
-#include <stdio.h>
 
 double absolute(double v) { return v < 0 ? -v : v; }
 

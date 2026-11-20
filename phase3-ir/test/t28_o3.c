@@ -1,7 +1,6 @@
 /* t28 -- -O3: inlining, tail recursion, expressions shared across
    blocks, code moved out of loops, stored values reused -- next to the
    cases where each of them would be wrong */
-#include <stdio.h>
 
 int calls = 0;
 int square(int v) { return v * v; }                    /* inlined */

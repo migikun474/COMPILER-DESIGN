@@ -1,6 +1,5 @@
 /* t08 -- classes: methods, constructors and destructors in order,
    inheritance, static members, operator overloading, arrays of objects */
-#include <stdio.h>
 
 class Animal {
 public:

@@ -1,7 +1,6 @@
 /* member initializer lists, const member functions, friends, explicit
    and converting constructors (arguments, references, returns).
    Expected output: g++. */
-#include <stdio.h>
 
 class Point {
   public:

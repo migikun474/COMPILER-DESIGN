@@ -2,7 +2,6 @@
    expression that made it, unless it became a variable or the result of
    the function. Also `obj.Base::member` and `long long` arithmetic that
    stays in registers. Expected output: g++. */
-#include <stdio.h>
 
 class Tag {
   public:

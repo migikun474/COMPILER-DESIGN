@@ -136,6 +136,19 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*             { }
 
+^[ \t]*"#"[^\n]* {
+    /* there is no preprocessor (D34): a directive is an error, and the
+       rest of its line is skipped so it does not cascade into syntax errors */
+    const char *hash = std::strchr(yytext, '#');
+    std::string word = hash + 1;
+    size_t from = word.find_first_not_of(" \t"), to = word.find_first_of(" \t<\"(", from);
+    word = from == std::string::npos ? "" : word.substr(from, to == std::string::npos ? std::string::npos : to - from);
+    reportDiagnostic(yylineno, g_tokStartCol + static_cast<int>(hash - yytext), "#" + word,
+                     "preprocessor directive '#" + word + "' is not supported: this compiler has no preprocessor "
+                     "(printf, scanf, malloc, free and va_list are built in, so no #include is needed)",
+                     "Lexical error");
+}
+
 {ID}/[ \t]*"(" { return identifierOrKeyword(/*beforeParen=*/true); }
 {ID}             { return identifierOrKeyword(/*beforeParen=*/false); }
 

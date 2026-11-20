@@ -1,6 +1,5 @@
 /* t19 -- scopes and lifetimes: shadowing, nested blocks, static and
    global variables, the same name in different functions */
-#include <stdio.h>
 
 int x = 100;
 int counter = 0;

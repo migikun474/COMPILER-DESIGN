@@ -1,8 +1,4 @@
 /* t02 -- if/else, while, do-while, for, until, switch, break, continue, goto */
-#include <stdio.h>
-#ifdef __cplusplus
-#define until(c) while (!(c))
-#endif
 
 int classify(int n) {
     switch (n) {

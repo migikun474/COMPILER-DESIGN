@@ -1,7 +1,5 @@
 /* t09 -- dynamic memory: malloc / calloc / realloc / free,
    a linked list and a growing array */
-#include <stdio.h>
-#include <stdlib.h>
 
 struct Node { int value; struct Node *next; };
 

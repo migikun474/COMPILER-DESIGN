@@ -1,6 +1,5 @@
 /* t24 -- references and const: aliases, reference parameters and
    results, references to structs, arrays and pointers */
-#include <stdio.h>
 
 struct Account { int id; double balance; };
 

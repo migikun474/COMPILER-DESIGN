@@ -1,4 +1,3 @@
-#define PI 3 
 int main(){
-    int a[PI] ; 
+    int a[3] ; 
 }

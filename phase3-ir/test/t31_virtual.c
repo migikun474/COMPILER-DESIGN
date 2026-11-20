@@ -1,7 +1,6 @@
 /* virtual functions: tables, overriding at several levels, multiple
    inheritance (this-adjustment), calls from constructors and
    destructors, references, slicing, abstract classes. Expected: g++. */
-#include <stdio.h>
 
 class Animal {
   public:
