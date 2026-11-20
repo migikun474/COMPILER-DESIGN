@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test31_dropped_class_features.c
 
-Syntax analysis failed: 6 error(s); semantic analysis was not run.
+Syntax analysis failed: 7 error(s); semantic analysis was not run.
 
 /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test31_dropped_class_features.c:10:21: lexical error: 'virtual' is not supported: this language has no virtual functions
  10 | class T01 { public: virtual int area() { return 0; } };
@@ -31,4 +31,8 @@ Syntax analysis failed: 6 error(s); semantic analysis was not run.
 /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test31_dropped_class_features.c:31:34: syntax error: syntax error, unexpected ':', expecting ';' or '{'
  31 | class T06 { public: int x; T06() : x(1) { } };
     |                                  ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test31_dropped_class_features.c:35:25: syntax error: function 'area' cannot have an initializer ('= 0' pure virtual functions are not supported)
+ 35 | class T07 { public: int area() = 0; };
+    |                         ^
 

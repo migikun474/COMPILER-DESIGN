@@ -104,6 +104,8 @@ fc18:  .word 0, 1074790400        # 4
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -212,6 +214,11 @@ _Z5weigh3Bigdcx:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -160
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M1_2
+        j     __stack_overflow
+M1_2:
         s.d   $f20, -112($fp)
         s.d   $f22, -120($fp)
         s.d   $f24, -136($fp)
@@ -319,6 +326,11 @@ _Z7averageiz:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -120
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M2_0
+        j     __stack_overflow
+M2_0:
         s.d   $f20, -112($fp)
         s.d   $f22, -88($fp)
         s.d   $f24, -104($fp)
@@ -411,6 +423,11 @@ _Z5powerxi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -56
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M3_0
+        j     __stack_overflow
+M3_0:
         sw    $s0, -28($fp)
         sw    $s1, -44($fp)
         sw    $s2, -32($fp)
@@ -478,6 +495,11 @@ main_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -320
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M4_0
+        j     __stack_overflow
+M4_0:
         s.d   $f20, -296($fp)
         sw    $s0, -284($fp)
         sw    $s1, -300($fp)
@@ -1052,6 +1074,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -1072,8 +1097,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -1133,6 +1174,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

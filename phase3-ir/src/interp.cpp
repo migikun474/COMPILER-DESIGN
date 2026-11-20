@@ -19,6 +19,10 @@ const uint32_t STACK_BASE = 0x100000; /* frames grow upwards from here */
 const uint32_t HEAP_BASE = 0x1000000;
 const uint32_t MEMORY_LIMIT = 0x8000000;
 const long long STEP_LIMIT = 500000000LL;
+/* ponytail: each simulated call is a C++ call, so depth is capped to stay inside the
+   default 8 MB host stack (about where SPIM's 256 KB stack stops too); run on a big-stack
+   thread if deeper recursion is ever needed */
+const int DEPTH_LIMIT = 10000;
 
 struct Arg { /* a `param` waiting for its call */
     Cls cls = Cls::Int;
@@ -90,6 +94,7 @@ class Machine {
     std::map<const sem::Symbol *, const Function *> functions;
     std::map<const Function *, Layout> layouts;
     uint32_t dataTop = DATA_BASE, heapTop = HEAP_BASE, stackTop = STACK_BASE;
+    int depth = 0;
     std::map<uint32_t, uint32_t> blocks; /* heap block -> size */
     long long executed = 0;
     std::string output;
@@ -536,7 +541,9 @@ class Machine {
         fr.layout = &layouts[&f];
         stackTop = alignUp(stackTop, 8);
         fr.base = stackTop;
-        if (fr.base + fr.layout->width + 16 > HEAP_BASE) throw Fault("stack overflow (recursion too deep)");
+        if (fr.base + fr.layout->width + 16 > HEAP_BASE || ++depth > DEPTH_LIMIT)
+            throw Fault("stack overflow (recursion too deep)");
+        struct Leave { int &d; ~Leave() { --d; } } leave{depth};
         stackTop += fr.layout->width + 8;
         need(fr.base, fr.layout->width + 8);
         memset(&mem[fr.base], 0, fr.layout->width + 8);

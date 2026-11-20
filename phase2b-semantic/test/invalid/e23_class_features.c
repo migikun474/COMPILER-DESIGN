@@ -55,3 +55,8 @@ int main() {
     r = k.value();                            // error: member function 'value' cannot be called on a const object (there are no const member functions)
     return r + copy.value();
 }
+int conds(int a, int b) {
+    if (a = b) return 1;                      // warning: assignment used as the condition of 'if'; did you mean '=='?
+    while (a = 0) { }                         // warning: assignment used as the condition of 'while'
+    return a == b ? 1 : (a = 2) ? 2 : 3;      // warning: assignment used as the condition of '?:'
+}

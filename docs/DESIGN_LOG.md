@@ -1064,6 +1064,24 @@ At the user's request `-O3` no longer hoists invariant computations out
 of loops (`hoistInvariants()` deleted). The dominator and natural-loop
 analysis (`loops()`) stays, for the loop unrolling planned next.
 
+### D37. Run-time checks and the assignment warning (2026-11-21)
+
+- **Assignment as a condition:** `if (a = b)`, loops and `?:` warn
+  `assignment used as the condition`. The AST keeps no parentheses, so
+  gcc's `if ((a = b))` escape still warns.
+- **Division by zero:** the MIPS code checks the divisor of every
+  integer `/` and `%` (not a nonzero constant), and `__udivmodll` checks
+  it for `long long`. On zero it prints the interpreter's message,
+  `run-time error: division by zero`, and exits with code 2.
+- **Deep recursion:** SPIM's stack grows by doubling and stops 256 KB
+  below 0x80000000 (8045 nested 32-byte frames fit, 8046 do not). Every
+  function that calls, or whose frame exceeds 4 KB, compares `$sp` with
+  `__stack_limit` (16 KB above that floor, set at start-up) and jumps to
+  `__stack_overflow`, which prints `run-time error: stack overflow
+  (recursion too deep)` and exits with 2. The interpreter recursed in C++
+  for every simulated call and crashed near 50,000 calls; it now caps the
+  depth at 10,000 with the same message.
+
 ---
 
 ## Open questions

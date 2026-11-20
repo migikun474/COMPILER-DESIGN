@@ -20,6 +20,15 @@ using sem::TypePtr;
 namespace {
 
 int roundUp(int v, int a) { return (v + a - 1) / a * a; }
+
+/* SPIM's stack segment ends at 0x80000000 and grows downwards by
+   doubling; by default it stops at 256 KB (the next doubling would pass
+   the 512 KB limit of `spim -lstack`), and its top already holds argv and
+   the environment. A frame may reach down to 16 KB above that end, which
+   leaves room for the run-time library and the error message, so deep
+   recursion stops with "stack overflow" instead of SPIM's own failure
+   (measured: 8045 nested 32-byte frames fit, 8046 do not) */
+const char *const STACK_FLOOR = "0x7ffc4000";
 bool isWide(Cls c) { return c == Cls::LLong || c == Cls::ULLong; }
 bool isUnsignedCls(Cls c) { return c != Cls::Char && c != Cls::Short && c != Cls::Int && c != Cls::LLong; }
 
@@ -388,6 +397,13 @@ struct Emitter {
             case Op::Sub: ins("subu  " + abc); break;
             case Op::Mul: ins("mul   " + abc); break;
             case Op::Div: case Op::Mod:
+                if (!(q.b.kind == Operand::IntConst && static_cast<int32_t>(q.b.ival) != 0)) {
+                    /* the hardware does not trap: a zero divisor is reported like the interpreter does */
+                    std::string ok = fresh();
+                    ins("bnez  " + b + ", " + ok);
+                    ins("jal   __div_by_zero");
+                    lab(ok);
+                }
                 ins(std::string(isSigned ? "div   " : "divu  ") + a + ", " + b);
                 ins(std::string(q.op == Op::Div ? "mflo  " : "mfhi  ") + d);
                 break;
@@ -787,6 +803,14 @@ struct Emitter {
         ins("sw    $fp, 0($sp)");
         ins("move  $fp, $sp");
         if (frameSize) ins("addiu $sp, $sp, -" + std::to_string(frameSize));
+        if (calls || frameSize > 4096) { /* only a function that calls can recurse; a big frame can overflow alone */
+            std::string ok = fresh();
+            ins("lw    $t8, __stack_limit");
+            ins("sltu  $t8, $sp, $t8");
+            ins("beqz  $t8, " + ok);
+            ins("j     __stack_overflow");
+            lab(ok);
+        }
         for (const auto &r : saved) ins(saveOp(r.first, true) + r.first + ", " + std::to_string(r.second) + "($fp)");
         for (const sem::Symbol *p : incoming) { /* a parameter that lives in a register is fetched once */
             auto h = home.find(Key(p, 0));
@@ -1030,6 +1054,8 @@ struct Emitter {
             << "\n        .text\n        .globl main\n"
             << "main:\n"
             << "        li    $t0, -8\n        and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack\n"
+            << "        li    $t1, " << STACK_FLOOR << "\n"
+            << "        sw    $t1, __stack_limit      # deeper than this is a stack overflow\n"
             << "        addiu $sp, $sp, -8\n        sw    $a0, 0($sp)             # argc\n        sw    $a1, 4($sp)             # argv\n"
             << startup.str()
             << "        jal   main_\n        move  $a0, $v0\n        li    $v0, 17                 # exit with main's result\n        syscall\n"

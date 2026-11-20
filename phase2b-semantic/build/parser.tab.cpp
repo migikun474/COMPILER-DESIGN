@@ -4790,7 +4790,7 @@ yyreduce:
   case 307: /* primary_expr: TYPE_NAME '(' constructor_args_opt ')'  */
 #line 1167 "../phase2-parser/src/parser.y"
                                              {
-          /* `Dog(4)`: a temporary object (for a scalar type, a cast) */
+          /* `Dog()`: a temporary object (for a scalar type, `int(x)`, a cast) */
           yyval.node = makeFunctionalCast(yyvsp[-3].str, yyvsp[-3].idx, yyvsp[-1].nodeList);
       }
 #line 4797 "build/parser.tab.cpp"

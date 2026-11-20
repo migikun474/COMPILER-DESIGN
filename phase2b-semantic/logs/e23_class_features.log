@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c
 
-Semantic analysis failed: 13 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c'.
+Semantic analysis failed: 13 error(s), 3 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c'.
 
 /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c:6:7: semantic error: 'Two' cannot have a second base class 'Other': only single inheritance is supported [inheritance]
  6 | class Two : public Base, public Other { };    // error: 'Two' cannot have a second base class 'Other': only single inheritance is supported
@@ -57,4 +57,16 @@ Semantic analysis failed: 13 error(s), 0 warning(s) in '/home/amirishetty/Deskto
 /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c:55:11: semantic error: member function 'value' cannot be called on a const object (there are no const member functions) [const-object]
  55 |     r = k.value();                            // error: member function 'value' cannot be called on a const object (there are no const member functions)
     |           ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c:59:11: semantic warning: assignment used as the condition of 'if'; did you mean '=='? [assign-condition]
+ 59 |     if (a = b) return 1;                      // warning: assignment used as the condition of 'if'; did you mean '=='?
+    |           ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c:60:14: semantic warning: assignment used as the condition of 'while'; did you mean '=='? [assign-condition]
+ 60 |     while (a = 0) { }                         // warning: assignment used as the condition of 'while'
+    |              ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e23_class_features.c:61:28: semantic warning: assignment used as the condition of '?:'; did you mean '=='? [assign-condition]
+ 61 |     return a == b ? 1 : (a = 2) ? 2 : 3;      // warning: assignment used as the condition of '?:'
+    |                            ^
 
