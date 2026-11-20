@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--run [-q]] <source-file> [program arguments]\n"
                         "  -O1    optimize inside basic blocks\n"
                         "  -O2    -O1 plus constant/copy propagation and dead assignments across blocks\n"
-                        "  -O3    -O2 plus inlining, tail recursion, global common subexpressions, loop-invariant code motion\n"
+                        "  -O3    -O2 plus inlining, tail recursion, global common subexpressions\n"
                         "  --run  execute the generated code with the TAC interpreter\n"
                         "  -q     with --run: print only what the program prints\n", argv[0]);
         return 1;

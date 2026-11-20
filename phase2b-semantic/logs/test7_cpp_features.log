@@ -2,11 +2,92 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test7_cpp_features.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test7_cpp_features.c
 
-Semantic analysis failed: 1 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test7_cpp_features.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test7_cpp_features.c'.
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test7_cpp_features.c:35:9: semantic error: 'class Dog' has no default constructor (declared: Dog(int)); pass constructor arguments, e.g. 'Dog x(...)' [constructor]
- 35 |     Dog d;          /* class name used directly, no `class` keyword needed */
-    |         ^
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Animal"  <class Animal>  -> Animal (tag)
+|   `-- VarDecl "legs : INT"  <int>  -> Animal::legs (field, member)
+|-- ClassDecl "Dog : Animal"  <class Dog>  -> Dog (tag)
+|   |-- ConstructorDef "Dog : _ZN3DogC1Ev"  -> _ZN3DogC1Ev (function)
+|   |   `-- CompoundStmt
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="  <int>
+|   |               |-- Identifier "legs"  <int> lvalue  -> Animal::legs (field, member)
+|   |               `-- IntLiteral "4"  <int> =4
+|   `-- FunctionDef "bark : _ZN3Dog4barkEv"  <int (void)>  -> _ZN3Dog4barkEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- Identifier "legs"  <int> lvalue  -> Animal::legs (field, member)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "flag : BOOL"  <bool>  -> flag.1 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <bool>
+        |       |-- Identifier "flag"  <bool> lvalue  -> flag.1 (variable, local)
+        |       `-- BoolLiteral "true"  <bool> =1
+        |-- VarDecl "limit : INT"  <const int>  -> limit.2 (variable, local)
+        |   `-- IntLiteral "10"  <int> =10
+        |-- VarDecl "p : INT_POINTER"  <int *>  -> p.3 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int *>
+        |       |-- Identifier "p"  <int *> lvalue  -> p.3 (variable, local)
+        |       `-- CastExpr "INT_POINTER"  <int *>
+        |           `-- BuiltinCallExpr "malloc"  <void *>
+        |               `-- SizeofExpr "INT"  <unsigned int> =4
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "free"  <void>
+        |       `-- Identifier "p"  <int *> lvalue  -> p.3 (variable, local)
+        |-- VarDecl "arr : INT_ARRAY"  <int[5]>  -> arr.4 (variable, local)
+        |-- VarDecl "sz : INT"  <int>  -> sz.5 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "sz"  <int> lvalue  -> sz.5 (variable, local)
+        |       `-- SizeofExpr  <unsigned int> =20
+        |           `-- Identifier "arr"  <int[5]> lvalue  -> arr.4 (variable, local)
+        |-- VarDecl "sz2 : INT"  <int>  -> sz2.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "sz2"  <int> lvalue  -> sz2.6 (variable, local)
+        |       `-- SizeofExpr "INT"  <unsigned int> =4
+        |-- VarDecl "d : CLASS"  <class Dog>  -> d.7 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- MemberExpr "legs"  <int> lvalue  -> Animal::legs (field, member)
+        |       |   `-- Identifier "d"  <class Dog> lvalue  -> d.7 (variable, local)
+        |       `-- IntLiteral "4"  <int> =4
+        |-- VarDecl "legs : INT"  <int>  -> legs.8 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <int>
+        |       |-- Identifier "legs"  <int> lvalue  -> legs.8 (variable, local)
+        |       `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
+        |           `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
+        |               `-- Identifier "d"  <class Dog> lvalue  -> d.7 (variable, local)
+        `-- ReturnStmt
+            `-- IntLiteral "0"  <int> =0
 
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Animal             class_tag      class Animal               -        global                         3     -     0     Animal               -                        size 4
+Animal::legs       field          int                        member   global > class Animal          5     4     3     Animal::legs         -                        public, offset 0
+Dog                class_tag      class Dog                  -        global                         8     -     0     Dog                  -                        size 4, public base Animal
+Dog::Dog           constructor    void (void)                -        global > class Dog             10    -     1     _ZN3DogC1Ev          _ZN3DogC1Ev              public
+Dog::bark          method         int (void)                 -        global > class Dog             13    -     1     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
+main               function       int (void)                 -        global                         18    -     0     main                 main                     defined
+flag               variable       bool                       local    global > main()                19    1     1     flag.1               -                        
+limit              variable       const int                  local    global > main()                21    4     0     limit.2              -                        value 10
+p                  variable       int *                      local    global > main()                23    4     2     p.3                  -                        
+arr                variable       int[5]                     local    global > main()                27    20    1     arr.4                -                        
+sz                 variable       int                        local    global > main()                28    4     1     sz.5                 -                        
+sz2                variable       int                        local    global > main()                30    4     1     sz2.6                -                        
+d                  variable       class Dog                  local    global > main()                33    4     2     d.7                  -                        
+legs               variable       int                        local    global > main()                35    4     1     legs.8               -                        
+
+=== Record Layouts (MIPS32) ===
+class Animal: size 4, align 4
+    +0  int legs  [public]
+class Dog: size 4, align 4
+    (base Animal, public)

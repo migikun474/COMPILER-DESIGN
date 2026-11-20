@@ -2,61 +2,55 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v17_constructors_operators.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v17_constructors_operators.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v17_constructors_operators.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v17_constructors_operators.c'.
 
 === Annotated AST ===
 Program "translation_unit"
 |-- ClassDecl "Vec"  <class Vec>  -> Vec (tag)
 |   |-- VarDecl "x : INT"  <int>  -> Vec::x (field, member)
 |   |-- VarDecl "y : INT"  <int>  -> Vec::y (field, member)
-|   |-- ConstructorDef "Vec : _ZN3VecC1Eii"  -> _ZN3VecC1Eii (function)
-|   |   |-- ParamDecl "a : INT"  <int>  -> a.1 (parameter, param)
-|   |   |-- ParamDecl "b : INT"  <int>  -> b.2 (parameter, param)
-|   |   `-- CompoundStmt
-|   |       |-- ExprStmt
-|   |       |   `-- AssignExpr "="  <int>
-|   |       |       |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
-|   |       |       `-- Identifier "a"  <int> lvalue  -> a.1 (parameter, param)
-|   |       `-- ExprStmt
-|   |           `-- AssignExpr "="  <int>
-|   |               |-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
-|   |               `-- Identifier "b"  <int> lvalue  -> b.2 (parameter, param)
-|   |-- ConstructorDef "Vec : _ZN3VecC1Ei"  -> _ZN3VecC1Ei (function)
-|   |   `-- ParamDecl "a : INT"
 |   |-- ConstructorDef "Vec : _ZN3VecC1Ev"  -> _ZN3VecC1Ev (function)
+|   |-- FunctionDef "operator+ : _ZN3VecplES_"  <class Vec (class Vec)>  -> _ZN3VecplES_ (function)
+|   |   |-- ParamDecl "o : CLASS"  <class Vec>  -> o.1 (parameter, param)
 |   |   `-- CompoundStmt
+|   |       |-- VarDecl "r : CLASS"  <class Vec>  -> r.2 (variable, local)
 |   |       |-- ExprStmt
 |   |       |   `-- AssignExpr "="  <int>
-|   |       |       |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
-|   |       |       `-- IntLiteral "0"  <int> =0
-|   |       `-- ExprStmt
-|   |           `-- AssignExpr "="  <int>
-|   |               |-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
-|   |               `-- IntLiteral "0"  <int> =0
-|   |-- DestructorDef "Vec : _ZN3VecD1Ev"  -> _ZN3VecD1Ev (function)
-|   |-- FunctionDef "operator+ : _ZN3VecplES_"  <class Vec (class Vec)>  -> _ZN3VecplES_ (function)
-|   |   |-- ParamDecl "o : CLASS"  <class Vec>  -> o.3 (parameter, param)
-|   |   `-- CompoundStmt
+|   |       |       |-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+|   |       |       |   `-- Identifier "r"  <class Vec> lvalue  -> r.2 (variable, local)
+|   |       |       `-- BinaryExpr "+"  <int>
+|   |       |           |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
+|   |       |           `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+|   |       |               `-- Identifier "o"  <class Vec> lvalue  -> o.1 (parameter, param)
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="  <int>
+|   |       |       |-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
+|   |       |       |   `-- Identifier "r"  <class Vec> lvalue  -> r.2 (variable, local)
+|   |       |       `-- BinaryExpr "+"  <int>
+|   |       |           |-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
+|   |       |           `-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
+|   |       |               `-- Identifier "o"  <class Vec> lvalue  -> o.1 (parameter, param)
 |   |       `-- ReturnStmt
-|   |           `-- ConstructExpr "Vec"  <class Vec>  -> _ZN3VecC1Eii (function)
-|   |               |-- BinaryExpr "+"  <int>
-|   |               |   |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
-|   |               |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
-|   |               |       `-- Identifier "o"  <class Vec> lvalue  -> o.3 (parameter, param)
-|   |               `-- BinaryExpr "+"  <int>
-|   |                   |-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
-|   |                   `-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
-|   |                       `-- Identifier "o"  <class Vec> lvalue  -> o.3 (parameter, param)
+|   |           `-- Identifier "r"  <class Vec> lvalue  -> r.2 (variable, local)
 |   |-- FunctionDef "operator- : _ZN3VecmiEv"  <class Vec (void)>  -> _ZN3VecmiEv (function)
 |   |   `-- CompoundStmt
+|   |       |-- VarDecl "r : CLASS"  <class Vec>  -> r.3 (variable, local)
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="  <int>
+|   |       |       |-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+|   |       |       |   `-- Identifier "r"  <class Vec> lvalue  -> r.3 (variable, local)
+|   |       |       `-- UnaryExpr "-"  <int>
+|   |       |           `-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="  <int>
+|   |       |       |-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
+|   |       |       |   `-- Identifier "r"  <class Vec> lvalue  -> r.3 (variable, local)
+|   |       |       `-- UnaryExpr "-"  <int>
+|   |       |           `-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
 |   |       `-- ReturnStmt
-|   |           `-- ConstructExpr "Vec"  <class Vec>  -> _ZN3VecC1Eii (function)
-|   |               |-- UnaryExpr "-"  <int>
-|   |               |   `-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
-|   |               `-- UnaryExpr "-"  <int>
-|   |                   `-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
+|   |           `-- Identifier "r"  <class Vec> lvalue  -> r.3 (variable, local)
 |   |-- FunctionDef "operator== : _ZN3VeceqES_"  <int (class Vec)>  -> _ZN3VeceqES_ (function)
 |   |   |-- ParamDecl "o : CLASS"  <class Vec>  -> o.4 (parameter, param)
 |   |   `-- CompoundStmt
@@ -128,90 +122,107 @@ Program "translation_unit"
 |           |   `-- ThisExpr  <class Vec *>
 |           `-- ReturnStmt
 |               `-- Identifier "p"  <class Vec *> lvalue  -> p.9 (variable, local)
-|-- ConstructorDef "Vec : _ZN3VecC1Ei"  -> _ZN3VecC1Ei (function)
-|   |-- ParamDecl "a : INT"  <int>  -> a.10 (parameter, param)
+|-- ConstructorDef "Vec : _ZN3VecC1Ev"  -> _ZN3VecC1Ev (function)
 |   `-- CompoundStmt
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- Identifier "x"  <int> lvalue  -> Vec::x (field, member)
-|       |       `-- Identifier "a"  <int> lvalue  -> a.10 (parameter, param)
+|       |       `-- IntLiteral "0"  <int> =0
 |       `-- ExprStmt
 |           `-- AssignExpr "="  <int>
 |               |-- Identifier "y"  <int> lvalue  -> Vec::y (field, member)
-|               `-- Identifier "a"  <int> lvalue  -> a.10 (parameter, param)
-|-- DestructorDef "Vec : _ZN3VecD1Ev"  -> _ZN3VecD1Ev (function)
-|   `-- CompoundStmt
+|               `-- IntLiteral "0"  <int> =0
 |-- FunctionDef "dims : _ZN3Vec4dimsEv"  <int (void)>  -> _ZN3Vec4dimsEv (function)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- IntLiteral "2"  <int> =2
+|-- FunctionDef "make : _Z4makeii"  <class Vec (int, int)>  -> _Z4makeii (function)
+|   |-- ParamDecl "a : INT"  <int>  -> a.10 (parameter, param)
+|   |-- ParamDecl "b : INT"  <int>  -> b.11 (parameter, param)
+|   `-- CompoundStmt
+|       |-- VarDecl "v : CLASS"  <class Vec>  -> v.12 (variable, local)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+|       |       |   `-- Identifier "v"  <class Vec> lvalue  -> v.12 (variable, local)
+|       |       `-- Identifier "a"  <int> lvalue  -> a.10 (parameter, param)
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="  <int>
+|       |       |-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
+|       |       |   `-- Identifier "v"  <class Vec> lvalue  -> v.12 (variable, local)
+|       |       `-- Identifier "b"  <int> lvalue  -> b.11 (parameter, param)
+|       `-- ReturnStmt
+|           `-- Identifier "v"  <class Vec> lvalue  -> v.12 (variable, local)
 |-- FunctionDef "operator* : _Zml3Veci"  <class Vec (class Vec, int)>  -> _Zml3Veci (function)
-|   |-- ParamDecl "v : CLASS"  <class Vec>  -> v.11 (parameter, param)
-|   |-- ParamDecl "k : INT"  <int>  -> k.12 (parameter, param)
+|   |-- ParamDecl "v : CLASS"  <class Vec>  -> v.13 (parameter, param)
+|   |-- ParamDecl "k : INT"  <int>  -> k.14 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
-|           `-- ConstructExpr "Vec"  <class Vec>  -> _ZN3VecC1Eii (function)
+|           `-- CallExpr  <class Vec>  -> _Z4makeii (function)
+|               |-- Identifier "make"  <class Vec (int, int)>  -> _Z4makeii (function)
 |               |-- BinaryExpr "*"  <int>
 |               |   |-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
-|               |   |   `-- Identifier "v"  <class Vec> lvalue  -> v.11 (parameter, param)
-|               |   `-- Identifier "k"  <int> lvalue  -> k.12 (parameter, param)
+|               |   |   `-- Identifier "v"  <class Vec> lvalue  -> v.13 (parameter, param)
+|               |   `-- Identifier "k"  <int> lvalue  -> k.14 (parameter, param)
 |               `-- BinaryExpr "*"  <int>
 |                   |-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
-|                   |   `-- Identifier "v"  <class Vec> lvalue  -> v.11 (parameter, param)
-|                   `-- Identifier "k"  <int> lvalue  -> k.12 (parameter, param)
+|                   |   `-- Identifier "v"  <class Vec> lvalue  -> v.13 (parameter, param)
+|                   `-- Identifier "k"  <int> lvalue  -> k.14 (parameter, param)
 `-- FunctionDef "main : main"  <int (int, char **)>  -> main (function)
-    |-- ParamDecl "argc : INT"  <int>  -> argc.13 (parameter, param)
-    |-- ParamDecl "argv : CHAR_POINTER_POINTER"  <char **>  -> argv.14 (parameter, param)
+    |-- ParamDecl "argc : INT"  <int>  -> argc.15 (parameter, param)
+    |-- ParamDecl "argv : CHAR_POINTER_POINTER"  <char **>  -> argv.16 (parameter, param)
     `-- CompoundStmt
-        |-- VarDecl "a : CLASS"  <class Vec>  -> a.15 (variable, local)
-        |   `-- ConstructExpr "CLASS"  <class Vec>  -> _ZN3VecC1Eii (function)
+        |-- VarDecl "a : CLASS"  <class Vec>  -> a.17 (variable, local)
+        |   `-- CallExpr  <class Vec>  -> _Z4makeii (function)
+        |       |-- Identifier "make"  <class Vec (int, int)>  -> _Z4makeii (function)
         |       |-- IntLiteral "1"  <int> =1
         |       `-- IntLiteral "2"  <int> =2
-        |-- VarDecl "b : CLASS"  <class Vec>  -> b.16 (variable, local)
-        |   `-- ConstructExpr "Vec"  <class Vec>  -> _ZN3VecC1Eii (function)
+        |-- VarDecl "b : CLASS"  <class Vec>  -> b.18 (variable, local)
+        |   `-- CallExpr  <class Vec>  -> _Z4makeii (function)
+        |       |-- Identifier "make"  <class Vec (int, int)>  -> _Z4makeii (function)
         |       |-- IntLiteral "3"  <int> =3
         |       `-- IntLiteral "4"  <int> =4
-        |-- VarDecl "e : CLASS"  <class Vec>  -> e.17 (variable, local)
-        |-- VarDecl "f : CLASS"  <class Vec>  -> f.18 (variable, local)
-        |   `-- IntLiteral "5"  <int> =5
-        |-- VarDecl "c : CLASS"  <class Vec>  -> c.19 (variable, local)
+        |-- VarDecl "e : CLASS"  <class Vec>  -> e.19 (variable, local)
+        |-- VarDecl "t : CLASS"  <class Vec>  -> t.20 (variable, local)
+        |   `-- ConstructExpr "Vec"  <class Vec>  -> _ZN3VecC1Ev (function)
+        |-- VarDecl "c : CLASS"  <class Vec>  -> c.21 (variable, local)
         |   `-- BinaryExpr "+"  <class Vec>  -> _ZN3VecplES_ (function)
-        |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
-        |       `-- Identifier "b"  <class Vec> lvalue  -> b.16 (variable, local)
-        |-- VarDecl "d : CLASS"  <class Vec>  -> d.20 (variable, local)
+        |       |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
+        |       `-- Identifier "b"  <class Vec> lvalue  -> b.18 (variable, local)
+        |-- VarDecl "d : CLASS"  <class Vec>  -> d.22 (variable, local)
         |   `-- UnaryExpr "-"  <class Vec>  -> _ZN3VecmiEv (function)
-        |       `-- Identifier "c"  <class Vec> lvalue  -> c.19 (variable, local)
-        |-- VarDecl "g : CLASS"  <class Vec>  -> g.21 (variable, local)
+        |       `-- Identifier "c"  <class Vec> lvalue  -> c.21 (variable, local)
+        |-- VarDecl "g : CLASS"  <class Vec>  -> g.23 (variable, local)
         |   `-- BinaryExpr "*"  <class Vec>  -> _Zml3Veci (function)
-        |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
+        |       |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
         |-- ExprStmt
         |   `-- AssignExpr "+="  <class Vec> lvalue  -> _ZN3VecpLES_ (function)
-        |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
-        |       `-- Identifier "b"  <class Vec> lvalue  -> b.16 (variable, local)
+        |       |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
+        |       `-- Identifier "b"  <class Vec> lvalue  -> b.18 (variable, local)
         |-- ExprStmt
         |   `-- UnaryExpr "++(pre)"  <class Vec> lvalue  -> _ZN3VecppEv (function)
-        |       `-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
+        |       `-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
         |-- ExprStmt
         |   `-- PostfixOpExpr "++"  <class Vec>  -> _ZN3VecppEi (function)
-        |       `-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
+        |       `-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <class Vec>
-        |       |-- Identifier "g"  <class Vec> lvalue  -> g.21 (variable, local)
-        |       `-- Identifier "d"  <class Vec> lvalue  -> d.20 (variable, local)
-        |-- VarDecl "same : INT"  <int>  -> same.22 (variable, local)
+        |       |-- Identifier "g"  <class Vec> lvalue  -> g.23 (variable, local)
+        |       `-- Identifier "d"  <class Vec> lvalue  -> d.22 (variable, local)
+        |-- VarDecl "same : INT"  <int>  -> same.24 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- BinaryExpr "+"  <int>
         |       |   |-- BinaryExpr "+"  <int>
         |       |   |   |-- BinaryExpr "+"  <int>
         |       |   |   |   |-- BinaryExpr "=="  <int>  -> _ZN3VeceqES_ (function)
-        |       |   |   |   |   |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
-        |       |   |   |   |   `-- Identifier "b"  <class Vec> lvalue  -> b.16 (variable, local)
+        |       |   |   |   |   |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
+        |       |   |   |   |   `-- Identifier "b"  <class Vec> lvalue  -> b.18 (variable, local)
         |       |   |   |   `-- IndexExpr  <int>  -> _ZN3VecixEi (function)
-        |       |   |   |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
+        |       |   |   |       |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
         |       |   |   |       `-- IntLiteral "0"  <int> =0
         |       |   |   `-- CallExpr  <int>  -> _ZN3VecclEi (function)
-        |       |   |       |-- Identifier "a"  <class Vec> lvalue  -> a.15 (variable, local)
+        |       |   |       |-- Identifier "a"  <class Vec> lvalue  -> a.17 (variable, local)
         |       |   |       `-- IntLiteral "3"  <int> =3
         |       |   `-- CallExpr  <int>  -> _ZN3Vec4dimsEv (function)
         |       |       `-- ScopeExpr "dims"  <int (void)>  -> _ZN3Vec4dimsEv (function)
@@ -219,80 +230,85 @@ Program "translation_unit"
         |       `-- ArrowExpr "y"  <int> lvalue  -> Vec::y (field, member)
         |           `-- CallExpr  <class Vec *>  -> _ZN3Vec4selfEv (function)
         |               `-- MemberExpr "self"  <class Vec *(void)>  -> _ZN3Vec4selfEv (function)
-        |                   `-- Identifier "c"  <class Vec> lvalue  -> c.19 (variable, local)
-        |-- VarDecl "row : CLASS_ARRAY"  <class Vec[3]>  -> row.23 (variable, local)
-        |-- VarDecl "w : INT"  <int>  -> w.24 (variable, local)
+        |                   `-- Identifier "c"  <class Vec> lvalue  -> c.21 (variable, local)
+        |-- VarDecl "row : CLASS_ARRAY"  <class Vec[3]>  -> row.25 (variable, local)
+        |-- VarDecl "w : INT"  <int>  -> w.26 (variable, local)
         |   `-- ConstructExpr "INT"  <int>
         |       `-- IntLiteral "7"  <int> =7
-        |-- VarDecl "half : DOUBLE"  <double>  -> half.25 (variable, local)
+        |-- VarDecl "half : DOUBLE"  <double>  -> half.27 (variable, local)
         |   `-- BinaryExpr "/"  <double>
         |       |-- CastExpr "DOUBLE"  <double>
-        |       |   `-- Identifier "w"  <int> lvalue  -> w.24 (variable, local)
+        |       |   `-- Identifier "w"  <int> lvalue  -> w.26 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
         `-- ReturnStmt
             `-- BinaryExpr "+"  <double>
                 |-- BinaryExpr "+"  <double>
                 |   |-- BinaryExpr "+"  <double>
-                |   |   |-- BinaryExpr "+"  <int>
+                |   |   |-- BinaryExpr "+"  <double>
                 |   |   |   |-- BinaryExpr "+"  <int>
-                |   |   |   |   |-- Identifier "same"  <int> lvalue  -> same.22 (variable, local)
-                |   |   |   |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
-                |   |   |   |       `-- Identifier "g"  <class Vec> lvalue  -> g.21 (variable, local)
-                |   |   |   `-- Identifier "w"  <int> lvalue  -> w.24 (variable, local)
-                |   |   `-- Identifier "half"  <double> lvalue  -> half.25 (variable, local)
-                |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
-                |       `-- Identifier "e"  <class Vec> lvalue  -> e.17 (variable, local)
-                `-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
-                    `-- Identifier "f"  <class Vec> lvalue  -> f.18 (variable, local)
+                |   |   |   |   |-- BinaryExpr "+"  <int>
+                |   |   |   |   |   |-- Identifier "same"  <int> lvalue  -> same.24 (variable, local)
+                |   |   |   |   |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+                |   |   |   |   |       `-- Identifier "g"  <class Vec> lvalue  -> g.23 (variable, local)
+                |   |   |   |   `-- Identifier "w"  <int> lvalue  -> w.26 (variable, local)
+                |   |   |   `-- Identifier "half"  <double> lvalue  -> half.27 (variable, local)
+                |   |   `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+                |   |       `-- Identifier "e"  <class Vec> lvalue  -> e.19 (variable, local)
+                |   `-- MemberExpr "y"  <int> lvalue  -> Vec::y (field, member)
+                |       `-- Identifier "t"  <class Vec> lvalue  -> t.20 (variable, local)
+                `-- MemberExpr "x"  <int> lvalue  -> Vec::x (field, member)
+                    `-- IndexExpr  <class Vec> lvalue
+                        |-- Identifier "row"  <class Vec[3]> lvalue  -> row.25 (variable, local)
+                        `-- IntLiteral "1"  <int> =1
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
 Vec                class_tag      class Vec                  -        global                         3     -     0     Vec                  -                        size 8
-Vec::x             field          int                        member   global > class Vec             5     4     17    Vec::x               -                        public, offset 0
-Vec::y             field          int                        member   global > class Vec             6     4     14    Vec::y               -                        public, offset 4
-Vec::Vec           constructor    void (int, int)            -        global > class Vec             7     -     5     _ZN3VecC1Eii         _ZN3VecC1Eii             public
-Vec::Vec           constructor    void (int)                 -        global > class Vec             8     -     1     _ZN3VecC1Ei          _ZN3VecC1Ei              public
-Vec::Vec           constructor    void (void)                -        global > class Vec             9     -     2     _ZN3VecC1Ev          _ZN3VecC1Ev              public
-Vec::~Vec          destructor     void (void)                -        global > class Vec             10    -     0     _ZN3VecD1Ev          _ZN3VecD1Ev              public
-Vec::operator+     method         class Vec (class Vec)      -        global > class Vec             11    -     1     _ZN3VecplES_         _ZN3VecplES_             public, defined
-Vec::operator-     method         class Vec (void)           -        global > class Vec             12    -     1     _ZN3VecmiEv          _ZN3VecmiEv              public, defined
-Vec::operator==    method         int (class Vec)            -        global > class Vec             13    -     1     _ZN3VeceqES_         _ZN3VeceqES_             public, defined
-Vec::operator[]    method         int (int)                  -        global > class Vec             14    -     1     _ZN3VecixEi          _ZN3VecixEi              public, defined
-Vec::operator+=    method         class Vec &(class Vec)     -        global > class Vec             15    -     1     _ZN3VecpLES_         _ZN3VecpLES_             public, defined
-Vec::operator++    method         class Vec &(void)          -        global > class Vec             16    -     1     _ZN3VecppEv          _ZN3VecppEv              public, defined
-Vec::operator++    method         class Vec (int)            -        global > class Vec             17    -     1     _ZN3VecppEi          _ZN3VecppEi              public, defined
-Vec::operator()    method         int (int)                  -        global > class Vec             18    -     1     _ZN3VecclEi          _ZN3VecclEi              public, defined
-Vec::dims          method         int (void)                 -        global > class Vec             19    -     1     _ZN3Vec4dimsEv       _ZN3Vec4dimsEv           public, static, defined
-Vec::self          method         class Vec *(void)          -        global > class Vec             20    -     1     _ZN3Vec4selfEv       _ZN3Vec4selfEv           public, defined
-a                  parameter      int                        param    global > class Vec > Vec()     7     4     1     a.1                  -                        
-b                  parameter      int                        param    global > class Vec > Vec()     7     4     1     b.2                  -                        
-o                  parameter      class Vec                  param    global > class Vec > operator+() 11    8     2     o.3                  -                        
-o                  parameter      class Vec                  param    global > class Vec > operator==() 13    8     2     o.4                  -                        
-i                  parameter      int                        param    global > class Vec > operator[]() 14    4     1     i.5                  -                        
-o                  parameter      class Vec                  param    global > class Vec > operator+=() 15    8     2     o.6                  -                        
-(unnamed)          parameter      int                        param    global > class Vec > operator++() 17    4     0     param0._ZN3VecppEi   -                        
-old                variable       class Vec                  local    global > class Vec > operator++() 17    8     1     old.7                -                        
-k                  parameter      int                        param    global > class Vec > operator()() 18    4     1     k.8                  -                        
-p                  variable       class Vec *                local    global > class Vec > self()    20    4     1     p.9                  -                        
-a                  parameter      int                        param    global > class Vec > Vec()     22    4     2     a.10                 -                        
-operator*          function       class Vec (class Vec, int) -        global                         25    -     1     _Zml3Veci            _Zml3Veci                defined
-v                  parameter      class Vec                  param    global > operator*()           25    8     2     v.11                 -                        
-k                  parameter      int                        param    global > operator*()           25    4     2     k.12                 -                        
-main               function       int (int, char **)         -        global                         27    -     0     main                 main                     defined
-argc               parameter      int                        param    global > main()                27    4     0     argc.13              -                        
-argv               parameter      char **                    param    global > main()                27    4     0     argv.14              -                        
-a                  variable       class Vec                  local    global > main()                28    8     8     a.15                 -                        
-b                  variable       class Vec                  local    global > main()                29    8     3     b.16                 -                        
-e                  variable       class Vec                  local    global > main()                30    8     1     e.17                 -                        
-f                  variable       class Vec                  local    global > main()                31    8     1     f.18                 -                        
-c                  variable       class Vec                  local    global > main()                32    8     2     c.19                 -                        
-d                  variable       class Vec                  local    global > main()                33    8     1     d.20                 -                        
-g                  variable       class Vec                  local    global > main()                34    8     2     g.21                 -                        
-same               variable       int                        local    global > main()                39    4     1     same.22              -                        
-row                variable       class Vec[3]               local    global > main()                40    24    0     row.23               -                        
-w                  variable       int                        local    global > main()                41    4     2     w.24                 -                        
-half               variable       double                     local    global > main()                42    8     1     half.25              -                        
+Vec::x             field          int                        member   global > class Vec             5     4     19    Vec::x               -                        public, offset 0
+Vec::y             field          int                        member   global > class Vec             6     4     15    Vec::y               -                        public, offset 4
+Vec::Vec           constructor    void (void)                -        global > class Vec             7     -     6     _ZN3VecC1Ev          _ZN3VecC1Ev              public
+Vec::operator+     method         class Vec (class Vec)      -        global > class Vec             8     -     1     _ZN3VecplES_         _ZN3VecplES_             public, defined
+Vec::operator-     method         class Vec (void)           -        global > class Vec             9     -     1     _ZN3VecmiEv          _ZN3VecmiEv              public, defined
+Vec::operator==    method         int (class Vec)            -        global > class Vec             10    -     1     _ZN3VeceqES_         _ZN3VeceqES_             public, defined
+Vec::operator[]    method         int (int)                  -        global > class Vec             11    -     1     _ZN3VecixEi          _ZN3VecixEi              public, defined
+Vec::operator+=    method         class Vec &(class Vec)     -        global > class Vec             12    -     1     _ZN3VecpLES_         _ZN3VecpLES_             public, defined
+Vec::operator++    method         class Vec &(void)          -        global > class Vec             13    -     1     _ZN3VecppEv          _ZN3VecppEv              public, defined
+Vec::operator++    method         class Vec (int)            -        global > class Vec             14    -     1     _ZN3VecppEi          _ZN3VecppEi              public, defined
+Vec::operator()    method         int (int)                  -        global > class Vec             15    -     1     _ZN3VecclEi          _ZN3VecclEi              public, defined
+Vec::dims          method         int (void)                 -        global > class Vec             16    -     1     _ZN3Vec4dimsEv       _ZN3Vec4dimsEv           public, static, defined
+Vec::self          method         class Vec *(void)          -        global > class Vec             17    -     1     _ZN3Vec4selfEv       _ZN3Vec4selfEv           public, defined
+o                  parameter      class Vec                  param    global > class Vec > operator+() 8     8     2     o.1                  -                        
+r                  variable       class Vec                  local    global > class Vec > operator+() 8     8     3     r.2                  -                        
+r                  variable       class Vec                  local    global > class Vec > operator-() 9     8     3     r.3                  -                        
+o                  parameter      class Vec                  param    global > class Vec > operator==() 10    8     2     o.4                  -                        
+i                  parameter      int                        param    global > class Vec > operator[]() 11    4     1     i.5                  -                        
+o                  parameter      class Vec                  param    global > class Vec > operator+=() 12    8     2     o.6                  -                        
+(unnamed)          parameter      int                        param    global > class Vec > operator++() 14    4     0     param0._ZN3VecppEi   -                        
+old                variable       class Vec                  local    global > class Vec > operator++() 14    8     1     old.7                -                        
+k                  parameter      int                        param    global > class Vec > operator()() 15    4     1     k.8                  -                        
+p                  variable       class Vec *                local    global > class Vec > self()    17    4     1     p.9                  -                        
+make               function       class Vec (int, int)       -        global                         21    -     3     _Z4makeii            _Z4makeii                defined
+a                  parameter      int                        param    global > make()                21    4     1     a.10                 -                        
+b                  parameter      int                        param    global > make()                21    4     1     b.11                 -                        
+v                  variable       class Vec                  local    global > make()                21    8     3     v.12                 -                        
+operator*          function       class Vec (class Vec, int) -        global                         22    -     1     _Zml3Veci            _Zml3Veci                defined
+v                  parameter      class Vec                  param    global > operator*()           22    8     2     v.13                 -                        
+k                  parameter      int                        param    global > operator*()           22    4     2     k.14                 -                        
+main               function       int (int, char **)         -        global                         24    -     0     main                 main                     defined
+argc               parameter      int                        param    global > main()                24    4     0     argc.15              -                        
+argv               parameter      char **                    param    global > main()                24    4     0     argv.16              -                        
+a                  variable       class Vec                  local    global > main()                25    8     8     a.17                 -                        
+b                  variable       class Vec                  local    global > main()                26    8     3     b.18                 -                        
+e                  variable       class Vec                  local    global > main()                27    8     1     e.19                 -                        
+t                  variable       class Vec                  local    global > main()                28    8     1     t.20                 -                        
+c                  variable       class Vec                  local    global > main()                29    8     2     c.21                 -                        
+d                  variable       class Vec                  local    global > main()                30    8     1     d.22                 -                        
+g                  variable       class Vec                  local    global > main()                31    8     2     g.23                 -                        
+same               variable       int                        local    global > main()                36    4     1     same.24              -                        
+row                variable       class Vec[3]               local    global > main()                37    24    1     row.25               -                        
+w                  variable       int                        local    global > main()                38    4     2     w.26                 -                        
+half               variable       double                     local    global > main()                39    8     1     half.27              -                        
 
 === Record Layouts (MIPS32) ===
 class Vec: size 8, align 4

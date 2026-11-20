@@ -75,7 +75,8 @@
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
 %token STRUCT CLASS
 %token PUBLIC PRIVATE PROTECTED THIS
-%token STATIC TYPEDEF AUTO EXTERN CONST VIRTUAL EXPLICIT FRIEND
+%token STATIC TYPEDEF AUTO EXTERN CONST FRIEND
+%token VIRTUAL EXPLICIT   /* reserved but rejected by the scanner (D35); never reach the grammar */
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
@@ -196,7 +197,6 @@ declaration_specifiers
           $$.typeSpec.storageClasses += $2.typeSpec.storageClasses;
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
           if ($2.typeSpec.isAuto) $$.typeSpec.isAuto = true;
-          if ($2.typeSpec.isVirtual) $$.typeSpec.isVirtual = true;
           if ($2.typeSpec.isFriend) $$.typeSpec.isFriend = true;
           if (!$2.typeSpec.tagName.empty()) $$.typeSpec.tagName = $2.typeSpec.tagName;
           if (!$2.typeSpec.typedefName.empty()) $$.typeSpec.typedefName = $2.typeSpec.typedefName;
@@ -211,7 +211,6 @@ storage_or_type_specifier
     | AUTO     { $$ = ParserValue(); $$.typeSpec.isAuto = true; }
     | TYPEDEF  { $$.typeSpec.isTypedefStorage = true; $$.typeSpec.storageClasses = 1; }
     | CONST    { $$.typeSpec.isConst = true; } /* now actually tracked -- see Symbol/SymbolTableEntry */
-    | VIRTUAL  { $$ = ParserValue(); $$.typeSpec.isVirtual = true; }
     | FRIEND   { $$ = ParserValue(); $$.typeSpec.isFriend = true; }
     | type_specifier { $$ = $1; }
     ;
@@ -264,7 +263,7 @@ struct_or_class_specifier
           $$.typeSpec.tagName = $2.str;
           addTypeName($2.str); /* usable as a type from here on, but
                                              NOT inside its own body -- lets
-                                             constructors/destructors keep
+                                             constructors keep
                                              matching the class's own name as
                                              a plain IDENTIFIER */
           auto node = atToken(mkNode(ASTKind::StructDecl, $2.str), $2.idx);
@@ -413,19 +412,12 @@ member_item
     | function_definition { $$.node = $1.node; }
     | access_specifier ':' { $$ = ParserValue(); $$.str = $1.str; }
     | constructor_def { $$.node = $1.node; }
-    | EXPLICIT constructor_def {
-          $$.node = $2.node;
-          if ($$.node && $$.node->typeExpr) $$.node->typeExpr->isExplicit = true;
-      }
-    | destructor_def { $$.node = $1.node; }
-    | VIRTUAL destructor_def {
-          $$.node = $2.node;
-          if ($$.node && $$.node->typeExpr) $$.node->typeExpr->isVirtual = true;
-      }
     ;
 
 /* `Name(params)` inside a class: a constructor, either defined here or
-   only declared (then defined outside as `Name::Name(params) {...}`).
+   only declared (then defined outside as `Name::Name() {...}`). The
+   grammar still reads a parameter list so that semantic analysis can say
+   precisely why it is rejected: only `Name()` is allowed (D35).
    The head pushes the parameter scope; whichever rule finishes it pops. */
 constructor_head
     : IDENTIFIER '(' { pushScope(currentClassName() + "::" + $1.str + "()"); } parameter_list_opt ')' {
@@ -446,10 +438,9 @@ constructor_head
     ;
 
 constructor_def
-    : constructor_head mem_init_opt compound_stmt {
+    : constructor_head compound_stmt {
           popScope();
-          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), $3.node,
-                                        $2.nodeList);
+          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), $2.node);
       }
     | constructor_head ';' {
           popScope();
@@ -457,26 +448,7 @@ constructor_def
       }
     ;
 
-destructor_head
-    : '~' IDENTIFIER '(' ')' {
-          setCategory($2.idx, "DESTRUCTOR");
-          pushScope(currentClassName() + "::~" + $2.str + "()");
-          $$ = $2;
-      }
-    ;
-
-destructor_def
-    : destructor_head compound_stmt {
-          popScope();
-          $$.node = makeDestructorNode($1.str, $1.idx, currentClassName(), $2.node);
-      }
-    | destructor_head ';' {
-          popScope();
-          $$.node = makeDestructorNode($1.str, $1.idx, currentClassName(), nullptr);
-      }
-    ;
-
-/* `Dog::Dog(int n) { ... }` / `Dog::~Dog() { ... }` after the class */
+/* `Dog::Dog() { ... }` after the class */
 out_of_class_special
     : TYPE_NAME SCOPE_RES TYPE_NAME '(' {
           setCategory($1.idx, categoryForTypeName(lookupTypeSymbol($1.str)));
@@ -493,50 +465,13 @@ out_of_class_special
                   setCategory(p.nameIdx, p.typeStr);
               }
           }
-      } mem_init_opt compound_stmt {
-          popScope();
-          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $6.decl.isVariadic, $1.str, $10.node, $9.nodeList);
-          leaveClass();
-      }
-    | TYPE_NAME SCOPE_RES '~' TYPE_NAME '(' ')' {
-          setCategory($1.idx, categoryForTypeName(lookupTypeSymbol($1.str)));
-          setCategory($4.idx, "DESTRUCTOR");
-          enterClass($1.str);
-          pushScope($1.str + "::~" + $4.str + "()");
       } compound_stmt {
           popScope();
-          $$.node = makeDestructorNode($4.str, $4.idx, $1.str, $8.node);
+          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $6.decl.isVariadic, $1.str, $9.node);
           leaveClass();
       }
     ;
 
-/* `Dog(int n) : Animal(4), legs(n) { }`: bases and members built from
-   arguments before the body runs (a base's name before '(' is scanned
-   as FCAST, as in any other `T(...)`) */
-mem_init_opt
-    : /* empty */ { $$ = ParserValue(); }
-    | ':' mem_initializer_list { $$ = $2; }
-    ;
-
-mem_initializer_list
-    : mem_initializer { $$.nodeList.push_back($1.node); }
-    | mem_initializer_list ',' mem_initializer { $$ = $1; $$.nodeList.push_back($3.node); }
-    ;
-
-mem_initializer
-    : IDENTIFIER '(' argument_list_opt ')' {
-          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
-          for (auto &a : $3.nodeList) addChild($$.node, a);
-      }
-    | TYPE_NAME '(' argument_list_opt ')' {
-          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
-          for (auto &a : $3.nodeList) addChild($$.node, a);
-      }
-    | FCAST '(' argument_list_opt ')' {
-          $$.node = atToken(mkNode(ASTKind::MemInit, $1.str), $1.idx);
-          for (auto &a : $3.nodeList) addChild($$.node, a);
-      }
-    ;
 
 access_specifier
     : PUBLIC
@@ -687,9 +622,8 @@ direct_declarator
           $$.decl.nameIdx = $3.idx;
           $$.decl.className = $1.str;
       }
-    | direct_declarator '(' param_scope parameter_list_opt ')' method_cv_opt {
+    | direct_declarator '(' param_scope parameter_list_opt ')' {
           $$ = $1;
-          $$.decl.isConstMethod = $6.decl.isConstMethod;
           if ($1.decl.wasParenGrouped && $1.decl.pointerLevel > 0) {
               /* `int (*fp)(int)` would declare a pointer to a function;
                  the language has no function pointers, so a parameter
@@ -716,12 +650,6 @@ direct_declarator
       }
     | direct_declarator '[' ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back(nullptr); }
     | direct_declarator '[' assignment_expr ']' { $$ = $1; $$.decl.arrayLevel++; $$.decl.arrayDims.push_back($3.node); }
-    ;
-
-/* `int get() const`: a member function that does not change *this */
-method_cv_opt
-    : /* empty */ { $$ = ParserValue(); }
-    | CONST { $$ = ParserValue(); $$.decl.isConstMethod = true; }
     ;
 
 /* `operator+`, `operator==`, `operator[]`, ... as a function name */
@@ -796,7 +724,7 @@ function_definition
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
           std::string owner = $1.typeSpec.isFriend ? "" : currentClassName(); /* a friend is not a member */
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, owner, $2.decl.isConstMethod);
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, owner);
           std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
           SymbolDeclInfo extra;
           extra.tokenIdx = $2.decl.nameIdx;
@@ -836,7 +764,7 @@ function_definition
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
           std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic,
-                                       $1.typeSpec.isFriend ? "" : currentClassName(), $2.decl.isConstMethod);
+                                       $1.typeSpec.isFriend ? "" : currentClassName());
           if (outOfClass) leaveClass();
           auto node = atToken(mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled), $2.decl.nameIdx);
           node->typeExpr = makeTypeExpr($1.typeSpec, $2.decl);
@@ -1237,7 +1165,7 @@ primary_expr
     | BOOL_LITERAL { $$.node = atToken(mkNode(ASTKind::BoolLiteral, $1.str), $1.idx); }
     | THIS { $$.node = atToken(mkNode(ASTKind::ThisExpr), $1.idx); }
     | TYPE_NAME '(' constructor_args_opt ')' {
-          /* `Dog(4)`: a temporary object (for a scalar type, a cast) */
+          /* `Dog()`: a temporary object (for a scalar type, `int(x)`, a cast) */
           $$.node = makeFunctionalCast($1.str, $1.idx, $3.nodeList);
       }
     | FCAST '(' constructor_args_opt ')' {

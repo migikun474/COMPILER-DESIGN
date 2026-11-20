@@ -1,0 +1,16 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e24_removed_keywords.c
+
+Syntax analysis failed: 2 error(s); semantic analysis was not run.
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e24_removed_keywords.c:6:5: lexical error: 'virtual' is not supported: this language has no virtual functions
+ 6 |     virtual int area() { return 0; }          // error: 'virtual' is not supported: this language has no virtual functions
+   |     ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e24_removed_keywords.c:7:5: lexical error: 'explicit' is not supported: this language has no converting constructors
+ 7 |     explicit Shape() { }                      // error: 'explicit' is not supported: this language has no converting constructors
+   |     ^
+

@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test24_cpp_and_c99_syntax.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test24_cpp_and_c99_syntax.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test24_cpp_and_c99_syntax.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test24_cpp_and_c99_syntax.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -12,49 +12,37 @@ Program "translation_unit"
 |-- ClassDecl "Node"  <class Node>  -> Node (tag)
 |   |-- VarDecl "value : INT"  <int>  -> Node::value (field, member)
 |   |-- VarDecl "next : CLASS_POINTER"  <class Node *>  -> Node::next (field, member)
-|   |-- ConstructorDef "Node : _ZN4NodeC1Ei"  -> _ZN4NodeC1Ei (function)
-|   |   `-- ParamDecl "v : INT"
-|   |-- ConstructorDef "Node : _ZN4NodeC1EiPS_"  -> _ZN4NodeC1EiPS_ (function)
-|   |   |-- ParamDecl "v : INT"  <int>  -> v.1 (parameter, param)
-|   |   |-- ParamDecl "n : CLASS_POINTER"  <class Node *>  -> n.2 (parameter, param)
-|   |   `-- CompoundStmt
-|   |       |-- ExprStmt
-|   |       |   `-- AssignExpr "="  <int>
-|   |       |       |-- Identifier "value"  <int> lvalue  -> Node::value (field, member)
-|   |       |       `-- Identifier "v"  <int> lvalue  -> v.1 (parameter, param)
-|   |       `-- ExprStmt
-|   |           `-- AssignExpr "="  <class Node *>
-|   |               |-- Identifier "next"  <class Node *> lvalue  -> Node::next (field, member)
-|   |               `-- Identifier "n"  <class Node *> lvalue  -> n.2 (parameter, param)
-|   |-- DestructorDef "Node : _ZN4NodeD1Ev"  -> _ZN4NodeD1Ev (function)
+|   |-- ConstructorDef "Node : _ZN4NodeC1Ev"  -> _ZN4NodeC1Ev (function)
 |   |-- FunctionDecl "count : _ZN4Node5countEv"  <int (void)>  -> _ZN4Node5countEv (function)
 |   |-- FunctionDef "operator+ : _ZN4NodeplES_"  <class Node (class Node)>  -> _ZN4NodeplES_ (function)
-|   |   |-- ParamDecl "o : CLASS"  <class Node>  -> o.3 (parameter, param)
+|   |   |-- ParamDecl "o : CLASS"  <class Node>  -> o.1 (parameter, param)
 |   |   `-- CompoundStmt
+|   |       |-- VarDecl "r : CLASS"  <class Node>  -> r.2 (variable, local)
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="  <int>
+|   |       |       |-- MemberExpr "value"  <int> lvalue  -> Node::value (field, member)
+|   |       |       |   `-- Identifier "r"  <class Node> lvalue  -> r.2 (variable, local)
+|   |       |       `-- BinaryExpr "+"  <int>
+|   |       |           |-- Identifier "value"  <int> lvalue  -> Node::value (field, member)
+|   |       |           `-- MemberExpr "value"  <int> lvalue  -> Node::value (field, member)
+|   |       |               `-- Identifier "o"  <class Node> lvalue  -> o.1 (parameter, param)
 |   |       `-- ReturnStmt
-|   |           `-- ConstructExpr "Node"  <class Node>  -> _ZN4NodeC1Ei (function)
-|   |               `-- BinaryExpr "+"  <int>
-|   |                   |-- Identifier "value"  <int> lvalue  -> Node::value (field, member)
-|   |                   `-- MemberExpr "value"  <int> lvalue  -> Node::value (field, member)
-|   |                       `-- Identifier "o"  <class Node> lvalue  -> o.3 (parameter, param)
+|   |           `-- Identifier "r"  <class Node> lvalue  -> r.2 (variable, local)
 |   `-- FunctionDef "get : _ZN4Node3getEv"  <int (void)>  -> _ZN4Node3getEv (function)
 |       `-- CompoundStmt
 |           `-- ReturnStmt
 |               `-- ArrowExpr "value"  <int> lvalue  -> Node::value (field, member)
 |                   `-- ThisExpr  <class Node *>
-|-- ConstructorDef "Node : _ZN4NodeC1Ei"  -> _ZN4NodeC1Ei (function)
-|   |-- ParamDecl "v : INT"  <int>  -> v.4 (parameter, param)
+|-- ConstructorDef "Node : _ZN4NodeC1Ev"  -> _ZN4NodeC1Ev (function)
 |   `-- CompoundStmt
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- Identifier "value"  <int> lvalue  -> Node::value (field, member)
-|       |       `-- Identifier "v"  <int> lvalue  -> v.4 (parameter, param)
+|       |       `-- IntLiteral "1"  <int> =1
 |       `-- ExprStmt
 |           `-- AssignExpr "="  <class Node *>
 |               |-- Identifier "next"  <class Node *> lvalue  -> Node::next (field, member)
 |               `-- IntLiteral "0"  <int> =0
-|-- DestructorDef "Node : _ZN4NodeD1Ev"  -> _ZN4NodeD1Ev (function)
-|   `-- CompoundStmt
 |-- FunctionDef "count : _ZN4Node5countEv"  <int (void)>  -> _ZN4Node5countEv (function)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
@@ -63,96 +51,96 @@ Program "translation_unit"
 |   |-- VarDecl "x : INT"  <int>  -> Pt::x (field, member)
 |   `-- VarDecl "y : INT"  <int>  -> Pt::y (field, member)
 |-- FunctionDef "sum : _Z3sumiz"  <int (int, ...)>  -> _Z3sumiz (function)
-|   |-- ParamDecl "n : INT"  <int>  -> n.5 (parameter, param)
+|   |-- ParamDecl "n : INT"  <int>  -> n.3 (parameter, param)
 |   `-- CompoundStmt
-|       |-- VarDecl "ap : VA_LIST"  <va_list>  -> ap.6 (variable, local)
+|       |-- VarDecl "ap : VA_LIST"  <va_list>  -> ap.4 (variable, local)
 |       |-- ExprStmt
 |       |   `-- BuiltinCallExpr "va_start"  <void>
-|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.6 (variable, local)
-|       |       `-- Identifier "n"  <int> lvalue  -> n.5 (parameter, param)
-|       |-- VarDecl "s : INT"  <int>  -> s.7 (variable, local)
+|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.4 (variable, local)
+|       |       `-- Identifier "n"  <int> lvalue  -> n.3 (parameter, param)
+|       |-- VarDecl "s : INT"  <int>  -> s.5 (variable, local)
 |       |   `-- BuiltinCallExpr "va_arg"  <int>
-|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.6 (variable, local)
+|       |       |-- Identifier "ap"  <va_list> lvalue  -> ap.4 (variable, local)
 |       |       `-- TypeName "INT"  <int>
 |       |-- ExprStmt
 |       |   `-- BuiltinCallExpr "va_end"  <void>
-|       |       `-- Identifier "ap"  <va_list> lvalue  -> ap.6 (variable, local)
+|       |       `-- Identifier "ap"  <va_list> lvalue  -> ap.4 (variable, local)
 |       `-- ReturnStmt
-|           `-- Identifier "s"  <int> lvalue  -> s.7 (variable, local)
+|           `-- Identifier "s"  <int> lvalue  -> s.5 (variable, local)
 |-- FunctionDecl "apply : _Z5applyPii"  <int (int *, int)>  -> _Z5applyPii (function)
 |-- FunctionDef "apply : _Z5applyPii"  -> _Z5applyPii (function)
-|   |-- ParamDecl "f : INT_POINTER"  <int *>  -> f.8 (parameter, param)
-|   |-- ParamDecl "v : INT"  <int>  -> v.9 (parameter, param)
+|   |-- ParamDecl "f : INT_POINTER"  <int *>  -> f.6 (parameter, param)
+|   |-- ParamDecl "v : INT"  <int>  -> v.7 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- BinaryExpr "+"  <int>
 |               |-- UnaryExpr "*"  <int> lvalue
-|               |   `-- Identifier "f"  <int *> lvalue  -> f.8 (parameter, param)
-|               `-- Identifier "v"  <int> lvalue  -> v.9 (parameter, param)
+|               |   `-- Identifier "f"  <int *> lvalue  -> f.6 (parameter, param)
+|               `-- Identifier "v"  <int> lvalue  -> v.7 (parameter, param)
 |-- FunctionDef "twice : _Z5twicei"  <int (int)>  -> _Z5twicei (function)
-|   |-- ParamDecl "v : INT"  <int>  -> v.10 (parameter, param)
+|   |-- ParamDecl "v : INT"  <int>  -> v.8 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- BinaryExpr "*"  <int>
-|               |-- Identifier "v"  <int> lvalue  -> v.10 (parameter, param)
+|               |-- Identifier "v"  <int> lvalue  -> v.8 (parameter, param)
 |               `-- IntLiteral "2"  <int> =2
 `-- FunctionDef "main : main"  <int (void)>  -> main (function)
     `-- CompoundStmt
-        |-- VarDecl "a : CLASS"  <class Node>  -> a.11 (variable, local)
-        |   `-- ConstructExpr "CLASS"  <class Node>  -> _ZN4NodeC1Ei (function)
-        |       `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "b : CLASS"  <class Node>  -> b.12 (variable, local)
-        |   `-- ConstructExpr "CLASS"  <class Node>  -> _ZN4NodeC1EiPS_ (function)
-        |       |-- IntLiteral "2"  <int> =2
+        |-- VarDecl "a : CLASS"  <class Node>  -> a.9 (variable, local)
+        |-- VarDecl "b : CLASS"  <class Node>  -> b.10 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <class Node *>
+        |       |-- MemberExpr "next"  <class Node *> lvalue  -> Node::next (field, member)
+        |       |   `-- Identifier "b"  <class Node> lvalue  -> b.10 (variable, local)
         |       `-- UnaryExpr "&"  <class Node *>
-        |           `-- Identifier "a"  <class Node> lvalue  -> a.11 (variable, local)
-        |-- VarDecl "c : CLASS"  <class Node>  -> c.13 (variable, local)
+        |           `-- Identifier "a"  <class Node> lvalue  -> a.9 (variable, local)
+        |-- VarDecl "c : CLASS"  <class Node>  -> c.11 (variable, local)
         |   `-- BinaryExpr "+"  <class Node>  -> _ZN4NodeplES_ (function)
-        |       |-- Identifier "a"  <class Node> lvalue  -> a.11 (variable, local)
-        |       `-- Identifier "b"  <class Node> lvalue  -> b.12 (variable, local)
-        |-- VarDecl "many : INT_POINTER"  <int *>  -> many.14 (variable, local)
+        |       |-- Identifier "a"  <class Node> lvalue  -> a.9 (variable, local)
+        |       `-- Identifier "b"  <class Node> lvalue  -> b.10 (variable, local)
+        |-- VarDecl "many : INT_POINTER"  <int *>  -> many.12 (variable, local)
         |   `-- CastExpr "INT_POINTER"  <int *>
         |       `-- BuiltinCallExpr "malloc"  <void *>
         |           `-- BinaryExpr "*"  <unsigned int> =16
         |               |-- IntLiteral "4"  <int> =4
         |               `-- SizeofExpr "INT"  <unsigned int> =4
-        |-- VarDecl "x : INT"  <int>  -> x.15 (variable, local)
+        |-- VarDecl "x : INT"  <int>  -> x.13 (variable, local)
         |   `-- ConstructExpr "INT"  <int>
         |       `-- IntLiteral "5"  <int> =5
-        |-- VarDecl "cp : INT_POINTER"  <int * const>  -> cp.16 (variable, local)
+        |-- VarDecl "cp : INT_POINTER"  <int * const>  -> cp.14 (variable, local)
         |   `-- UnaryExpr "&"  <int *>
-        |       `-- Identifier "x"  <int> lvalue  -> x.15 (variable, local)
-        |-- VarDecl "rp : INT_POINTER_POINTER"  <int *&>  -> rp.17 (variable, local)
-        |   `-- Identifier "many"  <int *> lvalue  -> many.14 (variable, local)
-        |-- VarDecl "p : STRUCT"  <struct Pt>  -> p.18 (variable, local)
+        |       `-- Identifier "x"  <int> lvalue  -> x.13 (variable, local)
+        |-- VarDecl "rp : INT_POINTER_POINTER"  <int *&>  -> rp.15 (variable, local)
+        |   `-- Identifier "many"  <int *> lvalue  -> many.12 (variable, local)
+        |-- VarDecl "p : STRUCT"  <struct Pt>  -> p.16 (variable, local)
         |   `-- InitializerList  <struct Pt>
         |       |-- DesignatedInit ".y"  <int>  -> Pt::y (field, member)
         |       |   `-- IntLiteral "2"  <int> =2
         |       `-- DesignatedInit ".x"  <int>  -> Pt::x (field, member)
         |           `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.19 (variable, local)
+        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.17 (variable, local)
         |   `-- InitializerList  <int[4]>
         |       `-- DesignatedInit "[]"  <int>
         |           |-- IntLiteral "1"  <int> =1
         |           `-- IntLiteral "7"  <int> =7
-        |-- VarDecl "zeros : INT_ARRAY"  <int[2]>  -> zeros.20 (variable, local)
+        |-- VarDecl "zeros : INT_ARRAY"  <int[2]>  -> zeros.18 (variable, local)
         |   `-- InitializerList  <int[2]>
-        |-- VarDecl "s : CHAR_POINTER"  <char *>  -> s.21 (variable, local)
+        |-- VarDecl "s : CHAR_POINTER"  <char *>  -> s.19 (variable, local)
         |   `-- StringLiteral ""adjacent""  <char[9]> lvalue
-        |-- VarDecl "grid : INT_POINTER_ARRAY"  <int (*)[4]>  -> grid.22 (variable, local)
+        |-- VarDecl "grid : INT_POINTER_ARRAY"  <int (*)[4]>  -> grid.20 (variable, local)
         |   `-- CastExpr "INT_POINTER_ARRAY"  <int (*)[4]>
         |       `-- UnaryExpr "&"  <int (*)[4]>
-        |           `-- Identifier "arr"  <int[4]> lvalue  -> arr.19 (variable, local)
+        |           `-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
         |-- CompoundStmt
         |   `-- StructDecl "Local"  <struct Local>  -> Local (tag)
         |       `-- VarDecl "k : INT"  <int>  -> Local::k (field, member)
-        |-- VarDecl "Local : INT"  <int>  -> Local.23 (variable, local)
+        |-- VarDecl "Local : INT"  <int>  -> Local.21 (variable, local)
         |   `-- IntLiteral "0"  <int> =0
-        |-- VarDecl "T : INT"  <int>  -> T.24 (variable, local)
+        |-- VarDecl "T : INT"  <int>  -> T.22 (variable, local)
         |   `-- IntLiteral "3"  <int> =3
         |-- ExprStmt
         |   `-- BuiltinCallExpr "free"  <void>
-        |       `-- Identifier "many"  <int *> lvalue  -> many.14 (variable, local)
+        |       `-- Identifier "many"  <int *> lvalue  -> many.12 (variable, local)
         `-- ReturnStmt
             `-- BinaryExpr "+"  <int>
                 |-- BinaryExpr "+"  <int>
@@ -175,37 +163,37 @@ Program "translation_unit"
                 |   |   |   |   |   |   |   |   |   |   |   |       |-- IntLiteral "1"  <int> =1
                 |   |   |   |   |   |   |   |   |   |   |   |       `-- IntLiteral "2"  <int> =2
                 |   |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"  <int> lvalue
-                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "cp"  <int * const> lvalue  -> cp.16 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |       `-- Identifier "cp"  <int * const> lvalue  -> cp.14 (variable, local)
                 |   |   |   |   |   |   |   |   |   |   `-- UnaryExpr "*"  <int> lvalue
-                |   |   |   |   |   |   |   |   |   |       `-- Identifier "rp"  <int *> lvalue  -> rp.17 (variable, local)
+                |   |   |   |   |   |   |   |   |   |       `-- Identifier "rp"  <int *> lvalue  -> rp.15 (variable, local)
                 |   |   |   |   |   |   |   |   |   `-- MemberExpr "x"  <int> lvalue  -> Pt::x (field, member)
-                |   |   |   |   |   |   |   |   |       `-- Identifier "p"  <struct Pt> lvalue  -> p.18 (variable, local)
+                |   |   |   |   |   |   |   |   |       `-- Identifier "p"  <struct Pt> lvalue  -> p.16 (variable, local)
                 |   |   |   |   |   |   |   |   `-- IndexExpr  <int> lvalue
-                |   |   |   |   |   |   |   |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.19 (variable, local)
+                |   |   |   |   |   |   |   |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
                 |   |   |   |   |   |   |   |       `-- IntLiteral "1"  <int> =1
                 |   |   |   |   |   |   |   `-- IndexExpr  <int> lvalue
-                |   |   |   |   |   |   |       |-- Identifier "zeros"  <int[2]> lvalue  -> zeros.20 (variable, local)
+                |   |   |   |   |   |   |       |-- Identifier "zeros"  <int[2]> lvalue  -> zeros.18 (variable, local)
                 |   |   |   |   |   |   |       `-- IntLiteral "0"  <int> =0
                 |   |   |   |   |   |   `-- IndexExpr  <char> lvalue
-                |   |   |   |   |   |       |-- Identifier "s"  <char *> lvalue  -> s.21 (variable, local)
+                |   |   |   |   |   |       |-- Identifier "s"  <char *> lvalue  -> s.19 (variable, local)
                 |   |   |   |   |   |       `-- IntLiteral "0"  <int> =0
                 |   |   |   |   |   `-- IndexExpr  <int> lvalue
                 |   |   |   |   |       |-- UnaryExpr "*"  <int[4]> lvalue
-                |   |   |   |   |       |   `-- Identifier "grid"  <int (*)[4]> lvalue  -> grid.22 (variable, local)
+                |   |   |   |   |       |   `-- Identifier "grid"  <int (*)[4]> lvalue  -> grid.20 (variable, local)
                 |   |   |   |   |       `-- IntLiteral "1"  <int> =1
                 |   |   |   |   `-- CallExpr  <int>  -> _Z5applyPii (function)
                 |   |   |   |       |-- Identifier "apply"  <int (int *, int)>  -> _Z5applyPii (function)
                 |   |   |   |       |-- UnaryExpr "&"  <int *>
-                |   |   |   |       |   `-- Identifier "x"  <int> lvalue  -> x.15 (variable, local)
+                |   |   |   |       |   `-- Identifier "x"  <int> lvalue  -> x.13 (variable, local)
                 |   |   |   |       `-- IntLiteral "1"  <int> =1
                 |   |   |   `-- CallExpr  <int>  -> _Z5twicei (function)
                 |   |   |       |-- Identifier "twice"  <int (int)>  -> _Z5twicei (function)
                 |   |   |       `-- IntLiteral "2"  <int> =2
-                |   |   `-- Identifier "Local"  <int> lvalue  -> Local.23 (variable, local)
-                |   `-- Identifier "T"  <int> lvalue  -> T.24 (variable, local)
+                |   |   `-- Identifier "Local"  <int> lvalue  -> Local.21 (variable, local)
+                |   `-- Identifier "T"  <int> lvalue  -> T.22 (variable, local)
                 `-- CallExpr  <int>  -> _ZN4Node3getEv (function)
                     `-- MemberExpr "get"  <int (void)>  -> _ZN4Node3getEv (function)
-                        `-- Identifier "c"  <class Node> lvalue  -> c.13 (variable, local)
+                        `-- Identifier "c"  <class Node> lvalue  -> c.11 (variable, local)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
@@ -214,45 +202,41 @@ T                  typedef        int                        -        global    
 Node               class_tag      class Node                 -        global                         12    -     0     Node                 -                        size 8
 Node::value        field          int                        member   global > class Node            14    4     5     Node::value          -                        public, offset 0
 Node::next         field          class Node *               member   global > class Node            15    4     2     Node::next           -                        public, offset 4
-Node::Node         constructor    void (int)                 -        global > class Node            16    -     2     _ZN4NodeC1Ei         _ZN4NodeC1Ei             public
-Node::Node         constructor    void (int, class Node *)   -        global > class Node            17    -     1     _ZN4NodeC1EiPS_      _ZN4NodeC1EiPS_          public
-Node::~Node        destructor     void (void)                -        global > class Node            18    -     0     _ZN4NodeD1Ev         _ZN4NodeD1Ev             public
-Node::count        method         int (void)                 -        global > class Node            19    -     1     _ZN4Node5countEv     _ZN4Node5countEv         public, static, defined
-Node::operator+    method         class Node (class Node)    -        global > class Node            20    -     1     _ZN4NodeplES_        _ZN4NodeplES_            public, defined
-Node::get          method         int (void)                 -        global > class Node            21    -     1     _ZN4Node3getEv       _ZN4Node3getEv           public, defined
-v                  parameter      int                        param    global > class Node > Node()   17    4     1     v.1                  -                        
-n                  parameter      class Node *               param    global > class Node > Node()   17    4     1     n.2                  -                        
-o                  parameter      class Node                 param    global > class Node > operator+() 20    8     1     o.3                  -                        
-v                  parameter      int                        param    global > class Node > Node()   23    4     1     v.4                  -                        
-Pt                 struct_tag     struct Pt                  -        global                         26    -     0     Pt                   -                        size 8
-Pt::x              field          int                        member   global > struct Pt             26    4     1     Pt::x                -                        public, offset 0
-Pt::y              field          int                        member   global > struct Pt             26    4     0     Pt::y                -                        public, offset 4
-sum                function       int (int, ...)             -        global                         27    -     1     _Z3sumiz             _Z3sumiz                 defined
-n                  parameter      int                        param    global > sum()                 27    4     1     n.5                  -                        
-ap                 variable       va_list                    local    global > sum()                 28    4     3     ap.6                 -                        
-s                  variable       int                        local    global > sum()                 30    4     1     s.7                  -                        
-apply              function       int (int *, int)           -        global                         34    -     1     _Z5applyPii          _Z5applyPii              defined
-f                  parameter      int *                      param    global > apply()               35    4     1     f.8                  -                        
-v                  parameter      int                        param    global > apply()               35    4     1     v.9                  -                        
-twice              function       int (int)                  -        global                         36    -     1     _Z5twicei            _Z5twicei                defined
-v                  parameter      int                        param    global > twice()               36    4     1     v.10                 -                        
-main               function       int (void)                 -        global                         37    -     0     main                 main                     defined
-a                  variable       class Node                 local    global > main()                38    8     2     a.11                 -                        
-b                  variable       class Node                 local    global > main()                39    8     1     b.12                 -                        
-c                  variable       class Node                 local    global > main()                40    8     1     c.13                 -                        
-many               variable       int *                      local    global > main()                41    4     2     many.14              -                        
-x                  variable       int                        local    global > main()                42    4     2     x.15                 -                        
-cp                 variable       int * const                local    global > main()                43    4     1     cp.16                -                        
-rp                 variable       int *&                     local    global > main()                44    4     1     rp.17                -                        
-p                  variable       struct Pt                  local    global > main()                45    8     1     p.18                 -                        
-arr                variable       int[4]                     local    global > main()                46    16    2     arr.19               -                        
-zeros              variable       int[2]                     local    global > main()                47    8     1     zeros.20             -                        
-s                  variable       char *                     local    global > main()                48    4     1     s.21                 -                        
-grid               variable       int (*)[4]                 local    global > main()                49    4     1     grid.22              -                        
-Local              struct_tag     struct Local               -        global > main() > block        51    -     0     Local                -                        size 4
-Local::k           field          int                        member   global > main() > block > struct Local 51    4     0     Local::k             -                        public, offset 0
-Local              variable       int                        local    global > main()                53    4     1     Local.23             -                        
-T                  variable       int                        local    global > main()                54    4     1     T.24                 -                        
+Node::Node         constructor    void (void)                -        global > class Node            16    -     3     _ZN4NodeC1Ev         _ZN4NodeC1Ev             public
+Node::count        method         int (void)                 -        global > class Node            17    -     1     _ZN4Node5countEv     _ZN4Node5countEv         public, static, defined
+Node::operator+    method         class Node (class Node)    -        global > class Node            18    -     1     _ZN4NodeplES_        _ZN4NodeplES_            public, defined
+Node::get          method         int (void)                 -        global > class Node            19    -     1     _ZN4Node3getEv       _ZN4Node3getEv           public, defined
+o                  parameter      class Node                 param    global > class Node > operator+() 18    8     1     o.1                  -                        
+r                  variable       class Node                 local    global > class Node > operator+() 18    8     2     r.2                  -                        
+Pt                 struct_tag     struct Pt                  -        global                         23    -     0     Pt                   -                        size 8
+Pt::x              field          int                        member   global > struct Pt             23    4     1     Pt::x                -                        public, offset 0
+Pt::y              field          int                        member   global > struct Pt             23    4     0     Pt::y                -                        public, offset 4
+sum                function       int (int, ...)             -        global                         24    -     1     _Z3sumiz             _Z3sumiz                 defined
+n                  parameter      int                        param    global > sum()                 24    4     1     n.3                  -                        
+ap                 variable       va_list                    local    global > sum()                 25    4     3     ap.4                 -                        
+s                  variable       int                        local    global > sum()                 27    4     1     s.5                  -                        
+apply              function       int (int *, int)           -        global                         31    -     1     _Z5applyPii          _Z5applyPii              defined
+f                  parameter      int *                      param    global > apply()               32    4     1     f.6                  -                        
+v                  parameter      int                        param    global > apply()               32    4     1     v.7                  -                        
+twice              function       int (int)                  -        global                         33    -     1     _Z5twicei            _Z5twicei                defined
+v                  parameter      int                        param    global > twice()               33    4     1     v.8                  -                        
+main               function       int (void)                 -        global                         34    -     0     main                 main                     defined
+a                  variable       class Node                 local    global > main()                35    8     2     a.9                  -                        
+b                  variable       class Node                 local    global > main()                36    8     2     b.10                 -                        
+c                  variable       class Node                 local    global > main()                38    8     1     c.11                 -                        
+many               variable       int *                      local    global > main()                39    4     2     many.12              -                        
+x                  variable       int                        local    global > main()                40    4     2     x.13                 -                        
+cp                 variable       int * const                local    global > main()                41    4     1     cp.14                -                        
+rp                 variable       int *&                     local    global > main()                42    4     1     rp.15                -                        
+p                  variable       struct Pt                  local    global > main()                43    8     1     p.16                 -                        
+arr                variable       int[4]                     local    global > main()                44    16    2     arr.17               -                        
+zeros              variable       int[2]                     local    global > main()                45    8     1     zeros.18             -                        
+s                  variable       char *                     local    global > main()                46    4     1     s.19                 -                        
+grid               variable       int (*)[4]                 local    global > main()                47    4     1     grid.20              -                        
+Local              struct_tag     struct Local               -        global > main() > block        49    -     0     Local                -                        size 4
+Local::k           field          int                        member   global > main() > block > struct Local 49    4     0     Local::k             -                        public, offset 0
+Local              variable       int                        local    global > main()                51    4     1     Local.21             -                        
+T                  variable       int                        local    global > main()                52    4     1     T.22                 -                        
 
 === Record Layouts (MIPS32) ===
 class Node: size 8, align 4

@@ -1005,6 +1005,65 @@ trailing zeros and a lone point. Checked against gcc on 140 values
 (new test `t34_float_formats`). Same ceiling as `%f`: the scaled value
 must stay below about 9·10¹⁸.
 
+### D34. No preprocessor (2026-11-21)
+
+The user asked to remove the preprocessor and chose that any line
+starting with `#` is an error (rather than silently skipping it). The
+shared `preprocessor` module is deleted. Both scanners report
+`preprocessor directive '#include' is not supported` and skip the rest
+of the line, so one directive gives one message instead of a cascade of
+syntax errors. `printf`, `scanf`, `malloc`, `free` and `va_list` were
+always built into the language, so programs lose nothing by dropping
+`#include`. The drivers read the source through `openSource()`
+(diagnostics module), which keeps the lines for carets and for the
+scanner's lookahead; the line-origin map the preprocessor kept is gone,
+since every position is now a line of the file as written.
+
+Tests: every `#include` line was removed from the test programs, the
+macros in `t26` and parser `test2` were inlined, and the five
+preprocessor-only tests were replaced by `e16_no_preprocessor`.
+
+### D35. A smaller C++ subset (2026-11-21)
+
+The user asked to remove most C++ class features and keep the rest
+simple. Decisions taken with the user:
+
+| Feature | Now |
+|---|---|
+| Constructors | Only the default constructor `T()` (one per class, no parameters, no initializer list). `T x(other)` with an object of the same class, `T x = other`, by-value arguments and returns copy the object's bytes: there are no copy constructors |
+| Destructors | Removed; `~T()` is a syntax error |
+| Temporary object lifetime | Removed with destructors (nothing runs at the end of a full expression) |
+| Const member functions | Removed (`int f() const` is a syntax error); a const object can only call static members |
+| Nested and local classes | A `class`, or a struct with member functions, a constructor or a base, may not be defined inside a class or a function. Plain C data structs may still nest, as in C |
+| Lazily built static locals | A `static` local whose class runs a constructor is an error |
+| Inheritance | Single inheritance only: at most one direct base, chains allowed |
+| Object slicing | A derived object may not be copied, assigned or passed by value as a base object; pointers and references still convert |
+| Virtual functions | Removed with everything that served them: override detection, vtables, vptrs, dynamic dispatch (`call *t`, `jalr`), this-adjustment, abstract classes, `= 0`, virtual destructors and operators |
+| `explicit`, converting constructors | Removed |
+
+`virtual` and `explicit` stay reserved words so the scanner can name
+them in its error; `~T()`, `int f() const`, `T() : x(1)` and `= 0` are
+syntax errors. Friends, access control, static members, operator
+overloading, function overloading and references are unchanged.
+
+In the TAC generator this deleted the scope/destructor machinery
+(`destroyScopes`, temporaries, `scanLabels`), the vtable code, copy
+constructors, slicing and converting-constructor paths. With single
+inheritance and no vptr a base always sits at offset 0, so `this` is the
+object's address with no adjustment.
+
+Tests: semantic `v10`, `v17`, `v19`, `v21`, `v25`, `v27`, `e09`, `e14`,
+`e15`, `e23` rewritten, `e24_removed_keywords` added; parser `test7`,
+`test24`, `test25`, `test30` rewritten, `test31_dropped_class_features`
+added; TAC `t08`, `t13`, `t23`, `t27` rewritten (expected output from
+g++), `t30_temporaries`, `t31_virtual`, `t32_class_features` deleted.
+
+### D36. Loop-invariant code motion removed (2026-11-21)
+
+At the user's request `-O3` no longer hoists invariant computations out
+of loops (`hoistInvariants()` deleted). The dominator and natural-loop
+analysis (`loops()`) stays, for the loop unrolling planned next.
+
 ---
 
 ## Open questions

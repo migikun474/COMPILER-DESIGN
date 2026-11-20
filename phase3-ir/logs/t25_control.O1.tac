@@ -406,68 +406,68 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   classify           function      int (const char *)         -           9    -    5  _Z8classifyPKc; defined
-   daysIn             function      int (int, int)             -          35    -    4  _Z6daysInii; defined
-   grade              function      const char *(int)          -          43    -    4  _Z5gradei; defined
-   firstPair          function      int (int)                  -          47    -    3  _Z9firstPairi; defined
-   main               function      int (void)                 -          57    -    0  defined
+   classify           function      int (const char *)         -           5    -    5  _Z8classifyPKc; defined
+   daysIn             function      int (int, int)             -          31    -    4  _Z6daysInii; defined
+   grade              function      const char *(int)          -          39    -    4  _Z5gradei; defined
+   firstPair          function      int (int)                  -          43    -    3  _Z9firstPairi; defined
+   main               function      int (void)                 -          53    -    0  defined
 
  scope: global > classify()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param       9    4    3  s.1
-   state              variable      int                        local      10    4    5  state.2
+   s                  parameter     const char *               param       5    4    3  s.1
+   state              variable      int                        local       6    4    5  state.2
 
  scope: global > classify() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  variable      char                       local      12    1    6  c.3
-   digit              variable      int                        local      13    4    4  digit.4
-   letter             variable      int                        local      13    4    2  letter.5
+   c                  variable      char                       local       8    1    6  c.3
+   digit              variable      int                        local       9    4    4  digit.4
+   letter             variable      int                        local       9    4    2  letter.5
 
  scope: global > daysIn()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   month              parameter     int                        param      35    4    1  month.6
-   year               parameter     int                        param      35    4    3  year.7
+   month              parameter     int                        param      31    4    1  month.6
+   year               parameter     int                        param      31    4    3  year.7
 
  scope: global > grade()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   score              parameter     int                        param      43    4    3  score.8
+   score              parameter     int                        param      39    4    3  score.8
 
  scope: global > firstPair()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   target             parameter     int                        param      47    4    1  target.9
-   found              label         -                          -          53    -    1  _Z9firstPairi.found
-   i                  variable      int                        local      48    4    6  i.10
-   j                  variable      int                        local      48    4    5  j.11
+   target             parameter     int                        param      43    4    1  target.9
+   found              label         -                          -          49    -    1  _Z9firstPairi.found
+   i                  variable      int                        local      44    4    6  i.10
+   j                  variable      int                        local      44    4    5  j.11
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   triangle           variable      int                        local      63    4    2  triangle.12
-   skipped            variable      int                        local      63    4    2  skipped.13
-   n                  variable      int                        local      74    4    4  n.16
-   digits             variable      int                        local      74    4    3  digits.17
-   value              variable      int                        local      74    4    2  value.18
-   a                  variable      int                        local      77    4    6  a.19
-   b                  variable      int                        local      77    4    6  b.20
-   c                  variable      int                        local      77    4    2  c.21
-   steps              variable      int                        local      82    4    2  steps.22
-   k                  variable      int                        local      82    4    5  k.23
-   countdown          variable      int                        local      88    4    2  countdown.24
+   triangle           variable      int                        local      59    4    2  triangle.12
+   skipped            variable      int                        local      59    4    2  skipped.13
+   n                  variable      int                        local      70    4    4  n.16
+   digits             variable      int                        local      70    4    3  digits.17
+   value              variable      int                        local      70    4    2  value.18
+   a                  variable      int                        local      73    4    6  a.19
+   b                  variable      int                        local      73    4    6  b.20
+   c                  variable      int                        local      73    4    2  c.21
+   steps              variable      int                        local      78    4    2  steps.22
+   k                  variable      int                        local      78    4    5  k.23
+   countdown          variable      int                        local      84    4    2  countdown.24
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      64    4    6  i.14
+   i                  variable      int                        local      60    4    6  i.14
 
  scope: global > main() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local      66    4    5  j.15
+   j                  variable      int                        local      62    4    5  j.15
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

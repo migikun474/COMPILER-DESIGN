@@ -427,107 +427,107 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   g                  variable      int                        global      6    4    9  
-   bump               function      int (void)                 -           7    -    2  _Z4bumpv; defined
-   set                function      void (int *, int)          -           8    -    1  _Z3setPii; defined
-   twice              function      void (int &)               -           9    -    1  _Z5twiceRi; defined
-   fold               function      int (void)                 -          11    -    1  _Z4foldv; defined
-   common             function      int (int, int)             -          22    -    1  _Z6commonii; defined
-   aliasing           function      int (void)                 -          31    -    1  _Z8aliasingv; defined
-   globals            function      int (void)                 -          53    -    1  _Z7globalsv; defined
-   flow               function      int (int)                  -          65    -    3  _Z4flowi; defined
-   divide             function      int (int, int)             -          82    -    2  _Z6divideii; defined
-   main               function      int (void)                 -          84    -    0  defined
+   g                  variable      int                        global      5    4    9  
+   bump               function      int (void)                 -           6    -    2  _Z4bumpv; defined
+   set                function      void (int *, int)          -           7    -    1  _Z3setPii; defined
+   twice              function      void (int &)               -           8    -    1  _Z5twiceRi; defined
+   fold               function      int (void)                 -          10    -    1  _Z4foldv; defined
+   common             function      int (int, int)             -          21    -    1  _Z6commonii; defined
+   aliasing           function      int (void)                 -          30    -    1  _Z8aliasingv; defined
+   globals            function      int (void)                 -          52    -    1  _Z7globalsv; defined
+   flow               function      int (int)                  -          64    -    3  _Z4flowi; defined
+   divide             function      int (int, int)             -          81    -    2  _Z6divideii; defined
+   main               function      int (void)                 -          83    -    0  defined
 
  scope: global > set()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     int *                      param       8    4    1  p.1
-   v                  parameter     int                        param       8    4    1  v.2
+   p                  parameter     int *                      param       7    4    1  p.1
+   v                  parameter     int                        param       7    4    1  v.2
 
  scope: global > twice()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     int &                      param       9    4    2  r.3
+   r                  parameter     int &                      param       8    4    2  r.3
 
  scope: global > fold()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local      12    4    4  a.4
-   b                  variable      int                        local      12    4    4  b.5
-   c                  variable      int                        local      12    4    2  c.6
-   d                  variable      double                     local      13    8    1  d.7
-   u                  variable      unsigned int               local      14    4    1  u.8
-   ch                 variable      char                       local      15    1    1  ch.9
+   a                  variable      int                        local      11    4    4  a.4
+   b                  variable      int                        local      11    4    4  b.5
+   c                  variable      int                        local      11    4    2  c.6
+   d                  variable      double                     local      12    8    1  d.7
+   u                  variable      unsigned int               local      13    4    1  u.8
+   ch                 variable      char                       local      14    1    1  ch.9
 
  scope: global > common()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      22    4   10  x.10
-   y                  parameter     int                        param      22    4    7  y.11
-   a                  variable      int                        local      23    4    1  a.12
-   b                  variable      int                        local      23    4    1  b.13
-   c                  variable      int                        local      24    4    1  c.14
-   d                  variable      int                        local      24    4    1  d.15
-   e                  variable      int                        local      25    4    1  e.16
-   f                  variable      int                        local      27    4    1  f.17
+   x                  parameter     int                        param      21    4   10  x.10
+   y                  parameter     int                        param      21    4    7  y.11
+   a                  variable      int                        local      22    4    1  a.12
+   b                  variable      int                        local      22    4    1  b.13
+   c                  variable      int                        local      23    4    1  c.14
+   d                  variable      int                        local      23    4    1  d.15
+   e                  variable      int                        local      24    4    1  e.16
+   f                  variable      int                        local      26    4    1  f.17
 
  scope: global > aliasing()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      32    4    8  x.18
-   y                  variable      int                        local      32    4    5  y.19
-   p                  variable      int *                      local      33    4    1  p.20
-   a                  variable      int                        local      34    4    1  a.21
-   b                  variable      int                        local      36    4    1  b.22
-   c                  variable      int                        local      38    4    1  c.23
-   r                  variable      int &                      local      39    4    2  r.24
-   d                  variable      int                        local      41    4    1  d.25
-   arr                variable      int[3]                     local      43   12    7  arr.26
-   i                  variable      int                        local      44    4    4  i.27
-   e                  variable      int                        local      45    4    1  e.28
-   f                  variable      int                        local      47    4    1  f.29
-   q                  variable      int *                      local      48    4    1  q.30
+   x                  variable      int                        local      31    4    8  x.18
+   y                  variable      int                        local      31    4    5  y.19
+   p                  variable      int *                      local      32    4    1  p.20
+   a                  variable      int                        local      33    4    1  a.21
+   b                  variable      int                        local      35    4    1  b.22
+   c                  variable      int                        local      37    4    1  c.23
+   r                  variable      int &                      local      38    4    2  r.24
+   d                  variable      int                        local      40    4    1  d.25
+   arr                variable      int[3]                     local      42   12    7  arr.26
+   i                  variable      int                        local      43    4    4  i.27
+   e                  variable      int                        local      44    4    1  e.28
+   f                  variable      int                        local      46    4    1  f.29
+   q                  variable      int *                      local      47    4    1  q.30
 
  scope: global > globals()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local      54    4    1  a.31
-   b                  variable      int                        local      55    4    1  b.32
-   c                  variable      int                        local      57    4    1  c.33
-   d                  variable      int                        local      59    4    1  d.34
-   v                  variable      int                        local      60    4    2  v.35
-   e                  variable      int                        local      61    4    1  e.36
+   a                  variable      int                        local      53    4    1  a.31
+   b                  variable      int                        local      54    4    1  b.32
+   c                  variable      int                        local      56    4    1  c.33
+   d                  variable      int                        local      58    4    1  d.34
+   v                  variable      int                        local      59    4    2  v.35
+   e                  variable      int                        local      60    4    1  e.36
 
  scope: global > flow()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      65    4    3  n.37
-   s                  variable      int                        local      66    4    9  s.38
+   n                  parameter     int                        param      64    4    3  n.37
+   s                  variable      int                        local      65    4    9  s.38
 
  scope: global > flow() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      67    4    3  i.39
+   i                  variable      int                        local      66    4    3  i.39
 
  scope: global > flow() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      68    4    1  k.40
+   k                  variable      int                        local      67    4    1  k.40
 
  scope: global > divide()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      82    4    1  a.41
-   b                  parameter     int                        param      82    4    2  b.42
+   a                  parameter     int                        param      81    4    1  a.41
+   b                  parameter     int                        param      81    4    2  b.42
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   total              variable      int                        local      88    4    1  total.43
-   zero               variable      int                        local      91    4    1  zero.44
-   x                  variable      double                     local      93    8    2  x.45
-   y                  variable      double                     local      93    8    1  y.46
+   total              variable      int                        local      87    4    1  total.43
+   zero               variable      int                        local      90    4    1  zero.44
+   x                  variable      double                     local      92    8    2  x.45
+   y                  variable      double                     local      92    8    1  y.46
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

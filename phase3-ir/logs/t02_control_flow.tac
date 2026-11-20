@@ -207,30 +207,30 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   classify           function      int (int)                  -           7    -    1  _Z8classifyi; defined
-   main               function      int (void)                 -          18    -    0  defined
+   classify           function      int (int)                  -           3    -    1  _Z8classifyi; defined
+   main               function      int (void)                 -          14    -    0  defined
 
  scope: global > classify()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       7    4    7  n.1
+   n                  parameter     int                        param       3    4    7  n.1
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   again              label         -                          -          49    -    1  main.again
-   done               label         -                          -          54    -    1  main.done
-   i                  variable      int                        local      19    4   16  i.2
-   total              variable      int                        local      19    4    3  total.3
-   n                  variable      int                        local      27    4   11  n.4
-   fact               variable      int                        local      27    4    3  fact.5
-   count              variable      int                        local      48    4    5  count.7
-   x                  variable      int                        local      57    4    6  x.8
+   again              label         -                          -          45    -    1  main.again
+   done               label         -                          -          50    -    1  main.done
+   i                  variable      int                        local      15    4   16  i.2
+   total              variable      int                        local      15    4    3  total.3
+   n                  variable      int                        local      23    4   11  n.4
+   fact               variable      int                        local      23    4    3  fact.5
+   count              variable      int                        local      44    4    5  count.7
+   x                  variable      int                        local      53    4    6  x.8
 
  scope: global > main() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local      41    4    4  j.6
+   j                  variable      int                        local      37    4    4  j.6
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

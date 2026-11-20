@@ -29,7 +29,6 @@
    calls inlined                          12
    tail calls turned into jumps            0
    common subexpressions across blocks      1
-   instructions moved out of loops         1
 
 ============================================================================
  FUNCTION length(const char *)        (link name _Z6lengthPKc)
@@ -192,12 +191,12 @@
  Code: 12 instruction(s)
 
     153        i = 0
-    154        t6 = chartoint c
-    155  L10:  t1 = text ptr+ i
-    156        t2 = *t1
-    157        if t2 char== 0 goto L12
-    158        t4 = *t1
-    159        t5 = chartoint t4
+    154  L10:  t1 = text ptr+ i
+    155        t2 = *t1
+    156        if t2 char== 0 goto L12
+    157        t4 = *t1
+    158        t5 = chartoint t4
+    159        t6 = chartoint c
     160        if t5 int!= t6 goto L11
     161        return i
     162  L11:  i = i int+ 1
@@ -471,15 +470,15 @@
    t72              temp    char *                          4     360
    t73              temp    char                            1     364
    t76              temp    int                             4     376
-   t78              temp    const char *                    4     384
+   t77              temp    const char *                    4     380
+   t78              temp    char                            1     384
    t79              temp    char                            1     388
-   t80              temp    char                            1     392
-   t81              temp    int                             4     396
+   t80              temp    int                             4     392
    t84              temp    int                             4     408
-   t86              temp    const char *                    4     416
+   t85              temp    const char *                    4     412
+   t86              temp    char                            1     416
    t87              temp    char                            1     420
-   t88              temp    char                            1     424
-   t89              temp    int                             4     428
+   t88              temp    int                             4     424
    t90              temp    const char *                    4     432
    t91              temp    const char *                    4     436
    t92              temp    char                            1     440
@@ -576,24 +575,24 @@
     295        t69 = t69 int- 1
     296        goto L32
     297  L33:  t76 = 0
-    298  L34:  t78 = t1 ptr+ t76
-    299        t79 = *t78
-    300        if t79 char== 0 goto L36
-    301        t80 = *t78
-    302        t81 = chartoint t80
-    303        if t81 int!= 112 goto L35
+    298  L34:  t77 = t1 ptr+ t76
+    299        t78 = *t77
+    300        if t78 char== 0 goto L36
+    301        t79 = *t77
+    302        t80 = chartoint t79
+    303        if t80 int!= 112 goto L35
     304        t8 = t76
     305        goto L37
     306  L35:  t76 = t76 int+ 1
     307        goto L34
     308  L36:  t8 = -1
     309  L37:  t84 = 0
-    310  L38:  t86 = t1 ptr+ t84
-    311        t87 = *t86
-    312        if t87 char== 0 goto L40
-    313        t88 = *t86
-    314        t89 = chartoint t88
-    315        if t89 int!= 122 goto L39
+    310  L38:  t85 = t1 ptr+ t84
+    311        t86 = *t85
+    312        if t86 char== 0 goto L40
+    313        t87 = *t85
+    314        t88 = chartoint t87
+    315        if t88 int!= 122 goto L39
     316        t10 = t84
     317        goto L41
     318  L39:  t84 = t84 int+ 1
@@ -782,102 +781,102 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   length             function      int (const char *)         -           5    -    4  _Z6lengthPKc; defined
-   copy               function      void (char *, const char *) -           7    -    1  _Z4copyPcPKc; defined
-   compare            function      int (const char *, const char *) -           9    -    4  _Z7comparePKcS0_; defined
-   reverse            function      void (char *)              -          14    -    1  _Z7reversePc; defined
-   find               function      int (const char *, char)   -          19    -    2  _Z4findPKcc; defined
-   toNumber           function      int (const char *)         -          24    -    2  _Z8toNumberPKc; defined
-   toText             function      void (int, char *)         -          31    -    1  _Z6toTextiPc; defined
-   isPalindrome       function      int (const char *)         -          41    -    2  _Z12isPalindromePKc; defined
-   countWords         function      int (const char *)         -          47    -    1  _Z10countWordsPKc; defined
-   main               function      int (void)                 -          56    -    0  defined
+   length             function      int (const char *)         -           4    -    4  _Z6lengthPKc; defined
+   copy               function      void (char *, const char *) -           6    -    1  _Z4copyPcPKc; defined
+   compare            function      int (const char *, const char *) -           8    -    4  _Z7comparePKcS0_; defined
+   reverse            function      void (char *)              -          13    -    1  _Z7reversePc; defined
+   find               function      int (const char *, char)   -          18    -    2  _Z4findPKcc; defined
+   toNumber           function      int (const char *)         -          23    -    2  _Z8toNumberPKc; defined
+   toText             function      void (int, char *)         -          30    -    1  _Z6toTextiPc; defined
+   isPalindrome       function      int (const char *)         -          40    -    2  _Z12isPalindromePKc; defined
+   countWords         function      int (const char *)         -          46    -    1  _Z10countWordsPKc; defined
+   main               function      int (void)                 -          55    -    0  defined
 
  scope: global > length()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param       5    4    1  s.1
-   n                  variable      int                        local       5    4    3  n.2
+   s                  parameter     const char *               param       4    4    1  s.1
+   n                  variable      int                        local       4    4    3  n.2
 
  scope: global > copy()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   to                 parameter     char *                     param       7    4    1  to.3
-   from               parameter     const char *               param       7    4    1  from.4
+   to                 parameter     char *                     param       6    4    1  to.3
+   from               parameter     const char *               param       6    4    1  from.4
 
  scope: global > compare()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     const char *               param       9    4    4  a.5
-   b                  parameter     const char *               param       9    4    3  b.6
+   a                  parameter     const char *               param       8    4    4  a.5
+   b                  parameter     const char *               param       8    4    3  b.6
 
  scope: global > reverse()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     char *                     param      14    4    5  s.7
-   i                  variable      int                        local      15    4    4  i.8
-   j                  variable      int                        local      15    4    4  j.9
+   s                  parameter     char *                     param      13    4    5  s.7
+   i                  variable      int                        local      14    4    4  i.8
+   j                  variable      int                        local      14    4    4  j.9
 
  scope: global > reverse() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      char                       local      16    1    1  t.10
+   t                  variable      char                       local      15    1    1  t.10
 
  scope: global > find()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   text               parameter     const char *               param      19    4    2  text.11
-   c                  parameter     char                       param      19    1    1  c.12
+   text               parameter     const char *               param      18    4    2  text.11
+   c                  parameter     char                       param      18    1    1  c.12
 
  scope: global > find() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      20    4    4  i.13
+   i                  variable      int                        local      19    4    4  i.13
 
  scope: global > toNumber()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param      24    4    6  s.14
-   sign               variable      int                        local      25    4    2  sign.15
-   v                  variable      int                        local      25    4    3  v.16
+   s                  parameter     const char *               param      23    4    6  s.14
+   sign               variable      int                        local      24    4    2  sign.15
+   v                  variable      int                        local      24    4    3  v.16
 
  scope: global > toText()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param      31    4    6  v.17
-   out                parameter     char *                     param      31    4    2  out.18
-   tmp                variable      char[12]                   local      32   12    3  tmp.19
-   n                  variable      int                        local      33    4    4  n.20
-   neg                variable      int                        local      33    4    2  neg.21
+   v                  parameter     int                        param      30    4    6  v.17
+   out                parameter     char *                     param      30    4    2  out.18
+   tmp                variable      char[12]                   local      31   12    3  tmp.19
+   n                  variable      int                        local      32    4    4  n.20
+   neg                variable      int                        local      32    4    2  neg.21
 
  scope: global > isPalindrome()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param      41    4    3  s.22
-   i                  variable      int                        local      42    4    2  i.23
-   j                  variable      int                        local      42    4    2  j.24
+   s                  parameter     const char *               param      40    4    3  s.22
+   i                  variable      int                        local      41    4    2  i.23
+   j                  variable      int                        local      41    4    2  j.24
 
  scope: global > countWords()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param      47    4    4  s.25
-   words              variable      int                        local      48    4    2  words.26
-   inside             variable      int                        local      48    4    3  inside.27
+   s                  parameter     const char *               param      46    4    4  s.25
+   words              variable      int                        local      47    4    2  words.26
+   inside             variable      int                        local      47    4    3  inside.27
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   buf                variable      char[32]                   local      57   32    8  buf.28
-   num                variable      char[16]                   local      57   16    3  num.29
-   names              variable      const char *[3]            local      58   12    5  names.30
-   smallest           variable      int                        local      64    4    3  smallest.31
-   upper              variable      char[8]                    local      70    8    7  upper.33
+   buf                variable      char[32]                   local      56   32    8  buf.28
+   num                variable      char[16]                   local      56   16    3  num.29
+   names              variable      const char *[3]            local      57   12    5  names.30
+   smallest           variable      int                        local      63    4    3  smallest.31
+   upper              variable      char[8]                    local      69    8    7  upper.33
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      65    4    4  i.32
-   i                  variable      int                        local      71    4    6  i.34
+   i                  variable      int                        local      64    4    4  i.32
+   i                  variable      int                        local      70    4    6  i.34
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

@@ -124,13 +124,8 @@ for f in "$SCRIPT_DIR"/test/invalid/*.c; do check_file "$f" 1; done
 #  - operators.c line 11, `c = a+++++b;`, lexes as `(a++)++ + b`,
 #    incrementing an rvalue -- gcc and g++ reject it with the same
 #    "lvalue required as increment operand".
-#  - test7_cpp_features.c line 35, `Dog d;`, where Dog's only
-#    constructor is Dog(int): g++ rejects it ("no matching function for
-#    call to 'Dog::Dog()'"). It was written when the grammar could not
-#    call constructors with arguments at all; now `Dog d(4);` works.
 declare -A CORPUS_EXPECT=(
     [operators.c]="lvalue required as increment operand"
-    [test7_cpp_features.c]="has no default constructor"
 )
 echo
 echo "=== end to end: phase2-parser corpus through semantic analysis ==="

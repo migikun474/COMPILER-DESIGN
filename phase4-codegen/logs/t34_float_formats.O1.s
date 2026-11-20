@@ -68,9 +68,9 @@ main_:
         move  $fp, $sp
         addiu $sp, $sp, -152
         s.d   $f20, -144($fp)
-        sw    $s0, -152($fp)
+        sw    $s0, -148($fp)
         sw    $s1, -132($fp)
-        sw    $s2, -148($fp)
+        sw    $s2, -152($fp)
         # v[0] = 1234.5678
         l.d   $f0, fc0
         s.d   $f0, -104($fp)
@@ -189,9 +189,9 @@ L0_32:
         j     main__exit
 main__exit:
         l.d   $f20, -144($fp)
-        lw    $s0, -152($fp)
+        lw    $s0, -148($fp)
         lw    $s1, -132($fp)
-        lw    $s2, -148($fp)
+        lw    $s2, -152($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

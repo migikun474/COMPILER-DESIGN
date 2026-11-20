@@ -57,9 +57,9 @@ _Z7depositR7Accountd:
         addiu $sp, $sp, -64
         s.d   $f20, -40($fp)
         s.d   $f22, -48($fp)
-        s.d   $f24, -64($fp)
+        s.d   $f24, -56($fp)
         sw    $s0, -28($fp)
-        sw    $s1, -52($fp)
+        sw    $s1, -60($fp)
         lw    $s1, 8($fp)
         l.d   $f24, 16($fp)
         # t1 = a ptr+ 8
@@ -77,9 +77,9 @@ _Z7depositR7Accountd:
 _Z7depositR7Accountd_exit:
         l.d   $f20, -40($fp)
         l.d   $f22, -48($fp)
-        l.d   $f24, -64($fp)
+        l.d   $f24, -56($fp)
         lw    $s0, -28($fp)
-        lw    $s1, -52($fp)
+        lw    $s1, -60($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8

@@ -18,7 +18,6 @@ public:
     int peek() { return priv; }   // error: 'priv' is a private member of 'class Base' and is not accessible from class 'Derived'
     int ok() { return prot + pub; }
     foo(int x) { }                // error: member function 'foo' must declare a return type
-    ~Other() { }                  // error: destructor name '~Other' does not match the class name 'Derived'
 };
 
 class Hidden : private Base {

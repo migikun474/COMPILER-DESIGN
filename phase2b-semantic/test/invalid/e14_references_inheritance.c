@@ -1,8 +1,8 @@
-/* invalid: references, multiple inheritance, protected access through a
+/* invalid: references, single inheritance only, protected access through a
    base pointer, const propagation through pointers */
 class L { public: int v; int left() { return 1; } };
 class R { public: int v; int right() { return 2; } };
-class Both : public L, public R { public: int mine() { return left() + right(); } };
+class Both : public L, public R { public: int mine() { return left(); } };   // error: 'Both' cannot have a second base class 'R': only single inheritance is supported
 class Prot { protected: int p; };
 class Kid : public Prot {
 public:
@@ -18,7 +18,7 @@ void show(const int &r) { }
 
 int main() {
     Both b;
-    int v = b.v;                  // error: member 'v' is found in more than one base class of 'Both'
+    int v = b.v;                  /* found in L, the only base */
     v = b.left() + b.mine();
     int x = 1;
     int &r = x;

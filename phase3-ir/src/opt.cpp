@@ -878,75 +878,6 @@ struct FunctionPass {
         return result;
     }
 
-    /* loop-invariant code motion: a pure instruction whose operands do not
-       change in the loop, and whose result is assigned nowhere else, is
-       computed once in front of the loop */
-    bool hoistInvariants() {
-        std::vector<Block> blocks = flowGraph();
-        int n = static_cast<int>(fn.quads.size());
-        std::map<Name, int> defsAll;
-        for (const auto &q : fn.quads) {
-            Operand r = defined(q);
-            if (isName(r)) ++defsAll[nameOf(r)];
-            if ((q.op == Op::VaStart || q.op == Op::VaArg) && isName(q.a)) ++defsAll[nameOf(q.a)];
-        }
-        for (const Loop &l : loops(blocks)) {
-            std::set<int> inLoop;
-            for (int k : l.blocks)
-                for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) inLoop.insert(static_cast<int>(i));
-            int head = static_cast<int>(blocks[l.header].begin);
-            /* the code in front of the header must only be reached from outside the loop */
-            if (head > 0 && inLoop.count(head - 1) && fn.quads[head - 1].op != Op::Goto && fn.quads[head - 1].op != Op::Return) continue;
-            std::map<Name, int> defsIn;
-            for (int i : inLoop) {
-                const Quad &q = fn.quads[i];
-                Operand r = defined(q);
-                if (isName(r)) ++defsIn[nameOf(r)];
-                if ((q.op == Op::VaStart || q.op == Op::VaArg) && isName(q.a)) ++defsIn[nameOf(q.a)];
-            }
-            std::vector<Quad> moved;
-            std::vector<bool> drop(n, false);
-            std::set<Name> hoisted;
-            for (int i : inLoop) {
-                const Quad &q = fn.quads[i];
-                Operand r = defined(q);
-                if (!isPure(q.op) || !isPrivate(r) || defsAll[nameOf(r)] != 1) continue;
-                bool invariant = true;
-                if (q.op != Op::AddrOf)
-                    for (const Operand *o : {&q.a, &q.b})
-                        if (isName(*o) && !(isPrivate(*o) && (defsIn[nameOf(*o)] == 0 || hoisted.count(nameOf(*o))))) invariant = false;
-                if (!invariant) continue;
-                moved.push_back(q);
-                drop[i] = true;
-                hoisted.insert(nameOf(r));
-                ++stats.hoisted;
-            }
-            if (moved.empty()) continue;
-            /* rebuild: the moved instructions go in front of the header; jumps
-               from inside the loop still go to the header itself */
-            std::vector<int> at(n + 1, 0), origin;
-            std::vector<Quad> out;
-            int front = 0;
-            for (int i = 0; i < n; ++i) {
-                if (i == head) {
-                    front = static_cast<int>(out.size());
-                    for (const Quad &m : moved) { out.push_back(m); origin.push_back(-1); }
-                }
-                at[i] = static_cast<int>(out.size());
-                if (!drop[i]) { out.push_back(fn.quads[i]); origin.push_back(i); }
-            }
-            at[n] = static_cast<int>(out.size());
-            for (size_t k = 0; k < out.size(); ++k) {
-                if (origin[k] < 0 || !isJump(out[k]) || out[k].target < 0) continue;
-                int t = out[k].target;
-                out[k].target = t == head && !inLoop.count(origin[k]) ? front : at[t];
-            }
-            fn.quads.swap(out);
-            return true; /* indices changed: the caller starts again */
-        }
-        return false;
-    }
-
     /* `return f(args);` inside f itself: assign the arguments and jump to the start */
     bool tailRecursion() {
         if (!fn.sym || (fn.sym->name == "main" && !fn.sym->ownerRecord) || !addressTaken.empty()) return false;
@@ -1003,9 +934,7 @@ struct FunctionPass {
         runGlobal();
         if (tailRecursion()) runGlobal();
         for (int round = 0; round < 20; ++round) {
-            bool changed = globalCommon();
-            changed = hoistInvariants() || changed;
-            if (!changed) break;
+            if (!globalCommon()) break;
             runGlobal();
         }
     }
@@ -1217,7 +1146,6 @@ void printStats(const OptStats &s, std::ostream &out) {
         row("calls inlined", s.inlined);
         row("tail calls turned into jumps", s.tailCalls);
         row("common subexpressions across blocks", s.globalCommon);
-        row("instructions moved out of loops", s.hoisted);
     }
     out << "\n";
 }

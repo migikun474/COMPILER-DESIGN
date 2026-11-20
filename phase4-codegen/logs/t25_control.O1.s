@@ -61,12 +61,12 @@ _Z8classifyPKc:
         move  $fp, $sp
         addiu $sp, $sp, -88
         sw    $s0, -64($fp)
-        sw    $s1, -80($fp)
+        sw    $s1, -84($fp)
         sw    $s2, -68($fp)
-        sw    $s3, -72($fp)
-        sw    $s4, -84($fp)
-        sw    $s5, -76($fp)
-        sw    $s6, -88($fp)
+        sw    $s3, -76($fp)
+        sw    $s4, -88($fp)
+        sw    $s5, -80($fp)
+        sw    $s6, -72($fp)
         sw    $s7, -60($fp)
         lw    $s6, 8($fp)
         # state = 0
@@ -214,12 +214,12 @@ L0_49:
         j     _Z8classifyPKc_exit
 _Z8classifyPKc_exit:
         lw    $s0, -64($fp)
-        lw    $s1, -80($fp)
+        lw    $s1, -84($fp)
         lw    $s2, -68($fp)
-        lw    $s3, -72($fp)
-        lw    $s4, -84($fp)
-        lw    $s5, -76($fp)
-        lw    $s6, -88($fp)
+        lw    $s3, -76($fp)
+        lw    $s4, -88($fp)
+        lw    $s5, -80($fp)
+        lw    $s6, -72($fp)
         lw    $s7, -60($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)

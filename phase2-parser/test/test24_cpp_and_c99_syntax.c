@@ -1,6 +1,6 @@
 /* test24 -- syntax added after phase 2 was first finished, so that the
-   language's C++-style features can actually be *used*: constructor
-   calls, out-of-class constructors/destructors, `Class::member` in
+   language's C++-style features can actually be *used*: default
+   constructors defined out of class, `Class::member` in
    expressions, a class name used as a type inside its own body,
    operator overloading,
    va_list / va_start / va_arg / va_end, const pointers and references
@@ -13,15 +13,12 @@ class Node {
 public:
     int value;
     Node *next;
-    Node(int v);
-    Node(int v, Node *n) { value = v; next = n; }
-    ~Node();
+    Node();
     static int count();
-    Node operator+(Node o) { return Node(value + o.value); }
+    Node operator+(Node o) { Node r; r.value = value + o.value; return r; }
     int get() { return this->value; }
 };
-Node::Node(int v) { value = v; next = 0; }
-Node::~Node() { }
+Node::Node() { value = 1; next = 0; }
 int Node::count() { return 1; }
 struct Pt { int x; int y; };
 int sum(int n, ...) {
@@ -35,8 +32,9 @@ int apply(int *, int);
 int apply(int *f, int v) { return *f + v; }
 int twice(int v) { return v * 2; }
 int main() {
-    Node a(1);
-    Node b(2, &a);
+    Node a;
+    Node b;
+    b.next = &a;
     Node c = a + b;
     int *many = (int *) malloc(4 * sizeof(int));
     int x(5);

@@ -334,52 +334,54 @@ _Z9invariantii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -48($fp)
-        sw    $s1, -44($fp)
-        sw    $s2, -36($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
+        addiu $sp, $sp, -56
+        sw    $s0, -52($fp)
+        sw    $s1, -48($fp)
+        sw    $s2, -28($fp)
+        sw    $s3, -32($fp)
+        sw    $s4, -36($fp)
         sw    $s5, -40($fp)
+        sw    $s6, -44($fp)
         lw    $s5, 8($fp)
-        lw    $s2, 12($fp)
+        lw    $s6, 12($fp)
         # s = 0
         li    $s1, 0
         # i = 0
         li    $s0, 0
-        # t1 = k int* 3
-        li    $t1, 3
-        mul   $s3, $s2, $t1
-        # t2 = t1 int+ 1
-        addiu $s4, $s3, 1
-L9_4:
+L9_2:
         # if i int>= n goto 11
         bge   $s0, $s5, L9_11
+        # t1 = k int* 3
+        li    $t1, 3
+        mul   $s2, $s6, $t1
+        # t2 = t1 int+ 1
+        addiu $s3, $s2, 1
         # t3 = i int* t2
-        mul   $s2, $s0, $s4
+        mul   $s4, $s0, $s3
         # s = s int+ t3
-        addu  $s1, $s1, $s2
+        addu  $s1, $s1, $s4
         # if i int== 2 goto 9
         li    $t1, 2
         beq   $s0, $t1, L9_9
         # s = s int+ t1
-        addu  $s1, $s1, $s3
+        addu  $s1, $s1, $s2
 L9_9:
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 4
-        j     L9_4
+        # goto 2
+        j     L9_2
 L9_11:
         # return s
         move  $v0, $s1
         j     _Z9invariantii_exit
 _Z9invariantii_exit:
-        lw    $s0, -48($fp)
-        lw    $s1, -44($fp)
-        lw    $s2, -36($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
+        lw    $s0, -52($fp)
+        lw    $s1, -48($fp)
+        lw    $s2, -28($fp)
+        lw    $s3, -32($fp)
+        lw    $s4, -36($fp)
         lw    $s5, -40($fp)
+        lw    $s6, -44($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -481,54 +483,50 @@ _Z6nestedii:
         addiu $sp, $sp, -168
         sw    $s0, -160($fp)
         sw    $s1, -164($fp)
-        sw    $s2, -168($fp)
-        sw    $s3, -144($fp)
-        sw    $s4, -148($fp)
-        sw    $s5, -156($fp)
-        sw    $s6, -140($fp)
+        sw    $s2, -156($fp)
+        sw    $s3, -168($fp)
+        sw    $s4, -140($fp)
+        sw    $s5, -144($fp)
+        sw    $s6, -148($fp)
         sw    $s7, -152($fp)
         lw    $s1, 12($fp)
         # s = 0
-        li    $s2, 0
+        li    $s3, 0
         # r.32 = 0
-        li    $t0, 0
-        sw    $t0, -88($fp)
+        li    $s2, 0
 L12_2:
         # if r.32 int>= rows goto 15
-        lw    $t0, -88($fp)
         lw    $t1, 8($fp)
-        bge   $t0, $t1, L12_15
+        bge   $s2, $t1, L12_15
         # c.33 = 0
         li    $s0, 0
-        # t1 = r.32 int* 5
-        lw    $t0, -88($fp)
-        li    $t1, 5
-        mul   $s6, $t0, $t1
-        # t4 = r.32 int* cols
-        lw    $t0, -88($fp)
-        mul   $s7, $t0, $s1
-L12_6:
+L12_4:
         # if c.33 int>= cols goto 13
         bge   $s0, $s1, L12_13
+        # t1 = r.32 int* 5
+        li    $t1, 5
+        mul   $s4, $s2, $t1
         # t2 = t1 int+ c.33
-        addu  $s3, $s6, $s0
+        addu  $s5, $s4, $s0
         # t3 = t2 int<< 2
-        sll   $s4, $s3, 2
+        sll   $s6, $s5, 2
+        # t4 = r.32 int* cols
+        mul   $s7, $s2, $s1
         # t5 = t4 int+ c.33
-        addu  $s5, $s7, $s0
+        addu  $t0, $s7, $s0
+        sw    $t0, -120($fp)
         # grid[t3] = t5
         addiu $t8, $fp, -80
-        addu  $t8, $t8, $s4
-        sw    $s5, 0($t8)
+        addu  $t8, $t8, $s6
+        lw    $t0, -120($fp)
+        sw    $t0, 0($t8)
         # c.33 = c.33 int+ 1
         addiu $s0, $s0, 1
-        # goto 6
-        j     L12_6
+        # goto 4
+        j     L12_4
 L12_13:
         # r.32 = r.32 int+ 1
-        lw    $t0, -88($fp)
-        addiu $t0, $t0, 1
-        sw    $t0, -88($fp)
+        addiu $s2, $s2, 1
         # goto 2
         j     L12_2
 L12_15:
@@ -540,26 +538,26 @@ L12_16:
         bge   $s7, $t1, L12_28
         # c.35 = 0
         li    $s0, 0
-        # t8 = r.34 int* 5
-        li    $t1, 5
-        mul   $s6, $s7, $t1
-L12_19:
+L12_18:
         # if c.35 int>= cols goto 26
         bge   $s0, $s1, L12_26
+        # t8 = r.34 int* 5
+        li    $t1, 5
+        mul   $s2, $s7, $t1
         # t9 = t8 int+ c.35
-        addu  $s3, $s6, $s0
+        addu  $s4, $s2, $s0
         # t10 = t9 int<< 2
-        sll   $s4, $s3, 2
+        sll   $s5, $s4, 2
         # t11 = grid[t10]
         addiu $t8, $fp, -80
-        addu  $t8, $t8, $s4
-        lw    $s5, 0($t8)
+        addu  $t8, $t8, $s5
+        lw    $s6, 0($t8)
         # s = s int+ t11
-        addu  $s2, $s2, $s5
+        addu  $s3, $s3, $s6
         # c.35 = c.35 int+ 1
         addiu $s0, $s0, 1
-        # goto 19
-        j     L12_19
+        # goto 18
+        j     L12_18
 L12_26:
         # r.34 = r.34 int+ 1
         addiu $s7, $s7, 1
@@ -567,16 +565,16 @@ L12_26:
         j     L12_16
 L12_28:
         # return s
-        move  $v0, $s2
+        move  $v0, $s3
         j     _Z6nestedii_exit
 _Z6nestedii_exit:
         lw    $s0, -160($fp)
         lw    $s1, -164($fp)
-        lw    $s2, -168($fp)
-        lw    $s3, -144($fp)
-        lw    $s4, -148($fp)
-        lw    $s5, -156($fp)
-        lw    $s6, -140($fp)
+        lw    $s2, -156($fp)
+        lw    $s3, -168($fp)
+        lw    $s4, -140($fp)
+        lw    $s5, -144($fp)
+        lw    $s6, -148($fp)
         lw    $s7, -152($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)

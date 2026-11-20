@@ -33,14 +33,14 @@ main_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -64
-        sw    $s0, -56($fp)
-        sw    $s1, -48($fp)
+        sw    $s0, -60($fp)
+        sw    $s1, -52($fp)
         sw    $s2, -40($fp)
-        sw    $s3, -52($fp)
+        sw    $s3, -56($fp)
         sw    $s4, -36($fp)
         sw    $s5, -32($fp)
         sw    $s6, -44($fp)
-        sw    $s7, -60($fp)
+        sw    $s7, -48($fp)
         lw    $s7, 8($fp)
         # letters = 0
         li    $s1, 0
@@ -101,14 +101,14 @@ L0_18:
         move  $v0, $s7
         j     main__exit
 main__exit:
-        lw    $s0, -56($fp)
-        lw    $s1, -48($fp)
+        lw    $s0, -60($fp)
+        lw    $s1, -52($fp)
         lw    $s2, -40($fp)
-        lw    $s3, -52($fp)
+        lw    $s3, -56($fp)
         lw    $s4, -36($fp)
         lw    $s5, -32($fp)
         lw    $s6, -44($fp)
-        lw    $s7, -60($fp)
+        lw    $s7, -48($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -746,15 +746,7 @@ Operand Generator::assignment(const ASTNodePtr &n, bool discard) {
     const ASTNodePtr &L = n->children[0], &R = n->children[1];
     LValue lv = lvalue(L);
     if (op == "=") {
-        Operand v = sem::isRecord(lv.type) ? sliced(R, recordOf(lv.type)) : convert(rvalue(R), lv.type);
-        RecordInfo *rec = recordOf(lv.type);
-        if (rec && rec->polymorphic) { /* the members change, the object's class does not */
-            Operand at = address(lv);
-            std::vector<Operand> saved = saveVptrs(at, rec);
-            store(lv, v);
-            restoreVptrs(at, rec, saved);
-            return v;
-        }
+        Operand v = sem::isRecord(lv.type) ? rvalue(R) : convert(rvalue(R), lv.type); /* an object: a block copy */
         store(lv, v);
         return v;
     }
@@ -791,22 +783,16 @@ Operand Generator::ternary(const ASTNodePtr &n, bool discard) {
     List trueList, falseList;
     cond(C, trueList, falseList);
     backpatch(trueList, nextQuad());
-    /* a class object picked by value is a temporary of its own; whatever
-       else a branch creates dies inside that branch, the only place it exists */
-    bool object = !isVoid && sem::isRecord(T) && !n->isLValue;
     auto branch = [&](const ASTNodePtr &e) {
-        size_t mark = temporaries.size();
-        Operand v = object ? copyOf(e, T, false) : rvalue(e, isVoid);
+        Operand v = rvalue(e, isVoid);
         if (!isVoid) emitAssign(t, sem::isRecord(T) ? v : convert(v, T));
-        keep(v);
-        destroyTemporaries(mark);
     };
     branch(A);
     int skip = emitGoto();
     backpatch(falseList, nextQuad());
     branch(B);
     backpatch(makelist(skip), nextQuad());
-    return object ? temporary(t) : t;
+    return t;
 }
 
 /* ---------------- boolean expressions (Lecture 27) ---------------- */
@@ -821,16 +807,12 @@ int Generator::relJump(const ASTNodePtr &n) {
     TypePtr lt = sem::decay(L->semType), rt = sem::decay(R->semType);
     TypePtr C = (sem::isArithmetic(lt) && sem::isArithmetic(rt)) ? sem::usualArithmetic(lt, rt)
                 : sem::isPointer(lt) ? lt : rt;
-    /* ponytail: a test's temporaries die before its jump, not at the end
-       of the whole condition; `a(T(1)) && b(T(2))` destroys T(1) before T(2) is made */
-    size_t mark = temporaries.size();
     Quad q;
     q.op = Op::IfRel;
     q.a = convert(rvalue(L), C);
     q.b = convert(rvalue(R), C);
     q.relop = n->label;
     q.cls = classOf(C);
-    destroyTemporaries(mark);
     return emit(q);
 }
 
@@ -876,7 +858,6 @@ void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
         (n->constValue ? trueList : falseList).push_back(emitGoto()); /* E -> true: goto E.true */
         return;
     }
-    size_t mark = temporaries.size();
     Operand v = rvalue(n);
     TypePtr vt = v.type ? strip(v.type) : sem::intType();
     Quad q;
@@ -885,7 +866,6 @@ void Generator::cond(const ASTNodePtr &n, List &trueList, List &falseList) {
     q.b = isFloatCls(classOf(vt)) ? fcon(0, vt) : icon(0, vt);
     q.relop = "!=";
     q.cls = classOf(vt);
-    destroyTemporaries(mark);
     trueList.push_back(emit(q));
     falseList.push_back(emitGoto());
 }
@@ -929,115 +909,10 @@ Operand Generator::referenceTo(const ASTNodePtr &n, const TypePtr &elem) {
     return address(lv);
 }
 
-/* `rec`'s copy constructor rec(const rec &), if the class declares one */
-static sem::Symbol *copyConstructor(RecordInfo *rec) {
-    if (!rec) return nullptr;
-    for (const auto &c : rec->constructors) {
-        if (!c->type || c->type->params.size() != 1) continue;
-        const TypePtr &p = c->type->params[0];
-        if (sem::isReference(p) && sem::isRecord(p->elem) && p->elem->record.get() == rec) return c.get();
-    }
-    return nullptr;
-}
-
-/* `n`'s value as a `to` object: a derived object gives only its base part (slicing) */
-Operand Generator::sliced(const ASTNodePtr &n, RecordInfo *to) {
-    RecordInfo *from = recordOf(n->semType);
-    long long off = 0;
-    if (!to || !from || from == to || !baseOffset(from, to, off)) return rvalue(n);
-    return load(member(lvalueOrTemp(n), off, sem::recordType(to->shared_from_this())));
-}
-
-/* an object that already exists (an lvalue), not one the expression creates */
-bool Generator::isExisting(const ASTNodePtr &n) const {
-    return isLValueKind(n) || ((n->kind == ASTKind::CallExpr || isOverloaded(n)) && n->isLValue);
-}
-
-/* ---------------- unnamed class objects ---------------- */
-
-/* `t` is an object the expression created: it is destroyed at the end of
-   the full expression unless something keeps it */
-Operand Generator::temporary(const Operand &t) {
-    if (t.kind == Operand::Temp && t.type && sem::isRecord(t.type) && needsDestruction(t.type)) temporaries.push_back(t);
-    return t;
-}
-
-/* `t` became a variable, an element or the function's result: no destructor here */
-void Generator::keep(const Operand &t) {
-    for (size_t i = temporaries.size(); t.kind == Operand::Temp && i-- > 0;)
-        if (temporaries[i].temp == t.temp) temporaries.erase(temporaries.begin() + i);
-}
-
-/* the end of a full expression: the last one made is destroyed first */
-void Generator::destroyTemporaries(size_t from) {
-    while (temporaries.size() > from) {
-        LValue obj;
-        obj.kind = LValue::Direct;
-        obj.base = temporaries.back();
-        obj.type = obj.base.type;
-        temporaries.pop_back();
-        destroyObject(obj);
-    }
-}
-
-/* a class object passed or returned by value. An existing object is
-   copied: by the copy constructor when the class has one, else as a
-   block. A parameter's copy is destroyed after the call. An object the
-   expression creates is used as it is, and so is the local that is the
-   function's result (what C++ compilers do: copy elision). */
-Operand Generator::copyOf(const ASTNodePtr &n, const TypePtr &type, bool returned) {
-    sem::Symbol *ctor = copyConstructor(recordOf(type));
-    bool result = returned && n->kind == ASTKind::Identifier && n->symbol.get() == resultObject;
-    if (!isExisting(n) || result || (!ctor && (returned || !needsDestruction(type)))) return rvalue(n);
-    Operand copy = newTemp(type);
-    LValue lv;
-    lv.kind = LValue::Direct;
-    lv.base = copy;
-    lv.type = sem::unqualified(strip(type));
-    if (ctor) {
-        Operand to = address(lv);
-        call(ctor, to, {n}, {}, false);
-    } else {
-        emitAssign(copy, sliced(n, recordOf(type)));
-        installVptrs(address(lv), recordOf(type)); /* a copy of a derived object is still only a `type` */
-    }
-    return returned ? copy : temporary(copy);
-}
-
-/* `f(4)` with `f(Dog)` or `f(const Dog &)`, `return 4;` from a function
-   returning Dog: a temporary built by the converting constructor that
-   semantic analysis chose */
-Operand Generator::converted(const ASTNodePtr &n, const TypePtr &type) {
-    Operand obj = newTemp(sem::unqualified(strip(type)));
-    LValue lv;
-    lv.kind = LValue::Direct;
-    lv.base = obj;
-    lv.type = obj.type;
-    convertInto(address(lv), n);
-    return temporary(obj);
-}
-
-/* runs `n`'s converting constructor on the object at `addr`; while it
-   runs, `n` is the plain argument of that constructor */
-void Generator::convertInto(const Operand &addr, const ASTNodePtr &n) {
-    sem::SymbolPtr ctor = n->converter;
-    n->converter = nullptr;
-    call(ctor.get(), addr, {n}, {}, false);
-    n->converter = ctor;
-}
-
+/* an object passed by value is copied as a block of bytes: there are no
+   copy constructors (D35) */
 Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
-    if (arg->converter) {
-        Operand obj = converted(arg, param);
-        if (!sem::isReference(param)) return obj;
-        LValue lv;
-        lv.kind = LValue::Direct;
-        lv.base = obj;
-        lv.type = obj.type;
-        return convert(address(lv), sem::pointerTo(param->elem));
-    }
     if (sem::isReference(param)) return referenceTo(arg, param->elem);
-    if (sem::isRecord(param)) return copyOf(arg, param, false);
     return convert(rvalue(arg), param);
 }
 
@@ -1047,7 +922,7 @@ Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
    all arguments are evaluated before the first `param` (an argument may
    itself contain a call); a method gets `this` as its first parameter */
 Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std::vector<ASTNodePtr> &args,
-                        const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch) {
+                        const std::vector<Operand> &extraArgs, bool wantResult) {
     Operand thisArg = thisArgIn;
     TypePtr ft = callee->type;
     std::vector<Operand> values; /* all arguments first: an argument may itself contain a call */
@@ -1056,24 +931,6 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std
         else values.push_back(promoteVariadic(rvalue(args[i])));
     }
     for (const auto &e : extraArgs) values.push_back(e);
-    Operand target;
-    if (dispatch) { /* a virtual call: (function, this-adjustment) from the object's table */
-        LValue slot;
-        slot.kind = LValue::Deref;
-        slot.base = thisArg;
-        slot.type = sem::pointerTo(sem::unsignedIntType());
-        LValue entry;
-        entry.kind = LValue::Deref;
-        entry.base = load(slot);
-        entry.disp = 8LL * callee->vtableIndex;
-        entry.type = sem::pointerTo(sem::voidType());
-        target = load(entry);
-        entry.disp += 4;
-        entry.type = sem::intType();
-        Operand adjusted = pointerAdd(thisArg, load(entry));
-        adjusted.type = thisArg.type;
-        thisArg = adjusted;
-    }
     if (!thisArg.isNone()) {
         Quad p;
         p.op = Op::Param;
@@ -1090,43 +947,12 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std
     Quad q;
     q.op = Op::Call;
     q.callee = callee;
-    if (dispatch) { /* `call *t, n`: the callee is only known when the program runs */
-        q.callee = nullptr;
-        q.a = target;
-        q.note = "(virtual " + signatureOf(*callee) + ")";
-    }
     q.nargs = static_cast<int>(values.size()) + (thisArg.isNone() ? 0 : 1);
     TypePtr ret = ft ? ft->ret : nullptr;
-    /* an object result is received even when it is not used: it must be destroyed */
-    bool wanted = wantResult || (ret && needsDestruction(ret));
-    if (wanted && ret && !sem::isVoid(ret) && !callee->isConstructor && !callee->isDestructor) q.r = newTemp(ret);
+    if (wantResult && ret && !sem::isVoid(ret) && !callee->isConstructor) q.r = newTemp(ret);
     if (!q.r.isNone()) q.r.type = ret; /* keeps `T &`: the caller dereferences */
     emit(q);
-    if (!q.r.isNone() && sem::isRecord(ret)) { /* a copy of what the callee returned is a `ret`, whatever that was */
-        LValue lv;
-        lv.kind = LValue::Direct;
-        lv.base = q.r;
-        lv.type = ret;
-        installVptrs(address(lv), ret->record.get());
-    }
-    return temporary(q.r);
-}
-
-/* an object reached through a pointer or a reference: its class may be a
-   derived one, so a virtual call on it goes through its table */
-static bool dynamicObject(const ASTNodePtr &n) {
-    if (n->kind == ASTKind::UnaryExpr && n->label == "*") return true;
-    if (n->kind == ASTKind::CallExpr) return n->isLValue; /* returns T & */
-    bool named = n->kind == ASTKind::Identifier || n->kind == ASTKind::MemberExpr || n->kind == ASTKind::ArrowExpr;
-    return named && n->symbol && n->symbol->type && sem::isReference(n->symbol->type);
-}
-
-/* the address a member function receives as `this`, adjusted to the
-   class that declares it (a base sub-object may not start at offset 0) */
-static long long thisAdjust(const RecordInfo *object, const sem::Symbol *method) {
-    long long off = 0;
-    if (object && method->ownerRecord) baseOffset(object, method->ownerRecord, off);
-    return off;
+    return q.r;
 }
 
 Operand Generator::callExpr(const ASTNodePtr &n, bool discard) {
@@ -1134,30 +960,15 @@ Operand Generator::callExpr(const ASTNodePtr &n, bool discard) {
     if (!f || f->kind != sem::SymbolKind::Function) return {};
     const ASTNodePtr &callee = n->children[0];
     std::vector<ASTNodePtr> args(n->children.begin() + 1, n->children.end());
-    Operand thisArg;
-    bool dispatch = false;
-    bool qualified = callee->typeExpr && !callee->typeExpr->className.empty(); /* p->Base::f(): exactly that one */
-    bool isVirtual = f->isVirtual && f->vtableIndex >= 0 && !qualified;
+    Operand thisArg; /* the object's address; with single inheritance a base starts where the object does */
     if (f->ownerRecord && !f->isStatic) {
-        if (callee->kind == ASTKind::MemberExpr) {
-            LValue obj = lvalueOrTemp(callee->children[0]);
-            thisArg = pointerAdd(address(obj), icon(thisAdjust(recordOf(obj.type), f)));
-            dispatch = isVirtual && dynamicObject(callee->children[0]); /* an object's own class is known */
-        } else if (callee->kind == ASTKind::ArrowExpr) {
-            Operand p = rvalue(callee->children[0]);
-            const RecordInfo *rec = p.type && sem::isPointer(p.type) ? recordOf(p.type->elem) : nullptr;
-            thisArg = pointerAdd(p, icon(thisAdjust(rec, f)));
-            dispatch = isVirtual;
-        } else if (callee->semType && sem::isFunction(callee->semType)) { /* an implicit this->f() */
-            thisArg = pointerAdd(thisOperand(), icon(thisAdjust(currentClass(), f)));
-            dispatch = isVirtual && callee->kind == ASTKind::Identifier; /* not Base::f() */
-        } else { /* a function object: obj(args) is obj.operator()(args) */
-            LValue obj = lvalueOrTemp(callee);
-            thisArg = pointerAdd(address(obj), icon(thisAdjust(recordOf(obj.type), f)));
-        }
+        if (callee->kind == ASTKind::MemberExpr) thisArg = address(lvalueOrTemp(callee->children[0]));
+        else if (callee->kind == ASTKind::ArrowExpr) thisArg = rvalue(callee->children[0]);
+        else if (callee->semType && sem::isFunction(callee->semType)) thisArg = thisOperand(); /* an implicit this->f() */
+        else thisArg = address(lvalueOrTemp(callee)); /* a function object: obj(args) is obj.operator()(args) */
         thisArg.type = sem::pointerTo(sem::recordType(f->ownerRecord->shared_from_this()));
     }
-    return call(f, thisArg, args, {}, !discard, dispatch);
+    return call(f, thisArg, args, {}, !discard);
 }
 
 /* a + b, -a, a[i], a = b, a++ on a class: a call to operator<op> */
@@ -1168,8 +979,7 @@ Operand Generator::overloaded(const ASTNodePtr &n) {
     if (n->kind == ASTKind::PostfixOpExpr) extra.push_back(icon(0)); /* the dummy int of operator++(int) */
     Operand thisArg;
     if (f->ownerRecord && !f->isStatic) {
-        LValue obj = lvalueOrTemp(operands[0]);
-        thisArg = pointerAdd(address(obj), icon(thisAdjust(recordOf(obj.type), f)));
+        thisArg = address(lvalueOrTemp(operands[0]));
         thisArg.type = sem::pointerTo(sem::recordType(f->ownerRecord->shared_from_this()));
         operands.erase(operands.begin());
     }
@@ -1225,25 +1035,13 @@ Operand Generator::builtin(const ASTNodePtr &n, bool discard) {
 
 /* ---------------- objects ---------------- */
 
-bool needsDestruction(const TypePtr &tIn) {
-    TypePtr t = tIn;
-    while (t && sem::isArray(t)) t = t->elem;
-    RecordInfo *rec = t && sem::isRecord(t) ? t->record.get() : nullptr;
-    if (!rec || !rec->complete) return false;
-    if (rec->destructor) return true;
-    for (const auto &b : rec->bases)
-        if (b.record && needsDestruction(sem::recordType(b.record))) return true;
-    for (const auto &f : rec->fields)
-        if (f->storage == sem::Storage::Member && needsDestruction(f->type)) return true;
-    return false;
-}
-
+/* an object of type `t` runs a constructor: its class, its base or a member has one */
 bool Generator::needsConstruction(const TypePtr &tIn) {
     TypePtr t = tIn;
     while (t && sem::isArray(t)) t = t->elem;
     RecordInfo *rec = t && sem::isRecord(t) ? t->record.get() : nullptr;
     if (!rec || !rec->complete) return false;
-    if (!rec->constructors.empty() || rec->polymorphic) return true; /* a table pointer to store, at least */
+    if (!rec->constructors.empty()) return true;
     for (const auto &b : rec->bases)
         if (b.record && needsConstruction(sem::recordType(b.record))) return true;
     for (const auto &f : rec->fields)
@@ -1251,183 +1049,22 @@ bool Generator::needsConstruction(const TypePtr &tIn) {
     return false;
 }
 
-/* base sub-objects, then the table pointers, then members, in declaration
-   order (C++ order). `ctor`: a constructor definition whose member
-   initializer list (`: Animal(4), legs(n)`) says how to build some of them;
-   everything it leaves out is default-constructed. */
-void Generator::constructSubobjects(const Operand &addr, RecordInfo *rec, const ASTNode *ctor) {
-    auto initializerFor = [&](const void *what) -> const ASTNode * {
-        if (ctor)
-            for (const auto &m : ctor->children)
-                if (m->kind == ASTKind::MemInit && m->symbol &&
-                    (m->symbol.get() == what || (m->symbol->record && m->symbol->record.get() == what)))
-                    return m.get();
-        return nullptr;
-    };
+/* the base sub-object, then the members in declaration order (C++
+   order), each by its default constructor; the constructor's own body
+   runs after this */
+void Generator::constructSubobjects(const Operand &addr, RecordInfo *rec) {
     for (const auto &b : rec->bases) {
-        if (!b.record) continue;
-        const ASTNode *init = initializerFor(b.record.get());
-        if (!init && !needsConstruction(sem::recordType(b.record))) continue;
+        if (!b.record || !needsConstruction(sem::recordType(b.record))) continue;
         Operand p = pointerAdd(addr, icon(b.offset));
         p.type = sem::pointerTo(sem::recordType(b.record));
-        if (init) constructInto(p, b.record.get(), init->converter.get(), init->children);
-        else defaultConstruct(p, sem::recordType(b.record));
-        destroyTemporaries();
+        defaultConstruct(p, sem::recordType(b.record));
     }
-    installVptrs(addr, rec); /* virtual calls from here on reach this class's functions */
     for (const auto &f : rec->fields) {
-        if (f->storage != sem::Storage::Member) continue;
-        const ASTNode *init = initializerFor(f.get());
-        if (!init && !needsConstruction(f->type)) continue;
+        if (f->storage != sem::Storage::Member || !needsConstruction(f->type)) continue;
         Operand p = pointerAdd(addr, icon(f->offset));
         p.type = sem::pointerTo(f->type);
-        if (!init) {
-            defaultConstruct(p, f->type);
-        } else if (RecordInfo *fr = recordOf(f->type)) {
-            constructInto(p, fr, init->converter.get(), init->children);
-        } else {
-            LValue lv;
-            lv.kind = LValue::Deref;
-            lv.base = addr;
-            lv.disp = f->offset;
-            lv.type = f->type;
-            if (sem::isReference(f->type)) {
-                lv.type = sem::pointerTo(f->type->elem);
-                if (!init->children.empty()) store(lv, referenceTo(init->children[0], f->type->elem));
-            } else if (init->children.empty()) { /* `count()`: zero */
-                store(lv, isFloatCls(classOf(f->type)) ? fcon(0, f->type) : icon(0, f->type));
-            } else {
-                store(lv, convert(rvalue(init->children[0]), f->type));
-            }
-        }
-        destroyTemporaries();
+        defaultConstruct(p, f->type);
     }
-}
-
-/* the table of the sub-object at the end of `path` (outermost first, with
-   offsets) inside a complete `rec` object: for each slot, the final
-   overrider -- the first class from `rec` down that defines it -- and how far
-   `this` moves from this sub-object to that class's sub-object */
-sem::Symbol *Generator::vtable(RecordInfo *rec, const std::vector<std::pair<RecordInfo *, long long>> &path) {
-    long long off = path.back().second;
-    auto key = std::make_pair(rec, off);
-    auto known = vtables.find(key);
-    if (known != vtables.end()) return known->second.get();
-    RecordInfo *sub = path.back().first;
-    auto sym = std::make_shared<sem::Symbol>();
-    sym->name = sym->uniqueName = "_ZTV" + std::to_string(rec->tag.size()) + rec->tag + (off ? "_" + std::to_string(off) : "");
-    sym->kind = sem::SymbolKind::Variable;
-    sym->storage = sem::Storage::Global;
-    sym->isDefined = true;
-    sym->type = sem::arrayOf(sem::unsignedIntType(), std::max<long long>(1, 2 * static_cast<long long>(sub->virtuals.size())));
-    Global g;
-    g.sym = sym;
-    /* where a slot may be defined: the path down to this sub-object, then
-       on down its chain of first bases, which share this table */
-    std::vector<std::pair<RecordInfo *, long long>> chain = path;
-    for (RecordInfo *r = sub; !r->bases.empty() && r->bases[0].record && r->bases[0].record->polymorphic;) {
-        r = r->bases[0].record.get();
-        chain.push_back({r, off});
-    }
-    for (size_t k = 0; k < sub->virtuals.size(); ++k) {
-        const sem::Symbol *slot = sub->virtuals[k];
-        sem::Symbol *fn = nullptr;
-        long long delta = 0;
-        for (const auto &step : chain) {
-            auto it = step.first->members.find(slot->name);
-            if (it != step.first->members.end())
-                for (const auto &c : it->second)
-                    if (!fn && c->kind == sem::SymbolKind::Function && sem::sameParameterLists(c->type, slot->type)) {
-                        fn = c.get();
-                        delta = step.second - off;
-                    }
-            if (fn) break;
-        }
-        GlobalInit f;
-        f.offset = 8 * static_cast<long long>(k);
-        f.cls = Cls::Ptr;
-        if (fn && !fn->isPure) {
-            f.kind = GlobalInit::Address;
-            f.target = fn;
-            f.value = "&" + signatureOf(*fn);
-        } else { /* pure virtual: never called through this table */
-            f.value = "0";
-        }
-        g.init.push_back(f);
-        GlobalInit d;
-        d.offset = f.offset + 4;
-        d.cls = Cls::Int;
-        d.i = delta;
-        d.value = std::to_string(delta);
-        g.init.push_back(d);
-    }
-    prog.globals.push_back(g);
-    vtables[key] = sym;
-    return sym.get();
-}
-
-/* the offsets of the table pointers in a `rec` object: one per polymorphic
-   sub-object, except where a first base shares its derived class's */
-static void vptrOffsets(RecordInfo *r, long long off, bool shared, std::vector<std::pair<RecordInfo *, long long>> &path,
-                        const std::function<void(const std::vector<std::pair<RecordInfo *, long long>> &)> &visit) {
-    path.push_back({r, off});
-    if (r->polymorphic && !shared) visit(path);
-    for (size_t i = 0; i < r->bases.size(); ++i) {
-        const auto &b = r->bases[i];
-        if (b.record) vptrOffsets(b.record.get(), off + b.offset, i == 0 && b.record->polymorphic, path, visit);
-    }
-    path.pop_back();
-}
-
-/* a new `rec` object at `addr` gets the address of the right table in each of its table pointers */
-void Generator::installVptrs(const Operand &addr, RecordInfo *rec) {
-    if (!rec || !rec->polymorphic) return;
-    std::vector<std::pair<RecordInfo *, long long>> path;
-    vptrOffsets(rec, 0, false, path, [&](const std::vector<std::pair<RecordInfo *, long long>> &p) {
-        LValue slot;
-        slot.kind = LValue::Deref;
-        slot.base = addr;
-        slot.disp = p.back().second;
-        slot.type = sem::pointerTo(sem::unsignedIntType());
-        LValue table;
-        table.kind = LValue::Direct;
-        table.base = var(vtable(rec, p));
-        table.type = table.base.type;
-        Operand at = address(table);
-        at.type = slot.type;
-        store(slot, at);
-    });
-}
-
-/* assigning one object to another copies the members, never the table
-   pointers: `*base = derived;` leaves a derived object derived */
-std::vector<Operand> Generator::saveVptrs(const Operand &addr, RecordInfo *rec) {
-    std::vector<Operand> saved;
-    if (!rec || !rec->polymorphic) return saved;
-    std::vector<std::pair<RecordInfo *, long long>> path;
-    vptrOffsets(rec, 0, false, path, [&](const std::vector<std::pair<RecordInfo *, long long>> &p) {
-        LValue slot;
-        slot.kind = LValue::Deref;
-        slot.base = addr;
-        slot.disp = p.back().second;
-        slot.type = sem::pointerTo(sem::unsignedIntType());
-        saved.push_back(load(slot));
-    });
-    return saved;
-}
-
-void Generator::restoreVptrs(const Operand &addr, RecordInfo *rec, const std::vector<Operand> &saved) {
-    if (!rec || !rec->polymorphic) return;
-    std::vector<std::pair<RecordInfo *, long long>> path;
-    size_t i = 0;
-    vptrOffsets(rec, 0, false, path, [&](const std::vector<std::pair<RecordInfo *, long long>> &p) {
-        LValue slot;
-        slot.kind = LValue::Deref;
-        slot.base = addr;
-        slot.disp = p.back().second;
-        slot.type = sem::pointerTo(sem::unsignedIntType());
-        if (i < saved.size()) store(slot, saved[i++]);
-    });
 }
 
 void Generator::defaultConstruct(const Operand &addr, const TypePtr &t) {
@@ -1442,78 +1079,26 @@ void Generator::defaultConstruct(const Operand &addr, const TypePtr &t) {
         return;
     }
     RecordInfo *rec = t->record.get();
-    for (const auto &c : rec->constructors) {
-        if (c->type && c->type->params.empty()) {
-            call(c.get(), addr, {}, {}, false);
-            return;
-        }
-    }
-    if (rec->constructors.empty()) constructSubobjects(addr, rec); /* the implicit default constructor */
+    if (!rec->constructors.empty()) call(rec->constructors.front().get(), addr, {}, {}, false);
+    else constructSubobjects(addr, rec); /* the implicit default constructor */
 }
 
-void Generator::constructInto(const Operand &addr, RecordInfo *rec, sem::Symbol *ctor,
-                              const std::vector<ASTNodePtr> &args) {
-    /* T x(f()), T(f()): the object f made becomes this one, no copy */
-    bool same = args.size() == 1 && !isExisting(args[0]) && recordOf(args[0]->semType) == rec;
-    if (ctor && !(same && ctor == copyConstructor(rec))) {
-        call(ctor, addr, args, {}, false);
-        return;
-    }
-    if (args.size() == 1) { /* the implicit copy constructor: a memberwise copy */
+/* `T x(other)` with `other` of the same class copies its bytes (there are
+   no copy constructors); `T x;` and `T()` default-construct */
+void Generator::constructInto(const Operand &addr, RecordInfo *rec, const std::vector<ASTNodePtr> &args) {
+    if (args.size() == 1) {
         Quad q;
         q.op = Op::Store;
         q.a = addr;
-        RecordInfo *from = recordOf(args[0]->semType);
-        if (from && from != rec) { /* from a derived object: only its base sub-object */
-            long long off = 0;
-            baseOffset(from, rec, off);
-            q.r = load(member(lvalueOrTemp(args[0]), off, sem::recordType(rec->shared_from_this())));
-        } else {
-            q.r = rvalue(args[0]);
-            keep(q.r);
-        }
+        q.r = rvalue(args[0]);
         q.cls = Cls::Block;
         emit(q);
-        installVptrs(addr, rec);
         return;
     }
     defaultConstruct(addr, sem::recordType(rec->shared_from_this()));
 }
 
-/* members in reverse order, then base sub-objects (C++ order) */
-void Generator::destroySubobjects(const Operand &addr, RecordInfo *rec) {
-    for (auto f = rec->fields.rbegin(); f != rec->fields.rend(); ++f) {
-        if ((*f)->storage != sem::Storage::Member || !needsDestruction((*f)->type)) continue;
-        TypePtr t = (*f)->type;
-        long long count = 1;
-        while (sem::isArray(t)) {
-            count *= std::max(0LL, t->arraySize);
-            t = t->elem;
-        }
-        long long w = std::max(1LL, sem::sizeOf(t));
-        for (long long i = count; i-- > 0;) {
-            Operand p = pointerAdd(addr, icon((*f)->offset + i * w));
-            p.type = sem::pointerTo(t);
-            destroy(p, t->record.get());
-        }
-    }
-    for (auto b = rec->bases.rbegin(); b != rec->bases.rend(); ++b) {
-        if (!b->record || !needsDestruction(sem::recordType(b->record))) continue;
-        long long off = 0;
-        baseOffset(rec, b->record.get(), off);
-        Operand p = pointerAdd(addr, icon(off));
-        p.type = sem::pointerTo(sem::recordType(b->record));
-        destroy(p, b->record.get());
-    }
-}
-
-void Generator::destroy(const Operand &addr, RecordInfo *rec) {
-    if (!rec || !needsDestruction(sem::recordType(rec->shared_from_this()))) return;
-    if (rec->destructor) call(rec->destructor.get(), addr, {}, {}, false); /* it destroys its own sub-objects */
-    else destroySubobjects(addr, rec);
-}
-
-/* T(args): a temporary object, or for a non-class type a conversion */
+/* T(): a default-constructed temporary, or for a non-class type a conversion */
 Operand Generator::construct(const ASTNodePtr &n) {
     TypePtr T = n->semType;
     if (RecordInfo *rec = recordOf(T)) {
@@ -1522,8 +1107,8 @@ Operand Generator::construct(const ASTNodePtr &n) {
         lv.kind = LValue::Direct;
         lv.base = obj;
         lv.type = T;
-        constructInto(address(lv), rec, n->symbol.get(), n->children);
-        return temporary(obj);
+        constructInto(address(lv), rec, n->children);
+        return obj;
     }
     if (n->children.empty()) return isFloatCls(classOf(T)) ? fcon(0, T) : icon(0, T);
     return convert(rvalue(n->children[0]), T);

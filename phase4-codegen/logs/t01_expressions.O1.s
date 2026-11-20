@@ -71,15 +71,15 @@ main_:
         addiu $sp, $sp, -120
         s.d   $f20, -104($fp)
         s.d   $f22, -112($fp)
-        sw    $s0, -96($fp)
+        sw    $s0, -92($fp)
         sw    $s1, -88($fp)
-        sw    $s2, -92($fp)
+        sw    $s2, -96($fp)
         sw    $s3, -116($fp)
         sw    $s4, -120($fp)
         # a = 7
-        li    $s1, 7
+        li    $s2, 7
         # b = 3
-        li    $s2, 3
+        li    $s1, 3
         # c = 12
         li    $s0, 12
         # param "%d %d %d %d %d\n"
@@ -222,21 +222,21 @@ main_:
         jal   __printf
         addiu $sp, $sp, 24
         # a = 12
-        li    $s1, 12
+        li    $s2, 12
         # b = 2
-        li    $s2, 2
+        li    $s1, 2
         # c = -84
         li    $s0, -84
         # a = 4
-        li    $s1, 4
+        li    $s2, 4
         # b = 16
-        li    $s2, 16
+        li    $s1, 16
         # c = 0
         li    $s0, 0
         # a = 12
-        li    $s1, 12
+        li    $s2, 12
         # b = 0
-        li    $s2, 0
+        li    $s1, 0
         # c = 5
         li    $s0, 5
         # d = 15.0
@@ -389,9 +389,9 @@ main_:
 main__exit:
         l.d   $f20, -104($fp)
         l.d   $f22, -112($fp)
-        lw    $s0, -96($fp)
+        lw    $s0, -92($fp)
         lw    $s1, -88($fp)
-        lw    $s2, -92($fp)
+        lw    $s2, -96($fp)
         lw    $s3, -116($fp)
         lw    $s4, -120($fp)
         move  $sp, $fp

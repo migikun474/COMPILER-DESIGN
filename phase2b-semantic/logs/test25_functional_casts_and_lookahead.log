@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test25_functional_casts_and_lookahead.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test25_functional_casts_and_lookahead.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/../phase2-parser/test/test25_functional_casts_and_lookahead.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/../phase2-parser/test/test25_functional_casts_and_lookahead.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -17,13 +17,6 @@ Program "translation_unit"
 |       `-- IntLiteral "2"  <int> =2
 |-- ClassDecl "Dog"  <class Dog>  -> Dog (tag)
 |   |-- VarDecl "legs : INT"  <int>  -> Dog::legs (field, member)
-|   |-- ConstructorDef "Dog : _ZN3DogC1Ei"  -> _ZN3DogC1Ei (function)
-|   |   |-- ParamDecl "n : INT"  <int>  -> n.1 (parameter, param)
-|   |   `-- CompoundStmt
-|   |       `-- ExprStmt
-|   |           `-- AssignExpr "="  <int>
-|   |               |-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
-|   |               `-- Identifier "n"  <int> lvalue  -> n.1 (parameter, param)
 |   |-- ConstructorDef "Dog : _ZN3DogC1Ev"  -> _ZN3DogC1Ev (function)
 |   |   `-- CompoundStmt
 |   |       `-- ExprStmt
@@ -35,97 +28,83 @@ Program "translation_unit"
 |           `-- ReturnStmt
 |               `-- Identifier "legs"  <int> lvalue  -> Dog::legs (field, member)
 |-- FunctionDef "take : _Z4take3Dog"  <int (class Dog)>  -> _Z4take3Dog (function)
-|   |-- ParamDecl "d : CLASS"  <class Dog>  -> d.2 (parameter, param)
+|   |-- ParamDecl "d : CLASS"  <class Dog>  -> d.1 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
-|               `-- Identifier "d"  <class Dog> lvalue  -> d.2 (parameter, param)
+|               `-- Identifier "d"  <class Dog> lvalue  -> d.1 (parameter, param)
 |-- FunctionDef "twice : _Z5twicei"  <int (int)>  -> _Z5twicei (function)
-|   |-- ParamDecl "v : INT"  <int>  -> v.3 (parameter, param)
+|   |-- ParamDecl "v : INT"  <int>  -> v.2 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- BinaryExpr "*"  <int>
-|               |-- Identifier "v"  <int> lvalue  -> v.3 (parameter, param)
+|               |-- Identifier "v"  <int> lvalue  -> v.2 (parameter, param)
 |               `-- IntLiteral "2"  <int> =2
 `-- FunctionDef "main : main"  <int (void)>  -> main (function)
     `-- CompoundStmt
-        |-- VarDecl "x : INT"  <int>  -> x.4 (variable, local)
+        |-- VarDecl "x : INT"  <int>  -> x.3 (variable, local)
         |   `-- IntLiteral "3"  <int> =3
-        |-- VarDecl "d : DOUBLE"  <double>  -> d.5 (variable, local)
+        |-- VarDecl "d : DOUBLE"  <double>  -> d.4 (variable, local)
         |   `-- BinaryExpr "/"  <double>
         |       |-- ConstructExpr "double"  <double>
-        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
-        |-- VarDecl "i : INT"  <int>  -> i.6 (variable, local)
+        |-- VarDecl "i : INT"  <int>  -> i.5 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- ConstructExpr "int"  <int>
-        |       |   `-- Identifier "d"  <double> lvalue  -> d.5 (variable, local)
+        |       |   `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
         |       `-- ConstructExpr "int"  <int>
         |           `-- FloatLiteral "2.5"  <double>
-        |-- VarDecl "c : CHAR"  <char>  -> c.7 (variable, local)
+        |-- VarDecl "c : CHAR"  <char>  -> c.6 (variable, local)
         |   `-- ConstructExpr "char"  <char> =65
         |       `-- IntLiteral "65"  <int> =65
-        |-- VarDecl "big : LONG"  <long>  -> big.8 (variable, local)
+        |-- VarDecl "big : LONG"  <long>  -> big.7 (variable, local)
         |   `-- BinaryExpr "*"  <long>
         |       |-- ConstructExpr "long"  <long>
-        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
         |       `-- IntLiteral "2"  <int> =2
         |-- ExprStmt
         |   `-- BinaryExpr "+"  <int>
         |       |-- ConstructExpr "int"  <int>
-        |       |   `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
+        |       |   `-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
         |       `-- IntLiteral "1"  <int> =1
         |-- ExprStmt
         |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
         |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
-        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
-        |               `-- IntLiteral "4"  <int> =4
-        |-- ExprStmt
-        |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
-        |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
         |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ev (function)
-        |-- ExprStmt
-        |   `-- CallExpr  <int>  -> _ZN3Dog4barkEv (function)
-        |       `-- MemberExpr "bark"  <int (void)>  -> _ZN3Dog4barkEv (function)
-        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
-        |               `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
-        |-- VarDecl "y : INT"  <int>  -> y.9 (variable, local)
+        |-- VarDecl "y : INT"  <int>  -> y.8 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- CallExpr  <int>  -> _Z4take3Dog (function)
         |       |   |-- Identifier "take"  <int (class Dog)>  -> _Z4take3Dog (function)
-        |       |   `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
-        |       |       `-- IntLiteral "5"  <int> =5
+        |       |   `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ev (function)
         |       `-- CallExpr  <int>  -> _Z4take3Dog (function)
         |           |-- Identifier "take"  <int (class Dog)>  -> _Z4take3Dog (function)
-        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ei (function)
-        |               `-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
-        |-- VarDecl "spot : CLASS"  <class Dog>  -> spot.10 (variable, local)
-        |-- VarDecl "rex : CLASS"  <class Dog>  -> rex.11 (variable, local)
-        |   `-- ConstructExpr "CLASS"  <class Dog>  -> _ZN3DogC1Ei (function)
-        |       `-- IntLiteral "3"  <int> =3
+        |           `-- ConstructExpr "Dog"  <class Dog>  -> _ZN3DogC1Ev (function)
+        |-- VarDecl "spot : CLASS"  <class Dog>  -> spot.9 (variable, local)
+        |-- VarDecl "rex : CLASS"  <class Dog>  -> rex.10 (variable, local)
         |-- DeclGroup
-        |   |-- VarDecl "a : INT"  <int>  -> a.12 (variable, local)
+        |   |-- VarDecl "a : INT"  <int>  -> a.11 (variable, local)
         |   |   `-- IntLiteral "0"  <int> =0
-        |   `-- VarDecl "T : INT"  <int>  -> T.13 (variable, local)
+        |   `-- VarDecl "T : INT"  <int>  -> T.12 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
-        |       |-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
+        |       |-- Identifier "T"  <int> lvalue  -> T.12 (variable, local)
         |       `-- IntLiteral "5"  <int> =5
         |-- DeclGroup
-        |   |-- VarDecl "k : INT"  <int>  -> k.14 (variable, local)
+        |   |-- VarDecl "k : INT"  <int>  -> k.13 (variable, local)
         |   |   `-- IntLiteral "2"  <int> =2
-        |   |-- VarDecl "U : INT"  <int>  -> U.15 (variable, local)
+        |   |-- VarDecl "U : INT"  <int>  -> U.14 (variable, local)
         |   |   `-- BinaryExpr "+"  <int>
-        |   |       |-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
+        |   |       |-- Identifier "T"  <int> lvalue  -> T.12 (variable, local)
         |   |       `-- IntLiteral "1"  <int> =1
-        |   `-- VarDecl "m : INT"  <int>  -> m.16 (variable, local)
+        |   `-- VarDecl "m : INT"  <int>  -> m.15 (variable, local)
         |       `-- IntLiteral "0"  <int> =0
-        |-- VarDecl "N : INT"  <const int>  -> N.17 (variable, local)
+        |-- VarDecl "N : INT"  <const int>  -> N.16 (variable, local)
         |   `-- IntLiteral "2"  <int> =2
-        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.18 (variable, local)
+        |-- VarDecl "arr : INT_ARRAY"  <int[4]>  -> arr.17 (variable, local)
         |   `-- InitializerList  <int[4]>
         |       |-- DesignatedInit "[]"  <int>
-        |       |   |-- Identifier "N"  <const int> lvalue =2  -> N.17 (variable, local)
+        |       |   |-- Identifier "N"  <const int> lvalue =2  -> N.16 (variable, local)
         |       |   `-- IntLiteral "7"  <int> =7
         |       |-- DesignatedInit "[]"  <int>
         |       |   |-- Identifier "FIRST"  <const int> lvalue =0  -> FIRST (variable, global)
@@ -135,14 +114,14 @@ Program "translation_unit"
         |           |   |-- Identifier "THIRD"  <const int> lvalue =2  -> THIRD (variable, global)
         |           |   `-- IntLiteral "1"  <int> =1
         |           `-- IntLiteral "9"  <int> =9
-        |-- VarDecl "g : INT"  <int>  -> g.19 (variable, local)
+        |-- VarDecl "g : INT"  <int>  -> g.18 (variable, local)
         |   `-- CallExpr  <int>  -> _Z5twicei (function)
         |       |-- Identifier "twice"  <int (int)>  -> _Z5twicei (function)
         |       `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "ip : INT_POINTER"  <int *>  -> ip.20 (variable, local)
+        |-- VarDecl "ip : INT_POINTER"  <int *>  -> ip.19 (variable, local)
         |   `-- CastExpr "INT_POINTER"  <int *>
         |       `-- IntLiteral "0"  <int> =0
-        |-- VarDecl "s : INT"  <int>  -> s.21 (variable, local)
+        |-- VarDecl "s : INT"  <int>  -> s.20 (variable, local)
         |   `-- BinaryExpr "+"  <unsigned int> =12
         |       |-- BinaryExpr "*"  <unsigned int> =8
         |       |   |-- SizeofExpr "INT"  <unsigned int> =4
@@ -164,26 +143,26 @@ Program "translation_unit"
                 |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <long>
                 |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
                 |   |   |   |   |   |   |   |   |   |   |   |   |   |-- BinaryExpr "+"  <int>
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "x"  <int> lvalue  -> x.4 (variable, local)
-                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "i"  <int> lvalue  -> i.6 (variable, local)
-                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "c"  <char> lvalue  -> c.7 (variable, local)
-                |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "big"  <long> lvalue  -> big.8 (variable, local)
-                |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "y"  <int> lvalue  -> y.9 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   |-- Identifier "x"  <int> lvalue  -> x.3 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "i"  <int> lvalue  -> i.5 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "c"  <char> lvalue  -> c.6 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "big"  <long> lvalue  -> big.7 (variable, local)
+                |   |   |   |   |   |   |   |   |   |   |   `-- Identifier "y"  <int> lvalue  -> y.8 (variable, local)
                 |   |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
-                |   |   |   |   |   |   |   |   |   |       `-- Identifier "spot"  <class Dog> lvalue  -> spot.10 (variable, local)
+                |   |   |   |   |   |   |   |   |   |       `-- Identifier "spot"  <class Dog> lvalue  -> spot.9 (variable, local)
                 |   |   |   |   |   |   |   |   |   `-- MemberExpr "legs"  <int> lvalue  -> Dog::legs (field, member)
-                |   |   |   |   |   |   |   |   |       `-- Identifier "rex"  <class Dog> lvalue  -> rex.11 (variable, local)
-                |   |   |   |   |   |   |   |   `-- Identifier "a"  <int> lvalue  -> a.12 (variable, local)
-                |   |   |   |   |   |   |   `-- Identifier "T"  <int> lvalue  -> T.13 (variable, local)
-                |   |   |   |   |   |   `-- Identifier "k"  <int> lvalue  -> k.14 (variable, local)
-                |   |   |   |   |   `-- Identifier "U"  <int> lvalue  -> U.15 (variable, local)
-                |   |   |   |   `-- Identifier "m"  <int> lvalue  -> m.16 (variable, local)
+                |   |   |   |   |   |   |   |   |       `-- Identifier "rex"  <class Dog> lvalue  -> rex.10 (variable, local)
+                |   |   |   |   |   |   |   |   `-- Identifier "a"  <int> lvalue  -> a.11 (variable, local)
+                |   |   |   |   |   |   |   `-- Identifier "T"  <int> lvalue  -> T.12 (variable, local)
+                |   |   |   |   |   |   `-- Identifier "k"  <int> lvalue  -> k.13 (variable, local)
+                |   |   |   |   |   `-- Identifier "U"  <int> lvalue  -> U.14 (variable, local)
+                |   |   |   |   `-- Identifier "m"  <int> lvalue  -> m.15 (variable, local)
                 |   |   |   `-- IndexExpr  <int> lvalue
-                |   |   |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.18 (variable, local)
+                |   |   |       |-- Identifier "arr"  <int[4]> lvalue  -> arr.17 (variable, local)
                 |   |   |       `-- IntLiteral "3"  <int> =3
-                |   |   `-- Identifier "g"  <int> lvalue  -> g.19 (variable, local)
-                |   `-- Identifier "s"  <int> lvalue  -> s.21 (variable, local)
-                `-- Identifier "d"  <double> lvalue  -> d.5 (variable, local)
+                |   |   `-- Identifier "g"  <int> lvalue  -> g.18 (variable, local)
+                |   `-- Identifier "s"  <int> lvalue  -> s.20 (variable, local)
+                `-- Identifier "d"  <double> lvalue  -> d.4 (variable, local)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
@@ -193,34 +172,32 @@ U                  typedef        int                        -        global    
 FIRST              variable       const int                  global   global                         9     4     1     FIRST                -                        value 0
 THIRD              variable       const int                  global   global                         9     4     1     THIRD                -                        value 2
 Dog                class_tag      class Dog                  -        global                         10    -     0     Dog                  -                        size 4
-Dog::legs          field          int                        member   global > class Dog             12    4     6     Dog::legs            -                        public, offset 0
-Dog::Dog           constructor    void (int)                 -        global > class Dog             13    -     5     _ZN3DogC1Ei          _ZN3DogC1Ei              public
-Dog::Dog           constructor    void (void)                -        global > class Dog             14    -     2     _ZN3DogC1Ev          _ZN3DogC1Ev              public
-Dog::bark          method         int (void)                 -        global > class Dog             15    -     3     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
-n                  parameter      int                        param    global > class Dog > Dog()     13    4     1     n.1                  -                        
-take               function       int (class Dog)            -        global                         17    -     2     _Z4take3Dog          _Z4take3Dog              defined
-d                  parameter      class Dog                  param    global > take()                17    4     1     d.2                  -                        
-twice              function       int (int)                  -        global                         18    -     1     _Z5twicei            _Z5twicei                defined
-v                  parameter      int                        param    global > twice()               18    4     1     v.3                  -                        
-main               function       int (void)                 -        global                         19    -     0     main                 main                     defined
-x                  variable       int                        local    global > main()                20    4     6     x.4                  -                        
-d                  variable       double                     local    global > main()                21    8     2     d.5                  -                        
-i                  variable       int                        local    global > main()                22    4     1     i.6                  -                        
-c                  variable       char                       local    global > main()                23    1     1     c.7                  -                        
-big                variable       long                       local    global > main()                24    4     1     big.8                -                        
-y                  variable       int                        local    global > main()                29    4     1     y.9                  -                        
-spot               variable       class Dog                  local    global > main()                30    4     1     spot.10              -                        
-rex                variable       class Dog                  local    global > main()                31    4     1     rex.11               -                        
-a                  variable       int                        local    global > main()                32    4     1     a.12                 -                        
-T                  variable       int                        local    global > main()                32    4     3     T.13                 -                        
-k                  variable       int                        local    global > main()                34    4     1     k.14                 -                        
-U                  variable       int                        local    global > main()                34    4     1     U.15                 -                        
-m                  variable       int                        local    global > main()                34    4     1     m.16                 -                        
-N                  variable       const int                  local    global > main()                35    4     1     N.17                 -                        value 2
-arr                variable       int[4]                     local    global > main()                36    16    1     arr.18               -                        
-g                  variable       int                        local    global > main()                37    4     1     g.19                 -                        
-ip                 variable       int *                      local    global > main()                38    4     0     ip.20                -                        
-s                  variable       int                        local    global > main()                39    4     1     s.21                 -                        
+Dog::legs          field          int                        member   global > class Dog             12    4     5     Dog::legs            -                        public, offset 0
+Dog::Dog           constructor    void (void)                -        global > class Dog             13    -     5     _ZN3DogC1Ev          _ZN3DogC1Ev              public
+Dog::bark          method         int (void)                 -        global > class Dog             14    -     1     _ZN3Dog4barkEv       _ZN3Dog4barkEv           public, defined
+take               function       int (class Dog)            -        global                         16    -     2     _Z4take3Dog          _Z4take3Dog              defined
+d                  parameter      class Dog                  param    global > take()                16    4     1     d.1                  -                        
+twice              function       int (int)                  -        global                         17    -     1     _Z5twicei            _Z5twicei                defined
+v                  parameter      int                        param    global > twice()               17    4     1     v.2                  -                        
+main               function       int (void)                 -        global                         18    -     0     main                 main                     defined
+x                  variable       int                        local    global > main()                19    4     4     x.3                  -                        
+d                  variable       double                     local    global > main()                20    8     2     d.4                  -                        
+i                  variable       int                        local    global > main()                21    4     1     i.5                  -                        
+c                  variable       char                       local    global > main()                22    1     1     c.6                  -                        
+big                variable       long                       local    global > main()                23    4     1     big.7                -                        
+y                  variable       int                        local    global > main()                26    4     1     y.8                  -                        
+spot               variable       class Dog                  local    global > main()                27    4     1     spot.9               -                        
+rex                variable       class Dog                  local    global > main()                28    4     1     rex.10               -                        
+a                  variable       int                        local    global > main()                29    4     1     a.11                 -                        
+T                  variable       int                        local    global > main()                29    4     3     T.12                 -                        
+k                  variable       int                        local    global > main()                31    4     1     k.13                 -                        
+U                  variable       int                        local    global > main()                31    4     1     U.14                 -                        
+m                  variable       int                        local    global > main()                31    4     1     m.15                 -                        
+N                  variable       const int                  local    global > main()                32    4     1     N.16                 -                        value 2
+arr                variable       int[4]                     local    global > main()                33    16    1     arr.17               -                        
+g                  variable       int                        local    global > main()                34    4     1     g.18                 -                        
+ip                 variable       int *                      local    global > main()                35    4     0     ip.19                -                        
+s                  variable       int                        local    global > main()                36    4     1     s.20                 -                        
 
 === Record Layouts (MIPS32) ===
 class Dog: size 4, align 4

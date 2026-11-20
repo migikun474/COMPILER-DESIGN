@@ -80,9 +80,9 @@ extern int yydebug;
     AUTO = 275,                    /* AUTO  */
     EXTERN = 276,                  /* EXTERN  */
     CONST = 277,                   /* CONST  */
-    VIRTUAL = 278,                 /* VIRTUAL  */
-    EXPLICIT = 279,                /* EXPLICIT  */
-    FRIEND = 280,                  /* FRIEND  */
+    FRIEND = 278,                  /* FRIEND  */
+    VIRTUAL = 279,                 /* VIRTUAL  */
+    EXPLICIT = 280,                /* EXPLICIT  */
     IF = 281,                      /* IF  */
     ELSE = 282,                    /* ELSE  */
     FOR = 283,                     /* FOR  */

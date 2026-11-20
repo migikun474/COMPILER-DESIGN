@@ -484,15 +484,15 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -536
-        sw    $s0, -516($fp)
-        sw    $s1, -512($fp)
-        sw    $s2, -504($fp)
-        sw    $s3, -508($fp)
-        sw    $s4, -532($fp)
-        sw    $s5, -524($fp)
-        sw    $s6, -528($fp)
-        sw    $s7, -520($fp)
+        addiu $sp, $sp, -552
+        sw    $s0, -532($fp)
+        sw    $s1, -528($fp)
+        sw    $s2, -520($fp)
+        sw    $s3, -524($fp)
+        sw    $s4, -536($fp)
+        sw    $s5, -540($fp)
+        sw    $s6, -544($fp)
+        sw    $s7, -548($fp)
         # list = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -740,56 +740,60 @@ L8_68:
         sw    $zero, -52($fp)
         # i.26 = 0
         li    $s0, 0
-        # t28 = &s
-        addiu $s7, $fp, -84
-        # t102 = t28 ptr+ 32
-        addiu $s2, $s7, 32
-L8_96:
+L8_94:
         # if i.26 int>= 5 goto 106
         li    $t1, 5
         bge   $s0, $t1, L8_106
+        # t28 = &s
+        addiu $s1, $fp, -84
         # t29 = i.26 int* 3
         li    $t1, 3
-        mul   $s3, $s0, $t1
+        mul   $s4, $s0, $t1
+        # t102 = t28 ptr+ 32
+        addiu $s2, $s1, 32
         # t103 = *t102
-        lw    $s1, 0($s2)
+        lw    $s3, 0($s2)
         # t104 = t103 int+ 1
-        addiu $s4, $s1, 1
+        addiu $s5, $s3, 1
         # *t102 = t104
-        sw    $s4, 0($s2)
+        sw    $s5, 0($s2)
         # t105 = t103 int<< 2
-        sll   $s5, $s1, 2
+        sll   $s6, $s3, 2
         # t106 = t28 ptr+ t105
-        addu  $s6, $s7, $s5
+        addu  $s7, $s1, $s6
         # *t106 = t29
-        sw    $s3, 0($s6)
+        sw    $s4, 0($s7)
         # i.26 = i.26 int+ 1
         addiu $s0, $s0, 1
-        # goto 96
-        j     L8_96
+        # goto 94
+        j     L8_94
 L8_106:
-        # t109 = *t102
-        lw    $s1, 0($s2)
+        # t31 = &s
+        addiu $s0, $fp, -84
+        # t108 = t31 ptr+ 32
+        addiu $s1, $s0, 32
+        # t109 = *t108
+        lw    $s3, 0($s1)
         # t110 = t109 int- 1
-        addiu $s0, $s1, -1
-        # *t102 = t110
-        sw    $s0, 0($s2)
+        addiu $s2, $s3, -1
+        # *t108 = t110
+        sw    $s2, 0($s1)
         # t111 = t110 int<< 2
-        sll   $s1, $s0, 2
-        # t112 = t28 ptr+ t111
-        addu  $s3, $s7, $s1
+        sll   $s3, $s2, 2
+        # t112 = t31 ptr+ t111
+        addu  $s4, $s0, $s3
         # t113 = *t112
-        lw    $s4, 0($s3)
+        lw    $s5, 0($s4)
         # t117 = t110 int- 1
-        addiu $s1, $s0, -1
-        # *t102 = t117
-        sw    $s1, 0($s2)
+        addiu $s3, $s2, -1
+        # *t108 = t117
+        sw    $s3, 0($s1)
         # t118 = t117 int<< 2
-        sll   $s0, $s1, 2
-        # t119 = t28 ptr+ t118
-        addu  $s1, $s7, $s0
+        sll   $s1, $s3, 2
+        # t119 = t31 ptr+ t118
+        addu  $s2, $s0, $s1
         # t120 = *t119
-        lw    $s2, 0($s1)
+        lw    $s1, 0($s2)
         # t35 = s[32]
         lw    $s0, -52($fp)
         # param "%d %d %d\n"
@@ -800,8 +804,8 @@ L8_106:
         addiu $sp, $sp, -16
         la    $t0, str3
         sw    $t0, 0($sp)
-        sw    $s4, 4($sp)
-        sw    $s2, 8($sp)
+        sw    $s5, 4($sp)
+        sw    $s1, 8($sp)
         sw    $s0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
@@ -814,18 +818,19 @@ L8_106:
         addiu $sp, $sp, 8
         sw    $v0, -108($fp)
         # r.32 = 0
-        li    $s7, 0
-L8_126:
-        # if r.32 int>= 3 goto 144
+        li    $s1, 0
+L8_128:
+        # if r.32 int>= 3 goto 148
         li    $t1, 3
-        bge   $s7, $t1, L8_144
+        bge   $s1, $t1, L8_148
         # t38 = r.32 int<< 2
-        sll   $t0, $s7, 2
-        sw    $t0, -252($fp)
+        sll   $t0, $s1, 2
+        sw    $t0, -256($fp)
         # t39 = table ptr+ t38
         lw    $t0, -108($fp)
-        lw    $t1, -252($fp)
-        addu  $s5, $t0, $t1
+        lw    $t1, -256($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -260($fp)
         # param 16
         # t41 = call malloc, 1
         addiu $sp, $sp, -8
@@ -833,47 +838,54 @@ L8_126:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        sw    $v0, -260($fp)
+        sw    $v0, -264($fp)
         # *t39 = t41
-        move  $t0, $v0
-        sw    $t0, 0($s5)
+        lw    $t8, -260($fp)
+        lw    $t0, -264($fp)
+        sw    $t0, 0($t8)
         # c = 0
         li    $s0, 0
+L8_135:
+        # if c int>= 4 goto 146
+        li    $t1, 4
+        bge   $s0, $t1, L8_146
+        # t42 = r.32 int<< 2
+        sll   $s2, $s1, 2
+        # t43 = table ptr+ t42
+        lw    $t0, -108($fp)
+        addu  $s3, $t0, $s2
+        # t44 = *t43
+        lw    $s4, 0($s3)
+        # t45 = c int<< 2
+        sll   $s5, $s0, 2
+        # t46 = t44 ptr+ t45
+        addu  $s6, $s4, $s5
         # t47 = r.32 int* 10
         li    $t1, 10
-        mul   $s6, $s7, $t1
-L8_134:
-        # if c int>= 4 goto 142
-        li    $t1, 4
-        bge   $s0, $t1, L8_142
-        # t44 = *t39
-        lw    $s1, 0($s5)
-        # t45 = c int<< 2
-        sll   $s2, $s0, 2
-        # t46 = t44 ptr+ t45
-        addu  $s3, $s1, $s2
+        mul   $s7, $s1, $t1
         # t48 = t47 int+ c
-        addu  $s4, $s6, $s0
+        addu  $t0, $s7, $s0
+        sw    $t0, -292($fp)
         # *t46 = t48
-        sw    $s4, 0($s3)
+        sw    $t0, 0($s6)
         # c = c int+ 1
         addiu $s0, $s0, 1
-        # goto 134
-        j     L8_134
-L8_142:
+        # goto 135
+        j     L8_135
+L8_146:
         # r.32 = r.32 int+ 1
-        addiu $s7, $s7, 1
-        # goto 126
-        j     L8_126
-L8_144:
+        addiu $s1, $s1, 1
+        # goto 128
+        j     L8_128
+L8_148:
         # diagonal = 0
         li    $s2, 0
         # r.35 = 0
         li    $s0, 0
-L8_146:
-        # if r.35 int>= 3 goto 155
+L8_150:
+        # if r.35 int>= 3 goto 159
         li    $t1, 3
-        bge   $s0, $t1, L8_155
+        bge   $s0, $t1, L8_159
         # t51 = r.35 int<< 2
         sll   $s1, $s0, 2
         # t52 = table ptr+ t51
@@ -889,9 +901,9 @@ L8_146:
         addu  $s2, $s2, $s6
         # r.35 = r.35 int+ 1
         addiu $s0, $s0, 1
-        # goto 146
-        j     L8_146
-L8_155:
+        # goto 150
+        j     L8_150
+L8_159:
         # t61 = table ptr+ 8
         lw    $t0, -108($fp)
         addiu $s0, $t0, 8
@@ -997,14 +1009,14 @@ L8_155:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        lw    $s0, -516($fp)
-        lw    $s1, -512($fp)
-        lw    $s2, -504($fp)
-        lw    $s3, -508($fp)
-        lw    $s4, -532($fp)
-        lw    $s5, -524($fp)
-        lw    $s6, -528($fp)
-        lw    $s7, -520($fp)
+        lw    $s0, -532($fp)
+        lw    $s1, -528($fp)
+        lw    $s2, -520($fp)
+        lw    $s3, -524($fp)
+        lw    $s4, -536($fp)
+        lw    $s5, -540($fp)
+        lw    $s6, -544($fp)
+        lw    $s7, -548($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -75,13 +75,13 @@ _Z5depthi:
         # t1 = n int<< 1
         sll   $s1, $s0, 1
         # a = t1
-        move  $s5, $s1
+        move  $s4, $s1
         # t2 = n int+ 7
         addiu $s2, $s0, 7
         # b = t2
-        move  $s3, $s2
+        move  $s5, $s2
         # c = t1 int- t2
-        subu  $s4, $s1, $s2
+        subu  $s3, $s1, $s2
         # if n int!= 0 goto 7
         bne   $s0, $zero, L0_7
         # return 1
@@ -100,9 +100,9 @@ L0_7:
         # below = t5
         move  $s1, $s0
         # t6 = a int+ b
-        addu  $s1, $s5, $s3
+        addu  $s1, $s4, $s5
         # t7 = t6 int+ c
-        addu  $s2, $s1, $s4
+        addu  $s2, $s1, $s3
         # t8 = t7 int+ t5
         addu  $s1, $s2, $s0
         # return t8

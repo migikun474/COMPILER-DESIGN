@@ -99,7 +99,7 @@ void SemanticAnalyzer::analyze(const ASTNodePtr &root) {
                     "undefined-variable");
         }
         if (s->kind == SymbolKind::Function && !s->isDefined && s->useCount > 0 &&
-            !s->isConstructor && !s->isDestructor && !s->isPure) { /* a pure virtual one is never called directly */
+            !s->isConstructor) {
             warning(s->line, s->column, "function '" + s->name + "' is used but never defined",
                     "undefined-function");
         }
@@ -393,7 +393,6 @@ SemanticAnalyzer::Resolved SemanticAnalyzer::resolveType(const ASTTypeExpr &te, 
             t = errorType();
         }
         t = functionType(t, resolveParams(te, at), te.isVariadic);
-        if (te.isConstMethod) t = qualified(t, true); /* `int get() const` */
     } else {
         t = wrapArrays(t, innerDims, te.arrayDims.size());
     }
@@ -410,8 +409,51 @@ SemanticAnalyzer::Resolved SemanticAnalyzer::resolveType(const ASTTypeExpr &te, 
    declarations
    ===================================================================== */
 
+/* an object of type `t` runs a constructor: its class, a base or a member (or an array element's) has one */
+static bool hasConstructor(const TypePtr &tIn) {
+    TypePtr t = tIn;
+    while (t && isArray(t)) t = t->elem;
+    RecordInfo *rec = t && isRecord(t) ? t->record.get() : nullptr;
+    if (!rec || !rec->complete) return false;
+    if (!rec->constructors.empty()) return true;
+    for (const auto &b : rec->bases)
+        if (b.record && hasConstructor(recordType(b.record))) return true;
+    for (const auto &f : rec->fields)
+        if (f->storage == Storage::Member && hasConstructor(f->type)) return true;
+    return false;
+}
+
+/* a C++ class rather than a plain C struct: declared `class`, or with a
+   base, member functions or a constructor (D35 forbids defining these
+   inside a function or another class; data-only structs are still C) */
+static bool isCxxClass(const ASTNodePtr &n) {
+    if (n->kind == ASTKind::ClassDecl || !n->bases.empty()) return true;
+    for (const auto &m : n->children) {
+        if (m->kind == ASTKind::FunctionDef || m->kind == ASTKind::FunctionDecl || m->kind == ASTKind::ConstructorDef ||
+            m->kind == ASTKind::FriendDecl)
+            return true;
+        if (m->kind == ASTKind::DeclGroup)
+            for (const auto &c : m->children)
+                if (c->kind == ASTKind::FunctionDecl || c->kind == ASTKind::FunctionDef) return true;
+    }
+    return false;
+}
+
+/* a class defined inside a function body (D35: no local classes) */
+static bool definesLocalRecord(const ASTNodePtr &n) {
+    if (n->kind == ASTKind::StructDecl || n->kind == ASTKind::ClassDecl) return isCxxClass(n);
+    if (n->kind == ASTKind::DeclGroup)
+        for (const auto &c : n->children)
+            if ((c->kind == ASTKind::StructDecl || c->kind == ASTKind::ClassDecl) && isCxxClass(c)) return true;
+    return false;
+}
+
 void SemanticAnalyzer::declaration(const ASTNodePtr &n, DeclCtx ctx) {
     if (!n) return;
+    if (ctx == DeclCtx::Local && definesLocalRecord(n)) {
+        error(n.get(), "a class cannot be defined inside a function (no local classes): define it at file scope", "local-class");
+        return;
+    }
     switch (n->kind) {
         case ASTKind::VarDecl: variable(n, ctx); break;
         case ASTKind::FunctionDecl: functionSignature(n, ctx, false); break;
@@ -433,8 +475,7 @@ void SemanticAnalyzer::declaration(const ASTNodePtr &n, DeclCtx ctx) {
             if (isAnonymousTag(tagFromLabel(n->label)))
                 warning(n.get(), "unnamed struct that defines no instances", "anonymous");
             break;
-        case ASTKind::ConstructorDef:
-        case ASTKind::DestructorDef: outOfClassSpecial(n); break; /* `Dog::Dog(...) {}` */
+        case ASTKind::ConstructorDef: outOfClassSpecial(n); break; /* `Dog::Dog() {}` */
         default: break; /* ErrorNode: only reachable with syntax errors, which skip this phase */
     }
 }
@@ -541,11 +582,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
         }
     }
 
-    if (isAbstractType(t) && !declarationOnly) {
-        error(line, col, what + " '" + name + "' cannot have the abstract type " + q(t) + " (it has pure virtual functions)",
-              "abstract");
-        t = errorType();
-    } else if (isVoid(t)) {
+    if (isVoid(t)) {
         error(line, col, what + " '" + name + "' has incomplete type 'void'", "incomplete-type");
         t = errorType();
     } else if (!isError(t) && !isComplete(t) && !isReference(t) && !declarationOnly) {
@@ -656,6 +693,13 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     n->symbol = sym;
     n->semType = t;
 
+    if (ctx == DeclCtx::Local && storage == Storage::Static && hasConstructor(t)) {
+        /* D35: no lazily constructed static locals (C++ builds them on first use) */
+        error(line, col, "static local '" + name + "' of type " + q(t) +
+                             " is not supported: its class has a constructor (make it a global or a non-static local)",
+              "static-object");
+        return sym;
+    }
     if (!init && ctx != DeclCtx::Member && !isError(t)) defaultConstruct(t, n.get());
     if (init) {
         sym->hasInitializer = true;
@@ -746,7 +790,7 @@ bool SemanticAnalyzer::isConstantInitializer(const ASTNodePtr &n) {
    ponytail: the value after a designator must be braced when it names
    an aggregate (`{.a = 1, 2}` is not elided); gcc accepts that too. */
 static bool isAggregate(const TypePtr &t) {
-    return t && (isArray(t) || (isRecord(t) && t->record && t->record->constructors.empty() && !t->record->polymorphic));
+    return t && (isArray(t) || (isRecord(t) && t->record && t->record->constructors.empty()));
 }
 
 static std::vector<SymbolPtr> memberFields(const TypePtr &t) {
@@ -768,7 +812,7 @@ ASTNodePtr SemanticAnalyzer::takeElided(const TypePtr &sub, const std::vector<AS
                  (c->kind == ASTKind::StringLiteral && isArray(sub) && sub->elem && sub->elem->kind == TypeKind::Char);
     if (!whole && isRecord(sub) && c->kind != ASTKind::DesignatedInit) { /* `{other, 1}`: a struct value */
         TypePtr ct = decay(expr(c));
-        whole = isRecord(ct) && (ct->record == sub->record || isDerivedFrom(ct->record.get(), sub->record.get()));
+        whole = isRecord(ct) && ct->record == sub->record;
     }
     if (whole) {
         ++i;
@@ -888,11 +932,6 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
         }
         if (isRecord(target)) {
             RecordInfo *rec = target->record.get();
-            if (rec->polymorphic) {
-                error(init.get(), "a class with virtual functions (" + q(target) + ") cannot be initialized with a brace list; use a constructor",
-                      "initializer");
-                return;
-            }
             std::vector<SymbolPtr> fields;
             for (const auto &f : rec->fields) {
                 if (f->storage == Storage::Member) fields.push_back(f);
@@ -1003,14 +1042,6 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
 
     TypePtr it = expr(init);
     if (isError(it) || isError(target)) return;
-    if (RecordInfo *rec = isRecord(target) ? target->record.get() : nullptr) {
-        /* `Dog d = 4;`: a constructor taking one argument converts */
-        RecordInfo *from = isRecord(decay(it)) ? decay(it)->record.get() : nullptr;
-        if (!(from && (from == rec || isDerivedFrom(from, rec))) && userConvertible(target, init)) {
-            init->converter = construct(rec, {init}, init.get(), true);
-            return;
-        }
-    }
     if (convertible(target, init, "type mismatch: cannot initialize " + what + " of type '%T' with a value of type '%F'") &&
         requireConstant && !isConstantInitializer(init)) {
         error(init.get(), "initializer element is not a compile-time constant (" + what + " has static storage)",
@@ -1078,11 +1109,6 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     }
     TypePtr ft = r.type;
     if (!isFunction(ft)) return nullptr;
-    for (const auto &p : ft->params)
-        if (isAbstractType(p)) error(line, col, "a parameter of '" + name + "' cannot have the abstract type " + q(p) + "; pass it by reference",
-                                     "abstract");
-    if (isAbstractType(ft->ret))
-        error(line, col, "'" + name + "' cannot return the abstract type " + q(ft->ret) + " by value", "abstract");
     if (isDefinition && ctx != DeclCtx::Member && !isVoid(ft->ret) && !isError(ft->ret) && !isComplete(ft->ret) &&
         !isReference(ft->ret)) {
         error(line, col, "function '" + name + "' has incomplete return type " + q(ft->ret), "incomplete-type");
@@ -1145,21 +1171,10 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     sym->line = line;
     sym->column = col;
     sym->isStatic = te.isStatic;
-    sym->isVirtual = te.isVirtual;
-    sym->isPure = te.isPure;
     sym->declNode = n.get();
-    if (!rec && (te.isVirtual || te.isConstMethod))
-        error(line, col, std::string(te.isVirtual ? "'virtual'" : "a 'const' qualifier") + " is only allowed on member functions ('" +
-                             name + "' is not one)",
-              "invalid-specifier");
-    if (te.isStatic && (te.isVirtual || te.isConstMethod))
-        error(line, col, "static member function '" + name + "' cannot be " + (te.isVirtual ? "virtual" : "const"),
-              "invalid-specifier");
-    if (te.isPure && !te.isVirtual)
-        error(line, col, "'" + name + "' is declared '= 0' but is not virtual", "pure-virtual");
     /* the link name, from the resolved signature (Itanium C++ ABI) */
     sym->mangledName = (name == "main" && ctx == DeclCtx::Global) ? "main"
-                                                                  : mangle(name, ft->params, ft->variadic, rec ? rec->tag : "", ft->isConst);
+                                                                  : mangle(name, ft->params, ft->variadic, rec ? rec->tag : "");
     sym->uniqueName = sym->mangledName;
     /* distinct signatures always mangle differently; this only guards
        the TAC namespace against a declaration that already failed */
@@ -1324,7 +1339,7 @@ void SemanticAnalyzer::functionBody(const ASTNodePtr &n, const SymbolPtr &fnSym,
     c.ret = ft->ret;
     c.cls = cls;
     c.isStaticMethod = cls && fnSym->isStatic;
-    c.isConstructorLike = fnSym->isConstructor || fnSym->isDestructor;
+    c.isConstructorLike = fnSym->isConstructor;
     ASTNodePtr body = n->children.empty() ? nullptr : n->children.back();
     if (body && body->kind == ASTKind::CompoundStmt) {
         collectLabels(body, c);
@@ -1341,7 +1356,6 @@ void SemanticAnalyzer::functionBody(const ASTNodePtr &n, const SymbolPtr &fnSym,
         }
         fns.push_back(c);
         int errorsBefore = errors;
-        if (fnSym->isConstructor && cls) memberInitializers(n, cls);
         blockItems(body); /* the body block shares the parameters' scope, as in C */
         FunctionCtx done = fns.back();
         fns.pop_back();
@@ -1402,8 +1416,10 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
         } else if (!b->record->complete) {
             error(n.get(), "base class '" + recordKindName(b->record->kind) + " " + baseName + "' has incomplete type",
                   "inheritance");
-        } else if (std::any_of(rec->bases.begin(), rec->bases.end(), [&](const BaseClass &x) { return x.record == b->record; })) {
-            error(n.get(), "base class '" + baseName + "' specified more than once", "inheritance");
+        } else if (!rec->bases.empty()) {
+            /* single inheritance only (D35): one direct base; chains B : A, C : B are fine */
+            error(n.get(), "'" + tag + "' cannot have a second base class '" + baseName +
+                               "': only single inheritance is supported", "inheritance");
         } else {
             Access a = accessText == "public"      ? Access::Public
                        : accessText == "protected" ? Access::Protected
@@ -1524,35 +1540,30 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 bodies.push_back({m, s});
                 break;
             }
-            case ASTKind::ConstructorDef:
-            case ASTKind::DestructorDef: {
-                bool ctor = m->kind == ASTKind::ConstructorDef;
+            case ASTKind::ConstructorDef: {
                 std::string name = tagFromLabel(m->label);
                 if (name != tag) {
-                    if (ctor) {
-                        error(m.get(), "member function '" + name + "' must declare a return type (only constructors, named '" +
-                                           tag + "', may omit it)",
-                              "missing-return-type");
-                    } else {
-                        error(m.get(), "destructor name '~" + name + "' does not match the " + recordKindName(kind) +
-                                           " name '" + tag + "'",
-                              "destructor");
-                    }
+                    error(m.get(), "member function '" + name + "' must declare a return type (only constructors, named '" +
+                                       tag + "', may omit it)",
+                          "missing-return-type");
                     return;
                 }
                 auto s = std::make_shared<Symbol>();
-                s->name = ctor ? tag : "~" + tag;
+                s->name = tag;
                 s->kind = SymbolKind::Function;
-                s->type = functionType(voidType(), ctor && m->typeExpr ? resolveParams(*m->typeExpr, m.get())
-                                                                       : std::vector<TypePtr>{},
-                                       false);
+                std::vector<TypePtr> params = m->typeExpr ? resolveParams(*m->typeExpr, m.get()) : std::vector<TypePtr>{};
+                if (!params.empty() || (m->typeExpr && m->typeExpr->isVariadic)) {
+                    /* only the default constructor exists in this language (D35) */
+                    error(m.get(), "constructor '" + tag + "' cannot take parameters: only default constructors '" + tag +
+                                       "()' are supported",
+                          "constructor");
+                    return;
+                }
+                s->type = functionType(voidType(), {}, false);
                 s->isMethod = true;
                 bool hasBody = !m->children.empty() && m->children.back()->kind == ASTKind::CompoundStmt;
-                s->isConstructor = ctor;
-                s->isDestructor = !ctor;
-                s->isExplicit = m->typeExpr && m->typeExpr->isExplicit;
-                s->isVirtual = m->typeExpr && m->typeExpr->isVirtual;
-                s->isDefined = hasBody; /* else `Dog(int n);`, defined as Dog::Dog(int n) {...} */
+                s->isConstructor = true;
+                s->isDefined = hasBody; /* else `Dog();`, defined later as Dog::Dog() {...} */
                 s->ownerRecord = rec.get();
                 s->access = a;
                 s->line = m->line;
@@ -1560,25 +1571,13 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 s->declNode = m.get();
                 s->mangledName = mangle(s->name, s->type->params, s->type->variadic, tag);
                 s->uniqueName = s->mangledName;
-                if (ctor) {
-                    for (const auto &other : rec->constructors) {
-                        if (sameParameterLists(other->type, s->type)) {
-                            error(m.get(), "constructor '" + describeSignature(s) + "' is already declared at line " +
-                                               displayLine(other->line),
-                                  "redefinition");
-                            return;
-                        }
-                    }
-                    rec->constructors.push_back(s);
-                } else {
-                    if (rec->destructor) {
-                        error(m.get(), "destructor '~" + tag + "' is already declared at line " +
-                                           displayLine(rec->destructor->line),
-                              "redefinition");
-                        return;
-                    }
-                    rec->destructor = s;
+                if (!rec->constructors.empty()) {
+                    error(m.get(), "constructor '" + describeSignature(s) + "' is already declared at line " +
+                                       displayLine(rec->constructors.front()->line),
+                          "redefinition");
+                    return;
                 }
+                rec->constructors.push_back(s);
                 st.declareHidden(rec->scopeId, s);
                 m->symbol = s;
                 if (!m->typeExpr) m->typeExpr = std::make_shared<ASTTypeExpr>();
@@ -1587,8 +1586,15 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
             }
             case ASTKind::StructDecl:
             case ASTKind::ClassDecl:
+                if (isCxxClass(m) || (kind == RecordKind::Class && !isAnonymousTag(tagFromLabel(m->label)))) {
+                    /* a class inside a class (D35); C's nested data structs and unnamed members stay */
+                    error(m.get(), "nested " + std::string(m->kind == ASTKind::ClassDecl ? "class" : "struct") + " '" +
+                                       tagFromLabel(m->label) + "' is not supported: define it outside '" + tag + "'",
+                          "nested-class");
+                    break;
+                }
                 recordDefinition(m);
-                if (bare && isAnonymousTag(tagFromLabel(m->label))) anonymousMember(m, a);
+                if (bare) anonymousMember(m, a);
                 break;
             case ASTKind::TypedefDecl:
                 typedefDecl(m);
@@ -1599,7 +1605,6 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
     };
     for (const auto &m : n->children) memberItem(m, defaultAccess, true);
     st.exitScope();
-    virtualFunctions(rec.get(), n);
     layoutRecord(*rec);
     /* a promoted member sits at its holder's offset plus its own */
     for (auto &p : promotions) p.promoted->offset = p.holder->offset + p.inner->offset;

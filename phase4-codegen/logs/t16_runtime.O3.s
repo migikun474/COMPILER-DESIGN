@@ -848,27 +848,27 @@ main_:
         # t[24] = 100
         li    $t0, 100
         sw    $t0, -128($fp)
-        # t51 = s[0]
+        # t48 = s[0]
         l.d   $f0, -112($fp)
         mov.d $f20, $f0
-        # t52 = s[24]
+        # t49 = s[24]
         lw    $s0, -88($fp)
-        # t54 = s[28]
+        # t51 = s[28]
         lb    $s1, -84($fp)
-        # t55 = chartoint t54
+        # t52 = chartoint t51
         move  $t0, $s1
         move  $s2, $t0
-        # t56 = s[32]
+        # t53 = s[32]
         lw    $t1, -76($fp)
         lw    $t0, -80($fp)
         move  $s1, $t0
         move  $s3, $t1
         # param "%.1f %d %d %c %lld\n"
-        # param t51
-        # param t52
+        # param t48
+        # param t49
         # param 100
-        # param t55
-        # param t56
+        # param t52
+        # param t53
         # call printf, 6
         addiu $sp, $sp, -40
         la    $t0, str17
@@ -883,35 +883,35 @@ main_:
         sw    $s3, 36($sp)
         jal   __printf
         addiu $sp, $sp, 40
-        # t79 = s
+        # t76 = s
         addiu $a0, $fp, -312
         addiu $a1, $fp, -112
         li    $a2, 40
         jal   __memcpy
-        # t83 = t79[0]
+        # t80 = t76[0]
         l.d   $f0, -312($fp)
         mov.d $f20, $f0
-        # t84 = t83 double* 2.0
+        # t81 = t80 double* 2.0
         l.d   $f2, fc16
         mul.d $f22, $f20, $f2
-        # t85 = t79[24]
+        # t82 = t76[24]
         lw    $s0, -288($fp)
-        # t86 = inttodouble t85
+        # t83 = inttodouble t82
         move  $t0, $s0
         mtc1  $t0, $f0
         cvt.d.w $f0, $f0
         mov.d $f20, $f0
-        # t87 = t84 double+ t86
+        # t84 = t81 double+ t83
         add.d $f24, $f22, $f20
-        # t89 = t87 double+ 97.0
+        # t86 = t84 double+ 97.0
         l.d   $f2, fc17
         add.d $f20, $f24, $f2
-        # t90 = t79[32]
+        # t87 = t76[32]
         lw    $t1, -276($fp)
         lw    $t0, -280($fp)
         move  $s0, $t0
         move  $s1, $t1
-        # t91 = t90 llong/ 1000000000
+        # t88 = t87 llong/ 1000000000
         move  $a0, $s0
         move  $a1, $s1
         li    $a2, 1000000000
@@ -919,7 +919,7 @@ main_:
         jal   __divll
         move  $s2, $v0
         move  $s3, $v1
-        # t92 = llongtodouble t91
+        # t89 = llongtodouble t88
         move  $t0, $s2
         move  $t1, $s3
         mtc1  $t1, $f0
@@ -934,13 +934,13 @@ main_:
 M4_0:
         add.d $f0, $f0, $f6
         mov.d $f22, $f0
-        # t93 = t89 double+ t92
+        # t90 = t86 double+ t89
         add.d $f24, $f20, $f22
-        # t95 = t93 double+ 5.0
+        # t92 = t90 double+ 5.0
         l.d   $f2, fc18
         add.d $f20, $f24, $f2
         # param "%.1f\n"
-        # param t95
+        # param t92
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str18
@@ -955,7 +955,7 @@ M4_0:
         # param 4.0
         # param 77
         # param "tail"
-        # t58 = call average(int, ...), 6
+        # t55 = call average(int, ...), 6
         addiu $sp, $sp, -48
         li    $t0, 3
         sw    $t0, 0($sp)
@@ -975,7 +975,7 @@ M4_0:
         addiu $sp, $sp, 48
         mov.d $f20, $f0
         # param "%.2f\n"
-        # param t58
+        # param t55
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str19
@@ -985,29 +985,29 @@ M4_0:
         jal   __printf
         addiu $sp, $sp, 16
         # param 12
-        # t60 = call malloc, 1
+        # t57 = call malloc, 1
         addiu $sp, $sp, -8
         li    $t0, 12
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # *t60 = 1
+        # *t57 = 1
         li    $t0, 1
         sw    $t0, 0($s0)
-        # t61 = t60 ptr+ 4
+        # t58 = t57 ptr+ 4
         addiu $s1, $s0, 4
-        # *t61 = 2
+        # *t58 = 2
         li    $t0, 2
         sw    $t0, 0($s1)
-        # t62 = t60 ptr+ 8
+        # t59 = t57 ptr+ 8
         addiu $s1, $s0, 8
-        # *t62 = 3
+        # *t59 = 3
         li    $t0, 3
         sw    $t0, 0($s1)
-        # param t60
+        # param t57
         # param 24
-        # t64 = call realloc, 2
+        # t61 = call realloc, 2
         addiu $sp, $sp, -8
         sw    $s0, 0($sp)
         li    $t0, 24
@@ -1017,7 +1017,7 @@ M4_0:
         move  $s1, $v0
         # param 4
         # param 4
-        # t65 = call calloc, 2
+        # t62 = call calloc, 2
         addiu $sp, $sp, -8
         li    $t0, 4
         sw    $t0, 0($sp)
@@ -1026,35 +1026,35 @@ M4_0:
         jal   __calloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # t66 = *t64
+        # t63 = *t61
         lw    $s2, 0($s1)
-        # t67 = t64 ptr+ 4
+        # t64 = t61 ptr+ 4
         addiu $s3, $s1, 4
-        # t68 = *t67
+        # t65 = *t64
         lw    $s4, 0($s3)
-        # t69 = t66 int+ t68
+        # t66 = t63 int+ t65
         addu  $s3, $s2, $s4
-        # t70 = t64 ptr+ 8
+        # t67 = t61 ptr+ 8
         addiu $s2, $s1, 8
-        # t71 = *t70
+        # t68 = *t67
         lw    $s4, 0($s2)
-        # t72 = t69 int+ t71
+        # t69 = t66 int+ t68
         addu  $s2, $s3, $s4
-        # t73 = *t65
+        # t70 = *t62
         lw    $s3, 0($s0)
-        # t74 = t65 ptr+ 12
+        # t71 = t62 ptr+ 12
         addiu $s4, $s0, 12
-        # t75 = *t74
+        # t72 = *t71
         lw    $s5, 0($s4)
-        # if t64 ptr!= t65 goto 159
+        # if t61 ptr!= t62 goto 159
         xor   $s0, $s1, $s0
         sltu  $s0, $zero, $s0
 L4_160:
         # param "%d %d %d %d\n"
+        # param t69
+        # param t70
         # param t72
         # param t73
-        # param t75
-        # param t76
         # call printf, 5
         addiu $sp, $sp, -24
         la    $t0, str5

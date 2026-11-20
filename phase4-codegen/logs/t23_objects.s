@@ -14,18 +14,16 @@ g_Shape__live:
 str0:
         .byte 83, 104, 97, 112, 101, 32, 37, 100, 10, 0
 str1:
-        .byte 126, 83, 104, 97, 112, 101, 32, 37, 100, 10, 0
-str2:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str3:
+str2:
         .byte 37, 100, 32, 37, 100, 32, 37, 99, 32, 37, 99, 10, 0
-str4:
+str3:
         .byte 37, 100, 32, 37, 100, 10, 0
-str5:
+str4:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str6:
+str5:
         .byte 37, 100, 10, 0
-str7:
+str6:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37
         .byte 100, 10, 0
 
@@ -84,44 +82,6 @@ _ZN5ShapeC1Ev_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# Shape::~Shape()
-_ZN5ShapeD1Ev:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        # t1 = *this
-        lw    $t8, 8($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -4($fp)
-        # param "~Shape %d\n"
-        # param t1
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        lw    $t0, -4($fp)
-        sw    $t0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # t2 = Shape::live int- 1
-        lw    $t0, g_Shape__live
-        li    $t1, 1
-        subu  $t0, $t0, $t1
-        sw    $t0, -8($fp)
-        # Shape::live = t2
-        lw    $t0, -8($fp)
-        sw    $t0, g_Shape__live
-        # return
-        j     _ZN5ShapeD1Ev_exit
-_ZN5ShapeD1Ev_exit:
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # Shape::area()
 _ZN5Shape4areaEv:
         addiu $sp, $sp, -8
@@ -148,47 +108,6 @@ _ZN5Shape4nameEv:
         li    $v0, 83
         j     _ZN5Shape4nameEv_exit
 _ZN5Shape4nameEv_exit:
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Rect::Rect(int, int)
-_ZN4RectC1Eii:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        # param this
-        # call Shape::Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeC1Ev
-        addiu $sp, $sp, 8
-        # t1 = this ptr+ 4
-        lw    $t0, 8($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -4($fp)
-        # *t1 = a
-        lw    $t8, -4($fp)
-        lw    $t0, 12($fp)
-        sw    $t0, 0($t8)
-        # t2 = this ptr+ 8
-        lw    $t0, 8($fp)
-        li    $t1, 8
-        addu  $t0, $t0, $t1
-        sw    $t0, -8($fp)
-        # *t2 = b
-        lw    $t8, -8($fp)
-        lw    $t0, 16($fp)
-        sw    $t0, 0($t8)
-        # return
-        j     _ZN4RectC1Eii_exit
-_ZN4RectC1Eii_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -230,6 +149,40 @@ _ZN4RectC1Ev:
         # return
         j     _ZN4RectC1Ev_exit
 _ZN4RectC1Ev_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# Rect::set(int, int)
+_ZN4Rect3setEii:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -8
+        # t1 = this ptr+ 4
+        lw    $t0, 8($fp)
+        li    $t1, 4
+        addu  $t0, $t0, $t1
+        sw    $t0, -4($fp)
+        # *t1 = a
+        lw    $t8, -4($fp)
+        lw    $t0, 12($fp)
+        sw    $t0, 0($t8)
+        # t2 = this ptr+ 8
+        lw    $t0, 8($fp)
+        li    $t1, 8
+        addu  $t0, $t0, $t1
+        sw    $t0, -8($fp)
+        # *t2 = b
+        lw    $t8, -8($fp)
+        lw    $t0, 16($fp)
+        sw    $t0, 0($t8)
+        # return
+        j     _ZN4Rect3setEii_exit
+_ZN4Rect3setEii_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -321,41 +274,28 @@ _ZN4Rect9perimeterEv_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# Square::Square(int)
-_ZN6SquareC1Ei:
+# Square::side(int)
+_ZN6Square4sideEi:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
         # param this
-        # call Rect::Rect(), 1
-        addiu $sp, $sp, -8
+        # param s
+        # param s
+        # call Rect::set(int, int), 3
+        addiu $sp, $sp, -16
         lw    $t0, 8($fp)
         sw    $t0, 0($sp)
-        jal   _ZN4RectC1Ev
-        addiu $sp, $sp, 8
-        # t1 = this ptr+ 4
-        lw    $t0, 8($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -4($fp)
-        # *t1 = side
-        lw    $t8, -4($fp)
         lw    $t0, 12($fp)
-        sw    $t0, 0($t8)
-        # t2 = this ptr+ 8
-        lw    $t0, 8($fp)
-        li    $t1, 8
-        addu  $t0, $t0, $t1
-        sw    $t0, -8($fp)
-        # *t2 = side
-        lw    $t8, -8($fp)
+        sw    $t0, 4($sp)
         lw    $t0, 12($fp)
-        sw    $t0, 0($t8)
+        sw    $t0, 8($sp)
+        jal   _ZN4Rect3setEii
+        addiu $sp, $sp, 16
         # return
-        j     _ZN6SquareC1Ei_exit
-_ZN6SquareC1Ei_exit:
+        j     _ZN6Square4sideEi_exit
+_ZN6Square4sideEi_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -372,35 +312,6 @@ _ZN6Square4nameEv:
         li    $v0, 81
         j     _ZN6Square4nameEv_exit
 _ZN6Square4nameEv_exit:
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Point::Point(int, int)
-_ZN5PointC1Eii:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        # *this = a
-        lw    $t8, 8($fp)
-        lw    $t0, 12($fp)
-        sw    $t0, 0($t8)
-        # t1 = this ptr+ 4
-        lw    $t0, 8($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -4($fp)
-        # *t1 = b
-        lw    $t8, -4($fp)
-        lw    $t0, 16($fp)
-        sw    $t0, 0($t8)
-        # return
-        j     _ZN5PointC1Eii_exit
-_ZN5PointC1Eii_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -509,59 +420,65 @@ _ZN5PointmiERKS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -48
-        # t2 = &t1
+        # t1 = &r
         addiu $t0, $fp, -8
         sw    $t0, -12($fp)
-        # t3 = *this
+        # param t1
+        # call Point::Point(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -12($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN5PointC1Ev
+        addiu $sp, $sp, 8
+        # t2 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
         sw    $t0, -16($fp)
-        # t4 = *o
+        # t3 = *o
         lw    $t8, 12($fp)
         lw    $t0, 0($t8)
         sw    $t0, -20($fp)
-        # t5 = t3 int- t4
+        # t4 = t2 int- t3
         lw    $t0, -16($fp)
         lw    $t1, -20($fp)
         subu  $t0, $t0, $t1
         sw    $t0, -24($fp)
-        # t6 = this ptr+ 4
+        # r[0] = t4
+        addiu $t8, $fp, -8
+        li    $t9, 0
+        addu  $t8, $t8, $t9
+        lw    $t0, -24($fp)
+        sw    $t0, 0($t8)
+        # t5 = this ptr+ 4
         lw    $t0, 8($fp)
         li    $t1, 4
         addu  $t0, $t0, $t1
         sw    $t0, -28($fp)
-        # t7 = *t6
+        # t6 = *t5
         lw    $t8, -28($fp)
         lw    $t0, 0($t8)
         sw    $t0, -32($fp)
-        # t8 = o ptr+ 4
+        # t7 = o ptr+ 4
         lw    $t0, 12($fp)
         li    $t1, 4
         addu  $t0, $t0, $t1
         sw    $t0, -36($fp)
-        # t9 = *t8
+        # t8 = *t7
         lw    $t8, -36($fp)
         lw    $t0, 0($t8)
         sw    $t0, -40($fp)
-        # t10 = t7 int- t9
+        # t9 = t6 int- t8
         lw    $t0, -32($fp)
         lw    $t1, -40($fp)
         subu  $t0, $t0, $t1
         sw    $t0, -44($fp)
-        # param t2
-        # param t5
-        # param t10
-        # call Point::Point(int, int), 3
-        addiu $sp, $sp, -16
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -24($fp)
-        sw    $t0, 4($sp)
+        # r[4] = t9
+        addiu $t8, $fp, -8
+        li    $t9, 4
+        addu  $t8, $t8, $t9
         lw    $t0, -44($fp)
-        sw    $t0, 8($sp)
-        jal   _ZN5PointC1Eii
-        addiu $sp, $sp, 16
-        # return t1
+        sw    $t0, 0($t8)
+        # return r
         addiu $v0, $fp, -8
         j     _ZN5PointmiERKS__exit
 _ZN5PointmiERKS__exit:
@@ -663,31 +580,31 @@ _ZN5PointltERKS_:
         # if t10 int< t19 goto 21
         lw    $t0, -40($fp)
         lw    $t1, -76($fp)
-        blt   $t0, $t1, L14_21
+        blt   $t0, $t1, L12_21
         # t1 = 0
         li    $t0, 0
         sw    $t0, -4($fp)
         # goto 22
-        j     L14_22
-L14_21:
+        j     L12_22
+L12_21:
         # t1 = 1
         li    $t0, 1
         sw    $t0, -4($fp)
-L14_22:
+L12_22:
         # if t1 int!= 0 goto 25
         lw    $t0, -4($fp)
         li    $t1, 0
-        bne   $t0, $t1, L14_25
+        bne   $t0, $t1, L12_25
         # t20 = 0
         li    $t0, 0
         sb    $t0, -77($fp)
         # goto 26
-        j     L14_26
-L14_25:
+        j     L12_26
+L12_25:
         # t20 = 1
         li    $t0, 1
         sb    $t0, -77($fp)
-L14_26:
+L12_26:
         # return t20
         lbu   $v0, -77($fp)
         j     _ZN5PointltERKS__exit
@@ -708,16 +625,16 @@ _ZN5PointixEi:
         # if i int== 0 goto 2
         lw    $t0, 12($fp)
         li    $t1, 0
-        beq   $t0, $t1, L15_2
+        beq   $t0, $t1, L13_2
         # goto 4
-        j     L15_4
-L15_2:
+        j     L13_4
+L13_2:
         # t1 = this
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
         # goto 6
-        j     L15_6
-L15_4:
+        j     L13_6
+L13_4:
         # t2 = this ptr+ 4
         lw    $t0, 8($fp)
         li    $t1, 4
@@ -726,7 +643,7 @@ L15_4:
         # t1 = t2
         lw    $t0, -8($fp)
         sw    $t0, -4($fp)
-L15_6:
+L13_6:
         # return t1
         lw    $v0, -4($fp)
         j     _ZN5PointixEi_exit
@@ -737,84 +654,100 @@ _ZN5PointixEi_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# Segment::Segment(int, int, int, int)
-_ZN7SegmentC1Eiiii:
+# at(int, int)
+_Z2atii:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        # param this
-        # call Point::Point(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5PointC1Ev
-        addiu $sp, $sp, 8
-        # t1 = this ptr+ 8
-        lw    $t0, 8($fp)
-        li    $t1, 8
-        addu  $t0, $t0, $t1
-        sw    $t0, -4($fp)
+        addiu $sp, $sp, -16
+        # t1 = &p
+        addiu $t0, $fp, -8
+        sw    $t0, -12($fp)
         # param t1
         # call Point::Point(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
+        lw    $t0, -12($fp)
         sw    $t0, 0($sp)
         jal   _ZN5PointC1Ev
         addiu $sp, $sp, 8
-        # t3 = &t2
-        addiu $t0, $fp, -12
-        sw    $t0, -16($fp)
-        # param t3
+        # p[0] = a
+        addiu $t8, $fp, -8
+        li    $t9, 0
+        addu  $t8, $t8, $t9
+        lw    $t0, 8($fp)
+        sw    $t0, 0($t8)
+        # p[4] = b
+        addiu $t8, $fp, -8
+        li    $t9, 4
+        addu  $t8, $t8, $t9
+        lw    $t0, 12($fp)
+        sw    $t0, 0($t8)
+        # return p
+        addiu $v0, $fp, -8
+        j     _Z2atii_exit
+_Z2atii_exit:
+        move  $sp, $fp
+        lw    $ra, 4($sp)
+        lw    $fp, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
+
+# Segment::set(int, int, int, int)
+_ZN7Segment3setEiiii:
+        addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
+        sw    $fp, 0($sp)
+        move  $fp, $sp
+        addiu $sp, $sp, -24
         # param a
         # param b
-        # call Point::Point(int, int), 3
-        addiu $sp, $sp, -16
-        lw    $t0, -16($fp)
-        sw    $t0, 0($sp)
+        # t1 = call at(int, int), 2
+        addiu $sp, $sp, -8
         lw    $t0, 12($fp)
-        sw    $t0, 4($sp)
+        sw    $t0, 0($sp)
         lw    $t0, 16($fp)
-        sw    $t0, 8($sp)
-        jal   _ZN5PointC1Eii
-        addiu $sp, $sp, 16
-        # *this = t2
-        lw    $t8, 8($fp)
-        addiu $a0, $t8, 0
-        addiu $a1, $fp, -12
+        sw    $t0, 4($sp)
+        jal   _Z2atii
+        addiu $sp, $sp, 8
+        move  $a1, $v0
+        addiu $a0, $fp, -8
         li    $a2, 8
         jal   __memcpy
-        # t5 = &t4
-        addiu $t0, $fp, -24
-        sw    $t0, -28($fp)
-        # param t5
+        # *this = t1
+        lw    $t8, 8($fp)
+        addiu $a0, $t8, 0
+        addiu $a1, $fp, -8
+        li    $a2, 8
+        jal   __memcpy
         # param c
         # param d
-        # call Point::Point(int, int), 3
-        addiu $sp, $sp, -16
-        lw    $t0, -28($fp)
-        sw    $t0, 0($sp)
+        # t2 = call at(int, int), 2
+        addiu $sp, $sp, -8
         lw    $t0, 20($fp)
-        sw    $t0, 4($sp)
+        sw    $t0, 0($sp)
         lw    $t0, 24($fp)
-        sw    $t0, 8($sp)
-        jal   _ZN5PointC1Eii
-        addiu $sp, $sp, 16
-        # t6 = this ptr+ 8
+        sw    $t0, 4($sp)
+        jal   _Z2atii
+        addiu $sp, $sp, 8
+        move  $a1, $v0
+        addiu $a0, $fp, -16
+        li    $a2, 8
+        jal   __memcpy
+        # t3 = this ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
         addu  $t0, $t0, $t1
-        sw    $t0, -32($fp)
-        # *t6 = t4
-        lw    $t8, -32($fp)
+        sw    $t0, -20($fp)
+        # *t3 = t2
+        lw    $t8, -20($fp)
         addiu $a0, $t8, 0
-        addiu $a1, $fp, -24
+        addiu $a1, $fp, -16
         li    $a2, 8
         jal   __memcpy
         # return
-        j     _ZN7SegmentC1Eiiii_exit
-_ZN7SegmentC1Eiiii_exit:
+        j     _ZN7Segment3setEiiii_exit
+_ZN7Segment3setEiiii_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -827,7 +760,7 @@ _ZN7Segment7length2Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
+        addiu $sp, $sp, -48
         # t1 = this ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
@@ -847,58 +780,52 @@ _ZN7Segment7length2Ev:
         addiu $a0, $fp, -20
         li    $a2, 8
         jal   __memcpy
-        # t3 = &t2
-        addiu $t0, $fp, -20
-        sw    $t0, -24($fp)
         # d = t2
         addiu $a0, $fp, -8
         addiu $a1, $fp, -20
         li    $a2, 8
         jal   __memcpy
-        # t4 = &d
-        addiu $t0, $fp, -8
-        sw    $t0, -28($fp)
-        # t5 = d[0]
+        # t3 = d[0]
         addiu $t8, $fp, -8
         li    $t9, 0
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -32($fp)
-        # t6 = d[0]
+        sw    $t0, -24($fp)
+        # t4 = d[0]
         addiu $t8, $fp, -8
         li    $t9, 0
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -28($fp)
+        # t5 = t3 int* t4
+        lw    $t0, -24($fp)
+        lw    $t1, -28($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -32($fp)
+        # t6 = d[4]
+        addiu $t8, $fp, -8
+        li    $t9, 4
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -36($fp)
-        # t7 = t5 int* t6
-        lw    $t0, -32($fp)
-        lw    $t1, -36($fp)
-        mul   $t0, $t0, $t1
+        # t7 = d[4]
+        addiu $t8, $fp, -8
+        li    $t9, 4
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
         sw    $t0, -40($fp)
-        # t8 = d[4]
-        addiu $t8, $fp, -8
-        li    $t9, 4
-        addu  $t8, $t8, $t9
-        lw    $t0, 0($t8)
-        sw    $t0, -44($fp)
-        # t9 = d[4]
-        addiu $t8, $fp, -8
-        li    $t9, 4
-        addu  $t8, $t8, $t9
-        lw    $t0, 0($t8)
-        sw    $t0, -48($fp)
-        # t10 = t8 int* t9
-        lw    $t0, -44($fp)
-        lw    $t1, -48($fp)
+        # t8 = t6 int* t7
+        lw    $t0, -36($fp)
+        lw    $t1, -40($fp)
         mul   $t0, $t0, $t1
-        sw    $t0, -52($fp)
-        # t11 = t7 int+ t10
-        lw    $t0, -40($fp)
-        lw    $t1, -52($fp)
+        sw    $t0, -44($fp)
+        # t9 = t5 int+ t8
+        lw    $t0, -32($fp)
+        lw    $t1, -44($fp)
         addu  $t0, $t0, $t1
-        sw    $t0, -56($fp)
-        # return t11
-        lw    $v0, -56($fp)
+        sw    $t0, -48($fp)
+        # return t9
+        lw    $v0, -48($fp)
         j     _ZN7Segment7length2Ev_exit
 _ZN7Segment7length2Ev_exit:
         move  $sp, $fp
@@ -1047,49 +974,58 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -440
+        addiu $sp, $sp, -432
         # t1 = &r
         addiu $t0, $fp, -12
         sw    $t0, -116($fp)
         # param t1
+        # call Rect::Rect(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -116($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN4RectC1Ev
+        addiu $sp, $sp, 8
+        # t2 = &r
+        addiu $t0, $fp, -12
+        sw    $t0, -120($fp)
+        # param t2
         # param 3
         # param 4
-        # call Rect::Rect(int, int), 3
+        # call Rect::set(int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -116($fp)
+        lw    $t0, -120($fp)
         sw    $t0, 0($sp)
         li    $t0, 3
         sw    $t0, 4($sp)
         li    $t0, 4
         sw    $t0, 8($sp)
-        jal   _ZN4RectC1Eii
+        jal   _ZN4Rect3setEii
         addiu $sp, $sp, 16
-        # t2 = &q
+        # t3 = &q
         addiu $t0, $fp, -24
-        sw    $t0, -120($fp)
-        # param t2
-        # param 5
-        # call Square::Square(int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -120($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
-        jal   _ZN6SquareC1Ei
-        addiu $sp, $sp, 8
-        # t3 = &r
-        addiu $t0, $fp, -12
         sw    $t0, -124($fp)
         # param t3
-        # t4 = call Rect::area(), 1
+        # call Rect::Rect(), 1
         addiu $sp, $sp, -8
         lw    $t0, -124($fp)
         sw    $t0, 0($sp)
-        jal   _ZN4Rect4areaEv
+        jal   _ZN4RectC1Ev
         addiu $sp, $sp, 8
-        sw    $v0, -128($fp)
-        # t5 = &q
+        # t4 = &q
         addiu $t0, $fp, -24
+        sw    $t0, -128($fp)
+        # param t4
+        # param 5
+        # call Square::side(int), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -128($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 5
+        sw    $t0, 4($sp)
+        jal   _ZN6Square4sideEi
+        addiu $sp, $sp, 8
+        # t5 = &r
+        addiu $t0, $fp, -12
         sw    $t0, -132($fp)
         # param t5
         # t6 = call Rect::area(), 1
@@ -1103,177 +1039,188 @@ main_:
         addiu $t0, $fp, -24
         sw    $t0, -140($fp)
         # param t7
-        # t8 = call Rect::perimeter(), 1
+        # t8 = call Rect::area(), 1
         addiu $sp, $sp, -8
         lw    $t0, -140($fp)
         sw    $t0, 0($sp)
-        jal   _ZN4Rect9perimeterEv
+        jal   _ZN4Rect4areaEv
         addiu $sp, $sp, 8
         sw    $v0, -144($fp)
+        # t9 = &q
+        addiu $t0, $fp, -24
+        sw    $t0, -148($fp)
+        # param t9
+        # t10 = call Rect::perimeter(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -148($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN4Rect9perimeterEv
+        addiu $sp, $sp, 8
+        sw    $v0, -152($fp)
         # param "%d %d %d %d\n"
-        # param t4
         # param t6
         # param t8
+        # param t10
         # param Shape::live
         # call printf, 5
         addiu $sp, $sp, -24
-        la    $t0, str2
+        la    $t0, str1
         sw    $t0, 0($sp)
-        lw    $t0, -128($fp)
-        sw    $t0, 4($sp)
         lw    $t0, -136($fp)
-        sw    $t0, 8($sp)
+        sw    $t0, 4($sp)
         lw    $t0, -144($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -152($fp)
         sw    $t0, 12($sp)
         lw    $t0, g_Shape__live
         sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # t9 = &q
+        # t11 = &q
         addiu $t0, $fp, -24
-        sw    $t0, -148($fp)
-        # asShape = t9
-        lw    $t0, -148($fp)
+        sw    $t0, -156($fp)
+        # asShape = t11
+        lw    $t0, -156($fp)
         sw    $t0, -28($fp)
-        # t10 = &r
+        # t12 = &r
         addiu $t0, $fp, -12
-        sw    $t0, -152($fp)
-        # param t10
-        # t11 = call total(class Rect &), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -152($fp)
-        sw    $t0, 0($sp)
-        jal   _Z5totalR4Rect
-        addiu $sp, $sp, 8
-        sw    $v0, -156($fp)
-        # t12 = &q
-        addiu $t0, $fp, -24
         sw    $t0, -160($fp)
         # param t12
-        # t13 = call through(class Shape *), 1
+        # t13 = call total(class Rect &), 1
         addiu $sp, $sp, -8
         lw    $t0, -160($fp)
         sw    $t0, 0($sp)
-        jal   _Z7throughP5Shape
+        jal   _Z5totalR4Rect
         addiu $sp, $sp, 8
         sw    $v0, -164($fp)
         # t14 = &q
         addiu $t0, $fp, -24
         sw    $t0, -168($fp)
         # param t14
-        # t15 = call Square::name(), 1
+        # t15 = call through(class Shape *), 1
         addiu $sp, $sp, -8
         lw    $t0, -168($fp)
         sw    $t0, 0($sp)
-        jal   _ZN6Square4nameEv
+        jal   _Z7throughP5Shape
         addiu $sp, $sp, 8
         sw    $v0, -172($fp)
+        # t16 = &q
+        addiu $t0, $fp, -24
+        sw    $t0, -176($fp)
+        # param t16
+        # t17 = call Square::name(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -176($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN6Square4nameEv
+        addiu $sp, $sp, 8
+        sw    $v0, -180($fp)
         # param asShape
-        # t16 = call Shape::name(), 1
+        # t18 = call Shape::name(), 1
         addiu $sp, $sp, -8
         lw    $t0, -28($fp)
         sw    $t0, 0($sp)
         jal   _ZN5Shape4nameEv
         addiu $sp, $sp, 8
-        sw    $v0, -176($fp)
+        sw    $v0, -184($fp)
         # param "%d %d %c %c\n"
-        # param t11
         # param t13
         # param t15
-        # param t16
+        # param t17
+        # param t18
         # call printf, 5
         addiu $sp, $sp, -24
-        la    $t0, str3
+        la    $t0, str2
         sw    $t0, 0($sp)
-        lw    $t0, -156($fp)
-        sw    $t0, 4($sp)
         lw    $t0, -164($fp)
-        sw    $t0, 8($sp)
+        sw    $t0, 4($sp)
         lw    $t0, -172($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -180($fp)
         sw    $t0, 12($sp)
-        lw    $t0, -176($fp)
+        lw    $t0, -184($fp)
         sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # t17 = &q
+        # t19 = &q
         addiu $t0, $fp, -24
-        sw    $t0, -180($fp)
-        # param t17
+        sw    $t0, -188($fp)
+        # param t19
         # param 1
         # call grow(class Rect *, int), 2
         addiu $sp, $sp, -8
-        lw    $t0, -180($fp)
+        lw    $t0, -188($fp)
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
         jal   _Z4growP4Recti
         addiu $sp, $sp, 8
-        # t18 = &q
-        addiu $t0, $fp, -24
-        sw    $t0, -184($fp)
-        # alias = t18
-        lw    $t0, -184($fp)
-        sw    $t0, -32($fp)
-        # t19 = alias ptr+ 4
-        lw    $t0, -32($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -188($fp)
-        # *t19 = 10
-        lw    $t8, -188($fp)
-        li    $t0, 10
-        sw    $t0, 0($t8)
         # t20 = &q
         addiu $t0, $fp, -24
         sw    $t0, -192($fp)
-        # param t20
-        # t21 = call Rect::area(), 1
-        addiu $sp, $sp, -8
+        # alias = t20
         lw    $t0, -192($fp)
+        sw    $t0, -32($fp)
+        # t21 = alias ptr+ 4
+        lw    $t0, -32($fp)
+        li    $t1, 4
+        addu  $t0, $t0, $t1
+        sw    $t0, -196($fp)
+        # *t21 = 10
+        lw    $t8, -196($fp)
+        li    $t0, 10
+        sw    $t0, 0($t8)
+        # t22 = &q
+        addiu $t0, $fp, -24
+        sw    $t0, -200($fp)
+        # param t22
+        # t23 = call Rect::area(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -200($fp)
         sw    $t0, 0($sp)
         jal   _ZN4Rect4areaEv
         addiu $sp, $sp, 8
-        sw    $v0, -196($fp)
+        sw    $v0, -204($fp)
         # param alias
-        # t22 = call Rect::perimeter(), 1
+        # t24 = call Rect::perimeter(), 1
         addiu $sp, $sp, -8
         lw    $t0, -32($fp)
         sw    $t0, 0($sp)
         jal   _ZN4Rect9perimeterEv
         addiu $sp, $sp, 8
-        sw    $v0, -200($fp)
+        sw    $v0, -208($fp)
         # param "%d %d\n"
-        # param t21
-        # param t22
+        # param t23
+        # param t24
         # call printf, 3
         addiu $sp, $sp, -16
-        la    $t0, str4
+        la    $t0, str3
         sw    $t0, 0($sp)
-        lw    $t0, -196($fp)
+        lw    $t0, -204($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -200($fp)
+        lw    $t0, -208($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t23 = &pair
+        # t25 = &pair
         addiu $t0, $fp, -56
-        sw    $t0, -204($fp)
-        # param t23
+        sw    $t0, -212($fp)
+        # param t25
         # call Rect::Rect(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -204($fp)
+        lw    $t0, -212($fp)
         sw    $t0, 0($sp)
         jal   _ZN4RectC1Ev
         addiu $sp, $sp, 8
-        # t24 = t23 ptr+ 12
-        lw    $t0, -204($fp)
+        # t26 = t25 ptr+ 12
+        lw    $t0, -212($fp)
         li    $t1, 12
         addu  $t0, $t0, $t1
-        sw    $t0, -208($fp)
-        # param t24
+        sw    $t0, -216($fp)
+        # param t26
         # call Rect::Rect(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -208($fp)
+        lw    $t0, -216($fp)
         sw    $t0, 0($sp)
         jal   _ZN4RectC1Ev
         addiu $sp, $sp, 8
@@ -1283,347 +1230,344 @@ main_:
         addu  $t8, $t8, $t9
         li    $t0, 6
         sw    $t0, 0($t8)
-        # t25 = &pair
-        addiu $t0, $fp, -56
-        sw    $t0, -212($fp)
-        # param t25
-        # t26 = call Rect::area(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -212($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN4Rect4areaEv
-        addiu $sp, $sp, 8
-        sw    $v0, -216($fp)
         # t27 = &pair
         addiu $t0, $fp, -56
         sw    $t0, -220($fp)
-        # t28 = t27 ptr+ 12
-        lw    $t0, -220($fp)
-        li    $t1, 12
-        addu  $t0, $t0, $t1
-        sw    $t0, -224($fp)
-        # param t28
-        # t29 = call Rect::area(), 1
+        # param t27
+        # t28 = call Rect::area(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -224($fp)
+        lw    $t0, -220($fp)
         sw    $t0, 0($sp)
         jal   _ZN4Rect4areaEv
         addiu $sp, $sp, 8
-        sw    $v0, -228($fp)
-        # t30 = t26 int+ t29
-        lw    $t0, -216($fp)
-        lw    $t1, -228($fp)
+        sw    $v0, -224($fp)
+        # t29 = &pair
+        addiu $t0, $fp, -56
+        sw    $t0, -228($fp)
+        # t30 = t29 ptr+ 12
+        lw    $t0, -228($fp)
+        li    $t1, 12
         addu  $t0, $t0, $t1
         sw    $t0, -232($fp)
-        # t31 = pair[12]
+        # param t30
+        # t31 = call Rect::area(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -232($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN4Rect4areaEv
+        addiu $sp, $sp, 8
+        sw    $v0, -236($fp)
+        # t32 = t28 int+ t31
+        lw    $t0, -224($fp)
+        lw    $t1, -236($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -240($fp)
+        # t33 = pair[12]
         addiu $t8, $fp, -56
         li    $t9, 12
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -236($fp)
+        sw    $t0, -244($fp)
         # param "%d %d %d\n"
-        # param t30
-        # param t31
+        # param t32
+        # param t33
         # param Shape::live
         # call printf, 4
         addiu $sp, $sp, -16
-        la    $t0, str5
+        la    $t0, str4
         sw    $t0, 0($sp)
-        lw    $t0, -232($fp)
+        lw    $t0, -240($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -236($fp)
+        lw    $t0, -244($fp)
         sw    $t0, 8($sp)
         lw    $t0, g_Shape__live
         sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t32 = &pair
-        addiu $t0, $fp, -56
-        sw    $t0, -240($fp)
-        # t33 = t32 ptr+ 12
-        lw    $t0, -240($fp)
-        li    $t1, 12
-        addu  $t0, $t0, $t1
-        sw    $t0, -244($fp)
-        # param t33
-        # call Shape::~Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -244($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeD1Ev
-        addiu $sp, $sp, 8
-        # t34 = &pair
-        addiu $t0, $fp, -56
-        sw    $t0, -248($fp)
-        # param t34
-        # call Shape::~Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -248($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeD1Ev
-        addiu $sp, $sp, 8
         # param "%d\n"
         # param Shape::live
         # call printf, 2
         addiu $sp, $sp, -8
-        la    $t0, str6
+        la    $t0, str5
         sw    $t0, 0($sp)
         lw    $t0, g_Shape__live
         sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # t35 = &a
-        addiu $t0, $fp, -64
-        sw    $t0, -252($fp)
-        # param t35
         # param 3
         # param 4
-        # call Point::Point(int, int), 3
-        addiu $sp, $sp, -16
-        lw    $t0, -252($fp)
-        sw    $t0, 0($sp)
+        # t34 = call at(int, int), 2
+        addiu $sp, $sp, -8
         li    $t0, 3
-        sw    $t0, 4($sp)
+        sw    $t0, 0($sp)
         li    $t0, 4
-        sw    $t0, 8($sp)
-        jal   _ZN5PointC1Eii
-        addiu $sp, $sp, 16
-        # t36 = &b
-        addiu $t0, $fp, -72
-        sw    $t0, -256($fp)
-        # param t36
+        sw    $t0, 4($sp)
+        jal   _Z2atii
+        addiu $sp, $sp, 8
+        move  $a1, $v0
+        addiu $a0, $fp, -252
+        li    $a2, 8
+        jal   __memcpy
+        # a = t34
+        addiu $a0, $fp, -64
+        addiu $a1, $fp, -252
+        li    $a2, 8
+        jal   __memcpy
         # param 1
         # param 1
-        # call Point::Point(int, int), 3
-        addiu $sp, $sp, -16
-        lw    $t0, -256($fp)
+        # t35 = call at(int, int), 2
+        addiu $sp, $sp, -8
+        li    $t0, 1
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
-        li    $t0, 1
-        sw    $t0, 8($sp)
-        jal   _ZN5PointC1Eii
-        addiu $sp, $sp, 16
-        # t37 = &a
+        jal   _Z2atii
+        addiu $sp, $sp, 8
+        move  $a1, $v0
+        addiu $a0, $fp, -260
+        li    $a2, 8
+        jal   __memcpy
+        # b = t35
+        addiu $a0, $fp, -72
+        addiu $a1, $fp, -260
+        li    $a2, 8
+        jal   __memcpy
+        # t36 = &a
         addiu $t0, $fp, -64
-        sw    $t0, -260($fp)
-        # t38 = &b
-        addiu $t0, $fp, -72
         sw    $t0, -264($fp)
+        # t37 = &b
+        addiu $t0, $fp, -72
+        sw    $t0, -268($fp)
+        # param t36
         # param t37
-        # param t38
-        # t39 = call Point::operator+=(const class Point &), 2
+        # t38 = call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -8
-        lw    $t0, -260($fp)
-        sw    $t0, 0($sp)
         lw    $t0, -264($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -268($fp)
         sw    $t0, 4($sp)
         jal   _ZN5PointpLERKS_
         addiu $sp, $sp, 8
-        sw    $v0, -268($fp)
-        # t40 = &a
+        sw    $v0, -272($fp)
+        # t39 = &a
         addiu $t0, $fp, -64
-        sw    $t0, -272($fp)
-        # t41 = &b
-        addiu $t0, $fp, -72
         sw    $t0, -276($fp)
-        # param t40
-        # param t41
-        # t42 = call Point::operator+=(const class Point &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -272($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -276($fp)
-        sw    $t0, 4($sp)
-        jal   _ZN5PointpLERKS_
-        addiu $sp, $sp, 8
-        sw    $v0, -280($fp)
-        # t43 = &b
+        # t40 = &b
         addiu $t0, $fp, -72
-        sw    $t0, -284($fp)
-        # param t42
-        # param t43
-        # t44 = call Point::operator+=(const class Point &), 2
+        sw    $t0, -280($fp)
+        # param t39
+        # param t40
+        # t41 = call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -8
-        lw    $t0, -280($fp)
+        lw    $t0, -276($fp)
         sw    $t0, 0($sp)
-        lw    $t0, -284($fp)
+        lw    $t0, -280($fp)
         sw    $t0, 4($sp)
         jal   _ZN5PointpLERKS_
         addiu $sp, $sp, 8
-        sw    $v0, -288($fp)
-        # t45 = &a
-        addiu $t0, $fp, -64
-        sw    $t0, -292($fp)
-        # param t45
-        # param 0
-        # t46 = call Point::operator[](int), 2
+        sw    $v0, -284($fp)
+        # t42 = &b
+        addiu $t0, $fp, -72
+        sw    $t0, -288($fp)
+        # param t41
+        # param t42
+        # t43 = call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -8
-        lw    $t0, -292($fp)
+        lw    $t0, -284($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -288($fp)
+        sw    $t0, 4($sp)
+        jal   _ZN5PointpLERKS_
+        addiu $sp, $sp, 8
+        sw    $v0, -292($fp)
+        # t44 = &a
+        addiu $t0, $fp, -64
+        sw    $t0, -296($fp)
+        # param t44
+        # param 0
+        # t45 = call Point::operator[](int), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -296($fp)
         sw    $t0, 0($sp)
         li    $t0, 0
         sw    $t0, 4($sp)
         jal   _ZN5PointixEi
         addiu $sp, $sp, 8
-        sw    $v0, -296($fp)
-        # t47 = &a
+        sw    $v0, -300($fp)
+        # t46 = &a
         addiu $t0, $fp, -64
-        sw    $t0, -300($fp)
-        # param t47
+        sw    $t0, -304($fp)
+        # param t46
         # param 1
-        # t48 = call Point::operator[](int), 2
+        # t47 = call Point::operator[](int), 2
         addiu $sp, $sp, -8
-        lw    $t0, -300($fp)
+        lw    $t0, -304($fp)
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
         jal   _ZN5PointixEi
         addiu $sp, $sp, 8
-        sw    $v0, -304($fp)
-        # t49 = *t48
-        lw    $t8, -304($fp)
+        sw    $v0, -308($fp)
+        # t48 = *t47
+        lw    $t8, -308($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -308($fp)
-        # t50 = t49 int* 2
-        lw    $t0, -308($fp)
+        sw    $t0, -312($fp)
+        # t49 = t48 int* 2
+        lw    $t0, -312($fp)
         li    $t1, 2
         mul   $t0, $t0, $t1
-        sw    $t0, -312($fp)
-        # *t46 = t50
-        lw    $t8, -296($fp)
-        lw    $t0, -312($fp)
-        sw    $t0, 0($t8)
-        # t51 = &a
-        addiu $t0, $fp, -64
         sw    $t0, -316($fp)
-        # t52 = &b
-        addiu $t0, $fp, -72
-        sw    $t0, -320($fp)
-        # param t51
-        # param t52
-        # t53 = call Point::operator-(const class Point &), 2
-        addiu $sp, $sp, -8
+        # *t45 = t49
+        lw    $t8, -300($fp)
         lw    $t0, -316($fp)
-        sw    $t0, 0($sp)
+        sw    $t0, 0($t8)
+        # t50 = &a
+        addiu $t0, $fp, -64
+        sw    $t0, -320($fp)
+        # t51 = &b
+        addiu $t0, $fp, -72
+        sw    $t0, -324($fp)
+        # param t50
+        # param t51
+        # t52 = call Point::operator-(const class Point &), 2
+        addiu $sp, $sp, -8
         lw    $t0, -320($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -324($fp)
         sw    $t0, 4($sp)
         jal   _ZN5PointmiERKS_
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -328
+        addiu $a0, $fp, -332
         li    $a2, 8
         jal   __memcpy
-        # t54 = &t53
-        addiu $t0, $fp, -328
-        sw    $t0, -332($fp)
-        # c = t53
+        # c = t52
         addiu $a0, $fp, -80
-        addiu $a1, $fp, -328
+        addiu $a1, $fp, -332
         li    $a2, 8
         jal   __memcpy
-        # t55 = &c
-        addiu $t0, $fp, -80
-        sw    $t0, -336($fp)
-        # t56 = a[0]
+        # t53 = a[0]
         addiu $t8, $fp, -64
         li    $t9, 0
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -336($fp)
+        # t54 = a[4]
+        addiu $t8, $fp, -64
+        li    $t9, 4
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -340($fp)
-        # t57 = a[4]
-        addiu $t8, $fp, -64
-        li    $t9, 4
-        addu  $t8, $t8, $t9
-        lw    $t0, 0($t8)
-        sw    $t0, -344($fp)
-        # t58 = c[0]
+        # t55 = c[0]
         addiu $t8, $fp, -80
         li    $t9, 0
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -348($fp)
-        # t59 = c[4]
+        sw    $t0, -344($fp)
+        # t56 = c[4]
         addiu $t8, $fp, -80
         li    $t9, 4
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
+        sw    $t0, -348($fp)
+        # t57 = &b
+        addiu $t0, $fp, -72
         sw    $t0, -352($fp)
-        # t60 = &b
-        addiu $t0, $fp, -72
+        # t58 = &a
+        addiu $t0, $fp, -64
         sw    $t0, -356($fp)
-        # t61 = &a
-        addiu $t0, $fp, -64
-        sw    $t0, -360($fp)
-        # param t60
-        # param t61
-        # t62 = call Point::operator<(const class Point &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -356($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -360($fp)
-        sw    $t0, 4($sp)
-        jal   _ZN5PointltERKS_
-        addiu $sp, $sp, 8
-        sb    $v0, -361($fp)
-        # t63 = booltoint t62
-        lbu   $t0, -361($fp)
-        sw    $t0, -368($fp)
-        # t64 = &a
-        addiu $t0, $fp, -64
-        sw    $t0, -372($fp)
-        # t65 = &b
-        addiu $t0, $fp, -72
-        sw    $t0, -376($fp)
-        # param t64
-        # param t65
-        # t66 = call Point::operator<(const class Point &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -372($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -376($fp)
-        sw    $t0, 4($sp)
-        jal   _ZN5PointltERKS_
-        addiu $sp, $sp, 8
-        sb    $v0, -377($fp)
-        # t67 = booltoint t66
-        lbu   $t0, -377($fp)
-        sw    $t0, -384($fp)
-        # param "%d %d %d %d %d %d\n"
-        # param t56
         # param t57
         # param t58
-        # param t59
-        # param t63
-        # param t67
+        # t59 = call Point::operator<(const class Point &), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -352($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -356($fp)
+        sw    $t0, 4($sp)
+        jal   _ZN5PointltERKS_
+        addiu $sp, $sp, 8
+        sb    $v0, -357($fp)
+        # t60 = booltoint t59
+        lbu   $t0, -357($fp)
+        sw    $t0, -364($fp)
+        # t61 = &a
+        addiu $t0, $fp, -64
+        sw    $t0, -368($fp)
+        # t62 = &b
+        addiu $t0, $fp, -72
+        sw    $t0, -372($fp)
+        # param t61
+        # param t62
+        # t63 = call Point::operator<(const class Point &), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -368($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -372($fp)
+        sw    $t0, 4($sp)
+        jal   _ZN5PointltERKS_
+        addiu $sp, $sp, 8
+        sb    $v0, -373($fp)
+        # t64 = booltoint t63
+        lbu   $t0, -373($fp)
+        sw    $t0, -380($fp)
+        # param "%d %d %d %d %d %d\n"
+        # param t53
+        # param t54
+        # param t55
+        # param t56
+        # param t60
+        # param t64
         # call printf, 7
         addiu $sp, $sp, -32
-        la    $t0, str7
+        la    $t0, str6
         sw    $t0, 0($sp)
-        lw    $t0, -340($fp)
+        lw    $t0, -336($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -344($fp)
+        lw    $t0, -340($fp)
         sw    $t0, 8($sp)
-        lw    $t0, -348($fp)
+        lw    $t0, -344($fp)
         sw    $t0, 12($sp)
-        lw    $t0, -352($fp)
+        lw    $t0, -348($fp)
         sw    $t0, 16($sp)
-        lw    $t0, -368($fp)
+        lw    $t0, -364($fp)
         sw    $t0, 20($sp)
-        lw    $t0, -384($fp)
+        lw    $t0, -380($fp)
         sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t68 = &s
+        # t65 = &s
         addiu $t0, $fp, -96
+        sw    $t0, -384($fp)
+        # param t65
+        # call Point::Point(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -384($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN5PointC1Ev
+        addiu $sp, $sp, 8
+        # t66 = t65 ptr+ 8
+        lw    $t0, -384($fp)
+        li    $t1, 8
+        addu  $t0, $t0, $t1
         sw    $t0, -388($fp)
-        # param t68
+        # param t66
+        # call Point::Point(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -388($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN5PointC1Ev
+        addiu $sp, $sp, 8
+        # t67 = &s
+        addiu $t0, $fp, -96
+        sw    $t0, -392($fp)
+        # param t67
         # param 1
         # param 2
         # param 4
         # param 6
-        # call Segment::Segment(int, int, int, int), 5
+        # call Segment::set(int, int, int, int), 5
         addiu $sp, $sp, -24
-        lw    $t0, -388($fp)
+        lw    $t0, -392($fp)
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
@@ -1633,71 +1577,81 @@ main_:
         sw    $t0, 12($sp)
         li    $t0, 6
         sw    $t0, 16($sp)
-        jal   _ZN7SegmentC1Eiiii
+        jal   _ZN7Segment3setEiiii
         addiu $sp, $sp, 24
-        # t69 = &s
+        # t68 = &s
         addiu $t0, $fp, -96
-        sw    $t0, -392($fp)
-        # param t69
-        # t70 = call Segment::length2(), 1
+        sw    $t0, -396($fp)
+        # param t68
+        # t69 = call Segment::length2(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -392($fp)
+        lw    $t0, -396($fp)
         sw    $t0, 0($sp)
         jal   _ZN7Segment7length2Ev
         addiu $sp, $sp, 8
-        sw    $v0, -396($fp)
-        # t71 = s[12]
+        sw    $v0, -400($fp)
+        # t70 = s[12]
         addiu $t8, $fp, -96
         li    $t9, 12
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -400($fp)
+        sw    $t0, -404($fp)
         # param "%d %d\n"
+        # param t69
         # param t70
-        # param t71
         # call printf, 3
         addiu $sp, $sp, -16
-        la    $t0, str4
+        la    $t0, str3
         sw    $t0, 0($sp)
-        lw    $t0, -396($fp)
-        sw    $t0, 4($sp)
         lw    $t0, -400($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -404($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
+        # t71 = &last
+        addiu $t0, $fp, -108
+        sw    $t0, -408($fp)
+        # param t71
+        # call Rect::Rect(), 1
+        addiu $sp, $sp, -8
+        lw    $t0, -408($fp)
+        sw    $t0, 0($sp)
+        jal   _ZN4RectC1Ev
+        addiu $sp, $sp, 8
         # t72 = &last
         addiu $t0, $fp, -108
-        sw    $t0, -404($fp)
+        sw    $t0, -412($fp)
         # param t72
         # param 2
         # param 9
-        # call Rect::Rect(int, int), 3
+        # call Rect::set(int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -404($fp)
+        lw    $t0, -412($fp)
         sw    $t0, 0($sp)
         li    $t0, 2
         sw    $t0, 4($sp)
         li    $t0, 9
         sw    $t0, 8($sp)
-        jal   _ZN4RectC1Eii
+        jal   _ZN4Rect3setEii
         addiu $sp, $sp, 16
         # t73 = &last
         addiu $t0, $fp, -108
-        sw    $t0, -408($fp)
+        sw    $t0, -416($fp)
         # base = t73
-        lw    $t0, -408($fp)
+        lw    $t0, -416($fp)
         sw    $t0, -112($fp)
         # t74 = &last
         addiu $t0, $fp, -108
-        sw    $t0, -412($fp)
+        sw    $t0, -420($fp)
         # param t74
         # t75 = call Rect::area(), 1
         addiu $sp, $sp, -8
-        lw    $t0, -412($fp)
+        lw    $t0, -420($fp)
         sw    $t0, 0($sp)
         jal   _ZN4Rect4areaEv
         addiu $sp, $sp, 8
-        sw    $v0, -416($fp)
+        sw    $v0, -424($fp)
         # param base
         # t76 = call Shape::area(), 1
         addiu $sp, $sp, -8
@@ -1705,62 +1659,29 @@ main_:
         sw    $t0, 0($sp)
         jal   _ZN5Shape4areaEv
         addiu $sp, $sp, 8
-        sw    $v0, -420($fp)
+        sw    $v0, -428($fp)
         # t77 = *base
         lw    $t8, -112($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -424($fp)
+        sw    $t0, -432($fp)
         # param "%d %d %d\n"
         # param t75
         # param t76
         # param t77
         # call printf, 4
         addiu $sp, $sp, -16
-        la    $t0, str5
+        la    $t0, str4
         sw    $t0, 0($sp)
-        lw    $t0, -416($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -420($fp)
-        sw    $t0, 8($sp)
         lw    $t0, -424($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -428($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -432($fp)
         sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t78 = &last
-        addiu $t0, $fp, -108
-        sw    $t0, -428($fp)
-        # param t78
-        # call Shape::~Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -428($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeD1Ev
-        addiu $sp, $sp, 8
-        # t79 = Shape::live
-        lw    $t0, g_Shape__live
-        sw    $t0, -432($fp)
-        # t80 = &q
-        addiu $t0, $fp, -24
-        sw    $t0, -436($fp)
-        # param t80
-        # call Shape::~Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -436($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeD1Ev
-        addiu $sp, $sp, 8
-        # t81 = &r
-        addiu $t0, $fp, -12
-        sw    $t0, -440($fp)
-        # param t81
-        # call Shape::~Shape(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -440($fp)
-        sw    $t0, 0($sp)
-        jal   _ZN5ShapeD1Ev
-        addiu $sp, $sp, 8
-        # return t79
-        lw    $v0, -432($fp)
+        # return Shape::live
+        lw    $v0, g_Shape__live
         j     main__exit
 main__exit:
         move  $sp, $fp

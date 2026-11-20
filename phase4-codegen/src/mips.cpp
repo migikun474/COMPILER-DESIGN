@@ -589,8 +589,7 @@ struct Emitter {
             bool narrow = c == Cls::Bool || c == Cls::Char || c == Cls::UChar || c == Cls::Short || c == Cls::UShort;
             storeValueAt(args[i]->a, narrow ? Cls::Int : c, std::to_string(offsets[i]) + "($sp)"); /* a full word per small argument */
         }
-        if (!q.callee && !q.a.isNone()) ins("jalr  " + use(q.a, "$t9")); /* a virtual call: the address from the table */
-        else ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
+        ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
         if (size) ins("addiu $sp, $sp, " + std::to_string(size));
         if (q.r.isNone()) return;
         Cls c = classOf(q.r.type);

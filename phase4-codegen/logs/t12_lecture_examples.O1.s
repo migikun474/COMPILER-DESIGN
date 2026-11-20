@@ -43,14 +43,14 @@ main_:
         # b = 2
         li    $s1, 2
         # c = 3
-        li    $t0, 3
-        sw    $t0, -12($fp)
+        li    $s5, 3
         # d = 4
-        li    $s5, 4
+        li    $s6, 4
         # e = 5
-        li    $s6, 5
+        li    $s7, 5
         # f = 6
-        li    $s7, 6
+        li    $t0, 6
+        sw    $t0, -24($fp)
         # i = 1
         li    $s3, 1
         # r = 1.5
@@ -84,10 +84,10 @@ L0_19:
         # if a int< b goto 25
         blt   $s0, $s1, L0_25
         # if c int>= d goto 23
-        lw    $t0, -12($fp)
-        bge   $t0, $s5, L0_23
+        bge   $s5, $s6, L0_23
         # if e int< f goto 25
-        blt   $s6, $s7, L0_25
+        lw    $t1, -24($fp)
+        blt   $s7, $t1, L0_25
 L0_23:
         # t8 = 0
         li    $s0, 0

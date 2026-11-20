@@ -196,7 +196,7 @@ void SemanticAnalyzer::returnStatement(const ASTNodePtr &n) {
     if (f->isConstructorLike) {
         if (e) {
             expr(e);
-            error(e.get(), std::string(f->fn && f->fn->isDestructor ? "destructor" : "constructor") + " '" + f->name +
+            error(e.get(), "constructor '" + f->name +
                                "' cannot return a value",
                   "return-type");
         }
@@ -225,10 +225,6 @@ void SemanticAnalyzer::returnStatement(const ASTNodePtr &n) {
         return;
     }
     expr(e);
-    if (isRecord(f->ret) && !isRecord(decay(e->semType)) && userConvertible(unqualified(f->ret), e)) { /* `return 4;` from a Dog function */
-        e->converter = construct(f->ret->record.get(), {e}, e.get(), true);
-        return;
-    }
     convertible(f->ret, e, "type mismatch: cannot return '%F' from function '" + f->name +
                                "' whose return type is '%T'");
 }
@@ -343,7 +339,7 @@ void SemanticAnalyzer::jumpScopes(const ASTNodePtr &n, std::vector<const Symbol 
     };
     switch (n->kind) {
         case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::FunctionDef:
-            return; /* a local class's member functions are checked on their own */
+            return; /* a struct's or a function's own declarations */
         case ASTKind::LabeledStmt:
             w.labels[n->symbol.get()] = inScope;
             break;

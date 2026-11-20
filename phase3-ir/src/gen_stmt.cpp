@@ -18,95 +18,15 @@ Generator::Breakable *Generator::innermostLoop() {
     return nullptr;
 }
 
-/* ---------------- destructors at scope exit ---------------- */
-
-void Generator::destroyObject(const LValue &obj) {
-    TypePtr t = obj.type;
-    long long count = 1;
-    while (sem::isArray(t)) {
-        count *= std::max(0LL, t->arraySize);
-        t = t->elem;
-    }
-    if (!sem::isRecord(t)) return;
-    long long w = std::max(1LL, sem::sizeOf(t));
-    for (long long i = count; i-- > 0;) { /* elements of an array in reverse */
-        LValue e = count == 1 && !sem::isArray(obj.type) ? obj : addOffset(obj, icon(i * w), t);
-        e.type = t;
-        destroy(address(e), t->record.get());
-    }
-}
-
-/* objects with static storage, destroyed when main returns, last constructed first */
-void Generator::destroyStatics() {
-    for (auto g = dynamicGlobals.rbegin(); g != dynamicGlobals.rend(); ++g) {
-        LValue obj;
-        obj.kind = LValue::Direct;
-        obj.base = var(g->first);
-        obj.type = g->first->type;
-        destroyObject(obj);
-    }
-}
-
-bool Generator::hasObjects(size_t downTo) const {
-    for (size_t i = downTo; i < scopes.size(); ++i)
-        if (!scopes[i].objects.empty()) return true;
-    return false;
-}
-
-/* leaving every scope from the innermost down to index `downTo`: their
-   objects are destroyed in reverse order of construction */
-void Generator::destroyScopes(size_t downTo) {
-    for (size_t i = scopes.size(); i-- > downTo;) {
-        std::vector<LValue> objects = scopes[i].objects;
-        for (auto o = objects.rbegin(); o != objects.rend(); ++o) destroyObject(*o);
-    }
-}
-
-/* which blocks enclose each label: a `goto` out of a block must destroy
-   that block's objects, and the label may come later in the function */
-void Generator::scanLabels(const ASTNodePtr &n, std::vector<const ASTNode *> &chain) {
-    if (!n) return;
-    switch (n->kind) {
-        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::FunctionDef:
-            return; /* a local class's functions have their own labels */
-        case ASTKind::LabeledStmt:
-            labelScopes[n->symbol.get()] = chain;
-            break;
-        default:
-            break;
-    }
-    bool opens = n->kind == ASTKind::CompoundStmt || n->kind == ASTKind::ForStmt;
-    if (opens) chain.push_back(n.get());
-    for (const auto &c : n->children) scanLabels(c, chain);
-    if (opens) chain.pop_back();
-}
-
 /* SDT (Lecture 27):
      S -> { L }      { S.nextlist = L.nextlist }
      L -> L1 M S     { backpatch(L1.nextlist, M.quad); L.nextlist = S.nextlist } */
 List Generator::block(const ASTNodePtr &n) {
-    scopes.push_back({n.get(), {}});
     List next;
     for (const auto &s : n->children) {
         backpatch(next, nextQuad()); /* S1.next = the first instruction of S2 */
         next = stmt(s);
     }
-    if (!scopes.back().objects.empty()) {
-        /* falling out of the block runs its destructors; skipped when the
-           block cannot end by falling out (it ends in a jump nothing passes) */
-        bool reachable = !next.empty() || fn->quads.empty() ||
-                         (fn->quads.back().op != Op::Return && fn->quads.back().op != Op::Goto);
-        for (const auto &l : labels)
-            if (l.second.pos == nextQuad()) reachable = true;
-        for (const auto &q : fn->quads)
-            if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target == nextQuad()) reachable = true;
-        if (reachable) {
-            backpatch(next, nextQuad());
-            next.clear();
-            destroyScopes(scopes.size() - 1);
-        }
-    }
-    scopes.pop_back();
     return next;
 }
 
@@ -134,7 +54,6 @@ List Generator::stmt(const ASTNodePtr &n) {
             return block(n);
         case ASTKind::ExprStmt:
             rvalue(child(0), true);
-            destroyTemporaries();
             return {};
         case ASTKind::EmptyStmt:
             return {};
@@ -163,7 +82,6 @@ List Generator::stmt(const ASTNodePtr &n) {
             else cond(child(0), falseList, trueList);
             backpatch(trueList, nextQuad());
             breakables.push_back(Breakable());
-            breakables.back().scopeDepth = scopes.size();
             List bodyNext = stmt(child(1));
             Breakable loop = breakables.back();
             breakables.pop_back();
@@ -174,7 +92,6 @@ List Generator::stmt(const ASTNodePtr &n) {
         case ASTKind::DoWhileStmt: {
             int begin = nextQuad();
             breakables.push_back(Breakable());
-            breakables.back().scopeDepth = scopes.size();
             List bodyNext = stmt(child(0));
             Breakable loop = breakables.back();
             breakables.pop_back();
@@ -189,7 +106,6 @@ List Generator::stmt(const ASTNodePtr &n) {
             bool hasStep = n->children.size() == 4;
             ASTNodePtr init = child(0), test = child(1), step = hasStep ? child(2) : nullptr;
             ASTNodePtr body = child(hasStep ? 3 : 2);
-            scopes.push_back({n.get(), {}}); /* `for (Dog d; ...)`: d lives as long as the loop */
             backpatch(stmt(init), nextQuad());
             int begin = nextQuad();
             List trueList, falseList;
@@ -198,22 +114,13 @@ List Generator::stmt(const ASTNodePtr &n) {
                 backpatch(trueList, nextQuad());
             }
             breakables.push_back(Breakable());
-            breakables.back().scopeDepth = scopes.size();
             List bodyNext = stmt(body);
             Breakable loop = breakables.back();
             breakables.pop_back();
             backpatch(merge(bodyNext, loop.continues), nextQuad()); /* `continue` runs the step */
             if (step) rvalue(step, true);
-            destroyTemporaries();
             emitGoto(begin);
-            List exits = merge(falseList, loop.breaks);
-            if (!scopes.back().objects.empty()) {
-                backpatch(exits, nextQuad());
-                exits.clear();
-                destroyScopes(scopes.size() - 1);
-            }
-            scopes.pop_back();
-            return exits;
+            return merge(falseList, loop.breaks);
         }
         case ASTKind::SwitchStmt: {
             /* t = E ; goto test ; body ; goto next ; test: if t == v1 goto L1 ... goto default */
@@ -221,11 +128,9 @@ List Generator::stmt(const ASTNodePtr &n) {
             TypePtr T = sem::integerPromotion(subject.type ? strip(subject.type) : sem::intType());
             Operand t = newTemp(T);
             emitAssign(t, convert(subject, T));
-            destroyTemporaries();
             int toTests = emitGoto();
             Breakable sw;
             sw.isSwitch = true;
-            sw.scopeDepth = scopes.size();
             breakables.push_back(sw);
             List bodyNext = stmt(child(1));
             sw = breakables.back();
@@ -262,23 +167,12 @@ List Generator::stmt(const ASTNodePtr &n) {
             return stmt(child(0));
         }
         case ASTKind::BreakStmt:
-            if (!breakables.empty()) {
-                destroyScopes(breakables.back().scopeDepth); /* the blocks being left */
-                breakables.back().breaks.push_back(emitGoto());
-            }
+            if (!breakables.empty()) breakables.back().breaks.push_back(emitGoto());
             return {};
         case ASTKind::ContinueStmt:
-            if (Breakable *loop = innermostLoop()) {
-                destroyScopes(loop->scopeDepth);
-                loop->continues.push_back(emitGoto());
-            }
+            if (Breakable *loop = innermostLoop()) loop->continues.push_back(emitGoto());
             return {};
         case ASTKind::ReturnStmt: {
-            if (inDestructor) { /* the epilogue destroys the members first */
-                destroyScopes(0);
-                returnJumps.push_back(emitGoto());
-                return {};
-            }
             Quad q;
             q.op = Op::Return;
             TypePtr ret = fn->sym && fn->sym->type ? fn->sym->type->ret : nullptr;
@@ -286,46 +180,22 @@ List Generator::stmt(const ASTNodePtr &n) {
             if (child(0)) {
                 if (noValue) rvalue(child(0), true);
                 else if (sem::isReference(ret)) q.a = referenceTo(child(0), ret->elem);
-                else if (sem::isRecord(ret)) q.a = child(0)->converter ? converted(child(0), ret) : copyOf(child(0), ret, true);
+                else if (sem::isRecord(ret)) q.a = rvalue(child(0)); /* an object: returned as a block */
                 else q.a = convert(rvalue(child(0)), ret);
-                keep(q.a); /* the result is the caller's to destroy */
-            }
-            bool statics = inMain() && !dynamicGlobals.empty();
-            if (hasObjects(0) || statics || !temporaries.empty()) {
-                /* the value is computed first, then temporaries and locals are destroyed */
-                if (q.a.kind == Operand::Var && q.a.sym != resultObject) {
-                    Operand saved = newTemp(q.a.type);
-                    emitAssign(saved, q.a);
-                    q.a = saved;
-                }
-                destroyTemporaries();
-                destroyScopes(0);
-                if (statics) destroyStatics();
             }
             emit(q);
             return {};
         }
         case ASTKind::GotoStmt: {
             const sem::Symbol *label = n->symbol.get();
-            /* blocks the jump leaves: those not around the label too */
-            const std::vector<const ASTNode *> &around = labelScopes[label];
-            size_t common = 0;
-            while (common < scopes.size() && common < around.size() && scopes[common].node == around[common]) ++common;
-            destroyScopes(common);
             auto known = labels.find(label);
-            if (known != labels.end() && common > 0 && common == around.size()) {
-                /* a jump backwards in the same block passes the declarations
-                   made after the label again: those objects are destroyed */
-                std::vector<LValue> objects = scopes[common - 1].objects;
-                for (size_t i = objects.size(); i-- > known->second.objectsBefore;) destroyObject(objects[i]);
-            }
             int j = emitGoto(known != labels.end() ? known->second.pos : -1);
-            if (known == labels.end()) pendingGotos.push_back({label, j});
+            if (known == labels.end()) pendingGotos.push_back({label, j}); /* a forward jump: patched at the label */
             return {};
         }
         case ASTKind::LabeledStmt: {
             const sem::Symbol *label = n->symbol.get();
-            labels[label] = {nextQuad(), scopes.empty() ? 0 : scopes.back().objects.size()};
+            labels[label] = {nextQuad()};
             for (auto &g : pendingGotos)
                 if (g.first == label) fn->quads[g.second].target = nextQuad();
             return stmt(child(0));
@@ -341,13 +211,9 @@ void Generator::localDecl(const ASTNodePtr &n) {
     switch (n->kind) {
         case ASTKind::VarDecl:
             localVariable(n);
-            destroyTemporaries();
             break;
         case ASTKind::DeclGroup:
             for (const auto &c : n->children) localDecl(c);
-            break;
-        case ASTKind::StructDecl: case ASTKind::ClassDecl:
-            localRecords.push_back(n); /* its member functions are generated after this one */
             break;
         default:
             break;
@@ -372,23 +238,11 @@ void Generator::localVariable(const ASTNodePtr &n) {
         if (init->kind == ASTKind::ConstructExpr && !init->typeExpr && init->children.size() == 1) target = init->children[0];
         Operand dst = var(s);
         dst.type = sem::pointerTo(T->elem);
-        size_t mark = temporaries.size();
         emitAssign(dst, referenceTo(target, T->elem));
-        if (temporaries.size() > mark && !isExisting(target) && !scopes.empty()) {
-            /* a temporary bound to a reference lives as long as the reference */
-            LValue bound;
-            bound.kind = LValue::Direct;
-            bound.base = temporaries.back();
-            bound.type = bound.base.type;
-            temporaries.pop_back();
-            scopes.back().objects.push_back(bound);
-        }
         return;
     }
     if (sem::isRecord(T) || sem::isArray(T)) {
         initObject(obj, init);
-        /* destroyed at scope exit, except the object that is the function's result */
-        if (!scopes.empty() && needsDestruction(T) && s != resultObject) scopes.back().objects.push_back(obj);
         return;
     }
     if (!init) return;
@@ -404,8 +258,8 @@ void Generator::localVariable(const ASTNodePtr &n) {
     emitAssign(dst, convert(rvalue(value), T));
 }
 
-/* a struct, class object or array being created: constructor call,
-   brace list, or a copy of another object */
+/* a struct, class object or array being created: the default
+   constructor, a brace list, or a copy of another object's bytes */
 void Generator::initObject(const LValue &obj, const ASTNodePtr &init) {
     const TypePtr &T = obj.type;
     if (sem::isArray(T)) {
@@ -419,15 +273,10 @@ void Generator::initObject(const LValue &obj, const ASTNodePtr &init) {
     } else if (init->kind == ASTKind::InitializerList) {
         initAggregate(obj, init);
     } else if (init->kind == ASTKind::ConstructExpr && sem::isRecord(strip(init->semType)) &&
-               strip(init->semType)->record.get() == rec) { /* Dog d(4);  Dog d = Dog(4); */
-        constructInto(address(obj), rec, init->symbol.get(), init->children);
-    } else if (init->converter) { /* Dog d = 4;  Vec v = other;  a converting constructor */
-        convertInto(address(obj), init);
+               strip(init->semType)->record.get() == rec) { /* Dog d(other);  Dog d = Dog(); */
+        constructInto(address(obj), rec, init->children);
     } else {
-        Operand v = sliced(init, rec);
-        keep(v); /* T x = f();  the object f made is x */
-        store(obj, v);
-        installVptrs(address(obj), rec);
+        store(obj, rvalue(init)); /* Dog d = other;  Dog d = f();  a block copy */
     }
 }
 
@@ -541,7 +390,6 @@ void Generator::initAggregate(const LValue &obj, const ASTNodePtr &init) {
         Operand v = item.ch >= 0 ? icon(item.ch, item.type)
                     : sem::isRecord(item.type) ? rvalue(item.value)
                                                : convert(rvalue(item.value), item.type);
-        keep(v); /* an object made for an element is that element */
         auto same = std::find_if(stores.begin(), stores.end(), [&](const Store &s) { return s.offset == item.offset; });
         if (same != stores.end()) *same = {item.offset, item.type, v}; /* a later initializer of the same element wins */
         else stores.push_back({item.offset, item.type, v});
@@ -743,24 +591,6 @@ void Generator::buildFrame() {
     fn->frameWidth = alignUp(offset, 4);
 }
 
-/* true if every `return` under `n` names the same local, left in `only`:
-   that local is built where the result goes, so returning it neither
-   copies nor destroys it (the named return value optimization) */
-static bool returnsOnly(const ASTNodePtr &n, const sem::Symbol *&only) {
-    if (!n) return true;
-    if (n->kind == ASTKind::StructDecl || n->kind == ASTKind::ClassDecl || n->kind == ASTKind::FunctionDef) return true;
-    if (n->kind == ASTKind::ReturnStmt) {
-        const sem::Symbol *s = !n->children.empty() && n->children[0] && n->children[0]->kind == ASTKind::Identifier
-                                   ? n->children[0]->symbol.get() : nullptr;
-        if (!s || s->storage != sem::Storage::Local || !sem::isRecord(s->type) || (only && only != s)) return false;
-        only = s;
-        return true;
-    }
-    for (const auto &c : n->children)
-        if (!returnsOnly(c, only)) return false;
-    return true;
-}
-
 void Generator::function(const ASTNodePtr &n) {
     sem::SymbolPtr sym = n->symbol;
     if (!sym || sym->kind != sem::SymbolKind::Function || n->children.empty()) return;
@@ -775,22 +605,8 @@ void Generator::function(const ASTNodePtr &n) {
     fn->linkName = sym->mangledName.empty() ? sym->name : sym->mangledName;
     breakables.clear();
     labels.clear();
-    labelScopes.clear();
-    scopes.clear();
     pendingGotos.clear();
-    returnJumps.clear();
-    inDestructor = sym->isDestructor;
     curLine = n->line;
-    temporaries.clear();
-    resultObject = nullptr;
-    const sem::Symbol *only = nullptr;
-    if (sym->type && sym->type->ret && sem::isRecord(sym->type->ret) && returnsOnly(body, only) && only)
-        for (const auto &d : body->children) { /* declared in the outermost block, as g++ 13 requires */
-            if (d->kind == ASTKind::VarDecl && d->symbol.get() == only) resultObject = only;
-            if (d->kind == ASTKind::DeclGroup)
-                for (const auto &v : d->children)
-                    if (v->symbol.get() == only) resultObject = only;
-        }
 
     RecordInfo *cls = sym->ownerRecord;
     if (cls && !sym->isStatic) { /* the hidden first parameter */
@@ -802,8 +618,7 @@ void Generator::function(const ASTNodePtr &n) {
         fn->owned.push_back(self);
         fn->thisSym = self.get();
     }
-    if (sym->isConstructor && cls) constructSubobjects(thisOperand(), cls, n.get()); /* bases and members first */
-    if (sym->isDestructor && cls) installVptrs(thisOperand(), cls); /* while it runs, the object is a `cls` again */
+    if (sym->isConstructor && cls) constructSubobjects(thisOperand(), cls); /* base and members first */
     if (sym->name == "main" && !cls) {
         /* objects with static storage whose constructor must run */
         for (const auto &g : dynamicGlobals) {
@@ -812,15 +627,10 @@ void Generator::function(const ASTNodePtr &n) {
             obj.base = var(g.first);
             obj.type = g.first->type;
             initObject(obj, g.second && !g.second->children.empty() ? g.second->children[0] : nullptr);
-            destroyTemporaries();
         }
     }
-    std::vector<const ASTNode *> chain;
-    scanLabels(body, chain);
-
     List next = block(body);
-    backpatch(merge(next, returnJumps), nextQuad());
-    if (sym->isDestructor && cls) destroySubobjects(thisOperand(), cls);
+    backpatch(next, nextQuad());
 
     bool endsInJump = !fn->quads.empty() &&
                       (fn->quads.back().op == Op::Return || fn->quads.back().op == Op::Goto);
@@ -828,7 +638,6 @@ void Generator::function(const ASTNodePtr &n) {
     for (const auto &q : fn->quads)
         if ((q.op == Op::Goto || q.op == Op::IfRel) && q.target == nextQuad()) endIsTarget = true;
     if (!endsInJump || endIsTarget) {
-        if (inMain()) destroyStatics();
         Quad q;
         q.op = Op::Return;
         if (sym->name == "main" && !cls) q.a = icon(0); /* falling off the end of main returns 0 */
@@ -838,12 +647,11 @@ void Generator::function(const ASTNodePtr &n) {
     fn = nullptr;
 }
 
-/* every function body in the tree: top level, class members, classes
-   declared inside classes */
+/* every function body in the tree: top level and class members */
 void Generator::collect(const ASTNodePtr &n) {
     if (!n) return;
     switch (n->kind) {
-        case ASTKind::FunctionDef: case ASTKind::ConstructorDef: case ASTKind::DestructorDef:
+        case ASTKind::FunctionDef: case ASTKind::ConstructorDef:
             function(n);
             break;
         case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::DeclGroup: case ASTKind::Program:
@@ -858,11 +666,6 @@ Program Generator::generate(const ASTNodePtr &root) {
     prog = Program();
     globals();
     collect(root);
-    while (!localRecords.empty()) { /* classes declared inside function bodies */
-        ASTNodePtr rec = localRecords.back();
-        localRecords.pop_back();
-        collect(rec);
-    }
     int index = 100; /* the slides number instructions from 100 */
     for (auto &f : prog.functions) {
         f.firstIndex = index;

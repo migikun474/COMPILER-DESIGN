@@ -567,131 +567,131 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Node               struct_tag    struct Node                -           6    -    0  size 8
-   Tree               struct_tag    struct Tree                -           7    -    0  size 12
-   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 36
-   Stack              typedef       Stack                      -           8    -    0  
-   prepend            function      struct Node *(struct Node *, int) -          10    -    1  _Z7prependP4Nodei; defined
-   reverse            function      struct Node *(struct Node *) -          17    -    1  _Z7reverseP4Node; defined
-   removeValue        function      void (struct Node **, int) -          28    -    1  _Z11removeValuePP4Nodei; defined
-   insert             function      struct Tree *(struct Tree *, int) -          35    -    4  _Z6insertP4Treei; defined
-   inorder            function      void (struct Tree *)       -          45    -    3  _Z7inorderP4Tree; defined
-   height             function      int (struct Tree *)        -          52    -    4  _Z6heightP4Tree; defined
-   push               function      void (Stack *, int)        -          58    -    1  _Z4pushP5Stacki; defined
-   pop                function      int (Stack *)              -          59    -    2  _Z3popP5Stack; defined
-   main               function      int (void)                 -          61    -    0  defined
+   Node               struct_tag    struct Node                -           4    -    0  size 8
+   Tree               struct_tag    struct Tree                -           5    -    0  size 12
+   (unnamed at 6:9)   struct_tag    struct (unnamed at 6:9)    -           6    -    0  size 36
+   Stack              typedef       Stack                      -           6    -    0  
+   prepend            function      struct Node *(struct Node *, int) -           8    -    1  _Z7prependP4Nodei; defined
+   reverse            function      struct Node *(struct Node *) -          15    -    1  _Z7reverseP4Node; defined
+   removeValue        function      void (struct Node **, int) -          26    -    1  _Z11removeValuePP4Nodei; defined
+   insert             function      struct Tree *(struct Tree *, int) -          33    -    4  _Z6insertP4Treei; defined
+   inorder            function      void (struct Tree *)       -          43    -    3  _Z7inorderP4Tree; defined
+   height             function      int (struct Tree *)        -          50    -    4  _Z6heightP4Tree; defined
+   push               function      void (Stack *, int)        -          56    -    1  _Z4pushP5Stacki; defined
+   pop                function      int (Stack *)              -          57    -    2  _Z3popP5Stack; defined
+   main               function      int (void)                 -          59    -    0  defined
 
  scope: global > struct Node
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   value              field         int                        member      6    4    3  Node::value; public, offset 0
-   next               field         struct Node *              member      6    4    6  Node::next; public, offset 4
+   value              field         int                        member      4    4    3  Node::value; public, offset 0
+   next               field         struct Node *              member      4    4    6  Node::next; public, offset 4
 
  scope: global > struct Tree
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   key                field         int                        member      7    4    5  Tree::key; public, offset 0
-   left               field         struct Tree *              member      7    4    9  Tree::left; public, offset 4
-   right              field         struct Tree *              member      7    4    6  Tree::right; public, offset 8
+   key                field         int                        member      5    4    5  Tree::key; public, offset 0
+   left               field         struct Tree *              member      5    4    9  Tree::left; public, offset 4
+   right              field         struct Tree *              member      5    4    6  Tree::right; public, offset 8
 
- scope: global > struct (unnamed at 8:9)
+ scope: global > struct (unnamed at 6:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   items              field         int[8]                     member      8   32    2  (unnamed at 8:9)::items; public, offset 0
-   top                field         int                        member      8    4    4  (unnamed at 8:9)::top; public, offset 32
+   items              field         int[8]                     member      6   32    2  (unnamed at 6:9)::items; public, offset 0
+   top                field         int                        member      6    4    4  (unnamed at 6:9)::top; public, offset 32
 
  scope: global > prepend()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param      10    4    1  head.1
-   v                  parameter     int                        param      10    4    1  v.2
-   n                  variable      struct Node *              local      11    4    3  n.3
+   head               parameter     struct Node *              param       8    4    1  head.1
+   v                  parameter     int                        param       8    4    1  v.2
+   n                  variable      struct Node *              local       9    4    3  n.3
 
  scope: global > reverse()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param      17    4    5  head.4
-   prev               variable      struct Node *              local      18    4    3  prev.5
+   head               parameter     struct Node *              param      15    4    5  head.4
+   prev               variable      struct Node *              local      16    4    3  prev.5
 
  scope: global > reverse() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   next               variable      struct Node *              local      20    4    1  next.6
+   next               variable      struct Node *              local      18    4    1  next.6
 
  scope: global > removeValue()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   link               parameter     struct Node **             param      28    4    6  link.7
-   v                  parameter     int                        param      28    4    1  v.8
+   link               parameter     struct Node **             param      26    4    6  link.7
+   v                  parameter     int                        param      26    4    1  v.8
 
  scope: global > removeValue() > while > if
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   dead               variable      struct Node *              local      30    4    2  dead.9
+   dead               variable      struct Node *              local      28    4    2  dead.9
 
  scope: global > insert()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      35    4   11  t.10
-   key                parameter     int                        param      35    4    4  key.11
+   t                  parameter     struct Tree *              param      33    4   11  t.10
+   key                parameter     int                        param      33    4    4  key.11
 
  scope: global > inorder()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      45    4    4  t.12
+   t                  parameter     struct Tree *              param      43    4    4  t.12
 
  scope: global > height()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      52    4    3  t.13
-   l                  variable      int                        local      54    4    2  l.14
-   r                  variable      int                        local      54    4    2  r.15
+   t                  parameter     struct Tree *              param      50    4    3  t.13
+   l                  variable      int                        local      52    4    2  l.14
+   r                  variable      int                        local      52    4    2  r.15
 
  scope: global > push()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     Stack *                    param      58    4    2  s.16
-   v                  parameter     int                        param      58    4    1  v.17
+   s                  parameter     Stack *                    param      56    4    2  s.16
+   v                  parameter     int                        param      56    4    1  v.17
 
  scope: global > pop()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     Stack *                    param      59    4    2  s.18
+   s                  parameter     Stack *                    param      57    4    2  s.18
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   list               variable      struct Node *              local      62    4    6  list.19
-   root               variable      struct Tree *              local      69    4    9  root.22
-   keys               variable      int[7]                     local      70   28    1  keys.23
-   s                  variable      Stack                      local      76   36    5  s.25
-   a                  variable      int                        local      79    4    1  a.27
-   b                  variable      int                        local      79    4    1  b.28
-   rows               variable      int                        local      82    4    4  rows.29
-   cols               variable      int                        local      82    4    3  cols.30
-   table              variable      int **                     local      83    4    5  table.31
-   diagonal           variable      int                        local      88    4    2  diagonal.34
-   last               variable      int *                      local      90    4    1  last.36
-   v1                 variable      int                        local      93    4    2  v1.37
-   v2                 variable      int                        local      93    4    2  v2.38
-   v3                 variable      int                        local      93    4    2  v3.39
-   ptrs               variable      int *[3]                   local      94   12    2  ptrs.40
-   pp                 variable      int **                     local      95    4    2  pp.41
+   list               variable      struct Node *              local      60    4    6  list.19
+   root               variable      struct Tree *              local      67    4    9  root.22
+   keys               variable      int[7]                     local      68   28    1  keys.23
+   s                  variable      Stack                      local      74   36    5  s.25
+   a                  variable      int                        local      77    4    1  a.27
+   b                  variable      int                        local      77    4    1  b.28
+   rows               variable      int                        local      80    4    4  rows.29
+   cols               variable      int                        local      80    4    3  cols.30
+   table              variable      int **                     local      81    4    5  table.31
+   diagonal           variable      int                        local      86    4    2  diagonal.34
+   last               variable      int *                      local      88    4    1  last.36
+   v1                 variable      int                        local      91    4    2  v1.37
+   v2                 variable      int                        local      91    4    2  v2.38
+   v3                 variable      int                        local      91    4    2  v3.39
+   ptrs               variable      int *[3]                   local      92   12    2  ptrs.40
+   pp                 variable      int **                     local      93    4    2  pp.41
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      63    4    4  i.20
-   p                  variable      struct Node *              local      66    4    4  p.21
-   i                  variable      int                        local      71    4    3  i.24
-   i                  variable      int                        local      78    4    3  i.26
-   r                  variable      int                        local      84    4    5  r.32
-   r                  variable      int                        local      89    4    4  r.35
+   i                  variable      int                        local      61    4    4  i.20
+   p                  variable      struct Node *              local      64    4    4  p.21
+   i                  variable      int                        local      69    4    3  i.24
+   i                  variable      int                        local      76    4    3  i.26
+   r                  variable      int                        local      82    4    5  r.32
+   r                  variable      int                        local      87    4    4  r.35
 
  scope: global > main() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  variable      int                        local      86    4    4  c.33
+   c                  variable      int                        local      84    4    4  c.33
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -704,6 +704,6 @@ struct Tree: size 12, align 4
     +0  int key  [public]
     +4  struct Tree * left  [public]
     +8  struct Tree * right  [public]
-struct (unnamed at 8:9): size 36, align 4
+struct (unnamed at 6:9): size 36, align 4
     +0  int[8] items  [public]
     +32  int top  [public]

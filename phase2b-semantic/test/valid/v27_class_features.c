@@ -1,25 +1,22 @@
-/* valid: virtual functions and abstract classes, const member functions,
-   friends, explicit and converting constructors, member initializer
-   lists, brace elision, and the flow checks that only warn */
+/* valid: single inheritance, friends, default constructors that also
+   run the base's, brace elision, and the flow checks that only warn */
 class Shape {
 public:
-    virtual int area() const = 0;
-    virtual int sides() const { return 0; }
-    virtual ~Shape() { }
+    int kind;
+    Shape() { kind = 1; }
+    int sides() { return 0; }
 };
 class Square : public Shape {
     int side;
 public:
-    explicit Square(int s) : side(s) { }
-    int area() const { return side * side; }      /* overrides: virtual without the keyword */
+    Square() { side = 3; }                        /* Shape() runs first */
+    int area() { return side * side; }
     friend int peek(const Square &q);
     friend class Auditor;
 };
 int peek(const Square &q) { return q.side; }
 class Auditor { public: int check(const Square &q) { return q.side; } };
-class Meters { public: int v; Meters(int x) : v(x) { } };
-int twice(Meters m) { return m.v * 2; }           /* twice(4) converts */
-Meters back(int k) { return k; }                  /* so does the return */
+class Tile : public Square { public: int color; };   /* a chain of single inheritance */
 struct Pair { int a[2]; int b; };
 struct Pair global = {1, 2, 3};                   /* braces elided: {{1, 2}, 3} */
 int grid[][2] = {1, 2, 3, 4};                     /* two rows */
@@ -32,9 +29,10 @@ int dead(int x) {
     x++;                                          // warning: code will never be executed
 }
 int main() {
-    Square q(3);
-    const Shape &s = q;
+    Square q;
+    Shape *s = &q;                                /* derived pointer to base pointer */
+    Tile t;
     Auditor a;
-    int r = s.area() + s.sides() + peek(q) + a.check(q) + twice(4) + back(5).v + global.b + grid[1][1];
+    int r = q.area() + s->sides() + s->kind + peek(q) + a.check(q) + t.area() + global.b + grid[1][1];
     return r + sign(0) + dead(1);
 }

@@ -211,12 +211,12 @@ main_:
         s.d   $f24, -656($fp)
         sw    $s0, -604($fp)
         sw    $s1, -608($fp)
-        sw    $s2, -612($fp)
-        sw    $s3, -628($fp)
-        sw    $s4, -620($fp)
-        sw    $s5, -624($fp)
-        sw    $s6, -632($fp)
-        sw    $s7, -616($fp)
+        sw    $s2, -632($fp)
+        sw    $s3, -612($fp)
+        sw    $s4, -616($fp)
+        sw    $s5, -620($fp)
+        sw    $s6, -624($fp)
+        sw    $s7, -628($fp)
         # a[0] = 1
         li    $t0, 1
         sw    $t0, -20($fp)
@@ -231,136 +231,119 @@ main_:
         # a[16] = 0
         sw    $zero, -4($fp)
         # i = 0
-        li    $t0, 0
-        sw    $t0, -156($fp)
+        li    $s2, 0
 L3_6:
         # if i int>= 5 goto 12
-        lw    $t0, -156($fp)
         li    $t1, 5
-        bge   $t0, $t1, L3_12
+        bge   $s2, $t1, L3_12
         # t1 = i int<< 2
-        lw    $t0, -156($fp)
-        sll   $s0, $t0, 2
+        sll   $s0, $s2, 2
         # t2 = i int* i
-        lw    $t0, -156($fp)
-        lw    $t1, -156($fp)
-        mul   $s1, $t0, $t1
+        mul   $s1, $s2, $s2
         # squares[t1] = t2
         la    $t8, g_squares
         addu  $t8, $t8, $s0
         sw    $s1, 0($t8)
         # i = i int+ 1
-        lw    $t0, -156($fp)
-        addiu $t0, $t0, 1
-        sw    $t0, -156($fp)
+        addiu $s2, $s2, 1
         # goto 6
         j     L3_6
 L3_12:
         # i = 0
-        li    $t0, 0
-        sw    $t0, -156($fp)
+        li    $s2, 0
 L3_13:
         # if i int>= 3 goto 24
-        lw    $t0, -156($fp)
         li    $t1, 3
-        bge   $t0, $t1, L3_24
+        bge   $s2, $t1, L3_24
         # j = 0
-        li    $s6, 0
-        # t4 = i int* 3
-        lw    $t0, -156($fp)
-        li    $t1, 3
-        mul   $s2, $t0, $t1
-L3_16:
+        li    $s1, 0
+L3_15:
         # if j int>= 3 goto 22
         li    $t1, 3
-        bge   $s6, $t1, L3_22
+        bge   $s1, $t1, L3_22
+        # t4 = i int* 3
+        li    $t1, 3
+        mul   $s3, $s2, $t1
         # t5 = t4 int+ j
-        addu  $s0, $s2, $s6
+        addu  $s0, $s3, $s1
         # t6 = t5 int<< 2
-        sll   $s1, $s0, 2
+        sll   $s4, $s0, 2
         # m[t6] = t5
         addiu $t8, $fp, -56
-        addu  $t8, $t8, $s1
+        addu  $t8, $t8, $s4
         sw    $s0, 0($t8)
         # j = j int+ 1
-        addiu $s6, $s6, 1
-        # goto 16
-        j     L3_16
+        addiu $s1, $s1, 1
+        # goto 15
+        j     L3_15
 L3_22:
         # i = i int+ 1
-        lw    $t0, -156($fp)
-        addiu $t0, $t0, 1
-        sw    $t0, -156($fp)
+        addiu $s2, $s2, 1
         # goto 13
         j     L3_13
 L3_24:
         # i = 0
-        li    $t0, 0
-        sw    $t0, -156($fp)
+        li    $s2, 0
 L3_25:
         # if i int>= 2 goto 46
-        lw    $t0, -156($fp)
         li    $t1, 2
-        bge   $t0, $t1, L3_46
+        bge   $s2, $t1, L3_46
         # j = 0
-        li    $s6, 0
-        # t11 = i int* 3
-        lw    $t0, -156($fp)
-        li    $t1, 3
-        mul   $t0, $t0, $t1
-        sw    $t0, -288($fp)
-        # t16 = i int* 100
-        lw    $t0, -156($fp)
-        li    $t1, 100
-        mul   $t0, $t0, $t1
-        sw    $t0, -308($fp)
-L3_29:
+        li    $s1, 0
+L3_27:
         # if j int>= 3 goto 44
         li    $t1, 3
-        bge   $s6, $t1, L3_44
+        bge   $s1, $t1, L3_44
         # k = 0
         li    $s0, 0
+L3_29:
+        # if k int>= 4 goto 42
+        li    $t1, 4
+        bge   $s0, $t1, L3_42
+        # t11 = i int* 3
+        li    $t1, 3
+        mul   $s3, $s2, $t1
         # t12 = t11 int+ j
-        lw    $t0, -288($fp)
-        addu  $s7, $t0, $s6
+        addu  $s4, $s3, $s1
         # t13 = t12 int<< 2
-        sll   $s4, $s7, 2
+        sll   $s5, $s4, 2
+        # t14 = t13 int+ k
+        addu  $s6, $s5, $s0
+        # t15 = t14 int<< 2
+        sll   $s7, $s6, 2
+        # t16 = i int* 100
+        li    $t1, 100
+        mul   $t0, $s2, $t1
+        sw    $t0, -308($fp)
         # t17 = j int* 10
         li    $t1, 10
-        mul   $t0, $s6, $t1
+        mul   $t0, $s1, $t1
         sw    $t0, -312($fp)
         # t18 = t16 int+ t17
         lw    $t0, -308($fp)
         lw    $t1, -312($fp)
-        addu  $s5, $t0, $t1
-L3_35:
-        # if k int>= 4 goto 42
-        li    $t1, 4
-        bge   $s0, $t1, L3_42
-        # t14 = t13 int+ k
-        addu  $s1, $s4, $s0
-        # t15 = t14 int<< 2
-        sll   $s2, $s1, 2
+        addu  $t0, $t0, $t1
+        sw    $t0, -316($fp)
         # t19 = t18 int+ k
-        addu  $s3, $s5, $s0
+        addu  $t0, $t0, $s0
+        sw    $t0, -320($fp)
         # cube[t15] = t19
         addiu $t8, $fp, -152
-        addu  $t8, $t8, $s2
-        sw    $s3, 0($t8)
+        addu  $t8, $t8, $s7
+        lw    $t0, -320($fp)
+        sw    $t0, 0($t8)
         # k = k int+ 1
         addiu $s0, $s0, 1
-        # goto 35
-        j     L3_35
-L3_42:
-        # j = j int+ 1
-        addiu $s6, $s6, 1
         # goto 29
         j     L3_29
+L3_42:
+        # j = j int+ 1
+        addiu $s1, $s1, 1
+        # goto 27
+        j     L3_27
 L3_44:
         # i = i int+ 1
-        lw    $t0, -156($fp)
-        addiu $t0, $t0, 1
-        sw    $t0, -156($fp)
+        addiu $s2, $s2, 1
         # goto 25
         j     L3_25
 L3_46:
@@ -796,12 +779,12 @@ main__exit:
         l.d   $f24, -656($fp)
         lw    $s0, -604($fp)
         lw    $s1, -608($fp)
-        lw    $s2, -612($fp)
-        lw    $s3, -628($fp)
-        lw    $s4, -620($fp)
-        lw    $s5, -624($fp)
-        lw    $s6, -632($fp)
-        lw    $s7, -616($fp)
+        lw    $s2, -632($fp)
+        lw    $s3, -612($fp)
+        lw    $s4, -616($fp)
+        lw    $s5, -620($fp)
+        lw    $s6, -624($fp)
+        lw    $s7, -628($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

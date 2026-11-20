@@ -26,7 +26,6 @@
      - inlining of small functions (at most 16 instructions, not
        recursive, not variadic) and tail recursion turned into a jump;
      - common subexpressions across blocks (available expressions);
-     - loop-invariant code motion (natural loops from dominators).
 
    Nothing here may change what a program prints or returns: the test
    suite runs every program before and after and compares.
@@ -57,7 +56,6 @@ struct OptStats {
     int inlined = 0;           /* -O3: calls replaced by the callee's body */
     int tailCalls = 0;         /* -O3: `return f(...)` in f turned into a jump */
     int globalCommon = 0;      /* -O3: expressions reused from another block */
-    int hoisted = 0;           /* -O3: instructions moved in front of a loop */
 };
 
 OptStats optimize(Program &program, int level);

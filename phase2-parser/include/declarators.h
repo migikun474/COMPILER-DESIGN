@@ -4,7 +4,7 @@
 /* Turning a reduced declaration into AST nodes and symbol-table entries:
    the declared type's printable string and ASTTypeExpr snapshot, node
    positions taken from tokens, and registration of variables,
-   functions, typedefs, constructors and destructors. */
+   functions, typedefs and constructors. */
 
 #include <string>
 #include <vector>
@@ -37,14 +37,11 @@ std::string anonymousTagAt(int tokIdx);
 std::vector<ASTTypeExprPtr> paramExprs(const std::vector<DeclInfo> &params);
 ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts);
 
-/* Builds a ConstructorDef / DestructorDef node and records the callable
-   in the symbol table. `body` is null for a declaration inside the class
-   (`Dog(int n);`), whose definition then appears outside it
-   (`Dog::Dog(int n) { ... }`); `className` names the class either way. */
+/* Builds a ConstructorDef node and records the callable in the symbol
+   table. `body` is null for a declaration inside the class (`Dog();`),
+   whose definition then appears outside it (`Dog::Dog() { ... }`);
+   `className` names the class either way. */
 ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::vector<DeclInfo> &params,
-                               bool variadic, const std::string &className, const ASTNodePtr &body,
-                               const std::vector<ASTNodePtr> &memInits = {});
-ASTNodePtr makeDestructorNode(const std::string &name, int nameIdx, const std::string &className,
-                              const ASTNodePtr &body);
+                               bool variadic, const std::string &className, const ASTNodePtr &body);
 
 #endif

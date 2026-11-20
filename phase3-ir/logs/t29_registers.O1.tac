@@ -613,139 +613,139 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   depth              function      int (int)                  -           7    -    2  _Z5depthi; defined
-   many               function      int (int)                  -          14    -    1  _Z4manyi; defined
-   three              function      int (int, int, int)        -          22    -    2  _Z5threeiii; defined
-   twice              function      int (int)                  -          23    -    6  _Z5twicei; defined
-   arguments          function      int (int, int, int)        -          24    -    2  _Z9argumentsiii; defined
-   characters         function      int (const char *)         -          31    -    2  _Z10charactersPKc; defined
-   half               function      double (double)            -          48    -    1  _Z4halfd; defined
-   numbers            function      double (int)               -          49    -    3  _Z7numbersi; defined
-   jumps              function      int (int)                  -          61    -    3  _Z5jumpsi; defined
-   mixed              function      int (int)                  -          73    -    1  _Z5mixedi; defined
-   main               function      int (void)                 -          85    -    0  defined
+   depth              function      int (int)                  -           6    -    2  _Z5depthi; defined
+   many               function      int (int)                  -          13    -    1  _Z4manyi; defined
+   three              function      int (int, int, int)        -          21    -    2  _Z5threeiii; defined
+   twice              function      int (int)                  -          22    -    6  _Z5twicei; defined
+   arguments          function      int (int, int, int)        -          23    -    2  _Z9argumentsiii; defined
+   characters         function      int (const char *)         -          30    -    2  _Z10charactersPKc; defined
+   half               function      double (double)            -          47    -    1  _Z4halfd; defined
+   numbers            function      double (int)               -          48    -    3  _Z7numbersi; defined
+   jumps              function      int (int)                  -          60    -    3  _Z5jumpsi; defined
+   mixed              function      int (int)                  -          72    -    1  _Z5mixedi; defined
+   main               function      int (void)                 -          84    -    0  defined
 
  scope: global > depth()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       7    4    4  n.1
-   a                  variable      int                        local       8    4    2  a.2
-   b                  variable      int                        local       8    4    2  b.3
-   c                  variable      int                        local       8    4    1  c.4
-   below              variable      int                        local      10    4    1  below.5
+   n                  parameter     int                        param       6    4    4  n.1
+   a                  variable      int                        local       7    4    2  a.2
+   b                  variable      int                        local       7    4    2  b.3
+   c                  variable      int                        local       7    4    1  c.4
+   below              variable      int                        local       9    4    1  below.5
 
  scope: global > many()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      14    4   12  x.6
-   a                  variable      int                        local      15    4    2  a.7
-   b                  variable      int                        local      15    4    2  b.8
-   c                  variable      int                        local      15    4    2  c.9
-   d                  variable      int                        local      15    4    2  d.10
-   e                  variable      int                        local      15    4    2  e.11
-   f                  variable      int                        local      15    4    2  f.12
-   g                  variable      int                        local      16    4    2  g.13
-   h                  variable      int                        local      16    4    2  h.14
-   i                  variable      int                        local      16    4    2  i.15
-   j                  variable      int                        local      16    4    2  j.16
-   k                  variable      int                        local      16    4    2  k.17
-   l                  variable      int                        local      16    4    2  l.18
-   s                  variable      int                        local      17    4    2  s.19
+   x                  parameter     int                        param      13    4   12  x.6
+   a                  variable      int                        local      14    4    2  a.7
+   b                  variable      int                        local      14    4    2  b.8
+   c                  variable      int                        local      14    4    2  c.9
+   d                  variable      int                        local      14    4    2  d.10
+   e                  variable      int                        local      14    4    2  e.11
+   f                  variable      int                        local      14    4    2  f.12
+   g                  variable      int                        local      15    4    2  g.13
+   h                  variable      int                        local      15    4    2  h.14
+   i                  variable      int                        local      15    4    2  i.15
+   j                  variable      int                        local      15    4    2  j.16
+   k                  variable      int                        local      15    4    2  k.17
+   l                  variable      int                        local      15    4    2  l.18
+   s                  variable      int                        local      16    4    2  s.19
 
  scope: global > many() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      int                        local      18    4    3  t.20
+   t                  variable      int                        local      17    4    3  t.20
 
  scope: global > three()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     int                        param      22    4    1  p.21
-   q                  parameter     int                        param      22    4    1  q.22
-   r                  parameter     int                        param      22    4    1  r.23
+   p                  parameter     int                        param      21    4    1  p.21
+   q                  parameter     int                        param      21    4    1  q.22
+   r                  parameter     int                        param      21    4    1  r.23
 
  scope: global > twice()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param      23    4    1  v.24
+   v                  parameter     int                        param      22    4    1  v.24
 
  scope: global > arguments()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      24    4    2  a.25
-   b                  parameter     int                        param      24    4    2  b.26
-   c                  parameter     int                        param      24    4    2  c.27
-   x                  variable      int                        local      25    4    2  x.28
-   y                  variable      int                        local      26    4    1  y.29
-   z                  variable      int                        local      27    4    1  z.30
+   a                  parameter     int                        param      23    4    2  a.25
+   b                  parameter     int                        param      23    4    2  b.26
+   c                  parameter     int                        param      23    4    2  c.27
+   x                  variable      int                        local      24    4    2  x.28
+   y                  variable      int                        local      25    4    1  y.29
+   z                  variable      int                        local      26    4    1  z.30
 
  scope: global > characters()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     const char *               param      31    4    5  s.31
-   c                  variable      char                       local      32    1    5  c.32
-   u                  variable      unsigned char              local      33    1    3  u.33
-   h                  variable      short                      local      34    2    3  h.34
-   any                variable      bool                       local      35    1    3  any.35
-   signs              variable      int                        local      36    4    2  signs.36
-   same               variable      unsigned char              local      44    1    1  same.38
+   s                  parameter     const char *               param      30    4    5  s.31
+   c                  variable      char                       local      31    1    5  c.32
+   u                  variable      unsigned char              local      32    1    3  u.33
+   h                  variable      short                      local      33    2    3  h.34
+   any                variable      bool                       local      34    1    3  any.35
+   signs              variable      int                        local      35    4    2  signs.36
+   same               variable      unsigned char              local      43    1    1  same.38
 
  scope: global > characters() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      37    4    6  i.37
+   i                  variable      int                        local      36    4    6  i.37
 
  scope: global > half()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     double                     param      48    8    1  v.39
+   v                  parameter     double                     param      47    8    1  v.39
 
  scope: global > numbers()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      49    4    1  n.40
-   a                  variable      double                     local      50    8    2  a.41
-   b                  variable      double                     local      50    8    1  b.42
-   c                  variable      double                     local      50    8    1  c.43
-   d                  variable      double                     local      50    8    1  d.44
-   e                  variable      double                     local      50    8    1  e.45
-   f                  variable      double                     local      50    8    1  f.46
-   g                  variable      double                     local      50    8    2  g.47
-   total              variable      double                     local      50    8    5  total.48
-   small              variable      float                      local      51    4    4  small.49
+   n                  parameter     int                        param      48    4    1  n.40
+   a                  variable      double                     local      49    8    2  a.41
+   b                  variable      double                     local      49    8    1  b.42
+   c                  variable      double                     local      49    8    1  c.43
+   d                  variable      double                     local      49    8    1  d.44
+   e                  variable      double                     local      49    8    1  e.45
+   f                  variable      double                     local      49    8    1  f.46
+   g                  variable      double                     local      49    8    2  g.47
+   total              variable      double                     local      49    8    5  total.48
+   small              variable      float                      local      50    4    4  small.49
 
  scope: global > numbers() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      52    4    2  i.50
+   i                  variable      int                        local      51    4    2  i.50
 
  scope: global > jumps()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      61    4    1  n.51
-   done               label         -                          -          69    -    1  _Z5jumpsi.done
-   top                label         -                          -          63    -    1  _Z5jumpsi.top
-   i                  variable      int                        local      62    4    5  i.52
-   s                  variable      int                        local      62    4    2  s.53
-   last               variable      int                        local      62    4    2  last.54
+   n                  parameter     int                        param      60    4    1  n.51
+   done               label         -                          -          68    -    1  _Z5jumpsi.done
+   top                label         -                          -          62    -    1  _Z5jumpsi.top
+   i                  variable      int                        local      61    4    5  i.52
+   s                  variable      int                        local      61    4    2  s.53
+   last               variable      int                        local      61    4    2  last.54
 
  scope: global > mixed()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      73    4    2  n.55
-   before             variable      int                        local      74    4    3  before.56
-   sum                variable      int                        local      74    4    5  sum.57
-   after              variable      int                        local      81    4    1  after.60
+   n                  parameter     int                        param      72    4    2  n.55
+   before             variable      int                        local      73    4    3  before.56
+   sum                variable      int                        local      73    4    5  sum.57
+   after              variable      int                        local      80    4    1  after.60
 
  scope: global > mixed() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      75    4    4  i.58
+   i                  variable      int                        local      74    4    4  i.58
 
  scope: global > mixed() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   inside             variable      int                        local      76    4    1  inside.59
+   inside             variable      int                        local      75    4    1  inside.59
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

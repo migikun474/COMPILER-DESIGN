@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v10_classes.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v10_classes.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v10_classes.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v10_classes.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -37,8 +37,7 @@ Program "translation_unit"
 |       `-- ReturnStmt
 |           `-- IntLiteral "4"  <int> =4
 |-- ClassDecl "Square : Shape"  <class Square>  -> Square (tag)
-|   |-- ConstructorDef "Square : _ZN6SquareC1Ei"  -> _ZN6SquareC1Ei (function)
-|   |   |-- ParamDecl "s : INT"  <int>  -> s.1 (parameter, param)
+|   |-- ConstructorDef "Square : _ZN6SquareC1Ev"  -> _ZN6SquareC1Ev (function)
 |   |   `-- CompoundStmt
 |   |       |-- ExprStmt
 |   |       |   `-- AssignExpr "="  <int>
@@ -47,9 +46,7 @@ Program "translation_unit"
 |   |       `-- ExprStmt
 |   |           `-- AssignExpr "="  <int>
 |   |               |-- Identifier "factor"  <int> lvalue  -> Shape::factor (field, member)
-|   |               `-- Identifier "s"  <int> lvalue  -> s.1 (parameter, param)
-|   |-- DestructorDef "Square : _ZN6SquareD1Ev"  -> _ZN6SquareD1Ev (function)
-|   |   `-- CompoundStmt
+|   |               `-- IntLiteral "3"  <int> =3
 |   `-- FunctionDef "side : _ZN6Square4sideEv"  <int (void)>  -> _ZN6Square4sideEv (function)
 |       `-- CompoundStmt
 |           `-- ReturnStmt
@@ -72,30 +69,28 @@ Program "translation_unit"
 |   `-- VarDecl "a : INT"  <int>  -> Plain::a (field, member)
 `-- FunctionDef "main : main"  <int (void)>  -> main (function)
     `-- CompoundStmt
-        |-- VarDecl "sq : CLASS"  <class Square>  -> sq.2 (variable, local)
-        |   `-- ConstructExpr "CLASS"  <class Square>  -> _ZN6SquareC1Ei (function)
-        |       `-- IntLiteral "3"  <int> =3
+        |-- VarDecl "sq : CLASS"  <class Square>  -> sq.1 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- MemberExpr "sides"  <int> lvalue  -> Shape::sides (field, member)
-        |       |   `-- Identifier "sq"  <class Square> lvalue  -> sq.2 (variable, local)
+        |       |   `-- Identifier "sq"  <class Square> lvalue  -> sq.1 (variable, local)
         |       `-- IntLiteral "4"  <int> =4
-        |-- VarDecl "base : CLASS_POINTER"  <class Shape *>  -> base.3 (variable, local)
+        |-- VarDecl "base : CLASS_POINTER"  <class Shape *>  -> base.2 (variable, local)
         |   `-- UnaryExpr "&"  <class Square *>
-        |       `-- Identifier "sq"  <class Square> lvalue  -> sq.2 (variable, local)
-        |-- VarDecl "c : CLASS"  <class Counter>  -> c.4 (variable, local)
+        |       `-- Identifier "sq"  <class Square> lvalue  -> sq.1 (variable, local)
+        |-- VarDecl "c : CLASS"  <class Counter>  -> c.3 (variable, local)
         |-- ExprStmt
         |   `-- CallExpr  <void>  -> _ZN7Counter3incEv (function)
         |       `-- MemberExpr "inc"  <void (void)>  -> _ZN7Counter3incEv (function)
-        |           `-- Identifier "c"  <class Counter> lvalue  -> c.4 (variable, local)
-        |-- VarDecl "pl : STRUCT"  <struct Plain>  -> pl.5 (variable, local)
+        |           `-- Identifier "c"  <class Counter> lvalue  -> c.3 (variable, local)
+        |-- VarDecl "pl : STRUCT"  <struct Plain>  -> pl.4 (variable, local)
         |-- ExprStmt
         |   `-- AssignExpr "="  <int>
         |       |-- MemberExpr "a"  <int> lvalue  -> Plain::a (field, member)
-        |       |   `-- Identifier "pl"  <struct Plain> lvalue  -> pl.5 (variable, local)
+        |       |   `-- Identifier "pl"  <struct Plain> lvalue  -> pl.4 (variable, local)
         |       `-- IntLiteral "1"  <int> =1
-        |-- VarDecl "made : CLASS"  <class Shape>  -> made.6 (variable, local)
-        |-- VarDecl "total : INT"  <int>  -> total.7 (variable, local)
+        |-- VarDecl "made : CLASS"  <class Shape>  -> made.5 (variable, local)
+        |-- VarDecl "total : INT"  <int>  -> total.6 (variable, local)
         |   `-- BinaryExpr "+"  <int>
         |       |-- BinaryExpr "+"  <int>
         |       |   |-- BinaryExpr "+"  <int>
@@ -103,23 +98,23 @@ Program "translation_unit"
         |       |   |   |   |-- BinaryExpr "+"  <int>
         |       |   |   |   |   |-- CallExpr  <int>  -> _ZN5Shape4areaEv (function)
         |       |   |   |   |   |   `-- ArrowExpr "area"  <int (void)>  -> _ZN5Shape4areaEv (function)
-        |       |   |   |   |   |       `-- Identifier "base"  <class Shape *> lvalue  -> base.3 (variable, local)
+        |       |   |   |   |   |       `-- Identifier "base"  <class Shape *> lvalue  -> base.2 (variable, local)
         |       |   |   |   |   `-- CallExpr  <int>  -> _ZN5Shape9perimeterEv (function)
         |       |   |   |   |       `-- MemberExpr "perimeter"  <int (void)>  -> _ZN5Shape9perimeterEv (function)
-        |       |   |   |   |           `-- Identifier "made"  <class Shape> lvalue  -> made.6 (variable, local)
+        |       |   |   |   |           `-- Identifier "made"  <class Shape> lvalue  -> made.5 (variable, local)
         |       |   |   |   `-- CallExpr  <int>  -> _ZN6Square4sideEv (function)
         |       |   |   |       `-- MemberExpr "side"  <int (void)>  -> _ZN6Square4sideEv (function)
-        |       |   |   |           `-- Identifier "sq"  <class Square> lvalue  -> sq.2 (variable, local)
+        |       |   |   |           `-- Identifier "sq"  <class Square> lvalue  -> sq.1 (variable, local)
         |       |   |   `-- CallExpr  <int>  -> _ZN7Counter3getEv (function)
         |       |   |       `-- MemberExpr "get"  <int (void)>  -> _ZN7Counter3getEv (function)
-        |       |   |           `-- Identifier "c"  <class Counter> lvalue  -> c.4 (variable, local)
+        |       |   |           `-- Identifier "c"  <class Counter> lvalue  -> c.3 (variable, local)
         |       |   `-- MemberExpr "a"  <int> lvalue  -> Plain::a (field, member)
-        |       |       `-- Identifier "pl"  <struct Plain> lvalue  -> pl.5 (variable, local)
+        |       |       `-- Identifier "pl"  <struct Plain> lvalue  -> pl.4 (variable, local)
         |       `-- CallExpr  <int>  -> _ZN5Shape5countEv (function)
         |           `-- ArrowExpr "count"  <int (void)>  -> _ZN5Shape5countEv (function)
-        |               `-- Identifier "base"  <class Shape *> lvalue  -> base.3 (variable, local)
+        |               `-- Identifier "base"  <class Shape *> lvalue  -> base.2 (variable, local)
         `-- ReturnStmt
-            `-- Identifier "total"  <int> lvalue  -> total.7 (variable, local)
+            `-- Identifier "total"  <int> lvalue  -> total.6 (variable, local)
 
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
@@ -133,23 +128,21 @@ Shape::scale       method         int (void)                 -        global > c
 Shape::factor      field          int                        member   global > class Shape           11    4     4     Shape::factor        -                        protected, offset 4
 Shape::secret      field          int                        member   global > class Shape           13    4     0     Shape::secret        -                        private, offset 8
 Square             class_tag      class Square               -        global                         19    -     0     Square               -                        size 12, public base Shape
-Square::Square     constructor    void (int)                 -        global > class Square          21    -     1     _ZN6SquareC1Ei       _ZN6SquareC1Ei           public
-Square::~Square    destructor     void (void)                -        global > class Square          22    -     0     _ZN6SquareD1Ev       _ZN6SquareD1Ev           public
-Square::side       method         int (void)                 -        global > class Square          23    -     1     _ZN6Square4sideEv    _ZN6Square4sideEv        public, defined
-s                  parameter      int                        param    global > class Square > Square() 21    4     1     s.1                  -                        
-Counter            class_tag      class Counter              -        global                         26    -     0     Counter              -                        size 4
-Counter::value     field          int                        member   global > class Counter         27    4     2     Counter::value       -                        private, offset 0
-Counter::inc       method         void (void)                -        global > class Counter         29    -     1     _ZN7Counter3incEv    _ZN7Counter3incEv        public, defined
-Counter::get       method         int (void)                 -        global > class Counter         30    -     1     _ZN7Counter3getEv    _ZN7Counter3getEv        public, defined
-Plain              struct_tag     struct Plain               -        global                         33    -     0     Plain                -                        size 4
-Plain::a           field          int                        member   global > struct Plain          33    4     2     Plain::a             -                        public, offset 0
-main               function       int (void)                 -        global                         35    -     0     main                 main                     defined
-sq                 variable       class Square               local    global > main()                36    12    3     sq.2                 -                        
-base               variable       class Shape *              local    global > main()                38    4     2     base.3               -                        
-c                  variable       class Counter              local    global > main()                39    4     2     c.4                  -                        
-pl                 variable       struct Plain               local    global > main()                41    4     2     pl.5                 -                        
-made               variable       class Shape                local    global > main()                43    12    1     made.6               -                        
-total              variable       int                        local    global > main()                44    4     1     total.7              -                        
+Square::Square     constructor    void (void)                -        global > class Square          21    -     1     _ZN6SquareC1Ev       _ZN6SquareC1Ev           public
+Square::side       method         int (void)                 -        global > class Square          22    -     1     _ZN6Square4sideEv    _ZN6Square4sideEv        public, defined
+Counter            class_tag      class Counter              -        global                         25    -     0     Counter              -                        size 4
+Counter::value     field          int                        member   global > class Counter         26    4     2     Counter::value       -                        private, offset 0
+Counter::inc       method         void (void)                -        global > class Counter         28    -     1     _ZN7Counter3incEv    _ZN7Counter3incEv        public, defined
+Counter::get       method         int (void)                 -        global > class Counter         29    -     1     _ZN7Counter3getEv    _ZN7Counter3getEv        public, defined
+Plain              struct_tag     struct Plain               -        global                         32    -     0     Plain                -                        size 4
+Plain::a           field          int                        member   global > struct Plain          32    4     2     Plain::a             -                        public, offset 0
+main               function       int (void)                 -        global                         34    -     0     main                 main                     defined
+sq                 variable       class Square               local    global > main()                35    12    3     sq.1                 -                        
+base               variable       class Shape *              local    global > main()                37    4     2     base.2               -                        
+c                  variable       class Counter              local    global > main()                38    4     2     c.3                  -                        
+pl                 variable       struct Plain               local    global > main()                40    4     2     pl.4                 -                        
+made               variable       class Shape                local    global > main()                42    12    1     made.5               -                        
+total              variable       int                        local    global > main()                43    4     1     total.6              -                        
 
 === Record Layouts (MIPS32) ===
 class Shape: size 12, align 4

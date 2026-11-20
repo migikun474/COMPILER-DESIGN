@@ -29,7 +29,6 @@
    calls inlined                          16
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
 
 ----------------------------------------------------------------------------
  GLOBALS: 3 object(s) in static storage
@@ -501,120 +500,120 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   later              function      int (int)                  -           6    -    2  _Z5lateri; defined
-   fact               function      int (int)                  -           8    -    2  _Z4facti; defined
-   fib                function      int (int)                  -           9    -    3  _Z3fibi; defined
-   gcd                function      int (int, int)             -          10    -    1  _Z3gcdii; defined
-   pick               function      int (int)                  -          12    -    2  _Z4picki; defined
-   pick               function      int (double)               -          13    -    1  _Z4pickd; defined
-   pick               function      int (char *)               -          14    -    1  _Z4pickPc; defined
-   pick               function      int (int, int)             -          15    -    1  _Z4pickii; defined
-   bump               function      void (int &)               -          17    -    1  _Z4bumpRi; defined
-   exchange           function      void (int &, int &)        -          18    -    1  _Z8exchangeRiS_; defined
-   largest            function      int &(int &, int &)        -          19    -    1  _Z7largestRiS_; defined
-   half               function      double (const double &)    -          20    -    1  _Z4halfRKd; defined
-   sum                function      int (int, ...)             -          22    -    2  _Z3sumiz; defined
-   mix                function      double (int, ...)          -          31    -    1  _Z3mixiz; defined
-   counter            function      int (void)                 -          39    -    3  _Z7counterv; defined
-   global             variable      int                        global     45    4    4  
-   ratio              variable      double                     global     46    8    1  
-   scale              function      void (int)                 -          47    -    1  _Z5scalei; defined
-   main               function      int (void)                 -          49    -    0  defined
+   later              function      int (int)                  -           4    -    2  _Z5lateri; defined
+   fact               function      int (int)                  -           6    -    2  _Z4facti; defined
+   fib                function      int (int)                  -           7    -    3  _Z3fibi; defined
+   gcd                function      int (int, int)             -           8    -    1  _Z3gcdii; defined
+   pick               function      int (int)                  -          10    -    2  _Z4picki; defined
+   pick               function      int (double)               -          11    -    1  _Z4pickd; defined
+   pick               function      int (char *)               -          12    -    1  _Z4pickPc; defined
+   pick               function      int (int, int)             -          13    -    1  _Z4pickii; defined
+   bump               function      void (int &)               -          15    -    1  _Z4bumpRi; defined
+   exchange           function      void (int &, int &)        -          16    -    1  _Z8exchangeRiS_; defined
+   largest            function      int &(int &, int &)        -          17    -    1  _Z7largestRiS_; defined
+   half               function      double (const double &)    -          18    -    1  _Z4halfRKd; defined
+   sum                function      int (int, ...)             -          20    -    2  _Z3sumiz; defined
+   mix                function      double (int, ...)          -          29    -    1  _Z3mixiz; defined
+   counter            function      int (void)                 -          37    -    3  _Z7counterv; defined
+   global             variable      int                        global     43    4    4  
+   ratio              variable      double                     global     44    8    1  
+   scale              function      void (int)                 -          45    -    1  _Z5scalei; defined
+   main               function      int (void)                 -          47    -    0  defined
 
  scope: global > fact()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       8    4    3  n.1
+   n                  parameter     int                        param       6    4    3  n.1
 
  scope: global > fib()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       9    4    4  n.2
+   n                  parameter     int                        param       7    4    4  n.2
 
  scope: global > gcd()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      10    4    3  a.3
-   b                  parameter     int                        param      10    4    4  b.4
+   a                  parameter     int                        param       8    4    3  a.3
+   b                  parameter     int                        param       8    4    4  b.4
 
  scope: global > gcd() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      int                        local      10    4    1  t.5
+   t                  variable      int                        local       8    4    1  t.5
 
  scope: global > pick()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      12    4    0  a.6
-   a                  parameter     double                     param      13    8    0  a.7
-   s                  parameter     char *                     param      14    4    0  s.8
-   a                  parameter     int                        param      15    4    0  a.9
-   b                  parameter     int                        param      15    4    0  b.10
+   a                  parameter     int                        param      10    4    0  a.6
+   a                  parameter     double                     param      11    8    0  a.7
+   s                  parameter     char *                     param      12    4    0  s.8
+   a                  parameter     int                        param      13    4    0  a.9
+   b                  parameter     int                        param      13    4    0  b.10
 
  scope: global > bump()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     int &                      param      17    4    2  r.11
+   r                  parameter     int &                      param      15    4    2  r.11
 
  scope: global > exchange()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int &                      param      18    4    2  a.12
-   b                  parameter     int &                      param      18    4    2  b.13
-   t                  variable      int                        local      18    4    1  t.14
+   a                  parameter     int &                      param      16    4    2  a.12
+   b                  parameter     int &                      param      16    4    2  b.13
+   t                  variable      int                        local      16    4    1  t.14
 
  scope: global > largest()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int &                      param      19    4    2  a.15
-   b                  parameter     int &                      param      19    4    2  b.16
+   a                  parameter     int &                      param      17    4    2  a.15
+   b                  parameter     int &                      param      17    4    2  b.16
 
  scope: global > half()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     const double &             param      20    4    1  v.17
+   v                  parameter     const double &             param      18    4    1  v.17
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      22    4    2  n.18
-   ap                 variable      va_list                    local      23    4    3  ap.19
-   s                  variable      int                        local      25    4    2  s.20
+   n                  parameter     int                        param      20    4    2  n.18
+   ap                 variable      va_list                    local      21    4    3  ap.19
+   s                  variable      int                        local      23    4    2  s.20
 
  scope: global > sum() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      26    4    2  i.21
+   i                  variable      int                        local      24    4    2  i.21
 
  scope: global > mix()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      31    4    1  n.22
-   ap                 variable      va_list                    local      32    4    4  ap.23
-   s                  variable      double                     local      34    8    1  s.24
+   n                  parameter     int                        param      29    4    1  n.22
+   ap                 variable      va_list                    local      30    4    4  ap.23
+   s                  variable      double                     local      32    8    1  s.24
 
  scope: global > counter()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   calls              variable      int                        static     40    4    2  calls.25; static
+   calls              variable      int                        static     38    4    2  calls.25; static
 
  scope: global > scale()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  parameter     int                        param      47    4    1  k.26
+   k                  parameter     int                        param      45    4    1  k.26
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   text               variable      char[4]                    local      51    4    1  text.27
-   x                  variable      int                        local      54    4    5  x.28
-   y                  variable      int                        local      54    4    3  y.29
-   alias              variable      int &                      local      57    4    2  alias.30
+   text               variable      char[4]                    local      49    4    1  text.27
+   x                  variable      int                        local      52    4    5  x.28
+   y                  variable      int                        local      52    4    3  y.29
+   alias              variable      int &                      local      55    4    2  alias.30
 
  scope: global > later()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      70    4    1  n.31
+   n                  parameter     int                        param      68    4    1  n.31
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

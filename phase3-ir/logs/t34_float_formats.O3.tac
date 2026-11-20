@@ -29,7 +29,6 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -95,19 +94,19 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   main               function      int (void)                 -           5    -    0  defined
+   main               function      int (void)                 -           4    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  variable      double[13]                 local       6  104   10  v.1
-   n                  variable      int                        local       7    4    1  n.2
-   f                  variable      float                      local      10    4    3  f.4
+   v                  variable      double[13]                 local       5  104   10  v.1
+   n                  variable      int                        local       6    4    1  n.2
+   f                  variable      float                      local       9    4    3  f.4
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       8    4   12  i.3
+   i                  variable      int                        local       7    4   12  i.3
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

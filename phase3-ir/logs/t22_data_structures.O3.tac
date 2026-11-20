@@ -4,7 +4,7 @@
 
    Source file   : test/t22_data_structures.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 321 -> 299 instruction(s)
+   Result        : Optimized three address code (-O3): 321 -> 303 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,22 +14,21 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          321 -> 299   (6% fewer)
+   instructions                          321 -> 303   (5% fewer)
 
    constants folded                        5
    algebraic simplifications              11
-   common subexpressions                  11
-   copies / constants forwarded           53
+   common subexpressions                   9
+   copies / constants forwarded           47
    temporaries merged away                15
-   dead instructions removed              25
+   dead instructions removed              22
    jumps removed or redirected            15
    unreachable instructions removed        1
-   propagated across blocks               11
-   dead assignments removed               14
+   propagated across blocks               10
+   dead assignments removed               13
    calls inlined                           6
    tail calls turned into jumps            1
-   common subexpressions across blocks      2
-   instructions moved out of loops         5
+   common subexpressions across blocks      0
 
 ============================================================================
  FUNCTION prepend(struct Node *, int)        (link name _Z7prependP4Nodei)
@@ -301,7 +300,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 23 parameter(s)/local(s), 86 temporaries, frame 636 bytes
+ Symbol table: 23 parameter(s)/local(s), 90 temporaries, frame 636 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -350,10 +349,13 @@
    t27              temp    int                             4     260
    t28              temp    Stack *                         4     264
    t29              temp    int                             4     268
+   t31              temp    Stack *                         4     276
    t35              temp    int                             4     292
    t38              temp    int                             4     304
    t39              temp    int **                          4     308
    t41              temp    void *                          4     316
+   t42              temp    int                             4     320
+   t43              temp    int **                          4     324
    t44              temp    int *                           4     328
    t45              temp    int                             4     332
    t46              temp    int *                           4     336
@@ -405,6 +407,7 @@
    t104             temp    int                             4     568
    t105             temp    int                             4     572
    t106             temp    Stack *                         4     576
+   t108             temp    Stack *                         4     584
    t109             temp    int                             4     588
    t110             temp    int                             4     592
    t111             temp    int                             4     596
@@ -414,9 +417,9 @@
    t118             temp    int                             4     624
    t119             temp    Stack *                         4     628
    t120             temp    int                             4     632
-   (34 temporaries no longer used after optimization not shown)
+   (30 temporaries no longer used after optimization not shown)
 
- Code: 197 instruction(s)
+ Code: 201 instruction(s)
 
     202        list = 0
     203        i.20 = 1
@@ -512,10 +515,10 @@
     293        call printf, 4
     294        s[32] = 0
     295        i.26 = 0
-    296        t28 = &s
-    297        t102 = t28 ptr+ 32
-    298  L25:  if i.26 int>= 5 goto L26
-    299        t29 = i.26 int* 3
+    296  L25:  if i.26 int>= 5 goto L26
+    297        t28 = &s
+    298        t29 = i.26 int* 3
+    299        t102 = t28 ptr+ 32
     300        t103 = *t102
     301        t104 = t103 int+ 1
     302        *t102 = t104
@@ -524,97 +527,101 @@
     305        *t106 = t29
     306        i.26 = i.26 int+ 1
     307        goto L25
-    308  L26:  t109 = *t102
-    309        t110 = t109 int- 1
-    310        *t102 = t110
-    311        t111 = t110 int<< 2                 (w = 4)
-    312        t112 = t28 ptr+ t111
-    313        t113 = *t112
-    314        t117 = t110 int- 1
-    315        *t102 = t117
-    316        t118 = t117 int<< 2                 (w = 4)
-    317        t119 = t28 ptr+ t118
-    318        t120 = *t119
-    319        t35 = s[32]
-    320        param "%d %d %d\n"
-    321        param t113
-    322        param t120
-    323        param t35
-    324        call printf, 4
-    325        param 12
-    326        table = call malloc, 1
-    327        r.32 = 0
-    328  L27:  if r.32 int>= 3 goto L30
-    329        t38 = r.32 int<< 2
-    330        t39 = table ptr+ t38
-    331        param 16
-    332        t41 = call malloc, 1
-    333        *t39 = t41
-    334        c = 0
-    335        t47 = r.32 int* 10
-    336  L28:  if c int>= 4 goto L29
-    337        t44 = *t39
-    338        t45 = c int<< 2
-    339        t46 = t44 ptr+ t45
-    340        t48 = t47 int+ c
-    341        *t46 = t48
-    342        c = c int+ 1
-    343        goto L28
-    344  L29:  r.32 = r.32 int+ 1
-    345        goto L27
-    346  L30:  diagonal = 0
-    347        r.35 = 0
-    348  L31:  if r.35 int>= 3 goto L32
-    349        t51 = r.35 int<< 2
-    350        t52 = table ptr+ t51
-    351        t53 = *t52
-    352        t55 = t53 ptr+ t51
-    353        t56 = *t55
-    354        diagonal = diagonal int+ t56
-    355        r.35 = r.35 int+ 1
-    356        goto L31
-    357  L32:  t61 = table ptr+ 8
-    358        t62 = *t61
-    359        t64 = t62 ptr+ 16
-    360        t65 = t64 ptr- 4
-    361        t66 = *t65
-    362        t67 = table ptr+ 4
-    363        t68 = *t67
-    364        t69 = t68 ptr+ 8
-    365        t70 = *t69
-    366        param "%d %d %d\n"
-    367        param diagonal
-    368        param t66
-    369        param t70
-    370        call printf, 4
-    371        v1 = 1
-    372        v2 = 2
-    373        v3 = 3
-    374        t71 = &v3
-    375        t72 = &v1
-    376        t73 = &v2
-    377        ptrs[0] = t71
-    378        ptrs[4] = t72
-    379        ptrs[8] = t73
-    380        t74 = &ptrs
-    381        t75 = *t74
-    382        *t75 = 30
-    383        t76 = ptrs[8]
-    384        t77 = *t76
-    385        t78 = t77 int+ 5
-    386        *t76 = t78
-    387        t79 = t74 ptr+ 4
-    388        t80 = *t79
-    389        t81 = *t80
-    390        param "%d %d %d %d\n"
-    391        param v1
-    392        param v2
-    393        param v3
-    394        param t81
-    395        call printf, 5
-    396        param t14
-    397        t82 = call height(struct Tree *), 1
-    398        return t82
+    308  L26:  t31 = &s
+    309        t108 = t31 ptr+ 32
+    310        t109 = *t108
+    311        t110 = t109 int- 1
+    312        *t108 = t110
+    313        t111 = t110 int<< 2                 (w = 4)
+    314        t112 = t31 ptr+ t111
+    315        t113 = *t112
+    316        t117 = t110 int- 1
+    317        *t108 = t117
+    318        t118 = t117 int<< 2                 (w = 4)
+    319        t119 = t31 ptr+ t118
+    320        t120 = *t119
+    321        t35 = s[32]
+    322        param "%d %d %d\n"
+    323        param t113
+    324        param t120
+    325        param t35
+    326        call printf, 4
+    327        param 12
+    328        table = call malloc, 1
+    329        r.32 = 0
+    330  L27:  if r.32 int>= 3 goto L30
+    331        t38 = r.32 int<< 2
+    332        t39 = table ptr+ t38
+    333        param 16
+    334        t41 = call malloc, 1
+    335        *t39 = t41
+    336        c = 0
+    337  L28:  if c int>= 4 goto L29
+    338        t42 = r.32 int<< 2
+    339        t43 = table ptr+ t42
+    340        t44 = *t43
+    341        t45 = c int<< 2
+    342        t46 = t44 ptr+ t45
+    343        t47 = r.32 int* 10
+    344        t48 = t47 int+ c
+    345        *t46 = t48
+    346        c = c int+ 1
+    347        goto L28
+    348  L29:  r.32 = r.32 int+ 1
+    349        goto L27
+    350  L30:  diagonal = 0
+    351        r.35 = 0
+    352  L31:  if r.35 int>= 3 goto L32
+    353        t51 = r.35 int<< 2
+    354        t52 = table ptr+ t51
+    355        t53 = *t52
+    356        t55 = t53 ptr+ t51
+    357        t56 = *t55
+    358        diagonal = diagonal int+ t56
+    359        r.35 = r.35 int+ 1
+    360        goto L31
+    361  L32:  t61 = table ptr+ 8
+    362        t62 = *t61
+    363        t64 = t62 ptr+ 16
+    364        t65 = t64 ptr- 4
+    365        t66 = *t65
+    366        t67 = table ptr+ 4
+    367        t68 = *t67
+    368        t69 = t68 ptr+ 8
+    369        t70 = *t69
+    370        param "%d %d %d\n"
+    371        param diagonal
+    372        param t66
+    373        param t70
+    374        call printf, 4
+    375        v1 = 1
+    376        v2 = 2
+    377        v3 = 3
+    378        t71 = &v3
+    379        t72 = &v1
+    380        t73 = &v2
+    381        ptrs[0] = t71
+    382        ptrs[4] = t72
+    383        ptrs[8] = t73
+    384        t74 = &ptrs
+    385        t75 = *t74
+    386        *t75 = 30
+    387        t76 = ptrs[8]
+    388        t77 = *t76
+    389        t78 = t77 int+ 5
+    390        *t76 = t78
+    391        t79 = t74 ptr+ 4
+    392        t80 = *t79
+    393        t81 = *t80
+    394        param "%d %d %d %d\n"
+    395        param v1
+    396        param v2
+    397        param v3
+    398        param t81
+    399        call printf, 5
+    400        param t14
+    401        t82 = call height(struct Tree *), 1
+    402        return t82
 
 
 ----------------------------------------------------------------------------
@@ -624,131 +631,131 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Node               struct_tag    struct Node                -           6    -    0  size 8
-   Tree               struct_tag    struct Tree                -           7    -    0  size 12
-   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 36
-   Stack              typedef       Stack                      -           8    -    0  
-   prepend            function      struct Node *(struct Node *, int) -          10    -    1  _Z7prependP4Nodei; defined
-   reverse            function      struct Node *(struct Node *) -          17    -    1  _Z7reverseP4Node; defined
-   removeValue        function      void (struct Node **, int) -          28    -    1  _Z11removeValuePP4Nodei; defined
-   insert             function      struct Tree *(struct Tree *, int) -          35    -    4  _Z6insertP4Treei; defined
-   inorder            function      void (struct Tree *)       -          45    -    3  _Z7inorderP4Tree; defined
-   height             function      int (struct Tree *)        -          52    -    4  _Z6heightP4Tree; defined
-   push               function      void (Stack *, int)        -          58    -    1  _Z4pushP5Stacki; defined
-   pop                function      int (Stack *)              -          59    -    2  _Z3popP5Stack; defined
-   main               function      int (void)                 -          61    -    0  defined
+   Node               struct_tag    struct Node                -           4    -    0  size 8
+   Tree               struct_tag    struct Tree                -           5    -    0  size 12
+   (unnamed at 6:9)   struct_tag    struct (unnamed at 6:9)    -           6    -    0  size 36
+   Stack              typedef       Stack                      -           6    -    0  
+   prepend            function      struct Node *(struct Node *, int) -           8    -    1  _Z7prependP4Nodei; defined
+   reverse            function      struct Node *(struct Node *) -          15    -    1  _Z7reverseP4Node; defined
+   removeValue        function      void (struct Node **, int) -          26    -    1  _Z11removeValuePP4Nodei; defined
+   insert             function      struct Tree *(struct Tree *, int) -          33    -    4  _Z6insertP4Treei; defined
+   inorder            function      void (struct Tree *)       -          43    -    3  _Z7inorderP4Tree; defined
+   height             function      int (struct Tree *)        -          50    -    4  _Z6heightP4Tree; defined
+   push               function      void (Stack *, int)        -          56    -    1  _Z4pushP5Stacki; defined
+   pop                function      int (Stack *)              -          57    -    2  _Z3popP5Stack; defined
+   main               function      int (void)                 -          59    -    0  defined
 
  scope: global > struct Node
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   value              field         int                        member      6    4    3  Node::value; public, offset 0
-   next               field         struct Node *              member      6    4    6  Node::next; public, offset 4
+   value              field         int                        member      4    4    3  Node::value; public, offset 0
+   next               field         struct Node *              member      4    4    6  Node::next; public, offset 4
 
  scope: global > struct Tree
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   key                field         int                        member      7    4    5  Tree::key; public, offset 0
-   left               field         struct Tree *              member      7    4    9  Tree::left; public, offset 4
-   right              field         struct Tree *              member      7    4    6  Tree::right; public, offset 8
+   key                field         int                        member      5    4    5  Tree::key; public, offset 0
+   left               field         struct Tree *              member      5    4    9  Tree::left; public, offset 4
+   right              field         struct Tree *              member      5    4    6  Tree::right; public, offset 8
 
- scope: global > struct (unnamed at 8:9)
+ scope: global > struct (unnamed at 6:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   items              field         int[8]                     member      8   32    2  (unnamed at 8:9)::items; public, offset 0
-   top                field         int                        member      8    4    4  (unnamed at 8:9)::top; public, offset 32
+   items              field         int[8]                     member      6   32    2  (unnamed at 6:9)::items; public, offset 0
+   top                field         int                        member      6    4    4  (unnamed at 6:9)::top; public, offset 32
 
  scope: global > prepend()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param      10    4    1  head.1
-   v                  parameter     int                        param      10    4    1  v.2
-   n                  variable      struct Node *              local      11    4    3  n.3
+   head               parameter     struct Node *              param       8    4    1  head.1
+   v                  parameter     int                        param       8    4    1  v.2
+   n                  variable      struct Node *              local       9    4    3  n.3
 
  scope: global > reverse()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param      17    4    5  head.4
-   prev               variable      struct Node *              local      18    4    3  prev.5
+   head               parameter     struct Node *              param      15    4    5  head.4
+   prev               variable      struct Node *              local      16    4    3  prev.5
 
  scope: global > reverse() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   next               variable      struct Node *              local      20    4    1  next.6
+   next               variable      struct Node *              local      18    4    1  next.6
 
  scope: global > removeValue()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   link               parameter     struct Node **             param      28    4    6  link.7
-   v                  parameter     int                        param      28    4    1  v.8
+   link               parameter     struct Node **             param      26    4    6  link.7
+   v                  parameter     int                        param      26    4    1  v.8
 
  scope: global > removeValue() > while > if
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   dead               variable      struct Node *              local      30    4    2  dead.9
+   dead               variable      struct Node *              local      28    4    2  dead.9
 
  scope: global > insert()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      35    4   11  t.10
-   key                parameter     int                        param      35    4    4  key.11
+   t                  parameter     struct Tree *              param      33    4   11  t.10
+   key                parameter     int                        param      33    4    4  key.11
 
  scope: global > inorder()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      45    4    4  t.12
+   t                  parameter     struct Tree *              param      43    4    4  t.12
 
  scope: global > height()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  parameter     struct Tree *              param      52    4    3  t.13
-   l                  variable      int                        local      54    4    2  l.14
-   r                  variable      int                        local      54    4    2  r.15
+   t                  parameter     struct Tree *              param      50    4    3  t.13
+   l                  variable      int                        local      52    4    2  l.14
+   r                  variable      int                        local      52    4    2  r.15
 
  scope: global > push()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     Stack *                    param      58    4    2  s.16
-   v                  parameter     int                        param      58    4    1  v.17
+   s                  parameter     Stack *                    param      56    4    2  s.16
+   v                  parameter     int                        param      56    4    1  v.17
 
  scope: global > pop()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     Stack *                    param      59    4    2  s.18
+   s                  parameter     Stack *                    param      57    4    2  s.18
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   list               variable      struct Node *              local      62    4    6  list.19
-   root               variable      struct Tree *              local      69    4    9  root.22
-   keys               variable      int[7]                     local      70   28    1  keys.23
-   s                  variable      Stack                      local      76   36    5  s.25
-   a                  variable      int                        local      79    4    1  a.27
-   b                  variable      int                        local      79    4    1  b.28
-   rows               variable      int                        local      82    4    4  rows.29
-   cols               variable      int                        local      82    4    3  cols.30
-   table              variable      int **                     local      83    4    5  table.31
-   diagonal           variable      int                        local      88    4    2  diagonal.34
-   last               variable      int *                      local      90    4    1  last.36
-   v1                 variable      int                        local      93    4    2  v1.37
-   v2                 variable      int                        local      93    4    2  v2.38
-   v3                 variable      int                        local      93    4    2  v3.39
-   ptrs               variable      int *[3]                   local      94   12    2  ptrs.40
-   pp                 variable      int **                     local      95    4    2  pp.41
+   list               variable      struct Node *              local      60    4    6  list.19
+   root               variable      struct Tree *              local      67    4    9  root.22
+   keys               variable      int[7]                     local      68   28    1  keys.23
+   s                  variable      Stack                      local      74   36    5  s.25
+   a                  variable      int                        local      77    4    1  a.27
+   b                  variable      int                        local      77    4    1  b.28
+   rows               variable      int                        local      80    4    4  rows.29
+   cols               variable      int                        local      80    4    3  cols.30
+   table              variable      int **                     local      81    4    5  table.31
+   diagonal           variable      int                        local      86    4    2  diagonal.34
+   last               variable      int *                      local      88    4    1  last.36
+   v1                 variable      int                        local      91    4    2  v1.37
+   v2                 variable      int                        local      91    4    2  v2.38
+   v3                 variable      int                        local      91    4    2  v3.39
+   ptrs               variable      int *[3]                   local      92   12    2  ptrs.40
+   pp                 variable      int **                     local      93    4    2  pp.41
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      63    4    4  i.20
-   p                  variable      struct Node *              local      66    4    4  p.21
-   i                  variable      int                        local      71    4    3  i.24
-   i                  variable      int                        local      78    4    3  i.26
-   r                  variable      int                        local      84    4    5  r.32
-   r                  variable      int                        local      89    4    4  r.35
+   i                  variable      int                        local      61    4    4  i.20
+   p                  variable      struct Node *              local      64    4    4  p.21
+   i                  variable      int                        local      69    4    3  i.24
+   i                  variable      int                        local      76    4    3  i.26
+   r                  variable      int                        local      82    4    5  r.32
+   r                  variable      int                        local      87    4    4  r.35
 
  scope: global > main() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  variable      int                        local      86    4    4  c.33
+   c                  variable      int                        local      84    4    4  c.33
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -761,6 +768,6 @@ struct Tree: size 12, align 4
     +0  int key  [public]
     +4  struct Tree * left  [public]
     +8  struct Tree * right  [public]
-struct (unnamed at 8:9): size 36, align 4
+struct (unnamed at 6:9): size 36, align 4
     +0  int[8] items  [public]
     +32  int top  [public]

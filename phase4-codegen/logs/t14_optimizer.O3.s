@@ -365,11 +365,11 @@ _Z4flowi:
         li    $s0, 0
         # i = 0
         li    $s2, 0
-        # k = n int<< 1
-        sll   $s4, $s1, 1
-L7_3:
+L7_2:
         # if i int>= n goto 18
         bge   $s2, $s1, L7_18
+        # k = n int<< 1
+        sll   $s4, $s1, 1
         # t2 = i int% 2
         li    $t1, 2
         div   $s2, $t1
@@ -393,8 +393,8 @@ L7_9:
 L7_11:
         # i = i int+ 1
         addiu $s2, $s2, 1
-        # goto 3
-        j     L7_3
+        # goto 2
+        j     L7_2
 L7_13:
         # s = s int+ 1
         addiu $s0, $s0, 1

@@ -1,5 +1,5 @@
 /* valid: classes, objects, inheritance, access modifiers, methods,
-   this, out-of-class definitions, constructors */
+   this, out-of-class definitions, default constructors */
 class Shape {
 public:
     int sides;
@@ -18,8 +18,7 @@ int Shape::count() { return 4; }
 
 class Square : public Shape {
 public:
-    Square(int s) { sides = 4; factor = s; }   /* protected base member, used in a derived class */
-    ~Square() { }
+    Square() { sides = 4; factor = 3; }      /* protected base member, used in a derived class */
     int side() { return factor + scale(); }
 };
 
@@ -33,7 +32,7 @@ public:
 struct Plain { int a; };          /* struct members are public by default */
 
 int main() {
-    Square sq(3);                 /* Square's only constructor takes the side length */
+    Square sq;                    /* runs the default constructor Square() */
     sq.sides = 4;
     Shape *base = &sq;            /* derived pointer -> base pointer */
     Counter c;

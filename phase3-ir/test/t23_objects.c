@@ -7,7 +7,6 @@ public:
     int id;
     static int live;
     Shape() { id = ++live; printf("Shape %d\n", id); }
-    ~Shape() { printf("~Shape %d\n", id); live--; }
     int area() { return 0; }
     int name() { return 'S'; }
 };
@@ -16,33 +15,33 @@ int Shape::live = 0;
 class Rect : public Shape {
 public:
     int w, h;
-    Rect(int a, int b) { w = a; h = b; }
     Rect() { w = 1; h = 1; }
+    void set(int a, int b) { w = a; h = b; }
     int area() { return w * h; }               /* hides Shape::area */
     int perimeter() { return 2 * (w + h); }
 };
 
 class Square : public Rect {
 public:
-    Square(int side) { w = side; h = side; }
+    void side(int s) { set(s, s); }            /* a base class method through `this` */
     int name() { return 'Q'; }
 };
 
 class Point {
 public:
     int x, y;
-    Point(int a, int b) { x = a; y = b; }
     Point() { x = 0; y = 0; }
     Point &operator+=(const Point &o) { x += o.x; y += o.y; return *this; }
-    Point operator-(const Point &o) { return Point(x - o.x, y - o.y); }
+    Point operator-(const Point &o) { Point r; r.x = x - o.x; r.y = y - o.y; return r; }
     bool operator<(const Point &o) { return x * x + y * y < o.x * o.x + o.y * o.y; }
     int &operator[](int i) { return i == 0 ? x : y; }
 };
+Point at(int a, int b) { Point p; p.x = a; p.y = b; return p; }
 
 class Segment {
 public:
     Point from, to;                            /* objects inside an object */
-    Segment(int a, int b, int c, int d) { from = Point(a, b); to = Point(c, d); }
+    void set(int a, int b, int c, int d) { from = at(a, b); to = at(c, d); }
     int length2() { Point d = to - from; return d.x * d.x + d.y * d.y; }
 };
 
@@ -51,8 +50,10 @@ int through(Shape *s) { return s->area() + s->name(); }      /* no virtual: Shap
 void grow(Rect *r, int by) { r->w += by; r->h += by; }
 
 int main() {
-    Rect r(3, 4);
-    Square q(5);
+    Rect r;
+    r.set(3, 4);
+    Square q;
+    q.side(5);
     printf("%d %d %d %d\n", r.area(), q.area(), q.perimeter(), Shape::live);
     Shape *asShape = &q;                       /* the hidden Shape::name is reached through a Shape * */
     printf("%d %d %c %c\n", total(r), through(&q), q.name(), asShape->name());
@@ -67,17 +68,19 @@ int main() {
     }
     printf("%d\n", Shape::live);
 
-    Point a(3, 4), b(1, 1);
+    Point a = at(3, 4), b = at(1, 1);
     a += b;
     (a += b) += b;
     a[0] = a[1] * 2;
     Point c = a - b;
     printf("%d %d %d %d %d %d\n", a.x, a.y, c.x, c.y, b < a, a < b);
-    Segment s(1, 2, 4, 6);
+    Segment s;
+    s.set(1, 2, 4, 6);
     printf("%d %d\n", s.length2(), s.to.y);
 
     {
-        Rect last(2, 9);
+        Rect last;
+        last.set(2, 9);
         Shape *base = &last;
         printf("%d %d %d\n", last.area(), base->area(), base->id);
     }

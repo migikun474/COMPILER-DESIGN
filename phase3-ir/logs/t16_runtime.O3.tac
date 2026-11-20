@@ -4,7 +4,7 @@
 
    Source file   : test/t16_runtime.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 311 -> 226 instruction(s)
+   Result        : Optimized three address code (-O3): 308 -> 226 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          311 -> 226   (27% fewer)
+   instructions                          308 -> 226   (26% fewer)
 
    constants folded                       51
    algebraic simplifications               1
    common subexpressions                   1
    copies / constants forwarded          114
    temporaries merged away                 5
-   dead instructions removed              59
+   dead instructions removed              56
    jumps removed or redirected             9
    unreachable instructions removed       10
    propagated across blocks                1
@@ -29,7 +29,6 @@
    calls inlined                           1
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
 
 ============================================================================
  FUNCTION make(int)        (link name _Z4makei)
@@ -190,7 +189,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 15 parameter(s)/local(s), 35 temporaries, frame 864 bytes
+ Symbol table: 15 parameter(s)/local(s), 35 temporaries, frame 848 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -210,41 +209,41 @@
    p                local   int *                           4     152
    z                local   int *                           4     156
    t22              temp    long long                       8     312
-   t51              temp    double                          8     560
-   t52              temp    int                             4     568
-   t54              temp    char                            1     576
-   t55              temp    int                             4     580
-   t56              temp    long long                       8     584
-   t58              temp    double                          8     600
-   t60              temp    void *                          4     612
-   t61              temp    int *                           4     616
-   t62              temp    int *                           4     620
-   t64              temp    void *                          4     628
-   t65              temp    void *                          4     632
-   t66              temp    int                             4     636
-   t67              temp    int *                           4     640
-   t68              temp    int                             4     644
-   t69              temp    int                             4     648
-   t70              temp    int *                           4     652
-   t71              temp    int                             4     656
-   t72              temp    int                             4     660
-   t73              temp    int                             4     664
-   t74              temp    int *                           4     668
-   t75              temp    int                             4     672
-   t76              temp    int                             4     676
-   t79              temp    struct Big                     40     696
-   t83              temp    double                          8     760
-   t84              temp    double                          8     768
-   t85              temp    int                             4     776
-   t86              temp    double                          8     784
-   t87              temp    double                          8     792
-   t89              temp    double                          8     808
-   t90              temp    long long                       8     816
-   t91              temp    long long                       8     824
-   t92              temp    double                          8     832
-   t93              temp    double                          8     840
-   t95              temp    double                          8     856
-   (60 temporaries no longer used after optimization not shown)
+   t48              temp    double                          8     544
+   t49              temp    int                             4     552
+   t51              temp    char                            1     560
+   t52              temp    int                             4     564
+   t53              temp    long long                       8     568
+   t55              temp    double                          8     584
+   t57              temp    void *                          4     596
+   t58              temp    int *                           4     600
+   t59              temp    int *                           4     604
+   t61              temp    void *                          4     612
+   t62              temp    void *                          4     616
+   t63              temp    int                             4     620
+   t64              temp    int *                           4     624
+   t65              temp    int                             4     628
+   t66              temp    int                             4     632
+   t67              temp    int *                           4     636
+   t68              temp    int                             4     640
+   t69              temp    int                             4     644
+   t70              temp    int                             4     648
+   t71              temp    int *                           4     652
+   t72              temp    int                             4     656
+   t73              temp    int                             4     660
+   t76              temp    struct Big                     40     680
+   t80              temp    double                          8     744
+   t81              temp    double                          8     752
+   t82              temp    int                             4     760
+   t83              temp    double                          8     768
+   t84              temp    double                          8     776
+   t86              temp    double                          8     792
+   t87              temp    long long                       8     800
+   t88              temp    long long                       8     808
+   t89              temp    double                          8     816
+   t90              temp    double                          8     824
+   t92              temp    double                          8     840
+   (57 temporaries no longer used after optimization not shown)
 
  Code: 167 instruction(s)
 
@@ -344,32 +343,32 @@
     252       s = call make(int), 1
     253       t = s
     254       t[24] = 100
-    255       t51 = s[0]
-    256       t52 = s[24]
-    257       t54 = s[28]
-    258       t55 = chartoint t54
-    259       t56 = s[32]
+    255       t48 = s[0]
+    256       t49 = s[24]
+    257       t51 = s[28]
+    258       t52 = chartoint t51
+    259       t53 = s[32]
     260       param "%.1f %d %d %c %lld\n"
-    261       param t51
-    262       param t52
+    261       param t48
+    262       param t49
     263       param 100
-    264       param t55
-    265       param t56
+    264       param t52
+    265       param t53
     266       call printf, 6
-    267       t79 = s
-    268       t83 = t79[0]
-    269       t84 = t83 double* 2.0
-    270       t85 = t79[24]
-    271       t86 = inttodouble t85
-    272       t87 = t84 double+ t86
-    273       t89 = t87 double+ 97.0
-    274       t90 = t79[32]
-    275       t91 = t90 llong/ 1000000000
-    276       t92 = llongtodouble t91
-    277       t93 = t89 double+ t92
-    278       t95 = t93 double+ 5.0
+    267       t76 = s
+    268       t80 = t76[0]
+    269       t81 = t80 double* 2.0
+    270       t82 = t76[24]
+    271       t83 = inttodouble t82
+    272       t84 = t81 double+ t83
+    273       t86 = t84 double+ 97.0
+    274       t87 = t76[32]
+    275       t88 = t87 llong/ 1000000000
+    276       t89 = llongtodouble t88
+    277       t90 = t86 double+ t89
+    278       t92 = t90 double+ 5.0
     279       param "%.1f\n"
-    280       param t95
+    280       param t92
     281       call printf, 2
     282       param 3
     283       param 1.0
@@ -377,42 +376,42 @@
     285       param 4.0
     286       param 77
     287       param "tail"
-    288       t58 = call average(int, ...), 6
+    288       t55 = call average(int, ...), 6
     289       param "%.2f\n"
-    290       param t58
+    290       param t55
     291       call printf, 2
     292       param 12
-    293       t60 = call malloc, 1
-    294       *t60 = 1
-    295       t61 = t60 ptr+ 4
-    296       *t61 = 2
-    297       t62 = t60 ptr+ 8
-    298       *t62 = 3
-    299       param t60
+    293       t57 = call malloc, 1
+    294       *t57 = 1
+    295       t58 = t57 ptr+ 4
+    296       *t58 = 2
+    297       t59 = t57 ptr+ 8
+    298       *t59 = 3
+    299       param t57
     300       param 24
-    301       t64 = call realloc, 2
+    301       t61 = call realloc, 2
     302       param 4
     303       param 4
-    304       t65 = call calloc, 2
-    305       t66 = *t64
-    306       t67 = t64 ptr+ 4
-    307       t68 = *t67
-    308       t69 = t66 int+ t68
-    309       t70 = t64 ptr+ 8
-    310       t71 = *t70
-    311       t72 = t69 int+ t71
-    312       t73 = *t65
-    313       t74 = t65 ptr+ 12
-    314       t75 = *t74
-    315       if t64 ptr!= t65 goto L7
-    316       t76 = 0
+    304       t62 = call calloc, 2
+    305       t63 = *t61
+    306       t64 = t61 ptr+ 4
+    307       t65 = *t64
+    308       t66 = t63 int+ t65
+    309       t67 = t61 ptr+ 8
+    310       t68 = *t67
+    311       t69 = t66 int+ t68
+    312       t70 = *t62
+    313       t71 = t62 ptr+ 12
+    314       t72 = *t71
+    315       if t61 ptr!= t62 goto L7
+    316       t73 = 0
     317       goto L8
-    318  L7:  t76 = 1
+    318  L7:  t73 = 1
     319  L8:  param "%d %d %d %d\n"
-    320       param t72
-    321       param t73
-    322       param t75
-    323       param t76
+    320       param t69
+    321       param t70
+    322       param t72
+    323       param t73
     324       call printf, 5
     325       return 45
 
@@ -424,78 +423,78 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Big                struct_tag    struct Big                 -           8    -    0  size 40
-   make               function      struct Big (int)           -          10    -    1  _Z4makei; defined
-   weigh              function      double (struct Big, double, char, long long) -          19    -    1  _Z5weigh3Bigdcx; defined
-   average            function      double (int, ...)          -          23    -    1  _Z7averageiz; defined
-   power              function      long long (long long, int) -          35    -    2  _Z5powerxi; defined
-   main               function      int (void)                 -          37    -    0  defined
+   Big                struct_tag    struct Big                 -           5    -    0  size 40
+   make               function      struct Big (int)           -           7    -    1  _Z4makei; defined
+   weigh              function      double (struct Big, double, char, long long) -          16    -    1  _Z5weigh3Bigdcx; defined
+   average            function      double (int, ...)          -          20    -    1  _Z7averageiz; defined
+   power              function      long long (long long, int) -          32    -    2  _Z5powerxi; defined
+   main               function      int (void)                 -          34    -    0  defined
 
  scope: global > struct Big
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   d                  field         double                     member      8    8    3  Big::d; public, offset 0
-   n                  field         int[5]                     member      8   20    5  Big::n; public, offset 8
-   tag                field         char                       member      8    1    2  Big::tag; public, offset 28
-   w                  field         long long                  member      8    8    3  Big::w; public, offset 32
+   d                  field         double                     member      5    8    3  Big::d; public, offset 0
+   n                  field         int[5]                     member      5   20    5  Big::n; public, offset 8
+   tag                field         char                       member      5    1    2  Big::tag; public, offset 28
+   w                  field         long long                  member      5    8    3  Big::w; public, offset 32
 
  scope: global > make()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  parameter     int                        param      10    4    4  k.1
-   b                  variable      struct Big                 local      11   40    5  b.2
+   k                  parameter     int                        param       7    4    4  k.1
+   b                  variable      struct Big                 local       8   40    5  b.2
 
  scope: global > make() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      13    4    4  i.3
+   i                  variable      int                        local      10    4    4  i.3
 
  scope: global > weigh()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   b                  parameter     struct Big                 param      19   40    3  b.4
-   scale              parameter     double                     param      19    8    1  scale.5
-   c                  parameter     char                       param      19    1    1  c.6
-   extra              parameter     long long                  param      19    8    1  extra.7
+   b                  parameter     struct Big                 param      16   40    3  b.4
+   scale              parameter     double                     param      16    8    1  scale.5
+   c                  parameter     char                       param      16    1    1  c.6
+   extra              parameter     long long                  param      16    8    1  extra.7
 
  scope: global > average()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   count              parameter     int                        param      23    4    3  count.8
-   ap                 variable      va_list                    local      24    4    5  ap.9
-   total              variable      double                     local      26    8    2  total.10
-   tail               variable      long long                  local      28    8    1  tail.12
-   label              variable      char *                     local      29    4    1  label.13
+   count              parameter     int                        param      20    4    3  count.8
+   ap                 variable      va_list                    local      21    4    5  ap.9
+   total              variable      double                     local      23    8    2  total.10
+   tail               variable      long long                  local      25    8    1  tail.12
+   label              variable      char *                     local      26    4    1  label.13
 
  scope: global > average() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      27    4    2  i.11
+   i                  variable      int                        local      24    4    2  i.11
 
  scope: global > power()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   base               parameter     long long                  param      35    8    2  base.14
-   n                  parameter     int                        param      35    4    2  n.15
+   base               parameter     long long                  param      32    8    2  base.14
+   n                  parameter     int                        param      32    4    2  n.15
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      long long                  local      38    8   17  a.16
-   b                  variable      long long                  local      38    8    9  b.17
-   u                  variable      unsigned long long         local      39    8    5  u.18
-   i                  variable      int                        local      49    4    1  i.19
-   big                variable      unsigned int               local      50    4    2  big.20
-   d                  variable      double                     local      51    8    1  d.21
-   e                  variable      double                     local      51    8    1  e.22
-   f                  variable      double                     local      51    8    1  f.23
-   fl                 variable      float                      local      52    4    1  fl.24
-   x                  variable      float                      local      56    4    5  x.25
-   y                  variable      float                      local      56    4    4  y.26
-   s                  variable      struct Big                 local      63   40    6  s.27
-   t                  variable      struct Big                 local      64   40    2  t.28
-   p                  variable      int *                      local      70    4    9  p.29
-   z                  variable      int *                      local      73    4    3  z.30
+   a                  variable      long long                  local      35    8   17  a.16
+   b                  variable      long long                  local      35    8    9  b.17
+   u                  variable      unsigned long long         local      36    8    5  u.18
+   i                  variable      int                        local      46    4    1  i.19
+   big                variable      unsigned int               local      47    4    2  big.20
+   d                  variable      double                     local      48    8    1  d.21
+   e                  variable      double                     local      48    8    1  e.22
+   f                  variable      double                     local      48    8    1  f.23
+   fl                 variable      float                      local      49    4    1  fl.24
+   x                  variable      float                      local      53    4    5  x.25
+   y                  variable      float                      local      53    4    4  y.26
+   s                  variable      struct Big                 local      60   40    6  s.27
+   t                  variable      struct Big                 local      61   40    2  t.28
+   p                  variable      int *                      local      67    4    9  p.29
+   z                  variable      int *                      local      70    4    3  z.30
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

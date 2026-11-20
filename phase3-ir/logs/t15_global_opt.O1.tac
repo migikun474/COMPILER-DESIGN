@@ -168,7 +168,7 @@
    x                local   int                             4       0
    y                local   int                             4       4
    p                local   int *                           4       8
-   s                local   struct (unnamed at 44:5)        8      12
+   s                local   struct (unnamed at 43:5)        8      12
    t1               temp    int *                           4      20
    t2               temp    int                             4      24
    t3               temp    int                             4      28
@@ -313,84 +313,84 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   g                  variable      int                        global      5    4    4  
-   touch              function      int (void)                 -           6    -    2  _Z5touchv; defined
-   branches           function      int (int)                  -           8    -    2  _Z8branchesi; defined
-   loop               function      int (int)                  -          17    -    3  _Z4loopi; defined
-   rewritten          function      int (int)                  -          28    -    2  _Z9rewritteni; defined
-   viaPointer         function      int (void)                 -          38    -    1  _Z10viaPointerv; defined
-   jumps              function      int (int)                  -          49    -    4  _Z5jumpsi; defined
-   main               function      int (void)                 -          62    -    0  defined
+   g                  variable      int                        global      4    4    4  
+   touch              function      int (void)                 -           5    -    2  _Z5touchv; defined
+   branches           function      int (int)                  -           7    -    2  _Z8branchesi; defined
+   loop               function      int (int)                  -          16    -    3  _Z4loopi; defined
+   rewritten          function      int (int)                  -          27    -    2  _Z9rewritteni; defined
+   viaPointer         function      int (void)                 -          37    -    1  _Z10viaPointerv; defined
+   jumps              function      int (int)                  -          48    -    4  _Z5jumpsi; defined
+   main               function      int (void)                 -          61    -    0  defined
 
  scope: global > branches()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  parameter     int                        param       8    4    2  c.1
-   x                  variable      int                        local       9    4    3  x.2
-   y                  variable      int                        local       9    4    4  y.3
-   z                  variable      int                        local      11    4    2  z.4
-   unused             variable      int                        local      13    4    0  unused.5
+   c                  parameter     int                        param       7    4    2  c.1
+   x                  variable      int                        local       8    4    3  x.2
+   y                  variable      int                        local       8    4    4  y.3
+   z                  variable      int                        local      10    4    2  z.4
+   unused             variable      int                        local      12    4    0  unused.5
 
  scope: global > loop()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      17    4    1  n.6
-   step               variable      int                        local      18    4    1  step.7
-   sum                variable      int                        local      18    4    3  sum.8
-   last               variable      int                        local      18    4    2  last.9
-   i                  variable      int                        local      24    4    1  i.12
+   n                  parameter     int                        param      16    4    1  n.6
+   step               variable      int                        local      17    4    1  step.7
+   sum                variable      int                        local      17    4    3  sum.8
+   last               variable      int                        local      17    4    2  last.9
+   i                  variable      int                        local      23    4    1  i.12
 
  scope: global > loop() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      19    4    3  i.10
+   i                  variable      int                        local      18    4    3  i.10
 
  scope: global > loop() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   scratch            variable      int                        local      22    4    0  scratch.11
+   scratch            variable      int                        local      21    4    0  scratch.11
 
  scope: global > rewritten()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      28    4    7  a.13
-   b                  variable      int                        local      29    4    1  b.14
-   c                  variable      int                        local      31    4    1  c.15
-   d                  variable      int                        local      33    4    2  d.16
+   a                  parameter     int                        param      27    4    7  a.13
+   b                  variable      int                        local      28    4    1  b.14
+   c                  variable      int                        local      30    4    1  c.15
+   d                  variable      int                        local      32    4    2  d.16
 
  scope: global > viaPointer()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      39    4    2  x.17
-   y                  variable      int                        local      39    4    3  y.18
-   p                  variable      int *                      local      40    4    1  p.19
-   (unnamed at 44:5)  struct_tag    struct (unnamed at 44:5)   -          44    -    0  size 8
-   s                  variable      struct (unnamed at 44:5)   local      44    8    3  s.20
+   x                  variable      int                        local      38    4    2  x.17
+   y                  variable      int                        local      38    4    3  y.18
+   p                  variable      int *                      local      39    4    1  p.19
+   (unnamed at 43:5)  struct_tag    struct (unnamed at 43:5)   -          43    -    0  size 8
+   s                  variable      struct (unnamed at 43:5)   local      43    8    3  s.20
 
- scope: global > viaPointer() > struct (unnamed at 44:5)
+ scope: global > viaPointer() > struct (unnamed at 43:5)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         int                        member     44    4    2  (unnamed at 44:5)::a; public, offset 0
-   b                  field         int                        member     44    4    1  (unnamed at 44:5)::b; public, offset 4
+   a                  field         int                        member     43    4    2  (unnamed at 43:5)::a; public, offset 0
+   b                  field         int                        member     43    4    1  (unnamed at 43:5)::b; public, offset 4
 
  scope: global > jumps()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      49    4    2  n.21
-   again              label         -                          -          51    -    1  _Z5jumpsi.again
-   k                  variable      int                        local      50    4    3  k.22
-   t                  variable      int                        local      50    4    5  t.23
+   n                  parameter     int                        param      48    4    2  n.21
+   again              label         -                          -          50    -    1  _Z5jumpsi.again
+   k                  variable      int                        local      49    4    3  k.22
+   t                  variable      int                        local      49    4    5  t.23
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r1                 variable      int                        local      65    4    1  r1.24
-   r9                 variable      int                        local      65    4    1  r9.25
+   r1                 variable      int                        local      64    4    1  r1.24
+   r9                 variable      int                        local      64    4    1  r9.25
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
 ----------------------------------------------------------------------------
 
-struct (unnamed at 44:5): size 8, align 4
+struct (unnamed at 43:5): size 8, align 4
     +0  int a  [public]
     +4  int b  [public]

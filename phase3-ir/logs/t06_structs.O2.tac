@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 187 -> 168 instruction(s)
+   Result        : Optimized three address code (-O2): 182 -> 167 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          187 -> 168   (10% fewer)
+   instructions                          182 -> 167   (8% fewer)
 
    constants folded                        1
    algebraic simplifications               1
    common subexpressions                   6
    copies / constants forwarded           12
-   temporaries merged away                 3
-   dead instructions removed              12
+   temporaries merged away                 4
+   dead instructions removed               7
    jumps removed or redirected             2
    unreachable instructions removed        0
    propagated across blocks                0
@@ -165,7 +165,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 50 temporaries, frame 460 bytes
+ Symbol table: 14 parameter(s)/local(s), 49 temporaries, frame 436 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -194,48 +194,47 @@
    t10              temp    int                             4     212
    t11              temp    int                             4     216
    t12              temp    struct Point                    8     220
+   t14              temp    struct Point *                  4     232
    t15              temp    struct Point *                  4     236
-   t16              temp    struct Point *                  4     240
+   t17              temp    struct Point *                  4     244
    t18              temp    struct Point *                  4     248
-   t19              temp    struct Point *                  4     252
+   t19              temp    int                             4     252
    t20              temp    int                             4     256
-   t21              temp    int                             4     260
+   t22              temp    int                             4     264
    t23              temp    int                             4     268
    t24              temp    int                             4     272
-   t25              temp    int                             4     276
-   t26              temp    struct Point                    8     280
-   t28              temp    int                             4     292
+   t25              temp    struct Point                    8     276
+   t26              temp    int                             4     284
+   t27              temp    struct Point *                  4     288
+   t28              temp    struct Point *                  4     292
    t29              temp    struct Point *                  4     296
-   t30              temp    struct Point *                  4     300
-   t31              temp    struct Point *                  4     304
-   t32              temp    int                             4     308
-   t33              temp    int                             4     312
-   t35              temp    struct Point                    8     320
+   t30              temp    int                             4     300
+   t31              temp    int                             4     304
+   t33              temp    struct Point                    8     312
+   t34              temp    int                             4     320
+   t35              temp    int                             4     324
+   t36              temp    struct Rect *                   4     328
    t37              temp    int                             4     332
-   t38              temp    int                             4     336
-   t39              temp    struct Rect *                   4     340
-   t40              temp    int                             4     344
-   t41              temp    Complex                        16     352
-   t44              temp    double                          8     376
-   t45              temp    double                          8     384
-   t46              temp    struct Node *                   4     392
-   t47              temp    struct Node *                   4     396
-   t48              temp    struct Node *                   4     400
-   t49              temp    int                             4     404
-   t50              temp    struct Node *                   4     408
-   t51              temp    struct Node *                   4     412
-   t52              temp    struct Node *                   4     416
-   t53              temp    int                             4     420
-   t54              temp    int                             4     424
-   t55              temp    int                             4     428
-   t58              temp    short                           2     440
-   t59              temp    int                             4     444
-   t60              temp    int                             4     448
-   t61              temp    int                             4     452
-   t62              temp    int                             4     456
-   (12 temporaries no longer used after optimization not shown)
+   t39              temp    double                          8     352
+   t40              temp    double                          8     360
+   t41              temp    struct Node *                   4     368
+   t42              temp    struct Node *                   4     372
+   t43              temp    struct Node *                   4     376
+   t44              temp    int                             4     380
+   t45              temp    struct Node *                   4     384
+   t46              temp    struct Node *                   4     388
+   t47              temp    struct Node *                   4     392
+   t48              temp    int                             4     396
+   t49              temp    int                             4     400
+   t50              temp    int                             4     404
+   t53              temp    short                           2     416
+   t54              temp    int                             4     420
+   t55              temp    int                             4     424
+   t56              temp    int                             4     428
+   t57              temp    int                             4     432
+   (8 temporaries no longer used after optimization not shown)
 
- Code: 136 instruction(s)
+ Code: 135 instruction(s)
 
     132       r[0] = 1
     133       r[4] = 2
@@ -273,47 +272,47 @@
     165       pts[t10] = t12
     166       i = i int+ 1
     167       goto L3
-    168  L4:  t15 = &pts
-    169       t16 = t15 ptr+ 8
-    170       param t16
+    168  L4:  t14 = &pts
+    169       t15 = t14 ptr+ 8
+    170       param t15
     171       param 10
     172       call move(struct Point *, int), 2
-    173       t18 = t15 ptr+ 16
-    174       t19 = t18 ptr+ 4
-    175       t20 = *t19
-    176       t21 = t20 int+ 1
-    177       *t19 = t21
-    178       t23 = pts[8]
-    179       t24 = pts[12]
-    180       t25 = pts[20]
+    173       t17 = t14 ptr+ 16
+    174       t18 = t17 ptr+ 4
+    175       t19 = *t18
+    176       t20 = t19 int+ 1
+    177       *t18 = t20
+    178       t22 = pts[8]
+    179       t23 = pts[12]
+    180       t24 = pts[20]
     181       param 3
     182       param 4
-    183       t26 = call make(int, int), 2
-    184       t28 = t26[4]
+    183       t25 = call make(int, int), 2
+    184       t26 = t25[4]
     185       param "%d %d %d %d\n"
-    186       param t23
-    187       param t24
-    188       param t25
-    189       param t28
+    186       param t22
+    187       param t23
+    188       param t24
+    189       param t26
     190       call printf, 5
-    191       t29 = &r
-    192       t30 = t29 ptr+ 8
-    193       t31 = t30 ptr+ 4
-    194       t32 = *t31
-    195       t33 = t32 int+ 1
-    196       *t30 = t33
+    191       t27 = &r
+    192       t28 = t27 ptr+ 8
+    193       t29 = t28 ptr+ 4
+    194       t30 = *t29
+    195       t31 = t30 int+ 1
+    196       *t28 = t31
     197       param 7
     198       param 7
-    199       t35 = call make(int, int), 2
-    200       *t29 = t35
-    201       t37 = r[8]
-    202       t38 = *t29
-    203       t39 = t29 ptr+ 12
-    204       t40 = *t39
+    199       t33 = call make(int, int), 2
+    200       *t27 = t33
+    201       t34 = r[8]
+    202       t35 = *t27
+    203       t36 = t27 ptr+ 12
+    204       t37 = *t36
     205       param "%d %d %d\n"
-    206       param t37
-    207       param t38
-    208       param t40
+    206       param t34
+    207       param t35
+    208       param t37
     209       call printf, 4
     210       a[0] = 1.5
     211       a[8] = 2.0
@@ -321,58 +320,57 @@
     213       b[8] = 0.5
     214       param a
     215       param b
-    216       t41 = call add(Complex, Complex), 2
-    217       c = t41
-    218       t44 = c[0]
-    219       t45 = c[8]
-    220       param "%.1f %.1f\n"
-    221       param t44
-    222       param t45
-    223       call printf, 3
-    224       n1[0] = 1
-    225       t46 = &n2
-    226       n1[4] = t46
-    227       n2[0] = 2
-    228       t47 = &n3
-    229       n2[4] = t47
-    230       n3[0] = 3
-    231       n3[4] = 0
-    232       t48 = &n1
-    233       param t48
-    234       t49 = call length(struct Node *), 1
-    235       t50 = n1[4]
-    236       t51 = t50 ptr+ 4
-    237       t52 = *t51
-    238       t53 = *t52
-    239       param "%d %d\n"
-    240       param t49
-    241       param t53
-    242       call printf, 3
-    243       k[0] = 1
-    244       k[4] = 16909060
-    245       k[8] = 0
-    246       k[9] = 0
-    247       k[10] = 0
-    248       k[11] = 0
-    249       k[12] = 9
-    250       k[9] = 120
-    251       t54 = k[0]
-    252       t55 = k[4]
-    253       t58 = k[12]
-    254       t59 = shorttoint t58
-    255       param "%d %d %c %d %d\n"
-    256       param t54
-    257       param t55
-    258       param 120
-    259       param t59
-    260       param 16
-    261       call printf, 6
-    262       zero[0] = 0
-    263       zero[4] = 0
-    264       t60 = zero[0]
-    265       t61 = pts[16]
-    266       t62 = t60 int+ t61
-    267       return t62
+    216       c = call add(Complex, Complex), 2
+    217       t39 = c[0]
+    218       t40 = c[8]
+    219       param "%.1f %.1f\n"
+    220       param t39
+    221       param t40
+    222       call printf, 3
+    223       n1[0] = 1
+    224       t41 = &n2
+    225       n1[4] = t41
+    226       n2[0] = 2
+    227       t42 = &n3
+    228       n2[4] = t42
+    229       n3[0] = 3
+    230       n3[4] = 0
+    231       t43 = &n1
+    232       param t43
+    233       t44 = call length(struct Node *), 1
+    234       t45 = n1[4]
+    235       t46 = t45 ptr+ 4
+    236       t47 = *t46
+    237       t48 = *t47
+    238       param "%d %d\n"
+    239       param t44
+    240       param t48
+    241       call printf, 3
+    242       k[0] = 1
+    243       k[4] = 16909060
+    244       k[8] = 0
+    245       k[9] = 0
+    246       k[10] = 0
+    247       k[11] = 0
+    248       k[12] = 9
+    249       k[9] = 120
+    250       t49 = k[0]
+    251       t50 = k[4]
+    252       t53 = k[12]
+    253       t54 = shorttoint t53
+    254       param "%d %d %c %d %d\n"
+    255       param t49
+    256       param t50
+    257       param 120
+    258       param t54
+    259       param 16
+    260       call printf, 6
+    261       zero[0] = 0
+    262       zero[4] = 0
+    263       t55 = zero[0]
+    264       t56 = pts[16]
+    265       t57 = t55 int+ t56
+    266       return t57
 
 
 ----------------------------------------------------------------------------
@@ -382,111 +380,111 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Point              struct_tag    struct Point               -           5    -    0  size 8
-   Rect               struct_tag    struct Rect                -           6    -    0  size 20
-   Node               struct_tag    struct Node                -           7    -    0  size 8
-   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 16
-   Complex            typedef       Complex                    -           8    -    0  
-   Packet             struct_tag    struct Packet              -           9    -    0  size 16
-   (unnamed at 11:5)  struct_tag    struct (unnamed at 11:5)   -          11    -    0  size 8
-   make               function      struct Point (int, int)    -          15    -    3  _Z4makeii; defined
-   area               function      int (struct Rect)          -          20    -    1  _Z4area4Rect; defined
-   move               function      void (struct Point *, int) -          25    -    1  _Z4moveP5Pointi; defined
-   add                function      Complex (Complex, Complex) -          27    -    1  _Z3add7ComplexS_; defined
-   length             function      int (struct Node *)        -          34    -    1  _Z6lengthP4Node; defined
-   origin             variable      struct Point               global     40    8    2  
-   main               function      int (void)                 -          42    -    0  defined
+   Point              struct_tag    struct Point               -           4    -    0  size 8
+   Rect               struct_tag    struct Rect                -           5    -    0  size 20
+   Node               struct_tag    struct Node                -           6    -    0  size 8
+   (unnamed at 7:9)   struct_tag    struct (unnamed at 7:9)    -           7    -    0  size 16
+   Complex            typedef       Complex                    -           7    -    0  
+   Packet             struct_tag    struct Packet              -           8    -    0  size 16
+   (unnamed at 10:5)  struct_tag    struct (unnamed at 10:5)   -          10    -    0  size 8
+   make               function      struct Point (int, int)    -          14    -    3  _Z4makeii; defined
+   area               function      int (struct Rect)          -          19    -    1  _Z4area4Rect; defined
+   move               function      void (struct Point *, int) -          24    -    1  _Z4moveP5Pointi; defined
+   add                function      Complex (Complex, Complex) -          26    -    1  _Z3add7ComplexS_; defined
+   length             function      int (struct Node *)        -          33    -    1  _Z6lengthP4Node; defined
+   origin             variable      struct Point               global     39    8    2  
+   main               function      int (void)                 -          41    -    0  defined
 
  scope: global > struct Point
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  field         int                        member      5    4   16  Point::x; public, offset 0
-   y                  field         int                        member      5    4    9  Point::y; public, offset 4
+   x                  field         int                        member      4    4   16  Point::x; public, offset 0
+   y                  field         int                        member      4    4    9  Point::y; public, offset 4
 
  scope: global > struct Rect
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   low                field         struct Point               member      6    8    7  Rect::low; public, offset 0
-   high               field         struct Point               member      6    8    8  Rect::high; public, offset 8
-   tag                field         char                       member      6    1    1  Rect::tag; public, offset 16
+   low                field         struct Point               member      5    8    7  Rect::low; public, offset 0
+   high               field         struct Point               member      5    8    8  Rect::high; public, offset 8
+   tag                field         char                       member      5    1    1  Rect::tag; public, offset 16
 
  scope: global > struct Node
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   value              field         int                        member      7    4    4  Node::value; public, offset 0
-   next               field         struct Node *              member      7    4    6  Node::next; public, offset 4
+   value              field         int                        member      6    4    4  Node::value; public, offset 0
+   next               field         struct Node *              member      6    4    6  Node::next; public, offset 4
 
- scope: global > struct (unnamed at 8:9)
+ scope: global > struct (unnamed at 7:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   re                 field         double                     member      8    8    4  (unnamed at 8:9)::re; public, offset 0
-   im                 field         double                     member      8    8    4  (unnamed at 8:9)::im; public, offset 8
+   re                 field         double                     member      7    8    4  (unnamed at 7:9)::re; public, offset 0
+   im                 field         double                     member      7    8    4  (unnamed at 7:9)::im; public, offset 8
 
  scope: global > struct Packet
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   kind               field         int                        member     10    4    1  Packet::kind; public, offset 0
-   (unnamed)          field         struct (unnamed at 11:5)   member     11    8    0  Packet::(unnamed at 11:5); public, offset 4
-   tail               field         short                      member     12    2    1  Packet::tail; public, offset 12
+   kind               field         int                        member      9    4    1  Packet::kind; public, offset 0
+   (unnamed)          field         struct (unnamed at 10:5)   member     10    8    0  Packet::(unnamed at 10:5); public, offset 4
+   tail               field         short                      member     11    2    1  Packet::tail; public, offset 12
 
- scope: global > struct Packet > struct (unnamed at 11:5)
+ scope: global > struct Packet > struct (unnamed at 10:5)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   word               field         int                        member     11    4    0  (unnamed at 11:5)::word; public, offset 0
-   bytes              field         char[4]                    member     11    4    0  (unnamed at 11:5)::bytes; public, offset 4
+   word               field         int                        member     10    4    0  (unnamed at 10:5)::word; public, offset 0
+   bytes              field         char[4]                    member     10    4    0  (unnamed at 10:5)::bytes; public, offset 4
 
  scope: global > make()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      15    4    1  x.1
-   y                  parameter     int                        param      15    4    1  y.2
-   p                  variable      struct Point               local      16    8    1  p.3
+   x                  parameter     int                        param      14    4    1  x.1
+   y                  parameter     int                        param      14    4    1  y.2
+   p                  variable      struct Point               local      15    8    1  p.3
 
  scope: global > area()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     struct Rect                param      20   20    6  r.4
+   r                  parameter     struct Rect                param      19   20    6  r.4
 
  scope: global > move()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     struct Point *             param      25    4    1  p.5
-   dx                 parameter     int                        param      25    4    1  dx.6
+   p                  parameter     struct Point *             param      24    4    1  p.5
+   dx                 parameter     int                        param      24    4    1  dx.6
 
  scope: global > add()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     Complex                    param      27   16    2  a.7
-   b                  parameter     Complex                    param      27   16    2  b.8
-   c                  variable      Complex                    local      28   16    3  c.9
+   a                  parameter     Complex                    param      26   16    2  a.7
+   b                  parameter     Complex                    param      26   16    2  b.8
+   c                  variable      Complex                    local      27   16    3  c.9
 
  scope: global > length()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param      34    4    3  head.10
-   n                  variable      int                        local      35    4    2  n.11
+   head               parameter     struct Node *              param      33    4    3  head.10
+   n                  variable      int                        local      34    4    2  n.11
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  variable      struct Rect                local      43   20    8  r.12
-   copy               variable      struct Rect                local      44   20    3  copy.13
-   pts                variable      struct Point[3]            local      50   24    7  pts.14
-   pp                 variable      struct Point *             local      56    4    2  pp.16
-   rp                 variable      struct Rect *              local      58    4    3  rp.17
-   a                  variable      Complex                    local      62   16    1  a.18
-   b                  variable      Complex                    local      62   16    1  b.19
-   c                  variable      Complex                    local      63   16    2  c.20
-   n1                 variable      struct Node                local      66    8    4  n1.21
-   n2                 variable      struct Node                local      66    8    3  n2.22
-   n3                 variable      struct Node                local      66    8    3  n3.23
-   k                  variable      struct Packet              local      72   16    5  k.24
-   zero               variable      struct Point               local      75    8    1  zero.25
+   r                  variable      struct Rect                local      42   20    8  r.12
+   copy               variable      struct Rect                local      43   20    3  copy.13
+   pts                variable      struct Point[3]            local      49   24    7  pts.14
+   pp                 variable      struct Point *             local      55    4    2  pp.16
+   rp                 variable      struct Rect *              local      57    4    3  rp.17
+   a                  variable      Complex                    local      61   16    1  a.18
+   b                  variable      Complex                    local      61   16    1  b.19
+   c                  variable      Complex                    local      62   16    2  c.20
+   n1                 variable      struct Node                local      65    8    4  n1.21
+   n2                 variable      struct Node                local      65    8    3  n2.22
+   n3                 variable      struct Node                local      65    8    3  n3.23
+   k                  variable      struct Packet              local      71   16    5  k.24
+   zero               variable      struct Point               local      74    8    1  zero.25
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      51    4    6  i.15
+   i                  variable      int                        local      50    4    6  i.15
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -502,15 +500,15 @@ struct Rect: size 20, align 4
 struct Node: size 8, align 4
     +0  int value  [public]
     +4  struct Node * next  [public]
-struct (unnamed at 8:9): size 16, align 8
+struct (unnamed at 7:9): size 16, align 8
     +0  double re  [public]
     +8  double im  [public]
 struct Packet: size 16, align 4
     +0  int kind  [public]
-    +4  struct (unnamed at 11:5)   [public]
+    +4  struct (unnamed at 10:5)   [public]
     +12  short tail  [public]
     +4  int word  [public]  (from the unnamed member)
     +8  char[4] bytes  [public]  (from the unnamed member)
-struct (unnamed at 11:5): size 8, align 4
+struct (unnamed at 10:5): size 8, align 4
     +0  int word  [public]
     +4  char[4] bytes  [public]

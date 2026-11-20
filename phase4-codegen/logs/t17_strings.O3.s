@@ -286,22 +286,20 @@ _Z4findPKcc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -48($fp)
+        addiu $sp, $sp, -56
+        sw    $s0, -52($fp)
         sw    $s1, -24($fp)
         sw    $s2, -28($fp)
         sw    $s3, -32($fp)
         sw    $s4, -36($fp)
         sw    $s5, -40($fp)
         sw    $s6, -44($fp)
+        sw    $s7, -48($fp)
         lw    $s6, 8($fp)
-        lw    $s1, 12($fp)
+        lw    $s7, 12($fp)
         # i = 0
         li    $s0, 0
-        # t6 = chartoint c
-        move  $t0, $s1
-        move  $s5, $t0
-L4_2:
+L4_1:
         # t1 = text ptr+ i
         addu  $s1, $s6, $s0
         # t2 = *t1
@@ -313,6 +311,9 @@ L4_2:
         # t5 = chartoint t4
         move  $t0, $s3
         move  $s4, $t0
+        # t6 = chartoint c
+        move  $t0, $s7
+        move  $s5, $t0
         # if t5 int!= t6 goto 9
         bne   $s4, $s5, L4_9
         # return i
@@ -321,20 +322,21 @@ L4_2:
 L4_9:
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 2
-        j     L4_2
+        # goto 1
+        j     L4_1
 L4_11:
         # return -1
         li    $v0, -1
         j     _Z4findPKcc_exit
 _Z4findPKcc_exit:
-        lw    $s0, -48($fp)
+        lw    $s0, -52($fp)
         lw    $s1, -24($fp)
         lw    $s2, -28($fp)
         lw    $s3, -32($fp)
         lw    $s4, -36($fp)
         lw    $s5, -40($fp)
         lw    $s6, -44($fp)
+        lw    $s7, -48($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -810,18 +812,18 @@ L9_39:
         # t76 = 0
         li    $s1, 0
 L9_40:
-        # t78 = t1 ptr+ t76
+        # t77 = t1 ptr+ t76
         addu  $s2, $s0, $s1
-        # t79 = *t78
+        # t78 = *t77
         lb    $s3, 0($s2)
-        # if t79 char== 0 goto 50
+        # if t78 char== 0 goto 50
         beq   $s3, $zero, L9_50
-        # t80 = *t78
+        # t79 = *t77
         lb    $s4, 0($s2)
-        # t81 = chartoint t80
+        # t80 = chartoint t79
         move  $t0, $s4
         move  $s5, $t0
-        # if t81 int!= 112 goto 48
+        # if t80 int!= 112 goto 48
         li    $t1, 112
         bne   $s5, $t1, L9_48
         # t8 = t76
@@ -840,18 +842,18 @@ L9_51:
         # t84 = 0
         li    $s1, 0
 L9_52:
-        # t86 = t1 ptr+ t84
+        # t85 = t1 ptr+ t84
         addu  $s2, $s0, $s1
-        # t87 = *t86
+        # t86 = *t85
         lb    $s3, 0($s2)
-        # if t87 char== 0 goto 62
+        # if t86 char== 0 goto 62
         beq   $s3, $zero, L9_62
-        # t88 = *t86
+        # t87 = *t85
         lb    $s4, 0($s2)
-        # t89 = chartoint t88
+        # t88 = chartoint t87
         move  $t0, $s4
         move  $s5, $t0
-        # if t89 int!= 122 goto 60
+        # if t88 int!= 122 goto 60
         li    $t1, 122
         bne   $s5, $t1, L9_60
         # t10 = t84

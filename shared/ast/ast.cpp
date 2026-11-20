@@ -42,8 +42,6 @@ const char *astKindName(ASTKind k) {
         case ASTKind::ClassDecl: return "ClassDecl";
         case ASTKind::TypedefDecl: return "TypedefDecl";
         case ASTKind::ConstructorDef: return "ConstructorDef";
-        case ASTKind::DestructorDef: return "DestructorDef";
-        case ASTKind::MemInit: return "MemInit";
         case ASTKind::FriendDecl: return "FriendDecl";
         case ASTKind::InitDeclarator: return "InitDeclarator";
         case ASTKind::InitializerList: return "InitializerList";

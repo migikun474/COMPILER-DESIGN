@@ -7,10 +7,8 @@ public:
 
 class Dog : public Animal {
 public:
-    Dog(int n) {
-        legs = n;
-    }
-    ~Dog() {
+    Dog() {
+        legs = 4;
     }
     int bark() {
         return legs;

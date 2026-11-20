@@ -477,14 +477,14 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -360
-        s.d   $f20, -336($fp)
-        sw    $s0, -324($fp)
-        sw    $s1, -340($fp)
-        sw    $s2, -344($fp)
-        sw    $s3, -348($fp)
-        sw    $s4, -352($fp)
-        sw    $s5, -356($fp)
+        addiu $sp, $sp, -320
+        s.d   $f20, -296($fp)
+        sw    $s0, -284($fp)
+        sw    $s1, -300($fp)
+        sw    $s2, -304($fp)
+        sw    $s3, -308($fp)
+        sw    $s4, -312($fp)
+        sw    $s5, -316($fp)
         # param "%lld %lld %lld\n"
         # param 123455801358024
         # param 123457776666666
@@ -824,19 +824,14 @@ main_:
         jal   __printf
         addiu $sp, $sp, 32
         # param 2
-        # t47 = call make(int), 1
+        # s = call make(int), 1
         addiu $sp, $sp, -8
         li    $t0, 2
         sw    $t0, 0($sp)
         jal   _Z4makei
         addiu $sp, $sp, 8
         move  $a1, $v0
-        addiu $a0, $fp, -208
-        li    $a2, 40
-        jal   __memcpy
-        # s = t47
         addiu $a0, $fp, -112
-        addiu $a1, $fp, -208
         li    $a2, 40
         jal   __memcpy
         # t = s
@@ -847,27 +842,27 @@ main_:
         # t[24] = 100
         li    $t0, 100
         sw    $t0, -128($fp)
-        # t51 = s[0]
+        # t48 = s[0]
         l.d   $f0, -112($fp)
         mov.d $f20, $f0
-        # t52 = s[24]
+        # t49 = s[24]
         lw    $s0, -88($fp)
-        # t54 = s[28]
+        # t51 = s[28]
         lb    $s1, -84($fp)
-        # t55 = chartoint t54
+        # t52 = chartoint t51
         move  $t0, $s1
         move  $s2, $t0
-        # t56 = s[32]
+        # t53 = s[32]
         lw    $t1, -76($fp)
         lw    $t0, -80($fp)
         move  $s1, $t0
         move  $s3, $t1
         # param "%.1f %d %d %c %lld\n"
-        # param t51
-        # param t52
+        # param t48
+        # param t49
         # param 100
-        # param t55
-        # param t56
+        # param t52
+        # param t53
         # call printf, 6
         addiu $sp, $sp, -40
         la    $t0, str17
@@ -886,7 +881,7 @@ main_:
         # param 2.0
         # param 97
         # param 5
-        # t57 = call weigh(struct Big, double, char, long long), 4
+        # t54 = call weigh(struct Big, double, char, long long), 4
         addiu $sp, $sp, -64
         addiu $a0, $sp, 0
         addiu $a1, $fp, -112
@@ -904,7 +899,7 @@ main_:
         addiu $sp, $sp, 64
         mov.d $f20, $f0
         # param "%.1f\n"
-        # param t57
+        # param t54
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str18
@@ -919,7 +914,7 @@ main_:
         # param 4.0
         # param 77
         # param "tail"
-        # t58 = call average(int, ...), 6
+        # t55 = call average(int, ...), 6
         addiu $sp, $sp, -48
         li    $t0, 3
         sw    $t0, 0($sp)
@@ -939,7 +934,7 @@ main_:
         addiu $sp, $sp, 48
         mov.d $f20, $f0
         # param "%.2f\n"
-        # param t58
+        # param t55
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str19
@@ -949,29 +944,29 @@ main_:
         jal   __printf
         addiu $sp, $sp, 16
         # param 12
-        # t60 = call malloc, 1
+        # t57 = call malloc, 1
         addiu $sp, $sp, -8
         li    $t0, 12
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # *t60 = 1
+        # *t57 = 1
         li    $t0, 1
         sw    $t0, 0($s0)
-        # t61 = t60 ptr+ 4
+        # t58 = t57 ptr+ 4
         addiu $s1, $s0, 4
-        # *t61 = 2
+        # *t58 = 2
         li    $t0, 2
         sw    $t0, 0($s1)
-        # t62 = t60 ptr+ 8
+        # t59 = t57 ptr+ 8
         addiu $s1, $s0, 8
-        # *t62 = 3
+        # *t59 = 3
         li    $t0, 3
         sw    $t0, 0($s1)
-        # param t60
+        # param t57
         # param 24
-        # t64 = call realloc, 2
+        # t61 = call realloc, 2
         addiu $sp, $sp, -8
         sw    $s0, 0($sp)
         li    $t0, 24
@@ -981,7 +976,7 @@ main_:
         move  $s1, $v0
         # param 4
         # param 4
-        # t65 = call calloc, 2
+        # t62 = call calloc, 2
         addiu $sp, $sp, -8
         li    $t0, 4
         sw    $t0, 0($sp)
@@ -990,35 +985,35 @@ main_:
         jal   __calloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # t66 = *t64
+        # t63 = *t61
         lw    $s2, 0($s1)
-        # t67 = t64 ptr+ 4
+        # t64 = t61 ptr+ 4
         addiu $s3, $s1, 4
-        # t68 = *t67
+        # t65 = *t64
         lw    $s4, 0($s3)
-        # t69 = t66 int+ t68
+        # t66 = t63 int+ t65
         addu  $s3, $s2, $s4
-        # t70 = t64 ptr+ 8
+        # t67 = t61 ptr+ 8
         addiu $s2, $s1, 8
-        # t71 = *t70
+        # t68 = *t67
         lw    $s4, 0($s2)
-        # t72 = t69 int+ t71
+        # t69 = t66 int+ t68
         addu  $s2, $s3, $s4
-        # t73 = *t65
+        # t70 = *t62
         lw    $s3, 0($s0)
-        # t74 = t65 ptr+ 12
+        # t71 = t62 ptr+ 12
         addiu $s4, $s0, 12
-        # t75 = *t74
+        # t72 = *t71
         lw    $s5, 0($s4)
-        # if t64 ptr!= t65 goto 153
+        # if t61 ptr!= t62 goto 152
         xor   $s0, $s1, $s0
         sltu  $s0, $zero, $s0
-L4_154:
+L4_153:
         # param "%d %d %d %d\n"
+        # param t69
+        # param t70
         # param t72
         # param t73
-        # param t75
-        # param t76
         # call printf, 5
         addiu $sp, $sp, -24
         la    $t0, str5
@@ -1033,13 +1028,13 @@ L4_154:
         li    $v0, 45
         j     main__exit
 main__exit:
-        l.d   $f20, -336($fp)
-        lw    $s0, -324($fp)
-        lw    $s1, -340($fp)
-        lw    $s2, -344($fp)
-        lw    $s3, -348($fp)
-        lw    $s4, -352($fp)
-        lw    $s5, -356($fp)
+        l.d   $f20, -296($fp)
+        lw    $s0, -284($fp)
+        lw    $s1, -300($fp)
+        lw    $s2, -304($fp)
+        lw    $s3, -308($fp)
+        lw    $s4, -312($fp)
+        lw    $s5, -316($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

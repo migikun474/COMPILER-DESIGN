@@ -174,27 +174,27 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   main               function      int (void)                 -           5    -    0  defined
+   main               function      int (void)                 -           4    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local       6    4   24  a.1
-   b                  variable      int                        local       6    4   20  b.2
-   c                  variable      int                        local       6    4    8  c.3
-   d                  variable      double                     local      12    8    7  d.4
-   f                  variable      float                      local      13    4    3  f.5
-   truncated          variable      int                        local      16    4    1  truncated.6
-   u                  variable      unsigned int               local      19    4    5  u.7
-   neg                variable      int                        local      21    4    3  neg.8
-   ch                 variable      char                       local      25    1    4  ch.9
-   s                  variable      short                      local      27    2    3  s.10
-   big                variable      long long                  local      29    8    4  big.11
-   i                  variable      int                        local      36    4    8  i.12
-   j                  variable      int                        local      36    4    8  j.13
-   big2               variable      int                        local      45    4    1  big2.14
-   mixed              variable      double                     local      46    8    1  mixed.15
-   wraps              variable      unsigned char              local      50    1    3  wraps.16
+   a                  variable      int                        local       5    4   24  a.1
+   b                  variable      int                        local       5    4   20  b.2
+   c                  variable      int                        local       5    4    8  c.3
+   d                  variable      double                     local      11    8    7  d.4
+   f                  variable      float                      local      12    4    3  f.5
+   truncated          variable      int                        local      15    4    1  truncated.6
+   u                  variable      unsigned int               local      18    4    5  u.7
+   neg                variable      int                        local      20    4    3  neg.8
+   ch                 variable      char                       local      24    1    4  ch.9
+   s                  variable      short                      local      26    2    3  s.10
+   big                variable      long long                  local      28    8    4  big.11
+   i                  variable      int                        local      35    4    8  i.12
+   j                  variable      int                        local      35    4    8  j.13
+   big2               variable      int                        local      44    4    1  big2.14
+   mixed              variable      double                     local      45    8    1  mixed.15
+   wraps              variable      unsigned char              local      49    1    3  wraps.16
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

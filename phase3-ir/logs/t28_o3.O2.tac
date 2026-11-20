@@ -643,171 +643,171 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   calls              variable      int                        global      6    4    4  
-   square             function      int (int)                  -           7    -    1  _Z6squarei; defined
-   clamp              function      int (int, int, int)        -           8    -    3  _Z5clampiii; defined
-   counted            function      int (int)                  -           9    -    3  _Z7countedi; defined
-   bump               function      void (int &, int)          -          10    -    1  _Z4bumpRii; defined
-   Pair               struct_tag    struct Pair                -          11    -    0  size 8
-   total              function      int (struct Pair)          -          12    -    2  _Z5total4Pair; defined
-   fact               function      int (int)                  -          13    -    2  _Z4facti; defined
-   gcd                function      int (int, int)             -          15    -    3  _Z3gcdii; defined
-   sumTo              function      int (int, int)             -          16    -    2  _Z5sumToii; defined
-   countDown          function      int (int)                  -          17    -    2  _Z9countDowni; defined
-   invariant          function      int (int, int)             -          19    -    2  _Z9invariantii; defined
-   notInvariant       function      int (int)                  -          30    -    1  _Z12notInvarianti; defined
-   zeroTrips          function      int (int, int)             -          40    -    2  _Z9zeroTripsii; defined
-   nested             function      int (int, int)             -          46    -    2  _Z6nestedii; defined
-   shared             function      int (int, int, int)        -          55    -    2  _Z6sharediii; defined
-   memory             function      int (int)                  -          62    -    2  _Z6memoryi; defined
-   main               function      int (void)                 -          74    -    0  defined
+   calls              variable      int                        global      5    4    4  
+   square             function      int (int)                  -           6    -    1  _Z6squarei; defined
+   clamp              function      int (int, int, int)        -           7    -    3  _Z5clampiii; defined
+   counted            function      int (int)                  -           8    -    3  _Z7countedi; defined
+   bump               function      void (int &, int)          -           9    -    1  _Z4bumpRii; defined
+   Pair               struct_tag    struct Pair                -          10    -    0  size 8
+   total              function      int (struct Pair)          -          11    -    2  _Z5total4Pair; defined
+   fact               function      int (int)                  -          12    -    2  _Z4facti; defined
+   gcd                function      int (int, int)             -          14    -    3  _Z3gcdii; defined
+   sumTo              function      int (int, int)             -          15    -    2  _Z5sumToii; defined
+   countDown          function      int (int)                  -          16    -    2  _Z9countDowni; defined
+   invariant          function      int (int, int)             -          18    -    2  _Z9invariantii; defined
+   notInvariant       function      int (int)                  -          29    -    1  _Z12notInvarianti; defined
+   zeroTrips          function      int (int, int)             -          39    -    2  _Z9zeroTripsii; defined
+   nested             function      int (int, int)             -          45    -    2  _Z6nestedii; defined
+   shared             function      int (int, int, int)        -          54    -    2  _Z6sharediii; defined
+   memory             function      int (int)                  -          61    -    2  _Z6memoryi; defined
+   main               function      int (void)                 -          73    -    0  defined
 
  scope: global > square()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param       7    4    2  v.1
+   v                  parameter     int                        param       6    4    2  v.1
 
  scope: global > clamp()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param       8    4    3  v.2
-   lo                 parameter     int                        param       8    4    2  lo.3
-   hi                 parameter     int                        param       8    4    2  hi.4
+   v                  parameter     int                        param       7    4    3  v.2
+   lo                 parameter     int                        param       7    4    2  lo.3
+   hi                 parameter     int                        param       7    4    2  hi.4
 
  scope: global > counted()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param       9    4    1  v.5
+   v                  parameter     int                        param       8    4    1  v.5
 
  scope: global > bump()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     int &                      param      10    4    1  r.6
-   by                 parameter     int                        param      10    4    1  by.7
+   r                  parameter     int &                      param       9    4    1  r.6
+   by                 parameter     int                        param       9    4    1  by.7
 
  scope: global > struct Pair
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         int                        member     11    4    3  Pair::a; public, offset 0
-   b                  field         int                        member     11    4    1  Pair::b; public, offset 4
+   a                  field         int                        member     10    4    3  Pair::a; public, offset 0
+   b                  field         int                        member     10    4    1  Pair::b; public, offset 4
 
  scope: global > total()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     struct Pair                param      12    8    3  p.8
+   p                  parameter     struct Pair                param      11    8    3  p.8
 
  scope: global > fact()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      13    4    3  n.9
+   n                  parameter     int                        param      12    4    3  n.9
 
  scope: global > gcd()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      15    4    2  a.10
-   b                  parameter     int                        param      15    4    3  b.11
+   a                  parameter     int                        param      14    4    2  a.10
+   b                  parameter     int                        param      14    4    3  b.11
 
  scope: global > sumTo()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      16    4    3  n.12
-   acc                parameter     int                        param      16    4    2  acc.13
+   n                  parameter     int                        param      15    4    3  n.12
+   acc                parameter     int                        param      15    4    2  acc.13
 
  scope: global > countDown()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      17    4    2  n.14
+   n                  parameter     int                        param      16    4    2  n.14
 
  scope: global > invariant()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      19    4    1  n.15
-   k                  parameter     int                        param      19    4    2  k.16
-   s                  variable      int                        local      20    4    3  s.17
+   n                  parameter     int                        param      18    4    1  n.15
+   k                  parameter     int                        param      18    4    2  k.16
+   s                  variable      int                        local      19    4    3  s.17
 
  scope: global > invariant() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      21    4    4  i.18
+   i                  variable      int                        local      20    4    4  i.18
 
  scope: global > invariant() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   scale              variable      int                        local      22    4    1  scale.19
+   scale              variable      int                        local      21    4    1  scale.19
 
  scope: global > notInvariant()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      30    4    1  n.20
-   s                  variable      int                        local      31    4    2  s.21
-   k                  variable      int                        local      31    4    3  k.22
+   n                  parameter     int                        param      29    4    1  n.20
+   s                  variable      int                        local      30    4    2  s.21
+   k                  variable      int                        local      30    4    3  k.22
 
  scope: global > notInvariant() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      32    4    3  i.23
+   i                  variable      int                        local      31    4    3  i.23
 
  scope: global > notInvariant() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  variable      int                        local      33    4    1  v.24
+   v                  variable      int                        local      32    4    1  v.24
 
  scope: global > zeroTrips()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      40    4    2  n.25
-   d                  parameter     int                        param      40    4    1  d.26
-   s                  variable      int                        local      41    4    2  s.27
+   n                  parameter     int                        param      39    4    2  n.25
+   d                  parameter     int                        param      39    4    1  d.26
+   s                  variable      int                        local      40    4    2  s.27
 
  scope: global > nested()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   rows               parameter     int                        param      46    4    2  rows.28
-   cols               parameter     int                        param      46    4    3  cols.29
-   grid               variable      int[4][5]                  local      47   80    2  grid.30
-   s                  variable      int                        local      47    4    2  s.31
+   rows               parameter     int                        param      45    4    2  rows.28
+   cols               parameter     int                        param      45    4    3  cols.29
+   grid               variable      int[4][5]                  local      46   80    2  grid.30
+   s                  variable      int                        local      46    4    2  s.31
 
  scope: global > nested() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  variable      int                        local      48    4    4  r.32
-   r                  variable      int                        local      50    4    3  r.34
+   r                  variable      int                        local      47    4    4  r.32
+   r                  variable      int                        local      49    4    3  r.34
 
  scope: global > nested() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  variable      int                        local      49    4    4  c.33
-   c                  variable      int                        local      51    4    3  c.35
+   c                  variable      int                        local      48    4    4  c.33
+   c                  variable      int                        local      50    4    3  c.35
 
  scope: global > shared()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      55    4    6  x.36
-   y                  parameter     int                        param      55    4    4  y.37
-   flag               parameter     int                        param      55    4    1  flag.38
-   a                  variable      int                        local      56    4    1  a.39
-   b                  variable      int                        local      56    4    3  b.40
+   x                  parameter     int                        param      54    4    6  x.36
+   y                  parameter     int                        param      54    4    4  y.37
+   flag               parameter     int                        param      54    4    1  flag.38
+   a                  variable      int                        local      55    4    1  a.39
+   b                  variable      int                        local      55    4    3  b.40
 
  scope: global > memory()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  parameter     int                        param      62    4    5  i.41
-   arr                variable      int[4]                     local      63   16    6  arr.42
-   p                  variable      int *                      local      64    4    2  p.43
-   q                  variable      int *                      local      64    4    1  q.44
-   a                  variable      int                        local      66    4    1  a.45
-   b                  variable      int                        local      68    4    1  b.46
-   c                  variable      int                        local      70    4    1  c.47
+   i                  parameter     int                        param      61    4    5  i.41
+   arr                variable      int[4]                     local      62   16    6  arr.42
+   p                  variable      int *                      local      63    4    2  p.43
+   q                  variable      int *                      local      63    4    1  q.44
+   a                  variable      int                        local      65    4    1  a.45
+   b                  variable      int                        local      67    4    1  b.46
+   c                  variable      int                        local      69    4    1  c.47
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      75    4    2  x.48
-   p                  variable      struct Pair                local      77    8    3  p.49
-   t                  variable      int                        local      78    4    1  t.50
-   c1                 variable      int                        local      80    4    1  c1.51
-   c2                 variable      int                        local      80    4    1  c2.52
-   c3                 variable      int                        local      80    4    1  c3.53
+   x                  variable      int                        local      74    4    2  x.48
+   p                  variable      struct Pair                local      76    8    3  p.49
+   t                  variable      int                        local      77    4    1  t.50
+   c1                 variable      int                        local      79    4    1  c1.51
+   c2                 variable      int                        local      79    4    1  c2.52
+   c3                 variable      int                        local      79    4    1  c3.53
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

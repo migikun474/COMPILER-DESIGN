@@ -82,24 +82,24 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   main               function      int (int, char **)         -           4    -    0  defined
+   main               function      int (int, char **)         -           3    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   argc               parameter     int                        param       4    4    3  argc.1
-   argv               parameter     char **                    param       4    4    2  argv.2
-   letters            variable      int                        local       5    4    2  letters.3
+   argc               parameter     int                        param       3    4    3  argc.1
+   argv               parameter     char **                    param       3    4    2  argv.2
+   letters            variable      int                        local       4    4    2  letters.3
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       6    4    5  i.4
+   i                  variable      int                        local       5    4    5  i.4
 
  scope: global > main() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  variable      char *                     local       7    4    2  s.5
+   s                  variable      char *                     local       6    4    2  s.5
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

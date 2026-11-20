@@ -29,7 +29,6 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
 
 ============================================================================
  FUNCTION main()        (link name main)

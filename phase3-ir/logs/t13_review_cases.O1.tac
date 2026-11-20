@@ -4,7 +4,7 @@
 
    Source file   : test/t13_review_cases.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 176 -> 162 instruction(s)
+   Result        : Optimized three address code (-O1): 150 -> 130 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,16 +14,16 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          176 -> 162   (7% fewer)
+   instructions                          150 -> 130   (13% fewer)
 
-   constants folded                        3
+   constants folded                        4
    algebraic simplifications               0
-   common subexpressions                   4
-   copies / constants forwarded           16
+   common subexpressions                   6
+   copies / constants forwarded           18
    temporaries merged away                 3
-   dead instructions removed               5
+   dead instructions removed               9
    jumps removed or redirected             5
-   unreachable instructions removed        1
+   unreachable instructions removed        2
 
 ----------------------------------------------------------------------------
  GLOBALS: 2 object(s) in static storage
@@ -92,55 +92,57 @@
  FUNCTION B::B()        (link name _ZN1BC1Ev)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class B *                       4       0
-
- Code: 2 instruction(s)
-
-    107     *this = 2
-    108     return
-
-============================================================================
- FUNCTION B::gb()        (link name _ZN1B2gbEv)
-============================================================================
-
  Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class B *                       4       0
-   t1               temp    int                             4       4
+   t1               temp    class B *                       4       4
 
- Code: 2 instruction(s)
+ Code: 5 instruction(s)
 
-    109     t1 = *this
-    110     return t1
+    107     param this                          (this)
+    108     call A::A(), 1
+    109     t1 = this ptr+ 4
+    110     *t1 = 2
+    111     return
 
 ============================================================================
- FUNCTION C::C()        (link name _ZN1CC1Ev)
+ FUNCTION B::gb()        (link name _ZN1B2gbEv)
 ============================================================================
 
  Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
+   this             param   class B *                       4       0
+   t1               temp    class B *                       4       4
+   t2               temp    int                             4       8
+
+ Code: 3 instruction(s)
+
+    112     t1 = this ptr+ 4
+    113     t2 = *t1
+    114     return t2
+
+============================================================================
+ FUNCTION C::C()        (link name _ZN1CC1Ev)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
    this             param   class C *                       4       0
    t1               temp    class C *                       4       4
-   t2               temp    class C *                       4       8
 
- Code: 8 instruction(s)
+ Code: 5 instruction(s)
 
-    111     param this                          (this)
-    112     call A::A(), 1
-    113     t1 = this ptr+ 4
-    114     param t1                            (this)
-    115     call B::B(), 1
-    116     t2 = this ptr+ 8
-    117     *t2 = 3
-    118     return
+    115     param this                          (this)
+    116     call B::B(), 1
+    117     t1 = this ptr+ 8
+    118     *t1 = 3
+    119     return
 
 ============================================================================
  FUNCTION C::sum()        (link name _ZN1C3sumEv)
@@ -161,34 +163,36 @@
 
  Code: 8 instruction(s)
 
-    119     t1 = *this
-    120     t2 = this ptr+ 4
-    121     t3 = *t2
-    122     t4 = t1 int+ t3
-    123     t5 = this ptr+ 8
-    124     t6 = *t5
-    125     t7 = t4 int+ t6
-    126     return t7
+    120     t1 = *this
+    121     t2 = this ptr+ 4
+    122     t3 = *t2
+    123     t4 = t1 int+ t3
+    124     t5 = this ptr+ 8
+    125     t6 = *t5
+    126     t7 = t4 int+ t6
+    127     return t7
 
 ============================================================================
  FUNCTION takeB(class B *)        (link name _Z5takeBP1B)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 16 bytes
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 20 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    p                param   class B *                       4       0
    t1               temp    int                             4       4
+   t2               temp    class B *                       4       8
    (2 temporaries no longer used after optimization not shown)
 
- Code: 5 instruction(s)
+ Code: 6 instruction(s)
 
-    127       if p ptr== 0 goto L1
-    128       t1 = *p
-    129       goto L2
-    130  L1:  t1 = -1
-    131  L2:  return t1
+    128       if p ptr== 0 goto L1
+    129       t2 = p ptr+ 4
+    130       t1 = *t2
+    131       goto L2
+    132  L1:  t1 = -1
+    133  L2:  return t1
 
 ============================================================================
  FUNCTION Cnt::Cnt()        (link name _ZN3CntC1Ev)
@@ -203,45 +207,10 @@
 
  Code: 4 instruction(s)
 
-    132     t1 = Cnt::made int+ 1
-    133     Cnt::made = t1
-    134     *this = t1
-    135     return
-
-============================================================================
- FUNCTION Dog::Dog(int)        (link name _ZN3DogC1Ei)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 0 temporaries, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   n                param   int                             4       4
-
- Code: 2 instruction(s)
-
-    136     *this = n
+    134     t1 = Cnt::made int+ 1
+    135     Cnt::made = t1
+    136     *this = t1
     137     return
-
-============================================================================
- FUNCTION Dog::~Dog()        (link name _ZN3DogD1Ev)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    int                             4       4
-
- Code: 5 instruction(s)
-
-    138     t1 = *this
-    139     param "~Dog(%d)\n"
-    140     param t1
-    141     call printf, 2
-    142     return
 
 ============================================================================
  FUNCTION vsum(int, va_list)        (link name _Z4vsumiPv)
@@ -260,14 +229,14 @@
 
  Code: 8 instruction(s)
 
-    143       s = 0
-    144  L3:  t1 = n
-    145       n = n int- 1
-    146       if t1 int<= 0 goto L4
-    147       t3 = va_arg ap, int
-    148       s = s int+ t3
-    149       goto L3
-    150  L4:  return s
+    138       s = 0
+    139  L3:  t1 = n
+    140       n = n int- 1
+    141       if t1 int<= 0 goto L4
+    142       t3 = va_arg ap, int
+    143       s = s int+ t3
+    144       goto L3
+    145  L4:  return s
 
 ============================================================================
  FUNCTION total(int, ...)        (link name _Z5totaliz)
@@ -284,13 +253,13 @@
 
  Code: 7 instruction(s)
 
-    151     va_start ap, n
-    152     param n
-    153     param ap
-    154     t1 = call vsum(int, va_list), 2
-    155     s = t1
-    156     va_end ap
-    157     return t1
+    146     va_start ap, n
+    147     param n
+    148     param ap
+    149     t1 = call vsum(int, va_list), 2
+    150     s = t1
+    151     va_end ap
+    152     return t1
 
 ============================================================================
  FUNCTION one()        (link name _Z3onev)
@@ -298,13 +267,13 @@
 
  Code: 1 instruction(s)
 
-    158     return 1
+    153     return 1
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 11 parameter(s)/local(s), 32 temporaries, frame 228 bytes
+ Symbol table: 9 parameter(s)/local(s), 21 temporaries, frame 192 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -317,147 +286,107 @@
    guard            local   int                             4      32
    x                local   class Cnt                       4      36
    y                local   class Cnt                       4      40
-   d                local   class Dog                       4      44
-   last             local   class Dog                       4      48
-   t1               temp    double                          8      56
-   t3               temp    const double *                  4      72
-   t4               temp    double                          8      80
-   t5               temp    double                          8      88
-   t6               temp    const double *                  4      96
-   t7               temp    double                          8     104
-   t8               temp    class C *                       4     112
-   t9               temp    class C *                       4     116
-   t10              temp    class B *                       4     120
-   t12              temp    class C *                       4     128
-   t13              temp    int                             4     132
-   t15              temp    class C *                       4     140
-   t16              temp    int                             4     144
-   t17              temp    int                             4     148
-   t18              temp    class C *                       4     152
-   t19              temp    class B *                       4     156
-   t20              temp    int                             4     160
-   t21              temp    class C *                       4     164
-   t22              temp    int                             4     168
-   t23              temp    int                             4     172
-   t24              temp    int                             4     176
-   t25              temp    class A *                       4     180
-   t26              temp    class A                         4     184
-   t27              temp    int                             4     188
-   t28              temp    class Cnt *                     4     192
-   t29              temp    class Cnt *                     4     196
-   t30              temp    int                             4     200
-   t31              temp    int                             4     204
-   t32              temp    int                             4     208
-   t33              temp    class Dog *                     4     212
-   t34              temp    class Dog *                     4     216
-   t35              temp    class Dog *                     4     220
-   (4 temporaries no longer used after optimization not shown)
+   t1               temp    double                          8      48
+   t3               temp    const double *                  4      64
+   t4               temp    double                          8      72
+   t5               temp    double                          8      80
+   t6               temp    const double *                  4      88
+   t7               temp    double                          8      96
+   t8               temp    class C *                       4     104
+   t11              temp    int                             4     116
+   t13              temp    int                             4     124
+   t14              temp    class B *                       4     128
+   t15              temp    int                             4     132
+   t17              temp    int                             4     140
+   t19              temp    int                             4     148
+   t21              temp    int                             4     156
+   t22              temp    class A *                       4     160
+   t23              temp    int                             4     164
+   t25              temp    class Cnt *                     4     172
+   t26              temp    class Cnt *                     4     176
+   t27              temp    int                             4     180
+   t28              temp    int                             4     184
+   t29              temp    int                             4     188
+   (8 temporaries no longer used after optimization not shown)
 
- Code: 103 instruction(s)
+ Code: 76 instruction(s)
 
-    159       k = 5
-    160       t1 = 5.0
-    161       t3 = &t1
-    162       param t3
-    163       t4 = call half(const double &), 1
-    164       t5 = 3.0
-    165       t6 = &t5
-    166       param t6
-    167       t7 = call half(const double &), 1
-    168       param "%.2f %.2f\n"
-    169       param t4
-    170       param t7
-    171       call printf, 3
-    172       t8 = &c
-    173       param t8                            (this)
-    174       call C::C(), 1
-    175       t9 = t8
-    176       t10 = t8
-    177       if t8 ptr== 0 goto L5
-    178       t10 = t9 ptr+ 4
-    179  L5:  pb = t10
-    180       none = 0
-    181       nb = 0
-    182       t12 = &c
-    183       param t12                           (this)
-    184       t13 = call C::sum(), 1
-    185       t15 = t12 ptr+ 4
-    186       param t15                           (this)
-    187       t16 = call B::gb(), 1
-    188       t17 = *t10
-    189       t18 = t12
-    190       t19 = t12
-    191       if t12 ptr== 0 goto L6
-    192       t19 = t18 ptr+ 4
-    193  L6:  param t19
-    194       t20 = call takeB(class B *), 1
-    195       t21 = &c
-    196       param t21                           (this)
-    197       t22 = call A::ga(), 1
-    198       if nb ptr== 0 goto L7
-    199       t23 = 0
-    200       goto L8
-    201  L7:  t23 = 1
-    202  L8:  param nb
-    203       t24 = call takeB(class B *), 1
-    204       param "%d %d %d %d %d %d %d\n"
-    205       param t13
-    206       param t16
-    207       param t17
-    208       param t20
-    209       param t22
-    210       param t23
-    211       param t24
-    212       call printf, 8
-    213       t25 = &first
-    214       t26 = c[0]
-    215       *t25 = t26
-    216       guard = 77
-    217       t27 = first[0]
-    218       param "%d %d\n"
-    219       param t27
-    220       param 77
-    221       call printf, 3
-    222       t28 = &x
-    223       param t28                           (this)
-    224       call Cnt::Cnt(), 1
-    225       t29 = &y
-    226       param t29                           (this)
-    227       call Cnt::Cnt(), 1
-    228       t30 = x[0]
-    229       t31 = y[0]
-    230       param "%d %d %d\n"
-    231       param Cnt::made
-    232       param t30
-    233       param t31
-    234       call printf, 4
-    235       param 3
-    236       param 1
-    237       param 2
-    238       param 3
-    239       t32 = call total(int, ...), 4
-    240       param "%.1f %d\n"
-    241       param chosen
-    242       param t32
-    243       call printf, 3
-    244       t33 = &d
-    245       param t33                           (this)
-    246       param 1
-    247       call Dog::Dog(int), 2
-    248       if k int== 0 goto L9
-    249       call one(), 0
-    250  L9:  t34 = &d
-    251       param t34                           (this)
-    252       call Dog::~Dog(), 1
-    253       param "after the block\n"
-    254       call printf, 1
-    255       t35 = &last
-    256       param t35                           (this)
-    257       param 2
-    258       call Dog::Dog(int), 2
-    259       param t35                           (this)
-    260       call Dog::~Dog(), 1
-    261       return 0
+    154     k = 5
+    155     t1 = 5.0
+    156     t3 = &t1
+    157     param t3
+    158     t4 = call half(const double &), 1
+    159     t5 = 3.0
+    160     t6 = &t5
+    161     param t6
+    162     t7 = call half(const double &), 1
+    163     param "%.2f %.2f\n"
+    164     param t4
+    165     param t7
+    166     call printf, 3
+    167     t8 = &c
+    168     param t8                            (this)
+    169     call C::C(), 1
+    170     pb = t8
+    171     none = 0
+    172     nb = 0
+    173     param t8                            (this)
+    174     t11 = call C::sum(), 1
+    175     param t8                            (this)
+    176     t13 = call B::gb(), 1
+    177     t14 = t8 ptr+ 4
+    178     t15 = *t14
+    179     param t8
+    180     t17 = call takeB(class B *), 1
+    181     param t8                            (this)
+    182     t19 = call A::ga(), 1
+    183     param 0
+    184     t21 = call takeB(class B *), 1
+    185     param "%d %d %d %d %d %d %d\n"
+    186     param t11
+    187     param t13
+    188     param t15
+    189     param t17
+    190     param t19
+    191     param 1
+    192     param t21
+    193     call printf, 8
+    194     t22 = &first
+    195     param t22                           (this)
+    196     call A::A(), 1
+    197     t23 = c[0]
+    198     first[0] = t23
+    199     guard = 77
+    200     param "%d %d\n"
+    201     param t23
+    202     param 77
+    203     call printf, 3
+    204     t25 = &x
+    205     param t25                           (this)
+    206     call Cnt::Cnt(), 1
+    207     t26 = &y
+    208     param t26                           (this)
+    209     call Cnt::Cnt(), 1
+    210     t27 = x[0]
+    211     t28 = y[0]
+    212     param "%d %d %d\n"
+    213     param Cnt::made
+    214     param t27
+    215     param t28
+    216     call printf, 4
+    217     param 3
+    218     param 1
+    219     param 2
+    220     param 3
+    221     t29 = call total(int, ...), 4
+    222     param "%.1f %d\n"
+    223     param chosen
+    224     param t29
+    225     call printf, 3
+    226     call one(), 0
+    227     param "after the block\n"
+    228     call printf, 1
+    229     return 0
 
 
 ----------------------------------------------------------------------------
@@ -467,101 +396,82 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   half               function      double (const double &)    -           6    -    2  _Z4halfRKd; defined
-   A                  class_tag     class A                    -           8    -    0  size 4
-   B                  class_tag     class B                    -           9    -    0  size 4
-   C                  class_tag     class C                    -          10    -    0  size 12, public base A, public base B
-   takeB              function      int (class B *)            -          16    -    2  _Z5takeBP1B; defined
-   Cnt                class_tag     class Cnt                  -          18    -    0  size 4
-   Dog                class_tag     class Dog                  -          26    -    0  size 4
-   chosen             variable      double                     global     33    8    1  
-   vsum               function      int (int, va_list)         -          35    -    1  _Z4vsumiPv; defined
-   total              function      int (int, ...)             -          40    -    1  _Z5totaliz; defined
-   one                function      int (void)                 -          48    -    1  _Z3onev; defined
-   main               function      int (void)                 -          50    -    0  defined
+   half               function      double (const double &)    -           4    -    2  _Z4halfRKd; defined
+   A                  class_tag     class A                    -           6    -    0  size 4
+   B                  class_tag     class B                    -           7    -    0  size 8, public base A
+   C                  class_tag     class C                    -           8    -    0  size 12, public base B
+   takeB              function      int (class B *)            -          14    -    2  _Z5takeBP1B; defined
+   Cnt                class_tag     class Cnt                  -          16    -    0  size 4
+   chosen             variable      double                     global     25    8    1  
+   vsum               function      int (int, va_list)         -          27    -    1  _Z4vsumiPv; defined
+   total              function      int (int, ...)             -          32    -    1  _Z5totaliz; defined
+   one                function      int (void)                 -          40    -    1  _Z3onev; defined
+   main               function      int (void)                 -          42    -    0  defined
 
  scope: global > half()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     const double &             param       6    4    1  v.1
+   v                  parameter     const double &             param       4    4    1  v.1
 
  scope: global > class A
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         int                        member      8    4    4  A::a; public, offset 0
-   A                  constructor   void (void)                -           8    -    1  _ZN1AC1Ev; public
-   ga                 method        int (void)                 -           8    -    1  _ZN1A2gaEv; public, defined
+   a                  field         int                        member      6    4    6  A::a; public, offset 0
+   A                  constructor   void (void)                -           6    -    1  _ZN1AC1Ev; public
+   ga                 method        int (void)                 -           6    -    1  _ZN1A2gaEv; public, defined
 
  scope: global > class B
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   b                  field         int                        member      9    4    5  B::b; public, offset 0
-   B                  constructor   void (void)                -           9    -    1  _ZN1BC1Ev; public
-   gb                 method        int (void)                 -           9    -    1  _ZN1B2gbEv; public, defined
+   b                  field         int                        member      7    4    5  B::b; public, offset 4
+   B                  constructor   void (void)                -           7    -    0  _ZN1BC1Ev; public
+   gb                 method        int (void)                 -           7    -    1  _ZN1B2gbEv; public, defined
 
  scope: global > class C
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  field         int                        member     12    4    2  C::c; public, offset 8
-   C                  constructor   void (void)                -          13    -    1  _ZN1CC1Ev; public
-   sum                method        int (void)                 -          14    -    1  _ZN1C3sumEv; public, defined
+   c                  field         int                        member     10    4    2  C::c; public, offset 8
+   C                  constructor   void (void)                -          11    -    1  _ZN1CC1Ev; public
+   sum                method        int (void)                 -          12    -    1  _ZN1C3sumEv; public, defined
 
  scope: global > takeB()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     class B *                  param      16    4    2  p.2
+   p                  parameter     class B *                  param      14    4    2  p.2
 
  scope: global > class Cnt
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   made               field         int                        static     20    4    3  Cnt::made; public, static
-   id                 field         int                        member     21    4    3  Cnt::id; public, offset 0
-   Cnt                constructor   void (void)                -          22    -    2  _ZN3CntC1Ev; public
-
- scope: global > class Dog
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   id                 field         int                        member     28    4    2  Dog::id; public, offset 0
-   Dog                constructor   void (int)                 -          29    -    2  _ZN3DogC1Ei; public
-   ~Dog               destructor    void (void)                -          30    -    0  _ZN3DogD1Ev; public
-
- scope: global > class Dog > Dog()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      29    4    1  n.3
+   made               field         int                        static     18    4    3  Cnt::made; public, static
+   id                 field         int                        member     19    4    3  Cnt::id; public, offset 0
+   Cnt                constructor   void (void)                -          20    -    2  _ZN3CntC1Ev; public
 
  scope: global > vsum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      35    4    1  n.4
-   ap                 parameter     va_list                    param      35    4    1  ap.5
-   s                  variable      int                        local      36    4    2  s.6
+   n                  parameter     int                        param      27    4    1  n.3
+   ap                 parameter     va_list                    param      27    4    1  ap.4
+   s                  variable      int                        local      28    4    2  s.5
 
  scope: global > total()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      40    4    2  n.7
-   ap                 variable      va_list                    local      41    4    3  ap.8
-   s                  variable      int                        local      43    4    1  s.9
+   n                  parameter     int                        param      32    4    2  n.6
+   ap                 variable      va_list                    local      33    4    3  ap.7
+   s                  variable      int                        local      35    4    1  s.8
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      51    4    2  k.10
-   c                  variable      class C                    local      54   12    6  c.11
-   pb                 variable      class B *                  local      55    4    1  pb.12
-   none               variable      class C *                  local      56    4    1  none.13
-   nb                 variable      class B *                  local      57    4    2  nb.14
-   first              variable      class A                    local      59    4    1  first.15
-   guard              variable      int                        local      60    4    1  guard.16
-   x                  variable      class Cnt                  local      63    4    1  x.17
-   y                  variable      class Cnt                  local      63    4    1  y.18
-
- scope: global > main() > block
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   d                  variable      class Dog                  local      68    4    0  d.19
-   last               variable      class Dog                  local      73    4    0  last.20
+   k                  variable      int                        local      43    4    2  k.9
+   c                  variable      class C                    local      46   12    6  c.10
+   pb                 variable      class B *                  local      47    4    1  pb.11
+   none               variable      class C *                  local      48    4    1  none.12
+   nb                 variable      class B *                  local      49    4    2  nb.13
+   first              variable      class A                    local      51    4    2  first.14
+   guard              variable      int                        local      53    4    1  guard.15
+   x                  variable      class Cnt                  local      56    4    1  x.16
+   y                  variable      class Cnt                  local      56    4    1  y.17
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -569,14 +479,12 @@
 
 class A: size 4, align 4
     +0  int a  [public]
-class B: size 4, align 4
-    +0  int b  [public]
-class C: size 12, align 4
+class B: size 8, align 4
     (base A, public)
+    +4  int b  [public]
+class C: size 12, align 4
     (base B, public)
     +8  int c  [public]
 class Cnt: size 4, align 4
     static  int made  [public]
-    +0  int id  [public]
-class Dog: size 4, align 4
     +0  int id  [public]

@@ -45,19 +45,12 @@ class Generator {
         sem::TypePtr type;
     };
 
-    /* a block's local objects that have a destructor, in construction order */
-    struct Scope {
-        const ASTNode *node = nullptr;
-        std::vector<LValue> objects;
-    };
     struct LabelInfo {
         int pos = -1;
-        size_t objectsBefore = 0; /* objects of its block already constructed at the label */
     };
 
     struct Breakable {
         bool isSwitch = false;
-        size_t scopeDepth = 0; /* scopes open when the loop / switch started */
         List breaks, continues;
         std::vector<std::pair<long long, int>> cases; /* value -> instruction index */
         int defaultPos = -1;
@@ -69,15 +62,8 @@ class Generator {
     int curLine = 0;
     std::vector<Breakable> breakables;
     std::map<const sem::Symbol *, LabelInfo> labels;
-    std::map<const sem::Symbol *, std::vector<const ASTNode *>> labelScopes; /* the blocks around each label */
-    std::vector<Scope> scopes;
-    std::vector<Operand> temporaries;           /* unnamed class objects of the current full expression */
-    const sem::Symbol *resultObject = nullptr;  /* the local every `return` names: it is the result itself */
     std::vector<std::pair<sem::Symbol *, const ASTNode *>> dynamicGlobals; /* class objects built at program start */
     std::vector<std::pair<const sem::Symbol *, int>> pendingGotos;
-    List returnJumps;                 /* destructor bodies: `return` runs the epilogue first */
-    bool inDestructor = false;
-    std::vector<ASTNodePtr> localRecords; /* classes declared inside a function body */
     std::map<std::string, int> stringIds;
     std::set<const sem::Symbol *> generated;
 
@@ -108,10 +94,6 @@ class Generator {
     void localDecl(const ASTNodePtr &n);
     void localVariable(const ASTNodePtr &n);
     void initObject(const LValue &obj, const ASTNodePtr &init);
-    void scanLabels(const ASTNodePtr &n, std::vector<const ASTNode *> &chain);
-    void destroyObject(const LValue &obj);
-    void destroyScopes(size_t downTo);
-    bool hasObjects(size_t downTo) const;
     struct InitItem {
         long long offset;
         sem::TypePtr type;
@@ -125,17 +107,8 @@ class Generator {
     /* ---- objects ---- */
     bool needsConstruction(const sem::TypePtr &t);
     void defaultConstruct(const Operand &addr, const sem::TypePtr &t);
-    void constructSubobjects(const Operand &addr, sem::RecordInfo *rec, const ASTNode *ctor = nullptr);
-    /* virtual functions: one table per (complete class, sub-object offset) */
-    std::map<std::pair<sem::RecordInfo *, long long>, sem::SymbolPtr> vtables;
-    sem::Symbol *vtable(sem::RecordInfo *rec, const std::vector<std::pair<sem::RecordInfo *, long long>> &path);
-    void installVptrs(const Operand &addr, sem::RecordInfo *rec);
-    std::vector<Operand> saveVptrs(const Operand &addr, sem::RecordInfo *rec);
-    void restoreVptrs(const Operand &addr, sem::RecordInfo *rec, const std::vector<Operand> &saved);
-    void constructInto(const Operand &addr, sem::RecordInfo *rec, sem::Symbol *ctor,
-                       const std::vector<ASTNodePtr> &args);
-    void destroy(const Operand &addr, sem::RecordInfo *rec);
-    void destroySubobjects(const Operand &addr, sem::RecordInfo *rec);
+    void constructSubobjects(const Operand &addr, sem::RecordInfo *rec);
+    void constructInto(const Operand &addr, sem::RecordInfo *rec, const std::vector<ASTNodePtr> &args);
 
     /* ---- statements: each returns its S.next list ---- */
     List stmt(const ASTNodePtr &n);
@@ -161,7 +134,7 @@ class Generator {
     Operand callExpr(const ASTNodePtr &n, bool discard);
     Operand overloaded(const ASTNodePtr &n);
     Operand call(sem::Symbol *callee, const Operand &thisArg, const std::vector<ASTNodePtr> &args,
-                 const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch = false);
+                 const std::vector<Operand> &extraArgs, bool wantResult);
     bool isOverloaded(const ASTNodePtr &n) const;
     bool isLValueKind(const ASTNodePtr &n) const;
 
@@ -174,17 +147,8 @@ class Generator {
     Operand scaled(const Operand &index, long long width, const std::string &note = "");
     Operand convert(const Operand &v, const sem::TypePtr &to);
     Operand argumentFor(const sem::TypePtr &param, const ASTNodePtr &arg);
-    Operand converted(const ASTNodePtr &n, const sem::TypePtr &type);
-    void convertInto(const Operand &addr, const ASTNodePtr &n);
     Operand promoteVariadic(const Operand &v);
     Operand referenceTo(const ASTNodePtr &n, const sem::TypePtr &elem);
-    Operand copyOf(const ASTNodePtr &n, const sem::TypePtr &type, bool returned);
-    void destroyStatics();
-    Operand temporary(const Operand &t);
-    void keep(const Operand &t);
-    void destroyTemporaries(size_t from = 0);
-    bool isExisting(const ASTNodePtr &n) const;
-    Operand sliced(const ASTNodePtr &n, sem::RecordInfo *to);
     bool inMain() const { return fn && fn->sym && fn->sym->name == "main" && !fn->sym->ownerRecord; }
     sem::RecordInfo *currentClass() const;
 };
@@ -194,9 +158,6 @@ class Generator {
 bool baseOffset(const sem::RecordInfo *derived, const sem::RecordInfo *base, long long &offset);
 inline sem::TypePtr strip(const sem::TypePtr &t) { return sem::isReference(t) ? t->elem : t; }
 inline long long alignUp(long long v, long long a) { return a > 1 ? (v + a - 1) / a * a : v; }
-
-/* a class with a destructor, or with a base or member that has one */
-bool needsDestruction(const sem::TypePtr &t);
 
 } // namespace tac
 

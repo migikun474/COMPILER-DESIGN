@@ -9,11 +9,8 @@ class Dog {
 public:
     int age;
     Dog() { age = 0; }                                    // mangled: _ZN3DogC1Ev
-    Dog(int a) { age = a; }                               // mangled: _ZN3DogC1Ei
-    Dog(const Dog &o) { age = o.age; }                    // mangled: _ZN3DogC1ERKS_
-    ~Dog() { }                                            // mangled: _ZN3DogD1Ev
     void bark() { }                                       // mangled: _ZN3Dog4barkEv
-    int years() const { return age; }                     // mangled: _ZNK3Dog5yearsEv
+    int years() { return age; }                           // mangled: _ZN3Dog5yearsEv
     static int count(int n) { return n; }                 // mangled: _ZN3Dog5countEi
     Dog &operator=(const Dog &o) { age = o.age; return *this; } // mangled: _ZN3DogaSERKS_
     int operator[](int i) { return i; }                   // mangled: _ZN3DogixEi
@@ -23,10 +20,10 @@ public:
 
 class Cat {
 public:
-    Cat(struct Point p);
+    Cat();
     void meow(Cat *other, struct Point *where);
 };
-Cat::Cat(struct Point p) { }                              // mangled: _ZN3CatC1E5Point
+Cat::Cat() { }                                            // mangled: _ZN3CatC1Ev
 void Cat::meow(Cat *other, struct Point *where) { }       // mangled: _ZN3Cat4meowEPS_P5Point
 
 typedef unsigned int uint;
@@ -63,14 +60,14 @@ int over(double a) { return 0; }                          // mangled: _Z4overd
 int over(struct Point *p) { return 0; }                   // mangled: _Z4overP5Point
 
 int main() {                                              // mangled: main
-    Dog d(3);
+    Dog d;
     Dog z;
     Dog e = d;
     e = d;
     d.bark();
     struct Point p;
     p.x = 1; p.y = 2;
-    Cat c(p);
+    Cat c;
     c.meow(&c, &p);
     return over(1) + over(2.0) + Dog::count(e[1]) + d(1, 2) + (d == e);
 }

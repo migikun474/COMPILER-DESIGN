@@ -111,23 +111,27 @@ _Z4manyi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -184
-        sw    $s0, -164($fp)
-        sw    $s1, -168($fp)
+        sw    $s0, -180($fp)
+        sw    $s1, -184($fp)
         sw    $s2, -156($fp)
         sw    $s3, -160($fp)
-        sw    $s4, -172($fp)
-        sw    $s5, -176($fp)
-        sw    $s6, -180($fp)
-        sw    $s7, -184($fp)
+        sw    $s4, -164($fp)
+        sw    $s5, -168($fp)
+        sw    $s6, -172($fp)
+        sw    $s7, -176($fp)
         lw    $s0, 8($fp)
         # a = x int+ 1
-        addiu $s4, $s0, 1
+        addiu $t0, $s0, 1
+        sw    $t0, -4($fp)
         # b = x int+ 2
-        addiu $s5, $s0, 2
+        addiu $t0, $s0, 2
+        sw    $t0, -8($fp)
         # c = x int+ 3
-        addiu $s6, $s0, 3
+        addiu $t0, $s0, 3
+        sw    $t0, -12($fp)
         # d = x int+ 4
-        addiu $s7, $s0, 4
+        addiu $t0, $s0, 4
+        sw    $t0, -16($fp)
         # e = x int+ 5
         addiu $t0, $s0, 5
         sw    $t0, -20($fp)
@@ -156,63 +160,76 @@ _Z4manyi:
         li    $s1, 0
         # t = 0
         li    $s0, 0
+L1_14:
+        # if t int>= 3 goto 30
+        li    $t1, 3
+        bge   $s0, $t1, L1_30
         # t13 = a int* b
-        mul   $s2, $s4, $s5
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        mul   $s2, $t0, $t1
         # t14 = c int* d
-        mul   $s3, $s6, $s7
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        mul   $s3, $t0, $t1
         # t15 = t13 int+ t14
-        addu  $t0, $s2, $s3
-        sw    $t0, -68($fp)
+        addu  $s4, $s2, $s3
         # t16 = e int* f
         lw    $t0, -20($fp)
         lw    $t1, -24($fp)
-        mul   $s2, $t0, $t1
+        mul   $s5, $t0, $t1
         # t17 = t15 int+ t16
-        lw    $t0, -68($fp)
-        addu  $s3, $t0, $s2
+        addu  $s6, $s4, $s5
         # t18 = g int* h
         lw    $t0, -28($fp)
         lw    $t1, -32($fp)
-        mul   $s2, $t0, $t1
+        mul   $s7, $t0, $t1
         # t19 = t17 int+ t18
-        addu  $t0, $s3, $s2
+        addu  $t0, $s6, $s7
         sw    $t0, -84($fp)
         # t20 = i int* j
         lw    $t0, -36($fp)
         lw    $t1, -40($fp)
-        mul   $s2, $t0, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -88($fp)
         # t21 = t19 int+ t20
         lw    $t0, -84($fp)
-        addu  $t0, $t0, $s2
+        lw    $t1, -88($fp)
+        addu  $t0, $t0, $t1
         sw    $t0, -92($fp)
         # t22 = k int* l
         lw    $t0, -44($fp)
         lw    $t1, -48($fp)
-        mul   $s2, $t0, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -96($fp)
         # t23 = t21 int+ t22
         lw    $t0, -92($fp)
-        addu  $s3, $t0, $s2
-L1_25:
-        # if t int>= 3 goto 30
-        li    $t1, 3
-        bge   $s0, $t1, L1_30
+        lw    $t1, -96($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -100($fp)
         # t24 = t23 int+ t
-        addu  $s2, $s3, $s0
+        addu  $t0, $t0, $s0
+        sw    $t0, -104($fp)
         # s = s int+ t24
-        addu  $s1, $s1, $s2
+        move  $t1, $t0
+        addu  $s1, $s1, $t1
         # t = t int+ 1
         addiu $s0, $s0, 1
-        # goto 25
-        j     L1_25
+        # goto 14
+        j     L1_14
 L1_30:
         # t27 = s int+ a
-        addu  $s0, $s1, $s4
+        lw    $t1, -4($fp)
+        addu  $s0, $s1, $t1
         # t28 = t27 int+ b
-        addu  $s1, $s0, $s5
+        lw    $t1, -8($fp)
+        addu  $s1, $s0, $t1
         # t29 = t28 int+ c
-        addu  $s0, $s1, $s6
+        lw    $t1, -12($fp)
+        addu  $s0, $s1, $t1
         # t30 = t29 int+ d
-        addu  $s1, $s0, $s7
+        lw    $t1, -16($fp)
+        addu  $s1, $s0, $t1
         # t31 = t30 int+ e
         lw    $t1, -20($fp)
         addu  $s0, $s1, $t1
@@ -241,14 +258,14 @@ L1_30:
         move  $v0, $s1
         j     _Z4manyi_exit
 _Z4manyi_exit:
-        lw    $s0, -164($fp)
-        lw    $s1, -168($fp)
+        lw    $s0, -180($fp)
+        lw    $s1, -184($fp)
         lw    $s2, -156($fp)
         lw    $s3, -160($fp)
-        lw    $s4, -172($fp)
-        lw    $s5, -176($fp)
-        lw    $s6, -180($fp)
-        lw    $s7, -184($fp)
+        lw    $s4, -164($fp)
+        lw    $s5, -168($fp)
+        lw    $s6, -172($fp)
+        lw    $s7, -176($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
