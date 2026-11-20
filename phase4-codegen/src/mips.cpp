@@ -590,20 +590,42 @@ struct Emitter {
         size_t n = std::min(static_cast<size_t>(q.nargs), params.size());
         std::vector<const Quad *> args(params.end() - static_cast<long>(n), params.end());
         params.resize(params.size() - n);
-        std::vector<int> offsets;
+        std::vector<int> offsets, sizes;
         int size = 0;
         for (const Quad *p : args) {
             auto s = slot(p->a.type);
             size = roundUp(size, s.second);
             offsets.push_back(size);
+            sizes.push_back(s.first);
             size += s.first;
         }
+        /* a call to a user function passes the first 16 bytes in $a0-$a3 as
+           well (D39, MIPS o32 style) and always reserves them as the callee's
+           home area; the run-time library keeps the all-stack convention */
+        bool regs = q.callee != nullptr;
         size = roundUp(size, 8);
+        if (regs) size = std::max(size, 16);
         if (size) ins("addiu $sp, $sp, -" + std::to_string(size));
+        std::vector<int> inReg(args.size(), -1);
         for (size_t i = 0; i < args.size(); ++i) {
             Cls c = classOf(args[i]->a.type);
             bool narrow = c == Cls::Bool || c == Cls::Char || c == Cls::UChar || c == Cls::Short || c == Cls::UShort;
+            if (regs && offsets[i] < 16 && (narrow || c == Cls::Int || c == Cls::UInt || c == Cls::Ptr)) {
+                inReg[i] = offsets[i] / 4; /* an integer word: straight into its $a register, never stored */
+                continue;
+            }
             storeValueAt(args[i]->a, narrow ? Cls::Int : c, std::to_string(offsets[i]) + "($sp)"); /* a full word per small argument */
+        }
+        if (regs) {
+            for (int k = 0; k < 4; ++k) /* the other words of the first 16 bytes: stored above, loaded too */
+                for (size_t i = 0; i < args.size(); ++i)
+                    if (inReg[i] < 0 && offsets[i] <= 4 * k && 4 * k < offsets[i] + sizes[i])
+                        ins("lw    $a" + std::to_string(k) + ", " + std::to_string(4 * k) + "($sp)");
+            for (size_t i = 0; i < args.size(); ++i) {
+                if (inReg[i] < 0) continue;
+                std::string a = "$a" + std::to_string(inReg[i]), r = use(args[i]->a, a);
+                if (r != a) ins("move  " + a + ", " + r);
+            }
         }
         ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
         if (size) ins("addiu $sp, $sp, " + std::to_string(size));
@@ -829,9 +851,29 @@ struct Emitter {
             lab(ok);
         }
         for (const auto &r : saved) ins(saveOp(r.first, true) + r.first + ", " + std::to_string(r.second) + "($fp)");
+        /* the first 16 bytes of arguments arrive in $a0-$a3 (D39): an integer
+           parameter with a register takes it from there; every other word
+           goes to its home slot, where the rest of the code reads it */
+        std::set<const sem::Symbol *> moved;
+        int words = f.sym->type && f.sym->type->variadic ? 4 : std::min(4, (varargStart + 3) / 4);
+        for (int k = 0; k < words; ++k) {
+            std::string a = "$a" + std::to_string(k);
+            const sem::Symbol *taker = nullptr;
+            for (const sem::Symbol *p : incoming) {
+                auto h = home.find(Key(p, 0));
+                Cls c = classOf(p->type);
+                if (h != home.end() && varOff[p] == 8 + 4 * k && !isFloatCls(c) && !isWide(c)) taker = p;
+            }
+            if (taker) {
+                ins("move  " + home[Key(taker, 0)] + ", " + a);
+                moved.insert(taker);
+            } else {
+                ins("sw    " + a + ", " + std::to_string(8 + 4 * k) + "($fp)");
+            }
+        }
         for (const sem::Symbol *p : incoming) { /* a parameter that lives in a register is fetched once */
             auto h = home.find(Key(p, 0));
-            if (h == home.end()) continue;
+            if (h == home.end() || moved.count(p)) continue;
             Cls c = homeClass[Key(p, 0)];
             ins(std::string(c == Cls::Double ? "l.d   " : c == Cls::Float ? "l.s   " : "lw    ") + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
             if (isWide(c)) ins("lw    " + homeHi[Key(p, 0)] + ", " + std::to_string(varOff[p] + 4) + "($fp)");

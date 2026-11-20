@@ -48,6 +48,8 @@ M0_0:
         sw    $s5, -12($fp)
         sw    $s6, -20($fp)
         sw    $s7, -24($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # letters = 0
         li    $s1, 0
         # i = 1

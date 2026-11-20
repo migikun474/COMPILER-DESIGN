@@ -70,8 +70,8 @@ _Z3setPii:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
+        move  $s0, $a0
+        move  $s1, $a1
         # *p = v
         sw    $s1, 0($s0)
         # return
@@ -93,7 +93,7 @@ _Z5twiceRi:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # t1 = *r
         lw    $s0, 0($s2)
         # t2 = t1 int<< 1
@@ -160,8 +160,8 @@ _Z6commonii:
         sw    $s5, -16($fp)
         sw    $s6, -20($fp)
         sw    $s7, -24($fp)
-        lw    $s0, 8($fp)
-        lw    $s3, 12($fp)
+        move  $s0, $a0
+        move  $s3, $a1
         # t1 = x int* y
         mul   $s2, $s0, $s3
         # t2 = t1 int+ 3
@@ -271,12 +271,11 @@ M5_0:
         # param t4
         # param 1
         # call set(int *, int), 2
-        addiu $sp, $sp, -8
-        sw    $s3, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s3
+        li    $a1, 1
         jal   _Z3setPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t5 = x int+ y
         lw    $t0, -4($fp)
         lw    $t1, -8($fp)
@@ -299,10 +298,10 @@ M5_0:
         move  $s5, $s4
         # param t1
         # call twice(int &), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z5twiceRi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # arr[0] = 1
         li    $t0, 1
         sw    $t0, -20($fp)
@@ -399,7 +398,9 @@ M6_0:
         # b = t1
         move  $s1, $s0
         # call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         # t3 = g int+ 1
         lw    $t0, g_g
         addiu $s1, $t0, 1
@@ -423,7 +424,9 @@ M6_0:
         # t9 = t8 int+ 6
         addiu $s0, $s1, 6
         # t10 = call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t11 = t9 int+ t10
         addu  $s2, $s0, $s1
@@ -451,7 +454,7 @@ _Z4flowi:
         sw    $s2, -12($fp)
         sw    $s3, -4($fp)
         sw    $s4, -20($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # s = 0
         li    $s0, 0
         # i = 0
@@ -543,8 +546,8 @@ M8_1:
         sw    $s0, -4($fp)
         sw    $s1, -12($fp)
         sw    $s2, -8($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
+        move  $s2, $a0
+        move  $s1, $a1
         # if b int!= 0 goto 3
         bne   $s1, $zero, L8_3
         # t1 = 0
@@ -589,7 +592,9 @@ M9_0:
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
         # t1 = call fold(), 0
+        addiu $sp, $sp, -16
         jal   _Z4foldv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t1
@@ -603,13 +608,11 @@ M9_0:
         # param 3
         # param 4
         # t2 = call common(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
+        li    $a1, 4
         jal   _Z6commonii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t2
@@ -621,7 +624,9 @@ M9_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t3 = call aliasing(), 0
+        addiu $sp, $sp, -16
         jal   _Z8aliasingv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t3
@@ -633,7 +638,9 @@ M9_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t4 = call globals(), 0
+        addiu $sp, $sp, -16
         jal   _Z7globalsv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # total = t4
         move  $s1, $s0
@@ -651,27 +658,24 @@ M9_0:
         addiu $sp, $sp, 16
         # param 3
         # t5 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 4
         # t6 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 5
         # t7 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t5
@@ -691,23 +695,20 @@ M9_0:
         # param 1
         # param 0
         # t8 = call divide(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
+        move  $a1, $zero
         jal   _Z6divideii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 9
         # param 3
         # t9 = call divide(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
+        li    $a1, 3
         jal   _Z6divideii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t8

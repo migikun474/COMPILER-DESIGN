@@ -69,7 +69,7 @@ M0_0:
         sw    $s2, -8($fp)
         sw    $s3, -12($fp)
         sw    $s4, -20($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # t1 = n int<< 1
         sll   $s1, $s0, 1
         # t2 = n int+ 7
@@ -86,10 +86,10 @@ L0_5:
         addiu $s3, $s0, -1
         # param t4
         # t5 = call depth(int), 1
-        addiu $sp, $sp, -8
-        sw    $s3, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s3
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t6 = t1 int+ t2
         addu  $s3, $s1, $s2
@@ -126,7 +126,7 @@ _Z4manyi:
         sw    $s5, -88($fp)
         sw    $s6, -92($fp)
         sw    $s7, -96($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # a = x int+ 1
         addiu $t0, $s0, 1
         sw    $t0, -4($fp)
@@ -346,9 +346,9 @@ _Z9argumentsiii:
         sw    $s5, -24($fp)
         sw    $s6, -28($fp)
         sw    $s7, -32($fp)
-        lw    $s6, 8($fp)
-        lw    $s2, 12($fp)
-        lw    $s7, 16($fp)
+        move  $s6, $a0
+        move  $s2, $a1
+        move  $s7, $a2
         # t1 = a int+ 1
         addiu $s0, $s6, 1
         # t13 = b int<< 1
@@ -416,6 +416,7 @@ _Z10charactersPKc:
         sw    $s5, -76($fp)
         sw    $s6, -84($fp)
         sw    $s7, -88($fp)
+        sw    $a0, 8($fp)
         # c = 0
         li    $s6, 0
         # u = 0
@@ -587,7 +588,7 @@ _Z7numbersi:
         s.d   $f30, -48($fp)
         sw    $s0, -56($fp)
         sw    $s1, -52($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # total = 0.0
         l.d   $f24, fc0
         # small = 0.5
@@ -691,7 +692,7 @@ _Z5mixedi:
         sw    $s5, -8($fp)
         sw    $s6, -20($fp)
         sw    $s7, -24($fp)
-        lw    $s7, 8($fp)
+        move  $s7, $a0
         # before = n int* 3
         li    $t1, 3
         mul   $s3, $s7, $t1
@@ -794,19 +795,17 @@ M6_0:
         sw    $s4, -36($fp)
         # param 5
         # t1 = call depth(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 3
         # t2 = call many(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4manyi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t1
@@ -824,12 +823,9 @@ M6_0:
         # param 3
         # t3 = call arguments(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 1
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
-        li    $t0, 3
-        sw    $t0, 8($sp)
+        li    $a0, 1
+        li    $a1, 2
+        li    $a2, 3
         jal   _Z9argumentsiii
         addiu $sp, $sp, 16
         move  $s0, $v0
@@ -838,11 +834,9 @@ M6_0:
         # param 9
         # t4 = call arguments(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 4
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
-        li    $t0, 9
-        sw    $t0, 8($sp)
+        li    $a0, 4
+        move  $a1, $zero
+        li    $a2, 9
         jal   _Z9argumentsiii
         addiu $sp, $sp, 16
         move  $s1, $v0
@@ -859,19 +853,17 @@ M6_0:
         addiu $sp, $sp, 16
         # param "register allocation"
         # t5 = call characters(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str1
         jal   _Z10charactersPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "zzzzzzzzzzzzzzzzzzzz"
         # t6 = call characters(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str2
         jal   _Z10charactersPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t5
@@ -886,26 +878,24 @@ M6_0:
         addiu $sp, $sp, 16
         # param 0
         # t7 = call numbers(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z7numbersi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         mov.d $f20, $f0
         # param 3
         # t8 = call numbers(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z7numbersi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         mov.d $f22, $f0
         # param 40
         # t9 = call numbers(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 40
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 40
         jal   _Z7numbersi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         mov.d $f24, $f0
         # param "%.4f %.4f %.4f\n"
         # param t7
@@ -997,11 +987,10 @@ L6_69:
         addu  $s1, $s0, $s3
         # param 9
         # t12 = call mixed(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
         jal   _Z5mixedi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d %d %d\n"
         # param t10

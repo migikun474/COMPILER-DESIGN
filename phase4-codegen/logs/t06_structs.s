@@ -54,6 +54,8 @@ _Z4makeii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # p[0] = x
         addiu $t8, $fp, -8
         li    $t9, 0
@@ -83,6 +85,10 @@ _Z4area4Rect:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = r[8]
         addiu $t8, $fp, 8
         li    $t9, 8
@@ -151,6 +157,8 @@ _Z4moveP5Pointi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *p
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -180,6 +188,10 @@ _Z3add7ComplexS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -64
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = a[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -243,6 +255,7 @@ _Z6lengthP4Node:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
         # n = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -359,6 +372,10 @@ M5_0:
         addiu $a1, $fp, -20
         li    $a2, 20
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z4area4Rect
         addiu $sp, $sp, 24
         sw    $v0, -188($fp)
@@ -450,13 +467,11 @@ L5_30:
         # param i
         # param t11
         # t12 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -68($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -220($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -68($fp)
+        lw    $a1, -220($fp)
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -228
         li    $a2, 8
@@ -491,13 +506,11 @@ L5_39:
         # param t15
         # param 10
         # call move(struct Point *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -240($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 10
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -240($fp)
+        li    $a1, 10
         jal   _Z4moveP5Pointi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t16 = &pts
         addiu $t0, $fp, -64
         sw    $t0, -244($fp)
@@ -550,13 +563,11 @@ L5_39:
         # param 3
         # param 4
         # t25 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
+        li    $a1, 4
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -284
         li    $a2, 8
@@ -624,13 +635,11 @@ L5_39:
         # param 7
         # param 7
         # t33 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 7
-        sw    $t0, 0($sp)
-        li    $t0, 7
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 7
+        li    $a1, 7
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -320
         li    $a2, 8
@@ -712,6 +721,10 @@ L5_39:
         addiu $a1, $fp, -112
         li    $a2, 16
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z3add7ComplexS_
         addiu $sp, $sp, 32
         move  $a1, $v0
@@ -795,11 +808,10 @@ L5_39:
         sw    $t0, -380($fp)
         # param t43
         # t44 = call length(struct Node *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -380($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -380($fp)
         jal   _Z6lengthP4Node
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -384($fp)
         # t45 = n1[4]
         addiu $t8, $fp, -136

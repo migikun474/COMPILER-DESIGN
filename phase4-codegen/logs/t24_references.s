@@ -58,6 +58,10 @@ _Z7depositR7Accountd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = a ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
@@ -97,6 +101,7 @@ _Z4peekRK7Account:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
         # t1 = a ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
@@ -123,6 +128,8 @@ _Z6richerR7AccountS0_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t2 = a ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
@@ -176,6 +183,10 @@ _Z6minmaxPKiiRiS1_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -72
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = *values
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -314,6 +325,8 @@ _Z7advanceRPii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *p
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -348,6 +361,8 @@ _Z7elementPii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = i int* 4
         lw    $t0, 12($fp)
         li    $t1, 4
@@ -375,6 +390,8 @@ _Z5scaleRKiRKd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -40
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *v
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -415,6 +432,9 @@ _Z6rotateRiS_S_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = *a
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -508,12 +528,9 @@ M8_0:
         # param t6
         # call rotate(int &, int &, int &), 3
         addiu $sp, $sp, -16
-        lw    $t0, -132($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -136($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -140($fp)
-        sw    $t0, 8($sp)
+        lw    $a0, -132($fp)
+        lw    $a1, -136($fp)
+        lw    $a2, -140($fp)
         jal   _Z6rotateRiS_S_
         addiu $sp, $sp, 16
         # t7 = *rx
@@ -588,14 +605,10 @@ M8_0:
         # param t11
         # call minmax(const int *, int, int &, int &), 4
         addiu $sp, $sp, -16
-        lw    $t0, -152($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
-        lw    $t0, -156($fp)
-        sw    $t0, 8($sp)
-        lw    $t0, -160($fp)
-        sw    $t0, 12($sp)
+        lw    $a0, -152($fp)
+        li    $a1, 5
+        lw    $a2, -156($fp)
+        lw    $a3, -160($fp)
         jal   _Z6minmaxPKiiRiS1_
         addiu $sp, $sp, 16
         # t12 = &data
@@ -604,13 +617,11 @@ M8_0:
         # param t12
         # param 3
         # t13 = call element(int *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -164($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -164($fp)
+        li    $a1, 3
         jal   _Z7elementPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -168($fp)
         # *t13 = 99
         lw    $t8, -168($fp)
@@ -622,13 +633,11 @@ M8_0:
         # param t14
         # param 0
         # t15 = call element(int *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -172($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 0
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -172($fp)
+        li    $a1, 0
         jal   _Z7elementPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -176($fp)
         # t16 = *t15
         lw    $t8, -176($fp)
@@ -655,13 +664,11 @@ M8_0:
         # param t19
         # param 2
         # call advance(int *&, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -192($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -192($fp)
+        li    $a1, 2
         jal   _Z7advanceRPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t20 = *p
         lw    $t8, -52($fp)
         lw    $t0, 0($t8)
@@ -746,10 +753,11 @@ M8_0:
         # param 2e+02
         # call deposit(struct Account &, double), 2
         addiu $sp, $sp, -16
-        lw    $t0, -216($fp)
-        sw    $t0, 0($sp)
         l.d   $f0, fc2
         s.d   $f0, 8($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        lw    $a0, -216($fp)
         jal   _Z7depositR7Accountd
         addiu $sp, $sp, 16
         # t26 = &a
@@ -761,13 +769,11 @@ M8_0:
         # param t26
         # param t27
         # t28 = call richer(struct Account &, struct Account &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -220($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -224($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -220($fp)
+        lw    $a1, -224($fp)
         jal   _Z6richerR7AccountS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -228($fp)
         # t29 = t28 ptr+ 8
         lw    $t0, -228($fp)
@@ -801,13 +807,11 @@ M8_0:
         # param t33
         # param t34
         # t35 = call richer(struct Account &, struct Account &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -256($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -260($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -256($fp)
+        lw    $a1, -260($fp)
         jal   _Z6richerR7AccountS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -264($fp)
         # best = t35
         lw    $t0, -264($fp)
@@ -830,11 +834,10 @@ M8_0:
         sw    $t0, -284($fp)
         # param best
         # t39 = call peek(const struct Account &), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -92($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -92($fp)
         jal   _Z4peekRK7Account
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -296($fp)
         # param "%.1f %.1f %d %.1f\n"
         # param t36
@@ -873,13 +876,11 @@ M8_0:
         # param t40
         # param t41
         # t42 = call scale(const int &, const double &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -300($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -304($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -300($fp)
+        lw    $a1, -304($fp)
         jal   _Z5scaleRKiRKd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -308($fp)
         # t44 = shorttoint small
         lh    $t0, -106($fp)
@@ -899,13 +900,11 @@ M8_0:
         # param t45
         # param t47
         # t48 = call scale(const int &, const double &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -320($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -332($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -320($fp)
+        lw    $a1, -332($fp)
         jal   _Z5scaleRKiRKd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -336($fp)
         # t50 = 3 int+ 4
         li    $t0, 3
@@ -927,13 +926,11 @@ M8_0:
         # param t51
         # param t53
         # t54 = call scale(const int &, const double &), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -348($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -364($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -348($fp)
+        lw    $a1, -364($fp)
         jal   _Z5scaleRKiRKd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -368($fp)
         # param "%d %d %d\n"
         # param t42

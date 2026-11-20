@@ -67,7 +67,7 @@ _Z8branchesi:
         sw    $s0, -8($fp)
         sw    $s1, -12($fp)
         sw    $s2, -4($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # if c int== 0 goto 3
         beq   $s2, $zero, L1_3
         # y = 6
@@ -112,7 +112,7 @@ _Z4loopi:
         sw    $s1, -8($fp)
         sw    $s2, -16($fp)
         sw    $s3, -12($fp)
-        lw    $s3, 8($fp)
+        move  $s3, $a0
         # sum = 0
         li    $s1, 0
         # last = 0
@@ -163,7 +163,7 @@ M3_0:
         sw    $s0, -8($fp)
         sw    $s1, -4($fp)
         sw    $s2, -12($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # b = a
         move  $s2, $s0
         # if a int<= 3 goto 3
@@ -175,9 +175,13 @@ L3_3:
         # t1 = b int+ a
         addu  $s1, $s2, $s0
         # call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         # t3 = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t4 = t1 int+ 8
         addiu $s2, $s1, 8
@@ -249,7 +253,7 @@ _Z5jumpsi:
         sw    $s1, -8($fp)
         sw    $s2, -4($fp)
         sw    $s3, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # k = 0
         li    $s3, 0
         # t = 9
@@ -323,18 +327,17 @@ M6_0:
         sw    $s3, -16($fp)
         # param 0
         # t1 = call branches(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z8branchesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 1
         # t2 = call branches(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z8branchesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t1
@@ -349,26 +352,24 @@ M6_0:
         addiu $sp, $sp, 16
         # param 0
         # t3 = call loop(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 1
         # t4 = call loop(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 4
         # t5 = call loop(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t3
@@ -385,19 +386,17 @@ M6_0:
         addiu $sp, $sp, 16
         # param 1
         # t6 = call rewritten(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z9rewritteni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 9
         # t7 = call rewritten(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
         jal   _Z9rewritteni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d %d\n"
         # param t6
@@ -414,7 +413,9 @@ M6_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t8 = call viaPointer(), 0
+        addiu $sp, $sp, -16
         jal   _Z10viaPointerv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t8
@@ -427,35 +428,31 @@ M6_0:
         addiu $sp, $sp, 8
         # param 1
         # t9 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # t10 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 3
         # t11 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 5
         # t12 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d\n"
         # param t9

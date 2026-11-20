@@ -131,7 +131,7 @@ _Z4makei:
         sw    $s2, -64($fp)
         sw    $s3, -68($fp)
         sw    $s4, -76($fp)
-        lw    $s4, 8($fp)
+        move  $s4, $a0
         # t1 = inttodouble k
         move  $t0, $s4
         mtc1  $t0, $f0
@@ -245,6 +245,10 @@ M1_0:
         sw    $s0, -20($fp)
         sw    $s1, -44($fp)
         sw    $s2, -24($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, count
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -359,9 +363,11 @@ M2_0:
         sw    $s4, -24($fp)
         sw    $s5, -16($fp)
         sw    $s6, -28($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        move  $s3, $a2
         lw    $s5, 8($fp)
         lw    $s6, 12($fp)
-        lw    $s3, 16($fp)
         # if n int!= 0 goto 3
         bne   $s3, $zero, L2_3
         # t1 = 1
@@ -378,7 +384,9 @@ L2_3:
         addiu $sp, $sp, -16
         sw    $s5, 0($sp)
         sw    $s6, 4($sp)
-        sw    $s2, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        move  $a2, $s2
         jal   _Z5powerxi
         addiu $sp, $sp, 16
         move  $s3, $v0
@@ -575,8 +583,9 @@ M3_1:
         li    $t1, 0
         sw    $t0, 0($sp)
         sw    $t1, 4($sp)
-        li    $t0, 30
-        sw    $t0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        li    $a2, 30
         jal   _Z5powerxi
         addiu $sp, $sp, 16
         move  $s0, $v0
@@ -773,11 +782,10 @@ M3_1:
         addiu $sp, $sp, 32
         # param 2
         # s = call make(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z4makei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -40
         li    $a2, 40
@@ -899,8 +907,6 @@ M3_0:
         # param "tail"
         # t55 = call average(int, ...), 6
         addiu $sp, $sp, -48
-        li    $t0, 3
-        sw    $t0, 0($sp)
         l.d   $f0, fc19
         s.d   $f0, 8($sp)
         l.d   $f0, fc12
@@ -913,6 +919,9 @@ M3_0:
         sw    $t1, 36($sp)
         la    $t0, str20
         sw    $t0, 40($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        li    $a0, 3
         jal   _Z7averageiz
         addiu $sp, $sp, 48
         mov.d $f20, $f0

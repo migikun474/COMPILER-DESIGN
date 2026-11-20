@@ -67,7 +67,7 @@ M0_0:
         sw    $s1, -16($fp)
         sw    $s2, -8($fp)
         sw    $s3, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # if n int> 1 goto 3
         li    $t1, 1
         bgt   $s1, $t1, L0_3
@@ -80,10 +80,10 @@ L0_3:
         addiu $s2, $s1, -1
         # param t2
         # t3 = call fact(int), 1
-        addiu $sp, $sp, -8
-        sw    $s2, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s2
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # t1 = n int* t3
         mul   $s0, $s1, $s3
@@ -117,7 +117,7 @@ M1_0:
         sw    $s0, -12($fp)
         sw    $s1, -4($fp)
         sw    $s2, -8($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # if n int>= 2 goto 2
         li    $t1, 2
         bge   $s0, $t1, L1_2
@@ -129,19 +129,19 @@ L1_2:
         addiu $s1, $s0, -1
         # param t1
         # t2 = call fib(int), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _Z3fibi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # t3 = n int- 2
         addiu $s1, $s0, -2
         # param t3
         # t4 = call fib(int), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _Z3fibi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t5 = t2 int+ t4
         addu  $s1, $s2, $s0
@@ -167,6 +167,10 @@ _Z3sumiz:
         sw    $s0, -12($fp)
         sw    $s1, -16($fp)
         sw    $s2, -8($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -225,6 +229,10 @@ _Z3mixiz:
         s.d   $f22, -32($fp)
         s.d   $f24, -40($fp)
         sw    $s0, -20($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -284,19 +292,17 @@ M4_2:
         sw    $s4, -32($fp)
         # param 6
         # t1 = call fact(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 6
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 6
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param 10
         # t2 = call fib(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 10
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 10
         jal   _Z3fibi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s4, $v0
         # t30 = 84
         li    $s2, 84
@@ -454,35 +460,32 @@ L4_50:
         # param 30
         # t23 = call sum(int, ...), 4
         addiu $sp, $sp, -16
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 10
-        sw    $t0, 4($sp)
-        li    $t0, 20
-        sw    $t0, 8($sp)
-        li    $t0, 30
-        sw    $t0, 12($sp)
+        li    $a0, 3
+        li    $a1, 10
+        li    $a2, 20
+        li    $a3, 30
         jal   _Z3sumiz
         addiu $sp, $sp, 16
         move  $s0, $v0
         # param 0
         # t24 = call sum(int, ...), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z3sumiz
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 2
         # param 1.5
         # param 4
         # t25 = call mix(int, ...), 3
         addiu $sp, $sp, -24
-        li    $t0, 2
-        sw    $t0, 0($sp)
         l.d   $f0, fc2
         s.d   $f0, 8($sp)
         li    $t0, 4
         sw    $t0, 16($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        li    $a0, 2
         jal   _Z3mixiz
         addiu $sp, $sp, 24
         mov.d $f20, $f0

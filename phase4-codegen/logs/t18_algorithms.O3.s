@@ -51,6 +51,8 @@ _Z6bubblePii:
         sw    $s5, -36($fp)
         sw    $s6, -44($fp)
         sw    $s7, -48($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -200,7 +202,9 @@ M1_0:
         sw    $s5, -52($fp)
         sw    $s6, -36($fp)
         sw    $s7, -44($fp)
-        lw    $s4, 8($fp)
+        move  $s4, $a0
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
 L1_0:
         # if lo int< hi goto 2
         lw    $t0, 12($fp)
@@ -314,10 +318,9 @@ L1_40:
         # param j
         # call quick(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s4, 0($sp)
-        lw    $t0, 12($fp)
-        sw    $t0, 4($sp)
-        sw    $s1, 8($sp)
+        move  $a0, $s4
+        lw    $a1, 12($fp)
+        move  $a2, $s1
         jal   _Z5quickPiii
         addiu $sp, $sp, 16
         # lo = i
@@ -354,7 +357,9 @@ _Z6searchPiii:
         sw    $s5, -12($fp)
         sw    $s6, -20($fp)
         sw    $s7, -28($fp)
-        lw    $s0, 12($fp)
+        sw    $a0, 8($fp)
+        move  $s0, $a1
+        sw    $a2, 16($fp)
         # lo = 0
         li    $s1, 0
         # hi = n int- 1
@@ -435,10 +440,10 @@ M3_0:
         sw    $s3, -24($fp)
         sw    $s4, -8($fp)
         sw    $s5, -20($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
-        lw    $s5, 16($fp)
-        lw    $s3, 20($fp)
+        move  $s1, $a0
+        move  $s2, $a1
+        move  $s5, $a2
+        move  $s3, $a3
 L3_0:
         # if n int!= 0 goto 2
         bne   $s1, $zero, L3_2
@@ -453,10 +458,10 @@ L3_2:
         # param to
         # call hanoi(int, int, int, int), 4
         addiu $sp, $sp, -16
-        sw    $s0, 0($sp)
-        sw    $s2, 4($sp)
-        sw    $s3, 8($sp)
-        sw    $s5, 12($sp)
+        move  $a0, $s0
+        move  $a1, $s2
+        move  $a2, $s3
+        move  $a3, $s5
         jal   _Z5hanoiiiii
         addiu $sp, $sp, 16
         # moves = moves int+ 1
@@ -504,8 +509,8 @@ M4_0:
         sw    $s3, -8($fp)
         sw    $s4, -12($fp)
         sw    $s5, -16($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
+        move  $s0, $a0
+        move  $s1, $a1
 L4_0:
         # if m int!= 0 goto 3
         bne   $s0, $zero, L4_3
@@ -531,11 +536,11 @@ L4_7:
         # param m
         # param t5
         # t6 = call ackermann(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s4, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s4
         jal   _Z9ackermannii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s5, $v0
         # m = t4
         move  $s0, $s3
@@ -570,6 +575,9 @@ _Z8multiplyPA3_iPA2_iS2_:
         sw    $s5, -68($fp)
         sw    $s6, -80($fp)
         sw    $s7, -84($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # i = 0
         li    $s3, 0
 L5_1:
@@ -773,7 +781,7 @@ _Z6primesi:
         sw    $s2, -120($fp)
         sw    $s3, -124($fp)
         sw    $s4, -108($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # count = 0
         li    $s3, 0
         # i.34 = 0
@@ -925,12 +933,11 @@ M7_0:
         # param t3
         # param 8
         # call bubble(int *, int), 2
-        addiu $sp, $sp, -8
-        sw    $s5, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s5
+        li    $a1, 8
         jal   _Z6bubblePii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t4 = &b
         addiu $s3, $fp, -64
         # param t4
@@ -938,10 +945,9 @@ M7_0:
         # param 7
         # call quick(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s3, 0($sp)
-        sw    $zero, 4($sp)
-        li    $t0, 7
-        sw    $t0, 8($sp)
+        move  $a0, $s3
+        move  $a1, $zero
+        li    $a2, 7
         jal   _Z5quickPiii
         addiu $sp, $sp, 16
         # i.44 = 0
@@ -1048,11 +1054,9 @@ L7_59:
         # param 25
         # t12 = call search(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s5, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, 25
-        sw    $t0, 8($sp)
+        move  $a0, $s5
+        li    $a1, 8
+        li    $a2, 25
         jal   _Z6searchPiii
         addiu $sp, $sp, 16
         move  $s0, $v0
@@ -1061,11 +1065,9 @@ L7_59:
         # param 26
         # t14 = call search(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s5, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, 26
-        sw    $t0, 8($sp)
+        move  $a0, $s5
+        li    $a1, 8
+        li    $a2, 26
         jal   _Z6searchPiii
         addiu $sp, $sp, 16
         move  $s1, $v0
@@ -1074,11 +1076,9 @@ L7_59:
         # param -7
         # t17 = call search(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s3, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, -7
-        sw    $t0, 8($sp)
+        move  $a0, $s3
+        li    $a1, 8
+        li    $a2, -7
         jal   _Z6searchPiii
         addiu $sp, $sp, 16
         move  $s2, $v0
@@ -1101,26 +1101,20 @@ L7_59:
         # param 2
         # call hanoi(int, int, int, int), 4
         addiu $sp, $sp, -16
-        li    $t0, 6
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
-        li    $t0, 3
-        sw    $t0, 8($sp)
-        li    $t0, 2
-        sw    $t0, 12($sp)
+        li    $a0, 6
+        li    $a1, 1
+        li    $a2, 3
+        li    $a3, 2
         jal   _Z5hanoiiiii
         addiu $sp, $sp, 16
         # param 2
         # param 3
         # t18 = call ackermann(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 3
         jal   _Z9ackermannii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s6, $v0
         # t32 = 27
         li    $s0, 27
@@ -1243,9 +1237,9 @@ L7_105:
         # param t22
         # call multiply(int (*)[3], int (*)[2], int (*)[2]), 3
         addiu $sp, $sp, -16
-        sw    $s0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s2, 8($sp)
+        move  $a0, $s0
+        move  $a1, $s1
+        move  $a2, $s2
         jal   _Z8multiplyPA3_iPA2_iS2_
         addiu $sp, $sp, 16
         # t23 = z[0]
@@ -1273,11 +1267,10 @@ L7_105:
         addiu $sp, $sp, 24
         # param 100
         # t27 = call primes(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 100
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 100
         jal   _Z6primesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s6, $v0
         # t37 = 3
         li    $s0, 3
@@ -1369,11 +1362,9 @@ L7_173:
         # param 88
         # t31 = call search(int *, int, int), 3
         addiu $sp, $sp, -16
-        sw    $s5, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, 88
-        sw    $t0, 8($sp)
+        move  $a0, $s5
+        li    $a1, 8
+        li    $a2, 88
         jal   _Z6searchPiii
         addiu $sp, $sp, 16
         move  $s0, $v0

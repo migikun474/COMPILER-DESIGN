@@ -65,8 +65,10 @@ _Z6minmaxPKiiRiS1_:
         sw    $s5, -24($fp)
         sw    $s6, -28($fp)
         sw    $s7, -32($fp)
-        lw    $s2, 16($fp)
-        lw    $s3, 20($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        move  $s2, $a2
+        move  $s3, $a3
         # t1 = *values
         lw    $t8, 8($fp)
         lw    $s0, 0($t8)
@@ -269,11 +271,10 @@ M1_0:
         # param t11
         # call minmax(const int *, int, int &, int &), 4
         addiu $sp, $sp, -16
-        sw    $s1, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s3, 12($sp)
+        move  $a0, $s1
+        li    $a1, 5
+        move  $a2, $s2
+        move  $a3, $s3
         jal   _Z6minmaxPKiiRiS1_
         addiu $sp, $sp, 16
         # t71 = t9 ptr+ 12

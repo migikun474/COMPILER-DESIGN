@@ -108,6 +108,8 @@ _Z8absoluted:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # if v double< 0.0 goto 2
         l.d   $f0, 8($fp)
         l.d   $f2, fc0
@@ -147,6 +149,8 @@ _Z4rootd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -56
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = v double/ 2.0
         l.d   $f0, 8($fp)
         l.d   $f2, fc1
@@ -212,6 +216,7 @@ _Z6seriesi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -80
+        sw    $a0, 8($fp)
         # sum = 0.0
         l.d   $f0, fc0
         s.d   $f0, -8($fp)
@@ -297,6 +302,9 @@ _Z5powerdi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # r = 1.0
         l.d   $f0, fc2
         s.d   $f0, -8($fp)
@@ -347,6 +355,9 @@ _Z7averagefff:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = a float+ b
         l.s   $f0, 8($fp)
         l.s   $f2, 12($fp)
@@ -379,6 +390,8 @@ _Z10roundToIntd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # if v double< 0.0 goto 2
         l.d   $f0, 8($fp)
         l.d   $f2, fc0
@@ -429,6 +442,8 @@ _Z4polyd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -48
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = 2.0 double* x
         l.d   $f0, fc1
         l.d   $f2, 8($fp)
@@ -544,19 +559,20 @@ M7_1:
         addiu $sp, $sp, 40
         # param 2.0
         # t7 = call root(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, fc1
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z4rootd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -152($fp)
         # param 1000
         # t8 = call series(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1000
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1000
         jal   _Z6seriesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -160($fp)
         # param 1.5
         # param 6
@@ -564,8 +580,9 @@ M7_1:
         addiu $sp, $sp, -16
         l.d   $f0, fc10
         s.d   $f0, 0($sp)
-        li    $t0, 6
-        sw    $t0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        li    $a2, 6
         jal   _Z5powerdi
         addiu $sp, $sp, 16
         s.d   $f0, -168($fp)
@@ -596,6 +613,9 @@ M7_1:
         s.s   $f0, 4($sp)
         l.s   $f0, fc13
         s.s   $f0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
         jal   _Z7averagefff
         addiu $sp, $sp, 16
         s.s   $f0, -172($fp)
@@ -609,19 +629,23 @@ M7_1:
         s.d   $f0, -192($fp)
         # param t12
         # t13 = call absolute(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, -192($fp)
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z8absoluted
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -200($fp)
         # param 2.0
         # t14 = call poly(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, fc1
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z4polyd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -208($fp)
         # param "%.3f %.2f %.2f\n"
         # param t11
@@ -641,11 +665,13 @@ M7_1:
         addiu $sp, $sp, 32
         # param 2.5
         # t15 = call roundToInt(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, fc15
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z10roundToIntd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -212($fp)
         # t16 = double- 2.5
         l.d   $f0, fc15
@@ -653,19 +679,23 @@ M7_1:
         s.d   $f0, -224($fp)
         # param t16
         # t17 = call roundToInt(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, -224($fp)
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z10roundToIntd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -228($fp)
         # param 2.4
         # t18 = call roundToInt(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, fc16
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z10roundToIntd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -232($fp)
         # param "%d %d %d %d\n"
         # param t15
@@ -1012,19 +1042,23 @@ L7_124:
         addiu $sp, $sp, 32
         # param 81.0
         # t47 = call root(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, fc29
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z4rootd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         s.d   $f0, -432($fp)
         # param t47
         # t48 = call roundToInt(double), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         l.d   $f0, -432($fp)
         s.d   $f0, 0($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z10roundToIntd
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -436($fp)
         # return t48
         lw    $v0, -436($fp)

@@ -136,12 +136,16 @@ M2_0:
         li    $t0, 0
         sw    $t0, g_calls
         # t8 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t8 int== 0 goto 18
         beq   $s0, $zero, L2_18
         # t9 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t9 int== 0 goto 18
         beq   $s0, $zero, L2_18
@@ -167,12 +171,16 @@ L2_18:
         li    $t0, 0
         sw    $t0, g_calls
         # t10 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t10 int!= 0 goto 26
         bne   $s0, $zero, L2_26
         # t11 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t11 int== 0 goto 28
         beq   $s0, $zero, L2_28
@@ -199,18 +207,24 @@ L2_28:
         li    $t0, 0
         sw    $t0, g_calls
         # t13 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t13 int!= 0 goto 36
         bne   $s0, $zero, L2_36
         # t14 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t14 int== 0 goto 38
         beq   $s0, $zero, L2_38
 L2_36:
         # t15 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # if t15 int== 0 goto 40
         beq   $s0, $zero, L2_40

@@ -189,7 +189,7 @@ _Z4flowi:
         sw    $s2, -16($fp)
         sw    $s3, -4($fp)
         sw    $s4, -20($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # s = 0
         li    $s0, 0
         # i = 0
@@ -297,7 +297,9 @@ M3_0:
         jal   __printf
         addiu $sp, $sp, 8
         # t3 = call aliasing(), 0
+        addiu $sp, $sp, -16
         jal   _Z8aliasingv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t3
@@ -312,7 +314,9 @@ M3_0:
         lw    $t0, g_g
         addiu $s0, $t0, 1
         # call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         # t31 = g int+ 1
         lw    $t0, g_g
         addiu $s1, $t0, 1
@@ -328,7 +332,9 @@ M3_0:
         # t35 = t34 int+ 6
         addiu $s0, $s1, 6
         # t36 = call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t37 = t35 int+ t36
         addu  $s2, $s0, $s1
@@ -346,27 +352,24 @@ M3_0:
         addiu $sp, $sp, 16
         # param 3
         # t5 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 4
         # t6 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 5
         # t7 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t5

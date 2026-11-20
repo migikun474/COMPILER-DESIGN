@@ -66,7 +66,7 @@ _Z6lengthPKc:
         sw    $s2, -8($fp)
         sw    $s3, -12($fp)
         sw    $s4, -16($fp)
-        lw    $s4, 8($fp)
+        move  $s4, $a0
         # n = 0
         li    $s0, 0
 L0_1:
@@ -123,7 +123,7 @@ _Z8toNumberPKc:
         sw    $s5, -28($fp)
         sw    $s6, -32($fp)
         sw    $s7, -36($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # sign = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -244,8 +244,8 @@ _Z6toTextiPc:
         sw    $s5, -24($fp)
         sw    $s6, -28($fp)
         sw    $s7, -32($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
+        move  $s1, $a0
+        move  $s2, $a1
         # n = 0
         li    $s0, 0
         # if v int< 0 goto 4
@@ -366,7 +366,7 @@ _Z12isPalindromePKc:
         sw    $s5, -40($fp)
         sw    $s6, -28($fp)
         sw    $s7, -32($fp)
-        lw    $s5, 8($fp)
+        move  $s5, $a0
         # i = 0
         li    $s1, 0
         # t14 = 0
@@ -465,7 +465,7 @@ _Z10countWordsPKc:
         sw    $s5, -12($fp)
         sw    $s6, -16($fp)
         sw    $s7, -20($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # words = 0
         li    $s2, 0
         # inside = 0
@@ -657,10 +657,10 @@ L5_26:
         li    $s1, 0
         # param t1
         # t68 = call length(const char *), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z6lengthPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # t69 = t68 int- 1
         addiu $s2, $s3, -1
@@ -1114,28 +1114,26 @@ L5_210:
         # param -40213
         # param t29
         # call toText(int, char *), 2
-        addiu $sp, $sp, -8
-        li    $t0, -40213
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, -40213
+        move  $a1, $s0
         jal   _Z6toTextiPc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param t29
         # t32 = call toNumber(const char *), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z8toNumberPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t33 = t32 int+ 1
         addiu $s2, $s1, 1
         # param "77x"
         # t34 = call toNumber(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str11
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str11
         jal   _Z8toNumberPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%s %d %d\n"
         # param t29
@@ -1152,27 +1150,24 @@ L5_210:
         addiu $sp, $sp, 16
         # param "level"
         # t35 = call isPalindrome(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str12
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str12
         jal   _Z12isPalindromePKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "lever"
         # t36 = call isPalindrome(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str13
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str13
         jal   _Z12isPalindromePKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "  the quick  brown fox "
         # t37 = call countWords(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str14
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str14
         jal   _Z10countWordsPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t35

@@ -1103,6 +1103,21 @@ analysis (`loops()`) stays, for the loop unrolling planned next.
   uses it instead of liveness: a read reached by the entry definition is
   reported, at the line of that read rather than of the declaration.
 
+### D39. Frame slot reclamation and register arguments (2026-11-21)
+
+- **Frame slots:** the MIPS frame is laid out after register allocation;
+  only names kept in memory and still mentioned by some quad get a slot
+  (`t01` at `-O2`: 464 bytes -> 8).
+- **Register arguments (MIPS o32 style), replacing D25 for user calls:**
+  the first 16 bytes of arguments travel in `$a0`-`$a3`. Integer and
+  pointer words go straight into their register and are never stored;
+  other words there (doubles, `long long`, structs) are stored as before
+  and loaded too. The caller always reserves 16 bytes as the callee's home
+  area. The callee moves an argument into its home register, or spills it
+  to its home slot, so parameter access and `va_arg` are unchanged.
+  Calls into the run-time library keep the all-stack convention, so
+  `runtime.s` is untouched.
+
 ---
 
 ## Open questions

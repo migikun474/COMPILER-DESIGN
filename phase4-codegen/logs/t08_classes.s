@@ -57,6 +57,7 @@ _ZN6AnimalC1Ev:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
         # *this = 4
         lw    $t8, 8($fp)
         li    $t0, 4
@@ -84,6 +85,7 @@ _ZN6Animal5countEv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -109,6 +111,7 @@ _ZN3TagC1Ev:
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
+        sw    $a0, 8($fp)
         # *this = 7
         lw    $t8, 8($fp)
         li    $t0, 7
@@ -141,13 +144,13 @@ _ZN3DogC1Ev:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
+        sw    $a0, 8($fp)
         # param this
         # call Animal::Animal(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, 8($fp)
         jal   _ZN6AnimalC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t1 = this ptr+ 8
         lw    $t0, 8($fp)
         li    $t1, 8
@@ -155,11 +158,10 @@ M3_0:
         sw    $t0, -4($fp)
         # param t1
         # call Tag::Tag(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -4($fp)
         jal   _ZN3TagC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = this ptr+ 4
         lw    $t0, 8($fp)
         li    $t1, 4
@@ -200,6 +202,7 @@ _ZN3Dog5humanEv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
         # t1 = this ptr+ 4
         lw    $t0, 8($fp)
         li    $t1, 4
@@ -270,6 +273,7 @@ _ZN3Dog8birthdayEv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
         # t1 = this ptr+ 4
         lw    $t0, 8($fp)
         li    $t1, 4
@@ -309,6 +313,7 @@ _ZN3VecC1Ev:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # *this = 0
         lw    $t8, 8($fp)
         li    $t0, 0
@@ -343,16 +348,18 @@ _ZN3VecplES_:
         beqz  $t8, M8_0
         j     __stack_overflow
 M8_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = &r
         addiu $t0, $fp, -8
         sw    $t0, -12($fp)
         # param t1
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -422,16 +429,16 @@ _ZN3VecmiEv:
         beqz  $t8, M9_0
         j     __stack_overflow
 M9_0:
+        sw    $a0, 8($fp)
         # t1 = &r
         addiu $t0, $fp, -8
         sw    $t0, -12($fp)
         # param t1
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -482,6 +489,9 @@ _ZN3VeceqES_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t2 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -548,6 +558,8 @@ _ZN3VecixEi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # if i int== 0 goto 2
         lw    $t0, 12($fp)
         li    $t1, 0
@@ -595,6 +607,9 @@ _ZN3VecpLES_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -660,6 +675,7 @@ _ZN3VecppEv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -690,6 +706,8 @@ _ZN3VecclEi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -730,6 +748,9 @@ _ZN3Vec3dotES_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -792,16 +813,17 @@ _Z4makeii:
         beqz  $t8, M16_0
         j     __stack_overflow
 M16_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = &v
         addiu $t0, $fp, -8
         sw    $t0, -12($fp)
         # param t1
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # v[0] = a
         addiu $t8, $fp, -8
         li    $t9, 0
@@ -836,6 +858,9 @@ _Zml3Veci:
         beqz  $t8, M17_0
         j     __stack_overflow
 M17_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = v[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -861,13 +886,11 @@ M17_0:
         # param t2
         # param t4
         # t5 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -8($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -16($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -8($fp)
+        lw    $a1, -16($fp)
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -24
         li    $a2, 8
@@ -899,11 +922,10 @@ M18_0:
         sw    $t0, -92($fp)
         # param t1
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -92($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -92($fp)
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # rex[4] = 3
         addiu $t8, $fp, -12
         li    $t9, 4
@@ -915,35 +937,34 @@ M18_0:
         sw    $t0, -96($fp)
         # param t2
         # call Dog::birthday(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -96($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -96($fp)
         jal   _ZN3Dog8birthdayEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t3 = &rex
         addiu $t0, $fp, -12
         sw    $t0, -100($fp)
         # param t3
         # t4 = call Dog::human(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -100($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -100($fp)
         jal   _ZN3Dog5humanEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -104($fp)
         # t5 = &rex
         addiu $t0, $fp, -12
         sw    $t0, -108($fp)
         # param t5
         # t6 = call Animal::count(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -108($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -108($fp)
         jal   _ZN6Animal5countEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -112($fp)
         # t7 = call Dog::total(), 0
+        addiu $sp, $sp, -16
         jal   _ZN3Dog5totalEv
+        addiu $sp, $sp, 16
         sw    $v0, -116($fp)
         # param "%d %d %d\n"
         # param t4
@@ -993,11 +1014,10 @@ M18_0:
         sw    $t0, -128($fp)
         # param t10
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -128($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -128($fp)
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # other[4] = 5
         addiu $t8, $fp, -28
         li    $t9, 4
@@ -1009,11 +1029,10 @@ M18_0:
         sw    $t0, -132($fp)
         # param t11
         # t12 = call Dog::human(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -132($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -132($fp)
         jal   _ZN3Dog5humanEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -136($fp)
         # param "%d %d\n"
         # param t12
@@ -1038,13 +1057,11 @@ M18_0:
         # param 1
         # param 2
         # t13 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
+        li    $a1, 2
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -144
         li    $a2, 8
@@ -1057,13 +1074,11 @@ M18_0:
         # param 3
         # param 4
         # t14 = call make(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
+        li    $a1, 4
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -152
         li    $a2, 8
@@ -1078,11 +1093,10 @@ M18_0:
         sw    $t0, -156($fp)
         # param t15
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -156($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -156($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t16 = &a
         addiu $t0, $fp, -36
         sw    $t0, -160($fp)
@@ -1090,12 +1104,13 @@ M18_0:
         # param b
         # t17 = call Vec::operator+(class Vec), 2
         addiu $sp, $sp, -16
-        lw    $t0, -160($fp)
-        sw    $t0, 0($sp)
         addiu $a0, $sp, 4
         addiu $a1, $fp, -44
         li    $a2, 8
         jal   __memcpy
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a0, -160($fp)
         jal   _ZN3VecplES_
         addiu $sp, $sp, 16
         move  $a1, $v0
@@ -1112,11 +1127,10 @@ M18_0:
         sw    $t0, -172($fp)
         # param t18
         # t19 = call Vec::operator-(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -172($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -172($fp)
         jal   _ZN3VecmiEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -180
         li    $a2, 8
@@ -1134,8 +1148,9 @@ M18_0:
         addiu $a1, $fp, -36
         li    $a2, 8
         jal   __memcpy
-        li    $t0, 3
-        sw    $t0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        li    $a2, 3
         jal   _Zml3Veci
         addiu $sp, $sp, 16
         move  $a1, $v0
@@ -1154,12 +1169,13 @@ M18_0:
         # param b
         # t22 = call Vec::operator+=(class Vec), 2
         addiu $sp, $sp, -16
-        lw    $t0, -192($fp)
-        sw    $t0, 0($sp)
         addiu $a0, $sp, 4
         addiu $a1, $fp, -44
         li    $a2, 8
         jal   __memcpy
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a0, -192($fp)
         jal   _ZN3VecpLES_
         addiu $sp, $sp, 16
         sw    $v0, -196($fp)
@@ -1168,11 +1184,10 @@ M18_0:
         sw    $t0, -200($fp)
         # param t23
         # t24 = call Vec::operator++(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -200($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -200($fp)
         jal   _ZN3VecppEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -204($fp)
         # t25 = c[0]
         addiu $t8, $fp, -52
@@ -1242,12 +1257,13 @@ M18_0:
         # param b
         # t32 = call Vec::operator==(class Vec), 2
         addiu $sp, $sp, -16
-        lw    $t0, -232($fp)
-        sw    $t0, 0($sp)
         addiu $a0, $sp, 4
         addiu $a1, $fp, -44
         li    $a2, 8
         jal   __memcpy
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a0, -232($fp)
         jal   _ZN3VeceqES_
         addiu $sp, $sp, 16
         sw    $v0, -236($fp)
@@ -1258,12 +1274,13 @@ M18_0:
         # param c
         # t34 = call Vec::operator==(class Vec), 2
         addiu $sp, $sp, -16
-        lw    $t0, -240($fp)
-        sw    $t0, 0($sp)
         addiu $a0, $sp, 4
         addiu $a1, $fp, -52
         li    $a2, 8
         jal   __memcpy
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a0, -240($fp)
         jal   _ZN3VeceqES_
         addiu $sp, $sp, 16
         sw    $v0, -244($fp)
@@ -1273,13 +1290,11 @@ M18_0:
         # param t35
         # param 0
         # t36 = call Vec::operator[](int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -248($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 0
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -248($fp)
+        li    $a1, 0
         jal   _ZN3VecixEi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -252($fp)
         # t37 = &a
         addiu $t0, $fp, -36
@@ -1287,13 +1302,11 @@ M18_0:
         # param t37
         # param 2
         # t38 = call Vec::operator()(int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -256($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -256($fp)
+        li    $a1, 2
         jal   _ZN3VecclEi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -260($fp)
         # t39 = &a
         addiu $t0, $fp, -36
@@ -1302,12 +1315,13 @@ M18_0:
         # param b
         # t40 = call Vec::dot(class Vec), 2
         addiu $sp, $sp, -16
-        lw    $t0, -264($fp)
-        sw    $t0, 0($sp)
         addiu $a0, $sp, 4
         addiu $a1, $fp, -44
         li    $a2, 8
         jal   __memcpy
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a0, -264($fp)
         jal   _ZN3Vec3dotES_
         addiu $sp, $sp, 16
         sw    $v0, -268($fp)
@@ -1338,11 +1352,10 @@ M18_0:
         sw    $t0, -272($fp)
         # param t41
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -272($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -272($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t42 = t41 ptr+ 8
         lw    $t0, -272($fp)
         li    $t1, 8
@@ -1350,11 +1363,10 @@ M18_0:
         sw    $t0, -276($fp)
         # param t42
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -276($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -276($fp)
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # row[8] = 9
         addiu $t8, $fp, -84
         li    $t9, 8

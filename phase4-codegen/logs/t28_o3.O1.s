@@ -43,7 +43,7 @@ _Z6squarei:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # t1 = v int* v
         mul   $s0, $s1, $s1
         # return t1
@@ -66,9 +66,9 @@ _Z5clampiii:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        lw    $s2, 16($fp)
+        move  $s0, $a0
+        move  $s1, $a1
+        move  $s2, $a2
         # if v int>= lo goto 2
         bge   $s0, $s1, L1_2
         # return lo
@@ -102,7 +102,7 @@ _Z7countedi:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # t1 = calls int+ 1
         lw    $t0, g_calls
         addiu $s0, $t0, 1
@@ -133,8 +133,8 @@ _Z4bumpRii:
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
         sw    $s3, -16($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
+        move  $s2, $a0
+        move  $s3, $a1
         # t1 = *r
         lw    $s0, 0($s2)
         # t2 = t1 int+ by
@@ -162,6 +162,8 @@ _Z5total4Pair:
         sw    $s0, -8($fp)
         sw    $s1, -4($fp)
         sw    $s2, -12($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = p[0]
         lw    $s1, 8($fp)
         # t2 = t1 int+ 1
@@ -200,7 +202,7 @@ M5_0:
         sw    $s1, -16($fp)
         sw    $s2, -8($fp)
         sw    $s3, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # if n int> 1 goto 3
         li    $t1, 1
         bgt   $s1, $t1, L5_3
@@ -213,10 +215,10 @@ L5_3:
         addiu $s2, $s1, -1
         # param t2
         # t3 = call fact(int), 1
-        addiu $sp, $sp, -8
-        sw    $s2, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s2
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # t1 = n int* t3
         mul   $s0, $s1, $s3
@@ -250,8 +252,8 @@ M6_1:
         sw    $s0, -12($fp)
         sw    $s1, -4($fp)
         sw    $s2, -8($fp)
-        lw    $s2, 8($fp)
-        lw    $s0, 12($fp)
+        move  $s2, $a0
+        move  $s0, $a1
         # if b int!= 0 goto 2
         bne   $s0, $zero, L6_2
         # return a
@@ -267,11 +269,11 @@ M6_0:
         # param b
         # param t1
         # t2 = call gcd(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s1, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s1
         jal   _Z3gcdii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # return t2
         move  $v0, $s2
@@ -302,8 +304,8 @@ M7_0:
         sw    $s1, -4($fp)
         sw    $s2, -8($fp)
         sw    $s3, -16($fp)
-        lw    $s0, 8($fp)
-        lw    $s3, 12($fp)
+        move  $s0, $a0
+        move  $s3, $a1
         # if n int!= 0 goto 2
         bne   $s0, $zero, L7_2
         # return acc
@@ -317,11 +319,11 @@ L7_2:
         # param t1
         # param t2
         # t3 = call sumTo(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
-        sw    $s2, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
+        move  $a1, $s2
         jal   _Z5sumToii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # return t3
         move  $v0, $s0
@@ -351,7 +353,7 @@ _Z9countDowni:
 M8_0:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # if n int> 0 goto 2
         bgt   $s1, $zero, L8_2
         # return 0
@@ -362,10 +364,10 @@ L8_2:
         addiu $s0, $s1, -2
         # param t1
         # t2 = call countDown(int), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z9countDowni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # return t2
         move  $v0, $s1
@@ -393,8 +395,8 @@ _Z9invariantii:
         sw    $s5, -20($fp)
         sw    $s6, -28($fp)
         sw    $s7, -24($fp)
-        lw    $s7, 8($fp)
-        lw    $s6, 12($fp)
+        move  $s7, $a0
+        move  $s6, $a1
         # s = 0
         li    $s1, 0
         # i = 0
@@ -457,7 +459,7 @@ _Z12notInvarianti:
         sw    $s3, -12($fp)
         sw    $s4, -8($fp)
         sw    $s5, -24($fp)
-        lw    $s4, 8($fp)
+        move  $s4, $a0
         # s = 0
         li    $s3, 0
         # k = 1
@@ -512,8 +514,8 @@ M11_1:
         sw    $s1, -16($fp)
         sw    $s2, -4($fp)
         sw    $s3, -12($fp)
-        lw    $s0, 8($fp)
-        lw    $s3, 12($fp)
+        move  $s0, $a0
+        move  $s3, $a1
         # s = 7
         li    $s1, 7
 L11_1:
@@ -561,7 +563,8 @@ _Z6nestedii:
         sw    $s5, -92($fp)
         sw    $s6, -96($fp)
         sw    $s7, -100($fp)
-        lw    $s1, 12($fp)
+        sw    $a0, 8($fp)
+        move  $s1, $a1
         # s = 0
         li    $s3, 0
         # r.32 = 0
@@ -665,9 +668,9 @@ _Z6sharediii:
         sw    $s3, -20($fp)
         sw    $s4, -8($fp)
         sw    $s5, -24($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        lw    $s3, 16($fp)
+        move  $s0, $a0
+        move  $s1, $a1
+        move  $s3, $a2
         # t1 = x int* y
         mul   $s2, $s0, $s1
         # a = t1 int+ 2
@@ -725,7 +728,7 @@ _Z6memoryi:
         sw    $s2, -24($fp)
         sw    $s3, -32($fp)
         sw    $s4, -36($fp)
-        lw    $s3, 8($fp)
+        move  $s3, $a0
         # arr[0] = 1
         li    $t0, 1
         sw    $t0, -16($fp)
@@ -823,20 +826,19 @@ M15_0:
         addiu $s0, $fp, -4
         # param 3
         # t2 = call square(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z6squarei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param t1
         # param t2
         # call bump(int &, int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s1, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s1
         jal   _Z4bumpRii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # p[0] = 1
         li    $t0, 1
         sw    $t0, -12($fp)
@@ -845,23 +847,27 @@ M15_0:
         sw    $t0, -8($fp)
         # param p
         # t3 = call total(struct Pair), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         addiu $a0, $sp, 0
         addiu $a1, $fp, -12
         li    $a2, 8
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z5total4Pair
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param p
         # t4 = call total(struct Pair), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         addiu $a0, $sp, 0
         addiu $a1, $fp, -12
         li    $a2, 8
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z5total4Pair
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # t5 = t3 int+ t4
         addu  $s0, $s1, $s2
@@ -874,11 +880,9 @@ M15_0:
         # param 9
         # t8 = call clamp(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, -5
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
-        li    $t0, 9
-        sw    $t0, 8($sp)
+        li    $a0, -5
+        move  $a1, $zero
+        li    $a2, 9
         jal   _Z5clampiii
         addiu $sp, $sp, 16
         move  $s2, $v0
@@ -887,11 +891,9 @@ M15_0:
         # param 9
         # t9 = call clamp(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 50
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
-        li    $t0, 9
-        sw    $t0, 8($sp)
+        li    $a0, 50
+        move  $a1, $zero
+        li    $a2, 9
         jal   _Z5clampiii
         addiu $sp, $sp, 16
         move  $s3, $v0
@@ -900,11 +902,9 @@ M15_0:
         # param 9
         # t10 = call clamp(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 4
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
-        li    $t0, 9
-        sw    $t0, 8($sp)
+        li    $a0, 4
+        move  $a1, $zero
+        li    $a2, 9
         jal   _Z5clampiii
         addiu $sp, $sp, 16
         move  $s4, $v0
@@ -930,41 +930,37 @@ M15_0:
         addiu $sp, $sp, 24
         # param 1
         # t12 = call counted(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z7countedi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # c1 = t12
         move  $s1, $s0
         # param 1
         # t13 = call counted(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z7countedi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # c2 = t13
         move  $s2, $s1
         # param 1
         # t14 = call counted(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z7countedi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # c3 = t14
         move  $s3, $s2
         # param 6
         # t15 = call fact(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 6
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 6
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d %d\n"
         # param t12
@@ -987,42 +983,36 @@ M15_0:
         # param 1071
         # param 462
         # t16 = call gcd(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 1071
-        sw    $t0, 0($sp)
-        li    $t0, 462
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1071
+        li    $a1, 462
         jal   _Z3gcdii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 17
         # param 5
         # t17 = call gcd(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 17
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 17
+        li    $a1, 5
         jal   _Z3gcdii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 100
         # param 0
         # t18 = call sumTo(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 100
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 100
+        move  $a1, $zero
         jal   _Z5sumToii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 9
         # t19 = call countDown(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
         jal   _Z9countDowni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d\n"
         # param t16
@@ -1042,40 +1032,36 @@ M15_0:
         # param 5
         # param 2
         # t20 = call invariant(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
+        li    $a1, 2
         jal   _Z9invariantii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 0
         # param 9
         # t21 = call invariant(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
-        li    $t0, 9
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
+        li    $a1, 9
         jal   _Z9invariantii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 5
         # t22 = call notInvariant(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z12notInvarianti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 0
         # param 0
         # t23 = call zeroTrips(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
-        sw    $zero, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
+        move  $a1, $zero
         jal   _Z9zeroTripsii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d\n"
         # param t20
@@ -1095,35 +1081,29 @@ M15_0:
         # param 3
         # param 4
         # t24 = call zeroTrips(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
+        li    $a1, 4
         jal   _Z9zeroTripsii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 4
         # param 5
         # t25 = call nested(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
+        li    $a1, 5
         jal   _Z6nestedii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 2
         # param 3
         # t26 = call nested(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 3
         jal   _Z6nestedii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t24
@@ -1143,12 +1123,9 @@ M15_0:
         # param 1
         # t27 = call shared(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
-        li    $t0, 1
-        sw    $t0, 8($sp)
+        li    $a0, 3
+        li    $a1, 4
+        li    $a2, 1
         jal   _Z6sharediii
         addiu $sp, $sp, 16
         move  $s0, $v0
@@ -1157,11 +1134,9 @@ M15_0:
         # param 0
         # t28 = call shared(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
-        sw    $zero, 8($sp)
+        li    $a0, 3
+        li    $a1, 4
+        move  $a2, $zero
         jal   _Z6sharediii
         addiu $sp, $sp, 16
         move  $s1, $v0
@@ -1178,19 +1153,17 @@ M15_0:
         addiu $sp, $sp, 16
         # param 1
         # t29 = call memory(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z6memoryi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # t30 = call memory(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z6memoryi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t29

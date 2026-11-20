@@ -55,7 +55,7 @@ _ZN7CountedC1Ev:
         move  $fp, $sp
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # *this = 1
         li    $t0, 1
         sw    $t0, 0($s0)
@@ -151,10 +151,10 @@ M1_0:
         addiu $s0, $fp, -88
         # param t54
         # call Counted::Counted(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN7CountedC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t53[0] = 5
         li    $t0, 5
         sw    $t0, -88($fp)

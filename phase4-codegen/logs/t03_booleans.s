@@ -295,7 +295,9 @@ L2_44:
         li    $t0, 0
         sw    $t0, g_calls
         # t8 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         sw    $v0, -92($fp)
         # if t8 int!= 0 goto 56
         lw    $t0, -92($fp)
@@ -305,7 +307,9 @@ L2_44:
         j     L2_61
 L2_56:
         # t9 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         sw    $v0, -96($fp)
         # if t9 int!= 0 goto 59
         lw    $t0, -96($fp)
@@ -336,7 +340,9 @@ L2_61:
         li    $t0, 0
         sw    $t0, g_calls
         # t10 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         sw    $v0, -100($fp)
         # if t10 int!= 0 goto 71
         lw    $t0, -100($fp)
@@ -346,7 +352,9 @@ L2_61:
         j     L2_68
 L2_68:
         # t11 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         sw    $v0, -104($fp)
         # if t11 int!= 0 goto 71
         lw    $t0, -104($fp)
@@ -377,7 +385,9 @@ L2_73:
         li    $t0, 0
         sw    $t0, g_calls
         # t13 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         sw    $v0, -112($fp)
         # if t13 int!= 0 goto 83
         lw    $t0, -112($fp)
@@ -387,7 +397,9 @@ L2_73:
         j     L2_80
 L2_80:
         # t14 = call yes(), 0
+        addiu $sp, $sp, -16
         jal   _Z3yesv
+        addiu $sp, $sp, 16
         sw    $v0, -116($fp)
         # if t14 int!= 0 goto 83
         lw    $t0, -116($fp)
@@ -397,7 +409,9 @@ L2_80:
         j     L2_86
 L2_83:
         # t15 = call no(), 0
+        addiu $sp, $sp, -16
         jal   _Z2nov
+        addiu $sp, $sp, 16
         sw    $v0, -120($fp)
         # if t15 int!= 0 goto 86
         lw    $t0, -120($fp)

@@ -111,6 +111,7 @@ _Z4makei:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -104
+        sw    $a0, 8($fp)
         # t1 = inttodouble k
         lw    $t0, 8($fp)
         mtc1  $t0, $f0
@@ -233,6 +234,10 @@ _Z5weigh3Bigdcx:
         beqz  $t8, M1_2
         j     __stack_overflow
 M1_2:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = b[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -348,6 +353,10 @@ _Z7averageiz:
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, count
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -466,6 +475,9 @@ _Z5powerxi:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # if n int== 0 goto 2
         lw    $t0, 16($fp)
         li    $t1, 0
@@ -494,8 +506,9 @@ L3_4:
         lw    $t1, 12($fp)
         sw    $t0, 0($sp)
         sw    $t1, 4($sp)
-        lw    $t0, -12($fp)
-        sw    $t0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, -12($fp)
         jal   _Z5powerxi
         addiu $sp, $sp, 16
         sw    $v0, -24($fp)
@@ -920,8 +933,9 @@ L4_62:
         li    $t1, 0
         sw    $t0, 0($sp)
         sw    $t1, 4($sp)
-        li    $t0, 30
-        sw    $t0, 8($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        li    $a2, 30
         jal   _Z5powerxi
         addiu $sp, $sp, 16
         sw    $v0, -320($fp)
@@ -1288,11 +1302,10 @@ L4_128:
         addiu $sp, $sp, 32
         # param 2
         # t47 = call make(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z4makei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -544
         li    $a2, 40
@@ -1390,6 +1403,10 @@ L4_128:
         li    $t1, 0
         sw    $t0, 56($sp)
         sw    $t1, 60($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z5weigh3Bigdcx
         addiu $sp, $sp, 64
         s.d   $f0, -584($fp)
@@ -1411,8 +1428,6 @@ L4_128:
         # param "tail"
         # t55 = call average(int, ...), 6
         addiu $sp, $sp, -48
-        li    $t0, 3
-        sw    $t0, 0($sp)
         l.d   $f0, fc12
         s.d   $f0, 8($sp)
         l.d   $f0, fc3
@@ -1425,6 +1440,9 @@ L4_128:
         sw    $t1, 36($sp)
         la    $t0, str20
         sw    $t0, 40($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        li    $a0, 3
         jal   _Z7averageiz
         addiu $sp, $sp, 48
         s.d   $f0, -592($fp)

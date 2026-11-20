@@ -56,7 +56,7 @@ _Z8classifyi:
         addiu $sp, $sp, -8
         sw    $s0, -8($fp)
         sw    $s1, -4($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # t1 = n
         move  $s1, $s0
         # goto 8
@@ -220,10 +220,10 @@ L1_34:
         bge   $s1, $t1, L1_42
         # param i
         # t7 = call classify(int), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _Z8classifyi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d "
         # param t7

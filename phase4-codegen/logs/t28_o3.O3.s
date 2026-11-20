@@ -51,7 +51,7 @@ M0_0:
         sw    $s1, -16($fp)
         sw    $s2, -8($fp)
         sw    $s3, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # if n int> 1 goto 3
         li    $t1, 1
         bgt   $s1, $t1, L0_3
@@ -64,10 +64,10 @@ L0_3:
         addiu $s2, $s1, -1
         # param t2
         # t3 = call fact(int), 1
-        addiu $sp, $sp, -8
-        sw    $s2, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s2
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # t1 = n int* t3
         mul   $s0, $s1, $s3
@@ -100,7 +100,8 @@ _Z6nestedii:
         sw    $s5, -92($fp)
         sw    $s6, -96($fp)
         sw    $s7, -100($fp)
-        lw    $s1, 12($fp)
+        sw    $a0, 8($fp)
+        move  $s1, $a1
         # s = 0
         li    $s3, 0
         # r.32 = 0
@@ -241,7 +242,7 @@ _Z6memoryi:
         sw    $s2, -24($fp)
         sw    $s3, -32($fp)
         sw    $s4, -36($fp)
-        lw    $s3, 8($fp)
+        move  $s3, $a0
         # arr[0] = 1
         li    $t0, 1
         sw    $t0, -16($fp)
@@ -415,11 +416,10 @@ M3_6:
         addu  $s3, $t0, $s1
         # param 6
         # t15 = call fact(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 6
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 6
         jal   _Z4facti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d %d %d\n"
         # param t58
@@ -744,24 +744,20 @@ L3_161:
         # param 4
         # param 5
         # t25 = call nested(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
+        li    $a1, 5
         jal   _Z6nestedii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # param 3
         # t26 = call nested(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 3
         jal   _Z6nestedii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t101
@@ -791,19 +787,17 @@ L3_161:
         addiu $sp, $sp, 16
         # param 1
         # t29 = call memory(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z6memoryi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # t30 = call memory(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z6memoryi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t29

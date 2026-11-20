@@ -68,7 +68,7 @@ _Z5jumpsi:
         sw    $s1, -8($fp)
         sw    $s2, -4($fp)
         sw    $s3, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # k = 0
         li    $s3, 0
         # t = 9
@@ -262,17 +262,25 @@ L2_44:
         jal   __printf
         addiu $sp, $sp, 16
         # call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         # t44 = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t6 = 10 int+ t44
         li    $t0, 10
         addu  $s0, $t0, $s1
         # call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         # t50 = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t52 = 17 int+ t50
         li    $t0, 17
@@ -324,35 +332,31 @@ L2_44:
         addiu $sp, $sp, 8
         # param 1
         # t9 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # t10 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 3
         # t11 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 5
         # t12 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d\n"
         # param t9

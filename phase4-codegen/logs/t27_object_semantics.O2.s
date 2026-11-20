@@ -55,7 +55,7 @@ _ZN7CountedC1Ev:
         move  $fp, $sp
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # *this = 1
         li    $t0, 1
         sw    $t0, 0($s0)
@@ -73,6 +73,7 @@ _Z4take7Counted:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # c[0] = 50
         li    $t0, 50
         sw    $t0, 8($fp)
@@ -98,7 +99,7 @@ _Z4giveR7Counted:
         j     __stack_overflow
 M2_0:
         sw    $s0, -8($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # t1 = *c
         addiu $a1, $s0, 0
         addiu $a0, $fp, -4
@@ -129,15 +130,15 @@ _Z5freshi:
 M3_0:
         sw    $s0, -8($fp)
         sw    $s1, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # t1 = &local
         addiu $s0, $fp, -4
         # param t1
         # call Counted::Counted(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN7CountedC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # local[0] = x
         sw    $s1, -4($fp)
         # return local
@@ -166,7 +167,7 @@ _ZN3DogC1Ev:
 M4_0:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # t1 = this ptr+ 4
         addiu $s0, $s1, 4
         # *t1 = 0
@@ -200,7 +201,7 @@ _Z4peekRK3Dog:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # t1 = *d
         lw    $s0, 0($s1)
         # return t1
@@ -226,7 +227,7 @@ _Z3sumPKi:
         sw    $s3, -8($fp)
         sw    $s4, -12($fp)
         sw    $s5, -16($fp)
-        lw    $s5, 8($fp)
+        move  $s5, $a0
         # s = 0
         li    $s1, 0
         # i = 0
@@ -274,8 +275,8 @@ _Z6richerR7AccountS0_:
         sw    $s0, -4($fp)
         sw    $s1, -28($fp)
         sw    $s2, -32($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
+        move  $s1, $a0
+        move  $s2, $a1
         # t2 = a ptr+ 8
         addiu $s0, $s1, 8
         # t3 = *t2
@@ -323,9 +324,9 @@ _Z4pickiRiS_:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        lw    $s2, 16($fp)
+        move  $s0, $a0
+        move  $s1, $a1
+        move  $s2, $a2
         # if which int== 0 goto 3
         beq   $s0, $zero, L8_3
         # t1 = a
@@ -370,10 +371,10 @@ M9_0:
         la    $s0, g_keeper
         # param t1
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param "start of main\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -385,19 +386,20 @@ M9_0:
         addiu $s0, $fp, -4
         # param t2
         # call Counted::Counted(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN7CountedC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param a
         # t3 = call take(class Counted), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         addiu $a0, $sp, 0
         addiu $a1, $fp, -4
         li    $a2, 4
         jal   __memcpy
+        lw    $a0, 0($sp)
         jal   _Z4take7Counted
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t4 = a[0]
         lw    $s2, -4($fp)
@@ -414,10 +416,10 @@ M9_0:
         addiu $sp, $sp, 16
         # param t2
         # b = call give(class Counted &), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z4giveR7Counted
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -8
         li    $a2, 4
@@ -427,11 +429,10 @@ M9_0:
         sw    $t0, -8($fp)
         # param 5
         # c = call fresh(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5freshi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -12
         li    $a2, 4
@@ -500,10 +501,9 @@ L9_39:
         # param t18
         # t19 = call pick(int, int &, int &), 3
         addiu $sp, $sp, -16
-        li    $t0, 1
-        sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s2, 8($sp)
+        li    $a0, 1
+        move  $a1, $s1
+        move  $a2, $s2
         jal   _Z4pickiRiS_
         addiu $sp, $sp, 16
         move  $s0, $v0
@@ -532,11 +532,11 @@ L9_39:
         # param t22
         # param t23
         # t24 = call richer(struct Account &, struct Account &), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s1, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s1
         jal   _Z6richerR7AccountS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # t25 = t24 ptr+ 8
         addiu $s0, $s2, 8
@@ -578,10 +578,10 @@ L9_39:
         la    $s0, g_primes
         # param t31
         # t32 = call sum(const int *), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z3sumPKi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d\n"
         # param t32
@@ -596,26 +596,26 @@ L9_39:
         addiu $s0, $fp, -80
         # param t33
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t34 = t33 ptr+ 8
         addiu $s1, $s0, 8
         # param t34
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t35 = t33 ptr+ 16
         addiu $s1, $s0, 16
         # param t35
         # call Dog::Dog(), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _ZN3DogC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # i = 0
         li    $s0, 0
 L9_86:
@@ -643,10 +643,10 @@ L9_93:
         addiu $s1, $fp, -80
         # param t41
         # t42 = call peek(const class Dog &), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _Z4peekRK3Dog
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d\n"
         # param t40
@@ -666,10 +666,10 @@ L9_93:
         la    $s1, g_keeper
         # param t44
         # t45 = call peek(const class Dog &), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _Z4peekRK3Dog
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d\n"
         # param t43

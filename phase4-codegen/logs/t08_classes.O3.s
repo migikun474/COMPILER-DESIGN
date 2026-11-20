@@ -59,7 +59,7 @@ _ZN6AnimalC1Ev:
         j     __stack_overflow
 M0_0:
         sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # *this = 4
         li    $t0, 4
         sw    $t0, 0($s0)
@@ -93,7 +93,7 @@ _ZN3TagC1Ev:
         j     __stack_overflow
 M1_0:
         sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # *this = 7
         li    $t0, 7
         sw    $t0, 0($s0)
@@ -122,7 +122,7 @@ _ZN3VecC1Ev:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # *this = 0
         sw    $zero, 0($s1)
         # t1 = this ptr+ 4
@@ -149,8 +149,8 @@ _Z4makeii:
         sw    $s1, -16($fp)
         sw    $s2, -20($fp)
         sw    $s3, -24($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
+        move  $s2, $a0
+        move  $s3, $a1
         # t1 = &v
         addiu $s0, $fp, -8
         # *t1 = 0
@@ -200,18 +200,18 @@ M4_0:
         addiu $s0, $fp, -12
         # param t1
         # call Animal::Animal(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN6AnimalC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t48 = t1 ptr+ 8
         addiu $s2, $s0, 8
         # param t48
         # call Tag::Tag(), 1
-        addiu $sp, $sp, -8
-        sw    $s2, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s2
         jal   _ZN3TagC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t49 = t1 ptr+ 4
         addiu $s1, $s0, 4
         # *t49 = 0
@@ -283,18 +283,18 @@ M4_0:
         addiu $s0, $fp, -24
         # param t10
         # call Animal::Animal(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN6AnimalC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t66 = t10 ptr+ 8
         addiu $s1, $s0, 8
         # param t66
         # call Tag::Tag(), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _ZN3TagC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t67 = t10 ptr+ 4
         addiu $s2, $s0, 4
         # *t67 = 0
@@ -349,10 +349,10 @@ M4_0:
         addiu $s0, $fp, -96
         # param t80
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t79[0] = 1
         li    $t0, 1
         sw    $t0, -96($fp)
@@ -368,10 +368,10 @@ M4_0:
         addiu $s0, $fp, -104
         # param t84
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t83[0] = 3
         li    $t0, 3
         sw    $t0, -104($fp)
@@ -402,10 +402,10 @@ M4_0:
         addiu $s1, $fp, -120
         # param t90
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s1
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t91 = *t16
         lw    $s1, 0($s0)
         # t92 = t88[0]
@@ -433,10 +433,10 @@ M4_0:
         addiu $s4, $fp, -128
         # param t100
         # call Vec::Vec(), 1
-        addiu $sp, $sp, -8
-        sw    $s4, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s4
         jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t101 = *t15
         lw    $s4, 0($s2)
         # t102 = int- t101
@@ -472,11 +472,11 @@ M4_0:
         # param t109
         # param t111
         # e = call make(int, int), 2
-        addiu $sp, $sp, -8
-        sw    $s5, 0($sp)
-        sw    $s6, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s5
+        move  $a1, $s6
         jal   _Z4makeii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -64
         li    $a2, 8

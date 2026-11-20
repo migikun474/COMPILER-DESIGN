@@ -50,7 +50,7 @@ _Z8popcountj:
         sw    $s1, -16($fp)
         sw    $s2, -4($fp)
         sw    $s3, -8($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # n = 0
         li    $s1, 0
 L0_1:
@@ -91,7 +91,7 @@ _Z11reverseBitsj:
         sw    $s2, -16($fp)
         sw    $s3, -4($fp)
         sw    $s4, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # r = 0
         li    $s2, 0
         # i = 0
@@ -136,7 +136,7 @@ _Z12isPowerOfTwoj:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # if v uint== 0 goto 4
         beq   $s0, $zero, L2_4
         # t2 = v uint- 1
@@ -174,7 +174,7 @@ _Z10highestBitj:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
         # n = -1
         li    $s1, -1
 L3_1:
@@ -208,8 +208,8 @@ _Z4rotlji:
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
         sw    $s3, -16($fp)
-        lw    $s3, 8($fp)
-        lw    $s2, 12($fp)
+        move  $s3, $a0
+        move  $s2, $a1
         # t1 = v uint<< k
         sllv  $s0, $s3, $s2
         # t2 = 32 int- k
@@ -241,7 +241,7 @@ _Z4signi:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # if v int> 0 goto 3
         slt   $s0, $zero, $s1
 L5_4:
@@ -283,43 +283,38 @@ M6_0:
         li    $s0, -252702156
         # param 4042265140
         # t1 = call popcount(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, -252702156
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, -252702156
         jal   _Z8popcountj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 4042265140
         # t2 = call reverseBits(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, -252702156
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, -252702156
         jal   _Z11reverseBitsj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 64
         # t3 = call isPowerOfTwo(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 64
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 64
         jal   _Z12isPowerOfTwoj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 65
         # t4 = call isPowerOfTwo(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 65
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 65
         jal   _Z12isPowerOfTwoj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param 1000
         # t5 = call highestBit(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1000
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1000
         jal   _Z10highestBitj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s4, $v0
         # param "%d %x %d %d %d\n"
         # param t1
@@ -360,13 +355,11 @@ M6_0:
         # param 4042265140
         # param 8
         # t10 = call rotl(unsigned int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, -252702156
-        sw    $t0, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, -252702156
+        li    $a1, 8
         jal   _Z4rotlji
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%x %x %x\n"
         # param t10
@@ -495,26 +488,24 @@ M6_0:
         addiu $sp, $sp, 16
         # param -9
         # t52 = call sign(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, -9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, -9
         jal   _Z4signi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 0
         # t53 = call sign(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z4signi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 4
         # t54 = call sign(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4signi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d %d\n"
         # param t52
@@ -577,11 +568,10 @@ M6_0:
         addiu $sp, $sp, 16
         # param 255
         # t73 = call popcount(unsigned int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 255
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 255
         jal   _Z8popcountj
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # return t73
         move  $v0, $s0

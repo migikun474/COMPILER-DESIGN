@@ -63,6 +63,7 @@ _Z8classifyPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -64
+        sw    $a0, 8($fp)
         # state = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -312,6 +313,8 @@ _Z6daysInii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = month
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -420,6 +423,7 @@ _Z5gradei:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
         # if score int>= 90 goto 2
         lw    $t0, 8($fp)
         li    $t1, 90
@@ -488,6 +492,7 @@ _Z9firstPairi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
         # i = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -589,43 +594,38 @@ main_:
 M4_0:
         # param "1234"
         # t1 = call classify(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str5
         jal   _Z8classifyPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -56($fp)
         # param "12.5"
         # t2 = call classify(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str6
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str6
         jal   _Z8classifyPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -60($fp)
         # param "x_9"
         # t3 = call classify(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str7
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str7
         jal   _Z8classifyPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -64($fp)
         # param "9x"
         # t4 = call classify(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str8
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str8
         jal   _Z8classifyPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -68($fp)
         # param ""
         # t5 = call classify(const char *), 1
-        addiu $sp, $sp, -8
-        la    $t0, str9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str9
         jal   _Z8classifyPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -72($fp)
         # param "%d %d %d %d %d\n"
         # param t1
@@ -652,46 +652,38 @@ M4_0:
         # param 2
         # param 2024
         # t6 = call daysIn(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 2024
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 2024
         jal   _Z6daysInii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -76($fp)
         # param 2
         # param 1900
         # t7 = call daysIn(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 1900
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 1900
         jal   _Z6daysInii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -80($fp)
         # param 2
         # param 2000
         # t8 = call daysIn(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 2000
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 2000
         jal   _Z6daysInii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -84($fp)
         # param 11
         # param 2023
         # t9 = call daysIn(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 11
-        sw    $t0, 0($sp)
-        li    $t0, 2023
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 11
+        li    $a1, 2023
         jal   _Z6daysInii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -88($fp)
         # param "%d %d %d %d\n"
         # param t6
@@ -714,35 +706,31 @@ M4_0:
         addiu $sp, $sp, 24
         # param 95
         # t10 = call grade(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 95
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 95
         jal   _Z5gradei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -92($fp)
         # param 80
         # t11 = call grade(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 80
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 80
         jal   _Z5gradei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -96($fp)
         # param 60
         # t12 = call grade(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 60
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 60
         jal   _Z5gradei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -100($fp)
         # param 10
         # t13 = call grade(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 10
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 10
         jal   _Z5gradei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -104($fp)
         # param "%s %s %s %s\n"
         # param t10
@@ -765,27 +753,24 @@ M4_0:
         addiu $sp, $sp, 24
         # param 24
         # t14 = call firstPair(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 24
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 24
         jal   _Z9firstPairi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -108($fp)
         # param 49
         # t15 = call firstPair(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 49
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 49
         jal   _Z9firstPairi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -112($fp)
         # param 97
         # t16 = call firstPair(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 97
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 97
         jal   _Z9firstPairi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -116($fp)
         # param "%d %d %d\n"
         # param t14

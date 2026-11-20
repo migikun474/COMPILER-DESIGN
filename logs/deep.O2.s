@@ -34,15 +34,15 @@ _Z1fi:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        lw    $s1, 8($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        move  $s1, $a0
         # if n int!= 0 goto 2
         bne   $s1, $zero, L0_2
         # return 0
@@ -53,10 +53,10 @@ L0_2:
         addiu $s0, $s1, -1
         # param t1
         # t2 = call f(int), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z1fi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t3 = 1 int+ t2
         li    $t0, 1
@@ -65,8 +65,8 @@ L0_2:
         move  $v0, $s0
         j     _Z1fi_exit
 _Z1fi_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -79,13 +79,13 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        sw    $s0, -16($fp)
+        sw    $s0, -8($fp)
         # t1 = &n
         addiu $s0, $fp, -4
         # param "%d"
@@ -99,11 +99,10 @@ M1_0:
         addiu $sp, $sp, 8
         # param n
         # t2 = call f(int), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -4($fp)
         jal   _Z1fi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t2
@@ -118,7 +117,7 @@ M1_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -16($fp)
+        lw    $s0, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

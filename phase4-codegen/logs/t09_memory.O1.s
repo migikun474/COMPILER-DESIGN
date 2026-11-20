@@ -50,8 +50,8 @@ M0_0:
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
         sw    $s3, -16($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
+        move  $s2, $a0
+        move  $s1, $a1
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -249,11 +249,11 @@ L1_55:
         # param list
         # param t33
         # list = call push(struct Node *, int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s3, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s3
         jal   _Z4pushP4Nodei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # i.10 = i.10 int+ 1
         addiu $s1, $s1, 1

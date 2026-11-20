@@ -46,6 +46,8 @@ _Z4pushP4Nodei:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -359,13 +361,11 @@ L1_64:
         # param list
         # param t33
         # t34 = call push(struct Node *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -24($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -184($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -24($fp)
+        lw    $a1, -184($fp)
         jal   _Z4pushP4Nodei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -188($fp)
         # list = t34
         lw    $t0, -188($fp)

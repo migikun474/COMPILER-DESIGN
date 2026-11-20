@@ -103,7 +103,7 @@ _Z6shadowi:
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
         sw    $s2, -12($fp)
-        lw    $s2, 8($fp)
+        move  $s2, $a0
         # t1 = x.3 int+ 3
         addiu $s0, $s2, 3
         # t2 = t1 int+ 4
@@ -238,14 +238,15 @@ M6_0:
         sw    $s2, -12($fp)
         # param 1
         # t1 = call shadow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z6shadowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t2 = call useGlobal(), 0
+        addiu $sp, $sp, -16
         jal   _Z9useGlobalv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d %d\n"
         # param t1
@@ -262,11 +263,17 @@ M6_0:
         jal   __printf
         addiu $sp, $sp, 16
         # call changeGlobal(), 0
+        addiu $sp, $sp, -16
         jal   _Z12changeGlobalv
+        addiu $sp, $sp, 16
         # call changeGlobal(), 0
+        addiu $sp, $sp, -16
         jal   _Z12changeGlobalv
+        addiu $sp, $sp, 16
         # t3 = call useGlobal(), 0
+        addiu $sp, $sp, -16
         jal   _Z9useGlobalv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d %d %d\n"
         # param 5
@@ -284,10 +291,14 @@ M6_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t4 = call next(), 0
+        addiu $sp, $sp, -16
         jal   _Z4nextv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t5 = call next(), 0
+        addiu $sp, $sp, -16
         jal   _Z4nextv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t4
@@ -301,13 +312,19 @@ M6_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t6 = call twice(), 0
+        addiu $sp, $sp, -16
         jal   _Z5twicev
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # t7 = call twice(), 0
+        addiu $sp, $sp, -16
         jal   _Z5twicev
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t8 = call twice(), 0
+        addiu $sp, $sp, -16
         jal   _Z5twicev
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t6
@@ -323,7 +340,9 @@ M6_0:
         jal   __printf
         addiu $sp, $sp, 16
         # t9 = call loops(), 0
+        addiu $sp, $sp, -16
         jal   _Z5loopsv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t9

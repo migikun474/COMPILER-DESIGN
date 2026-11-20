@@ -58,7 +58,7 @@ _ZN1BC1Ev:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
+        move  $s1, $a0
         # *this = 1
         li    $t0, 1
         sw    $t0, 0($s1)
@@ -87,7 +87,8 @@ _Z4vsumiPv:
         sw    $s1, -16($fp)
         sw    $s2, -4($fp)
         sw    $s3, -8($fp)
-        lw    $s0, 8($fp)
+        move  $s0, $a0
+        sw    $a1, 12($fp)
         # s = 0
         li    $s1, 0
 L1_1:
@@ -146,19 +147,21 @@ _Z5totaliz:
         j     __stack_overflow
 M2_0:
         sw    $s0, -8($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
         # param n
         # param ap
         # t1 = call vsum(int, va_list), 2
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -4($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, 8($fp)
+        lw    $a1, -4($fp)
         jal   _Z4vsumiPv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # va_end ap
         # return t1
@@ -232,10 +235,10 @@ M3_0:
         addiu $s0, $fp, -12
         # param t8
         # call B::B(), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _ZN1BC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t37 = t8 ptr+ 8
         addiu $s1, $s0, 8
         # *t37 = 3
@@ -351,14 +354,10 @@ L3_26:
         # param 3
         # t29 = call total(int, ...), 4
         addiu $sp, $sp, -16
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
-        li    $t0, 2
-        sw    $t0, 8($sp)
-        li    $t0, 3
-        sw    $t0, 12($sp)
+        li    $a0, 3
+        li    $a1, 1
+        li    $a2, 2
+        li    $a3, 3
         jal   _Z5totaliz
         addiu $sp, $sp, 16
         move  $s0, $v0
