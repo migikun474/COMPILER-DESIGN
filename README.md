@@ -21,7 +21,6 @@ then MIPS.
 
 ```
 Front end
-├── Preprocessor          ✓  shared/preprocessor        (runs before every phase)
 ├── Lexical analysis      ✓  phase1-lexer
 ├── Syntax analysis       ✓  phase2-parser              (LALR(1), AST, parse-time symbol table)
 └── Semantic analysis     ✓  phase2b-semantic           (types, scopes, annotated AST)
@@ -51,8 +50,7 @@ flowchart of the generated code and the real TAC it produces.
 
 ```
 source.c
-   ↓  preprocessFile()            shared/preprocessor   #define, #include, #if; line map kept
-preprocessed text
+   (no preprocessor: a `#` line is a lexical error, D34)
    ↓  yylex()                     phase1-lexer/src/lexer.l   → Lexeme / Token table   (standalone tool)
    ↓  yylex() ⇄ yyparse()         phase2-parser/src/scanner.l + parser.y
 tokens → AST (g_astRoot) + parse-time symbol table + Token/Token_Type table
@@ -130,11 +128,9 @@ Abridged; the full matrix with test evidence for every row is in
 | Dynamic memory (`malloc` … `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | typedef, references | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Classes, inheritance, access modifiers, `const` methods, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Constructors/destructors, member initializer lists, `explicit`, operator overloading | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Virtual functions, abstract classes | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (vtables, `call *t` / `jalr`) |
-| Function overloading, converting constructors | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Preprocessor (`#define`, `#include`, `#if`) | ✓ | ✓ | ✓ | — | — | runs before the other phases |
+| Classes, single inheritance, access modifiers, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Default constructors, operator overloading | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| Function overloading | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 
 ## Implemented basic features
 
@@ -153,8 +149,8 @@ multi-level pointers and multi-dimensional arrays. Dynamic memory is
 `malloc` / `calloc` / `realloc` / `free`.
 
 Beyond the specification, the code also implements classes and objects,
-inheritance, access modifiers, constructors and destructors, operator
-and function overloading, a C preprocessor, `extern`, casts,
+single inheritance, access modifiers, default constructors, operator
+and function overloading, `extern`, casts,
 designated initializers, unnamed structs with anonymous members, and
 Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
 for sequence-point violations (`i = i++`), integer overflow in constant
@@ -186,7 +182,7 @@ Nothing. The last six partial features (class features, brace elision
 into struct members, flow checks, converting constructors for arguments
 and returns, member classification in the Token_Type table, columns in
 the phase-1 lexer) were finished on 2026-10-15 (decision D32 in
-[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md)). The semantic phase now
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md); most of those class features were later removed by D35). The semantic phase now
 warns about a missing `return` on some path and about unreachable code,
 and rejects a `goto` or `case` that jumps over an initialization; a read
 of an uninitialized local is warned about one phase later, by
@@ -287,7 +283,7 @@ spim -file add.s
 |---|---|---|
 | `-O1` | both | value numbering in each basic block: constant folding, copies, common subexpressions, dead temporaries, jump clean-up |
 | `-O2` | both | `-O1` plus constants and copies across blocks and dead assignments (liveness) |
-| `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop-invariant code motion |
+| `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal |
 | `--run`, `-q` | `tac_generator` | execute the code; `-q` prints only what the program prints |
 | `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the stack frame |
 
@@ -337,15 +333,16 @@ program's output or exit code).
 
 - Removed features (see above): `enum`, `union`, file manipulation,
   lambdas, function pointers, `new`/`delete`, `register`, `volatile`,
-  `long double`.
+  `long double`; the preprocessor (D34); and from C++ (D35): destructors,
+  constructors with parameters, copy and converting constructors,
+  member initializer lists, `const` member functions, virtual functions
+  and abstract classes, `explicit`, multiple inheritance, object
+  slicing, nested and local classes, static local objects with a
+  constructor.
 - Constructs rejected as syntax errors: bit-fields, default arguments,
   templates, namespaces, `using`, exceptions, `inline`, `override` /
   `final`, virtual inheritance, compound literals, nested function
   definitions, `wchar_t` / wide literals.
-- Virtual functions: a destructor may be `virtual` but is never called
-  through the table (there is no `delete`, so every object is destroyed
-  where its exact class is known); an override must return the same
-  type (no covariant returns).
 - `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
   reserved words of this language (they cannot be used as identifiers);
   `#include <stdio.h>` and other system headers are accepted and ignored.
