@@ -41,8 +41,6 @@ _Z4swapPiS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # t1 = *a
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -78,8 +76,6 @@ _Z3sumPiS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -241,11 +237,13 @@ M2_0:
         # param t15
         # param t16
         # call swap(int *, int *), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -172($fp)
-        lw    $a1, -176($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -172($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -176($fp)
+        sw    $t0, 4($sp)
         jal   _Z4swapPiS_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # param "%d %d\n"
         # param x
         # param y
@@ -348,11 +346,13 @@ M2_0:
         # param t25
         # param t27
         # t28 = call sum(int *, int *), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -212($fp)
-        lw    $a1, -220($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -212($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -220($fp)
+        sw    $t0, 4($sp)
         jal   _Z3sumPiS_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -224($fp)
         # param "%d %d %d\n"
         # param t24

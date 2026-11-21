@@ -1126,6 +1126,25 @@ stage flag (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) stops
 after that phase and prints it; with none it writes the MIPS assembly as
 before. The per-phase binaries stay for the per-phase test suites.
 
+### D41. Audit of D34-D40 (2026-11-22)
+
+Every item was re-checked with probe programs compared against g++ on
+the TAC interpreter and on SPIM at `-O0` ... `-O3` (register arguments
+of every kind and position, variadic calls, methods, recursion,
+unrolled loops with `break`/`continue`/`switch`, division of every
+width, the new algebraic rules, dead functions, the reduced classes),
+plus the run-time errors in both back ends. Two changes came out of it:
+
+- **`-O3` hang (older than D34):** `globalCommon()` started a block whose
+  predecessors were not yet computed from the empty set instead of
+  "everything", so its facts grew later and the iteration never settled
+  on some loop shapes. Such a block is now skipped until a predecessor
+  is computed; the sets only shrink and the analysis terminates. The
+  reproducer is test `t35_loop_shapes`.
+- **Register arguments follow the machine-level switch:** `-O0` and
+  `--stack-only` keep the all-stack convention of D25 (the direct
+  translation); `-O1` and above pass arguments in `$a0`-`$a3` (D39).
+
 ---
 
 ## Open questions

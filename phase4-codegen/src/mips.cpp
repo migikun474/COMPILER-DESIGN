@@ -601,8 +601,9 @@ struct Emitter {
         }
         /* a call to a user function passes the first 16 bytes in $a0-$a3 as
            well (D39, MIPS o32 style) and always reserves them as the callee's
-           home area; the run-time library keeps the all-stack convention */
-        bool regs = q.callee != nullptr;
+           home area; the run-time library keeps the all-stack convention, and
+           so does -O0 / --stack-only, the direct translation */
+        bool regs = optimize && q.callee != nullptr;
         size = roundUp(size, 8);
         if (regs) size = std::max(size, 16);
         if (size) ins("addiu $sp, $sp, -" + std::to_string(size));
@@ -855,7 +856,7 @@ struct Emitter {
            parameter with a register takes it from there; every other word
            goes to its home slot, where the rest of the code reads it */
         std::set<const sem::Symbol *> moved;
-        int words = f.sym->type && f.sym->type->variadic ? 4 : std::min(4, (varargStart + 3) / 4);
+        int words = !optimize ? 0 : f.sym->type && f.sym->type->variadic ? 4 : std::min(4, (varargStart + 3) / 4);
         for (int k = 0; k < words; ++k) {
             std::string a = "$a" + std::to_string(k);
             const sem::Symbol *taker = nullptr;

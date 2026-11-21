@@ -40,8 +40,6 @@ main_:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # letters = 0
         li    $t0, 0
         sw    $t0, -4($fp)

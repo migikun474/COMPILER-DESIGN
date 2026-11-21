@@ -62,7 +62,6 @@ _Z6lengthPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
-        sw    $a0, 8($fp)
         # n = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -114,8 +113,6 @@ _Z4copyPcPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
 L1_0:
         # t1 = to
         lw    $t0, 8($fp)
@@ -176,8 +173,6 @@ _Z7comparePKcS0_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -48
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
 L2_0:
         # t1 = *a
         lw    $t8, 8($fp)
@@ -271,16 +266,16 @@ _Z7reversePc:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $a0, 8($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
         # param s
         # t1 = call length(const char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 8($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 8($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -16($fp)
         # t2 = t1 int- 1
         lw    $t0, -16($fp)
@@ -372,8 +367,6 @@ _Z4findPKcc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -40
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -452,7 +445,6 @@ _Z8toNumberPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -72
-        sw    $a0, 8($fp)
         # sign = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -575,8 +567,6 @@ _Z6toTextiPc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -80
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # n = 0
         li    $t0, 0
         sw    $t0, -16($fp)
@@ -748,16 +738,16 @@ _Z12isPalindromePKc:
         beqz  $t8, M7_0
         j     __stack_overflow
 M7_0:
-        sw    $a0, 8($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
         # param s
         # t1 = call length(const char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 8($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 8($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -12($fp)
         # t2 = t1 int- 1
         lw    $t0, -12($fp)
@@ -851,7 +841,6 @@ _Z10countWordsPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
-        sw    $a0, 8($fp)
         # words = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -980,11 +969,13 @@ M9_0:
         # param t1
         # param "compiler"
         # call copy(char *, const char *), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -84($fp)
-        la    $a1, str3
+        addiu $sp, $sp, -8
+        lw    $t0, -84($fp)
+        sw    $t0, 0($sp)
+        la    $t0, str3
+        sw    $t0, 4($sp)
         jal   _Z4copyPcPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # t2 = &buf
         addiu $t0, $fp, -32
         sw    $t0, -88($fp)
@@ -993,10 +984,11 @@ M9_0:
         sw    $t0, -92($fp)
         # param t3
         # t4 = call length(const char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -92($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -92($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -96($fp)
         # param "%s %d\n"
         # param t2
@@ -1016,10 +1008,11 @@ M9_0:
         sw    $t0, -100($fp)
         # param t5
         # call reverse(char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -100($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -100($fp)
+        sw    $t0, 0($sp)
         jal   _Z7reversePc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # t6 = &buf
         addiu $t0, $fp, -32
         sw    $t0, -104($fp)
@@ -1029,11 +1022,13 @@ M9_0:
         # param t7
         # param 112
         # t8 = call find(const char *, char), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -108($fp)
-        li    $a1, 112
+        addiu $sp, $sp, -8
+        lw    $t0, -108($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 112
+        sw    $t0, 4($sp)
         jal   _Z4findPKcc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -112($fp)
         # t9 = &buf
         addiu $t0, $fp, -32
@@ -1041,11 +1036,13 @@ M9_0:
         # param t9
         # param 122
         # t10 = call find(const char *, char), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -116($fp)
-        li    $a1, 122
+        addiu $sp, $sp, -8
+        lw    $t0, -116($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 122
+        sw    $t0, 4($sp)
         jal   _Z4findPKcc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -120($fp)
         # param "%s %d %d\n"
         # param t6
@@ -1066,11 +1063,13 @@ M9_0:
         # param "abc"
         # param "abd"
         # t12 = call compare(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str7
-        la    $a1, str8
+        addiu $sp, $sp, -8
+        la    $t0, str7
+        sw    $t0, 0($sp)
+        la    $t0, str8
+        sw    $t0, 4($sp)
         jal   _Z7comparePKcS0_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -128($fp)
         # if t12 int< 0 goto 38
         lw    $t0, -128($fp)
@@ -1089,20 +1088,24 @@ L9_39:
         # param "abc"
         # param "abc"
         # t13 = call compare(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str7
-        la    $a1, str7
+        addiu $sp, $sp, -8
+        la    $t0, str7
+        sw    $t0, 0($sp)
+        la    $t0, str7
+        sw    $t0, 4($sp)
         jal   _Z7comparePKcS0_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -132($fp)
         # param "b"
         # param "abc"
         # t15 = call compare(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str9
-        la    $a1, str7
+        addiu $sp, $sp, -8
+        la    $t0, str9
+        sw    $t0, 0($sp)
+        la    $t0, str7
+        sw    $t0, 4($sp)
         jal   _Z7comparePKcS0_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -140($fp)
         # if t15 int> 0 goto 48
         lw    $t0, -140($fp)
@@ -1173,11 +1176,13 @@ L9_58:
         # param t17
         # param t19
         # t20 = call compare(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -148($fp)
-        lw    $a1, -156($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -148($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -156($fp)
+        sw    $t0, 4($sp)
         jal   _Z7comparePKcS0_
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -160($fp)
         # if t20 int< 0 goto 67
         lw    $t0, -160($fp)
@@ -1253,11 +1258,13 @@ L9_71:
         # param t28
         # param t29
         # call toText(int, char *), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -192($fp)
-        lw    $a1, -196($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -192($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -196($fp)
+        sw    $t0, 4($sp)
         jal   _Z6toTextiPc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # t30 = &num
         addiu $t0, $fp, -48
         sw    $t0, -200($fp)
@@ -1266,10 +1273,11 @@ L9_71:
         sw    $t0, -204($fp)
         # param t31
         # t32 = call toNumber(const char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -204($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -204($fp)
+        sw    $t0, 0($sp)
         jal   _Z8toNumberPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -208($fp)
         # t33 = t32 int+ 1
         lw    $t0, -208($fp)
@@ -1278,10 +1286,11 @@ L9_71:
         sw    $t0, -212($fp)
         # param "77x"
         # t34 = call toNumber(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str11
+        addiu $sp, $sp, -8
+        la    $t0, str11
+        sw    $t0, 0($sp)
         jal   _Z8toNumberPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -216($fp)
         # param "%s %d %d\n"
         # param t30
@@ -1301,24 +1310,27 @@ L9_71:
         addiu $sp, $sp, 16
         # param "level"
         # t35 = call isPalindrome(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str12
+        addiu $sp, $sp, -8
+        la    $t0, str12
+        sw    $t0, 0($sp)
         jal   _Z12isPalindromePKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -220($fp)
         # param "lever"
         # t36 = call isPalindrome(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str13
+        addiu $sp, $sp, -8
+        la    $t0, str13
+        sw    $t0, 0($sp)
         jal   _Z12isPalindromePKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -224($fp)
         # param "  the quick  brown fox "
         # t37 = call countWords(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str14
+        addiu $sp, $sp, -8
+        la    $t0, str14
+        sw    $t0, 0($sp)
         jal   _Z10countWordsPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -228($fp)
         # param "%d %d %d\n"
         # param t35
@@ -1497,10 +1509,11 @@ L9_138:
         sw    $t0, -276($fp)
         # param t50
         # t51 = call length(const char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -276($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -276($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -280($fp)
         # t52 = buf[0]
         addiu $t8, $fp, -32

@@ -83,7 +83,6 @@ _Z3sumPKi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
-        sw    $a0, 8($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -204,20 +203,22 @@ L1_6:
         sw    $t0, -280($fp)
         # param t3
         # t4 = call sum(const int *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -280($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -280($fp)
+        sw    $t0, 0($sp)
         jal   _Z3sumPKi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -284($fp)
         # t5 = &primes
         la    $t0, g_primes
         sw    $t0, -288($fp)
         # param t5
         # t6 = call sum(const int *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -288($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -288($fp)
+        sw    $t0, 0($sp)
         jal   _Z3sumPKi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -292($fp)
         # t7 = t4 int+ t6
         lw    $t0, -284($fp)

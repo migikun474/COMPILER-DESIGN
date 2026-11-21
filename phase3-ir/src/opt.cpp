@@ -912,6 +912,9 @@ struct FunctionPass {
                         it = o != out[p].end() && sameName(o->second.holder, it->second.holder) ? std::next(it) : f.erase(it);
                     }
                 }
+                /* no predecessor computed yet: still "everything" (top), not "nothing";
+                   starting from nothing made the sets grow later and never settle */
+                if (k != 0 && first) continue;
                 if (k == 0) f.clear();
                 in[k] = f;
                 for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) transferAvailable(fn.quads[i], f);

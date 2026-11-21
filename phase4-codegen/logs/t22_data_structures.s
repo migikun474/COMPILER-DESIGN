@@ -46,8 +46,6 @@ _Z7prependP4Nodei:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -89,7 +87,6 @@ _Z7reverseP4Node:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
-        sw    $a0, 8($fp)
         # prev = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -153,8 +150,6 @@ _Z11removeValuePP4Nodei:
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
 L2_0:
         # t1 = *link
         lw    $t8, 8($fp)
@@ -248,8 +243,6 @@ _Z6insertP4Treei:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # if t ptr!= 0 goto 11
         lw    $t0, 8($fp)
         li    $t1, 0
@@ -316,11 +309,13 @@ L3_14:
         # param t6
         # param key
         # t7 = call insert(struct Tree *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -24($fp)
-        lw    $a1, 12($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -24($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, 12($fp)
+        sw    $t0, 4($sp)
         jal   _Z6insertP4Treei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -28($fp)
         # t8 = t ptr+ 4
         lw    $t0, 8($fp)
@@ -346,11 +341,13 @@ L3_22:
         # param t10
         # param key
         # t11 = call insert(struct Tree *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -40($fp)
-        lw    $a1, 12($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -40($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, 12($fp)
+        sw    $t0, 4($sp)
         jal   _Z6insertP4Treei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -44($fp)
         # t12 = t ptr+ 8
         lw    $t0, 8($fp)
@@ -384,7 +381,6 @@ _Z7inorderP4Tree:
         beqz  $t8, M4_0
         j     __stack_overflow
 M4_0:
-        sw    $a0, 8($fp)
         # if t ptr!= 0 goto 3
         lw    $t0, 8($fp)
         li    $t1, 0
@@ -406,10 +402,11 @@ L4_3:
         sw    $t0, -8($fp)
         # param t2
         # call inorder(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -8($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -8($fp)
+        sw    $t0, 0($sp)
         jal   _Z7inorderP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # t3 = *t
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -435,10 +432,11 @@ L4_3:
         sw    $t0, -20($fp)
         # param t5
         # call inorder(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -20($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -20($fp)
+        sw    $t0, 0($sp)
         jal   _Z7inorderP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # return
         j     _Z7inorderP4Tree_exit
 _Z7inorderP4Tree_exit:
@@ -460,7 +458,6 @@ _Z6heightP4Tree:
         beqz  $t8, M5_0
         j     __stack_overflow
 M5_0:
-        sw    $a0, 8($fp)
         # if t ptr!= 0 goto 3
         lw    $t0, 8($fp)
         li    $t1, 0
@@ -483,10 +480,11 @@ L5_3:
         sw    $t0, -16($fp)
         # param t2
         # t3 = call height(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
         jal   _Z6heightP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -20($fp)
         # l = t3
         lw    $t0, -20($fp)
@@ -502,10 +500,11 @@ L5_3:
         sw    $t0, -28($fp)
         # param t5
         # t6 = call height(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -28($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -28($fp)
+        sw    $t0, 0($sp)
         jal   _Z6heightP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -32($fp)
         # r = t6
         lw    $t0, -32($fp)
@@ -549,8 +548,6 @@ _Z4pushP5Stacki:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # t1 = s ptr+ 32
         lw    $t0, 8($fp)
         li    $t1, 32
@@ -604,7 +601,6 @@ _Z3popP5Stack:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
-        sw    $a0, 8($fp)
         # t1 = s ptr+ 32
         lw    $t0, 8($fp)
         li    $t1, 32
@@ -692,11 +688,13 @@ L8_4:
         # param list
         # param t2
         # t3 = call prepend(struct Node *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -4($fp)
-        lw    $a1, -164($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -4($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -164($fp)
+        sw    $t0, 4($sp)
         jal   _Z7prependP4Nodei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -168($fp)
         # list = t3
         lw    $t0, -168($fp)
@@ -714,10 +712,11 @@ L8_4:
 L8_13:
         # param list
         # t5 = call reverse(struct Node *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -4($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -4($fp)
+        sw    $t0, 0($sp)
         jal   _Z7reverseP4Node
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -176($fp)
         # list = t5
         lw    $t0, -176($fp)
@@ -728,11 +727,13 @@ L8_13:
         # param t6
         # param 2
         # call removeValue(struct Node **, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -180($fp)
-        li    $a1, 2
+        addiu $sp, $sp, -8
+        lw    $t0, -180($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 2
+        sw    $t0, 4($sp)
         jal   _Z11removeValuePP4Nodei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # p = list
         lw    $t0, -4($fp)
         sw    $t0, -12($fp)
@@ -850,11 +851,13 @@ L8_44:
         # param root
         # param t11
         # t12 = call insert(struct Tree *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
-        lw    $a1, -200($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -200($fp)
+        sw    $t0, 4($sp)
         jal   _Z6insertP4Treei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -204($fp)
         # root = t12
         lw    $t0, -204($fp)
@@ -873,27 +876,31 @@ L8_53:
         # param root
         # param 10
         # t14 = call insert(struct Tree *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
-        li    $a1, 10
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 10
+        sw    $t0, 4($sp)
         jal   _Z6insertP4Treei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -212($fp)
         # root = t14
         lw    $t0, -212($fp)
         sw    $t0, -16($fp)
         # param root
         # call inorder(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
         jal   _Z7inorderP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # param root
         # t15 = call height(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
         jal   _Z6heightP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -216($fp)
         # t16 = root ptr+ 4
         lw    $t0, -16($fp)
@@ -992,11 +999,13 @@ L8_82:
         # param t28
         # param t29
         # call push(Stack *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -268($fp)
-        lw    $a1, -272($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -268($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -272($fp)
+        sw    $t0, 4($sp)
         jal   _Z4pushP5Stacki
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         # t30 = i.26 int+ 1
         lw    $t0, -88($fp)
         li    $t1, 1
@@ -1013,10 +1022,11 @@ L8_90:
         sw    $t0, -280($fp)
         # param t31
         # t32 = call pop(Stack *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -280($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -280($fp)
+        sw    $t0, 0($sp)
         jal   _Z3popP5Stack
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -284($fp)
         # a = t32
         lw    $t0, -284($fp)
@@ -1026,10 +1036,11 @@ L8_90:
         sw    $t0, -288($fp)
         # param t33
         # t34 = call pop(Stack *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -288($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -288($fp)
+        sw    $t0, 0($sp)
         jal   _Z3popP5Stack
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -292($fp)
         # b = t34
         lw    $t0, -292($fp)
@@ -1426,10 +1437,11 @@ L8_151:
         addiu $sp, $sp, 24
         # param root
         # t82 = call height(struct Tree *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -16($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
         jal   _Z6heightP4Tree
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -484($fp)
         # return t82
         lw    $v0, -484($fp)

@@ -72,7 +72,6 @@ _Z5depthi:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $a0, 8($fp)
         # t1 = n int* 2
         lw    $t0, 8($fp)
         li    $t1, 2
@@ -115,10 +114,11 @@ L0_9:
         sw    $t0, -32($fp)
         # param t4
         # t5 = call depth(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -32($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -32($fp)
+        sw    $t0, 0($sp)
         jal   _Z5depthi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -36($fp)
         # below = t5
         lw    $t0, -36($fp)
@@ -155,7 +155,6 @@ _Z4manyi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -208
-        sw    $a0, 8($fp)
         # t1 = x int+ 1
         lw    $t0, 8($fp)
         li    $t1, 1
@@ -422,9 +421,6 @@ _Z5threeiii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
-        sw    $a2, 16($fp)
         # t1 = p int* 100
         lw    $t0, 8($fp)
         li    $t1, 100
@@ -462,7 +458,6 @@ _Z5twicei:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $a0, 8($fp)
         # t1 = v int* 2
         lw    $t0, 8($fp)
         li    $t1, 2
@@ -490,9 +485,6 @@ _Z9argumentsiii:
         beqz  $t8, M4_0
         j     __stack_overflow
 M4_0:
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
-        sw    $a2, 16($fp)
         # t1 = a int+ 1
         lw    $t0, 8($fp)
         li    $t1, 1
@@ -503,10 +495,11 @@ M4_0:
         sw    $t0, -4($fp)
         # param b
         # t2 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 12($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 12($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -20($fp)
         # t3 = c int- 1
         lw    $t0, 16($fp)
@@ -518,9 +511,12 @@ M4_0:
         # param t3
         # t4 = call three(int, int, int), 3
         addiu $sp, $sp, -16
-        lw    $a0, -4($fp)
-        lw    $a1, -20($fp)
-        lw    $a2, -24($fp)
+        lw    $t0, -4($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -20($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -24($fp)
+        sw    $t0, 8($sp)
         jal   _Z5threeiii
         addiu $sp, $sp, 16
         sw    $v0, -28($fp)
@@ -529,31 +525,35 @@ M4_0:
         sw    $t0, -8($fp)
         # param a
         # t5 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 8($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 8($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -32($fp)
         # param b
         # t6 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 12($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 12($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -36($fp)
         # param t6
         # t7 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -36($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -36($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -40($fp)
         # param c
         # t8 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, 16($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, 16($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -44($fp)
         # t9 = t8 int+ x
         lw    $t0, -44($fp)
@@ -565,9 +565,12 @@ M4_0:
         # param t9
         # t10 = call three(int, int, int), 3
         addiu $sp, $sp, -16
-        lw    $a0, -32($fp)
-        lw    $a1, -40($fp)
-        lw    $a2, -48($fp)
+        lw    $t0, -32($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -40($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -48($fp)
+        sw    $t0, 8($sp)
         jal   _Z5threeiii
         addiu $sp, $sp, 16
         sw    $v0, -52($fp)
@@ -596,7 +599,6 @@ _Z10charactersPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -184
-        sw    $a0, 8($fp)
         # c = 0
         li    $t0, 0
         sb    $t0, -1($fp)
@@ -868,8 +870,6 @@ _Z4halfd:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # t1 = v double/ 2.0
         l.d   $f0, 8($fp)
         l.d   $f2, fc0
@@ -897,7 +897,6 @@ _Z7numbersi:
         beqz  $t8, M7_0
         j     __stack_overflow
 M7_0:
-        sw    $a0, 8($fp)
         # a = 1.5
         l.d   $f0, fc1
         s.d   $f0, -8($fp)
@@ -976,13 +975,11 @@ L7_12:
         s.d   $f0, -64($fp)
         # param total
         # t8 = call half(double), 1
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         l.d   $f0, -64($fp)
         s.d   $f0, 0($sp)
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
         jal   _Z4halfd
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         s.d   $f0, -136($fp)
         # t9 = floattodouble small
         l.s   $f0, -68($fp)
@@ -1062,7 +1059,6 @@ _Z5jumpsi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -40
-        sw    $a0, 8($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -1146,7 +1142,6 @@ _Z5mixedi:
         beqz  $t8, M9_0
         j     __stack_overflow
 M9_0:
-        sw    $a0, 8($fp)
         # t1 = n int* 3
         lw    $t0, 8($fp)
         li    $t1, 3
@@ -1211,10 +1206,11 @@ L9_13:
 L9_16:
         # param i
         # t6 = call twice(int), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -12($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -12($fp)
+        sw    $t0, 0($sp)
         jal   _Z5twicei
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -44($fp)
         # t7 = sum int+ t6
         lw    $t0, -8($fp)
@@ -1268,17 +1264,19 @@ main_:
 M10_0:
         # param 5
         # t1 = call depth(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 5
+        addiu $sp, $sp, -8
+        li    $t0, 5
+        sw    $t0, 0($sp)
         jal   _Z5depthi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -4($fp)
         # param 3
         # t2 = call many(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 3
+        addiu $sp, $sp, -8
+        li    $t0, 3
+        sw    $t0, 0($sp)
         jal   _Z4manyi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -8($fp)
         # param "%d %d\n"
         # param t1
@@ -1298,9 +1296,12 @@ M10_0:
         # param 3
         # t3 = call arguments(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $a0, 1
-        li    $a1, 2
-        li    $a2, 3
+        li    $t0, 1
+        sw    $t0, 0($sp)
+        li    $t0, 2
+        sw    $t0, 4($sp)
+        li    $t0, 3
+        sw    $t0, 8($sp)
         jal   _Z9argumentsiii
         addiu $sp, $sp, 16
         sw    $v0, -12($fp)
@@ -1309,9 +1310,12 @@ M10_0:
         # param 9
         # t4 = call arguments(int, int, int), 3
         addiu $sp, $sp, -16
-        li    $a0, 4
-        li    $a1, 0
-        li    $a2, 9
+        li    $t0, 4
+        sw    $t0, 0($sp)
+        li    $t0, 0
+        sw    $t0, 4($sp)
+        li    $t0, 9
+        sw    $t0, 8($sp)
         jal   _Z9argumentsiii
         addiu $sp, $sp, 16
         sw    $v0, -16($fp)
@@ -1330,17 +1334,19 @@ M10_0:
         addiu $sp, $sp, 16
         # param "register allocation"
         # t5 = call characters(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str1
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
         jal   _Z10charactersPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -20($fp)
         # param "zzzzzzzzzzzzzzzzzzzz"
         # t6 = call characters(const char *), 1
-        addiu $sp, $sp, -16
-        la    $a0, str2
+        addiu $sp, $sp, -8
+        la    $t0, str2
+        sw    $t0, 0($sp)
         jal   _Z10charactersPKc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -24($fp)
         # param "%d %d\n"
         # param t5
@@ -1357,24 +1363,27 @@ M10_0:
         addiu $sp, $sp, 16
         # param 0
         # t7 = call numbers(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 0
+        addiu $sp, $sp, -8
+        li    $t0, 0
+        sw    $t0, 0($sp)
         jal   _Z7numbersi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         s.d   $f0, -32($fp)
         # param 3
         # t8 = call numbers(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 3
+        addiu $sp, $sp, -8
+        li    $t0, 3
+        sw    $t0, 0($sp)
         jal   _Z7numbersi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         s.d   $f0, -40($fp)
         # param 40
         # t9 = call numbers(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 40
+        addiu $sp, $sp, -8
+        li    $t0, 40
+        sw    $t0, 0($sp)
         jal   _Z7numbersi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         s.d   $f0, -48($fp)
         # param "%.4f %.4f %.4f\n"
         # param t7
@@ -1394,24 +1403,27 @@ M10_0:
         addiu $sp, $sp, 32
         # param 0
         # t10 = call jumps(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 0
+        addiu $sp, $sp, -8
+        li    $t0, 0
+        sw    $t0, 0($sp)
         jal   _Z5jumpsi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -52($fp)
         # param 5
         # t11 = call jumps(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 5
+        addiu $sp, $sp, -8
+        li    $t0, 5
+        sw    $t0, 0($sp)
         jal   _Z5jumpsi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -56($fp)
         # param 9
         # t12 = call mixed(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 9
+        addiu $sp, $sp, -8
+        li    $t0, 9
+        sw    $t0, 0($sp)
         jal   _Z5mixedi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -60($fp)
         # param "%d %d %d\n"
         # param t10
@@ -1431,10 +1443,11 @@ M10_0:
         addiu $sp, $sp, 16
         # param 3
         # t13 = call jumps(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 3
+        addiu $sp, $sp, -8
+        li    $t0, 3
+        sw    $t0, 0($sp)
         jal   _Z5jumpsi
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -64($fp)
         # t14 = t13 int% 100
         lw    $t0, -64($fp)

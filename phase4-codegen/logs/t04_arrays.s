@@ -61,8 +61,6 @@ _Z5totalPii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -127,8 +125,6 @@ _Z5tracePA3_ii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -40
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -203,7 +199,6 @@ _Z6lengthPc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $a0, 8($fp)
         # n = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -547,11 +542,13 @@ L3_60:
         # param t27
         # param 5
         # t28 = call total(int *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -372($fp)
-        li    $a1, 5
+        addiu $sp, $sp, -8
+        lw    $t0, -372($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 5
+        sw    $t0, 4($sp)
         jal   _Z5totalPii
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -376($fp)
         # param "%d %d %d %d %d\n"
         # param t23
@@ -587,11 +584,13 @@ L3_60:
         # param t30
         # param 5
         # t31 = call total(int *, int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -384($fp)
-        li    $a1, 5
+        addiu $sp, $sp, -8
+        lw    $t0, -384($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 5
+        sw    $t0, 4($sp)
         jal   _Z5totalPii
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -388($fp)
         # t32 = &m
         addiu $t0, $fp, -56
@@ -599,11 +598,13 @@ L3_60:
         # param t32
         # param 3
         # t33 = call trace(int (*)[3], int), 2
-        addiu $sp, $sp, -16
-        lw    $a0, -392($fp)
-        li    $a1, 3
+        addiu $sp, $sp, -8
+        lw    $t0, -392($fp)
+        sw    $t0, 0($sp)
+        li    $t0, 3
+        sw    $t0, 4($sp)
         jal   _Z5tracePA3_ii
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -396($fp)
         # param "%d %d %d\n"
         # param t29
@@ -937,17 +938,19 @@ L3_60:
         sw    $t0, -456($fp)
         # param t48
         # t49 = call length(char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -456($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -456($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -460($fp)
         # param lit
         # t50 = call length(char *), 1
-        addiu $sp, $sp, -16
-        lw    $a0, -240($fp)
+        addiu $sp, $sp, -8
+        lw    $t0, -240($fp)
+        sw    $t0, 0($sp)
         jal   _Z6lengthPc
-        addiu $sp, $sp, 16
+        addiu $sp, $sp, 8
         sw    $v0, -464($fp)
         # param "%s %s %s %d %d\n"
         # param t46
