@@ -1,8 +1,12 @@
-/* mips_generator: source -> (phases 2, 2b, 3 unchanged) -> TAC -> MIPS
-   assembly for SPIM, written to standard output.
+/* mips_generator: the combined driver. source -> (phases 2, 2b, 3
+   unchanged) -> TAC -> MIPS assembly for SPIM, written to standard output;
+   a stage flag stops earlier and prints that stage instead (D40).
 
-     mips_generator [-O1|-O2] file.c > file.s
-     spim -file file.s [program arguments]                                  */
+     mips_generator [-O1|-O2|-O3] file.c > file.s
+     spim -file file.s [program arguments]
+     mips_generator --tokens|--ast|--symbols file.c
+     mips_generator [-On] --tac file.c
+     mips_generator [-On] --run file.c [program arguments] < input          */
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -14,6 +18,8 @@
 
 #include "ast/ast.hpp"
 #include "diagnostics/diagnostics.hpp"
+#include "interp.h"
+#include "token/token_log.hpp"
 #include "irgen.h"
 #include "mips.h"
 #include "opt.h"
@@ -28,16 +34,28 @@ int main(int argc, char **argv) {
     const char *path = nullptr;
     int level = 0;
     bool machine = true; /* registers, immediates, peephole (with -O1 and above) */
+    std::string stage;   /* "" = MIPS; tokens, ast, symbols, tac, run */
+    std::vector<std::string> programArgs;
     for (int i = 1; i < argc; ++i) {
+        if (path) { programArgs.push_back(argv[i]); continue; } /* after the file: arguments for --run */
         if (!std::strcmp(argv[i], "-O1")) level = 1;
         else if (!std::strcmp(argv[i], "-O2")) level = 2;
         else if (!std::strcmp(argv[i], "-O3")) level = 3;
         else if (!std::strcmp(argv[i], "-O0")) level = 0;
         else if (!std::strcmp(argv[i], "--stack-only")) machine = false;
+        else if (!std::strcmp(argv[i], "--tokens") || !std::strcmp(argv[i], "--ast") || !std::strcmp(argv[i], "--symbols") ||
+                 !std::strcmp(argv[i], "--tac") || !std::strcmp(argv[i], "--run"))
+            stage = argv[i] + 2;
         else path = argv[i];
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--stack-only] <source-file>     (the assembly is written to standard output)\n  --stack-only  keep every value in the stack frame even when optimizing (no registers, immediates or peephole)\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--stack-only] [stage] <source-file> [program arguments]\n"
+                        "  (the assembly is written to standard output)\n"
+                        "  --stack-only  keep every value in the stack frame even when optimizing (no registers, immediates or peephole)\n"
+                        "  stage: stop after a phase and print it instead of the assembly\n"
+                        "    --tokens   the token table          --ast   the syntax tree\n"
+                        "    --symbols  the semantic symbol table --tac   the three-address code\n"
+                        "    --run      run the TAC with the interpreter (stdin is the program's input)\n", argv[0]);
         return 1;
     }
     /* the run-time library sits beside the executable */
@@ -66,6 +84,14 @@ int main(int argc, char **argv) {
         reportDiagnostic(lastLine, 1, "", "parser could not recover after the preceding error(s)", "Fatal error");
     }
     bool syntaxFailed = hasErrors();
+    if (stage == "tokens" || stage == "ast") {
+        if (stage == "tokens") printTokenTable(std::cout);
+        else printAST(g_astRoot, std::cout);
+        std::ostringstream errs;
+        for (const auto &d : g_diagnostics) printDiagnostic(errs, path, d, useColor(stderr));
+        fputs(errs.str().c_str(), stderr);
+        return syntaxFailed ? 1 : 0;
+    }
     sem::SymbolTable table;
     if (!syntaxFailed) {
         sem::SemanticAnalyzer analyzer(table);
@@ -90,7 +116,26 @@ int main(int argc, char **argv) {
     }
     for (const auto &w : tac::uninitializedReads(program))
         fprintf(stderr, "%s:%s: warning: %s [uninitialized]\n", path, displayLine(w.first).c_str(), w.second.c_str());
+    if (stage == "symbols") {
+        sem::printSemanticSymbolTable(table, std::cout);
+        return 0;
+    }
     if (level > 0) tac::optimize(program, level);
+    if (stage == "tac") {
+        tac::printProgram(program, std::cout);
+        return 0;
+    }
+    if (stage == "run") {
+        std::stringstream input;
+        input << std::cin.rdbuf();
+        tac::RunResult r = tac::run(program, programArgs, input.str());
+        fputs(r.output.c_str(), stdout);
+        if (!r.error.empty()) {
+            fprintf(stderr, "\nrun-time error: %s\n", r.error.c_str());
+            return 2;
+        }
+        return r.exitCode;
+    }
     std::string assembly = mips::generate(program, runtime.str(), level > 0 && machine);
     fputs(assembly.c_str(), stdout);
     /* also logs/<file>.s, or .O1.s ... (.stack.O1.s with --stack-only): runnable as it is */

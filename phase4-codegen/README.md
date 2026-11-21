@@ -29,6 +29,17 @@ optimizing, to compare the two. SPIM prints a five-line banner before the
 program's output; the program's `return` value from `main` becomes
 SPIM's exit code.
 
+**Combined driver.** `mips_generator` runs every phase, so it can also
+stop at any of them and print that stage instead of the assembly:
+
+| Flag | Prints |
+|---|---|
+| `--tokens` | the token table |
+| `--ast` | the syntax tree |
+| `--symbols` | the semantic symbol table |
+| `--tac` | the three-address code (after `-On`, if given) |
+| `--run` | the program's output, run by the TAC interpreter (stdin is its input; arguments after the file go to `main`) |
+
 ### Logs
 
 Every run of `mips_generator` also writes the assembly to `logs/` in the

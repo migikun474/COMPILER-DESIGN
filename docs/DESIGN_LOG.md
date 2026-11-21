@@ -1118,6 +1118,14 @@ analysis (`loops()`) stays, for the loop unrolling planned next.
   Calls into the run-time library keep the all-stack convention, so
   `runtime.s` is untouched.
 
+### D40. A combined driver (2026-11-21)
+
+`mips_generator` already compiles phases 2, 2b, 3 and 4 into one
+program, so it became the combined driver rather than a new binary: a
+stage flag (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) stops
+after that phase and prints it; with none it writes the MIPS assembly as
+before. The per-phase binaries stay for the per-phase test suites.
+
 ---
 
 ## Open questions
