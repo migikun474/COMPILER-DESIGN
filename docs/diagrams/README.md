@@ -7,9 +7,9 @@ implementation as audited on 2026-10-06.
 
 | Diagram | Type | Shows | Used in |
 |---|---|---|---|
-| [compiler-architecture](compiler-architecture.svg) | architecture | the pipeline: implemented front-end phases, the shared library, and the two planned back-end phases | [`README.md`](../../README.md) |
+| [compiler-architecture](compiler-architecture.svg) | architecture | the pipeline: every phase from source to MIPS, and the shared library | [`README.md`](../../README.md) |
 | [repository-layout](repository-layout.svg) | tree | the project folders and what each contains | [`README.md`](../../README.md) |
-| [lexer-dataflow](lexer-dataflow.svg) | architecture | source → preprocessor → `yylex()` → tokens or diagnostics | [`phase1-lexer/README.md`](../../phase1-lexer/README.md) |
+| [lexer-dataflow](lexer-dataflow.svg) | architecture | source → `yylex()` → tokens or diagnostics (no preprocessor) | [`phase1-lexer/README.md`](../../phase1-lexer/README.md) |
 | [parser-architecture](parser-architecture.svg) | sequence | how `yyparse()`, `yylex()`, the parse-time symbol table and the AST interact for each token | [`phase2-parser/README.md`](../../phase2-parser/README.md) |
 | [semantic-architecture](semantic-architecture.svg) | architecture | the analyzer with the symbol table, type system, diagnostics and annotated AST | [`phase2b-semantic/README.md`](../../phase2b-semantic/README.md) |
 | [symbol-table-architecture](symbol-table-architecture.svg) | nested | the scope tree built for `docs/examples/add.c` | [`SYMBOL_TABLE.md`](../SYMBOL_TABLE.md) |

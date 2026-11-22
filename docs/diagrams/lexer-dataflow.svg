@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lexer-dataflow-title lexer-dataflow-desc" id="lexer-dataflow-root">
         <title id="lexer-dataflow-title">Lexer data flow</title>
-        <desc id="lexer-dataflow-desc">Source text is preprocessed, scanned by one yylex call that looks identifiers up in the keyword map, collects tokens and diagnostics, and prints either the token table or every error.</desc>
+        <desc id="lexer-dataflow-desc">Source text is read as written (no preprocessor), scanned by one yylex call that looks identifiers up in the keyword map, collects tokens and diagnostics, and prints either the token table or every error.</desc>
         <defs>
       <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
       #lexer-dataflow-root { --color-paper:   #f5f5f5;
@@ -38,8 +38,8 @@
 <text x="96.0" y="272" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">file.c</text>
 <rect x="192" y="232" width="128" height="56" rx="6" fill="#f5f5f5"/>
 <rect x="192" y="232" width="128" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<text x="256.0" y="257" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">Preprocessor</text>
-<text x="256.0" y="272" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">openPreprocessed()</text>
+<text x="256.0" y="257" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">Source reader</text>
+<text x="256.0" y="272" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">openSource()</text>
 <rect x="360" y="232" width="168" height="56" rx="6" fill="#f5f5f5"/>
 <rect x="360" y="232" width="168" height="56" rx="6" fill="#eb6c36" fill-opacity="0.08" stroke="#eb6c36" stroke-width="1"/>
 <text x="444.0" y="257" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">yylex() · Flex DFA</text>
