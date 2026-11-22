@@ -111,8 +111,11 @@ a report to `logs/` in the current directory (`logs/<file>.log`, or
 ## Feature matrix
 
 Abridged; the full matrix with test evidence for every row is in
-[`docs/FEATURES.md`](docs/FEATURES.md). ✓ implemented and tested,
-◐ implemented with documented gaps, — not applicable.
+[`docs/FEATURES.md`](docs/FEATURES.md); how each feature is built, what
+it relies on and what a change to it affects is in
+[`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md).
+✓ implemented and tested, ◐ implemented with documented gaps, — not
+applicable.
 
 | Feature | Lexer | Parser | Semantic | IR | MIPS | Status |
 |---|---|---|---|---|---|---|
@@ -238,6 +241,7 @@ functions, wide characters.
 | Semantic analysis | [`phase2b-semantic/README.md`](phase2b-semantic/README.md) |
 | IR / TAC and its interpreter | [`phase3-ir/README.md`](phase3-ir/README.md) |
 | Design decisions | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
 | Optimization (`-O1`, `-O2`, `-O3`) | [`phase3-ir/README.md`](phase3-ir/README.md) |
 | MIPS code generation | [`phase4-codegen/README.md`](phase4-codegen/README.md) |
 
