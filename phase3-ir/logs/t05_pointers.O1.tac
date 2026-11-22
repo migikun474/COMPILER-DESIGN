@@ -325,44 +325,44 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   swap               function      void (int *, int *)        -           4    -    1  _Z4swapPiS_; defined
-   sum                function      int (int *, int *)         -          10    -    1  _Z3sumPiS_; defined
-   main               function      int (void)                 -          16    -    0  defined
+   swap               function      void (int *, int *)        -           3    -    1  _Z4swapPiS_; defined
+   sum                function      int (int *, int *)         -           9    -    1  _Z3sumPiS_; defined
+   main               function      int (void)                 -          15    -    0  defined
 
  scope: global > swap()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param       4    4    2  a.1
-   b                  parameter     int *                      param       4    4    2  b.2
-   t                  variable      int                        local       5    4    1  t.3
+   a                  parameter     int *                      param       3    4    2  a.1
+   b                  parameter     int *                      param       3    4    2  b.2
+   t                  variable      int                        local       4    4    1  t.3
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   first              parameter     int *                      param      10    4    2  first.4
-   last               parameter     int *                      param      10    4    1  last.5
-   s                  variable      int                        local      11    4    2  s.6
+   first              parameter     int *                      param       9    4    2  first.4
+   last               parameter     int *                      param       9    4    1  last.5
+   s                  variable      int                        local      10    4    2  s.6
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      17    4    5  x.7
-   y                  variable      int                        local      17    4    4  y.8
-   p                  variable      int *                      local      18    4    6  p.9
-   pp                 variable      int **                     local      19    4    3  pp.10
-   ppp                variable      int ***                    local      20    4    2  ppp.11
-   arr                variable      int[5]                     local      27   20    8  arr.12
-   q                  variable      int *                      local      28    4   12  q.13
-   gap                variable      int                        local      30    4    1  gap.14
-   raw                variable      void *                     local      38    4    1  raw.15
-   back               variable      int *                      local      39    4    1  back.16
-   bytes              variable      char *                     local      40    4    1  bytes.17
-   grid               variable      int[2][3]                  local      44   24    1  grid.18
-   row                variable      int (*)[3]                 local      45    4    4  row.19
-   d                  variable      double                     local      51    8    2  d.20
-   dp                 variable      double *                   local      51    4    2  dp.21
-   text               variable      char[8]                    local      53    8    2  text.22
-   t                  variable      char *                     local      54    4    4  t.23
+   x                  variable      int                        local      16    4    5  x.7
+   y                  variable      int                        local      16    4    4  y.8
+   p                  variable      int *                      local      17    4    6  p.9
+   pp                 variable      int **                     local      18    4    3  pp.10
+   ppp                variable      int ***                    local      19    4    2  ppp.11
+   arr                variable      int[5]                     local      26   20    8  arr.12
+   q                  variable      int *                      local      27    4   12  q.13
+   gap                variable      int                        local      29    4    1  gap.14
+   raw                variable      void *                     local      37    4    1  raw.15
+   back               variable      int *                      local      38    4    1  back.16
+   bytes              variable      char *                     local      39    4    1  bytes.17
+   grid               variable      int[2][3]                  local      43   24    1  grid.18
+   row                variable      int (*)[3]                 local      44    4    4  row.19
+   d                  variable      double                     local      50    8    2  d.20
+   dp                 variable      double *                   local      50    4    2  dp.21
+   text               variable      char[8]                    local      52    8    2  text.22
+   t                  variable      char *                     local      53    4    4  t.23
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

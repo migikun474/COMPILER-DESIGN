@@ -263,78 +263,78 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        global      5    4    4  
-   counter            variable      int                        global      6    4    3  
-   hidden             variable      int                        global      7    4    1  static
-   next               function      int (void)                 -           9    -    2  _Z4nextv; defined
-   twice              function      int (void)                 -          10    -    3  _Z5twicev; defined
-   shadow             function      int (int)                  -          12    -    1  _Z6shadowi; defined
-   useGlobal          function      int (void)                 -          26    -    2  _Z9useGlobalv; defined
-   changeGlobal       function      void (void)                -          28    -    2  _Z12changeGlobalv; defined
-   loops              function      int (void)                 -          30    -    1  _Z5loopsv; defined
-   main               function      int (void)                 -          41    -    0  defined
+   x                  variable      int                        global      4    4    4  
+   counter            variable      int                        global      5    4    3  
+   hidden             variable      int                        global      6    4    1  static
+   next               function      int (void)                 -           8    -    2  _Z4nextv; defined
+   twice              function      int (void)                 -           9    -    3  _Z5twicev; defined
+   shadow             function      int (int)                  -          11    -    1  _Z6shadowi; defined
+   useGlobal          function      int (void)                 -          25    -    2  _Z9useGlobalv; defined
+   changeGlobal       function      void (void)                -          27    -    2  _Z12changeGlobalv; defined
+   loops              function      int (void)                 -          29    -    1  _Z5loopsv; defined
+   main               function      int (void)                 -          40    -    0  defined
 
  scope: global > next()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        static      9    4    2  n.1; static
+   n                  variable      int                        static      8    4    2  n.1; static
 
  scope: global > twice()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   calls              variable      int                        static     10    4    2  calls.2; static
+   calls              variable      int                        static      9    4    2  calls.2; static
 
  scope: global > shadow()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      12    4    2  x.3
-   r                  variable      int                        local      13    4    4  r.4
+   x                  parameter     int                        param      11    4    2  x.3
+   r                  variable      int                        local      12    4    4  r.4
 
  scope: global > shadow() > block
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      15    4    2  x.5
+   x                  variable      int                        local      14    4    2  x.5
 
  scope: global > shadow() > block > block
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      18    4    1  x.6
+   x                  variable      int                        local      17    4    1  x.6
 
  scope: global > loops()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   total              variable      int                        local      31    4    3  total.7
-   i                  variable      int                        local      37    4    1  i.11
+   total              variable      int                        local      30    4    3  total.7
+   i                  variable      int                        local      36    4    1  i.11
 
  scope: global > loops() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      32    4    4  i.8
+   i                  variable      int                        local      31    4    4  i.8
 
  scope: global > loops() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i2                 variable      int                        local      33    4    1  i2.9
+   i2                 variable      int                        local      32    4    1  i2.9
 
  scope: global > loops() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      34    4    3  i.10
+   i                  variable      int                        local      33    4    3  i.10
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      45    4    2  x.12
-   n1                 variable      int                        local      47    4    1  n1.13
-   n2                 variable      int                        local      47    4    1  n2.14
-   a                  variable      int                        local      49    4    1  a.15
-   b                  variable      int                        local      49    4    1  b.16
-   c                  variable      int                        local      49    4    1  c.17
+   x                  variable      int                        local      44    4    2  x.12
+   n1                 variable      int                        local      46    4    1  n1.13
+   n2                 variable      int                        local      46    4    1  n2.14
+   a                  variable      int                        local      48    4    1  a.15
+   b                  variable      int                        local      48    4    1  b.16
+   c                  variable      int                        local      48    4    1  c.17
 
  scope: global > main() > block
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   counter            variable      int                        local      53    4    2  counter.18
+   counter            variable      int                        local      52    4    2  counter.18
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

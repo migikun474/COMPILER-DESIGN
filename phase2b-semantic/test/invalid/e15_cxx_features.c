@@ -7,16 +7,15 @@ struct S { int b; };              // error: redefinition of 'struct S'
 class Vec {
 public:
     int x;
-    Vec(int a) { x = a; }
+    Vec(int a) { x = a; }         // error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported
     Vec operator+(Vec o, Vec p);  // error: must be a unary or binary operator (it has 3 operands)
     int operator!(int k);         // error: overloaded 'operator!' must be a unary operator
 private:
-    Vec(char *s);
+    Vec();
 };
 int operator+(int a, int b);      // error: must have at least one parameter of class type
 Vec operator=(Vec a, Vec b);      // error: overloaded 'operator=' must be a non-static member function
-Vec::Vec(double d) { x = 0; }     // error: out-of-line definition of constructor 'Vec::Vec(double)' does not match
-Vec::~Vec() { }                   // error: but 'class Vec' declares no destructor
+Vec::Vec(double d) { x = 0; }     // error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported
 int fixed(int n) { va_list ap; va_start(ap, n); return 0; }   // error: 'va_start' used in function 'fixed', which has fixed arguments
 int var(int n, ...) {
     va_list ap;
@@ -28,9 +27,9 @@ int var(int n, ...) {
     return c + z;
 }
 int main() {
-    Vec a;                        // error: 'class Vec' has no default constructor
-    Vec b(1, 2);                  // error: no matching function for call to 'Vec::Vec(int, int)'
-    Vec c("str");                 // error: 'Vec::Vec(char *)' is a private member of 'class Vec'
+    Vec a;                        // error: 'Vec::Vec()' is a private member of 'class Vec'
+    Vec b(1, 2);                  // error: 'class Vec' cannot be constructed from 2 arguments: only default construction is supported
+    Vec c = a;                    /* a copy of a's bytes: there are no copy constructors */
     Vec d = c * 2;                // error: no 'operator*' is declared for these operands
     c += d;                       // error: no 'operator+=' is declared
     int x = 1;

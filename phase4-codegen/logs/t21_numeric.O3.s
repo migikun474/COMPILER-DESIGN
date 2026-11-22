@@ -26,63 +26,61 @@ str6:
 str7:
         .byte 37, 46, 54, 102, 32, 37, 46, 49, 102, 32, 37, 46, 51, 102, 10, 0
         .align 3
-fc0:  .word 0, 0        # 0
+fc0:  .word 0, 1074003968        # 2.5
         .align 3
-fc1:  .word 0, 1073741824        # 2
+fc1:  .word 0, 1074266112        # 3
         .align 3
-fc2:  .word 0, 1072693248        # 1
+fc2:  .word 0, 1074528256        # 3.5
         .align 3
-fc3:  .word 0, 1074790400        # 4
+fc3:  .word 1610612736, 1070945621        # 0.333333
         .align 3
-fc4:  .word 1077936128        # 3
+fc4:  .word 0, 1072693248        # 1
         .align 3
-fc5:  .word 0, 1071644672        # 0.5
+fc5:  .word 0, 1073741824        # 2
         .align 3
-fc6:  .word 0, 1074266112        # 3
+fc6:  .word 0, 0        # 0
         .align 3
-fc7:  .word 0, 1075576832        # 7
+fc7:  .word 0, 1074790400        # 4
         .align 3
-fc8:  .word 0, 1074003968        # 2.5
+fc8:  .word 0, 1073217536        # 1.5
         .align 3
-fc9:  .word 0, 1074528256        # 3.5
+fc9:  .word 1610612736, 1074091349        # 2.66667
         .align 3
-fc10:  .word 1610612736, 1070945621        # 0.333333
+fc10:  .word 0, 1074397184        # 3.25
         .align 3
-fc11:  .word 0, 1073217536        # 1.5
+fc11:  .word 0, 3221225472        # -2
         .align 3
-fc12:  .word 1610612736, 1074091349        # 2.66667
+fc12:  .word 149946368, 1106103653        # 4e+09
         .align 3
-fc13:  .word 0, 1074397184        # 3.25
+fc13:  .word 0, 1097859072        # 1.67772e+07
         .align 3
-fc14:  .word 0, 3221225472        # -2
+fc14:  .word 0, 1070596096        # 0.25
         .align 3
-fc15:  .word 149946368, 1106103653        # 4e+09
+fc15:  .word 0        # 0
         .align 3
-fc16:  .word 0, 1097859072        # 1.67772e+07
+fc16:  .word 1065353216        # 1
         .align 3
-fc17:  .word 0, 1070596096        # 0.25
+fc17:  .word 1073741824        # 2
         .align 3
-fc18:  .word 0        # 0
+fc18:  .word 3539053052, 1062232653        # 0.001
         .align 3
-fc19:  .word 1065353216        # 1
+fc19:  .word 0, 1094914768        # 2.5e+06
         .align 3
-fc20:  .word 1073741824        # 2
+fc20:  .word 0, 1084459008        # 2500
         .align 3
-fc21:  .word 3539053052, 1062232653        # 0.001
+fc21:  .word 0, 1078214656        # 40.5
         .align 3
-fc22:  .word 0, 1094914768        # 2.5e+06
+fc22:  .word 0, 1079263232        # 81
         .align 3
-fc23:  .word 0, 1084459008        # 2500
-        .align 3
-fc24:  .word 0, 1078214656        # 40.5
-        .align 3
-fc25:  .word 0, 1079263232        # 81
+fc23:  .word 0, 1071644672        # 0.5
 
         .text
         .globl main
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -91,321 +89,26 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# absolute(double)
-_Z8absoluted:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        s.d   $f20, -16($fp)
-        s.d   $f22, -24($fp)
-        l.d   $f22, 8($fp)
-        # if v double< 0.0 goto 2
-        l.d   $f2, fc0
-        c.lt.d $f22, $f2
-        bc1t  L0_2
-        # goto 4
-        j     L0_4
-L0_2:
-        # t1 = double- v
-        neg.d $f20, $f22
-        # goto 5
-        j     L0_5
-L0_4:
-        # t1 = v
-        mov.d $f20, $f22
-L0_5:
-        # return t1
-        mov.d $f0, $f20
-        j     _Z8absoluted_exit
-_Z8absoluted_exit:
-        l.d   $f20, -16($fp)
-        l.d   $f22, -24($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# root(double)
-_Z4rootd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -72
-        s.d   $f20, -64($fp)
-        s.d   $f22, -40($fp)
-        s.d   $f24, -48($fp)
-        s.d   $f26, -56($fp)
-        sw    $s0, -68($fp)
-        l.d   $f26, 8($fp)
-        # guess = v double/ 2.0
-        l.d   $f2, fc1
-        div.d $f20, $f26, $f2
-        # i = 0
-        li    $s0, 0
-L1_2:
-        # if i int>= 20 goto 8
-        li    $t1, 20
-        bge   $s0, $t1, L1_8
-        # t2 = v double/ guess
-        div.d $f22, $f26, $f20
-        # t3 = guess double+ t2
-        add.d $f24, $f20, $f22
-        # guess = t3 double/ 2.0
-        l.d   $f2, fc1
-        div.d $f20, $f24, $f2
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 2
-        j     L1_2
-L1_8:
-        # return guess
-        mov.d $f0, $f20
-        j     _Z4rootd_exit
-_Z4rootd_exit:
-        l.d   $f20, -64($fp)
-        l.d   $f22, -40($fp)
-        l.d   $f24, -48($fp)
-        l.d   $f26, -56($fp)
-        lw    $s0, -68($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# series(int)
-_Z6seriesi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -112
-        s.d   $f20, -88($fp)
-        s.d   $f22, -104($fp)
-        s.d   $f24, -72($fp)
-        s.d   $f26, -80($fp)
-        sw    $s0, -108($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -64($fp)
-        sw    $s3, -92($fp)
-        lw    $s3, 8($fp)
-        # sum = 0.0
-        l.d   $f22, fc0
-        # sign = 1.0
-        l.d   $f20, fc2
-        # i = 0
-        li    $s0, 0
-L2_3:
-        # if i int>= terms goto 12
-        bge   $s0, $s3, L2_12
-        # t1 = i int<< 1
-        sll   $s1, $s0, 1
-        # t2 = t1 int+ 1
-        addiu $s2, $s1, 1
-        # t3 = inttodouble t2
-        move  $t0, $s2
-        mtc1  $t0, $f0
-        cvt.d.w $f0, $f0
-        mov.d $f24, $f0
-        # t4 = sign double/ t3
-        div.d $f26, $f20, $f24
-        # sum = sum double+ t4
-        add.d $f22, $f22, $f26
-        # sign = double- sign
-        neg.d $f20, $f20
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 3
-        j     L2_3
-L2_12:
-        # t8 = 4.0 double* sum
-        l.d   $f0, fc3
-        mul.d $f20, $f0, $f22
-        # return t8
-        mov.d $f0, $f20
-        j     _Z6seriesi_exit
-_Z6seriesi_exit:
-        l.d   $f20, -88($fp)
-        l.d   $f22, -104($fp)
-        l.d   $f24, -72($fp)
-        l.d   $f26, -80($fp)
-        lw    $s0, -108($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -64($fp)
-        lw    $s3, -92($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# power(double, int)
-_Z5powerdi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -40($fp)
-        s.d   $f22, -24($fp)
-        sw    $s0, -28($fp)
-        sw    $s1, -16($fp)
-        l.d   $f22, 8($fp)
-        lw    $s0, 16($fp)
-        # r = 1.0
-        l.d   $f20, fc2
-L3_1:
-        # t1 = n
-        move  $s1, $s0
-        # n = n int- 1
-        addiu $s0, $s0, -1
-        # if t1 int<= 0 goto 6
-        ble   $s1, $zero, L3_6
-        # r = r double* base
-        mul.d $f20, $f20, $f22
-        # goto 1
-        j     L3_1
-L3_6:
-        # return r
-        mov.d $f0, $f20
-        j     _Z5powerdi_exit
-_Z5powerdi_exit:
-        l.d   $f20, -40($fp)
-        l.d   $f22, -24($fp)
-        lw    $s0, -28($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# average(float, float, float)
-_Z7averagefff:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        s.d   $f24, -40($fp)
-        s.d   $f26, -48($fp)
-        l.s   $f22, 8($fp)
-        l.s   $f24, 12($fp)
-        l.s   $f26, 16($fp)
-        # t1 = a float+ b
-        add.s $f20, $f22, $f24
-        # t2 = t1 float+ c
-        add.s $f22, $f20, $f26
-        # t3 = t2 float/ 3.0
-        l.s   $f2, fc4
-        div.s $f20, $f22, $f2
-        # return t3
-        mov.s $f0, $f20
-        j     _Z7averagefff_exit
-_Z7averagefff_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        l.d   $f24, -40($fp)
-        l.d   $f26, -48($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# roundToInt(double)
-_Z10roundToIntd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -24($fp)
-        s.d   $f22, -40($fp)
-        sw    $s0, -28($fp)
-        l.d   $f22, 8($fp)
-        # if v double< 0.0 goto 2
-        l.d   $f2, fc0
-        c.lt.d $f22, $f2
-        bc1t  L5_2
-        # goto 4
-        j     L5_4
-L5_2:
-        # t1 = v double- 0.5
-        l.d   $f2, fc5
-        sub.d $f20, $f22, $f2
-        # goto 5
-        j     L5_5
-L5_4:
-        # t1 = v double+ 0.5
-        l.d   $f2, fc5
-        add.d $f20, $f22, $f2
-L5_5:
-        # t4 = doubletoint t1
-        mov.d $f0, $f20
-        trunc.w.d $f0, $f0
-        mfc1  $t0, $f0
-        move  $s0, $t0
-        # return t4
-        move  $v0, $s0
-        j     _Z10roundToIntd_exit
-_Z10roundToIntd_exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -40($fp)
-        lw    $s0, -28($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# poly(double)
-_Z4polyd:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -72
-        s.d   $f20, -72($fp)
-        s.d   $f22, -56($fp)
-        s.d   $f24, -64($fp)
-        l.d   $f20, 8($fp)
-        # t1 = 2.0 double* x
-        l.d   $f0, fc1
-        mul.d $f22, $f0, $f20
-        # t2 = t1 double- 3.0
-        l.d   $f2, fc6
-        sub.d $f24, $f22, $f2
-        # t3 = t2 double* x
-        mul.d $f22, $f24, $f20
-        # t4 = t3 double+ 0.5
-        l.d   $f2, fc5
-        add.d $f24, $f22, $f2
-        # t5 = t4 double* x
-        mul.d $f22, $f24, $f20
-        # t6 = t5 double- 7.0
-        l.d   $f2, fc7
-        sub.d $f20, $f22, $f2
-        # return t6
-        mov.d $f0, $f20
-        j     _Z4polyd_exit
-_Z4polyd_exit:
-        l.d   $f20, -72($fp)
-        l.d   $f22, -56($fp)
-        l.d   $f24, -64($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -352
-        s.d   $f20, -328($fp)
-        s.d   $f22, -320($fp)
-        s.d   $f24, -312($fp)
-        s.d   $f26, -304($fp)
-        s.d   $f28, -352($fp)
-        sw    $s0, -332($fp)
-        sw    $s1, -336($fp)
-        sw    $s2, -340($fp)
+        addiu $sp, $sp, -56
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        s.d   $f20, -32($fp)
+        s.d   $f22, -24($fp)
+        s.d   $f24, -16($fp)
+        s.d   $f26, -8($fp)
+        s.d   $f28, -56($fp)
+        sw    $s0, -36($fp)
+        sw    $s1, -40($fp)
+        sw    $s2, -44($fp)
         # param "%.3f %.3f %.3f %.4f\n"
         # param 2.5
         # param 3.0
@@ -415,47 +118,60 @@ main_:
         addiu $sp, $sp, -40
         la    $t0, str0
         sw    $t0, 0($sp)
-        l.d   $f0, fc8
+        l.d   $f0, fc0
         s.d   $f0, 8($sp)
-        l.d   $f0, fc6
+        l.d   $f0, fc1
         s.d   $f0, 16($sp)
-        l.d   $f0, fc9
+        l.d   $f0, fc2
         s.d   $f0, 24($sp)
-        l.d   $f0, fc10
+        l.d   $f0, fc3
         s.d   $f0, 32($sp)
         jal   __printf
         addiu $sp, $sp, 40
         # t50 = 1.0
-        l.d   $f20, fc2
+        l.d   $f20, fc4
         # t51 = 0
         li    $s0, 0
-L7_8:
-        # if t51 int>= 20 goto 14
+L0_8:
+        # if t51 int>= 20 goto 19
         li    $t1, 20
-        bge   $s0, $t1, L7_14
+        bge   $s0, $t1, L0_19
         # t52 = 2.0 double/ t50
-        l.d   $f0, fc1
+        l.d   $f0, fc5
         div.d $f22, $f0, $f20
         # t53 = t50 double+ t52
         add.d $f24, $f20, $f22
         # t50 = t53 double/ 2.0
-        l.d   $f2, fc1
+        l.d   $f2, fc5
+        div.d $f20, $f24, $f2
+        # t51 = t51 int+ 1
+        addiu $s0, $s0, 1
+        # if t51 int>= 20 goto 19
+        li    $t1, 20
+        bge   $s0, $t1, L0_19
+        # t52 = 2.0 double/ t50
+        l.d   $f0, fc5
+        div.d $f22, $f0, $f20
+        # t53 = t50 double+ t52
+        add.d $f24, $f20, $f22
+        # t50 = t53 double/ 2.0
+        l.d   $f2, fc5
         div.d $f20, $f24, $f2
         # t51 = t51 int+ 1
         addiu $s0, $s0, 1
         # goto 8
-        j     L7_8
-L7_14:
+        j     L0_8
+L0_19:
         # t55 = 0.0
-        l.d   $f24, fc0
+        l.d   $f24, fc6
         # t56 = 1.0
-        l.d   $f22, fc2
+        l.d   $f22, fc4
         # t57 = 0
         li    $s0, 0
-L7_17:
-        # if t57 int>= 1000 goto 26
+L0_22:
+        # if t57 int>= 1000 goto 39
         li    $t1, 1000
-        bge   $s0, $t1, L7_26
+        bge   $s0, $t1, L0_39
         # t58 = t57 int<< 1
         sll   $s1, $s0, 1
         # t59 = t58 int+ 1
@@ -473,29 +189,58 @@ L7_17:
         neg.d $f22, $f22
         # t57 = t57 int+ 1
         addiu $s0, $s0, 1
-        # goto 17
-        j     L7_17
-L7_26:
+        # if t57 int>= 1000 goto 39
+        li    $t1, 1000
+        bge   $s0, $t1, L0_39
+        # t58 = t57 int<< 1
+        sll   $s1, $s0, 1
+        # t59 = t58 int+ 1
+        addiu $s2, $s1, 1
+        # t60 = inttodouble t59
+        move  $t0, $s2
+        mtc1  $t0, $f0
+        cvt.d.w $f0, $f0
+        mov.d $f26, $f0
+        # t61 = t56 double/ t60
+        div.d $f28, $f22, $f26
+        # t55 = t55 double+ t61
+        add.d $f24, $f24, $f28
+        # t56 = double- t56
+        neg.d $f22, $f22
+        # t57 = t57 int+ 1
+        addiu $s0, $s0, 1
+        # goto 22
+        j     L0_22
+L0_39:
         # t8 = 4.0 double* t55
-        l.d   $f0, fc3
+        l.d   $f0, fc7
         mul.d $f26, $f0, $f24
         # t64 = 6
         li    $s0, 6
         # t65 = 1.0
-        l.d   $f22, fc2
-L7_29:
+        l.d   $f22, fc4
+L0_42:
         # t66 = t64
         move  $s1, $s0
         # t64 = t64 int- 1
         addiu $s0, $s0, -1
-        # if t66 int<= 0 goto 34
-        ble   $s1, $zero, L7_34
+        # if t66 int<= 0 goto 51
+        ble   $s1, $zero, L0_51
         # t65 = t65 double* 1.5
-        l.d   $f2, fc11
+        l.d   $f2, fc8
         mul.d $f22, $f22, $f2
-        # goto 29
-        j     L7_29
-L7_34:
+        # t66 = t64
+        move  $s1, $s0
+        # t64 = t64 int- 1
+        addiu $s0, $s0, -1
+        # if t66 int<= 0 goto 51
+        ble   $s1, $zero, L0_51
+        # t65 = t65 double* 1.5
+        l.d   $f2, fc8
+        mul.d $f22, $f22, $f2
+        # goto 42
+        j     L0_42
+L0_51:
         # param "%.5f %.4f %.2f\n"
         # param t50
         # param t8
@@ -520,11 +265,11 @@ L7_34:
         addiu $sp, $sp, -32
         la    $t0, str2
         sw    $t0, 0($sp)
-        l.d   $f0, fc12
+        l.d   $f0, fc9
         s.d   $f0, 8($sp)
-        l.d   $f0, fc13
+        l.d   $f0, fc10
         s.d   $f0, 16($sp)
-        l.d   $f0, fc14
+        l.d   $f0, fc11
         s.d   $f0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
@@ -572,35 +317,35 @@ L7_34:
         addiu $sp, $sp, -32
         la    $t0, str4
         sw    $t0, 0($sp)
-        l.d   $f0, fc15
+        l.d   $f0, fc12
         s.d   $f0, 8($sp)
-        l.d   $f0, fc16
+        l.d   $f0, fc13
         s.d   $f0, 16($sp)
         sw    $zero, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # total = 0.0
-        l.d   $f22, fc0
+        l.d   $f22, fc6
         # step = 0.25
-        l.d   $f20, fc17
-L7_63:
-        # if step double< 2.0 goto 65
-        l.d   $f2, fc1
+        l.d   $f20, fc14
+L0_80:
+        # if step double< 2.0 goto 82
+        l.d   $f2, fc5
         c.lt.d $f20, $f2
-        bc1t  L7_65
-        # goto 69
-        j     L7_69
-L7_65:
+        bc1t  L0_82
+        # goto 86
+        j     L0_86
+L0_82:
         # t35 = step double* step
         mul.d $f24, $f20, $f20
         # total = total double+ t35
         add.d $f22, $f22, $f24
         # step = step double+ 0.25
-        l.d   $f2, fc17
+        l.d   $f2, fc14
         add.d $f20, $f20, $f2
-        # goto 63
-        j     L7_63
-L7_69:
+        # goto 80
+        j     L0_80
+L0_86:
         # param "%.4f\n"
         # param total
         # call printf, 2
@@ -612,13 +357,13 @@ L7_69:
         jal   __printf
         addiu $sp, $sp, 16
         # fsum = 0.0
-        l.s   $f20, fc18
+        l.s   $f20, fc15
         # k = 1
         li    $s0, 1
-L7_74:
-        # if k int> 10 goto 80
+L0_91:
+        # if k int> 10 goto 102
         li    $t1, 10
-        bgt   $s0, $t1, L7_80
+        bgt   $s0, $t1, L0_102
         # t38 = inttofloat k
         move  $t0, $s0
         mtc1  $t0, $f0
@@ -626,15 +371,31 @@ L7_74:
         cvt.s.d $f0, $f0
         mov.s $f22, $f0
         # t39 = 1.0 float/ t38
-        l.s   $f0, fc19
+        l.s   $f0, fc16
         div.s $f24, $f0, $f22
         # fsum = fsum float+ t39
         add.s $f20, $f20, $f24
         # k = k int+ 1
         addiu $s0, $s0, 1
-        # goto 74
-        j     L7_74
-L7_80:
+        # if k int> 10 goto 102
+        li    $t1, 10
+        bgt   $s0, $t1, L0_102
+        # t38 = inttofloat k
+        move  $t0, $s0
+        mtc1  $t0, $f0
+        cvt.d.w $f0, $f0
+        cvt.s.d $f0, $f0
+        mov.s $f22, $f0
+        # t39 = 1.0 float/ t38
+        l.s   $f0, fc16
+        div.s $f24, $f0, $f22
+        # fsum = fsum float+ t39
+        add.s $f20, $f20, $f24
+        # k = k int+ 1
+        addiu $s0, $s0, 1
+        # goto 91
+        j     L0_91
+L0_102:
         # t42 = floattodouble fsum
         mov.s $f0, $f20
         cvt.d.s $f0, $f0
@@ -642,7 +403,7 @@ L7_80:
         # t43 = float- fsum
         neg.s $f24, $f20
         # t44 = t43 float* 2.0
-        l.s   $f2, fc20
+        l.s   $f2, fc17
         mul.s $f20, $f24, $f2
         # t45 = floattodouble t44
         mov.s $f0, $f20
@@ -669,52 +430,65 @@ L7_80:
         addiu $sp, $sp, -32
         la    $t0, str7
         sw    $t0, 0($sp)
-        l.d   $f0, fc21
+        l.d   $f0, fc18
         s.d   $f0, 8($sp)
-        l.d   $f0, fc22
+        l.d   $f0, fc19
         s.d   $f0, 16($sp)
-        l.d   $f0, fc23
+        l.d   $f0, fc20
         s.d   $f0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # t92 = 40.5
-        l.d   $f20, fc24
+        l.d   $f20, fc21
         # t93 = 0
         li    $s0, 0
-L7_95:
-        # if t93 int>= 20 goto 101
+L0_117:
+        # if t93 int>= 20 goto 128
         li    $t1, 20
-        bge   $s0, $t1, L7_101
+        bge   $s0, $t1, L0_128
         # t94 = 81.0 double/ t92
-        l.d   $f0, fc25
+        l.d   $f0, fc22
         div.d $f22, $f0, $f20
         # t95 = t92 double+ t94
         add.d $f24, $f20, $f22
         # t92 = t95 double/ 2.0
-        l.d   $f2, fc1
+        l.d   $f2, fc5
         div.d $f20, $f24, $f2
         # t93 = t93 int+ 1
         addiu $s0, $s0, 1
-        # goto 95
-        j     L7_95
-L7_101:
-        # if t92 double< 0.0 goto 103
-        l.d   $f2, fc0
+        # if t93 int>= 20 goto 128
+        li    $t1, 20
+        bge   $s0, $t1, L0_128
+        # t94 = 81.0 double/ t92
+        l.d   $f0, fc22
+        div.d $f22, $f0, $f20
+        # t95 = t92 double+ t94
+        add.d $f24, $f20, $f22
+        # t92 = t95 double/ 2.0
+        l.d   $f2, fc5
+        div.d $f20, $f24, $f2
+        # t93 = t93 int+ 1
+        addiu $s0, $s0, 1
+        # goto 117
+        j     L0_117
+L0_128:
+        # if t92 double< 0.0 goto 130
+        l.d   $f2, fc6
         c.lt.d $f20, $f2
-        bc1t  L7_103
-        # goto 105
-        j     L7_105
-L7_103:
+        bc1t  L0_130
+        # goto 132
+        j     L0_132
+L0_130:
         # t97 = t92 double- 0.5
-        l.d   $f2, fc5
+        l.d   $f2, fc23
         sub.d $f22, $f20, $f2
-        # goto 106
-        j     L7_106
-L7_105:
+        # goto 133
+        j     L0_133
+L0_132:
         # t97 = t92 double+ 0.5
-        l.d   $f2, fc5
+        l.d   $f2, fc23
         add.d $f22, $f20, $f2
-L7_106:
+L0_133:
         # t98 = doubletoint t97
         mov.d $f0, $f22
         trunc.w.d $f0, $f0
@@ -724,14 +498,14 @@ L7_106:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -328($fp)
-        l.d   $f22, -320($fp)
-        l.d   $f24, -312($fp)
-        l.d   $f26, -304($fp)
-        l.d   $f28, -352($fp)
-        lw    $s0, -332($fp)
-        lw    $s1, -336($fp)
-        lw    $s2, -340($fp)
+        l.d   $f20, -32($fp)
+        l.d   $f22, -24($fp)
+        l.d   $f24, -16($fp)
+        l.d   $f26, -8($fp)
+        l.d   $f28, -56($fp)
+        lw    $s0, -36($fp)
+        lw    $s1, -40($fp)
+        lw    $s2, -44($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -749,6 +523,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -769,8 +546,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -830,6 +623,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

@@ -742,149 +742,149 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   bubble             function      void (int *, int)          -           4    -    1  _Z6bubblePii; defined
-   quick              function      void (int *, int, int)     -          10    -    3  _Z5quickPiii; defined
-   search             function      int (int *, int, int)      -          22    -    4  _Z6searchPiii; defined
-   moves              variable      int                        global     32    4    2  
-   hanoi              function      void (int, int, int, int)  -          33    -    3  _Z5hanoiiiii; defined
-   ackermann          function      int (int, int)             -          40    -    4  _Z9ackermannii; defined
-   multiply           function      void (int (*)[3], int (*)[2], int (*)[2]) -          46    -    1  _Z8multiplyPA3_iPA2_iS2_; defined
-   primes             function      int (int)                  -          54    -    1  _Z6primesi; defined
-   power              function      int (int, int)             -          66    -    2  _Z5powerii; defined
-   collatz            function      int (int)                  -          76    -    1  _Z7collatzi; defined
-   main               function      int (void)                 -          78    -    0  defined
+   bubble             function      void (int *, int)          -           3    -    1  _Z6bubblePii; defined
+   quick              function      void (int *, int, int)     -           9    -    3  _Z5quickPiii; defined
+   search             function      int (int *, int, int)      -          21    -    4  _Z6searchPiii; defined
+   moves              variable      int                        global     31    4    2  
+   hanoi              function      void (int, int, int, int)  -          32    -    3  _Z5hanoiiiii; defined
+   ackermann          function      int (int, int)             -          39    -    4  _Z9ackermannii; defined
+   multiply           function      void (int (*)[3], int (*)[2], int (*)[2]) -          45    -    1  _Z8multiplyPA3_iPA2_iS2_; defined
+   primes             function      int (int)                  -          53    -    1  _Z6primesi; defined
+   power              function      int (int, int)             -          65    -    2  _Z5powerii; defined
+   collatz            function      int (int)                  -          75    -    1  _Z7collatzi; defined
+   main               function      int (void)                 -          77    -    0  defined
 
  scope: global > bubble()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param       4    4    6  a.1
-   n                  parameter     int                        param       4    4    2  n.2
+   a                  parameter     int *                      param       3    4    6  a.1
+   n                  parameter     int                        param       3    4    2  n.2
 
  scope: global > bubble() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       5    4    3  i.3
+   i                  variable      int                        local       4    4    3  i.3
 
  scope: global > bubble() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local       6    4    8  j.4
+   j                  variable      int                        local       5    4    8  j.4
 
  scope: global > bubble() > for > for body > for > for body > if
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      int                        local       7    4    1  t.5
+   t                  variable      int                        local       6    4    1  t.5
 
  scope: global > quick()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param      10    4    9  a.6
-   lo                 parameter     int                        param      10    4    4  lo.7
-   hi                 parameter     int                        param      10    4    4  hi.8
-   pivot              variable      int                        local      12    4    2  pivot.9
-   i                  variable      int                        local      12    4    8  i.10
-   j                  variable      int                        local      12    4    8  j.11
+   a                  parameter     int *                      param       9    4    9  a.6
+   lo                 parameter     int                        param       9    4    4  lo.7
+   hi                 parameter     int                        param       9    4    4  hi.8
+   pivot              variable      int                        local      11    4    2  pivot.9
+   i                  variable      int                        local      11    4    8  i.10
+   j                  variable      int                        local      11    4    8  j.11
 
  scope: global > quick() > while > if
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      int                        local      16    4    1  t.12
+   t                  variable      int                        local      15    4    1  t.12
 
  scope: global > search()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param      22    4    2  a.13
-   n                  parameter     int                        param      22    4    1  n.14
-   key                parameter     int                        param      22    4    2  key.15
-   lo                 variable      int                        local      23    4    4  lo.16
-   hi                 variable      int                        local      23    4    3  hi.17
+   a                  parameter     int *                      param      21    4    2  a.13
+   n                  parameter     int                        param      21    4    1  n.14
+   key                parameter     int                        param      21    4    2  key.15
+   lo                 variable      int                        local      22    4    4  lo.16
+   hi                 variable      int                        local      22    4    3  hi.17
 
  scope: global > search() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   mid                variable      int                        local      25    4    5  mid.18
+   mid                variable      int                        local      24    4    5  mid.18
 
  scope: global > hanoi()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      33    4    3  n.19
-   from               parameter     int                        param      33    4    2  from.20
-   to                 parameter     int                        param      33    4    2  to.21
-   via                parameter     int                        param      33    4    2  via.22
+   n                  parameter     int                        param      32    4    3  n.19
+   from               parameter     int                        param      32    4    2  from.20
+   to                 parameter     int                        param      32    4    2  to.21
+   via                parameter     int                        param      32    4    2  via.22
 
  scope: global > ackermann()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   m                  parameter     int                        param      40    4    4  m.23
-   n                  parameter     int                        param      40    4    3  n.24
+   m                  parameter     int                        param      39    4    4  m.23
+   n                  parameter     int                        param      39    4    3  n.24
 
  scope: global > multiply()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int (*)[3]                 param      46    4    1  a.25
-   b                  parameter     int (*)[2]                 param      46    4    1  b.26
-   c                  parameter     int (*)[2]                 param      46    4    2  c.27
+   a                  parameter     int (*)[3]                 param      45    4    1  a.25
+   b                  parameter     int (*)[2]                 param      45    4    1  b.26
+   c                  parameter     int (*)[2]                 param      45    4    2  c.27
 
  scope: global > multiply() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      47    4    5  i.28
+   i                  variable      int                        local      46    4    5  i.28
 
  scope: global > multiply() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local      48    4    5  j.29
+   j                  variable      int                        local      47    4    5  j.29
 
  scope: global > multiply() > for > for body > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      50    4    4  k.30
+   k                  variable      int                        local      49    4    4  k.30
 
  scope: global > primes()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   limit              parameter     int                        param      54    4    3  limit.31
-   composite          variable      char[101]                  local      55  101    3  composite.32
-   count              variable      int                        local      56    4    2  count.33
+   limit              parameter     int                        param      53    4    3  limit.31
+   composite          variable      char[101]                  local      54  101    3  composite.32
+   count              variable      int                        local      55    4    2  count.33
 
  scope: global > primes() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      57    4    3  i.34
-   i                  variable      int                        local      58    4    6  i.35
+   i                  variable      int                        local      56    4    3  i.34
+   i                  variable      int                        local      57    4    6  i.35
 
  scope: global > primes() > for > for body > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local      61    4    3  j.36
+   j                  variable      int                        local      60    4    3  j.36
 
  scope: global > power()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   base               parameter     int                        param      66    4    3  base.37
-   exp                parameter     int                        param      66    4    3  exp.38
-   result             variable      int                        local      67    4    2  result.39
+   base               parameter     int                        param      65    4    3  base.37
+   exp                parameter     int                        param      65    4    3  exp.38
+   result             variable      int                        local      66    4    2  result.39
 
  scope: global > collatz()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      76    4    5  n.40
-   steps              variable      int                        local      76    4    2  steps.41
+   n                  parameter     int                        param      75    4    5  n.40
+   steps              variable      int                        local      75    4    2  steps.41
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int[8]                     local      79   32    5  a.42
-   b                  variable      int[8]                     local      79   32    3  b.43
-   x                  variable      int[2][3]                  local      88   24    1  x.46
-   y                  variable      int[3][2]                  local      88   24    1  y.47
-   z                  variable      int[2][2]                  local      88   16    5  z.48
+   a                  variable      int[8]                     local      78   32    5  a.42
+   b                  variable      int[8]                     local      78   32    3  b.43
+   x                  variable      int[2][3]                  local      87   24    1  x.46
+   y                  variable      int[3][2]                  local      87   24    1  y.47
+   z                  variable      int[2][2]                  local      87   16    5  z.48
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      82    4    3  i.44
-   i                  variable      int                        local      84    4    3  i.45
+   i                  variable      int                        local      81    4    3  i.44
+   i                  variable      int                        local      83    4    3  i.45
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

@@ -1,5 +1,4 @@
 /* t20 -- bit manipulation and the edges of integer arithmetic */
-#include <stdio.h>
 
 int popcount(unsigned int v) { int n = 0; while (v) { n += v & 1; v >>= 1; } return n; }
 

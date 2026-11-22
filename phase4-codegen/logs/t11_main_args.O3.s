@@ -18,6 +18,8 @@ str1:
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -32,23 +34,29 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
-        sw    $s0, -56($fp)
-        sw    $s1, -48($fp)
-        sw    $s2, -40($fp)
-        sw    $s3, -52($fp)
-        sw    $s4, -36($fp)
-        sw    $s5, -32($fp)
-        sw    $s6, -44($fp)
-        sw    $s7, -60($fp)
-        lw    $s7, 8($fp)
+        addiu $sp, $sp, -32
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        sw    $s0, -32($fp)
+        sw    $s1, -24($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -28($fp)
+        sw    $s4, -8($fp)
+        sw    $s5, -4($fp)
+        sw    $s6, -16($fp)
+        sw    $s7, -20($fp)
+        move  $s7, $a0
+        sw    $a1, 12($fp)
         # letters = 0
         li    $s1, 0
         # i = 1
         li    $s3, 1
 L0_2:
-        # if i int>= argc goto 18
-        bge   $s3, $s7, L0_18
+        # if i int>= argc goto 22
+        bge   $s3, $s7, L0_22
         # t1 = i int<< 2
         sll   $s5, $s3, 2
         # t2 = argv ptr+ t1
@@ -59,15 +67,23 @@ L0_2:
 L0_6:
         # t4 = *s
         lb    $s2, 0($s0)
-        # if t4 char== 0 goto 11
-        beq   $s2, $zero, L0_11
+        # if t4 char== 0 goto 15
+        beq   $s2, $zero, L0_15
+        # letters = letters int+ 1
+        addiu $s1, $s1, 1
+        # s = s ptr+ 1
+        addiu $s0, $s0, 1
+        # t4 = *s
+        lb    $s2, 0($s0)
+        # if t4 char== 0 goto 15
+        beq   $s2, $zero, L0_15
         # letters = letters int+ 1
         addiu $s1, $s1, 1
         # s = s ptr+ 1
         addiu $s0, $s0, 1
         # goto 6
         j     L0_6
-L0_11:
+L0_15:
         # t9 = *t2
         lw    $s6, 0($s4)
         # param "%d: %s\n"
@@ -85,7 +101,7 @@ L0_11:
         addiu $s3, $s3, 1
         # goto 2
         j     L0_2
-L0_18:
+L0_22:
         # param "%d %d\n"
         # param argc
         # param letters
@@ -101,14 +117,14 @@ L0_18:
         move  $v0, $s7
         j     main__exit
 main__exit:
-        lw    $s0, -56($fp)
-        lw    $s1, -48($fp)
-        lw    $s2, -40($fp)
-        lw    $s3, -52($fp)
-        lw    $s4, -36($fp)
-        lw    $s5, -32($fp)
-        lw    $s6, -44($fp)
-        lw    $s7, -60($fp)
+        lw    $s0, -32($fp)
+        lw    $s1, -24($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -28($fp)
+        lw    $s4, -8($fp)
+        lw    $s5, -4($fp)
+        lw    $s6, -16($fp)
+        lw    $s7, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -126,6 +142,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -146,8 +165,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -207,6 +242,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

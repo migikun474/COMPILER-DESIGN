@@ -9,25 +9,23 @@
 
         .data
         .align 3
-g_keeper:  .space 4
+g_keeper:  .space 8
         .align 3
 g_primes:
         .byte 2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0, 7, 0, 0, 0
 str0:
-        .byte 99, 111, 112, 121, 32, 111, 102, 32, 37, 100, 10, 0
+        .byte 68, 111, 103, 40, 41, 10, 0
 str1:
-        .byte 126, 68, 111, 103, 32, 37, 100, 10, 0
+        .byte 115, 116, 97, 114, 116, 32, 111, 102, 32, 109, 97, 105, 110, 10, 0
 str2:
-        .byte 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 10, 0
 str3:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str4:
-        .byte 37, 100, 32, 37, 100, 10, 0
-str5:
         .byte 37, 100, 32, 37, 100, 32, 37, 46, 49, 102, 32, 37, 46, 49, 102, 10
         .byte 0
-str6:
-        .byte 101, 110, 100, 32, 111, 102, 32, 109, 97, 105, 110, 10, 0
+str5:
+        .byte 37, 100, 10, 0
         .align 3
 fc0:  .word 0, 1076166656        # 10.5
         .align 3
@@ -40,6 +38,8 @@ fc2:  .word 0, 1075970048        # 9
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -48,430 +48,21 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# Counted::Counted(int)
-_ZN7CountedC1Ei:
+# Counted::Counted()
+_ZN7CountedC1Ev:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
-        lw    $s0, 12($fp)
-        # *this = x
-        sw    $s0, 0($s1)
-        # return
-        j     _ZN7CountedC1Ei_exit
-_ZN7CountedC1Ei_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Counted::Counted(const class Counted &)
-_ZN7CountedC1ERKS_:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        lw    $s3, 8($fp)
-        lw    $s2, 12($fp)
-        # t1 = *o
-        lw    $s0, 0($s2)
-        # t2 = t1 int+ 100
-        addiu $s1, $s0, 100
-        # *this = t2
-        sw    $s1, 0($s3)
-        # t3 = *o
-        lw    $s0, 0($s2)
-        # param "copy of %d\n"
-        # param t3
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # return
-        j     _ZN7CountedC1ERKS__exit
-_ZN7CountedC1ERKS__exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# take(class Counted)
-_Z4take7Counted:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
-        # t1 = c[0]
-        lw    $s0, 8($fp)
-        # return t1
-        move  $v0, $s0
-        j     _Z4take7Counted_exit
-_Z4take7Counted_exit:
-        lw    $s0, -8($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# give(class Counted &)
-_Z4giveR7Counted:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -36($fp)
-        lw    $s3, 8($fp)
-        # t2 = &t1
-        addiu $s0, $fp, -4
-        # t5 = *c
-        lw    $s1, 0($s3)
-        # t6 = t5 int+ 100
-        addiu $s2, $s1, 100
-        # *t2 = t6
-        sw    $s2, 0($s0)
-        # t7 = *c
-        lw    $s0, 0($s3)
-        # param "copy of %d\n"
-        # param t7
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # return t1
-        addiu $v0, $fp, -4
-        j     _Z4giveR7Counted_exit
-_Z4giveR7Counted_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -36($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# fresh(int)
-_Z5freshi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        lw    $s1, 8($fp)
-        # t1 = &local
-        addiu $s0, $fp, -4
-        # *t1 = x
-        sw    $s1, 0($s0)
-        # return local
-        addiu $v0, $fp, -4
-        j     _Z5freshi_exit
-_Z5freshi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Other::Other()
-_ZN5OtherC1Ev:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
-        # *this = 7
-        li    $t0, 7
+        move  $s0, $a0
+        # *this = 1
+        li    $t0, 1
         sw    $t0, 0($s0)
         # return
-        j     _ZN5OtherC1Ev_exit
-_ZN5OtherC1Ev_exit:
+        j     _ZN7CountedC1Ev_exit
+_ZN7CountedC1Ev_exit:
         lw    $s0, -4($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Vec::Vec(class Other)
-_ZN3VecC1E5Other:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        lw    $s2, 8($fp)
-        # t1 = o[0]
-        lw    $s0, 12($fp)
-        # t2 = t1 int<< 1
-        sll   $s1, $s0, 1
-        # *this = t2
-        sw    $s1, 0($s2)
-        # return
-        j     _ZN3VecC1E5Other_exit
-_ZN3VecC1E5Other_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Vec::Vec(int)
-_ZN3VecC1Ei:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
-        lw    $s0, 12($fp)
-        # *this = k
-        sw    $s0, 0($s1)
-        # return
-        j     _ZN3VecC1Ei_exit
-_ZN3VecC1Ei_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Dog::Dog()
-_ZN3DogC1Ev:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
-        # *this = 0
-        sw    $zero, 0($s0)
-        # return
-        j     _ZN3DogC1Ev_exit
-_ZN3DogC1Ev_exit:
-        lw    $s0, -4($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Dog::Dog(int)
-_ZN3DogC1Ei:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        lw    $s1, 8($fp)
-        lw    $s0, 12($fp)
-        # *this = n
-        sw    $s0, 0($s1)
-        # return
-        j     _ZN3DogC1Ei_exit
-_ZN3DogC1Ei_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# Dog::~Dog()
-_ZN3DogD1Ev:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        lw    $s1, 8($fp)
-        # t1 = *this
-        lw    $s0, 0($s1)
-        # param "~Dog %d\n"
-        # param t1
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # return
-        j     _ZN3DogD1Ev_exit
-_ZN3DogD1Ev_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# sum(const int *)
-_Z3sumPKi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -48
-        sw    $s0, -40($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -44($fp)
-        lw    $s5, 8($fp)
-        # s = 0
-        li    $s1, 0
-        # i = 0
-        li    $s0, 0
-L11_2:
-        # if i int>= 4 goto 9
-        li    $t1, 4
-        bge   $s0, $t1, L11_9
-        # t1 = i int<< 2
-        sll   $s2, $s0, 2
-        # t2 = r ptr+ t1
-        addu  $s3, $s5, $s2
-        # t3 = *t2
-        lw    $s4, 0($s3)
-        # s = s int+ t3
-        addu  $s1, $s1, $s4
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 2
-        j     L11_2
-L11_9:
-        # return s
-        move  $v0, $s1
-        j     _Z3sumPKi_exit
-_Z3sumPKi_exit:
-        lw    $s0, -40($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -44($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# richer(struct Account &, struct Account &)
-_Z6richerR7AccountS0_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -64
-        s.d   $f20, -48($fp)
-        s.d   $f22, -56($fp)
-        sw    $s0, -36($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -64($fp)
-        lw    $s1, 8($fp)
-        lw    $s2, 12($fp)
-        # t2 = a ptr+ 8
-        addiu $s0, $s1, 8
-        # t3 = *t2
-        l.d   $f0, 0($s0)
-        mov.d $f20, $f0
-        # t4 = b ptr+ 8
-        addiu $s0, $s2, 8
-        # t5 = *t4
-        l.d   $f0, 0($s0)
-        mov.d $f22, $f0
-        # if t3 double>= t5 goto 6
-        c.le.d $f22, $f20
-        bc1t  L12_6
-        # goto 8
-        j     L12_8
-L12_6:
-        # t1 = a
-        move  $s0, $s1
-        # goto 9
-        j     L12_9
-L12_8:
-        # t1 = b
-        move  $s0, $s2
-L12_9:
-        # return t1
-        move  $v0, $s0
-        j     _Z6richerR7AccountS0__exit
-_Z6richerR7AccountS0__exit:
-        l.d   $f20, -48($fp)
-        l.d   $f22, -56($fp)
-        lw    $s0, -36($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -64($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# pick(int, int &, int &)
-_Z4pickiRiS_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        sw    $s2, -16($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
-        lw    $s2, 16($fp)
-        # if which int== 0 goto 3
-        beq   $s0, $zero, L13_3
-        # t1 = a
-        move  $s0, $s1
-        # goto 4
-        j     L13_4
-L13_3:
-        # t1 = b
-        move  $s0, $s2
-L13_4:
-        # return t1
-        move  $v0, $s0
-        j     _Z4pickiRiS__exit
-_Z4pickiRiS__exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        lw    $s2, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -483,99 +74,105 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -384
-        s.d   $f20, -360($fp)
-        s.d   $f22, -368($fp)
-        sw    $s0, -340($fp)
-        sw    $s1, -344($fp)
-        sw    $s2, -348($fp)
-        sw    $s3, -372($fp)
-        sw    $s4, -376($fp)
-        sw    $s5, -380($fp)
-        sw    $s6, -336($fp)
+        addiu $sp, $sp, -136
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M1_0
+        j     __stack_overflow
+M1_0:
+        s.d   $f20, -112($fp)
+        s.d   $f22, -120($fp)
+        sw    $s0, -96($fp)
+        sw    $s1, -100($fp)
+        sw    $s2, -104($fp)
+        sw    $s3, -128($fp)
+        sw    $s4, -124($fp)
+        sw    $s5, -132($fp)
+        sw    $s6, -92($fp)
         # t1 = &keeper
         la    $s6, g_keeper
-        # *t1 = 9
-        li    $t0, 9
+        # t47 = t1 ptr+ 4
+        addiu $s0, $s6, 4
+        # *t47 = 0
+        sw    $zero, 0($s0)
+        # *t1 = 42
+        li    $t0, 42
         sw    $t0, 0($s6)
+        # param "Dog()\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # param "start of main\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # t2 = &a
         addiu $s0, $fp, -4
         # *t2 = 1
         li    $t0, 1
         sw    $t0, 0($s0)
-        # t4 = &t3
-        addiu $s1, $fp, -100
-        # *t4 = 101
-        li    $t0, 101
-        sw    $t0, 0($s1)
-        # t64 = *t2
-        lw    $s1, 0($s0)
-        # param "copy of %d\n"
-        # param t64
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # t65 = t3
-        addiu $a0, $fp, -228
-        addiu $a1, $fp, -100
+        # t49 = a
+        addiu $a0, $fp, -84
+        addiu $a1, $fp, -4
         li    $a2, 4
         jal   __memcpy
-        # t66 = t65[0]
-        lw    $s1, -228($fp)
-        # param "%d\n"
-        # param t66
-        # call printf, 2
-        addiu $sp, $sp, -8
+        # t49[0] = 50
+        li    $t0, 50
+        sw    $t0, -84($fp)
+        # t4 = a[0]
+        lw    $s1, -4($fp)
+        # param "%d %d\n"
+        # param 50
+        # param t4
+        # call printf, 3
+        addiu $sp, $sp, -16
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # t69 = &t68
-        addiu $s1, $fp, -236
-        # param t69
-        # param t2
-        # call Counted::Counted(const class Counted &), 2
-        addiu $sp, $sp, -8
-        sw    $s1, 0($sp)
-        sw    $s0, 4($sp)
-        jal   _ZN7CountedC1ERKS_
-        addiu $sp, $sp, 8
-        # b = t68
-        addiu $a0, $fp, -8
-        addiu $a1, $fp, -236
-        li    $a2, 4
-        jal   __memcpy
-        # t72 = &t71
-        addiu $s0, $fp, -244
-        # param t72
-        # param 5
-        # call Counted::Counted(int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        li    $t0, 5
+        li    $t0, 50
         sw    $t0, 4($sp)
-        jal   _ZN7CountedC1Ei
-        addiu $sp, $sp, 8
-        # c = t71
-        addiu $a0, $fp, -12
-        addiu $a1, $fp, -244
+        sw    $s1, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # b = *t2
+        addiu $a1, $s0, 0
+        addiu $a0, $fp, -8
         li    $a2, 4
         jal   __memcpy
-        # t14 = a[0]
+        # b[0] = 7
+        li    $t0, 7
+        sw    $t0, -8($fp)
+        # t54 = &t53
+        addiu $s0, $fp, -88
+        # param t54
+        # call Counted::Counted(), 1
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        jal   _ZN7CountedC1Ev
+        addiu $sp, $sp, 16
+        # t53[0] = 5
+        li    $t0, 5
+        sw    $t0, -88($fp)
+        # c = t53
+        addiu $a0, $fp, -12
+        addiu $a1, $fp, -88
+        li    $a2, 4
+        jal   __memcpy
+        # t8 = a[0]
         lw    $s0, -4($fp)
-        # t15 = b[0]
+        # t9 = b[0]
         lw    $s1, -8($fp)
-        # t16 = c[0]
+        # t10 = c[0]
         lw    $s2, -12($fp)
         # param "%d %d %d\n"
-        # param t14
-        # param t15
-        # param t16
+        # param t8
+        # param t9
+        # param t10
         # call printf, 4
         addiu $sp, $sp, -16
         la    $t0, str3
@@ -585,157 +182,119 @@ main_:
         sw    $s2, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t17 = &o
-        addiu $s0, $fp, -16
-        # *t17 = 7
-        li    $t0, 7
-        sw    $t0, 0($s0)
-        # t18 = &f
-        addiu $s0, $fp, -20
-        # t75 = o
-        addiu $a0, $fp, -252
-        addiu $a1, $fp, -16
-        li    $a2, 4
-        jal   __memcpy
-        # t76 = t75[0]
-        lw    $s1, -252($fp)
-        # t77 = t76 int<< 1
-        sll   $s2, $s1, 1
-        # *t18 = t77
-        sw    $s2, 0($s0)
-        # t19 = &g
-        addiu $s0, $fp, -24
-        # *t19 = 5
-        li    $t0, 5
-        sw    $t0, 0($s0)
-        # t20 = f[0]
-        lw    $s0, -20($fp)
-        # t21 = g[0]
-        lw    $s1, -24($fp)
-        # param "%d %d\n"
-        # param t20
-        # param t21
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
         # x = 1
         li    $t0, 1
-        sw    $t0, -28($fp)
+        sw    $t0, -16($fp)
         # y = 2
         li    $t0, 2
-        sw    $t0, -32($fp)
-        # if x int<= 2 goto 53
-        lw    $t0, -28($fp)
+        sw    $t0, -20($fp)
+        # if x int<= 2 goto 37
+        lw    $t0, -16($fp)
         li    $t1, 2
-        ble   $t0, $t1, L14_53
-        # t22 = &x
-        addiu $s0, $fp, -28
-        # goto 54
-        j     L14_54
-L14_53:
-        # t22 = &y
-        addiu $s0, $fp, -32
-L14_54:
-        # *t22 = 20
+        ble   $t0, $t1, L1_37
+        # t11 = &x
+        addiu $s0, $fp, -16
+        # goto 38
+        j     L1_38
+L1_37:
+        # t11 = &y
+        addiu $s0, $fp, -20
+L1_38:
+        # *t11 = 20
         li    $t0, 20
         sw    $t0, 0($s0)
-        # if x int>= y goto 58
-        lw    $t0, -28($fp)
-        lw    $t1, -32($fp)
-        bge   $t0, $t1, L14_58
-        # t25 = &x
-        addiu $s0, $fp, -28
-        # goto 59
-        j     L14_59
-L14_58:
-        # t25 = &y
-        addiu $s0, $fp, -32
-L14_59:
-        # *t25 = 10
+        # if x int>= y goto 42
+        lw    $t0, -16($fp)
+        lw    $t1, -20($fp)
+        bge   $t0, $t1, L1_42
+        # t14 = &x
+        addiu $s0, $fp, -16
+        # goto 43
+        j     L1_43
+L1_42:
+        # t14 = &y
+        addiu $s0, $fp, -20
+L1_43:
+        # *t14 = 10
         li    $t0, 10
         sw    $t0, 0($s0)
-        # t28 = &x
-        addiu $s0, $fp, -28
-        # t31 = *t28
+        # t17 = &x
+        addiu $s0, $fp, -16
+        # t20 = *t17
         lw    $s1, 0($s0)
-        # t32 = t31 int+ 5
+        # t21 = t20 int+ 5
         addiu $s2, $s1, 5
-        # *t28 = t32
+        # *t17 = t21
         sw    $s2, 0($s0)
         # p[0] = 1
         li    $t0, 1
-        sw    $t0, -56($fp)
+        sw    $t0, -40($fp)
         # p[8] = 10.5
         l.d   $f0, fc0
-        s.d   $f0, -48($fp)
+        s.d   $f0, -32($fp)
         # q[0] = 2
         li    $t0, 2
-        sw    $t0, -72($fp)
+        sw    $t0, -56($fp)
         # q[8] = 99.0
         l.d   $f0, fc1
-        s.d   $f0, -64($fp)
-        # t33 = &p
-        addiu $s0, $fp, -56
-        # t34 = &q
-        addiu $s1, $fp, -72
-        # t86 = t33 ptr+ 8
+        s.d   $f0, -48($fp)
+        # t22 = &p
+        addiu $s0, $fp, -40
+        # t23 = &q
+        addiu $s1, $fp, -56
+        # t61 = t22 ptr+ 8
         addiu $s2, $s0, 8
-        # t87 = *t86
+        # t62 = *t61
         l.d   $f0, 0($s2)
         mov.d $f20, $f0
-        # t88 = t34 ptr+ 8
+        # t63 = t23 ptr+ 8
         addiu $s2, $s1, 8
-        # t89 = *t88
+        # t64 = *t63
         l.d   $f0, 0($s2)
         mov.d $f22, $f0
-        # if t87 double>= t89 goto 76
+        # if t62 double>= t64 goto 60
         c.le.d $f22, $f20
-        bc1t  L14_76
-        # goto 78
-        j     L14_78
-L14_76:
-        # t90 = t33
+        bc1t  L1_60
+        # goto 62
+        j     L1_62
+L1_60:
+        # t65 = t22
         move  $s2, $s0
-        # goto 79
-        j     L14_79
-L14_78:
-        # t90 = t34
+        # goto 63
+        j     L1_63
+L1_62:
+        # t65 = t23
         move  $s2, $s1
-L14_79:
-        # t36 = t90 ptr+ 8
+L1_63:
+        # t25 = t65 ptr+ 8
         addiu $s0, $s2, 8
-        # t37 = *t36
+        # t26 = *t25
         l.d   $f0, 0($s0)
         mov.d $f20, $f0
-        # t38 = t37 double- 9.0
+        # t27 = t26 double- 9.0
         l.d   $f2, fc2
         sub.d $f22, $f20, $f2
-        # *t36 = t38
+        # *t25 = t27
         mov.d $f0, $f22
         s.d   $f0, 0($s0)
-        # t40 = p[8]
-        l.d   $f0, -48($fp)
+        # t29 = p[8]
+        l.d   $f0, -32($fp)
         mov.d $f20, $f0
-        # t41 = q[8]
-        l.d   $f0, -64($fp)
+        # t30 = q[8]
+        l.d   $f0, -48($fp)
         mov.d $f22, $f0
         # param "%d %d %.1f %.1f\n"
         # param x
         # param y
-        # param t40
-        # param t41
+        # param t29
+        # param t30
         # call printf, 5
         addiu $sp, $sp, -32
-        la    $t0, str5
+        la    $t0, str4
         sw    $t0, 0($sp)
-        lw    $t0, -28($fp)
+        lw    $t0, -16($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -32($fp)
+        lw    $t0, -20($fp)
         sw    $t0, 8($sp)
         mov.d $f0, $f20
         s.d   $f0, 16($sp)
@@ -743,133 +302,179 @@ L14_79:
         s.d   $f0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t91 = &primes
+        # t66 = &primes
         la    $s5, g_primes
-        # t92 = 0
+        # t67 = 0
         li    $s1, 0
-        # t93 = 0
+        # t68 = 0
         li    $s0, 0
-L14_94:
-        # if t93 int>= 4 goto 101
+L1_78:
+        # if t68 int>= 4 goto 91
         li    $t1, 4
-        bge   $s0, $t1, L14_101
-        # t94 = t93 int<< 2
+        bge   $s0, $t1, L1_91
+        # t69 = t68 int<< 2
         sll   $s2, $s0, 2
-        # t95 = t91 ptr+ t94
+        # t70 = t66 ptr+ t69
         addu  $s3, $s5, $s2
-        # t96 = *t95
+        # t71 = *t70
         lw    $s4, 0($s3)
-        # t92 = t92 int+ t96
+        # t67 = t67 int+ t71
         addu  $s1, $s1, $s4
-        # t93 = t93 int+ 1
+        # t68 = t68 int+ 1
         addiu $s0, $s0, 1
-        # goto 94
-        j     L14_94
-L14_101:
+        # if t68 int>= 4 goto 91
+        li    $t1, 4
+        bge   $s0, $t1, L1_91
+        # t69 = t68 int<< 2
+        sll   $s2, $s0, 2
+        # t70 = t66 ptr+ t69
+        addu  $s3, $s5, $s2
+        # t71 = *t70
+        lw    $s4, 0($s3)
+        # t67 = t67 int+ t71
+        addu  $s1, $s1, $s4
+        # t68 = t68 int+ 1
+        addiu $s0, $s0, 1
+        # goto 78
+        j     L1_78
+L1_91:
         # param "%d\n"
-        # param t92
+        # param t67
         # call printf, 2
         addiu $sp, $sp, -8
-        la    $t0, str2
+        la    $t0, str5
         sw    $t0, 0($sp)
         sw    $s1, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # t44 = &pack
-        addiu $s3, $fp, -84
-        # *t44 = 0
-        sw    $zero, 0($s3)
-        # t45 = t44 ptr+ 4
-        addiu $s4, $s3, 4
-        # *t45 = 0
-        sw    $zero, 0($s4)
-        # t46 = t44 ptr+ 8
-        addiu $s5, $s3, 8
-        # *t46 = 0
-        sw    $zero, 0($s5)
-        # i = 0
-        li    $s0, 0
-L14_111:
-        # if i int>= 3 goto 117
-        li    $t1, 3
-        bge   $s0, $t1, L14_117
-        # t47 = i int<< 2
-        sll   $s2, $s0, 2
-        # t48 = i int+ 1
-        addiu $s1, $s0, 1
-        # pack[t47] = t48
-        addiu $t8, $fp, -84
-        addu  $t8, $t8, $s2
-        sw    $s1, 0($t8)
-        # i = t48
-        move  $s0, $s1
-        # goto 111
-        j     L14_111
-L14_117:
-        # t101 = *t46
-        lw    $s0, 0($s5)
-        # param "~Dog %d\n"
-        # param t101
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # t103 = *t45
-        lw    $s0, 0($s4)
-        # param "~Dog %d\n"
-        # param t103
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # t105 = *t44
-        lw    $s0, 0($s3)
-        # param "~Dog %d\n"
-        # param t105
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "end of main\n"
+        # t33 = &pack
+        addiu $s4, $fp, -80
+        # t73 = t33 ptr+ 4
+        addiu $s0, $s4, 4
+        # *t73 = 0
+        sw    $zero, 0($s0)
+        # *t33 = 42
+        li    $t0, 42
+        sw    $t0, 0($s4)
+        # param "Dog()\n"
         # call printf, 1
         addiu $sp, $sp, -8
-        la    $t0, str6
+        la    $t0, str0
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # t107 = *t1
-        lw    $s0, 0($s6)
-        # param "~Dog %d\n"
-        # param t107
-        # call printf, 2
+        # t34 = t33 ptr+ 8
+        addiu $s0, $s4, 8
+        # t75 = t34 ptr+ 4
+        addiu $s1, $s0, 4
+        # *t75 = 0
+        sw    $zero, 0($s1)
+        # *t34 = 42
+        li    $t0, 42
+        sw    $t0, 0($s0)
+        # param "Dog()\n"
+        # call printf, 1
         addiu $sp, $sp, -8
-        la    $t0, str1
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # t35 = t33 ptr+ 16
+        addiu $s0, $s4, 16
+        # t77 = t35 ptr+ 4
+        addiu $s1, $s0, 4
+        # *t77 = 0
+        sw    $zero, 0($s1)
+        # *t35 = 42
+        li    $t0, 42
+        sw    $t0, 0($s0)
+        # param "Dog()\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # i = 0
+        li    $s0, 0
+L1_113:
+        # if i int>= 3 goto 126
+        li    $t1, 3
+        bge   $s0, $t1, L1_126
+        # t36 = i int<< 3
+        sll   $s2, $s0, 3
+        # t37 = t36 int+ 4
+        addiu $s3, $s2, 4
+        # t38 = i int+ 1
+        addiu $s1, $s0, 1
+        # pack[t37] = t38
+        addiu $t8, $fp, -80
+        addu  $t8, $t8, $s3
+        sw    $s1, 0($t8)
+        # i = t38
+        move  $s0, $s1
+        # if t38 int>= 3 goto 126
+        li    $t1, 3
+        bge   $s1, $t1, L1_126
+        # t36 = i int<< 3
+        sll   $s2, $s0, 3
+        # t37 = t36 int+ 4
+        addiu $s3, $s2, 4
+        # t38 = i int+ 1
+        addiu $s1, $s0, 1
+        # pack[t37] = t38
+        addiu $t8, $fp, -80
+        addu  $t8, $t8, $s3
+        sw    $s1, 0($t8)
+        # i = t38
+        move  $s0, $s1
+        # goto 113
+        j     L1_113
+L1_126:
+        # t40 = pack[20]
+        lw    $s0, -60($fp)
+        # t79 = *t33
+        lw    $s1, 0($s4)
+        # param "%d %d\n"
+        # param t40
+        # param t79
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str2
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
+        sw    $s1, 8($sp)
         jal   __printf
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
+        # t43 = keeper[4]
+        la    $t8, g_keeper
+        lw    $s0, 4($t8)
+        # t81 = *t1
+        lw    $s1, 0($s6)
+        # param "%d %d\n"
+        # param t43
+        # param t81
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str2
+        sw    $t0, 0($sp)
+        sw    $s0, 4($sp)
+        sw    $s1, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -360($fp)
-        l.d   $f22, -368($fp)
-        lw    $s0, -340($fp)
-        lw    $s1, -344($fp)
-        lw    $s2, -348($fp)
-        lw    $s3, -372($fp)
-        lw    $s4, -376($fp)
-        lw    $s5, -380($fp)
-        lw    $s6, -336($fp)
+        l.d   $f20, -112($fp)
+        l.d   $f22, -120($fp)
+        lw    $s0, -96($fp)
+        lw    $s1, -100($fp)
+        lw    $s2, -104($fp)
+        lw    $s3, -128($fp)
+        lw    $s4, -124($fp)
+        lw    $s5, -132($fp)
+        lw    $s6, -92($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -887,6 +492,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -907,8 +515,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -968,6 +592,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

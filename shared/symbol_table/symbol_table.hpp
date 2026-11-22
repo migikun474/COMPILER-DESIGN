@@ -46,7 +46,7 @@ struct SymbolTableEntry;
 struct Symbol {
     SymKind kind;
     std::string typeStr; /* what to print in the Token_Type column */
-    std::string mangledName; /* only set for PROCEDURE/CONSTRUCTOR/DESTRUCTOR */
+    std::string mangledName; /* only set for PROCEDURE/CONSTRUCTOR */
     std::string aggregateTagName; 
     int flatIndex = -1; 
     ASTTypeExprPtr typeExpr; /* TYPEDEF_NAME: what the alias names (for mangling) */
@@ -210,8 +210,7 @@ extern std::vector<SymbolTableEntry> g_symbolTable;
      add(int, int)                 _Z3addii
      area(struct Point const *)    _Z4areaPK5Point
      Dog::bark()                   _ZN3Dog4barkEv
-     Dog::Dog(Dog const &)         _ZN3DogC1ERKS_      (C1 / D1: complete-object
-     Dog::~Dog()                   _ZN3DogD1Ev          constructor / destructor)
+     Dog::Dog()                    _ZN3DogC1Ev          (C1: complete-object constructor)
      Dog::operator+(Dog const &)   _ZN3DogplERKS_      (Itanium operator codes)
      printf-like f(char const *, ...)  _Z1fPKcz
 
@@ -227,10 +226,10 @@ extern std::vector<SymbolTableEntry> g_symbolTable;
    declaration (parseTimeType), so both symbol tables show the same name.
    ===================================================================== */
 std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className = "", bool constMethod = false);
+                   const std::string &className = "");
 /* the parser's entry point: parameters as written (ASTTypeExpr) */
 std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className = "", bool constMethod = false);
+                   const std::string &className = "");
 /* a type as the parser sees it: specifiers, tags, typedefs (through this
    table), pointers, references, arrays and function types -- no checks,
    that is the semantic phase's job. Parameters decay like in C. */
@@ -315,17 +314,12 @@ struct Symbol {
     int useCount = 0;
     int evaluatedUses = 0;    /* uses outside `sizeof`: these need a definition */
 
-    /* functions (incl. methods / constructors / destructors) */
+    /* functions (incl. methods / constructors) */
     bool isDefined = false;   /* functions: body seen; objects: defined here, not just
                                  declared `extern` */
     bool isStatic = false;    /* `static` function / member */
     bool isMethod = false;
     bool isConstructor = false;
-    bool isDestructor = false;
-    bool isExplicit = false;  /* `explicit` constructor: never an implicit conversion */
-    bool isVirtual = false;   /* declared `virtual`, or overrides a virtual function */
-    bool isPure = false;      /* `= 0` */
-    int vtableIndex = -1;     /* its slot in its class's table */
     std::string mangledName;
     std::vector<SymbolPtr> params; /* in order; unnamed ones too */
     std::vector<SymbolPtr> locals; /* every local / static local in the body */

@@ -1,10 +1,6 @@
 /* t25 -- control flow in combination: a state machine in a switch,
    nested loops with break and continue, do-while, until, ?: chains,
    the comma operator, goto out of nested loops */
-#include <stdio.h>
-#ifdef __cplusplus
-#define until(c) while (!(c))
-#endif
 
 int classify(const char *s) {                 /* 0 other, 1 integer, 2 decimal, 3 identifier */
     int state = 0;

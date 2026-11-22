@@ -15,7 +15,6 @@
 #include "ast/ast.hpp"
 #include "diagnostics/diagnostics.hpp"
 #include "parser.tab.hpp"
-#include "preprocessor/preprocessor.hpp"
 #include "report.h"
 #include "semantic.h"
 #include "symbol_table/symbol_table.hpp"
@@ -48,7 +47,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Usage: %s [-q] <source-file>\n  -q  print only the verdict and diagnostics\n", argv[0]);
         return 1;
     }
-    FILE *f = openPreprocessed(path); /* #define, #include, #if ... */
+    FILE *f = openSource(path); /* no preprocessor (D34): directives are lexical errors */
     if (!f) {
         fprintf(stderr, "Error: could not open file '%s'\n", path);
         return 1;
@@ -66,7 +65,7 @@ int main(int argc, char **argv) {
     }
     bool color = useColor(stderr);
 
-    if (hasErrors()) { /* preprocessor / lexical / syntax errors: semantics cannot run */
+    if (hasErrors()) { /* lexical / syntax errors: semantics cannot run */
         std::ostringstream plain, shown;
         for (const auto &d : g_diagnostics) {
             printDiagnostic(plain, path, d, false);
@@ -94,7 +93,7 @@ int main(int argc, char **argv) {
         printDiagnostic(shown, path, d, color);
     }
     int errors = static_cast<int>(errorDiagnostics().size());
-    int warnings = static_cast<int>(warningDiagnostics().size()); /* semantic + preprocessor */
+    int warnings = static_cast<int>(warningDiagnostics().size()); /* semantic warnings */
     std::string counts = std::to_string(errors) + " error(s), " + std::to_string(warnings) + " warning(s)";
 
     std::ostringstream details;

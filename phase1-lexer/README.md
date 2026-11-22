@@ -133,9 +133,8 @@ the sequence. A digit invalid for its base (`089`, `0b12`) is.
 Input ([`../docs/examples/lexer_ok.c`](../docs/examples/lexer_ok.c); output verified with the current build):
 
 ```c
-#define N 4
 int add(int a, int b) {
-    return a + b * N; /* sum */
+    return a + b * 4; /* sum */
 }
 ```
 
@@ -162,7 +161,7 @@ b                              identifier
 }                              close_brace_op
 ```
 
-`N` became `4` (preprocessor) and the comment is gone. An erroneous file
+The comment is gone. (There is no preprocessor: a `#` line would be a lexical error, D34.) An erroneous file
 ([`../docs/examples/lexer_errors.c`](../docs/examples/lexer_errors.c)):
 
 ```c

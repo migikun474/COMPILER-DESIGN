@@ -414,59 +414,59 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   total              function      int (int *, int)           -           4    -    2  _Z5totalPii; defined
-   trace              function      int (int (*)[3], int)      -          10    -    1  _Z5tracePA3_ii; defined
-   length             function      int (char *)               -          16    -    2  _Z6lengthPc; defined
-   squares            variable      int[5]                     global     22   20    3  
-   table              variable      int[2][3]                  global     23   24    3  
-   main               function      int (void)                 -          25    -    0  defined
+   total              function      int (int *, int)           -           3    -    2  _Z5totalPii; defined
+   trace              function      int (int (*)[3], int)      -           9    -    1  _Z5tracePA3_ii; defined
+   length             function      int (char *)               -          15    -    2  _Z6lengthPc; defined
+   squares            variable      int[5]                     global     21   20    3  
+   table              variable      int[2][3]                  global     22   24    3  
+   main               function      int (void)                 -          24    -    0  defined
 
  scope: global > total()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param       4    4    1  a.1
-   n                  parameter     int                        param       4    4    1  n.2
-   s                  variable      int                        local       5    4    2  s.3
+   a                  parameter     int *                      param       3    4    1  a.1
+   n                  parameter     int                        param       3    4    1  n.2
+   s                  variable      int                        local       4    4    2  s.3
 
  scope: global > total() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       6    4    3  i.4
+   i                  variable      int                        local       5    4    3  i.4
 
  scope: global > trace()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   m                  parameter     int (*)[3]                 param      10    4    1  m.5
-   n                  parameter     int                        param      10    4    1  n.6
-   s                  variable      int                        local      11    4    2  s.7
+   m                  parameter     int (*)[3]                 param       9    4    1  m.5
+   n                  parameter     int                        param       9    4    1  n.6
+   s                  variable      int                        local      10    4    2  s.7
 
  scope: global > trace() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      12    4    4  i.8
+   i                  variable      int                        local      11    4    4  i.8
 
  scope: global > length()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  parameter     char *                     param      16    4    1  s.9
-   n                  variable      int                        local      17    4    3  n.10
+   s                  parameter     char *                     param      15    4    1  s.9
+   n                  variable      int                        local      16    4    3  n.10
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int[5]                     local      26   20   13  a.11
-   m                  variable      int[3][3]                  local      27   36    4  m.12
-   cube               variable      int[2][3][4]               local      28   96    3  cube.13
-   i                  variable      int                        local      29    4   20  i.14
-   j                  variable      int                        local      29    4   10  j.15
-   k                  variable      int                        local      29    4    5  k.16
-   flat               variable      int[2][2]                  local      41   16    1  flat.17
-   sparse             variable      int[6]                     local      42   24    3  sparse.18
-   sized              variable      int[4]                     local      43   16    2  sized.19
-   word               variable      char[6]                    local      46    6    4  word.20
-   buf                variable      char[8]                    local      47    8    2  buf.21
-   lit                variable      char *                     local      48    4    2  lit.22
-   avg                variable      double[3]                  local      53   24    4  avg.23
+   a                  variable      int[5]                     local      25   20   13  a.11
+   m                  variable      int[3][3]                  local      26   36    4  m.12
+   cube               variable      int[2][3][4]               local      27   96    3  cube.13
+   i                  variable      int                        local      28    4   20  i.14
+   j                  variable      int                        local      28    4   10  j.15
+   k                  variable      int                        local      28    4    5  k.16
+   flat               variable      int[2][2]                  local      40   16    1  flat.17
+   sparse             variable      int[6]                     local      41   24    3  sparse.18
+   sized              variable      int[4]                     local      42   16    2  sized.19
+   word               variable      char[6]                    local      45    6    4  word.20
+   buf                variable      char[8]                    local      46    8    2  buf.21
+   lit                variable      char *                     local      47    4    2  lit.22
+   avg                variable      double[3]                  local      52   24    4  avg.23
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

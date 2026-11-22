@@ -30,6 +30,8 @@ str7:
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -38,248 +40,41 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# popcount(unsigned int)
-_Z8popcountj:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
-        lw    $s0, 8($fp)
-        # n = 0
-        li    $s1, 0
-L0_1:
-        # if v uint== 0 goto 7
-        beq   $s0, $zero, L0_7
-        # t1 = v uint& 1
-        andi  $s2, $s0, 1
-        # t2 = n uint+ t1
-        addu  $s3, $s1, $s2
-        # n = t2
-        move  $s1, $s3
-        # v = v uint>> 1
-        srl   $s0, $s0, 1
-        # goto 1
-        j     L0_1
-L0_7:
-        # return n
-        move  $v0, $s1
-        j     _Z8popcountj_exit
-_Z8popcountj_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# reverseBits(unsigned int)
-_Z11reverseBitsj:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -20($fp)
-        sw    $s4, -24($fp)
-        lw    $s1, 8($fp)
-        # r = 0
-        li    $s2, 0
-        # i = 0
-        li    $s0, 0
-L1_2:
-        # if i int>= 32 goto 9
-        li    $t1, 32
-        bge   $s0, $t1, L1_9
-        # t1 = r uint<< 1
-        sll   $s3, $s2, 1
-        # t2 = v uint& 1
-        andi  $s4, $s1, 1
-        # r = t1 uint| t2
-        or    $s2, $s3, $s4
-        # v = v uint>> 1
-        srl   $s1, $s1, 1
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 2
-        j     L1_2
-L1_9:
-        # return r
-        move  $v0, $s2
-        j     _Z11reverseBitsj_exit
-_Z11reverseBitsj_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -20($fp)
-        lw    $s4, -24($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# isPowerOfTwo(unsigned int)
-_Z12isPowerOfTwoj:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        lw    $s0, 8($fp)
-        # if v uint== 0 goto 4
-        beq   $s0, $zero, L2_4
-        # t2 = v uint- 1
-        addiu $s1, $s0, -1
-        # t3 = v uint& t2
-        and   $s2, $s0, $s1
-        # if t3 uint== 0 goto 6
-        beq   $s2, $zero, L2_6
-L2_4:
-        # t1 = 0
-        li    $s0, 0
-        # goto 7
-        j     L2_7
-L2_6:
-        # t1 = 1
-        li    $s0, 1
-L2_7:
-        # return t1
-        move  $v0, $s0
-        j     _Z12isPowerOfTwoj_exit
-_Z12isPowerOfTwoj_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# highestBit(unsigned int)
-_Z10highestBitj:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        lw    $s0, 8($fp)
-        # n = -1
-        li    $s1, -1
-L3_1:
-        # if v uint== 0 goto 5
-        beq   $s0, $zero, L3_5
-        # v = v uint>> 1
-        srl   $s0, $s0, 1
-        # n = n int+ 1
-        addiu $s1, $s1, 1
-        # goto 1
-        j     L3_1
-L3_5:
-        # return n
-        move  $v0, $s1
-        j     _Z10highestBitj_exit
-_Z10highestBitj_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# rotl(unsigned int, int)
-_Z4rotlji:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -20($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -32($fp)
-        lw    $s3, 8($fp)
-        lw    $s2, 12($fp)
-        # t1 = v uint<< k
-        sllv  $s0, $s3, $s2
-        # t2 = 32 int- k
-        li    $t0, 32
-        subu  $s1, $t0, $s2
-        # t3 = v uint>> t2
-        srlv  $s2, $s3, $s1
-        # t4 = t1 uint| t3
-        or    $s1, $s0, $s2
-        # return t4
-        move  $v0, $s1
-        j     _Z4rotlji_exit
-_Z4rotlji_exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -32($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# sign(int)
-_Z4signi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        lw    $s1, 8($fp)
-        # if v int> 0 goto 3
-        slt   $s0, $zero, $s1
-L5_4:
-        # if v int< 0 goto 7
-        slt   $s1, $s1, $zero
-L5_8:
-        # t3 = t1 int- t2
-        subu  $s2, $s0, $s1
-        # return t3
-        move  $v0, $s2
-        j     _Z4signi_exit
-_Z4signi_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -120
-        sw    $s0, -96($fp)
-        sw    $s1, -104($fp)
-        sw    $s2, -100($fp)
-        sw    $s3, -108($fp)
-        sw    $s4, -112($fp)
-        sw    $s5, -116($fp)
+        addiu $sp, $sp, -24
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        sw    $s0, -4($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -16($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -24($fp)
         # t74 = 4042265140
         li    $s0, -252702156
         # t75 = 0
         li    $s2, 0
-L6_2:
-        # if t74 uint== 0 goto 8
-        beq   $s0, $zero, L6_8
+L0_2:
+        # if t74 uint== 0 goto 13
+        beq   $s0, $zero, L0_13
+        # t76 = t74 uint& 1
+        andi  $s1, $s0, 1
+        # t77 = t75 uint+ t76
+        addu  $s3, $s2, $s1
+        # t75 = t77
+        move  $s2, $s3
+        # t74 = t74 uint>> 1
+        srl   $s0, $s0, 1
+        # if t74 uint== 0 goto 13
+        beq   $s0, $zero, L0_13
         # t76 = t74 uint& 1
         andi  $s1, $s0, 1
         # t77 = t75 uint+ t76
@@ -289,18 +84,18 @@ L6_2:
         # t74 = t74 uint>> 1
         srl   $s0, $s0, 1
         # goto 2
-        j     L6_2
-L6_8:
+        j     L0_2
+L0_13:
         # t78 = 4042265140
         li    $s0, -252702156
         # t79 = 0
         li    $s3, 0
         # t80 = 0
         li    $s1, 0
-L6_11:
-        # if t80 int>= 32 goto 18
+L0_16:
+        # if t80 int>= 32 goto 29
         li    $t1, 32
-        bge   $s1, $t1, L6_18
+        bge   $s1, $t1, L0_29
         # t81 = t79 uint<< 1
         sll   $s4, $s3, 1
         # t82 = t78 uint& 1
@@ -311,23 +106,42 @@ L6_11:
         srl   $s0, $s0, 1
         # t80 = t80 int+ 1
         addiu $s1, $s1, 1
-        # goto 11
-        j     L6_11
-L6_18:
+        # if t80 int>= 32 goto 29
+        li    $t1, 32
+        bge   $s1, $t1, L0_29
+        # t81 = t79 uint<< 1
+        sll   $s4, $s3, 1
+        # t82 = t78 uint& 1
+        andi  $s5, $s0, 1
+        # t79 = t81 uint| t82
+        or    $s3, $s4, $s5
+        # t78 = t78 uint>> 1
+        srl   $s0, $s0, 1
+        # t80 = t80 int+ 1
+        addiu $s1, $s1, 1
+        # goto 16
+        j     L0_16
+L0_29:
         # t91 = 1000
         li    $s0, 1000
         # t92 = -1
         li    $s1, -1
-L6_20:
-        # if t91 uint== 0 goto 24
-        beq   $s0, $zero, L6_24
+L0_31:
+        # if t91 uint== 0 goto 38
+        beq   $s0, $zero, L0_38
         # t91 = t91 uint>> 1
         srl   $s0, $s0, 1
         # t92 = t92 int+ 1
         addiu $s1, $s1, 1
-        # goto 20
-        j     L6_20
-L6_24:
+        # if t91 uint== 0 goto 38
+        beq   $s0, $zero, L0_38
+        # t91 = t91 uint>> 1
+        srl   $s0, $s0, 1
+        # t92 = t92 int+ 1
+        addiu $s1, $s1, 1
+        # goto 31
+        j     L0_31
+L0_38:
         # param "%d %x %d %d %d\n"
         # param t75
         # param t79
@@ -518,9 +332,9 @@ L6_24:
         li    $s0, 255
         # t112 = 0
         li    $s1, 0
-L6_87:
-        # if t111 uint== 0 goto 93
-        beq   $s0, $zero, L6_93
+L0_101:
+        # if t111 uint== 0 goto 112
+        beq   $s0, $zero, L0_112
         # t113 = t111 uint& 1
         andi  $s2, $s0, 1
         # t114 = t112 uint+ t113
@@ -529,19 +343,29 @@ L6_87:
         move  $s1, $s3
         # t111 = t111 uint>> 1
         srl   $s0, $s0, 1
-        # goto 87
-        j     L6_87
-L6_93:
+        # if t111 uint== 0 goto 112
+        beq   $s0, $zero, L0_112
+        # t113 = t111 uint& 1
+        andi  $s2, $s0, 1
+        # t114 = t112 uint+ t113
+        addu  $s3, $s1, $s2
+        # t112 = t114
+        move  $s1, $s3
+        # t111 = t111 uint>> 1
+        srl   $s0, $s0, 1
+        # goto 101
+        j     L0_101
+L0_112:
         # return t112
         move  $v0, $s1
         j     main__exit
 main__exit:
-        lw    $s0, -96($fp)
-        lw    $s1, -104($fp)
-        lw    $s2, -100($fp)
-        lw    $s3, -108($fp)
-        lw    $s4, -112($fp)
-        lw    $s5, -116($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -16($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -559,6 +383,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -579,8 +406,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -640,6 +483,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

@@ -1,6 +1,5 @@
 /* t15 -- -O2: constants, copies and dead assignments across basic
    blocks, next to the cases where a value is not the same on every path */
-#include <stdio.h>
 
 int g = 0;
 int touch() { g++; return g; }

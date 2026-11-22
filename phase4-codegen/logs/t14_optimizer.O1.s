@@ -29,6 +29,8 @@ fc1:  .word 0, 0        # 0
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -43,7 +45,7 @@ _Z4bumpv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = g int+ 10
         lw    $t0, g_g
         addiu $s0, $t0, 10
@@ -54,7 +56,7 @@ _Z4bumpv:
         move  $v0, $s0
         j     _Z4bumpv_exit
 _Z4bumpv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -68,8 +70,8 @@ _Z3setPii:
         addiu $sp, $sp, -8
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        lw    $s0, 8($fp)
-        lw    $s1, 12($fp)
+        move  $s0, $a0
+        move  $s1, $a1
         # *p = v
         sw    $s1, 0($s0)
         # return
@@ -87,11 +89,11 @@ _Z5twiceRi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        lw    $s2, 8($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        move  $s2, $a0
         # t1 = *r
         lw    $s0, 0($s2)
         # t2 = t1 int<< 1
@@ -101,9 +103,9 @@ _Z5twiceRi:
         # return
         j     _Z5twiceRi_exit
 _Z5twiceRi_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -114,10 +116,10 @@ _Z4foldv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
-        s.d   $f20, -48($fp)
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
+        addiu $sp, $sp, -16
+        s.d   $f20, -16($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
         # a = 11
         li    $s0, 11
         # b = 16
@@ -136,9 +138,9 @@ _Z4foldv:
         li    $v0, 632
         j     _Z4foldv_exit
 _Z4foldv_exit:
-        l.d   $f20, -48($fp)
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
+        l.d   $f20, -16($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -149,17 +151,17 @@ _Z6commonii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -120
-        sw    $s0, -112($fp)
-        sw    $s1, -92($fp)
-        sw    $s2, -88($fp)
-        sw    $s3, -116($fp)
-        sw    $s4, -96($fp)
-        sw    $s5, -100($fp)
-        sw    $s6, -104($fp)
-        sw    $s7, -108($fp)
-        lw    $s0, 8($fp)
-        lw    $s3, 12($fp)
+        addiu $sp, $sp, -32
+        sw    $s0, -28($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -32($fp)
+        sw    $s4, -12($fp)
+        sw    $s5, -16($fp)
+        sw    $s6, -20($fp)
+        sw    $s7, -24($fp)
+        move  $s0, $a0
+        move  $s3, $a1
         # t1 = x int* y
         mul   $s2, $s0, $s3
         # t2 = t1 int+ 3
@@ -208,14 +210,14 @@ _Z6commonii:
         move  $v0, $s2
         j     _Z6commonii_exit
 _Z6commonii_exit:
-        lw    $s0, -112($fp)
-        lw    $s1, -92($fp)
-        lw    $s2, -88($fp)
-        lw    $s3, -116($fp)
-        lw    $s4, -96($fp)
-        lw    $s5, -100($fp)
-        lw    $s6, -104($fp)
-        lw    $s7, -108($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -32($fp)
+        lw    $s4, -12($fp)
+        lw    $s5, -16($fp)
+        lw    $s6, -20($fp)
+        lw    $s7, -24($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -227,14 +229,19 @@ _Z8aliasingv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -184
-        sw    $s0, -156($fp)
-        sw    $s1, -160($fp)
-        sw    $s2, -164($fp)
-        sw    $s3, -168($fp)
-        sw    $s4, -172($fp)
-        sw    $s5, -176($fp)
-        sw    $s6, -180($fp)
+        addiu $sp, $sp, -48
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M5_0
+        j     __stack_overflow
+M5_0:
+        sw    $s0, -24($fp)
+        sw    $s1, -28($fp)
+        sw    $s2, -32($fp)
+        sw    $s3, -36($fp)
+        sw    $s4, -40($fp)
+        sw    $s5, -44($fp)
+        sw    $s6, -48($fp)
         # x = 5
         li    $t0, 5
         sw    $t0, -4($fp)
@@ -264,12 +271,11 @@ _Z8aliasingv:
         # param t4
         # param 1
         # call set(int *, int), 2
-        addiu $sp, $sp, -8
-        sw    $s3, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s3
+        li    $a1, 1
         jal   _Z3setPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t5 = x int+ y
         lw    $t0, -4($fp)
         lw    $t1, -8($fp)
@@ -292,34 +298,34 @@ _Z8aliasingv:
         move  $s5, $s4
         # param t1
         # call twice(int &), 1
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
         jal   _Z5twiceRi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # arr[0] = 1
         li    $t0, 1
-        sw    $t0, -44($fp)
+        sw    $t0, -20($fp)
         # arr[4] = 2
         li    $t0, 2
-        sw    $t0, -40($fp)
+        sw    $t0, -16($fp)
         # arr[8] = 3
         li    $t0, 3
-        sw    $t0, -36($fp)
+        sw    $t0, -12($fp)
         # i = 1
         li    $s0, 1
         # t12 = arr[4]
-        lw    $s0, -40($fp)
+        lw    $s0, -16($fp)
         # t15 = t12 int+ t12
         addu  $s5, $s0, $s0
         # e = t15
         move  $s0, $s5
         # arr[4] = 9
         li    $t0, 9
-        sw    $t0, -40($fp)
+        sw    $t0, -16($fp)
         # f = 18
         li    $s0, 18
         # t21 = &arr
-        addiu $s0, $fp, -44
+        addiu $s0, $fp, -20
         # q = t21
         move  $s6, $s0
         # t22 = t21 ptr+ 8
@@ -349,20 +355,20 @@ _Z8aliasingv:
         lw    $t1, -4($fp)
         addu  $s0, $s1, $t1
         # t32 = arr[8]
-        lw    $s1, -36($fp)
+        lw    $s1, -12($fp)
         # t33 = t31 int+ t32
         addu  $s2, $s0, $s1
         # return t33
         move  $v0, $s2
         j     _Z8aliasingv_exit
 _Z8aliasingv_exit:
-        lw    $s0, -156($fp)
-        lw    $s1, -160($fp)
-        lw    $s2, -164($fp)
-        lw    $s3, -168($fp)
-        lw    $s4, -172($fp)
-        lw    $s5, -176($fp)
-        lw    $s6, -180($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -28($fp)
+        lw    $s2, -32($fp)
+        lw    $s3, -36($fp)
+        lw    $s4, -40($fp)
+        lw    $s5, -44($fp)
+        lw    $s6, -48($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -375,10 +381,15 @@ _Z7globalsv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
-        sw    $s0, -60($fp)
-        sw    $s1, -64($fp)
-        sw    $s2, -68($fp)
+        addiu $sp, $sp, -16
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M6_0
+        j     __stack_overflow
+M6_0:
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         # t1 = g int+ 1
         lw    $t0, g_g
         addiu $s0, $t0, 1
@@ -387,7 +398,9 @@ _Z7globalsv:
         # b = t1
         move  $s1, $s0
         # call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         # t3 = g int+ 1
         lw    $t0, g_g
         addiu $s1, $t0, 1
@@ -411,7 +424,9 @@ _Z7globalsv:
         # t9 = t8 int+ 6
         addiu $s0, $s1, 6
         # t10 = call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # t11 = t9 int+ t10
         addu  $s2, $s0, $s1
@@ -419,9 +434,9 @@ _Z7globalsv:
         move  $v0, $s2
         j     _Z7globalsv_exit
 _Z7globalsv_exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -64($fp)
-        lw    $s2, -68($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -433,13 +448,13 @@ _Z4flowi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -24($fp)
-        sw    $s4, -40($fp)
-        lw    $s2, 8($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -16($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -4($fp)
+        sw    $s4, -20($fp)
+        move  $s2, $a0
         # s = 0
         li    $s0, 0
         # i = 0
@@ -506,11 +521,11 @@ L7_23:
         move  $v0, $s0
         j     _Z4flowi_exit
 _Z4flowi_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -24($fp)
-        lw    $s4, -40($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -4($fp)
+        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -519,14 +534,20 @@ _Z4flowi_exit:
 # divide(int, int)
 _Z6divideii:
         addiu $sp, $sp, -8
+        sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -12($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M8_1
+        j     __stack_overflow
+M8_1:
+        sw    $s0, -4($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -8($fp)
+        move  $s2, $a0
+        move  $s1, $a1
         # if b int!= 0 goto 3
         bne   $s1, $zero, L8_3
         # t1 = 0
@@ -535,6 +556,9 @@ _Z6divideii:
         j     L8_4
 L8_3:
         # t1 = a int/ b
+        bnez  $s1, M8_0
+        jal   __div_by_zero
+M8_0:
         div   $s2, $s1
         mflo  $s0
 L8_4:
@@ -542,10 +566,11 @@ L8_4:
         move  $v0, $s0
         j     _Z6divideii_exit
 _Z6divideii_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -12($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -8($fp)
         move  $sp, $fp
+        lw    $ra, 4($sp)
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
         jr    $ra
@@ -556,13 +581,20 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -80
-        s.d   $f20, -80($fp)
-        sw    $s0, -64($fp)
-        sw    $s1, -68($fp)
-        sw    $s2, -72($fp)
+        addiu $sp, $sp, -24
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M9_0
+        j     __stack_overflow
+M9_0:
+        s.d   $f20, -24($fp)
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
         # t1 = call fold(), 0
+        addiu $sp, $sp, -16
         jal   _Z4foldv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t1
@@ -576,13 +608,11 @@ main_:
         # param 3
         # param 4
         # t2 = call common(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
+        li    $a1, 4
         jal   _Z6commonii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t2
@@ -594,7 +624,9 @@ main_:
         jal   __printf
         addiu $sp, $sp, 8
         # t3 = call aliasing(), 0
+        addiu $sp, $sp, -16
         jal   _Z8aliasingv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t3
@@ -606,7 +638,9 @@ main_:
         jal   __printf
         addiu $sp, $sp, 8
         # t4 = call globals(), 0
+        addiu $sp, $sp, -16
         jal   _Z7globalsv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # total = t4
         move  $s1, $s0
@@ -624,27 +658,24 @@ main_:
         addiu $sp, $sp, 16
         # param 3
         # t5 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 4
         # t6 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 5
         # t7 = call flow(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z4flowi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t5
@@ -664,23 +695,20 @@ main_:
         # param 1
         # param 0
         # t8 = call divide(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
+        move  $a1, $zero
         jal   _Z6divideii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 9
         # param 3
         # t9 = call divide(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
+        li    $a1, 3
         jal   _Z6divideii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t8
@@ -714,10 +742,10 @@ main_:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -80($fp)
-        lw    $s0, -64($fp)
-        lw    $s1, -68($fp)
-        lw    $s2, -72($fp)
+        l.d   $f20, -24($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -735,6 +763,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -755,8 +786,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -816,6 +863,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

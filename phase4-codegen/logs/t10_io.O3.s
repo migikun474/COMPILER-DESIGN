@@ -44,6 +44,8 @@ fc2:  .word 0, 1072955392        # 1.25
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -58,14 +60,19 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -136
-        s.d   $f20, -120($fp)
-        s.d   $f22, -128($fp)
-        sw    $s0, -100($fp)
-        sw    $s1, -132($fp)
-        sw    $s2, -104($fp)
-        sw    $s3, -108($fp)
-        sw    $s4, -112($fp)
+        addiu $sp, $sp, -80
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        s.d   $f20, -64($fp)
+        s.d   $f22, -72($fp)
+        sw    $s0, -44($fp)
+        sw    $s1, -76($fp)
+        sw    $s2, -48($fp)
+        sw    $s3, -52($fp)
+        sw    $s4, -56($fp)
         # total = 0
         li    $s1, 0
         # t1 = &n
@@ -93,12 +100,12 @@ main_:
         addiu $sp, $sp, 24
         # i = 0
         li    $s0, 0
-        # t5 = &v
-        addiu $s2, $fp, -44
-L0_13:
-        # if i int>= n goto 20
+L0_12:
+        # if i int>= n goto 27
         lw    $t1, -4($fp)
-        bge   $s0, $t1, L0_20
+        bge   $s0, $t1, L0_27
+        # t5 = &v
+        addiu $s2, $fp, -40
         # param "%d"
         # param t5
         # call scanf, 2
@@ -109,13 +116,32 @@ L0_13:
         jal   __scanf
         addiu $sp, $sp, 8
         # total = total int+ v
-        lw    $t1, -44($fp)
+        lw    $t1, -40($fp)
         addu  $s1, $s1, $t1
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 13
-        j     L0_13
-L0_20:
+        # if i int>= n goto 27
+        lw    $t1, -4($fp)
+        bge   $s0, $t1, L0_27
+        # t5 = &v
+        addiu $s2, $fp, -40
+        # param "%d"
+        # param t5
+        # call scanf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        sw    $s2, 4($sp)
+        jal   __scanf
+        addiu $sp, $sp, 8
+        # total = total int+ v
+        lw    $t1, -40($fp)
+        addu  $s1, $s1, $t1
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # goto 12
+        j     L0_12
+L0_27:
         # t9 = chartoint grade
         lb    $t0, -33($fp)
         move  $s0, $t0
@@ -228,13 +254,13 @@ L0_20:
         move  $v0, $s1
         j     main__exit
 main__exit:
-        l.d   $f20, -120($fp)
-        l.d   $f22, -128($fp)
-        lw    $s0, -100($fp)
-        lw    $s1, -132($fp)
-        lw    $s2, -104($fp)
-        lw    $s3, -108($fp)
-        lw    $s4, -112($fp)
+        l.d   $f20, -64($fp)
+        l.d   $f22, -72($fp)
+        lw    $s0, -44($fp)
+        lw    $s1, -76($fp)
+        lw    $s2, -48($fp)
+        lw    $s3, -52($fp)
+        lw    $s4, -56($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -252,6 +278,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -270,8 +299,26 @@ __c_2p31:    .double 2147483648.0
 __c_ten:     .double 10.0
 __c_half:    .double 0.5
 __c_zero:    .double 0.0
+__c_one:     .double 1.0
+__pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -331,6 +378,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0
@@ -523,8 +572,9 @@ __dtoll_done:
         jr    $ra
 
 # ---------------------------------------------------------------- printf
-# %d %i %u %x %X %o %c %s %f %%, with '-' and '0' flags, width, precision
-# (strings and %f), '*', and the lengths l / ll / h.
+# %d %i %u %x %X %o %c %s %f %e %E %g %G %%, with '-' and '0' flags,
+# width, precision (strings and the floating formats), '*', and the
+# lengths l / ll / h.
 #   $s0 format   $s1 next argument   $s2 left-justify   $s3 pad character
 #   $s4 width    $s5 precision       $s6 number of 'l'  $s7 characters written
 __printf:
@@ -656,6 +706,16 @@ __pf_conv:
         beq   $t0, $t1, __pf_s
         li    $t1, 102
         beq   $t0, $t1, __pf_f
+        li    $t9, 101                  # the exponent letter: 'e' ...
+        li    $t1, 101
+        beq   $t0, $t1, __pf_e
+        li    $t1, 103
+        beq   $t0, $t1, __pf_g
+        li    $t9, 69                   # ... or 'E' for %E and %G
+        li    $t1, 69
+        beq   $t0, $t1, __pf_e
+        li    $t1, 71
+        beq   $t0, $t1, __pf_g
         li    $t3, 16
         li    $t1, 120
         beq   $t0, $t1, __pf_u
@@ -782,20 +842,169 @@ __pf_sgo:
         j     __pf_loop
 
 __pf_f:                                 # fixed notation
-        addiu $s1, $s1, 7
+        jal   __pf_getd
+        bgez  $s5, __pf_f1
+        li    $s5, 6
+__pf_f1:
+        la    $s6, __pf_buf+95
+        jal   __pf_fixed
+        move  $t0, $s6
+        la    $t1, __pf_buf+95
+        subu  $t1, $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_e:                                 # d.dddddde+XX, $s5 digits after the point
+        jal   __pf_getd
+        bgez  $s5, __pf_e1
+        li    $s5, 6
+__pf_e1:
+        move  $t3, $s5
+        jal   __pf_norm                 # $f12 in [1, 10), exponent in $t7
+        jal   __pf_expo                 # "e+03" at the end of the buffer, $s6 = its start
+        jal   __pf_fixed                # the mantissa's digits right before it
+        move  $t0, $s6
+        la    $t1, __pf_buf+95
+        subu  $t1, $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_g:                                 # $s5 significant digits: %e style if the exponent
+        jal   __pf_getd                 # is below -4 or not below $s5, else %f style;
+        bgez  $s5, __pf_g1              # no trailing zeros either way
+        li    $s5, 6
+__pf_g1:
+        bnez  $s5, __pf_g2
+        li    $s5, 1
+__pf_g2:
+        mov.d $f2, $f12                 # the value, kept for the %f style
+        addiu $t3, $s5, -1
+        jal   __pf_norm                 # the exponent %e would print, in $t7
+        li    $t5, -4
+        blt   $t7, $t5, __pf_gexp
+        bge   $t7, $s5, __pf_gexp
+        subu  $s5, $s5, $t7             # %f style with P - 1 - X decimals
+        addiu $s5, $s5, -1
+        mov.d $f12, $f2
+        la    $s6, __pf_buf+95
+        sw    $s6, __pf_mend
+        jal   __pf_fixed
+        j     __pf_gstrip
+__pf_gexp:
+        addiu $s5, $s5, -1              # %e style with P - 1 decimals; $f12 is the mantissa
+        jal   __pf_expo
+        sw    $s6, __pf_mend
+        jal   __pf_fixed
+__pf_gstrip:                            # trailing zeros go, and then a lone point
+        lw    $t5, __pf_mend
+        beqz  $s5, __pf_gmove           # no decimals: nothing to strip
+__pf_gzero:
+        lbu   $t6, -1($t5)
+        li    $t8, 48
+        bne   $t6, $t8, __pf_gdot
+        addiu $t5, $t5, -1
+        j     __pf_gzero
+__pf_gdot:
+        li    $t8, 46
+        bne   $t6, $t8, __pf_gmove
+        addiu $t5, $t5, -1
+__pf_gmove:                             # the exponent, if any, moves up behind the digits
+        lw    $t6, __pf_mend
+        la    $t8, __pf_buf+95
+__pf_gcopy:
+        beq   $t6, $t8, __pf_gout
+        lbu   $a0, 0($t6)
+        sb    $a0, 0($t5)
+        addiu $t6, $t6, 1
+        addiu $t5, $t5, 1
+        j     __pf_gcopy
+__pf_gout:
+        move  $t0, $s6
+        subu  $t1, $t5, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_getd:                              # the next argument, a double, into $f12 made
+        addiu $s1, $s1, 7               # non-negative; its sign character in $t2
         li    $t5, -8
         and   $s1, $s1, $t5
         l.d   $f12, 0($s1)
         addiu $s1, $s1, 8
-        bgez  $s5, __pf_fsign
-        li    $s5, 6
-__pf_fsign:
         li    $t2, 0
         l.d   $f14, __c_zero
         c.lt.d $f12, $f14
-        bc1f  __pf_fscale
+        bc1f  __pf_getd_done
         li    $t2, 45
         neg.d $f12, $f12
+__pf_getd_done:
+        jr    $ra
+
+__pf_norm:                              # $f12 (>= 0) = m * 10^$t7 with 1 <= m < 10, m in $f12,
+        li    $t7, 0                    # after rounding m to $t3 decimals (9.9999996 -> 1.0, X + 1)
+        l.d   $f4, __c_zero
+        c.eq.d $f12, $f4
+        bc1t  __pf_norm_done            # 0 is 0.000000e+00
+        l.d   $f6, __c_ten
+        l.d   $f8, __c_one
+__pf_norm_down:
+        c.lt.d $f12, $f6
+        bc1t  __pf_norm_up
+        div.d $f12, $f12, $f6
+        addiu $t7, $t7, 1
+        j     __pf_norm_down
+__pf_norm_up:
+        c.lt.d $f12, $f8
+        bc1f  __pf_norm_round
+        mul.d $f12, $f12, $f6
+        addiu $t7, $t7, -1
+        j     __pf_norm_up
+__pf_norm_round:                        # would rounding make it 10? then 1.0 and one more in the exponent
+        l.d   $f4, __c_half
+        move  $t5, $t3
+__pf_norm_half:
+        blez  $t5, __pf_norm_cmp
+        div.d $f4, $f4, $f6
+        addiu $t5, $t5, -1
+        j     __pf_norm_half
+__pf_norm_cmp:
+        sub.d $f4, $f6, $f4
+        c.lt.d $f12, $f4
+        bc1t  __pf_norm_done
+        div.d $f12, $f12, $f6
+        addiu $t7, $t7, 1
+__pf_norm_done:
+        jr    $ra
+
+__pf_expo:                              # "e+XX" ($t9 the letter, $t7 the exponent, at least two
+        la    $s6, __pf_buf+95          # digits) at the end of the buffer; $s6 = its start
+        move  $t5, $t7
+        li    $t6, 43                   # '+'
+        bgez  $t5, __pf_expo_digits
+        li    $t6, 45                   # '-'
+        negu  $t5, $t5
+__pf_expo_digits:
+        li    $t8, 0
+        li    $a1, 10
+__pf_expo_digit:
+        divu  $t5, $a1
+        mflo  $t5
+        mfhi  $a0
+        addiu $a0, $a0, 48
+        addiu $s6, $s6, -1
+        sb    $a0, 0($s6)
+        addiu $t8, $t8, 1
+        bnez  $t5, __pf_expo_digit
+        slti  $a0, $t8, 2
+        bnez  $a0, __pf_expo_digit
+        addiu $s6, $s6, -1
+        sb    $t6, 0($s6)
+        addiu $s6, $s6, -1
+        sb    $t9, 0($s6)
+        jr    $ra
+
+__pf_fixed:                             # the digits of $f12 (>= 0) with $s5 decimals, written to
+        addiu $sp, $sp, -8              # end at $s6; returns their start in $s6. Keeps $t2.
+        sw    $ra, 0($sp)
 __pf_fscale:                            # N = the value * 10^precision, rounded to nearest (ties to even)
         l.d   $f18, __c_ten
         move  $t5, $s5
@@ -833,7 +1042,6 @@ __pf_fdigits:                           # digits of N, last first, with the poin
         move  $t1, $v1
         li    $t3, 10
         li    $t4, 0                    # digits written
-        la    $s6, __pf_buf+95
 __pf_fdigit:
         bnez  $t1, __pf_fdiv64
         divu  $t0, $t3
@@ -862,11 +1070,9 @@ __pf_fmore:
         or    $t5, $t0, $t1
         bnez  $t5, __pf_fdigit
         ble   $t4, $s5, __pf_fdigit     # at least one digit before the point
-        move  $t0, $s6
-        la    $t1, __pf_buf+95
-        subu  $t1, $t1, $s6
-        jal   __pf_out
-        j     __pf_loop
+        lw    $ra, 0($sp)
+        addiu $sp, $sp, 8
+        jr    $ra
 
 __pf_out:                               # $t0 text, $t1 length, $t2 sign character or 0
         move  $t3, $t1

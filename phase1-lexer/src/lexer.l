@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "diagnostics/diagnostics.hpp"
-#include "preprocessor/preprocessor.hpp"
 #include "logger.h"
 #include "token.h"
 #include "token/token_type.hpp"
@@ -83,6 +82,12 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 <COMMENTSTATE>.                  { /* skip comment body */ }
 
 "//"[^\n]*                       { /* line comment, skip */ }
+^[ \t]*"#"[^\n]*                 {
+                                    /* no preprocessor (D34): a directive is an error and its line is skipped */
+                                    const char *hash = strchr(yytext, '#');
+                                    reportError(yylineno, tokCol + (int)(hash - yytext), hash,
+                                                "Preprocessor directive not supported: this compiler has no preprocessor");
+                                 }
 
  /* ---- identifiers AND keywords share one rule: the matched text is
     looked up in reserved_word() (keyword_map in token_type.cpp); if
@@ -209,7 +214,7 @@ int main(int argc, char** argv) {
         return 1;
     }
     /* like any C compiler, lex the preprocessed text (#define, #include, #if ...) */
-    FILE* f = openPreprocessed(argv[1]);
+    FILE* f = openSource(argv[1]);
     if (!f) {
         fprintf(stderr, "Error: could not open file '%s'\n", argv[1]);
         return 1;

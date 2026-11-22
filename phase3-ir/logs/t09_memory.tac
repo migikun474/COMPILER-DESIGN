@@ -271,47 +271,47 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Node               struct_tag    struct Node                -           6    -    0  size 8
-   push               function      struct Node *(struct Node *, int) -           8    -    1  _Z4pushP4Nodei; defined
-   main               function      int (void)                 -          15    -    0  defined
+   Node               struct_tag    struct Node                -           4    -    0  size 8
+   push               function      struct Node *(struct Node *, int) -           6    -    1  _Z4pushP4Nodei; defined
+   main               function      int (void)                 -          13    -    0  defined
 
  scope: global > struct Node
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   value              field         int                        member      6    4    3  Node::value; public, offset 0
-   next               field         struct Node *              member      6    4    4  Node::next; public, offset 4
+   value              field         int                        member      4    4    3  Node::value; public, offset 0
+   next               field         struct Node *              member      4    4    4  Node::next; public, offset 4
 
  scope: global > push()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param       8    4    1  head.1
-   v                  parameter     int                        param       8    4    1  v.2
-   n                  variable      struct Node *              local       9    4    3  n.3
+   head               parameter     struct Node *              param       6    4    1  head.1
+   v                  parameter     int                        param       6    4    1  v.2
+   n                  variable      struct Node *              local       7    4    3  n.3
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        local      16    4    7  n.4
-   a                  variable      int *                      local      17    4    9  a.5
-   z                  variable      int *                      local      19    4    5  z.7
-   list               variable      struct Node *              local      25    4    8  list.9
-   sum                variable      int                        local      27    4    3  sum.11
-   d                  variable      double *                   local      36    4    7  d.14
-   one                variable      int *                      local      38    4    3  one.15
-   text               variable      char *                     local      40    4    5  text.16
+   n                  variable      int                        local      14    4    7  n.4
+   a                  variable      int *                      local      15    4    9  a.5
+   z                  variable      int *                      local      17    4    5  z.7
+   list               variable      struct Node *              local      23    4    8  list.9
+   sum                variable      int                        local      25    4    3  sum.11
+   d                  variable      double *                   local      34    4    7  d.14
+   one                variable      int *                      local      36    4    3  one.15
+   text               variable      char *                     local      38    4    5  text.16
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      18    4    5  i.6
-   i                  variable      int                        local      22    4    4  i.8
-   i                  variable      int                        local      26    4    3  i.10
-   p                  variable      struct Node *              local      28    4    4  p.12
+   i                  variable      int                        local      16    4    5  i.6
+   i                  variable      int                        local      20    4    4  i.8
+   i                  variable      int                        local      24    4    3  i.10
+   p                  variable      struct Node *              local      26    4    4  p.12
 
  scope: global > main() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   dead               variable      struct Node *              local      31    4    1  dead.13
+   dead               variable      struct Node *              local      29    4    1  dead.13
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

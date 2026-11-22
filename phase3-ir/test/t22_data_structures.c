@@ -1,7 +1,5 @@
 /* t22 -- pointers and dynamic data: linked list, binary tree, stack,
    array of pointers, a table allocated row by row */
-#include <stdio.h>
-#include <stdlib.h>
 
 struct Node { int value; struct Node *next; };
 struct Tree { int key; struct Tree *left; struct Tree *right; };

@@ -354,29 +354,29 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   calls              variable      int                        global      4    4    8  
-   yes                function      int (void)                 -           5    -    3  _Z3yesv; defined
-   no                 function      int (void)                 -           6    -    4  _Z2nov; defined
-   main               function      int (void)                 -           8    -    0  defined
+   calls              variable      int                        global      3    4    8  
+   yes                function      int (void)                 -           4    -    3  _Z3yesv; defined
+   no                 function      int (void)                 -           5    -    4  _Z2nov; defined
+   main               function      int (void)                 -           7    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local       9    4    9  a.1
-   b                  variable      int                        local       9    4    8  b.2
-   c                  variable      int                        local       9    4    5  c.3
-   d                  variable      int                        local       9    4    2  d.4
-   e                  variable      int                        local       9    4    1  e.5
-   f                  variable      int                        local       9    4    1  f.6
-   r                  variable      int                        local      10    4   10  r.7
-   x                  variable      int                        local      25    4    6  x.8
-   z                  variable      double                     local      26    8    2  z.9
-   ch                 variable      char                       local      27    1    2  ch.10
-   p                  variable      int *                      local      28    4    2  p.11
-   flag               variable      bool                       local      36    1    2  flag.12
-   both               variable      bool                       local      37    1    1  both.13
-   big                variable      unsigned int               local      41    4    1  big.14
-   minus              variable      int                        local      42    4    1  minus.15
+   a                  variable      int                        local       8    4    9  a.1
+   b                  variable      int                        local       8    4    8  b.2
+   c                  variable      int                        local       8    4    5  c.3
+   d                  variable      int                        local       8    4    2  d.4
+   e                  variable      int                        local       8    4    1  e.5
+   f                  variable      int                        local       8    4    1  f.6
+   r                  variable      int                        local       9    4   10  r.7
+   x                  variable      int                        local      24    4    6  x.8
+   z                  variable      double                     local      25    8    2  z.9
+   ch                 variable      char                       local      26    1    2  ch.10
+   p                  variable      int *                      local      27    4    2  p.11
+   flag               variable      bool                       local      35    1    2  flag.12
+   both               variable      bool                       local      36    1    1  both.13
+   big                variable      unsigned int               local      40    4    1  big.14
+   minus              variable      int                        local      41    4    1  minus.15
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

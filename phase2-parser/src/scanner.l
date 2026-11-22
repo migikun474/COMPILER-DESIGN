@@ -87,8 +87,18 @@ static bool isSimpleTypeKeyword(TokenType t) {
     }
 }
 
+static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns nothing for it */
+
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
+    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT)) {
+        /* still reserved so the message is clear, but no longer part of the language (D35) */
+        reportDiagnostic(yylineno, g_tokStartCol, yytext,
+                         std::string("'") + yytext + "' is not supported: this language has no " +
+                             (kw.value() == TokenType::VIRTUAL ? "virtual functions" : "converting constructors"),
+                         "Lexical error");
+        return SKIP_TOKEN;
+    }
     /* `T(...)` that can only be an expression -- `Dog(4).bark();`,
        `int(x) + 1;` -- is announced as FCAST, so a statement may start
        with it (LALR(1) alone would have to guess at the '(') */
@@ -136,8 +146,21 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
 
 "//"[^\n]*             { }
 
-{ID}/[ \t]*"(" { return identifierOrKeyword(/*beforeParen=*/true); }
-{ID}             { return identifierOrKeyword(/*beforeParen=*/false); }
+^[ \t]*"#"[^\n]* {
+    /* there is no preprocessor (D34): a directive is an error, and the
+       rest of its line is skipped so it does not cascade into syntax errors */
+    const char *hash = std::strchr(yytext, '#');
+    std::string word = hash + 1;
+    size_t from = word.find_first_not_of(" \t"), to = word.find_first_of(" \t<\"(", from);
+    word = from == std::string::npos ? "" : word.substr(from, to == std::string::npos ? std::string::npos : to - from);
+    reportDiagnostic(yylineno, g_tokStartCol + static_cast<int>(hash - yytext), "#" + word,
+                     "preprocessor directive '#" + word + "' is not supported: this compiler has no preprocessor "
+                     "(printf, scanf, malloc, free and va_list are built in, so no #include is needed)",
+                     "Lexical error");
+}
+
+{ID}/[ \t]*"(" { int t = identifierOrKeyword(/*beforeParen=*/true); if (t != SKIP_TOKEN) return t; }
+{ID}             { int t = identifierOrKeyword(/*beforeParen=*/false); if (t != SKIP_TOKEN) return t; }
 
 \"                     { strbuf = "\""; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(STRSTATE); }
 <STRSTATE>\\.          { strbuf += yytext; }

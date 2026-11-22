@@ -19,6 +19,10 @@ const uint32_t STACK_BASE = 0x100000; /* frames grow upwards from here */
 const uint32_t HEAP_BASE = 0x1000000;
 const uint32_t MEMORY_LIMIT = 0x8000000;
 const long long STEP_LIMIT = 500000000LL;
+/* ponytail: each simulated call is a C++ call, so depth is capped to stay inside the
+   default 8 MB host stack (about where SPIM's 256 KB stack stops too); run on a big-stack
+   thread if deeper recursion is ever needed */
+const int DEPTH_LIMIT = 10000;
 
 struct Arg { /* a `param` waiting for its call */
     Cls cls = Cls::Int;
@@ -88,12 +92,9 @@ class Machine {
     std::map<const sem::Symbol *, uint32_t> globals;
     std::vector<uint32_t> strings;
     std::map<const sem::Symbol *, const Function *> functions;
-    /* a function's address, for the tables of virtual functions: where
-       MIPS code starts (0x00400000), 16 bytes apart; never dereferenced */
-    std::map<const sem::Symbol *, uint32_t> codeAddress;
-    std::map<uint32_t, const Function *> atAddress;
     std::map<const Function *, Layout> layouts;
     uint32_t dataTop = DATA_BASE, heapTop = HEAP_BASE, stackTop = STACK_BASE;
+    int depth = 0;
     std::map<uint32_t, uint32_t> blocks; /* heap block -> size */
     long long executed = 0;
     std::string output;
@@ -215,12 +216,6 @@ class Machine {
             long long size = std::max(1LL, sem::sizeOf(g.sym->type));
             globals[g.sym.get()] = allocData(static_cast<uint32_t>(size), static_cast<uint32_t>(sem::alignOf(g.sym->type)));
         }
-        uint32_t code = 0x00400000;
-        for (const auto &f : prog.functions) {
-            codeAddress[f.sym.get()] = code;
-            atAddress[code] = &f;
-            code += 16;
-        }
         for (const auto &g : prog.globals) {
             uint32_t base = globals[g.sym.get()];
             for (const auto &init : g.init) {
@@ -229,7 +224,7 @@ class Machine {
                     case GlobalInit::Integer: v.i = init.i; break;
                     case GlobalInit::Floating: v.f = init.f; break;
                     case GlobalInit::Address:
-                        v.i = globals.count(init.target) ? globals[init.target] : codeAddress.count(init.target) ? codeAddress[init.target] : 0;
+                        v.i = globals.count(init.target) ? globals[init.target] : 0;
                         break;
                     case GlobalInit::String: v.i = init.str >= 0 ? strings[init.str] : 0; break;
                 }
@@ -546,7 +541,9 @@ class Machine {
         fr.layout = &layouts[&f];
         stackTop = alignUp(stackTop, 8);
         fr.base = stackTop;
-        if (fr.base + fr.layout->width + 16 > HEAP_BASE) throw Fault("stack overflow (recursion too deep)");
+        if (fr.base + fr.layout->width + 16 > HEAP_BASE || ++depth > DEPTH_LIMIT)
+            throw Fault("stack overflow (recursion too deep)");
+        struct Leave { int &d; ~Leave() { --d; } } leave{depth};
         stackTop += fr.layout->width + 8;
         need(fr.base, fr.layout->width + 8);
         memset(&mem[fr.base], 0, fr.layout->width + 8);
@@ -643,19 +640,11 @@ class Machine {
                     size_t n = std::min(static_cast<size_t>(q.nargs), pending.size());
                     std::vector<Arg> callArgs(pending.end() - static_cast<long>(n), pending.end());
                     pending.resize(pending.size() - n);
-                    if (q.callee || !q.a.isNone()) {
-                        const Function *target = nullptr;
-                        if (q.callee) {
-                            auto found = functions.find(q.callee);
-                            if (found == functions.end())
-                                throw Fault("call to '" + signatureOf(*q.callee) + "', which has no definition");
-                            target = found->second;
-                        } else { /* a virtual call: the address came from a table */
-                            auto found = atAddress.find(static_cast<uint32_t>(value(q.a, fr).i));
-                            if (found == atAddress.end())
-                                throw Fault("call through a table entry that names no function (a pure virtual function?)");
-                            target = found->second;
-                        }
+                    if (q.callee) {
+                        auto found = functions.find(q.callee);
+                        if (found == functions.end())
+                            throw Fault("call to '" + signatureOf(*q.callee) + "', which has no definition");
+                        const Function *target = found->second;
                         uint32_t savedStack = stackTop;
                         Arg ret = call(*target, callArgs);
                         stackTop = savedStack;

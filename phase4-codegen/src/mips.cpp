@@ -20,6 +20,15 @@ using sem::TypePtr;
 namespace {
 
 int roundUp(int v, int a) { return (v + a - 1) / a * a; }
+
+/* SPIM's stack segment ends at 0x80000000 and grows downwards by
+   doubling; by default it stops at 256 KB (the next doubling would pass
+   the 512 KB limit of `spim -lstack`), and its top already holds argv and
+   the environment. A frame may reach down to 16 KB above that end, which
+   leaves room for the run-time library and the error message, so deep
+   recursion stops with "stack overflow" instead of SPIM's own failure
+   (measured: 8045 nested 32-byte frames fit, 8046 do not) */
+const char *const STACK_FLOOR = "0x7ffc4000";
 bool isWide(Cls c) { return c == Cls::LLong || c == Cls::ULLong; }
 bool isUnsignedCls(Cls c) { return c != Cls::Char && c != Cls::Short && c != Cls::Int && c != Cls::LLong; }
 
@@ -388,6 +397,13 @@ struct Emitter {
             case Op::Sub: ins("subu  " + abc); break;
             case Op::Mul: ins("mul   " + abc); break;
             case Op::Div: case Op::Mod:
+                if (!(q.b.kind == Operand::IntConst && static_cast<int32_t>(q.b.ival) != 0)) {
+                    /* the hardware does not trap: a zero divisor is reported like the interpreter does */
+                    std::string ok = fresh();
+                    ins("bnez  " + b + ", " + ok);
+                    ins("jal   __div_by_zero");
+                    lab(ok);
+                }
                 ins(std::string(isSigned ? "div   " : "divu  ") + a + ", " + b);
                 ins(std::string(q.op == Op::Div ? "mflo  " : "mfhi  ") + d);
                 break;
@@ -574,23 +590,45 @@ struct Emitter {
         size_t n = std::min(static_cast<size_t>(q.nargs), params.size());
         std::vector<const Quad *> args(params.end() - static_cast<long>(n), params.end());
         params.resize(params.size() - n);
-        std::vector<int> offsets;
+        std::vector<int> offsets, sizes;
         int size = 0;
         for (const Quad *p : args) {
             auto s = slot(p->a.type);
             size = roundUp(size, s.second);
             offsets.push_back(size);
+            sizes.push_back(s.first);
             size += s.first;
         }
+        /* a call to a user function passes the first 16 bytes in $a0-$a3 as
+           well (D39, MIPS o32 style) and always reserves them as the callee's
+           home area; the run-time library keeps the all-stack convention, and
+           so does -O0 / --stack-only, the direct translation */
+        bool regs = optimize && q.callee != nullptr;
         size = roundUp(size, 8);
+        if (regs) size = std::max(size, 16);
         if (size) ins("addiu $sp, $sp, -" + std::to_string(size));
+        std::vector<int> inReg(args.size(), -1);
         for (size_t i = 0; i < args.size(); ++i) {
             Cls c = classOf(args[i]->a.type);
             bool narrow = c == Cls::Bool || c == Cls::Char || c == Cls::UChar || c == Cls::Short || c == Cls::UShort;
+            if (regs && offsets[i] < 16 && (narrow || c == Cls::Int || c == Cls::UInt || c == Cls::Ptr)) {
+                inReg[i] = offsets[i] / 4; /* an integer word: straight into its $a register, never stored */
+                continue;
+            }
             storeValueAt(args[i]->a, narrow ? Cls::Int : c, std::to_string(offsets[i]) + "($sp)"); /* a full word per small argument */
         }
-        if (!q.callee && !q.a.isNone()) ins("jalr  " + use(q.a, "$t9")); /* a virtual call: the address from the table */
-        else ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
+        if (regs) {
+            for (int k = 0; k < 4; ++k) /* the other words of the first 16 bytes: stored above, loaded too */
+                for (size_t i = 0; i < args.size(); ++i)
+                    if (inReg[i] < 0 && offsets[i] <= 4 * k && 4 * k < offsets[i] + sizes[i])
+                        ins("lw    $a" + std::to_string(k) + ", " + std::to_string(4 * k) + "($sp)");
+            for (size_t i = 0; i < args.size(); ++i) {
+                if (inReg[i] < 0) continue;
+                std::string a = "$a" + std::to_string(inReg[i]), r = use(args[i]->a, a);
+                if (r != a) ins("move  " + a + ", " + r);
+            }
+        }
+        ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
         if (size) ins("addiu $sp, $sp, " + std::to_string(size));
         if (q.r.isNone()) return;
         Cls c = classOf(q.r.type);
@@ -752,6 +790,23 @@ struct Emitter {
         homeClass.clear();
         homeHi.clear();
         if (optimize) assignRegisters(f, incoming);
+        /* the layout again, now that registers are known: a slot only for a
+           name that is read or written in memory -- not one held in a
+           register, not one no instruction mentions any more */
+        depth = 0;
+        std::set<const sem::Symbol *> mentioned;
+        for (const auto &q : f.quads)
+            for (const Operand *o : {&q.a, &q.b, &q.r})
+                if (o->kind == Operand::Var) mentioned.insert(o->sym);
+        for (const auto &l : f.sym->locals) {
+            if (l->storage != sem::Storage::Local) continue;
+            if (mentioned.count(l.get()) && !home.count(Key(l.get(), 0))) varOff[l.get()] = place(l->type);
+            else varOff.erase(l.get());
+        }
+        for (int t : used) {
+            if (!home.count(Key(nullptr, t))) tempOff[t] = place(f.temps[t - 1]);
+            else tempOff.erase(t);
+        }
         std::map<std::string, int> saved;
         for (const auto *pairs : {&home, &homeHi})
             for (const auto &h : *pairs)
@@ -788,10 +843,38 @@ struct Emitter {
         ins("sw    $fp, 0($sp)");
         ins("move  $fp, $sp");
         if (frameSize) ins("addiu $sp, $sp, -" + std::to_string(frameSize));
+        if (calls || frameSize > 4096) { /* only a function that calls can recurse; a big frame can overflow alone */
+            std::string ok = fresh();
+            ins("lw    $t8, __stack_limit");
+            ins("sltu  $t8, $sp, $t8");
+            ins("beqz  $t8, " + ok);
+            ins("j     __stack_overflow");
+            lab(ok);
+        }
         for (const auto &r : saved) ins(saveOp(r.first, true) + r.first + ", " + std::to_string(r.second) + "($fp)");
+        /* the first 16 bytes of arguments arrive in $a0-$a3 (D39): an integer
+           parameter with a register takes it from there; every other word
+           goes to its home slot, where the rest of the code reads it */
+        std::set<const sem::Symbol *> moved;
+        int words = !optimize ? 0 : f.sym->type && f.sym->type->variadic ? 4 : std::min(4, (varargStart + 3) / 4);
+        for (int k = 0; k < words; ++k) {
+            std::string a = "$a" + std::to_string(k);
+            const sem::Symbol *taker = nullptr;
+            for (const sem::Symbol *p : incoming) {
+                auto h = home.find(Key(p, 0));
+                Cls c = classOf(p->type);
+                if (h != home.end() && varOff[p] == 8 + 4 * k && !isFloatCls(c) && !isWide(c)) taker = p;
+            }
+            if (taker) {
+                ins("move  " + home[Key(taker, 0)] + ", " + a);
+                moved.insert(taker);
+            } else {
+                ins("sw    " + a + ", " + std::to_string(8 + 4 * k) + "($fp)");
+            }
+        }
         for (const sem::Symbol *p : incoming) { /* a parameter that lives in a register is fetched once */
             auto h = home.find(Key(p, 0));
-            if (h == home.end()) continue;
+            if (h == home.end() || moved.count(p)) continue;
             Cls c = homeClass[Key(p, 0)];
             ins(std::string(c == Cls::Double ? "l.d   " : c == Cls::Float ? "l.s   " : "lw    ") + h->second + ", " + std::to_string(varOff[p]) + "($fp)");
             if (isWide(c)) ins("lw    " + homeHi[Key(p, 0)] + ", " + std::to_string(varOff[p] + 4) + "($fp)");
@@ -1031,6 +1114,8 @@ struct Emitter {
             << "\n        .text\n        .globl main\n"
             << "main:\n"
             << "        li    $t0, -8\n        and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack\n"
+            << "        li    $t1, " << STACK_FLOOR << "\n"
+            << "        sw    $t1, __stack_limit      # deeper than this is a stack overflow\n"
             << "        addiu $sp, $sp, -8\n        sw    $a0, 0($sp)             # argc\n        sw    $a1, 4($sp)             # argv\n"
             << startup.str()
             << "        jal   main_\n        move  $a0, $v0\n        li    $v0, 17                 # exit with main's result\n        syscall\n"

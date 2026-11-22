@@ -1,9 +1,6 @@
 /* t16 -- what the MIPS run-time library has to get right: 64-bit
    arithmetic, conversions between integers and floating point, printf
    formats, structs and doubles passed and returned on the stack */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 
 struct Big { double d; int n[5]; char tag; long long w; };
 

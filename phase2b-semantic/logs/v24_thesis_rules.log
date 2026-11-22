@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v24_thesis_rules.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v24_thesis_rules.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v24_thesis_rules.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v24_thesis_rules.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -195,38 +195,38 @@ Program "translation_unit"
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
-u1                 variable       int[1]                     global   global                         6     4     0     u1                   -                        
-u2                 variable       int[1]                     global   global                         7     4     0     u2                   -                        
-u3                 variable       int[1]                     global   global                         8     4     0     u3                   -                        
-u4                 variable       int[1]                     global   global                         9     4     0     u4                   -                        
-u5                 variable       int[1]                     global   global                         10    4     0     u5                   -                        
-u6                 variable       int[1]                     global   global                         11    4     0     u6                   -                        
-u7                 variable       int[1]                     global   global                         12    4     0     u7                   -                        
-u8                 variable       int[1]                     global   global                         13    4     0     u8                   -                        
-u9                 variable       int[1]                     global   global                         14    4     0     u9                   -                        
-table              variable       int[4]                     global   global                         18    16    2     table                -                        
-table_ok           variable       int[1]                     global   global                         19    4     0     table_ok             -                        
-counter            variable       int                        global   global                         21    4     1     counter              -                        
-bump               function       int (void)                 -        global                         23    -     1     _Z4bumpv             _Z4bumpv                 defined
-total              variable       int                        global   global                         24    4     1     total                -                        
-read_total         function       int (void)                 -        global                         25    -     1     _Z10read_totalv      _Z10read_totalv          defined
-Mutable            struct_tag     struct Mutable             -        global                         27    -     0     Mutable              -                        size 8
-Mutable::a         field          int                        member   global > struct Mutable        27    4     1     Mutable::a           -                        public, offset 0
-Mutable::b         field          int                        member   global > struct Mutable        27    4     0     Mutable::b           -                        public, offset 4
-main               function       int (void)                 -        global                         29    -     0     main                 main                     defined
-r                  variable       int                        local    global > main()                30    4     1     r.1                  -                        
-i                  variable       int                        local    global > main()                31    4     18    i.2                  -                        
-j                  variable       int                        local    global > main()                31    4     6     j.3                  -                        
-a                  variable       int[4]                     local    global > main()                31    16    1     a.4                  -                        
-m1                 variable       struct Mutable             local    global > main()                32    8     2     m1.5                 -                        
-m2                 variable       struct Mutable             local    global > main()                32    8     1     m2.6                 -                        
-c                  variable       char                       local    global > main()                46    1     3     c.7                  -                        
-s                  variable       short                      local    global > main()                46    2     1     s.8                  -                        
-f                  variable       float                      local    global > main()                46    4     2     f.9                  -                        
-l                  variable       long                       local    global > main()                46    4     1     l.10                 -                        
-ll                 variable       long long                  local    global > main()                46    8     1     ll.11                -                        
-d                  variable       double                     local    global > main()                46    8     1     d.12                 -                        
-u                  variable       unsigned int               local    global > main()                49    4     1     u.13                 -                        
+u1                 variable       int[1]                     global   global                         5     4     0     u1                   -                        
+u2                 variable       int[1]                     global   global                         6     4     0     u2                   -                        
+u3                 variable       int[1]                     global   global                         7     4     0     u3                   -                        
+u4                 variable       int[1]                     global   global                         8     4     0     u4                   -                        
+u5                 variable       int[1]                     global   global                         9     4     0     u5                   -                        
+u6                 variable       int[1]                     global   global                         10    4     0     u6                   -                        
+u7                 variable       int[1]                     global   global                         11    4     0     u7                   -                        
+u8                 variable       int[1]                     global   global                         12    4     0     u8                   -                        
+u9                 variable       int[1]                     global   global                         13    4     0     u9                   -                        
+table              variable       int[4]                     global   global                         17    16    2     table                -                        
+table_ok           variable       int[1]                     global   global                         18    4     0     table_ok             -                        
+counter            variable       int                        global   global                         20    4     1     counter              -                        
+bump               function       int (void)                 -        global                         22    -     1     _Z4bumpv             _Z4bumpv                 defined
+total              variable       int                        global   global                         23    4     1     total                -                        
+read_total         function       int (void)                 -        global                         24    -     1     _Z10read_totalv      _Z10read_totalv          defined
+Mutable            struct_tag     struct Mutable             -        global                         26    -     0     Mutable              -                        size 8
+Mutable::a         field          int                        member   global > struct Mutable        26    4     1     Mutable::a           -                        public, offset 0
+Mutable::b         field          int                        member   global > struct Mutable        26    4     0     Mutable::b           -                        public, offset 4
+main               function       int (void)                 -        global                         28    -     0     main                 main                     defined
+r                  variable       int                        local    global > main()                29    4     1     r.1                  -                        
+i                  variable       int                        local    global > main()                30    4     18    i.2                  -                        
+j                  variable       int                        local    global > main()                30    4     6     j.3                  -                        
+a                  variable       int[4]                     local    global > main()                30    16    1     a.4                  -                        
+m1                 variable       struct Mutable             local    global > main()                31    8     2     m1.5                 -                        
+m2                 variable       struct Mutable             local    global > main()                31    8     1     m2.6                 -                        
+c                  variable       char                       local    global > main()                45    1     3     c.7                  -                        
+s                  variable       short                      local    global > main()                45    2     1     s.8                  -                        
+f                  variable       float                      local    global > main()                45    4     2     f.9                  -                        
+l                  variable       long                       local    global > main()                45    4     1     l.10                 -                        
+ll                 variable       long long                  local    global > main()                45    8     1     ll.11                -                        
+d                  variable       double                     local    global > main()                45    8     1     d.12                 -                        
+u                  variable       unsigned int               local    global > main()                48    4     1     u.13                 -                        
 
 === Record Layouts (MIPS32) ===
 struct Mutable: size 8, align 4

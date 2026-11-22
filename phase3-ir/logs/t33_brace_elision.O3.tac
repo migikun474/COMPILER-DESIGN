@@ -29,7 +29,8 @@
    calls inlined                           0
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
+   loops unrolled                          0
+   unreachable functions removed           0
 
 ----------------------------------------------------------------------------
  GLOBALS: 3 object(s) in static storage
@@ -72,7 +73,7 @@
    s                local   struct S                       24       0
    t                local   struct S                       24      24
    first            local   struct In                       8      48
-   u                local   struct (unnamed at 11:5)       12      56
+   u                local   struct (unnamed at 10:5)       12      56
    d                local   struct S                       24      68
    t1               temp    int                             4      92
    t2               temp    int                             4      96
@@ -223,42 +224,42 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   In                 struct_tag    struct In                  -           2    -    0  size 8
-   S                  struct_tag    struct S                   -           3    -    0  size 24
-   g                  variable      struct S                   global      4   24    6  
-   pts                variable      struct In[3]               global      5   24    5  
-   m                  variable      int[2][3]                  global      6   24    4  
-   main               function      int (void)                 -           7    -    0  defined
+   In                 struct_tag    struct In                  -           1    -    0  size 8
+   S                  struct_tag    struct S                   -           2    -    0  size 24
+   g                  variable      struct S                   global      3   24    6  
+   pts                variable      struct In[3]               global      4   24    5  
+   m                  variable      int[2][3]                  global      5   24    4  
+   main               function      int (void)                 -           6    -    0  defined
 
  scope: global > struct In
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  field         int                        member      2    4    5  In::x; public, offset 0
-   y                  field         int                        member      2    4    7  In::y; public, offset 4
+   x                  field         int                        member      1    4    5  In::x; public, offset 0
+   y                  field         int                        member      1    4    7  In::y; public, offset 4
 
  scope: global > struct S
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         int[2]                     member      3    8    6  S::a; public, offset 0
-   b                  field         int                        member      3    4    3  S::b; public, offset 8
-   in                 field         struct In                  member      3    8    7  S::in; public, offset 12
-   name               field         char[4]                    member      3    4    4  S::name; public, offset 20
+   a                  field         int[2]                     member      2    8    6  S::a; public, offset 0
+   b                  field         int                        member      2    4    3  S::b; public, offset 8
+   in                 field         struct In                  member      2    8    7  S::in; public, offset 12
+   name               field         char[4]                    member      2    4    4  S::name; public, offset 20
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   s                  variable      struct S                   local       8   24    6  s.1
-   t                  variable      struct S                   local       9   24    6  t.2
-   first              variable      struct In                  local      10    8    2  first.3
-   (unnamed at 11:5)  struct_tag    struct (unnamed at 11:5)   -          11    -    0  size 12
-   u                  variable      struct (unnamed at 11:5)   local      11   12    3  u.4
-   d                  variable      struct S                   local      12   24    2  d.5
+   s                  variable      struct S                   local       7   24    6  s.1
+   t                  variable      struct S                   local       8   24    6  t.2
+   first              variable      struct In                  local       9    8    2  first.3
+   (unnamed at 10:5)  struct_tag    struct (unnamed at 10:5)   -          10    -    0  size 12
+   u                  variable      struct (unnamed at 10:5)   local      10   12    3  u.4
+   d                  variable      struct S                   local      11   24    2  d.5
 
- scope: global > main() > struct (unnamed at 11:5)
+ scope: global > main() > struct (unnamed at 10:5)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  field         struct In                  member     11    8    2  (unnamed at 11:5)::p; public, offset 0
-   z                  field         int                        member     11    4    1  (unnamed at 11:5)::z; public, offset 8
+   p                  field         struct In                  member     10    8    2  (unnamed at 10:5)::p; public, offset 0
+   z                  field         int                        member     10    4    1  (unnamed at 10:5)::z; public, offset 8
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -272,6 +273,6 @@ struct S: size 24, align 4
     +8  int b  [public]
     +12  struct In in  [public]
     +20  char[4] name  [public]
-struct (unnamed at 11:5): size 12, align 4
+struct (unnamed at 10:5): size 12, align 4
     +0  struct In p  [public]
     +8  int z  [public]

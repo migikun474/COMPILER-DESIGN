@@ -1,5 +1,4 @@
 /* t11 -- command-line arguments (run with: alpha beta) */
-#include <stdio.h>
 
 int main(int argc, char **argv) {
     int letters = 0;

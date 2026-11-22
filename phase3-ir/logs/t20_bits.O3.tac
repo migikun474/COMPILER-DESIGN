@@ -4,7 +4,7 @@
 
    Source file   : test/t20_bits.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 237 -> 141 instruction(s)
+   Result        : Optimized three address code (-O3): 237 -> 113 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          237 -> 141   (40% fewer)
+   instructions                          237 -> 113   (52% fewer)
 
    constants folded                       84
    algebraic simplifications               0
@@ -29,154 +29,8 @@
    calls inlined                          10
    tail calls turned into jumps            0
    common subexpressions across blocks      0
-   instructions moved out of loops         0
-
-============================================================================
- FUNCTION popcount(unsigned int)        (link name _Z8popcountj)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   unsigned int                    4       0
-   n                local   int                             4       4
-   t1               temp    unsigned int                    4       8
-   t2               temp    unsigned int                    4      12
-   (1 temporary no longer used after optimization not shown)
-
- Code: 8 instruction(s)
-
-    100       n = 0
-    101  L1:  if v uint== 0 goto L2
-    102       t1 = v uint& 1
-    103       t2 = n uint+ t1
-    104       n = t2
-    105       v = v uint>> 1
-    106       goto L1
-    107  L2:  return n
-
-============================================================================
- FUNCTION reverseBits(unsigned int)        (link name _Z11reverseBitsj)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 2 temporaries, frame 32 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   unsigned int                    4       0
-   r                local   unsigned int                    4       4
-   i                local   int                             4       8
-   t1               temp    unsigned int                    4      12
-   t2               temp    unsigned int                    4      16
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 10 instruction(s)
-
-    108       r = 0
-    109       i = 0
-    110  L3:  if i int>= 32 goto L4
-    111       t1 = r uint<< 1
-    112       t2 = v uint& 1
-    113       r = t1 uint| t2
-    114       v = v uint>> 1
-    115       i = i int+ 1
-    116       goto L3
-    117  L4:  return r
-
-============================================================================
- FUNCTION isPowerOfTwo(unsigned int)        (link name _Z12isPowerOfTwoj)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   unsigned int                    4       0
-   t1               temp    int                             4       4
-   t2               temp    unsigned int                    4       8
-   t3               temp    unsigned int                    4      12
-
- Code: 8 instruction(s)
-
-    118       if v uint== 0 goto L5
-    119       t2 = v uint- 1
-    120       t3 = v uint& t2
-    121       if t3 uint== 0 goto L6
-    122  L5:  t1 = 0
-    123       goto L7
-    124  L6:  t1 = 1
-    125  L7:  return t1
-
-============================================================================
- FUNCTION highestBit(unsigned int)        (link name _Z10highestBitj)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 0 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   unsigned int                    4       0
-   n                local   int                             4       4
-   (3 temporaries no longer used after optimization not shown)
-
- Code: 6 instruction(s)
-
-    126       n = -1
-    127  L8:  if v uint== 0 goto L9
-    128       v = v uint>> 1
-    129       n = n int+ 1
-    130       goto L8
-    131  L9:  return n
-
-============================================================================
- FUNCTION rotl(unsigned int, int)        (link name _Z4rotlji)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 4 temporaries, frame 24 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   unsigned int                    4       0
-   k                param   int                             4       4
-   t1               temp    unsigned int                    4       8
-   t2               temp    int                             4      12
-   t3               temp    unsigned int                    4      16
-   t4               temp    unsigned int                    4      20
-
- Code: 5 instruction(s)
-
-    132     t1 = v uint<< k
-    133     t2 = 32 int- k
-    134     t3 = v uint>> t2
-    135     t4 = t1 uint| t3
-    136     return t4
-
-============================================================================
- FUNCTION sign(int)        (link name _Z4signi)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   v                param   int                             4       0
-   t1               temp    int                             4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-
- Code: 10 instruction(s)
-
-    137        if v int> 0 goto L10
-    138        t1 = 0
-    139        goto L11
-    140  L10:  t1 = 1
-    141  L11:  if v int< 0 goto L12
-    142        t2 = 0
-    143        goto L13
-    144  L12:  t2 = 1
-    145  L13:  t3 = t1 int- t2
-    146        return t3
+   loops unrolled                          7
+   unreachable functions removed           6
 
 ============================================================================
  FUNCTION main()        (link name main)
@@ -213,102 +67,121 @@
    t114             temp    unsigned int                    4     484
    (99 temporaries no longer used after optimization not shown)
 
- Code: 94 instruction(s)
+ Code: 113 instruction(s)
 
-    147        t74 = 4042265140
-    148        t75 = 0
-    149  L14:  if t74 uint== 0 goto L15
-    150        t76 = t74 uint& 1
-    151        t77 = t75 uint+ t76
-    152        t75 = t77
-    153        t74 = t74 uint>> 1
-    154        goto L14
-    155  L15:  t78 = 4042265140
-    156        t79 = 0
-    157        t80 = 0
-    158  L16:  if t80 int>= 32 goto L17
-    159        t81 = t79 uint<< 1
-    160        t82 = t78 uint& 1
-    161        t79 = t81 uint| t82
-    162        t78 = t78 uint>> 1
-    163        t80 = t80 int+ 1
-    164        goto L16
-    165  L17:  t91 = 1000
-    166        t92 = -1
-    167  L18:  if t91 uint== 0 goto L19
-    168        t91 = t91 uint>> 1
-    169        t92 = t92 int+ 1
-    170        goto L18
-    171  L19:  param "%d %x %d %d %d\n"
-    172        param t75
-    173        param t79
-    174        param 1
-    175        param 0
-    176        param t92
-    177        call printf, 6
-    178        param "%x %x %x %x\n"
-    179        param 4660
-    180        param 4042265151
-    181        param 252702155
-    182        param 252702155
-    183        call printf, 5
-    184        param "%x %x %x\n"
-    185        param 4027725040
-    186        param 251732800
-    187        param 15
-    188        call printf, 4
-    189        param "%d %d %u %u\n"
-    190        param 2147483647
-    191        param -2147483648
-    192        param 1
-    193        param 2147483648
-    194        call printf, 5
-    195        param "%d %d %d %d\n"
-    196        param -1
-    197        param -1
-    198        param 1
-    199        param 1073741824
-    200        call printf, 5
-    201        param "%d %d %d %d\n"
-    202        param 0
-    203        param -128
-    204        param 32767
-    205        param 0
-    206        call printf, 5
-    207        param "%d %d %d\n"
-    208        param -3
-    209        param -1
-    210        param -3
-    211        call printf, 4
-    212        param "%d %d %d\n"
-    213        param 0
-    214        param 1
-    215        param 1
-    216        call printf, 4
-    217        param "%d %d %d %d\n"
-    218        param -1
-    219        param 0
-    220        param 1
-    221        param 1
-    222        call printf, 5
-    223        param "%d %d\n"
-    224        param 16
-    225        param 1
-    226        call printf, 3
-    227        param "%c %c %d\n"
-    228        param 97
-    229        param 65
-    230        param 25
-    231        call printf, 4
-    232        t111 = 255
-    233        t112 = 0
-    234  L20:  if t111 uint== 0 goto L21
-    235        t113 = t111 uint& 1
-    236        t114 = t112 uint+ t113
-    237        t112 = t114
-    238        t111 = t111 uint>> 1
-    239        goto L20
-    240  L21:  return t112
+    100       t74 = 4042265140
+    101       t75 = 0
+    102  L1:  if t74 uint== 0 goto L2
+    103       t76 = t74 uint& 1
+    104       t77 = t75 uint+ t76
+    105       t75 = t77
+    106       t74 = t74 uint>> 1
+    107       if t74 uint== 0 goto L2
+    108       t76 = t74 uint& 1
+    109       t77 = t75 uint+ t76
+    110       t75 = t77
+    111       t74 = t74 uint>> 1
+    112       goto L1
+    113  L2:  t78 = 4042265140
+    114       t79 = 0
+    115       t80 = 0
+    116  L3:  if t80 int>= 32 goto L4
+    117       t81 = t79 uint<< 1
+    118       t82 = t78 uint& 1
+    119       t79 = t81 uint| t82
+    120       t78 = t78 uint>> 1
+    121       t80 = t80 int+ 1
+    122       if t80 int>= 32 goto L4
+    123       t81 = t79 uint<< 1
+    124       t82 = t78 uint& 1
+    125       t79 = t81 uint| t82
+    126       t78 = t78 uint>> 1
+    127       t80 = t80 int+ 1
+    128       goto L3
+    129  L4:  t91 = 1000
+    130       t92 = -1
+    131  L5:  if t91 uint== 0 goto L6
+    132       t91 = t91 uint>> 1
+    133       t92 = t92 int+ 1
+    134       if t91 uint== 0 goto L6
+    135       t91 = t91 uint>> 1
+    136       t92 = t92 int+ 1
+    137       goto L5
+    138  L6:  param "%d %x %d %d %d\n"
+    139       param t75
+    140       param t79
+    141       param 1
+    142       param 0
+    143       param t92
+    144       call printf, 6
+    145       param "%x %x %x %x\n"
+    146       param 4660
+    147       param 4042265151
+    148       param 252702155
+    149       param 252702155
+    150       call printf, 5
+    151       param "%x %x %x\n"
+    152       param 4027725040
+    153       param 251732800
+    154       param 15
+    155       call printf, 4
+    156       param "%d %d %u %u\n"
+    157       param 2147483647
+    158       param -2147483648
+    159       param 1
+    160       param 2147483648
+    161       call printf, 5
+    162       param "%d %d %d %d\n"
+    163       param -1
+    164       param -1
+    165       param 1
+    166       param 1073741824
+    167       call printf, 5
+    168       param "%d %d %d %d\n"
+    169       param 0
+    170       param -128
+    171       param 32767
+    172       param 0
+    173       call printf, 5
+    174       param "%d %d %d\n"
+    175       param -3
+    176       param -1
+    177       param -3
+    178       call printf, 4
+    179       param "%d %d %d\n"
+    180       param 0
+    181       param 1
+    182       param 1
+    183       call printf, 4
+    184       param "%d %d %d %d\n"
+    185       param -1
+    186       param 0
+    187       param 1
+    188       param 1
+    189       call printf, 5
+    190       param "%d %d\n"
+    191       param 16
+    192       param 1
+    193       call printf, 3
+    194       param "%c %c %d\n"
+    195       param 97
+    196       param 65
+    197       param 25
+    198       call printf, 4
+    199       t111 = 255
+    200       t112 = 0
+    201  L7:  if t111 uint== 0 goto L8
+    202       t113 = t111 uint& 1
+    203       t114 = t112 uint+ t113
+    204       t112 = t114
+    205       t111 = t111 uint>> 1
+    206       if t111 uint== 0 goto L8
+    207       t113 = t111 uint& 1
+    208       t114 = t112 uint+ t113
+    209       t112 = t114
+    210       t111 = t111 uint>> 1
+    211       goto L7
+    212  L8:  return t112
 
 
 ----------------------------------------------------------------------------
@@ -318,66 +191,66 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   popcount           function      int (unsigned int)         -           4    -    2  _Z8popcountj; defined
-   reverseBits        function      unsigned int (unsigned int) -           6    -    1  _Z11reverseBitsj; defined
-   isPowerOfTwo       function      int (unsigned int)         -          12    -    2  _Z12isPowerOfTwoj; defined
-   highestBit         function      int (unsigned int)         -          13    -    1  _Z10highestBitj; defined
-   rotl               function      unsigned int (unsigned int, int) -          14    -    1  _Z4rotlji; defined
-   sign               function      int (int)                  -          15    -    3  _Z4signi; defined
-   main               function      int (void)                 -          17    -    0  defined
+   popcount           function      int (unsigned int)         -           3    -    2  _Z8popcountj; defined
+   reverseBits        function      unsigned int (unsigned int) -           5    -    1  _Z11reverseBitsj; defined
+   isPowerOfTwo       function      int (unsigned int)         -          11    -    2  _Z12isPowerOfTwoj; defined
+   highestBit         function      int (unsigned int)         -          12    -    1  _Z10highestBitj; defined
+   rotl               function      unsigned int (unsigned int, int) -          13    -    1  _Z4rotlji; defined
+   sign               function      int (int)                  -          14    -    3  _Z4signi; defined
+   main               function      int (void)                 -          16    -    0  defined
 
  scope: global > popcount()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param       4    4    3  v.1
-   n                  variable      int                        local       4    4    2  n.2
+   v                  parameter     unsigned int               param       3    4    3  v.1
+   n                  variable      int                        local       3    4    2  n.2
 
  scope: global > reverseBits()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param       6    4    2  v.3
-   r                  variable      unsigned int               local       7    4    3  r.4
+   v                  parameter     unsigned int               param       5    4    2  v.3
+   r                  variable      unsigned int               local       6    4    3  r.4
 
  scope: global > reverseBits() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       8    4    2  i.5
+   i                  variable      int                        local       7    4    2  i.5
 
  scope: global > isPowerOfTwo()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      12    4    3  v.6
+   v                  parameter     unsigned int               param      11    4    3  v.6
 
  scope: global > highestBit()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      13    4    2  v.7
-   n                  variable      int                        local      13    4    2  n.8
+   v                  parameter     unsigned int               param      12    4    2  v.7
+   n                  variable      int                        local      12    4    2  n.8
 
  scope: global > rotl()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      14    4    2  v.9
-   k                  parameter     int                        param      14    4    2  k.10
+   v                  parameter     unsigned int               param      13    4    2  v.9
+   k                  parameter     int                        param      13    4    2  k.10
 
  scope: global > sign()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param      15    4    2  v.11
+   v                  parameter     int                        param      14    4    2  v.11
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   u                  variable      unsigned int               local      18    4    9  u.12
-   big                variable      int                        local      23    4    1  big.13
-   small              variable      int                        local      23    4    3  small.14
-   wrap               variable      unsigned int               local      24    4    3  wrap.15
-   uc                 variable      unsigned char              local      29    1    2  uc.16
-   sc                 variable      char                       local      30    1    2  sc.17
-   sh                 variable      short                      local      31    2    2  sh.18
-   us                 variable      unsigned short             local      32    2    2  us.19
-   flags              variable      int                        local      39    4    6  flags.20
-   c                  variable      char                       local      45    1    3  c.21
+   u                  variable      unsigned int               local      17    4    9  u.12
+   big                variable      int                        local      22    4    1  big.13
+   small              variable      int                        local      22    4    3  small.14
+   wrap               variable      unsigned int               local      23    4    3  wrap.15
+   uc                 variable      unsigned char              local      28    1    2  uc.16
+   sc                 variable      char                       local      29    1    2  sc.17
+   sh                 variable      short                      local      30    2    2  sh.18
+   us                 variable      unsigned short             local      31    2    2  us.19
+   flags              variable      int                        local      38    4    6  flags.20
+   c                  variable      char                       local      44    1    3  c.21
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

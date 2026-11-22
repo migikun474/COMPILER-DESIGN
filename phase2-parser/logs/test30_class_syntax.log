@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test30_class_syntax.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test30_class_syntax.c
 
 No errors found.
 
@@ -19,47 +19,20 @@ id                             INT
 ;                              semicolon_op        
 Shape                          CONSTRUCTOR         
 (                              open_paren_op       
-int                            int                 
-n                              INT                 
-)                              close_paren_op      
-:                              colon_op            
-id                             IDENTIFIER          
-(                              open_paren_op       
-n                              INT                 
 )                              close_paren_op      
 {                              open_brace_op       
-}                              close_brace_op      
-virtual                        virtual             
-int                            int                 
-area                           PROCEDURE           
-(                              open_paren_op       
-)                              close_paren_op      
-const                          const               
-{                              open_brace_op       
-return                         return              
-0                              INT_LITERAL         
+id                             INT                 
+=                              assign_op           
+4                              INT_LITERAL         
 ;                              semicolon_op        
 }                              close_brace_op      
-virtual                        virtual             
 int                            int                 
 sides                          PROCEDURE           
 (                              open_paren_op       
 )                              close_paren_op      
-=                              assign_op           
-0                              INT_LITERAL         
-;                              semicolon_op        
-virtual                        virtual             
-~                              tilde_op            
-Shape                          DESTRUCTOR          
-(                              open_paren_op       
-)                              close_paren_op      
 {                              open_brace_op       
-printf                         printf              
-(                              open_paren_op       
-"~Shape%d "                    STRING_LITERAL      
-,                              comma_op            
-id                             INT                 
-)                              close_paren_op      
+return                         return              
+0                              INT_LITERAL         
 ;                              semicolon_op        
 }                              close_brace_op      
 friend                         friend              
@@ -89,43 +62,24 @@ side                           INT
 ;                              semicolon_op        
 public                         public              
 :                              colon_op            
-explicit                       explicit            
 Square                         CONSTRUCTOR         
 (                              open_paren_op       
-int                            int                 
-s                              INT                 
-)                              close_paren_op      
-:                              colon_op            
-Shape                          TYPEDEF             
-(                              open_paren_op       
-4                              INT_LITERAL         
-)                              close_paren_op      
-,                              comma_op            
-side                           IDENTIFIER          
-(                              open_paren_op       
-s                              INT                 
 )                              close_paren_op      
 {                              open_brace_op       
+side                           INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
 area                           PROCEDURE           
 (                              open_paren_op       
 )                              close_paren_op      
-const                          const               
 {                              open_brace_op       
 return                         return              
 side                           INT                 
 *                              star_op             
 side                           INT                 
-;                              semicolon_op        
-}                              close_brace_op      
-int                            int                 
-sides                          PROCEDURE           
-(                              open_paren_op       
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-4                              INT_LITERAL         
 ;                              semicolon_op        
 }                              close_brace_op      
 }                              close_brace_op      
@@ -152,9 +106,6 @@ shapes                         PROCEDURE
 {                              open_brace_op       
 Square                         CLASS               
 q                              CLASS               
-(                              open_paren_op       
-3                              INT_LITERAL         
-)                              close_paren_op      
 ;                              semicolon_op        
 Shape                          CLASS               
 *                              star_op             
@@ -164,8 +115,8 @@ p                              CLASS_POINTER
 q                              CLASS               
 ;                              semicolon_op        
 return                         return              
-p                              CLASS_POINTER       
-->                             arrow_op            
+q                              CLASS               
+.                              dot_op              
 area                           PROCEDURE           
 (                              open_paren_op       
 )                              close_paren_op      
@@ -398,44 +349,33 @@ members                        PROCEDURE
 Program "translation_unit"
 |-- ClassDecl "Shape"
 |   |-- VarDecl "id : INT"
-|   |-- ConstructorDef "Shape : _ZN5ShapeC1Ei"
-|   |   |-- ParamDecl "n : INT"
-|   |   |-- MemInit "id"
-|   |   |   `-- Identifier "n"
+|   |-- ConstructorDef "Shape : _ZN5ShapeC1Ev"
 |   |   `-- CompoundStmt
-|   |-- FunctionDef "area : _ZNK5Shape4areaEv"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
+|   |               |-- Identifier "id"
+|   |               `-- IntLiteral "4"
+|   |-- FunctionDef "sides : _ZN5Shape5sidesEv"
 |   |   `-- CompoundStmt
 |   |       `-- ReturnStmt
 |   |           `-- IntLiteral "0"
-|   |-- FunctionDecl "sides : _ZN5Shape5sidesEv"
-|   |-- DestructorDef "Shape : _ZN5ShapeD1Ev"
-|   |   `-- CompoundStmt
-|   |       `-- ExprStmt
-|   |           `-- BuiltinCallExpr "printf"
-|   |               |-- StringLiteral ""~Shape%d ""
-|   |               `-- Identifier "id"
 |   |-- FunctionDecl "peek : _Z4peekRK5Shape"
 |   |   `-- ParamDecl "s : CLASS_POINTER"
 |   `-- FriendDecl "Inspector"
 |-- ClassDecl "Square : Shape"
 |   |-- VarDecl "side : INT"
-|   |-- ConstructorDef "Square : _ZN6SquareC1Ei"
-|   |   |-- ParamDecl "s : INT"
-|   |   |-- MemInit "Shape"
-|   |   |   `-- IntLiteral "4"
-|   |   |-- MemInit "side"
-|   |   |   `-- Identifier "s"
+|   |-- ConstructorDef "Square : _ZN6SquareC1Ev"
 |   |   `-- CompoundStmt
-|   |-- FunctionDef "area : _ZNK6Square4areaEv"
-|   |   `-- CompoundStmt
-|   |       `-- ReturnStmt
-|   |           `-- BinaryExpr "*"
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="
 |   |               |-- Identifier "side"
-|   |               `-- Identifier "side"
-|   `-- FunctionDef "sides : _ZN6Square5sidesEv"
+|   |               `-- IntLiteral "3"
+|   `-- FunctionDef "area : _ZN6Square4areaEv"
 |       `-- CompoundStmt
 |           `-- ReturnStmt
-|               `-- IntLiteral "4"
+|               `-- BinaryExpr "*"
+|                   |-- Identifier "side"
+|                   `-- Identifier "side"
 |-- FunctionDef "peek : _Z4peekRK5Shape"
 |   |-- ParamDecl "s : CLASS_POINTER"
 |   `-- CompoundStmt
@@ -445,8 +385,6 @@ Program "translation_unit"
 |-- FunctionDef "shapes : _Z6shapesv"
 |   `-- CompoundStmt
 |       |-- VarDecl "q : CLASS"
-|       |   `-- ConstructExpr "CLASS"
-|       |       `-- IntLiteral "3"
 |       |-- VarDecl "p : CLASS_POINTER"
 |       |   `-- UnaryExpr "&"
 |       |       `-- Identifier "q"
@@ -454,8 +392,8 @@ Program "translation_unit"
 |           `-- BinaryExpr "+"
 |               |-- BinaryExpr "+"
 |               |   |-- CallExpr
-|               |   |   `-- ArrowExpr "area"
-|               |   |       `-- Identifier "p"
+|               |   |   `-- MemberExpr "area"
+|               |   |       `-- Identifier "q"
 |               |   `-- CallExpr
 |               |       `-- ArrowExpr "sides"
 |               |           `-- Identifier "p"
@@ -571,42 +509,37 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Shape                class_tag      6      global                       CLASS                                     0                                
-Shape::id            class_member   8      global > class Shape         INT                                       1                                
-Shape::n             parameter      9      global > class Shape > Shape::Shape() INT                                       1                                
-Shape::Shape         class_method   9      global > class Shape         CONSTRUCTOR                               0         VOID (INT)             _ZN5ShapeC1Ei
-Shape::area          class_method   10     global > class Shape         PROCEDURE                                 0         INT ()                 _ZNK5Shape4areaEv
-Shape::sides         class_method   11     global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape5sidesEv
-Shape::~Shape        class_method   12     global > class Shape         DESTRUCTOR                                0         VOID ()                _ZN5ShapeD1Ev
-Shape::peek          class_method   13     global > class Shape         PROCEDURE                                 0         INT (CLASS_POINTER)    _Z4peekRK5Shape
-Square               class_tag      16     global                       CLASS                                     0                                
-Square::side         class_member   17     global > class Square        INT                                       2                                
-Square::s            parameter      19     global > class Square > Square::Square() INT                                       1                                
-Square::Square       class_method   19     global > class Square        CONSTRUCTOR                               0         VOID (INT)             _ZN6SquareC1Ei
-Square::area         class_method   20     global > class Square        PROCEDURE                                 0         INT ()                 _ZNK6Square4areaEv
-Square::sides        class_method   21     global > class Square        PROCEDURE                                 0         INT ()                 _ZN6Square5sidesEv
-peek                 procedure      23     global                       PROCEDURE                                 1         INT (CLASS_POINTER)    _Z4peekRK5Shape
-s                    parameter      23     global > peek()              CLASS_POINTER                             1                                
-shapes               procedure      24     global                       PROCEDURE                                 1         INT ()                 _Z6shapesv
-q                    variable       25     global > shapes()            CLASS                                     2                                
-p                    variable       26     global > shapes()            CLASS_POINTER    *                        2                                
-In                   struct_tag     29     global                       STRUCT                                    0                                
-In::v                struct_member  29     global > struct In           INT                                       0                                
-P                    struct_tag     30     global                       STRUCT                                    0                                
-P::x                 struct_member  30     global > struct P            INT                                       0                                
-P::in                struct_member  30     global > struct P            STRUCT                                    0                                
-P::list              struct_member  30     global > struct P            STRUCT_ARRAY     []                       0                                
-make                 procedure      31     global                       PROCEDURE                                 1         STRUCT ()              _Z4makev
-p                    variable       31     global > make()              STRUCT                                    2                                
-Dog                  class_tag      32     global                       CLASS                                     0                                
-Dog::legs            class_member   32     global > class Dog           INT                                       0                                
-Dog::next            class_member   32     global > class Dog           CLASS_POINTER    *                        0                                
-Dog::get             class_method   32     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog3getEv
-use                  procedure      33     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z3useP1P
-q                    parameter      33     global > use()               STRUCT_POINTER                            2                                
-members              procedure      34     global                       PROCEDURE                                 1         INT ()                 _Z7membersv
-arr                  variable       35     global > members()           STRUCT_ARRAY     []                       3                                
-p                    variable       36     global > members()           STRUCT_POINTER   *                        3                                
-a                    variable       41     global > members()           INT                                       1                                
-d                    variable       42     global > members()           CLASS                                     4                                
-main                 procedure      47     global                       PROCEDURE                                 0         INT ()                 main
+Shape                class_tag      5      global                       CLASS                                     0                                
+Shape::id            class_member   7      global > class Shape         INT                                       1                                
+Shape::Shape         class_method   8      global > class Shape         CONSTRUCTOR                               0         VOID ()                _ZN5ShapeC1Ev
+Shape::sides         class_method   9      global > class Shape         PROCEDURE                                 0         INT ()                 _ZN5Shape5sidesEv
+Shape::peek          class_method   10     global > class Shape         PROCEDURE                                 0         INT (CLASS_POINTER)    _Z4peekRK5Shape
+Square               class_tag      13     global                       CLASS                                     0                                
+Square::side         class_member   14     global > class Square        INT                                       3                                
+Square::Square       class_method   16     global > class Square        CONSTRUCTOR                               0         VOID ()                _ZN6SquareC1Ev
+Square::area         class_method   17     global > class Square        PROCEDURE                                 0         INT ()                 _ZN6Square4areaEv
+peek                 procedure      19     global                       PROCEDURE                                 1         INT (CLASS_POINTER)    _Z4peekRK5Shape
+s                    parameter      19     global > peek()              CLASS_POINTER                             1                                
+shapes               procedure      20     global                       PROCEDURE                                 1         INT ()                 _Z6shapesv
+q                    variable       21     global > shapes()            CLASS                                     3                                
+p                    variable       22     global > shapes()            CLASS_POINTER    *                        1                                
+In                   struct_tag     25     global                       STRUCT                                    0                                
+In::v                struct_member  25     global > struct In           INT                                       0                                
+P                    struct_tag     26     global                       STRUCT                                    0                                
+P::x                 struct_member  26     global > struct P            INT                                       0                                
+P::in                struct_member  26     global > struct P            STRUCT                                    0                                
+P::list              struct_member  26     global > struct P            STRUCT_ARRAY     []                       0                                
+make                 procedure      27     global                       PROCEDURE                                 1         STRUCT ()              _Z4makev
+p                    variable       27     global > make()              STRUCT                                    2                                
+Dog                  class_tag      28     global                       CLASS                                     0                                
+Dog::legs            class_member   28     global > class Dog           INT                                       0                                
+Dog::next            class_member   28     global > class Dog           CLASS_POINTER    *                        0                                
+Dog::get             class_method   28     global > class Dog           PROCEDURE                                 0         INT ()                 _ZN3Dog3getEv
+use                  procedure      29     global                       PROCEDURE                                 1         INT (STRUCT_POINTER)   _Z3useP1P
+q                    parameter      29     global > use()               STRUCT_POINTER                            2                                
+members              procedure      30     global                       PROCEDURE                                 1         INT ()                 _Z7membersv
+arr                  variable       31     global > members()           STRUCT_ARRAY     []                       3                                
+p                    variable       32     global > members()           STRUCT_POINTER   *                        3                                
+a                    variable       37     global > members()           INT                                       1                                
+d                    variable       38     global > members()           CLASS                                     4                                
+main                 procedure      43     global                       PROCEDURE                                 0         INT ()                 main

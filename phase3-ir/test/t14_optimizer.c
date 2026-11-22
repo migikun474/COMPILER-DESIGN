@@ -1,7 +1,6 @@
 /* t14 -- code the optimizer must improve without changing its meaning:
    constants, common subexpressions and copies, next to the cases where
    reusing a value would be wrong (pointers, globals, calls) */
-#include <stdio.h>
 
 int g = 1;
 int bump() { g = g + 10; return g; }

@@ -24,6 +24,8 @@ fc1:  .word 0, 1074003968        # 2.5
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -38,13 +40,18 @@ _Z4pushP4Nodei:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
+        addiu $sp, $sp, -16
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        move  $s2, $a0
+        move  $s1, $a1
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -65,10 +72,10 @@ _Z4pushP4Nodei:
         move  $v0, $s0
         j     _Z4pushP4Nodei_exit
 _Z4pushP4Nodei_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -81,17 +88,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -312
-        s.d   $f20, -296($fp)
-        s.d   $f22, -304($fp)
-        sw    $s0, -272($fp)
-        sw    $s1, -284($fp)
-        sw    $s2, -308($fp)
-        sw    $s3, -260($fp)
-        sw    $s4, -264($fp)
-        sw    $s5, -268($fp)
-        sw    $s6, -276($fp)
-        sw    $s7, -280($fp)
+        addiu $sp, $sp, -72
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M1_0
+        j     __stack_overflow
+M1_0:
+        s.d   $f20, -56($fp)
+        s.d   $f22, -64($fp)
+        sw    $s0, -32($fp)
+        sw    $s1, -44($fp)
+        sw    $s2, -68($fp)
+        sw    $s3, -20($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -28($fp)
+        sw    $s6, -36($fp)
+        sw    $s7, -40($fp)
         # n = 5
         li    $s1, 5
         # param 20
@@ -132,7 +144,7 @@ L1_11:
         move  $s0, $v0
         # z = t7
         move  $t0, $s0
-        sw    $t0, -16($fp)
+        sw    $t0, -4($fp)
         # t8 = a ptr+ 16
         addiu $s3, $s2, 16
         # t9 = *t8
@@ -177,14 +189,14 @@ L1_28:
         sll   $s7, $s6, 2
         # t22 = a ptr+ t21
         addu  $t0, $s2, $s7
-        sw    $t0, -124($fp)
+        sw    $t0, -8($fp)
         # t23 = *t22
         move  $t8, $t0
         lw    $t0, 0($t8)
-        sw    $t0, -128($fp)
+        sw    $t0, -12($fp)
         # t24 = t23 int+ 100
         addiu $t0, $t0, 100
-        sw    $t0, -132($fp)
+        sw    $t0, -16($fp)
         # *t19 = t24
         sw    $t0, 0($s5)
         # i.8 = i.8 int+ 1
@@ -201,12 +213,12 @@ L1_40:
         # t29 = *t28
         lw    $s3, 0($s0)
         # t30 = z ptr+ 8
-        lw    $t0, -16($fp)
+        lw    $t0, -4($fp)
         addiu $s0, $t0, 8
         # t31 = *t30
         lw    $s4, 0($s0)
         # t32 = *z
-        lw    $t8, -16($fp)
+        lw    $t8, -4($fp)
         lw    $s0, 0($t8)
         # param "%d %d %d %d\n"
         # param t27
@@ -237,11 +249,11 @@ L1_55:
         # param list
         # param t33
         # list = call push(struct Node *, int), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s3, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s3
         jal   _Z4pushP4Nodei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # i.10 = i.10 int+ 1
         addiu $s1, $s1, 1
@@ -411,7 +423,7 @@ L1_84:
         # param z
         # call free, 1
         addiu $sp, $sp, -8
-        lw    $t0, -16($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
@@ -423,16 +435,16 @@ L1_84:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -296($fp)
-        l.d   $f22, -304($fp)
-        lw    $s0, -272($fp)
-        lw    $s1, -284($fp)
-        lw    $s2, -308($fp)
-        lw    $s3, -260($fp)
-        lw    $s4, -264($fp)
-        lw    $s5, -268($fp)
-        lw    $s6, -276($fp)
-        lw    $s7, -280($fp)
+        l.d   $f20, -56($fp)
+        l.d   $f22, -64($fp)
+        lw    $s0, -32($fp)
+        lw    $s1, -44($fp)
+        lw    $s2, -68($fp)
+        lw    $s3, -20($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -28($fp)
+        lw    $s6, -36($fp)
+        lw    $s7, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -450,6 +462,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -470,8 +485,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -531,6 +562,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

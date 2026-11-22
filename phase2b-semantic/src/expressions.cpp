@@ -121,8 +121,13 @@ bool SemanticAnalyzer::convertible(const TypePtr &target, const ASTNodePtr &e, c
     if (isError(from) || isError(target)) return true;
     if (isRecord(target) || isRecord(from)) {
         if (sameType(unqualified(target), from)) return true;
-        if (isRecord(target) && isRecord(from) && isDerivedFrom(from->record.get(), target->record.get()))
-            return true; /* slicing: the base part of a derived object */
+        if (isRecord(target) && isRecord(from) && isDerivedFrom(from->record.get(), target->record.get())) {
+            /* no object slicing (D35): copying only the base part of a derived object */
+            error(e.get(), fill(message, from, target) + " (a derived object cannot be copied into a base object: "
+                                                         "object slicing is not supported; use a pointer or a reference)",
+                  "slicing");
+            return false;
+        }
         error(e.get(), fill(message, from, target), "type-mismatch");
         return false;
     }
@@ -1021,30 +1026,7 @@ TypePtr SemanticAnalyzer::callResult(const TypePtr &fnType) {
     return fnType->ret;
 }
 
-/* `T` has a constructor that is not `explicit` and takes `arg` through
-   standard conversions only (C++ allows one user-defined conversion) */
-bool SemanticAnalyzer::userConvertible(const TypePtr &T, const ASTNodePtr &arg) {
-    RecordInfo *rec = isRecord(T) && T->record && T->record->complete ? T->record.get() : nullptr;
-    if (!rec || isError(arg->semType)) return false;
-    for (const auto &c : rec->constructors)
-        if (!c->isExplicit && c->type && c->type->params.size() == 1 &&
-            argumentConversion(c->type->params[0], arg, false).rank != ConvRank::None)
-            return true;
-    return false;
-}
-
-/* after overload resolution: an argument that needs a converting
-   constructor records it, for code generation */
-void SemanticAnalyzer::markConversions(const TypePtr &ft, const std::vector<ASTNodePtr> &args) {
-    if (!ft || !isFunction(ft)) return;
-    for (size_t i = 0; i < args.size() && i < ft->params.size(); ++i) {
-        TypePtr T = isReference(ft->params[i]) ? ft->params[i]->elem : ft->params[i];
-        if (isRecord(T) && argumentConversion(ft->params[i], args[i]).rank == ConvRank::UserDefined)
-            args[i]->converter = construct(T->record.get(), {args[i]}, args[i].get(), true);
-    }
-}
-
-Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTNodePtr &arg, bool allowUser) {
+Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTNodePtr &arg) {
     TypePtr at = arg->semType;
     Conversion c;
     if (isError(at) || isError(param)) {
@@ -1060,10 +1042,6 @@ Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTN
             c.rank = sameType(unqualified(T), unqualified(at)) ? ConvRank::Exact : ConvRank::Conversion;
             return c;
         }
-        if (T->isConst && allowUser && userConvertible(T, arg)) { /* `const Dog &` from 4: a temporary Dog */
-            c.rank = ConvRank::UserDefined;
-            return c;
-        }
         if (T->isConst) return implicitConversion(decay(at), T, isNullPointerConstant(arg));
         c.why = std::string("a non-const reference needs an lvalue of exactly type ") + q(T);
         return c;
@@ -1072,8 +1050,7 @@ Conversion SemanticAnalyzer::argumentConversion(const TypePtr &param, const ASTN
     if (isRecord(param) || isRecord(from)) {
         if (sameType(unqualified(param), from)) c.rank = ConvRank::Exact;
         else if (isRecord(param) && isRecord(from) && isDerivedFrom(from->record.get(), param->record.get()))
-            c.rank = ConvRank::Conversion; /* a derived object passed as its base: sliced */
-        else if (allowUser && userConvertible(unqualified(param), arg)) c.rank = ConvRank::UserDefined;
+            c.why = "a derived object cannot be passed as a base object by value (no object slicing); pass a pointer or a reference";
         else c.why = "no conversion between these types";
         return c;
     }
@@ -1116,7 +1093,6 @@ SymbolPtr SemanticAnalyzer::resolveOverload(const std::string &name, const std::
     if (fns.empty()) return nullptr;
     if (fns.size() == 1) {
         checkCallArgs(fns[0]->type, name, args, at);
-        markConversions(fns[0]->type, args);
         return fns[0];
     }
     for (const auto &a : args) {
@@ -1160,7 +1136,6 @@ SymbolPtr SemanticAnalyzer::resolveOverload(const std::string &name, const std::
         bool best = std::all_of(viable.begin(), viable.end(),
                                 [&](const Viable &w) { return w.s == v.s || better(v, w); });
         if (best) {
-            markConversions(v.s->type, args);
             return v.s;
         }
     }

@@ -25,6 +25,8 @@ str3:
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -39,7 +41,7 @@ _Z5touchv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -8($fp)
+        sw    $s0, -4($fp)
         # t1 = g int+ 1
         lw    $t0, g_g
         addiu $s0, $t0, 1
@@ -50,7 +52,7 @@ _Z5touchv:
         move  $v0, $s0
         j     _Z5touchv_exit
 _Z5touchv_exit:
-        lw    $s0, -8($fp)
+        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -61,12 +63,12 @@ _Z8branchesi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -32($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -40($fp)
-        sw    $s3, -28($fp)
-        lw    $s3, 8($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -4($fp)
+        move  $s3, $a0
         # x = 5
         li    $s0, 5
         # if c int== 0 goto 4
@@ -97,10 +99,10 @@ L1_8:
         move  $v0, $s0
         j     _Z8branchesi_exit
 _Z8branchesi_exit:
-        lw    $s0, -32($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -40($fp)
-        lw    $s3, -28($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -111,15 +113,15 @@ _Z4loopi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
-        sw    $s0, -44($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -60($fp)
-        sw    $s3, -64($fp)
-        sw    $s4, -56($fp)
-        sw    $s5, -48($fp)
-        sw    $s6, -52($fp)
-        lw    $s6, 8($fp)
+        addiu $sp, $sp, -32
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -24($fp)
+        sw    $s3, -28($fp)
+        sw    $s4, -20($fp)
+        sw    $s5, -12($fp)
+        sw    $s6, -16($fp)
+        move  $s6, $a0
         # step = 3
         li    $s4, 3
         # sum = 0
@@ -154,13 +156,13 @@ L2_11:
         move  $v0, $s1
         j     _Z4loopi_exit
 _Z4loopi_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -60($fp)
-        lw    $s3, -64($fp)
-        lw    $s4, -56($fp)
-        lw    $s5, -48($fp)
-        lw    $s6, -52($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -24($fp)
+        lw    $s3, -28($fp)
+        lw    $s4, -20($fp)
+        lw    $s5, -12($fp)
+        lw    $s6, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -172,11 +174,16 @@ _Z9rewritteni:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -36($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -40($fp)
-        lw    $s0, 8($fp)
+        addiu $sp, $sp, -16
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M3_0
+        j     __stack_overflow
+M3_0:
+        sw    $s0, -8($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -12($fp)
+        move  $s0, $a0
         # b = a
         move  $s2, $s0
         # if a int<= 3 goto 3
@@ -194,10 +201,14 @@ L3_3:
         # a = 8
         li    $s0, 8
         # d = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # t3 = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # d = t3
         move  $s2, $s0
@@ -209,9 +220,9 @@ L3_3:
         move  $v0, $s1
         j     _Z9rewritteni_exit
 _Z9rewritteni_exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -40($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -223,10 +234,10 @@ _Z10viaPointerv:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
-        sw    $s0, -44($fp)
-        sw    $s1, -52($fp)
-        sw    $s2, -48($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -16($fp)
+        sw    $s1, -24($fp)
+        sw    $s2, -20($fp)
         # x = 1
         li    $t0, 1
         sw    $t0, -4($fp)
@@ -249,21 +260,21 @@ _Z10viaPointerv:
         move  $s1, $s0
         # s[0] = 3
         li    $t0, 3
-        sw    $t0, -20($fp)
+        sw    $t0, -12($fp)
         # s[4] = 4
         li    $t0, 4
-        sw    $t0, -16($fp)
+        sw    $t0, -8($fp)
         # t4 = s[0]
-        lw    $s1, -20($fp)
+        lw    $s1, -12($fp)
         # t5 = t3 int+ t4
         addu  $s2, $s0, $s1
         # return t5
         move  $v0, $s2
         j     _Z10viaPointerv_exit
 _Z10viaPointerv_exit:
-        lw    $s0, -44($fp)
-        lw    $s1, -52($fp)
-        lw    $s2, -48($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -24($fp)
+        lw    $s2, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -274,12 +285,12 @@ _Z5jumpsi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
-        sw    $s0, -40($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -36($fp)
-        lw    $s3, 8($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -16($fp)
+        sw    $s1, -4($fp)
+        sw    $s2, -8($fp)
+        sw    $s3, -12($fp)
+        move  $s3, $a0
         # k = 0
         li    $s2, 0
         # t = 9
@@ -328,10 +339,10 @@ L5_15:
         move  $v0, $s2
         j     _Z5jumpsi_exit
 _Z5jumpsi_exit:
-        lw    $s0, -40($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -36($fp)
+        lw    $s0, -16($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -8($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -343,25 +354,29 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -72
-        sw    $s0, -60($fp)
-        sw    $s1, -64($fp)
-        sw    $s2, -68($fp)
-        sw    $s3, -72($fp)
+        addiu $sp, $sp, -16
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M6_0
+        j     __stack_overflow
+M6_0:
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
         # param 0
         # t1 = call branches(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z8branchesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 1
         # t2 = call branches(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z8branchesi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d %d\n"
         # param t1
@@ -376,26 +391,24 @@ main_:
         addiu $sp, $sp, 16
         # param 0
         # t3 = call loop(int), 1
-        addiu $sp, $sp, -8
-        sw    $zero, 0($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $zero
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 1
         # t4 = call loop(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 4
         # t5 = call loop(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z4loopi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d %d\n"
         # param t3
@@ -412,21 +425,19 @@ main_:
         addiu $sp, $sp, 16
         # param 1
         # t6 = call rewritten(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z9rewritteni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # r1 = t6
         move  $s1, $s0
         # param 9
         # t7 = call rewritten(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
         jal   _Z9rewritteni
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # r9 = t7
         move  $s2, $s1
@@ -445,7 +456,9 @@ main_:
         jal   __printf
         addiu $sp, $sp, 16
         # t8 = call viaPointer(), 0
+        addiu $sp, $sp, -16
         jal   _Z10viaPointerv
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
         # param t8
@@ -458,35 +471,31 @@ main_:
         addiu $sp, $sp, 8
         # param 1
         # t9 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s0, $v0
         # param 2
         # t10 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s1, $v0
         # param 3
         # t11 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s2, $v0
         # param 5
         # t12 = call jumps(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5jumpsi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s3, $v0
         # param "%d %d %d %d\n"
         # param t9
@@ -507,10 +516,10 @@ main_:
         lw    $v0, g_g
         j     main__exit
 main__exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -64($fp)
-        lw    $s2, -68($fp)
-        lw    $s3, -72($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -528,6 +537,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -548,8 +560,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -609,6 +637,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

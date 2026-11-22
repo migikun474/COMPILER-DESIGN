@@ -42,22 +42,14 @@ extern int g_currentColumn;
 extern std::string g_lastText;
 
 
-/* ---- where each line came from (filled by the preprocessor) ----
-   The lexer and parser see the *preprocessed* text, one line per
-   g_sourceLines entry, and every position in the compiler (tokens, AST
-   nodes, symbols, diagnostics) is a line of that text. g_lineOrigins
-   maps it back to the file and line the user wrote, for display only.
-   With no map (or a line beyond it) a line is its own origin. */
-struct LineOrigin {
-    int file = 0;          /* index into g_sourceFiles; 0 = the main file */
-    int line = 0;          /* line in that file */
-    std::string text;      /* that line as written */
-    bool expanded = false; /* text differs after macro expansion */
-};
-extern std::vector<std::string> g_sourceFiles; /* [0] = main file, as named on the command line */
-extern std::vector<LineOrigin> g_lineOrigins;
+/* ---- the source file ----
+   There is no preprocessor (D34): the lexer reads the file as written,
+   so every position in the compiler is a line of that file.
+   openSource() keeps the lines in g_sourceLines (for carets and the
+   scanner's lookahead) and returns the file for the scanner, or null. */
+FILE *openSource(const std::string &path);
 
-/* "12" for line 12 of the main file, "util.h:3" for an included file */
+/* a line number as shown in messages */
 std::string displayLine(int line);
 
 /* true when `f` is a terminal, i.e. ANSI colors are wanted */

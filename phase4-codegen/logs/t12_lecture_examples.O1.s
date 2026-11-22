@@ -16,6 +16,8 @@ fc0:  .word 0, 1073217536        # 1.5
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -29,28 +31,28 @@ main_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -216
-        s.d   $f20, -216($fp)
-        s.d   $f22, -184($fp)
-        sw    $s0, -176($fp)
-        sw    $s1, -188($fp)
-        sw    $s2, -172($fp)
-        sw    $s3, -192($fp)
-        sw    $s4, -208($fp)
-        sw    $s5, -196($fp)
-        sw    $s6, -200($fp)
-        sw    $s7, -204($fp)
+        addiu $sp, $sp, -144
+        s.d   $f20, -144($fp)
+        s.d   $f22, -112($fp)
+        sw    $s0, -104($fp)
+        sw    $s1, -116($fp)
+        sw    $s2, -100($fp)
+        sw    $s3, -120($fp)
+        sw    $s4, -136($fp)
+        sw    $s5, -124($fp)
+        sw    $s6, -128($fp)
+        sw    $s7, -132($fp)
         # b = 2
         li    $s1, 2
         # c = 3
-        li    $t0, 3
-        sw    $t0, -12($fp)
+        li    $s5, 3
         # d = 4
-        li    $s5, 4
+        li    $s6, 4
         # e = 5
-        li    $s6, 5
+        li    $s7, 5
         # f = 6
-        li    $s7, 6
+        li    $t0, 6
+        sw    $t0, -4($fp)
         # i = 1
         li    $s3, 1
         # r = 1.5
@@ -80,14 +82,14 @@ L0_15:
 L0_19:
         # y = t7
         move  $t0, $s2
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # if a int< b goto 25
         blt   $s0, $s1, L0_25
         # if c int>= d goto 23
-        lw    $t0, -12($fp)
-        bge   $t0, $s5, L0_23
+        bge   $s5, $s6, L0_23
         # if e int< f goto 25
-        blt   $s6, $s7, L0_25
+        lw    $t1, -4($fp)
+        blt   $s7, $t1, L0_25
 L0_23:
         # t8 = 0
         li    $s0, 0
@@ -99,7 +101,7 @@ L0_25:
 L0_26:
         # y = t8
         move  $t0, $s0
-        sw    $t0, -36($fp)
+        sw    $t0, -8($fp)
         # t9 = inttodouble i
         move  $t0, $s3
         mtc1  $t0, $f0
@@ -110,7 +112,7 @@ L0_26:
         # t11 = i int<< 2
         sll   $s1, $s3, 2
         # t12 = arr[t11]
-        addiu $t8, $fp, -76
+        addiu $t8, $fp, -48
         addu  $t8, $t8, $s1
         lw    $s2, 0($t8)
         # x = t12
@@ -120,23 +122,23 @@ L0_26:
         # t15 = t14 int<< 2
         sll   $s1, $s3, 2
         # m[t15] = t12
-        addiu $t8, $fp, -124
+        addiu $t8, $fp, -96
         addu  $t8, $t8, $s1
         sw    $s2, 0($t8)
         # return t8
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -216($fp)
-        l.d   $f22, -184($fp)
-        lw    $s0, -176($fp)
-        lw    $s1, -188($fp)
-        lw    $s2, -172($fp)
-        lw    $s3, -192($fp)
-        lw    $s4, -208($fp)
-        lw    $s5, -196($fp)
-        lw    $s6, -200($fp)
-        lw    $s7, -204($fp)
+        l.d   $f20, -144($fp)
+        l.d   $f22, -112($fp)
+        lw    $s0, -104($fp)
+        lw    $s1, -116($fp)
+        lw    $s2, -100($fp)
+        lw    $s3, -120($fp)
+        lw    $s4, -136($fp)
+        lw    $s5, -124($fp)
+        lw    $s6, -128($fp)
+        lw    $s7, -132($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -153,6 +155,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -173,8 +178,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -234,6 +255,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

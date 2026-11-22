@@ -1,26 +1,25 @@
-/* invalid: the other side of v27 */
-class Shape {
+/* invalid: the reduced C++ subset (D35) -- default constructors only,
+   single inheritance, no slicing, no nested or local classes, no lazily
+   built static objects -- plus access and jump-over-initialization checks */
+class Base { public: int b; };
+class Other { public: int o; };
+class Two : public Base, public Other { };    // error: 'Two' cannot have a second base class 'Other': only single inheritance is supported
+class Derived : public Base { public: int d; };
+class Point {
 public:
-    virtual int area() = 0;
-    int plain() = 0;                          // error: is declared '= 0' but is not virtual
+    int x;
+    Point(int a) { x = a; }                   // error: constructor 'Point' cannot take parameters: only default constructors 'Point()' are supported
 };
-virtual int loose();                          // error: 'virtual' is only allowed on member functions
-int freeConst() const;                        // error: a 'const' qualifier is only allowed on member functions
-class Base { public: virtual int f() { return 1; } };
-class Bad : public Base { public: double f() { return 2; } };   // error: overrides a virtual function but its return type differs
-class Meters { public: int v; explicit Meters(int x) : v(x) { } };
-int use(Meters m) { return m.v; }
-class Secret { int hidden; public: Secret() : hidden(1) { } };
-class Holder {
+class Counter {
     int n;
 public:
-    Holder() : n(0), missing(2) { }           // error: is neither a member nor a direct base
+    Counter() { n = 0; }
     int value() { return n; }
+    class Inner { int i; };                   // error: nested class 'Inner' is not supported: define it outside 'Counter'
 };
-struct Point { int x, y; Point(int a) : x(a), y(a) { } };
-struct Line { Point a; Line() { } };          // error: has no default constructor
-class Poly { public: virtual int g() { return 0; } };
+class Secret { int hidden; public: Secret() { hidden = 1; } };
 int peek(Secret &s) { return s.hidden; }      // error: is a private member
+int byValue(Base b) { return b.b; }
 int jump(int k) {
     if (k) goto out;                          // error: jump to label 'out' crosses the initialization of 'y'
     int y = 2;
@@ -37,12 +36,27 @@ int cases(int k) {
     }
     return 0;
 }
+int statics() {
+    static Counter c;                         // error: static local 'c' of type 'class Counter' is not supported: its class has a constructor
+    return 0;
+}
+int locals() {
+    class Local { public: int f() { return 1; } };   // error: a class cannot be defined inside a function (no local classes)
+    return 0;
+}
 int main() {
-    Shape s;                                  // error: cannot have the abstract type
-    Meters m = 5;                             // error: cannot initialize variable 'm'
-    int r = use(4);                           // error: argument 1 of 'use'
-    const Holder h;
-    r = h.value();                            // error: is not a const member function
-    Poly p = {};                              // error: cannot be initialized with a brace list
-    return r;
+    Derived d;
+    Base b = d;                               // error: object slicing is not supported
+    b = d;                                    // error: object slicing is not supported
+    int r = byValue(d);                       // error: no object slicing
+    Counter c(3);                             // error: 'class Counter' cannot be constructed from 1 argument: only default construction is supported
+    Counter copy(c);                          /* fine: a copy of c's bytes */
+    const Counter k;
+    r = k.value();                            // error: member function 'value' cannot be called on a const object (there are no const member functions)
+    return r + copy.value();
+}
+int conds(int a, int b) {
+    if (a = b) return 1;                      // warning: assignment used as the condition of 'if'; did you mean '=='?
+    while (a = 0) { }                         // warning: assignment used as the condition of 'while'
+    return a == b ? 1 : (a = 2) ? 2 : 3;      // warning: assignment used as the condition of '?:'
 }

@@ -47,10 +47,10 @@
    s                local   short                           2      50
    t1               temp    int *                           4      52
    t2               temp    double *                        4      56
-   t3               temp    char (*)[16]                    4      60
+   t3               temp    char *                          4      60
    t4               temp    char *                          4      64
    t5               temp    int *                           4      68
-   t8               temp    char (*)[16]                    4      80
+   t8               temp    char *                          4      80
    t9               temp    int                             4      84
    t10              temp    double                          8      88
    t11              temp    double                          8      96
@@ -123,29 +123,29 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   main               function      int (void)                 -           4    -    0  defined
+   main               function      int (void)                 -           3    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        local       5    4    2  n.1
-   total              variable      int                        local       5    4    4  total.2
-   scale              variable      double                     local       6    8    2  scale.3
-   name               variable      char[16]                   local       7   16    2  name.4
-   grade              variable      char                       local       8    1    2  grade.5
-   f                  variable      float                      local      19    4    1  f.8
-   c                  variable      char                       local      20    1    1  c.9
-   s                  variable      short                      local      21    2    1  s.10
+   n                  variable      int                        local       4    4    2  n.1
+   total              variable      int                        local       4    4    4  total.2
+   scale              variable      double                     local       5    8    2  scale.3
+   name               variable      char[16]                   local       6   16    2  name.4
+   grade              variable      char                       local       7    1    2  grade.5
+   f                  variable      float                      local      18    4    1  f.8
+   c                  variable      char                       local      19    1    1  c.9
+   s                  variable      short                      local      20    2    1  s.10
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      10    4    2  i.6
+   i                  variable      int                        local       9    4    2  i.6
 
  scope: global > main() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  variable      int                        local      11    4    2  v.7
+   v                  variable      int                        local      10    4    2  v.7
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

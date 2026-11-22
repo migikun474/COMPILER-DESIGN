@@ -1,5 +1,4 @@
 /* t05 -- pointers: levels, arithmetic, swap, void *, pointer to array */
-#include <stdio.h>
 
 void swap(int *a, int *b) {
     int t = *a;

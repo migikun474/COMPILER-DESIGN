@@ -1,6 +1,5 @@
 /* t01 -- arithmetic, conversions, bitwise, shifts, compound assignment,
    increment/decrement, comma, ternary, sizeof, casts */
-#include <stdio.h>
 
 int main() {
     int a = 7, b = 3, c;

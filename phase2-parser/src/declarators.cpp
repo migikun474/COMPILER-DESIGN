@@ -33,9 +33,7 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->isConst = ts.isConst;
     t->isAuto = ts.isAuto;
     t->isTypedef = ts.isTypedefStorage;
-    t->isVirtual = ts.isVirtual;
     t->isFriend = ts.isFriend;
-    t->isConstMethod = d.isConstMethod;
     t->pointerLevel = d.pointerLevel;
     t->isReference = d.isReference;
     t->arrayDims = d.arrayDims;
@@ -108,8 +106,7 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
     } else if (d.isFunction) {
         std::vector<std::string> paramTypes;
         for (auto &p : d.params) paramTypes.push_back(p.typeStr);
-        std::string mangled = mangle(d.name, paramExprs(d.params), d.isVariadic, ts.isFriend ? "" : currentClassName(),
-                                     d.isConstMethod);
+        std::string mangled = mangle(d.name, paramExprs(d.params), d.isVariadic, ts.isFriend ? "" : currentClassName());
         std::string returnType = computeTypeStr(ts, d.pointerLevel, d.arrayLevel);
 
         SymbolDeclInfo extra;
@@ -127,8 +124,10 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
 
         auto node = atToken(mkNode(ASTKind::FunctionDecl, d.name + " : " + mangled), d.nameIdx);
         node->typeExpr = makeTypeExpr(ts, d);
-        /* `virtual int area() = 0;`: a pure virtual function */
-        node->typeExpr->isPure = d.initExpr && d.initExpr->kind == ASTKind::IntLiteral && d.initExpr->label == "0";
+        if (d.initExpr) /* `int area() = 0;`: there are no pure virtual functions (D35) */
+            reportDiagnostic(node->line, node->column, "= ",
+                             "function '" + d.name + "' cannot have an initializer ('= 0' pure virtual functions are not supported)",
+                             "Syntax error");
         for (auto &p : d.params) {
             if (!p.name.empty()) {
                 auto pn = atToken(mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr), p.nameIdx);
@@ -161,8 +160,7 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
 }
 
 ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::vector<DeclInfo> &params,
-                               bool variadic, const std::string &className, const ASTNodePtr &body,
-                               const std::vector<ASTNodePtr> &memInits) {
+                               bool variadic, const std::string &className, const ASTNodePtr &body) {
     std::vector<std::string> paramTypes;
     for (auto &p : params) paramTypes.push_back(p.typeStr);
     std::string mangled = mangle(name, paramExprs(params), variadic, className);
@@ -188,26 +186,6 @@ ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::
             addChild(node, pn);
         }
     }
-    for (const auto &m : memInits) addChild(node, m); /* before the body, which stays the last child */
-    if (body) addChild(node, body);
-    return node;
-}
-
-ASTNodePtr makeDestructorNode(const std::string &name, int nameIdx, const std::string &className,
-                              const ASTNodePtr &body) {
-    std::string mangled = mangle("~" + name, std::vector<ASTTypeExprPtr>{}, false, className);
-    SymbolDeclInfo extra;
-    extra.tokenIdx = nameIdx;
-    extra.returnType = "VOID";
-    extra.mangledName = mangled;
-    declareSymbol("~" + name, SymKind::PROCEDURE, "DESTRUCTOR", extra);
-    auto node = atToken(mkNode(ASTKind::DestructorDef, name + " : " + mangled), nameIdx);
-    DeclInfo dtor;
-    dtor.name = name;
-    dtor.nameIdx = nameIdx;
-    dtor.isFunction = true;
-    dtor.className = className;
-    node->typeExpr = makeTypeExpr(TypeSpec(), dtor);
     if (body) addChild(node, body);
     return node;
 }

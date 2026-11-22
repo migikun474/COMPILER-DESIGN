@@ -1,35 +1,27 @@
-/* t27 -- C++ object rules found missing by the second code review:
-   copy constructors for by-value arguments and results, converting
-   constructors from another class, c ? a : b as an lvalue, const on a
-   typedef'd array, arrays of objects, destructors of static objects */
-#include <stdio.h>
+/* t27 -- object rules of the reduced C++ subset (D35): objects passed and
+   returned by value are copied as blocks (there are no copy constructors),
+   c ? a : b as an lvalue, const on a typedef'd array, arrays of objects
+   built by the default constructor, a global object built before main,
+   friends */
 
 class Counted {
 public:
     int v;
-    Counted(int x) { v = x; }
-    Counted(const Counted &o) { v = o.v + 100; printf("copy of %d\n", o.v); }
+    Counted() { v = 1; }
 };
-int take(Counted c) { return c.v; }                 /* the argument is copied */
+int take(Counted c) { c.v = 50; return c.v; }      /* changes only the copy */
 Counted give(Counted &c) { return c; }             /* the result is a copy */
-Counted fresh(int x) { Counted local(x); return local; }   /* a returned local is not copied */
-
-class Other { public: int n; Other() { n = 7; } };
-class Vec {
-public:
-    int x;
-    Vec(Other o) { x = o.n * 2; }
-    Vec(int k) { x = k; }
-};
+Counted fresh(int x) { Counted local; local.v = x; return local; }
 
 class Dog {
+    int secret;
 public:
     int id;
-    Dog() { id = 0; }
-    Dog(int n) { id = n; }
-    ~Dog() { printf("~Dog %d\n", id); }
+    Dog() { id = 0; secret = 42; printf("Dog()\n"); }
+    friend int peek(const Dog &d);
 };
-Dog keeper(9);                                      /* destroyed when main returns */
+int peek(const Dog &d) { return d.secret; }         /* a friend reads a private member */
+Dog keeper;                                         /* built before main runs */
 
 typedef int Row[4];
 const int primes[4] = {2, 3, 5, 7};
@@ -40,15 +32,13 @@ Account &richer(Account &a, Account &b) { return a.balance >= b.balance ? a : b;
 int &pick(int which, int &a, int &b) { return which ? a : b; }
 
 int main() {
-    Counted a(1);
-    printf("%d\n", take(a));
+    printf("start of main\n");
+    Counted a;
+    printf("%d %d\n", take(a), a.v);
     Counted b = give(a);
+    b.v = 7;
     Counted c = fresh(5);
     printf("%d %d %d\n", a.v, b.v, c.v);
-
-    Other o;
-    Vec f = o, g = 5;
-    printf("%d %d\n", f.x, g.x);
 
     int x = 1, y = 2;
     int &r = x > y ? x : y;
@@ -63,7 +53,8 @@ int main() {
     {
         Dog pack[3];
         for (int i = 0; i < 3; i++) pack[i].id = i + 1;
-    }                                               /* ~Dog 3, 2, 1 */
-    printf("end of main\n");
+        printf("%d %d\n", pack[2].id, peek(pack[0]));
+    }
+    printf("%d %d\n", keeper.id, peek(keeper));
     return 0;
 }

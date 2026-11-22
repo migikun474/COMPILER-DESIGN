@@ -1,7 +1,5 @@
 /* t07 -- functions: recursion, overloading, references, varargs,
    static locals, globals, forward calls */
-#include <stdio.h>
-#include <stdarg.h>
 
 int later(int n);                        /* defined after its first call */
 

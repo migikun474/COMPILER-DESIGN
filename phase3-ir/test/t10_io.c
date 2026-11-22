@@ -1,5 +1,4 @@
 /* t10 -- printf formats and scanf (input: test/t10_io.in) */
-#include <stdio.h>
 
 int main() {
     int n, total = 0;

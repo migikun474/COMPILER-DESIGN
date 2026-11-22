@@ -5,8 +5,8 @@ CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -O2 -I.
 AR       = ar
 
-MODULES  = token diagnostics preprocessor ast types symbol_table
-SRC      = token/token_type.cpp token/token_log.cpp diagnostics/diagnostics.cpp preprocessor/preprocessor.cpp \
+MODULES  = token diagnostics ast types symbol_table
+SRC      = token/token_type.cpp token/token_log.cpp diagnostics/diagnostics.cpp \
            ast/ast.cpp types/types.cpp symbol_table/symbol_table.cpp
 HEADERS  = $(wildcard $(addsuffix /*.hpp,$(MODULES)))
 OBJ      = $(SRC:%.cpp=build/%.o)

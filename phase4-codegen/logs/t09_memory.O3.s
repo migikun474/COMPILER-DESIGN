@@ -24,6 +24,8 @@ fc1:  .word 0, 1074003968        # 2.5
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -32,62 +34,28 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# push(struct Node *, int)
-_Z4pushP4Nodei:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        lw    $s2, 8($fp)
-        lw    $s1, 12($fp)
-        # param 8
-        # t1 = call malloc, 1
-        addiu $sp, $sp, -8
-        li    $t0, 8
-        sw    $t0, 0($sp)
-        jal   __malloc
-        addiu $sp, $sp, 8
-        move  $s0, $v0
-        # *t1 = v
-        sw    $s1, 0($s0)
-        # t2 = t1 ptr+ 4
-        addiu $s1, $s0, 4
-        # *t2 = head
-        sw    $s2, 0($s1)
-        # return t1
-        move  $v0, $s0
-        j     _Z4pushP4Nodei_exit
-_Z4pushP4Nodei_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -304
-        s.d   $f20, -288($fp)
-        s.d   $f22, -296($fp)
-        sw    $s0, -264($fp)
-        sw    $s1, -252($fp)
-        sw    $s2, -256($fp)
-        sw    $s3, -300($fp)
-        sw    $s4, -260($fp)
-        sw    $s5, -268($fp)
-        sw    $s6, -272($fp)
-        sw    $s7, -276($fp)
+        addiu $sp, $sp, -64
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        s.d   $f20, -48($fp)
+        s.d   $f22, -56($fp)
+        sw    $s0, -28($fp)
+        sw    $s1, -16($fp)
+        sw    $s2, -20($fp)
+        sw    $s3, -60($fp)
+        sw    $s4, -24($fp)
+        sw    $s5, -32($fp)
+        sw    $s6, -36($fp)
+        sw    $s7, -40($fp)
         # param 20
         # a = call malloc, 1
         addiu $sp, $sp, -8
@@ -98,10 +66,23 @@ main_:
         move  $s3, $v0
         # i.6 = 0
         li    $s0, 0
-L1_3:
-        # if i.6 int>= 5 goto 10
+L0_3:
+        # if i.6 int>= 5 goto 16
         li    $t1, 5
-        bge   $s0, $t1, L1_10
+        bge   $s0, $t1, L0_16
+        # t3 = i.6 int<< 2
+        sll   $s1, $s0, 2
+        # t4 = a ptr+ t3
+        addu  $s2, $s3, $s1
+        # t5 = i.6 int* i.6
+        mul   $s4, $s0, $s0
+        # *t4 = t5
+        sw    $s4, 0($s2)
+        # i.6 = i.6 int+ 1
+        addiu $s0, $s0, 1
+        # if i.6 int>= 5 goto 16
+        li    $t1, 5
+        bge   $s0, $t1, L0_16
         # t3 = i.6 int<< 2
         sll   $s1, $s0, 2
         # t4 = a ptr+ t3
@@ -113,8 +94,8 @@ L1_3:
         # i.6 = i.6 int+ 1
         addiu $s0, $s0, 1
         # goto 3
-        j     L1_3
-L1_10:
+        j     L0_3
+L0_16:
         # param 5
         # param 4
         # t7 = call calloc, 2
@@ -125,22 +106,22 @@ L1_10:
         sw    $t0, 4($sp)
         jal   __calloc
         addiu $sp, $sp, 8
-        sw    $v0, -68($fp)
+        sw    $v0, -4($fp)
         # t8 = a ptr+ 16
         addiu $s0, $s3, 16
         # t9 = *t8
         lw    $s1, 0($s0)
         # t10 = t7 ptr+ 4
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $s0, $t0, 4
         # t11 = *t10
         lw    $s2, 0($s0)
         # t12 = t9 int+ t11
         addu  $s0, $s1, $s2
         # t13 = t7 ptr+ 8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         addiu $t0, $t0, 8
-        sw    $t0, -92($fp)
+        sw    $t0, -8($fp)
         # *t13 = t12
         move  $t8, $t0
         sw    $s0, 0($t8)
@@ -156,10 +137,10 @@ L1_10:
         move  $s3, $v0
         # i.8 = 5
         li    $s0, 5
-L1_24:
-        # if i.8 int>= 10 goto 35
+L0_30:
+        # if i.8 int>= 10 goto 51
         li    $t1, 10
-        bge   $s0, $t1, L1_35
+        bge   $s0, $t1, L0_51
         # t18 = i.8 int<< 2
         sll   $s1, $s0, 2
         # t19 = a ptr+ t18
@@ -174,14 +155,36 @@ L1_24:
         lw    $s7, 0($s6)
         # t24 = t23 int+ 100
         addiu $t0, $s7, 100
-        sw    $t0, -120($fp)
+        sw    $t0, -12($fp)
         # *t19 = t24
         sw    $t0, 0($s2)
         # i.8 = i.8 int+ 1
         addiu $s0, $s0, 1
-        # goto 24
-        j     L1_24
-L1_35:
+        # if i.8 int>= 10 goto 51
+        li    $t1, 10
+        bge   $s0, $t1, L0_51
+        # t18 = i.8 int<< 2
+        sll   $s1, $s0, 2
+        # t19 = a ptr+ t18
+        addu  $s2, $s3, $s1
+        # t20 = i.8 int- 5
+        addiu $s4, $s0, -5
+        # t21 = t20 int<< 2
+        sll   $s5, $s4, 2
+        # t22 = a ptr+ t21
+        addu  $s6, $s3, $s5
+        # t23 = *t22
+        lw    $s7, 0($s6)
+        # t24 = t23 int+ 100
+        addiu $t0, $s7, 100
+        sw    $t0, -12($fp)
+        # *t19 = t24
+        sw    $t0, 0($s2)
+        # i.8 = i.8 int+ 1
+        addiu $s0, $s0, 1
+        # goto 30
+        j     L0_30
+L0_51:
         # t26 = a ptr+ 16
         addiu $s0, $s3, 16
         # t27 = *t26
@@ -191,10 +194,10 @@ L1_35:
         # t29 = *t28
         lw    $s2, 0($s0)
         # t31 = *t13
-        lw    $t8, -92($fp)
+        lw    $t8, -8($fp)
         lw    $s0, 0($t8)
         # t32 = *t7
-        lw    $t8, -68($fp)
+        lw    $t8, -4($fp)
         lw    $s4, 0($t8)
         # param "%d %d %d %d\n"
         # param t27
@@ -215,10 +218,10 @@ L1_35:
         li    $s0, 0
         # i.10 = 1
         li    $s1, 1
-L1_49:
-        # if i.10 int> 4 goto 59
+L0_65:
+        # if i.10 int> 4 goto 84
         li    $t1, 4
-        bgt   $s1, $t1, L1_59
+        bgt   $s1, $t1, L0_84
         # t33 = i.10 int* 10
         li    $t1, 10
         mul   $s4, $s1, $t1
@@ -240,16 +243,40 @@ L1_49:
         move  $s0, $s2
         # i.10 = i.10 int+ 1
         addiu $s1, $s1, 1
-        # goto 49
-        j     L1_49
-L1_59:
+        # if i.10 int> 4 goto 84
+        li    $t1, 4
+        bgt   $s1, $t1, L0_84
+        # t33 = i.10 int* 10
+        li    $t1, 10
+        mul   $s4, $s1, $t1
+        # param 8
+        # t63 = call malloc, 1
+        addiu $sp, $sp, -8
+        li    $t0, 8
+        sw    $t0, 0($sp)
+        jal   __malloc
+        addiu $sp, $sp, 8
+        move  $s2, $v0
+        # *t63 = t33
+        sw    $s4, 0($s2)
+        # t64 = t63 ptr+ 4
+        addiu $s5, $s2, 4
+        # *t64 = list
+        sw    $s0, 0($s5)
+        # list = t63
+        move  $s0, $s2
+        # i.10 = i.10 int+ 1
+        addiu $s1, $s1, 1
+        # goto 65
+        j     L0_65
+L0_84:
         # sum = 0
         li    $s2, 0
         # p = list
         move  $s1, $s0
-L1_61:
-        # if p ptr== 0 goto 67
-        beq   $s1, $zero, L1_67
+L0_86:
+        # if p ptr== 0 goto 97
+        beq   $s1, $zero, L0_97
         # t36 = *p
         lw    $s4, 0($s1)
         # sum = sum int+ t36
@@ -258,9 +285,19 @@ L1_61:
         addiu $s5, $s1, 4
         # p = *t38
         lw    $s1, 0($s5)
-        # goto 61
-        j     L1_61
-L1_67:
+        # if p ptr== 0 goto 97
+        beq   $s1, $zero, L0_97
+        # t36 = *p
+        lw    $s4, 0($s1)
+        # sum = sum int+ t36
+        addu  $s2, $s2, $s4
+        # t38 = p ptr+ 4
+        addiu $s5, $s1, 4
+        # p = *t38
+        lw    $s1, 0($s5)
+        # goto 86
+        j     L0_86
+L0_97:
         # t40 = list ptr+ 4
         addiu $s1, $s0, 4
         # t41 = *t40
@@ -278,9 +315,9 @@ L1_67:
         sw    $s1, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-L1_74:
-        # if list ptr== 0 goto 81
-        beq   $s0, $zero, L1_81
+L0_104:
+        # if list ptr== 0 goto 117
+        beq   $s0, $zero, L0_117
         # dead = list
         move  $s4, $s0
         # t43 = list ptr+ 4
@@ -293,9 +330,23 @@ L1_74:
         sw    $s4, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
-        # goto 74
-        j     L1_74
-L1_81:
+        # if list ptr== 0 goto 117
+        beq   $s0, $zero, L0_117
+        # dead = list
+        move  $s4, $s0
+        # t43 = list ptr+ 4
+        addiu $s1, $s0, 4
+        # list = *t43
+        lw    $s0, 0($s1)
+        # param dead
+        # call free, 1
+        addiu $sp, $sp, -8
+        sw    $s4, 0($sp)
+        jal   __free
+        addiu $sp, $sp, 8
+        # goto 104
+        j     L0_104
+L0_117:
         # param 24
         # t46 = call malloc, 1
         addiu $sp, $sp, -8
@@ -400,7 +451,7 @@ L1_81:
         # param t7
         # call free, 1
         addiu $sp, $sp, -8
-        lw    $t0, -68($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
@@ -412,16 +463,16 @@ L1_81:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -288($fp)
-        l.d   $f22, -296($fp)
-        lw    $s0, -264($fp)
-        lw    $s1, -252($fp)
-        lw    $s2, -256($fp)
-        lw    $s3, -300($fp)
-        lw    $s4, -260($fp)
-        lw    $s5, -268($fp)
-        lw    $s6, -272($fp)
-        lw    $s7, -276($fp)
+        l.d   $f20, -48($fp)
+        l.d   $f22, -56($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -16($fp)
+        lw    $s2, -20($fp)
+        lw    $s3, -60($fp)
+        lw    $s4, -24($fp)
+        lw    $s5, -32($fp)
+        lw    $s6, -36($fp)
+        lw    $s7, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -439,6 +490,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -459,8 +513,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -520,6 +590,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

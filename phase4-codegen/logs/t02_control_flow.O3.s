@@ -38,6 +38,8 @@ str11:
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -46,91 +48,58 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# classify(int)
-_Z8classifyi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        lw    $s0, 8($fp)
-        # goto 7
-        j     L0_7
-L0_1:
-        # return 100
-        li    $v0, 100
-        j     _Z8classifyi_exit
-L0_2:
-        # n = n int+ 10
-        addiu $s0, $s0, 10
-L0_3:
-        # n = n int<< 1
-        sll   $s0, $s0, 1
-        # goto 12
-        j     L0_12
-L0_5:
-        # n = -1
-        li    $s0, -1
-        # goto 12
-        j     L0_12
-L0_7:
-        # if n int== 0 goto 1
-        beq   $s0, $zero, L0_1
-        # if n int== 1 goto 2
-        li    $t1, 1
-        beq   $s0, $t1, L0_2
-        # if n int== 2 goto 2
-        li    $t1, 2
-        beq   $s0, $t1, L0_2
-        # if n int== 3 goto 3
-        li    $t1, 3
-        beq   $s0, $t1, L0_3
-        # goto 5
-        j     L0_5
-L0_12:
-        # return n
-        move  $v0, $s0
-        j     _Z8classifyi_exit
-_Z8classifyi_exit:
-        lw    $s0, -4($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
-        sw    $s0, -56($fp)
-        sw    $s1, -60($fp)
-        sw    $s2, -52($fp)
-        sw    $s3, -64($fp)
+        addiu $sp, $sp, -16
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M0_0
+        j     __stack_overflow
+M0_0:
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -16($fp)
         # total = 0
         li    $s3, 0
         # i = 0
         li    $s0, 0
-L1_2:
-        # if i int>= 10 goto 8
+L0_2:
+        # if i int>= 10 goto 13
         li    $t1, 10
-        bge   $s0, $t1, L1_8
+        bge   $s0, $t1, L0_13
         # if i int== 2 goto 6
         li    $t1, 2
-        beq   $s0, $t1, L1_6
-        # if i int== 8 goto 8
+        beq   $s0, $t1, L0_6
+        # if i int== 8 goto 13
         li    $t1, 8
-        beq   $s0, $t1, L1_8
+        beq   $s0, $t1, L0_13
         # total = total int+ i
         addu  $s3, $s3, $s0
-L1_6:
+L0_6:
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # if i int>= 10 goto 13
+        li    $t1, 10
+        bge   $s0, $t1, L0_13
+        # if i int== 2 goto 11
+        li    $t1, 2
+        beq   $s0, $t1, L0_11
+        # if i int== 8 goto 13
+        li    $t1, 8
+        beq   $s0, $t1, L0_13
+        # total = total int+ i
+        addu  $s3, $s3, $s0
+L0_11:
         # i = i int+ 1
         addiu $s0, $s0, 1
         # goto 2
-        j     L1_2
-L1_8:
+        j     L0_2
+L0_13:
         # param "for: %d %d\n"
         # param i
         # param total
@@ -146,17 +115,24 @@ L1_8:
         li    $s1, 5
         # fact = 1
         li    $s2, 1
-L1_14:
-        # if n int<= 1 goto 18
+L0_19:
+        # if n int<= 1 goto 26
         li    $t1, 1
-        ble   $s1, $t1, L1_18
+        ble   $s1, $t1, L0_26
         # fact = fact int* n
         mul   $s2, $s2, $s1
         # n = n int- 1
         addiu $s1, $s1, -1
-        # goto 14
-        j     L1_14
-L1_18:
+        # if n int<= 1 goto 26
+        li    $t1, 1
+        ble   $s1, $t1, L0_26
+        # fact = fact int* n
+        mul   $s2, $s2, $s1
+        # n = n int- 1
+        addiu $s1, $s1, -1
+        # goto 19
+        j     L0_19
+L0_26:
         # param "while: %d\n"
         # param fact
         # call printf, 2
@@ -166,14 +142,14 @@ L1_18:
         sw    $s2, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L1_21:
+L0_29:
         # t5 = n int+ 3
         addiu $s2, $s1, 3
         # n = t5
         move  $s1, $s2
-        # if t5 int< 10 goto 21
+        # if t5 int< 10 goto 29
         li    $t1, 10
-        blt   $s2, $t1, L1_21
+        blt   $s2, $t1, L0_29
         # param "do: %d\n"
         # param t5
         # call printf, 2
@@ -183,15 +159,20 @@ L1_21:
         sw    $s2, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L1_27:
-        # if n int>= 20 goto 30
+L0_35:
+        # if n int>= 20 goto 40
         li    $t1, 20
-        bge   $s1, $t1, L1_30
+        bge   $s1, $t1, L0_40
         # n = n int+ 4
         addiu $s1, $s1, 4
-        # goto 27
-        j     L1_27
-L1_30:
+        # if n int>= 20 goto 40
+        li    $t1, 20
+        bge   $s1, $t1, L0_40
+        # n = n int+ 4
+        addiu $s1, $s1, 4
+        # goto 35
+        j     L0_35
+L0_40:
         # param "until: %d\n"
         # param n
         # call printf, 2
@@ -203,50 +184,50 @@ L1_30:
         addiu $sp, $sp, 8
         # i = 0
         li    $s0, 0
-L1_34:
-        # if i int>= 6 goto 55
+L0_44:
+        # if i int>= 6 goto 85
         li    $t1, 6
-        bge   $s0, $t1, L1_55
+        bge   $s0, $t1, L0_85
         # t14 = i
         move  $s1, $s0
-        # goto 44
-        j     L1_44
-L1_37:
+        # goto 54
+        j     L0_54
+L0_47:
         # t7 = 100
         li    $s2, 100
-        # goto 50
-        j     L1_50
-L1_39:
+        # goto 60
+        j     L0_60
+L0_49:
         # t14 = i int+ 10
         addiu $s1, $s0, 10
-L1_40:
+L0_50:
         # t14 = t14 int<< 1
         sll   $s1, $s1, 1
-        # goto 49
-        j     L1_49
-L1_42:
+        # goto 59
+        j     L0_59
+L0_52:
         # t14 = -1
         li    $s1, -1
-        # goto 49
-        j     L1_49
-L1_44:
-        # if i int== 0 goto 37
-        beq   $s0, $zero, L1_37
-        # if i int== 1 goto 39
+        # goto 59
+        j     L0_59
+L0_54:
+        # if i int== 0 goto 47
+        beq   $s0, $zero, L0_47
+        # if i int== 1 goto 49
         li    $t1, 1
-        beq   $s0, $t1, L1_39
-        # if i int== 2 goto 39
+        beq   $s0, $t1, L0_49
+        # if i int== 2 goto 49
         li    $t1, 2
-        beq   $s0, $t1, L1_39
-        # if i int== 3 goto 40
+        beq   $s0, $t1, L0_49
+        # if i int== 3 goto 50
         li    $t1, 3
-        beq   $s0, $t1, L1_40
-        # goto 42
-        j     L1_42
-L1_49:
+        beq   $s0, $t1, L0_50
+        # goto 52
+        j     L0_52
+L0_59:
         # t7 = t14
         move  $s2, $s1
-L1_50:
+L0_60:
         # param "%d "
         # param t7
         # call printf, 2
@@ -258,9 +239,63 @@ L1_50:
         addiu $sp, $sp, 8
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 34
-        j     L1_34
-L1_55:
+        # if i int>= 6 goto 85
+        li    $t1, 6
+        bge   $s0, $t1, L0_85
+        # t14 = i
+        move  $s1, $s0
+        # goto 74
+        j     L0_74
+L0_67:
+        # t7 = 100
+        li    $s2, 100
+        # goto 80
+        j     L0_80
+L0_69:
+        # t14 = i int+ 10
+        addiu $s1, $s0, 10
+L0_70:
+        # t14 = t14 int<< 1
+        sll   $s1, $s1, 1
+        # goto 79
+        j     L0_79
+L0_72:
+        # t14 = -1
+        li    $s1, -1
+        # goto 79
+        j     L0_79
+L0_74:
+        # if i int== 0 goto 67
+        beq   $s0, $zero, L0_67
+        # if i int== 1 goto 69
+        li    $t1, 1
+        beq   $s0, $t1, L0_69
+        # if i int== 2 goto 69
+        li    $t1, 2
+        beq   $s0, $t1, L0_69
+        # if i int== 3 goto 70
+        li    $t1, 3
+        beq   $s0, $t1, L0_70
+        # goto 72
+        j     L0_72
+L0_79:
+        # t7 = t14
+        move  $s2, $s1
+L0_80:
+        # param "%d "
+        # param t7
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str4
+        sw    $t0, 0($sp)
+        sw    $s2, 4($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # i = i int+ 1
+        addiu $s0, $s0, 1
+        # goto 44
+        j     L0_44
+L0_85:
         # param "\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -270,18 +305,18 @@ L1_55:
         addiu $sp, $sp, 8
         # i = 0
         li    $s0, 0
-L1_58:
-        # if i int>= 3 goto 70
+L0_88:
+        # if i int>= 3 goto 107
         li    $t1, 3
-        bge   $s0, $t1, L1_70
+        bge   $s0, $t1, L0_107
         # j = 0
         li    $s1, 0
-L1_60:
-        # if j int>= 3 goto 68
+L0_90:
+        # if j int>= 3 goto 105
         li    $t1, 3
-        bge   $s1, $t1, L1_68
-        # if j int> i goto 68
-        bgt   $s1, $s0, L1_68
+        bge   $s1, $t1, L0_105
+        # if j int> i goto 105
+        bgt   $s1, $s0, L0_105
         # param "%d%d "
         # param i
         # param j
@@ -295,14 +330,32 @@ L1_60:
         addiu $sp, $sp, 16
         # j = j int+ 1
         addiu $s1, $s1, 1
-        # goto 60
-        j     L1_60
-L1_68:
+        # if j int>= 3 goto 105
+        li    $t1, 3
+        bge   $s1, $t1, L0_105
+        # if j int> i goto 105
+        bgt   $s1, $s0, L0_105
+        # param "%d%d "
+        # param i
+        # param j
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str6
+        sw    $t0, 0($sp)
+        sw    $s0, 4($sp)
+        sw    $s1, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # j = j int+ 1
+        addiu $s1, $s1, 1
+        # goto 90
+        j     L0_90
+L0_105:
         # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 58
-        j     L1_58
-L1_70:
+        # goto 88
+        j     L0_88
+L0_107:
         # param "\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -312,20 +365,20 @@ L1_70:
         addiu $sp, $sp, 8
         # count = 0
         li    $s1, 0
-L1_73:
+L0_110:
         # t11 = count int+ 1
         addiu $s0, $s1, 1
         # count = t11
         move  $s1, $s0
-        # if t11 int< 4 goto 73
+        # if t11 int< 4 goto 110
         li    $t1, 4
-        blt   $s0, $t1, L1_73
-        # if t11 int== 4 goto 78
+        blt   $s0, $t1, L0_110
+        # if t11 int== 4 goto 115
         li    $t1, 4
-        beq   $s0, $t1, L1_78
+        beq   $s0, $t1, L0_115
         # count = 99
         li    $s1, 99
-L1_78:
+L0_115:
         # param "goto: %d\n"
         # param count
         # call printf, 2
@@ -344,16 +397,16 @@ L1_78:
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L1_84:
+L0_121:
         # t12 = x int- 1
         addiu $s0, $s1, -1
         # x = t12
         move  $s1, $s0
-        # if t12 int== 1 goto 84
+        # if t12 int== 1 goto 121
         li    $t1, 1
-        beq   $s0, $t1, L1_84
-        # if t12 int> 0 goto 84
-        bgt   $s0, $zero, L1_84
+        beq   $s0, $t1, L0_121
+        # if t12 int> 0 goto 121
+        bgt   $s0, $zero, L0_121
         # param "x: %d\n"
         # param t12
         # call printf, 2
@@ -367,10 +420,10 @@ L1_84:
         move  $v0, $s3
         j     main__exit
 main__exit:
-        lw    $s0, -56($fp)
-        lw    $s1, -60($fp)
-        lw    $s2, -52($fp)
-        lw    $s3, -64($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -388,6 +441,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -408,8 +464,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -469,6 +541,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

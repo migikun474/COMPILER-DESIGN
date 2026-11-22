@@ -298,66 +298,66 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   popcount           function      int (unsigned int)         -           4    -    2  _Z8popcountj; defined
-   reverseBits        function      unsigned int (unsigned int) -           6    -    1  _Z11reverseBitsj; defined
-   isPowerOfTwo       function      int (unsigned int)         -          12    -    2  _Z12isPowerOfTwoj; defined
-   highestBit         function      int (unsigned int)         -          13    -    1  _Z10highestBitj; defined
-   rotl               function      unsigned int (unsigned int, int) -          14    -    1  _Z4rotlji; defined
-   sign               function      int (int)                  -          15    -    3  _Z4signi; defined
-   main               function      int (void)                 -          17    -    0  defined
+   popcount           function      int (unsigned int)         -           3    -    2  _Z8popcountj; defined
+   reverseBits        function      unsigned int (unsigned int) -           5    -    1  _Z11reverseBitsj; defined
+   isPowerOfTwo       function      int (unsigned int)         -          11    -    2  _Z12isPowerOfTwoj; defined
+   highestBit         function      int (unsigned int)         -          12    -    1  _Z10highestBitj; defined
+   rotl               function      unsigned int (unsigned int, int) -          13    -    1  _Z4rotlji; defined
+   sign               function      int (int)                  -          14    -    3  _Z4signi; defined
+   main               function      int (void)                 -          16    -    0  defined
 
  scope: global > popcount()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param       4    4    3  v.1
-   n                  variable      int                        local       4    4    2  n.2
+   v                  parameter     unsigned int               param       3    4    3  v.1
+   n                  variable      int                        local       3    4    2  n.2
 
  scope: global > reverseBits()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param       6    4    2  v.3
-   r                  variable      unsigned int               local       7    4    3  r.4
+   v                  parameter     unsigned int               param       5    4    2  v.3
+   r                  variable      unsigned int               local       6    4    3  r.4
 
  scope: global > reverseBits() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       8    4    2  i.5
+   i                  variable      int                        local       7    4    2  i.5
 
  scope: global > isPowerOfTwo()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      12    4    3  v.6
+   v                  parameter     unsigned int               param      11    4    3  v.6
 
  scope: global > highestBit()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      13    4    2  v.7
-   n                  variable      int                        local      13    4    2  n.8
+   v                  parameter     unsigned int               param      12    4    2  v.7
+   n                  variable      int                        local      12    4    2  n.8
 
  scope: global > rotl()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     unsigned int               param      14    4    2  v.9
-   k                  parameter     int                        param      14    4    2  k.10
+   v                  parameter     unsigned int               param      13    4    2  v.9
+   k                  parameter     int                        param      13    4    2  k.10
 
  scope: global > sign()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param      15    4    2  v.11
+   v                  parameter     int                        param      14    4    2  v.11
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   u                  variable      unsigned int               local      18    4    9  u.12
-   big                variable      int                        local      23    4    1  big.13
-   small              variable      int                        local      23    4    3  small.14
-   wrap               variable      unsigned int               local      24    4    3  wrap.15
-   uc                 variable      unsigned char              local      29    1    2  uc.16
-   sc                 variable      char                       local      30    1    2  sc.17
-   sh                 variable      short                      local      31    2    2  sh.18
-   us                 variable      unsigned short             local      32    2    2  us.19
-   flags              variable      int                        local      39    4    6  flags.20
-   c                  variable      char                       local      45    1    3  c.21
+   u                  variable      unsigned int               local      17    4    9  u.12
+   big                variable      int                        local      22    4    1  big.13
+   small              variable      int                        local      22    4    3  small.14
+   wrap               variable      unsigned int               local      23    4    3  wrap.15
+   uc                 variable      unsigned char              local      28    1    2  uc.16
+   sc                 variable      char                       local      29    1    2  sc.17
+   sh                 variable      short                      local      30    2    2  sh.18
+   us                 variable      unsigned short             local      31    2    2  us.19
+   flags              variable      int                        local      38    4    6  flags.20
+   c                  variable      char                       local      44    1    3  c.21
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

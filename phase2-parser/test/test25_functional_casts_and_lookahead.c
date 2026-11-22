@@ -10,7 +10,6 @@ const int FIRST = 0, THIRD = 2;
 class Dog {
 public:
     int legs;
-    Dog(int n) { legs = n; }
     Dog() { legs = 4; }
     int bark() { return legs; }
 };
@@ -23,12 +22,10 @@ int main() {
     char c = char(65);
     long big = long(x) * 2;
     int(x) + 1;                        /* 1: a statement starting with one */
-    Dog(4).bark();                     /* 2: a statement starting with a temporary */
-    Dog().bark();
-    Dog(x).bark();
-    int y = take(Dog(5)) + take(Dog(x));
+    Dog().bark();                      /* 2: a statement starting with a temporary */
+    int y = take(Dog()) + take(Dog());
     Dog (spot);                        /* still a declaration, as in C++ */
-    Dog rex(3);
+    Dog rex;
     int a = 0, T;                       /* 3: T redeclared after a comma */
     T = 5;
     int k = 2, U = T + 1, m = 0;

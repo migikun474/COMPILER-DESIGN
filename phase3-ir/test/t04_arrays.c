@@ -1,5 +1,4 @@
 /* t04 -- arrays: 1-D, 2-D, 3-D, initializers, strings, arrays as arguments */
-#include <stdio.h>
 
 int total(int a[], int n) {
     int s = 0;

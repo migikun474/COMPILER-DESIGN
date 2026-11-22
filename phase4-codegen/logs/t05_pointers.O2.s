@@ -24,6 +24,8 @@ fc1:  .word 0, 1073741824        # 2
 main:
         li    $t0, -8
         and   $sp, $sp, $t0           # frames assume an 8-byte aligned stack
+        li    $t1, 0x7ffc4000
+        sw    $t1, __stack_limit      # deeper than this is a stack overflow
         addiu $sp, $sp, -8
         sw    $a0, 0($sp)             # argc
         sw    $a1, 4($sp)             # argv
@@ -37,13 +39,13 @@ _Z4swapPiS_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
+        addiu $sp, $sp, -16
+        sw    $s0, -4($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -12($fp)
+        sw    $s3, -16($fp)
+        move  $s2, $a0
+        move  $s3, $a1
         # t1 = *a
         lw    $s0, 0($s2)
         # t2 = *b
@@ -55,10 +57,10 @@ _Z4swapPiS_:
         # return
         j     _Z4swapPiS__exit
 _Z4swapPiS__exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -12($fp)
+        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -69,14 +71,14 @@ _Z3sumPiS_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -32($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -20($fp)
-        sw    $s4, -28($fp)
-        lw    $s0, 8($fp)
-        lw    $s4, 12($fp)
+        addiu $sp, $sp, -24
+        sw    $s0, -12($fp)
+        sw    $s1, -20($fp)
+        sw    $s2, -4($fp)
+        sw    $s3, -8($fp)
+        sw    $s4, -16($fp)
+        move  $s0, $a0
+        move  $s4, $a1
         # s = 0
         li    $s1, 0
 L1_1:
@@ -97,11 +99,11 @@ L1_7:
         move  $v0, $s1
         j     _Z3sumPiS__exit
 _Z3sumPiS__exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -32($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -20($fp)
-        lw    $s4, -28($fp)
+        lw    $s0, -12($fp)
+        lw    $s1, -20($fp)
+        lw    $s2, -4($fp)
+        lw    $s3, -8($fp)
+        lw    $s4, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -113,16 +115,21 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -392
-        s.d   $f20, -384($fp)
-        s.d   $f22, -392($fp)
-        sw    $s0, -352($fp)
-        sw    $s1, -356($fp)
-        sw    $s2, -360($fp)
-        sw    $s3, -364($fp)
-        sw    $s4, -368($fp)
-        sw    $s5, -372($fp)
-        sw    $s6, -376($fp)
+        addiu $sp, $sp, -128
+        lw    $t8, __stack_limit
+        sltu  $t8, $sp, $t8
+        beqz  $t8, M2_0
+        j     __stack_overflow
+M2_0:
+        s.d   $f20, -120($fp)
+        s.d   $f22, -128($fp)
+        sw    $s0, -84($fp)
+        sw    $s1, -88($fp)
+        sw    $s2, -92($fp)
+        sw    $s3, -96($fp)
+        sw    $s4, -100($fp)
+        sw    $s5, -104($fp)
+        sw    $s6, -108($fp)
         # x = 5
         li    $t0, 5
         sw    $t0, -4($fp)
@@ -188,11 +195,11 @@ main_:
         # param t1
         # param t16
         # call swap(int *, int *), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s1, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s1
         jal   _Z4swapPiS_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param "%d %d\n"
         # param x
         # param y
@@ -208,21 +215,21 @@ main_:
         addiu $sp, $sp, 16
         # arr[0] = 10
         li    $t0, 10
-        sw    $t0, -40($fp)
+        sw    $t0, -36($fp)
         # arr[4] = 20
         li    $t0, 20
-        sw    $t0, -36($fp)
+        sw    $t0, -32($fp)
         # arr[8] = 30
         li    $t0, 30
-        sw    $t0, -32($fp)
+        sw    $t0, -28($fp)
         # arr[12] = 40
         li    $t0, 40
-        sw    $t0, -28($fp)
+        sw    $t0, -24($fp)
         # arr[16] = 50
         li    $t0, 50
-        sw    $t0, -24($fp)
+        sw    $t0, -20($fp)
         # t17 = &arr
-        addiu $s0, $fp, -40
+        addiu $s0, $fp, -36
         # t18 = t17 ptr+ 8
         addiu $s2, $s0, 8
         # t19 = t18 ptr- 4
@@ -242,11 +249,11 @@ main_:
         # param t17
         # param t27
         # t28 = call sum(int *, int *), 2
-        addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
-        sw    $s5, 4($sp)
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        move  $a1, $s5
         jal   _Z3sumPiS_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $s6, $v0
         # param "%d %d %d\n"
         # param t24
@@ -295,13 +302,13 @@ main_:
         sltiu $s0, $s0, 1
 L2_71:
         # t44 = &arr
-        addiu $s2, $fp, -40
+        addiu $s2, $fp, -36
         # if t31 ptr!= t44 goto 75
         xor   $s2, $s1, $s2
         sltu  $s2, $zero, $s2
 L2_76:
         # t46 = &arr
-        addiu $s3, $fp, -40
+        addiu $s3, $fp, -36
         # t47 = t46 ptr+ 16
         addiu $s4, $s3, 16
         # if t31 ptr< t47 goto 81
@@ -346,24 +353,24 @@ L2_82:
         addiu $sp, $sp, 16
         # grid[0] = 1
         li    $t0, 1
-        sw    $t0, -84($fp)
+        sw    $t0, -60($fp)
         # grid[4] = 2
         li    $t0, 2
-        sw    $t0, -80($fp)
+        sw    $t0, -56($fp)
         # grid[8] = 3
         li    $t0, 3
-        sw    $t0, -76($fp)
+        sw    $t0, -52($fp)
         # grid[12] = 4
         li    $t0, 4
-        sw    $t0, -72($fp)
+        sw    $t0, -48($fp)
         # grid[16] = 5
         li    $t0, 5
-        sw    $t0, -68($fp)
+        sw    $t0, -44($fp)
         # grid[20] = 6
         li    $t0, 6
-        sw    $t0, -64($fp)
+        sw    $t0, -40($fp)
         # t52 = &grid
-        addiu $s2, $fp, -84
+        addiu $s2, $fp, -60
         # t53 = t52 ptr+ 12
         addiu $s1, $s2, 12
         # t54 = t53 ptr+ 8
@@ -391,9 +398,9 @@ L2_82:
         sw    $t0, -12($fp)
         # d = 2.5
         l.d   $f0, fc0
-        s.d   $f0, -96($fp)
+        s.d   $f0, -72($fp)
         # t58 = &d
-        addiu $s0, $fp, -96
+        addiu $s0, $fp, -72
         # t59 = *t58
         l.d   $f0, 0($s0)
         mov.d $f20, $f0
@@ -405,29 +412,29 @@ L2_82:
         s.d   $f0, 0($s0)
         # text[0] = 112
         li    $t0, 112
-        sb    $t0, -108($fp)
+        sb    $t0, -80($fp)
         # text[1] = 111
         li    $t0, 111
-        sb    $t0, -107($fp)
+        sb    $t0, -79($fp)
         # text[2] = 105
         li    $t0, 105
-        sb    $t0, -106($fp)
+        sb    $t0, -78($fp)
         # text[3] = 110
         li    $t0, 110
-        sb    $t0, -105($fp)
+        sb    $t0, -77($fp)
         # text[4] = 116
         li    $t0, 116
-        sb    $t0, -104($fp)
+        sb    $t0, -76($fp)
         # text[5] = 101
         li    $t0, 101
-        sb    $t0, -103($fp)
+        sb    $t0, -75($fp)
         # text[6] = 114
         li    $t0, 114
-        sb    $t0, -102($fp)
+        sb    $t0, -74($fp)
         # text[7] = 0
-        sb    $zero, -101($fp)
+        sb    $zero, -73($fp)
         # t = &text
-        addiu $s0, $fp, -108
+        addiu $s0, $fp, -80
 L2_127:
         # t62 = *t
         lb    $s1, 0($s0)
@@ -439,7 +446,7 @@ L2_127:
         j     L2_127
 L2_131:
         # t64 = &text
-        addiu $s1, $fp, -108
+        addiu $s1, $fp, -80
         # t65 = t ptr- t64
         subu  $s2, $s0, $s1
         # t66 = t ptr- 1
@@ -457,7 +464,7 @@ L2_131:
         addiu $sp, $sp, -24
         la    $t0, str2
         sw    $t0, 0($sp)
-        l.d   $f0, -96($fp)
+        l.d   $f0, -72($fp)
         s.d   $f0, 8($sp)
         sw    $s2, 16($sp)
         sw    $s1, 20($sp)
@@ -470,15 +477,15 @@ L2_131:
         move  $v0, $s0
         j     main__exit
 main__exit:
-        l.d   $f20, -384($fp)
-        l.d   $f22, -392($fp)
-        lw    $s0, -352($fp)
-        lw    $s1, -356($fp)
-        lw    $s2, -360($fp)
-        lw    $s3, -364($fp)
-        lw    $s4, -368($fp)
-        lw    $s5, -372($fp)
-        lw    $s6, -376($fp)
+        l.d   $f20, -120($fp)
+        l.d   $f22, -128($fp)
+        lw    $s0, -84($fp)
+        lw    $s1, -88($fp)
+        lw    $s2, -92($fp)
+        lw    $s3, -96($fp)
+        lw    $s4, -100($fp)
+        lw    $s5, -104($fp)
+        lw    $s6, -108($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -496,6 +503,9 @@ main__exit:
 #   __udivll __umodll         result in $v1:$v0
 #   __shlll __shrll __sarll   a in $a1:$a0, count in $a2
 #   __dtoll                   double in $f12 -> $v1:$v0
+#   __div_by_zero             jumped to by integer division with a zero divisor
+#   __stack_overflow          jumped to by a prologue whose $sp passed __stack_limit
+#                             (both print the interpreter's message and exit with 2)
 #
 # The generated code keeps nothing in registers across a call, so these
 # routines use the temporaries freely; they preserve $sp, $fp and $s0-$s7.
@@ -516,8 +526,24 @@ __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
+__stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__m_divzero: .asciiz "\nrun-time error: division by zero\n"
+__m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
         .text
+
+# ------------------------------------------------------- run-time errors
+__div_by_zero:
+        la    $a0, __m_divzero
+        j     __rt_error
+__stack_overflow:
+        la    $a0, __m_stack
+__rt_error:                             # print the message in $a0, exit with code 2
+        li    $v0, 4
+        syscall
+        li    $a0, 2
+        li    $v0, 17
+        syscall
 
 # ---------------------------------------------------------------- memory
 __memcpy:
@@ -577,6 +603,8 @@ __free:                                 # memory is not reused
 
 # ------------------------------------------------------- 64-bit arithmetic
 __udivmodll:                            # unsigned: quotient $v1:$v0, remainder $t9:$t8
+        or    $t6, $a2, $a3             # a zero divisor is a run-time error
+        beqz  $t6, __div_by_zero
         li    $v0, 0
         li    $v1, 0
         li    $t8, 0

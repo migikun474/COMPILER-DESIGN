@@ -1,35 +1,26 @@
 /* t26 -- declarations: typedef, sizeof, const, struct layout, nested
    initializers, designators, multi-dimensional and string arrays,
    macros from the preprocessor */
-#include <stdio.h>
 
-#define COUNT 4
-#define SQUARE(v) ((v) * (v))
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#ifdef UNDEFINED_FLAG
-#define MODE 1
-#else
-#define MODE 2
-#endif
 
 typedef int Number;
-typedef Number Row[COUNT];
+typedef Number Row[4];
 typedef struct { char tag; double weight; short count; } Item;
 typedef struct { Item first; Item rest[2]; int total; } Box;
 struct Mixed { char a; int b; char c; short d; double e; char f; };
 
-const int primes[COUNT] = {2, 3, 5, 7};
+const int primes[4] = {2, 3, 5, 7};
 int matrix[2][3] = {{1, 2, 3}, {4, 5, 6}};
 char letters[] = {'o', 'k', 0};
 Item stock = {'s', 2.5, 3};
 double table[3] = {[2] = 9.5, [0] = 1.5};
 
-int sum(const Row r) { int s = 0; for (int i = 0; i < COUNT; i++) s += r[i]; return s; }
+int sum(const Row r) { int s = 0; for (int i = 0; i < 4; i++) s += r[i]; return s; }
 
 int main() {
-    Row r = {SQUARE(2), MAX(3, 9), MODE, COUNT};
+    Row r = {((2) * (2)), ((3) > (9) ? (3) : (9)), 2, 4};
     Number n = sum(r) + sum(primes);
-    printf("%d %d %d\n", n, SQUARE(1 + 2), MAX(n, 100));
+    printf("%d %d %d\n", n, ((1 + 2) * (1 + 2)), ((n) > (100) ? (n) : (100)));
     printf("%d %d %d %d\n", (int) sizeof(Item), (int) sizeof(Box), (int) sizeof(struct Mixed), (int) sizeof(Row));
     printf("%d %d %d\n", (int) sizeof(matrix), (int) (sizeof(matrix) / sizeof(matrix[0])), (int) sizeof(letters));
 
@@ -45,7 +36,7 @@ int main() {
     printf("%c %d %c %d %.1f %c %d\n", m.a, m.b, m.c, m.d, m.e, m.f, copy.b);
     printf("%s %.1f %.1f %.1f %d\n", letters, table[0], table[1], table[2], matrix[1][2] - matrix[0][0]);
 
-    int grid[3][COUNT] = {{1}, {0, 2}, {0, 0, 3}};
+    int grid[3][4] = {{1}, {0, 2}, {0, 0, 3}};
     int trace = 0;
     for (int i = 0; i < 3; i++) trace += grid[i][i];
     const char *words[] = {"one", "two", "three"};

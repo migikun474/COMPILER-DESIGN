@@ -453,14 +453,13 @@ class Mangler {
 } // namespace
 
 std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className, bool constMethod) {
+                   const std::string &className) {
     if (name == "main" && className.empty()) return "main";
     Mangler m;
     std::string out = "_Z";
     if (!className.empty()) {
-        out += std::string("N") + (constMethod ? "K" : "") + m.nestedPrefix(className); /* _ZNK3Dog3getEv */
+        out += "N" + m.nestedPrefix(className); /* _ZN3Dog3getEv */
         if (name == className) out += "C1";
-        else if (name == "~" + className) out += "D1";
         else out += sourceName(name);
         out += "E";
     } else {
@@ -470,7 +469,7 @@ std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &par
 }
 
 std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className, bool constMethod) {
+                   const std::string &className) {
     std::vector<sem::TypePtr> types;
     /* `f(void)` has no parameters */
     bool voidList = params.size() == 1 && params[0] && params[0]->specParts.size() == 1 &&
@@ -480,7 +479,7 @@ std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &p
     if (!voidList) {
         for (const auto &p : params) types.push_back(p ? parseTimeType(*p, true) : sem::errorType());
     }
-    return mangle(name, types, variadic, className, constMethod);
+    return mangle(name, types, variadic, className);
 }
 
 /* mirrors the semantic phase's resolveType()/resolveSpecifiers() minus
@@ -803,7 +802,6 @@ static std::string kindLabel(const Symbol &s) {
     }
     if (s.kind == SymbolKind::Function) {
         if (s.isConstructor) return "constructor";
-        if (s.isDestructor) return "destructor";
         if (s.isMethod) return "method";
     }
     return symbolKindName(s.kind);
@@ -822,7 +820,7 @@ static std::string notes(const Symbol &s) {
     auto add = [&](const std::string &x) { n += (n.empty() ? "" : ", ") + x; };
     if (s.ownerRecord) add(accessName(s.access));
     if (s.isStatic) add("static");
-    if (s.kind == SymbolKind::Function && !s.isConstructor && !s.isDestructor) add(s.isDefined ? "defined" : "declared only");
+    if (s.kind == SymbolKind::Function && !s.isConstructor) add(s.isDefined ? "defined" : "declared only");
     if (s.isConstant) add("value " + std::to_string(s.constValue));
     if (s.kind == SymbolKind::Variable && s.storage == Storage::Global && !s.isDefined) add("extern, not defined here");
     if (s.offset >= 0) add("offset " + std::to_string(s.offset));

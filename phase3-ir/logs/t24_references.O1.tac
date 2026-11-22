@@ -470,99 +470,99 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Account            struct_tag    struct Account             -           5    -    0  size 16
-   deposit            function      void (struct Account &, double) -           7    -    1  _Z7depositR7Accountd; defined
-   peek               function      double (const struct Account &) -           8    -    1  _Z4peekRK7Account; defined
-   richer             function      struct Account &(struct Account &, struct Account &) -           9    -    2  _Z6richerR7AccountS0_; defined
-   minmax             function      void (const int *, int, int &, int &) -          11    -    1  _Z6minmaxPKiiRiS1_; defined
-   advance            function      void (int *&, int)         -          19    -    1  _Z7advanceRPii; defined
-   element            function      int &(int *, int)          -          20    -    2  _Z7elementPii; defined
-   scale              function      int (const int &, const double &) -          21    -    3  _Z5scaleRKiRKd; defined
-   rotate             function      void (int &, int &, int &) -          22    -    1  _Z6rotateRiS_S_; defined
-   main               function      int (void)                 -          24    -    0  defined
+   Account            struct_tag    struct Account             -           4    -    0  size 16
+   deposit            function      void (struct Account &, double) -           6    -    1  _Z7depositR7Accountd; defined
+   peek               function      double (const struct Account &) -           7    -    1  _Z4peekRK7Account; defined
+   richer             function      struct Account &(struct Account &, struct Account &) -           8    -    2  _Z6richerR7AccountS0_; defined
+   minmax             function      void (const int *, int, int &, int &) -          10    -    1  _Z6minmaxPKiiRiS1_; defined
+   advance            function      void (int *&, int)         -          18    -    1  _Z7advanceRPii; defined
+   element            function      int &(int *, int)          -          19    -    2  _Z7elementPii; defined
+   scale              function      int (const int &, const double &) -          20    -    3  _Z5scaleRKiRKd; defined
+   rotate             function      void (int &, int &, int &) -          21    -    1  _Z6rotateRiS_S_; defined
+   main               function      int (void)                 -          23    -    0  defined
 
  scope: global > struct Account
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   id                 field         int                        member      5    4    1  Account::id; public, offset 0
-   balance            field         double                     member      5    8    7  Account::balance; public, offset 8
+   id                 field         int                        member      4    4    1  Account::id; public, offset 0
+   balance            field         double                     member      4    8    7  Account::balance; public, offset 8
 
  scope: global > deposit()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     struct Account &           param       7    4    1  a.1
-   amount             parameter     double                     param       7    8    1  amount.2
+   a                  parameter     struct Account &           param       6    4    1  a.1
+   amount             parameter     double                     param       6    8    1  amount.2
 
  scope: global > peek()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     const struct Account &     param       8    4    1  a.3
+   a                  parameter     const struct Account &     param       7    4    1  a.3
 
  scope: global > richer()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     struct Account &           param       9    4    2  a.4
-   b                  parameter     struct Account &           param       9    4    2  b.5
+   a                  parameter     struct Account &           param       8    4    2  a.4
+   b                  parameter     struct Account &           param       8    4    2  b.5
 
  scope: global > minmax()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   values             parameter     const int *                param      11    4    5  values.6
-   n                  parameter     int                        param      11    4    1  n.7
-   lo                 parameter     int &                      param      11    4    3  lo.8
-   hi                 parameter     int &                      param      11    4    3  hi.9
+   values             parameter     const int *                param      10    4    5  values.6
+   n                  parameter     int                        param      10    4    1  n.7
+   lo                 parameter     int &                      param      10    4    3  lo.8
+   hi                 parameter     int &                      param      10    4    3  hi.9
 
  scope: global > minmax() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      13    4    6  i.10
+   i                  variable      int                        local      12    4    6  i.10
 
  scope: global > advance()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     int *&                     param      19    4    1  p.11
-   steps              parameter     int                        param      19    4    1  steps.12
+   p                  parameter     int *&                     param      18    4    1  p.11
+   steps              parameter     int                        param      18    4    1  steps.12
 
  scope: global > element()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int *                      param      20    4    1  a.13
-   i                  parameter     int                        param      20    4    1  i.14
+   a                  parameter     int *                      param      19    4    1  a.13
+   i                  parameter     int                        param      19    4    1  i.14
 
  scope: global > scale()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     const int &                param      21    4    1  v.15
-   factor             parameter     const double &             param      21    4    1  factor.16
+   v                  parameter     const int &                param      20    4    1  v.15
+   factor             parameter     const double &             param      20    4    1  factor.16
 
  scope: global > rotate()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int &                      param      22    4    2  a.17
-   b                  parameter     int &                      param      22    4    2  b.18
-   c                  parameter     int &                      param      22    4    2  c.19
-   t                  variable      int                        local      22    4    1  t.20
+   a                  parameter     int &                      param      21    4    2  a.17
+   b                  parameter     int &                      param      21    4    2  b.18
+   c                  parameter     int &                      param      21    4    2  c.19
+   t                  variable      int                        local      21    4    1  t.20
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      25    4    3  x.21
-   y                  variable      int                        local      25    4    2  y.22
-   z                  variable      int                        local      25    4    2  z.23
-   rx                 variable      int &                      local      26    4    3  rx.24
-   rrx                variable      int &                      local      27    4    1  rrx.25
-   data               variable      int[5]                     local      32   20    7  data.26
-   lo                 variable      int                        local      32    4    3  lo.27
-   hi                 variable      int                        local      32    4    2  hi.28
-   p                  variable      int *                      local      36    4    2  p.29
-   a                  variable      struct Account             local      41   16    4  a.30
-   b                  variable      struct Account             local      41   16    3  b.31
-   best               variable      struct Account &           local      44    4    2  best.32
-   limit              variable      const int                  local      47    4    1  limit.33; value 40
-   rate               variable      const double               local      48    8    1  rate.34
-   small              variable      short                      local      49    2    1  small.35
-   msg                variable      const char *               local      51    4    2  msg.36
-   first              variable      const char &               local      52    4    1  first.37
+   x                  variable      int                        local      24    4    3  x.21
+   y                  variable      int                        local      24    4    2  y.22
+   z                  variable      int                        local      24    4    2  z.23
+   rx                 variable      int &                      local      25    4    3  rx.24
+   rrx                variable      int &                      local      26    4    1  rrx.25
+   data               variable      int[5]                     local      31   20    7  data.26
+   lo                 variable      int                        local      31    4    3  lo.27
+   hi                 variable      int                        local      31    4    2  hi.28
+   p                  variable      int *                      local      35    4    2  p.29
+   a                  variable      struct Account             local      40   16    4  a.30
+   b                  variable      struct Account             local      40   16    3  b.31
+   best               variable      struct Account &           local      43    4    2  best.32
+   limit              variable      const int                  local      46    4    1  limit.33; value 40
+   rate               variable      const double               local      47    8    1  rate.34
+   small              variable      short                      local      48    2    1  small.35
+   msg                variable      const char *               local      50    4    2  msg.36
+   first              variable      const char &               local      51    4    1  first.37
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

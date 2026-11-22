@@ -1,6 +1,5 @@
 /* t06 -- structures: nesting, arrays of structs, pointers, copies,
    by-value parameters and results, initializers, anonymous members */
-#include <stdio.h>
 
 struct Point { int x; int y; };
 struct Rect { struct Point low; struct Point high; char tag; };

@@ -1,6 +1,5 @@
 /* The rules of Papaspyrou's formal semantics of C that were missing,
    with gcc's diagnostics at gcc's lines. */
-#include <stdio.h>
 
 struct Key { const int id; int v; };
 struct Wrap { struct Key k; int n; };

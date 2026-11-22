@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test2_structs_pointers_arrays.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test2_structs_pointers_arrays.c
 
 No errors found.
 
@@ -32,5 +32,5 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-main                 procedure      2      global                       PROCEDURE                                 0         INT ()                 main
-a                    variable       3      global > main()              INT_ARRAY        []                       0                                
+main                 procedure      1      global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       2      global > main()              INT_ARRAY        []                       0                                

@@ -4,7 +4,7 @@
 
    Source file   : test/t26_declarations.c
    Optimization  : no optimization
-   Result        : Three address code generated: 2 function(s), 198 instruction(s)
+   Result        : Three address code generated: 2 function(s), 197 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -82,7 +82,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 66 temporaries, frame 584 bytes
+ Symbol table: 14 parameter(s)/local(s), 65 temporaries, frame 584 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -134,40 +134,39 @@
    t32              temp    short                           2     416
    t33              temp    double                          8     424
    t34              temp    double                          8     432
-   t35              temp    struct Mixed *                  4     440
-   t36              temp    char                            1     444
+   t35              temp    char                            1     440
+   t36              temp    int                             4     444
    t37              temp    int                             4     448
-   t38              temp    int                             4     452
-   t39              temp    char                            1     456
-   t40              temp    int                             4     460
-   t41              temp    short                           2     464
-   t42              temp    int                             4     468
-   t43              temp    double                          8     472
-   t44              temp    char                            1     480
-   t45              temp    int                             4     484
-   t46              temp    int                             4     488
-   t47              temp    char *                          4     492
-   t48              temp    double                          8     496
-   t49              temp    double                          8     504
-   t50              temp    double                          8     512
-   t51              temp    int                             4     520
-   t52              temp    int                             4     524
-   t53              temp    int                             4     528
-   t54              temp    int                             4     532
-   t55              temp    int                             4     536
-   t56              temp    int                             4     540
-   t57              temp    int                             4     544
-   t58              temp    int                             4     548
-   t59              temp    int                             4     552
-   t60              temp    const char *                    4     556
-   t61              temp    char                            1     560
-   t62              temp    int                             4     564
-   t63              temp    char *                          4     568
-   t64              temp    unsigned int                    4     572
-   t65              temp    int                             4     576
-   t66              temp    int                             4     580
+   t38              temp    char                            1     452
+   t39              temp    int                             4     456
+   t40              temp    short                           2     460
+   t41              temp    int                             4     464
+   t42              temp    double                          8     472
+   t43              temp    char                            1     480
+   t44              temp    int                             4     484
+   t45              temp    int                             4     488
+   t46              temp    char *                          4     492
+   t47              temp    double                          8     496
+   t48              temp    double                          8     504
+   t49              temp    double                          8     512
+   t50              temp    int                             4     520
+   t51              temp    int                             4     524
+   t52              temp    int                             4     528
+   t53              temp    int                             4     532
+   t54              temp    int                             4     536
+   t55              temp    int                             4     540
+   t56              temp    int                             4     544
+   t57              temp    int                             4     548
+   t58              temp    int                             4     552
+   t59              temp    const char *                    4     556
+   t60              temp    char                            1     560
+   t61              temp    int                             4     564
+   t62              temp    char *                          4     568
+   t63              temp    unsigned int                    4     572
+   t64              temp    int                             4     576
+   t65              temp    int                             4     580
 
- Code: 185 instruction(s)
+ Code: 184 instruction(s)
 
     113        t1 = 2 int* 2
     114        if 3 int> 9 goto L4
@@ -260,100 +259,99 @@
     201        m[16] = 3.5
     202        m[24] = 122
     203        copy = m
-    204        t35 = &copy
-    205        copy[4] = 100
-    206        t36 = m[0]
-    207        t37 = chartoint t36
-    208        t38 = m[4]
-    209        t39 = m[8]
-    210        t40 = chartoint t39
-    211        t41 = m[10]
-    212        t42 = shorttoint t41
-    213        t43 = m[16]
-    214        t44 = m[24]
-    215        t45 = chartoint t44
-    216        t46 = copy[4]
-    217        param "%c %d %c %d %.1f %c %d\n"
+    204        copy[4] = 100
+    205        t35 = m[0]
+    206        t36 = chartoint t35
+    207        t37 = m[4]
+    208        t38 = m[8]
+    209        t39 = chartoint t38
+    210        t40 = m[10]
+    211        t41 = shorttoint t40
+    212        t42 = m[16]
+    213        t43 = m[24]
+    214        t44 = chartoint t43
+    215        t45 = copy[4]
+    216        param "%c %d %c %d %.1f %c %d\n"
+    217        param t36
     218        param t37
-    219        param t38
-    220        param t40
+    219        param t39
+    220        param t41
     221        param t42
-    222        param t43
+    222        param t44
     223        param t45
-    224        param t46
-    225        call printf, 8
-    226        t47 = &letters
-    227        t48 = table[0]
-    228        t49 = table[8]
-    229        t50 = table[16]
-    230        t51 = matrix[20]
-    231        t52 = matrix[0]
-    232        t53 = t51 int- t52
-    233        param "%s %.1f %.1f %.1f %d\n"
+    224        call printf, 8
+    225        t46 = &letters
+    226        t47 = table[0]
+    227        t48 = table[8]
+    228        t49 = table[16]
+    229        t50 = matrix[20]
+    230        t51 = matrix[0]
+    231        t52 = t50 int- t51
+    232        param "%s %.1f %.1f %.1f %d\n"
+    233        param t46
     234        param t47
     235        param t48
     236        param t49
-    237        param t50
-    238        param t53
-    239        call printf, 6
-    240        grid[0] = 1
-    241        grid[4] = 0
-    242        grid[8] = 0
-    243        grid[12] = 0
-    244        grid[16] = 0
-    245        grid[20] = 2
-    246        grid[24] = 0
-    247        grid[28] = 0
-    248        grid[32] = 0
-    249        grid[36] = 0
-    250        grid[40] = 3
-    251        grid[44] = 0
-    252        trace = 0
-    253        i = 0
-    254  L10:  if i int< 3 goto L11
-    255        goto L12
-    256  L11:  t54 = i int* 4                      (n2 = 4)
-    257        t55 = t54 int+ i
-    258        t56 = t55 int* 4                    (w = 4)
-    259        t57 = grid[t56]
-    260        t58 = trace int+ t57
-    261        trace = t58
-    262        t59 = i int+ 1
-    263        i = t59
-    264        goto L10
-    265  L12:  words[0] = "one"
-    266        words[4] = "two"
-    267        words[8] = "three"
-    268        rows[0] = 97
-    269        rows[1] = 98
-    270        rows[2] = 0
-    271        rows[3] = 0
-    272        rows[4] = 0
-    273        rows[5] = 0
-    274        rows[6] = 99
-    275        rows[7] = 100
-    276        rows[8] = 101
-    277        rows[9] = 0
-    278        rows[10] = 0
-    279        rows[11] = 0
-    280        t60 = words[8]
-    281        t61 = rows[8]
-    282        t62 = chartoint t61
-    283        t63 = &rows
-    284        t64 = 12 uint/ 4
-    285        param "%d %s %c %s %d\n"
-    286        param trace
-    287        param t60
+    237        param t52
+    238        call printf, 6
+    239        grid[0] = 1
+    240        grid[4] = 0
+    241        grid[8] = 0
+    242        grid[12] = 0
+    243        grid[16] = 0
+    244        grid[20] = 2
+    245        grid[24] = 0
+    246        grid[28] = 0
+    247        grid[32] = 0
+    248        grid[36] = 0
+    249        grid[40] = 3
+    250        grid[44] = 0
+    251        trace = 0
+    252        i = 0
+    253  L10:  if i int< 3 goto L11
+    254        goto L12
+    255  L11:  t53 = i int* 4                      (n2 = 4)
+    256        t54 = t53 int+ i
+    257        t55 = t54 int* 4                    (w = 4)
+    258        t56 = grid[t55]
+    259        t57 = trace int+ t56
+    260        trace = t57
+    261        t58 = i int+ 1
+    262        i = t58
+    263        goto L10
+    264  L12:  words[0] = "one"
+    265        words[4] = "two"
+    266        words[8] = "three"
+    267        rows[0] = 97
+    268        rows[1] = 98
+    269        rows[2] = 0
+    270        rows[3] = 0
+    271        rows[4] = 0
+    272        rows[5] = 0
+    273        rows[6] = 99
+    274        rows[7] = 100
+    275        rows[8] = 101
+    276        rows[9] = 0
+    277        rows[10] = 0
+    278        rows[11] = 0
+    279        t59 = words[8]
+    280        t60 = rows[8]
+    281        t61 = chartoint t60
+    282        t62 = &rows
+    283        t63 = 12 uint/ 4
+    284        param "%d %s %c %s %d\n"
+    285        param trace
+    286        param t59
+    287        param t61
     288        param t62
     289        param t63
-    290        param t64
-    291        call printf, 6
-    292        sensor = 5
-    293        t65 = sensor int* 2
-    294        fast = t65
-    295        t66 = fast int+ kept.17
-    296        deduced = t66
-    297        return deduced
+    290        call printf, 6
+    291        sensor = 5
+    292        t64 = sensor int* 2
+    293        fast = t64
+    294        t65 = fast int+ kept.17
+    295        deduced = t65
+    296        return deduced
 
 
 ----------------------------------------------------------------------------
@@ -363,88 +361,88 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Number             typedef       int                        -          15    -    0  
-   Row                typedef       int[4]                     -          16    -    0  
-   (unnamed at 17:9)  struct_tag    struct (unnamed at 17:9)   -          17    -    0  size 24
-   Item               typedef       Item                       -          17    -    0  
-   (unnamed at 18:9)  struct_tag    struct (unnamed at 18:9)   -          18    -    0  size 80
-   Box                typedef       Box                        -          18    -    0  
-   Mixed              struct_tag    struct Mixed               -          19    -    0  size 32
-   primes             variable      const int[4]               global     21   16    1  
-   matrix             variable      int[2][3]                  global     22   24    5  
-   letters            variable      char[3]                    global     23    3    2  
-   stock              variable      Item                       global     24   24    2  
-   table              variable      double[3]                  global     25   24    3  
-   sum                function      int (const int *)          -          27    -    2  _Z3sumPKi; defined
-   main               function      int (void)                 -          29    -    0  defined
+   Number             typedef       int                        -           6    -    0  
+   Row                typedef       int[4]                     -           7    -    0  
+   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 24
+   Item               typedef       Item                       -           8    -    0  
+   (unnamed at 9:9)   struct_tag    struct (unnamed at 9:9)    -           9    -    0  size 80
+   Box                typedef       Box                        -           9    -    0  
+   Mixed              struct_tag    struct Mixed               -          10    -    0  size 32
+   primes             variable      const int[4]               global     12   16    1  
+   matrix             variable      int[2][3]                  global     13   24    5  
+   letters            variable      char[3]                    global     14    3    2  
+   stock              variable      Item                       global     15   24    2  
+   table              variable      double[3]                  global     16   24    3  
+   sum                function      int (const int *)          -          18    -    2  _Z3sumPKi; defined
+   main               function      int (void)                 -          20    -    0  defined
 
- scope: global > struct (unnamed at 17:9)
+ scope: global > struct (unnamed at 8:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   tag                field         char                       member     17    1    1  (unnamed at 17:9)::tag; public, offset 0
-   weight             field         double                     member     17    8    4  (unnamed at 17:9)::weight; public, offset 8
-   count              field         short                      member     17    2    4  (unnamed at 17:9)::count; public, offset 16
+   tag                field         char                       member      8    1    1  (unnamed at 8:9)::tag; public, offset 0
+   weight             field         double                     member      8    8    4  (unnamed at 8:9)::weight; public, offset 8
+   count              field         short                      member      8    2    4  (unnamed at 8:9)::count; public, offset 16
 
- scope: global > struct (unnamed at 18:9)
+ scope: global > struct (unnamed at 9:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   first              field         Item                       member     18   24    1  (unnamed at 18:9)::first; public, offset 0
-   rest               field         Item[2]                    member     18   48    5  (unnamed at 18:9)::rest; public, offset 24
-   total              field         int                        member     18    4    2  (unnamed at 18:9)::total; public, offset 72
+   first              field         Item                       member      9   24    1  (unnamed at 9:9)::first; public, offset 0
+   rest               field         Item[2]                    member      9   48    5  (unnamed at 9:9)::rest; public, offset 24
+   total              field         int                        member      9    4    2  (unnamed at 9:9)::total; public, offset 72
 
  scope: global > struct Mixed
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         char                       member     19    1    1  Mixed::a; public, offset 0
-   b                  field         int                        member     19    4    3  Mixed::b; public, offset 4
-   c                  field         char                       member     19    1    1  Mixed::c; public, offset 8
-   d                  field         short                      member     19    2    1  Mixed::d; public, offset 10
-   e                  field         double                     member     19    8    1  Mixed::e; public, offset 16
-   f                  field         char                       member     19    1    1  Mixed::f; public, offset 24
+   a                  field         char                       member     10    1    1  Mixed::a; public, offset 0
+   b                  field         int                        member     10    4    3  Mixed::b; public, offset 4
+   c                  field         char                       member     10    1    1  Mixed::c; public, offset 8
+   d                  field         short                      member     10    2    1  Mixed::d; public, offset 10
+   e                  field         double                     member     10    8    1  Mixed::e; public, offset 16
+   f                  field         char                       member     10    1    1  Mixed::f; public, offset 24
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     const int *                param      27    4    1  r.1
-   s                  variable      int                        local      27    4    2  s.2
+   r                  parameter     const int *                param      18    4    1  r.1
+   s                  variable      int                        local      18    4    2  s.2
 
  scope: global > sum() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      27    4    3  i.3
+   i                  variable      int                        local      18    4    3  i.3
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  variable      int[4]                     local      30   16    1  r.4
-   n                  variable      int                        local      31    4    3  n.5
-   box                variable      Box                        local      36   80    8  box.6
-   it                 variable      Item *                     local      38    4    2  it.7
-   m                  variable      struct Mixed               local      42   32    7  m.8
-   copy               variable      struct Mixed               local      43   32    2  copy.9
-   grid               variable      int[3][4]                  local      48   48    1  grid.10
-   trace              variable      int                        local      49    4    2  trace.11
-   words              variable      const char *[3]            local      51   12    3  words.13
-   rows               variable      char[2][6]                 local      52   12    2  rows.14
-   sensor             variable      int                        local      54    4    1  sensor.15
-   fast               variable      int                        local      55    4    1  fast.16
-   kept               variable      int                        static     56    4    1  kept.17; static
-   deduced            variable      int                        local      57    4    1  deduced.18
+   r                  variable      int[4]                     local      21   16    1  r.4
+   n                  variable      int                        local      22    4    3  n.5
+   box                variable      Box                        local      27   80    8  box.6
+   it                 variable      Item *                     local      29    4    2  it.7
+   m                  variable      struct Mixed               local      33   32    7  m.8
+   copy               variable      struct Mixed               local      34   32    2  copy.9
+   grid               variable      int[3][4]                  local      39   48    1  grid.10
+   trace              variable      int                        local      40    4    2  trace.11
+   words              variable      const char *[3]            local      42   12    3  words.13
+   rows               variable      char[2][6]                 local      43   12    2  rows.14
+   sensor             variable      int                        local      45    4    1  sensor.15
+   fast               variable      int                        local      46    4    1  fast.16
+   kept               variable      int                        static     47    4    1  kept.17; static
+   deduced            variable      int                        local      48    4    1  deduced.18
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      50    4    4  i.12
+   i                  variable      int                        local      41    4    4  i.12
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
 ----------------------------------------------------------------------------
 
-struct (unnamed at 17:9): size 24, align 8
+struct (unnamed at 8:9): size 24, align 8
     +0  char tag  [public]
     +8  double weight  [public]
     +16  short count  [public]
-struct (unnamed at 18:9): size 80, align 8
+struct (unnamed at 9:9): size 80, align 8
     +0  Item first  [public]
     +24  Item[2] rest  [public]
     +72  int total  [public]

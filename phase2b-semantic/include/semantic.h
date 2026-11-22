@@ -65,7 +65,7 @@ class SemanticAnalyzer {
         Symbol *fn = nullptr;
         std::string name;                /* for messages */
         TypePtr ret;
-        bool isConstructorLike = false;  /* constructor / destructor: no value returns */
+        bool isConstructorLike = false;  /* constructor: no value returns */
         bool sawValueReturn = false;
         std::vector<char> breakables;    /* 'L' loop, 'S' switch, innermost last */
         int loopDepth = 0;
@@ -124,9 +124,6 @@ class SemanticAnalyzer {
     ASTNodePtr takeElided(const TypePtr &sub, const std::vector<ASTNodePtr> &items, size_t &i);
     void friendFunction(const ASTNodePtr &m, RecordInfo *rec, bool isDefinition,
                         std::vector<std::pair<ASTNodePtr, SymbolPtr>> &bodies);
-    void virtualFunctions(RecordInfo *rec, const ASTNodePtr &n);
-    bool isAbstractType(const TypePtr &t) const;
-    void memberInitializers(const ASTNodePtr &ctorNode, RecordInfo *rec);
     std::vector<SymbolPtr> objectCandidates(const std::vector<SymbolPtr> &all, bool constObject, const ASTNode *at,
                                             const std::string &name);
     void checkInitializer(const TypePtr &target, const ASTNodePtr &init, bool requireConstant,
@@ -177,9 +174,7 @@ class SemanticAnalyzer {
     void checkConstantConversion(const TypePtr &target, const ASTNodePtr &e);
     /* gcc's -Wsequence-point over every full expression (sequencing.cpp) */
     void checkSequencing(const ASTNodePtr &root);
-    Conversion argumentConversion(const TypePtr &param, const ASTNodePtr &arg, bool allowUser = true);
-    bool userConvertible(const TypePtr &T, const ASTNodePtr &arg);
-    void markConversions(const TypePtr &ft, const std::vector<ASTNodePtr> &args);
+    Conversion argumentConversion(const TypePtr &param, const ASTNodePtr &arg);
     SymbolPtr resolveOverload(const std::string &name, const std::vector<SymbolPtr> &candidates,
                               const std::vector<ASTNodePtr> &args, const ASTNode *at);
     TypePtr checkCallArgs(const TypePtr &fnType, const std::string &name,
@@ -192,9 +187,9 @@ class SemanticAnalyzer {
     void foldBinary(const ASTNodePtr &n, const std::string &op);
 
     /* ---- constructors, operator overloading, va_* (cxx.cpp) ---- */
-    /* overload resolution among `rec`'s constructors (plus the implicit
-       default/copy constructors); returns the user constructor chosen */
-    SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at, bool implicit = false);
+    /* default construction only (D35): checks `args` and returns `rec`'s
+       constructor to call, or null when there is none to call */
+    SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at);
     void defaultConstruct(const TypePtr &t, const ASTNode *at);
     void constructorInit(const TypePtr &target, const ASTNodePtr &init, const std::string &what);
     TypePtr constructExpr(const ASTNodePtr &n);

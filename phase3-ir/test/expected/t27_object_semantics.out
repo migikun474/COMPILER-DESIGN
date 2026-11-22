@@ -1,13 +1,12 @@
-copy of 1
-101
-copy of 1
-1 101 5
-14 5
+Dog()
+start of main
+50 1
+1 7 5
 15 20 10.5 90.0
 17
-~Dog 3
-~Dog 2
-~Dog 1
-end of main
-~Dog 9
+Dog()
+Dog()
+Dog()
+3 42
+0 42
 exit: 0

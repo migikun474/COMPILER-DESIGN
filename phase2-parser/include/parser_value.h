@@ -34,7 +34,6 @@ struct TypeSpec {
     int storageClasses = 0;     /* static/extern/typedef keywords seen */
     bool isConst = false;
     bool isAuto = false;
-    bool isVirtual = false;
     bool isFriend = false;
 };
 
@@ -64,7 +63,6 @@ struct DeclInfo {
     std::vector<ASTNodePtr> arrayDims;  /* one per `[...]`, nullptr for `[]` */
     ASTTypeExprPtr typeExpr;            /* only meaningful for a param entry */
     ASTNodePtr ctorInit;                /* `T x(args)`: a ConstructExpr */
-    bool isConstMethod = false;         /* `int get() const` */
 };
 
 /* =====================================================================

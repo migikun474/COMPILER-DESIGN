@@ -1005,6 +1005,146 @@ trailing zeros and a lone point. Checked against gcc on 140 values
 (new test `t34_float_formats`). Same ceiling as `%f`: the scaled value
 must stay below about 9·10¹⁸.
 
+### D34. No preprocessor (2026-11-21)
+
+The user asked to remove the preprocessor and chose that any line
+starting with `#` is an error (rather than silently skipping it). The
+shared `preprocessor` module is deleted. Both scanners report
+`preprocessor directive '#include' is not supported` and skip the rest
+of the line, so one directive gives one message instead of a cascade of
+syntax errors. `printf`, `scanf`, `malloc`, `free` and `va_list` were
+always built into the language, so programs lose nothing by dropping
+`#include`. The drivers read the source through `openSource()`
+(diagnostics module), which keeps the lines for carets and for the
+scanner's lookahead; the line-origin map the preprocessor kept is gone,
+since every position is now a line of the file as written.
+
+Tests: every `#include` line was removed from the test programs, the
+macros in `t26` and parser `test2` were inlined, and the five
+preprocessor-only tests were replaced by `e16_no_preprocessor`.
+
+### D35. A smaller C++ subset (2026-11-21)
+
+The user asked to remove most C++ class features and keep the rest
+simple. Decisions taken with the user:
+
+| Feature | Now |
+|---|---|
+| Constructors | Only the default constructor `T()` (one per class, no parameters, no initializer list). `T x(other)` with an object of the same class, `T x = other`, by-value arguments and returns copy the object's bytes: there are no copy constructors |
+| Destructors | Removed; `~T()` is a syntax error |
+| Temporary object lifetime | Removed with destructors (nothing runs at the end of a full expression) |
+| Const member functions | Removed (`int f() const` is a syntax error); a const object can only call static members |
+| Nested and local classes | A `class`, or a struct with member functions, a constructor or a base, may not be defined inside a class or a function. Plain C data structs may still nest, as in C |
+| Lazily built static locals | A `static` local whose class runs a constructor is an error |
+| Inheritance | Single inheritance only: at most one direct base, chains allowed |
+| Object slicing | A derived object may not be copied, assigned or passed by value as a base object; pointers and references still convert |
+| Virtual functions | Removed with everything that served them: override detection, vtables, vptrs, dynamic dispatch (`call *t`, `jalr`), this-adjustment, abstract classes, `= 0`, virtual destructors and operators |
+| `explicit`, converting constructors | Removed |
+
+`virtual` and `explicit` stay reserved words so the scanner can name
+them in its error; `~T()`, `int f() const`, `T() : x(1)` and `= 0` are
+syntax errors. Friends, access control, static members, operator
+overloading, function overloading and references are unchanged.
+
+In the TAC generator this deleted the scope/destructor machinery
+(`destroyScopes`, temporaries, `scanLabels`), the vtable code, copy
+constructors, slicing and converting-constructor paths. With single
+inheritance and no vptr a base always sits at offset 0, so `this` is the
+object's address with no adjustment.
+
+Tests: semantic `v10`, `v17`, `v19`, `v21`, `v25`, `v27`, `e09`, `e14`,
+`e15`, `e23` rewritten, `e24_removed_keywords` added; parser `test7`,
+`test24`, `test25`, `test30` rewritten, `test31_dropped_class_features`
+added; TAC `t08`, `t13`, `t23`, `t27` rewritten (expected output from
+g++), `t30_temporaries`, `t31_virtual`, `t32_class_features` deleted.
+
+### D36. Loop-invariant code motion removed (2026-11-21)
+
+At the user's request `-O3` no longer hoists invariant computations out
+of loops (`hoistInvariants()` deleted). The dominator and natural-loop
+analysis (`loops()`) stays, for the loop unrolling planned next.
+
+### D37. Run-time checks and the assignment warning (2026-11-21)
+
+- **Assignment as a condition:** `if (a = b)`, loops and `?:` warn
+  `assignment used as the condition`. The AST keeps no parentheses, so
+  gcc's `if ((a = b))` escape still warns.
+- **Division by zero:** the MIPS code checks the divisor of every
+  integer `/` and `%` (not a nonzero constant), and `__udivmodll` checks
+  it for `long long`. On zero it prints the interpreter's message,
+  `run-time error: division by zero`, and exits with code 2.
+- **Deep recursion:** SPIM's stack grows by doubling and stops 256 KB
+  below 0x80000000 (8045 nested 32-byte frames fit, 8046 do not). Every
+  function that calls, or whose frame exceeds 4 KB, compares `$sp` with
+  `__stack_limit` (16 KB above that floor, set at start-up) and jumps to
+  `__stack_overflow`, which prints `run-time error: stack overflow
+  (recursion too deep)` and exits with 2. The interpreter recursed in C++
+  for every simulated call and crashed near 50,000 calls; it now caps the
+  depth at 10,000 with the same message.
+
+### D38. Optimizer additions: algebra, unrolling, dead functions, reaching definitions (2026-11-21)
+
+- **More algebraic rules** (`simplify()`, integers only): `x - x` and
+  `x ^ x` are 0, `x & x` and `x & -1` are `x`, `x & 0` is 0, `x | x` is
+  `x`, `x | -1` is -1, `x % 1` and `x % -1` are 0. None hold for
+  floating point (`x - x` is NaN for infinite `x`).
+- **Loop unrolling** (`-O3`, `unrollLoops()`): a small contiguous natural
+  loop (header first, at most 24 quads, its single back edge last)
+  becomes two copies, each keeping its exit test, so no trip count is
+  needed; a pass saves the jump back every other iteration. Loops are
+  taken last first so earlier loops keep their indices, and each is
+  unrolled once.
+- **Dead function elimination** (`-O3`, after inlining): only the
+  functions `main` reaches through calls are kept. With no function
+  pointers, every use of a function is a `call`.
+- **Reaching definitions** (`reachingDefinitions()`): forward, union at
+  joins, gen/kill per block, plus an entry pseudo-definition "no value
+  yet" for each scalar local. The uninitialized-variable warning now
+  uses it instead of liveness: a read reached by the entry definition is
+  reported, at the line of that read rather than of the declaration.
+
+### D39. Frame slot reclamation and register arguments (2026-11-21)
+
+- **Frame slots:** the MIPS frame is laid out after register allocation;
+  only names kept in memory and still mentioned by some quad get a slot
+  (`t01` at `-O2`: 464 bytes -> 8).
+- **Register arguments (MIPS o32 style), replacing D25 for user calls:**
+  the first 16 bytes of arguments travel in `$a0`-`$a3`. Integer and
+  pointer words go straight into their register and are never stored;
+  other words there (doubles, `long long`, structs) are stored as before
+  and loaded too. The caller always reserves 16 bytes as the callee's home
+  area. The callee moves an argument into its home register, or spills it
+  to its home slot, so parameter access and `va_arg` are unchanged.
+  Calls into the run-time library keep the all-stack convention, so
+  `runtime.s` is untouched.
+
+### D40. A combined driver (2026-11-21)
+
+`mips_generator` already compiles phases 2, 2b, 3 and 4 into one
+program, so it became the combined driver rather than a new binary: a
+stage flag (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) stops
+after that phase and prints it; with none it writes the MIPS assembly as
+before. The per-phase binaries stay for the per-phase test suites.
+
+### D41. Audit of D34-D40 (2026-11-22)
+
+Every item was re-checked with probe programs compared against g++ on
+the TAC interpreter and on SPIM at `-O0` ... `-O3` (register arguments
+of every kind and position, variadic calls, methods, recursion,
+unrolled loops with `break`/`continue`/`switch`, division of every
+width, the new algebraic rules, dead functions, the reduced classes),
+plus the run-time errors in both back ends. Two changes came out of it:
+
+- **`-O3` hang (older than D34):** `globalCommon()` started a block whose
+  predecessors were not yet computed from the empty set instead of
+  "everything", so its facts grew later and the iteration never settled
+  on some loop shapes. Such a block is now skipped until a predecessor
+  is computed; the sets only shrink and the analysis terminates. The
+  reproducer is test `t35_loop_shapes`.
+- **Register arguments follow the machine-level switch:** `-O0` and
+  `--stack-only` keep the all-stack convention of D25 (the direct
+  translation); `-O1` and above pass arguments in `$a0`-`$a3` (D39).
+
 ---
 
 ## Open questions

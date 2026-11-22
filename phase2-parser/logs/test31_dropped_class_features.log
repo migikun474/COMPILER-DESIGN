@@ -1,0 +1,77 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:10:21: lexical error: 'virtual' is not supported: this language has no virtual functions
+ 10 | class T01 { public: virtual int area() { return 0; } };
+    |                     ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:14:21: lexical error: 'explicit' is not supported: this language has no converting constructors
+ 14 | class T02 { public: explicit T02() { } };
+    |                     ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:18:21: syntax error: syntax error, unexpected '~', expecting '}'
+ 18 | class T03 { public: ~T03() { } };
+    |                     ^
+    | note: insert '}' here
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:23:6: syntax error: syntax error, unexpected '~', expecting TYPE_NAME
+ 23 | T04::~T04() { }
+    |      ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:27:38: syntax error: syntax error, unexpected CONST, expecting ';'
+ 27 | class T05 { public: int x; int get() const { return x; } };
+    |                                      ^
+    | note: insert ';' here
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:31:34: syntax error: syntax error, unexpected ':', expecting ';' or '{'
+ 31 | class T06 { public: int x; T06() : x(1) { } };
+    |                                  ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test31_dropped_class_features.c:35:25: syntax error: function 'area' cannot have an initializer ('= 0' pure virtual functions are not supported)
+ 35 | class T07 { public: int area() = 0; };
+    |                         ^
+
+-----------------------------------------
+Total Errors : 7
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "resync_marker : _Z13resync_markerv"
+|   `-- CompoundStmt
+|-- ClassDecl "T01"
+|   `-- FunctionDef "area : _ZN3T014areaEv"
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "0"
+|-- VarDecl "resync_after_1 : INT"
+|-- ClassDecl "T02"
+|   `-- ConstructorDef "T02 : _ZN3T02C1Ev"
+|       `-- CompoundStmt
+|-- VarDecl "resync_after_2 : INT"
+|-- ErrorNode "line 18: near '~'"
+|-- ErrorNode "line 18: near '~'"
+|-- ErrorNode "line 18: near '~'"
+|-- VarDecl "resync_after_3 : INT"
+|-- ClassDecl "T04"
+|   `-- VarDecl "x : INT"
+|-- ErrorNode "line 23: near '~'"
+|-- VarDecl "resync_after_4 : INT"
+|-- ErrorNode "line 27: near 'const'"
+|-- ErrorNode "line 27: near 'const'"
+|-- ErrorNode "line 27: near 'const'"
+|-- ErrorNode "line 27: near 'const'"
+|-- VarDecl "resync_after_5 : INT"
+|-- ErrorNode "line 31: near ':'"
+|-- ErrorNode "line 31: near ':'"
+|-- ErrorNode "line 31: near ':'"
+|-- VarDecl "resync_after_6 : INT"
+|-- ClassDecl "T07"
+|   `-- FunctionDecl "area : _ZN3T074areaEv"
+|-- VarDecl "resync_after_7 : INT"
+`-- FunctionDef "main : _ZN3T064mainEv"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- IntLiteral "0"

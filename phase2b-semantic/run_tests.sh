@@ -14,7 +14,7 @@
 #     void main(int x) {  // error: must return 'int'  // error: invalid parameter list
 #
 # The text after "error:"/"warning:" must appear (case-insensitively) in
-# a semantic or preprocessor diagnostic of that kind reported on that line. Any diagnostic the
+# a semantic or lexical diagnostic of that kind reported on that line. Any diagnostic the
 # file does not announce is a failure too, so spurious errors are caught
 # as reliably as missing ones.
 #
@@ -65,7 +65,7 @@ check_file() {
         }
     }' "$f" >> "$TMP/expected"
     printf '%s\n' "$out" |
-        sed -n -E 's#^.*:([0-9]+):[0-9]+: (semantic|preprocessor) (error|warning): (.*)$#\1\t\3\t\4#p' > "$TMP/actual"
+        sed -n -E 's#^.*:([0-9]+):[0-9]+: (semantic|lexical) (error|warning): (.*)$#\1\t\3\t\4#p' > "$TMP/actual"
 
     local report
     report="$(awk -F'\t' '
@@ -124,13 +124,8 @@ for f in "$SCRIPT_DIR"/test/invalid/*.c; do check_file "$f" 1; done
 #  - operators.c line 11, `c = a+++++b;`, lexes as `(a++)++ + b`,
 #    incrementing an rvalue -- gcc and g++ reject it with the same
 #    "lvalue required as increment operand".
-#  - test7_cpp_features.c line 35, `Dog d;`, where Dog's only
-#    constructor is Dog(int): g++ rejects it ("no matching function for
-#    call to 'Dog::Dog()'"). It was written when the grammar could not
-#    call constructors with arguments at all; now `Dog d(4);` works.
 declare -A CORPUS_EXPECT=(
     [operators.c]="lvalue required as increment operand"
-    [test7_cpp_features.c]="has no default constructor"
 )
 echo
 echo "=== end to end: phase2-parser corpus through semantic analysis ==="

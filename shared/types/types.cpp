@@ -331,9 +331,9 @@ int alignOf(const TypePtr &t) {
 static long long alignUp(long long v, int a) { return a > 1 ? (v + a - 1) / a * a : v; }
 
 void layoutRecord(RecordInfo &r) {
-    long long offset = r.ownVptr ? 4 : 0; /* the table pointer comes first */
-    int align = r.ownVptr ? 4 : 1;
-    for (auto &b : r.bases) { /* base sub-objects next, in order */
+    long long offset = 0;
+    int align = 1;
+    for (auto &b : r.bases) { /* the base sub-object first (single inheritance: at offset 0) */
         if (!b.record || !b.record->complete) continue;
         offset = alignUp(offset, b.record->align);
         b.offset = offset;

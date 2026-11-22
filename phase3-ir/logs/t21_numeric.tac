@@ -437,89 +437,89 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   absolute           function      double (double)            -           5    -    1  _Z8absoluted; defined
-   root               function      double (double)            -           7    -    2  _Z4rootd; defined
-   series             function      double (int)               -          13    -    1  _Z6seriesi; defined
-   power              function      double (double, int)       -          19    -    1  _Z5powerdi; defined
-   average            function      float (float, float, float) -          20    -    1  _Z7averagefff; defined
-   roundToInt         function      int (double)               -          21    -    4  _Z10roundToIntd; defined
-   poly               function      double (double)            -          23    -    1  _Z4polyd; defined
-   main               function      int (void)                 -          25    -    0  defined
+   absolute           function      double (double)            -           4    -    1  _Z8absoluted; defined
+   root               function      double (double)            -           6    -    2  _Z4rootd; defined
+   series             function      double (int)               -          12    -    1  _Z6seriesi; defined
+   power              function      double (double, int)       -          18    -    1  _Z5powerdi; defined
+   average            function      float (float, float, float) -          19    -    1  _Z7averagefff; defined
+   roundToInt         function      int (double)               -          20    -    4  _Z10roundToIntd; defined
+   poly               function      double (double)            -          22    -    1  _Z4polyd; defined
+   main               function      int (void)                 -          24    -    0  defined
 
  scope: global > absolute()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     double                     param       5    8    3  v.1
+   v                  parameter     double                     param       4    8    3  v.1
 
  scope: global > root()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     double                     param       7    8    2  v.2
-   guess              variable      double                     local       8    8    4  guess.3
+   v                  parameter     double                     param       6    8    2  v.2
+   guess              variable      double                     local       7    8    4  guess.3
 
  scope: global > root() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local       9    4    2  i.4
+   i                  variable      int                        local       8    4    2  i.4
 
  scope: global > series()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   terms              parameter     int                        param      13    4    1  terms.5
-   sum                variable      double                     local      14    8    2  sum.6
-   sign               variable      double                     local      14    8    3  sign.7
+   terms              parameter     int                        param      12    4    1  terms.5
+   sum                variable      double                     local      13    8    2  sum.6
+   sign               variable      double                     local      13    8    3  sign.7
 
  scope: global > series() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      15    4    3  i.8
+   i                  variable      int                        local      14    4    3  i.8
 
  scope: global > power()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   base               parameter     double                     param      19    8    1  base.9
-   n                  parameter     int                        param      19    4    1  n.10
-   r                  variable      double                     local      19    8    2  r.11
+   base               parameter     double                     param      18    8    1  base.9
+   n                  parameter     int                        param      18    4    1  n.10
+   r                  variable      double                     local      18    8    2  r.11
 
  scope: global > average()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     float                      param      20    4    1  a.12
-   b                  parameter     float                      param      20    4    1  b.13
-   c                  parameter     float                      param      20    4    1  c.14
+   a                  parameter     float                      param      19    4    1  a.12
+   b                  parameter     float                      param      19    4    1  b.13
+   c                  parameter     float                      param      19    4    1  c.14
 
  scope: global > roundToInt()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     double                     param      21    8    3  v.15
+   v                  parameter     double                     param      20    8    3  v.15
 
  scope: global > poly()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     double                     param      23    8    3  x.16
+   x                  parameter     double                     param      22    8    3  x.16
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   d                  variable      double                     local      26    8    2  d.17
-   e                  variable      double                     local      26    8    2  e.18
-   f                  variable      double                     local      26    8    1  f.19
-   g                  variable      float                      local      27    4    2  g.20
-   i                  variable      int                        local      34    4    2  i.21
-   u                  variable      unsigned int               local      35    4    1  u.22
-   c                  variable      char                       local      36    1    1  c.23
-   mixed              variable      double                     local      37    8    1  mixed.24
-   narrowed           variable      float                      local      38    4    1  narrowed.25
-   total              variable      double                     local      41    8    2  total.26
-   fsum               variable      float                      local      44    4    3  fsum.28
-   tiny               variable      double                     local      47    8    2  tiny.30
-   huge               variable      double                     local      47    8    2  huge.31
+   d                  variable      double                     local      25    8    2  d.17
+   e                  variable      double                     local      25    8    2  e.18
+   f                  variable      double                     local      25    8    1  f.19
+   g                  variable      float                      local      26    4    2  g.20
+   i                  variable      int                        local      33    4    2  i.21
+   u                  variable      unsigned int               local      34    4    1  u.22
+   c                  variable      char                       local      35    1    1  c.23
+   mixed              variable      double                     local      36    8    1  mixed.24
+   narrowed           variable      float                      local      37    4    1  narrowed.25
+   total              variable      double                     local      40    8    2  total.26
+   fsum               variable      float                      local      43    4    3  fsum.28
+   tiny               variable      double                     local      46    8    2  tiny.30
+   huge               variable      double                     local      46    8    2  huge.31
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   step               variable      double                     local      42    8    4  step.27
-   k                  variable      int                        local      45    4    3  k.29
+   step               variable      double                     local      41    8    4  step.27
+   k                  variable      int                        local      44    4    3  k.29
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

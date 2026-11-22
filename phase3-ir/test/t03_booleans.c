@@ -1,5 +1,4 @@
 /* t03 -- boolean expressions: short circuit, comparisons as values, ! */
-#include <stdio.h>
 
 int calls = 0;
 int yes() { calls++; return 1; }

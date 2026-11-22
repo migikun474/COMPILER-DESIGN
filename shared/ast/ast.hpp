@@ -11,7 +11,7 @@ enum class ASTKind {
 
     VarDecl, ParamDecl, FunctionDecl, FunctionDef, DeclGroup,
     StructDecl, ClassDecl, TypedefDecl,
-    ConstructorDef, DestructorDef, MemInit, FriendDecl, InitDeclarator, InitializerList,
+    ConstructorDef, FriendDecl, InitDeclarator, InitializerList,
 
     CompoundStmt, IfStmt, WhileStmt, DoWhileStmt, UntilStmt, ForStmt,
     SwitchStmt, CaseStmt, DefaultStmt, LabeledStmt,
@@ -56,11 +56,7 @@ struct ASTTypeExpr {
     bool isConst = false;
     bool isAuto = false;
     bool isTypedef = false;
-    bool isVirtual = false;             /* `virtual` member function / destructor */
-    bool isPure = false;                /* `virtual int f() = 0;` */
-    bool isExplicit = false;            /* `explicit` constructor */
     bool isFriend = false;              /* `friend` declaration inside a class */
-    bool isConstMethod = false;         /* `int get() const` */
 
     int pointerLevel = 0;               /* counts a leading '&' too, see isReference */
     bool isReference = false;           /* declarator began with '&' */
@@ -104,10 +100,6 @@ struct ASTNode {
     /* filled in by semantic analysis; unused by the parser */
     std::shared_ptr<const sem::Type> semType;
     std::shared_ptr<sem::Symbol> symbol;
-    /* an initializer converted by a constructor (`Vec v = other;`): that
-       constructor. Kept apart from `symbol`, which stays what the
-       expression itself refers to. */
-    std::shared_ptr<sem::Symbol> converter;
     bool isLValue = false;
     bool hasConstValue = false;
     long long constValue = 0;
