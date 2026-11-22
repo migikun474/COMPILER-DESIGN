@@ -177,9 +177,10 @@ register it is whatever the register held. The compiler warns about it
 - The caller removes the arguments. `$sp` is always 8-byte aligned.
 - Variable arguments need nothing special: `va_start` is the address
   after the last named argument, `va_arg` reads and advances.
-- Only temporaries that the (optimized) code still uses get a frame
-  slot, and names whose live intervals never overlap share one (D39:
-  `t01_expressions` at `-O2` went from a 464-byte frame to 8).
+- The frame is laid out after register allocation (D39): only names
+  kept in memory and still used by some instruction get a slot; a name
+  held in a register gets none. (When this was introduced, `main` of
+  `t01_expressions` at `-O2` went from a 464-byte frame to 8.)
 
 `main` in the assembly file is a small start-up stub: it aligns the
 stack, records the lowest address the stack may reach in
