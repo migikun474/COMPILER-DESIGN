@@ -345,20 +345,20 @@ from the declarator's pointer operators (`ASTTypeExpr::ptrOps`, e.g.
 
 ---
 
-## Structures, unions and classes
+## Structures and classes
 
 `recordDefinition()` creates (or completes) a `RecordInfo` and a `Tag`
 symbol in the tag name space:
 
 ```cpp
 struct RecordInfo {
-    RecordKind kind;                 // Struct, Union, Class
+    RecordKind kind;                 // Struct, Class
     std::string tag, typedefName;    // typedefName: for an unnamed type, its first typedef
     bool complete;
     std::vector<SymbolPtr> fields;   // data members in declaration order
     std::map<std::string, std::vector<SymbolPtr>> members;  // name -> field or method overloads
-    std::vector<SymbolPtr> constructors;  SymbolPtr destructor;
-    std::vector<BaseClass> bases;    // record + inheritance access
+    std::vector<SymbolPtr> constructors;  // at most one: the default constructor (D35)
+    std::vector<BaseClass> bases;    // at most one: single inheritance (D35)
     std::vector<SymbolPtr> promoted; // fields of unnamed members, usable directly
     long long size; int align; int scopeId;
 };
