@@ -361,88 +361,88 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Number             typedef       int                        -           6    -    0  
-   Row                typedef       int[4]                     -           7    -    0  
-   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 24
-   Item               typedef       Item                       -           8    -    0  
-   (unnamed at 9:9)   struct_tag    struct (unnamed at 9:9)    -           9    -    0  size 80
-   Box                typedef       Box                        -           9    -    0  
-   Mixed              struct_tag    struct Mixed               -          10    -    0  size 32
-   primes             variable      const int[4]               global     12   16    1  
-   matrix             variable      int[2][3]                  global     13   24    5  
-   letters            variable      char[3]                    global     14    3    2  
-   stock              variable      Item                       global     15   24    2  
-   table              variable      double[3]                  global     16   24    3  
-   sum                function      int (const int *)          -          18    -    2  _Z3sumPKi; defined
-   main               function      int (void)                 -          20    -    0  defined
+   Number             typedef       int                        -           5    -    0  
+   Row                typedef       int[4]                     -           6    -    0  
+   (unnamed at 7:9)   struct_tag    struct (unnamed at 7:9)    -           7    -    0  size 24
+   Item               typedef       Item                       -           7    -    0  
+   (unnamed at 8:9)   struct_tag    struct (unnamed at 8:9)    -           8    -    0  size 80
+   Box                typedef       Box                        -           8    -    0  
+   Mixed              struct_tag    struct Mixed               -           9    -    0  size 32
+   primes             variable      const int[4]               global     11   16    1  
+   matrix             variable      int[2][3]                  global     12   24    5  
+   letters            variable      char[3]                    global     13    3    2  
+   stock              variable      Item                       global     14   24    2  
+   table              variable      double[3]                  global     15   24    3  
+   sum                function      int (const int *)          -          17    -    2  _Z3sumPKi; defined
+   main               function      int (void)                 -          19    -    0  defined
+
+ scope: global > struct (unnamed at 7:9)
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   tag                field         char                       member      7    1    1  (unnamed at 7:9)::tag; public, offset 0
+   weight             field         double                     member      7    8    4  (unnamed at 7:9)::weight; public, offset 8
+   count              field         short                      member      7    2    4  (unnamed at 7:9)::count; public, offset 16
 
  scope: global > struct (unnamed at 8:9)
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   tag                field         char                       member      8    1    1  (unnamed at 8:9)::tag; public, offset 0
-   weight             field         double                     member      8    8    4  (unnamed at 8:9)::weight; public, offset 8
-   count              field         short                      member      8    2    4  (unnamed at 8:9)::count; public, offset 16
-
- scope: global > struct (unnamed at 9:9)
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   first              field         Item                       member      9   24    1  (unnamed at 9:9)::first; public, offset 0
-   rest               field         Item[2]                    member      9   48    5  (unnamed at 9:9)::rest; public, offset 24
-   total              field         int                        member      9    4    2  (unnamed at 9:9)::total; public, offset 72
+   first              field         Item                       member      8   24    1  (unnamed at 8:9)::first; public, offset 0
+   rest               field         Item[2]                    member      8   48    5  (unnamed at 8:9)::rest; public, offset 24
+   total              field         int                        member      8    4    2  (unnamed at 8:9)::total; public, offset 72
 
  scope: global > struct Mixed
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  field         char                       member     10    1    1  Mixed::a; public, offset 0
-   b                  field         int                        member     10    4    3  Mixed::b; public, offset 4
-   c                  field         char                       member     10    1    1  Mixed::c; public, offset 8
-   d                  field         short                      member     10    2    1  Mixed::d; public, offset 10
-   e                  field         double                     member     10    8    1  Mixed::e; public, offset 16
-   f                  field         char                       member     10    1    1  Mixed::f; public, offset 24
+   a                  field         char                       member      9    1    1  Mixed::a; public, offset 0
+   b                  field         int                        member      9    4    3  Mixed::b; public, offset 4
+   c                  field         char                       member      9    1    1  Mixed::c; public, offset 8
+   d                  field         short                      member      9    2    1  Mixed::d; public, offset 10
+   e                  field         double                     member      9    8    1  Mixed::e; public, offset 16
+   f                  field         char                       member      9    1    1  Mixed::f; public, offset 24
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     const int *                param      18    4    1  r.1
-   s                  variable      int                        local      18    4    2  s.2
+   r                  parameter     const int *                param      17    4    1  r.1
+   s                  variable      int                        local      17    4    2  s.2
 
  scope: global > sum() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      18    4    3  i.3
+   i                  variable      int                        local      17    4    3  i.3
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  variable      int[4]                     local      21   16    1  r.4
-   n                  variable      int                        local      22    4    3  n.5
-   box                variable      Box                        local      27   80    8  box.6
-   it                 variable      Item *                     local      29    4    2  it.7
-   m                  variable      struct Mixed               local      33   32    7  m.8
-   copy               variable      struct Mixed               local      34   32    2  copy.9
-   grid               variable      int[3][4]                  local      39   48    1  grid.10
-   trace              variable      int                        local      40    4    2  trace.11
-   words              variable      const char *[3]            local      42   12    3  words.13
-   rows               variable      char[2][6]                 local      43   12    2  rows.14
-   sensor             variable      int                        local      45    4    1  sensor.15
-   fast               variable      int                        local      46    4    1  fast.16
-   kept               variable      int                        static     47    4    1  kept.17; static
-   deduced            variable      int                        local      48    4    1  deduced.18
+   r                  variable      int[4]                     local      20   16    1  r.4
+   n                  variable      int                        local      21    4    3  n.5
+   box                variable      Box                        local      26   80    8  box.6
+   it                 variable      Item *                     local      28    4    2  it.7
+   m                  variable      struct Mixed               local      32   32    7  m.8
+   copy               variable      struct Mixed               local      33   32    2  copy.9
+   grid               variable      int[3][4]                  local      38   48    1  grid.10
+   trace              variable      int                        local      39    4    2  trace.11
+   words              variable      const char *[3]            local      41   12    3  words.13
+   rows               variable      char[2][6]                 local      42   12    2  rows.14
+   sensor             variable      int                        local      44    4    1  sensor.15
+   fast               variable      int                        local      45    4    1  fast.16
+   kept               variable      int                        static     46    4    1  kept.17; static
+   deduced            variable      int                        local      47    4    1  deduced.18
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      41    4    4  i.12
+   i                  variable      int                        local      40    4    4  i.12
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
 ----------------------------------------------------------------------------
 
-struct (unnamed at 8:9): size 24, align 8
+struct (unnamed at 7:9): size 24, align 8
     +0  char tag  [public]
     +8  double weight  [public]
     +16  short count  [public]
-struct (unnamed at 9:9): size 80, align 8
+struct (unnamed at 8:9): size 80, align 8
     +0  Item first  [public]
     +24  Item[2] rest  [public]
     +72  int total  [public]

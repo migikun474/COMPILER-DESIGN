@@ -7,7 +7,10 @@
 > In particular, these notes still describe **enum, union, file
 > manipulation, lambdas and function pointers**, which were removed from
 > the language on 2026-10-07 (see
-> [`../../docs/DESIGN_LOG.md`](../../docs/DESIGN_LOG.md), decisions D1–D6).
+> [`../../docs/DESIGN_LOG.md`](../../docs/DESIGN_LOG.md), decisions D1–D6),
+> and the preprocessor, destructors, constructors with parameters,
+> virtual functions and multiple inheritance, which were removed later
+> (decisions D34 and D35).
 
 # Phase 1 — Lexical Analyzer
 

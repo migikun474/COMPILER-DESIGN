@@ -23,8 +23,8 @@ the jumps between them, and the **orange** box is the point that
 backpatching fills in, the instruction number a marker `M` records.
 
 How to read the code: every section shows the function that implements
-the rule, shortened to its translation logic (type checks, destructors and
-other bookkeeping left out), with each line's comment naming the part of
+the rule, shortened to its translation logic (type checks and other
+bookkeeping left out), with each line's comment naming the part of
 the slide rule it is.
 
 ---
@@ -36,7 +36,7 @@ pass per phase, each over the result of the one before:
 
 ```mermaid
 flowchart LR
-    SRC(["source.c"]) --> PP["1 · Preprocessor<br/>define, include, if"]
+    SRC(["source.c"]) --> PP["1 · Source reader<br/>openSource, no preprocessor"]
     PP --> PARSE["2 · Lexer + parser<br/>builds the syntax tree"]
     PARSE --> SEM["3 · Semantic analysis<br/>types, symbols, offsets"]
     SEM --> TAC["4 · TAC generation<br/>the SDT rules"]
@@ -54,7 +54,7 @@ flowchart LR
 
 | Pass | Reads | Writes | Folder |
 |---|---|---|---|
-| 1 | source text | text with macros and `#include` expanded | `shared/preprocessor` |
+| 1 | the file | its lines, read as written (no preprocessor, D34) | `openSource()` in `shared/diagnostics` |
 | 2 | that text | the syntax tree (AST) | `phase2-parser` |
 | 3 | the whole tree | the same tree, with each expression's type, the symbol each name means, struct offsets | `phase2b-semantic` |
 | 4 | the annotated tree | TAC quadruples, one array per function | `phase3-ir` |
@@ -733,16 +733,13 @@ S → continue   { gen('goto _') }, patched to the loop's next test   → the co
 Each loop and `switch` keeps a record of its open `break` and `continue`
 jumps; when the loop is finished, `break`s join `S.nextlist` and
 `continue`s are patched to the condition (`while`, `do-while`) or the step
-(`for`). Objects with destructors in the blocks being left are destroyed
-before the jump.
+(`for`).
 
 ```cpp
 // stmt(), case BreakStmt
-destroyScopes(loop.scopeDepth);            // objects of the blocks being left
 loop.breaks.push_back(emitGoto());         // S.nextlist = makelist(nextquad); gen('goto _')
 
 // stmt(), case ContinueStmt
-destroyScopes(loop.scopeDepth);
 loop.continues.push_back(emitGoto());      // gen('goto _'), patched by the loop to its test or step
 
 // and in the loop (while / for / do-while), when its body is done:
@@ -783,7 +780,6 @@ for (auto &g : pendingGotos)               // gotos written before the label:
 return stmt(child);
 
 // stmt(), case GotoStmt
-destroyScopes(blocksLeft);                 // objects of the blocks the jump leaves
 int j = emitGoto(known ? labels[label] : -1);   // goto L (or goto _ if L is further down)
 if (!known) pendingGotos.push_back({label, j});
 ```
@@ -801,16 +797,12 @@ if (!known) pendingGotos.push_back({label, j});
 
 ### 6.10 `return`
 
-`S → return E { gen('return' E.place) }`. The value is computed first,
-then the destructors of the objects still alive run, then the `return`.
-Falling off the end of `main` adds `return 0`.
+`S → return E { gen('return' E.place) }`. Falling off the end of `main` adds `return 0`.
 
 ```cpp
 // stmt(), case ReturnStmt
 q.op = Op::Return;
 q.a = convert(rvalue(E), returnType);      // E.place, in the function's return type
-destroyTemporaries();                      // objects made while computing E
-destroyScopes(0);                          // every local object still alive
 emit(q);                                   // gen('return' E.place)
 ```
 

@@ -60,7 +60,7 @@
     <div class="diagram-container">
       <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="repository-layout-title repository-layout-desc">
         <title id="repository-layout-title">Project layout</title>
-        <desc id="repository-layout-desc">Folder tree of the project: the shared library, the three implemented phase folders and the two planned back-end folders that contain only a README.</desc>
+        <desc id="repository-layout-desc">Folder tree of the project: the shared library, the five implemented phase folders, from the lexer to MIPS generation.</desc>
         <defs>
           <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
           <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
@@ -82,41 +82,39 @@
 <rect x="368" y="104" width="240" height="48" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
 <text x="488.0" y="125" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">shared/</text>
 <text x="488.0" y="140" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">builds libshared.a</text>
-<text x="632" y="124" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">token · diagnostics · preprocessor</text>
+<text x="632" y="124" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">token · diagnostics</text>
 <text x="632" y="138" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">ast · types · symbol_table</text>
 <rect x="368" y="176" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="176" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="197" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase1-lexer/</text>
 <text x="488.0" y="212" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: lexer</text>
 <text x="632" y="196" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/lexer.l</text>
-<text x="632" y="210" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 9 programs</text>
+<text x="632" y="210" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 8 programs</text>
 <rect x="368" y="248" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="248" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="269" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase2-parser/</text>
 <text x="488.0" y="284" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: syntax_analyzer</text>
 <text x="632" y="268" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/parser.y · src/scanner.l</text>
-<text x="632" y="282" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 36 programs</text>
+<text x="632" y="282" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 37 programs</text>
 <rect x="368" y="320" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="320" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="341" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase2b-semantic/</text>
 <text x="488.0" y="356" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: semantic_analyzer</text>
 <text x="632" y="340" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/*.cpp · run_tests.sh</text>
-<text x="632" y="354" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/valid 24 · test/invalid 20</text>
+<text x="632" y="354" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/valid 26 · test/invalid 23</text>
 <rect x="368" y="392" width="240" height="48" rx="6" fill="#f5f5f5"/>
-<rect x="368" y="392" width="240" height="48" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
+<rect x="368" y="392" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="413" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase3-ir/ · phase4-codegen/</text>
-<text x="488.0" y="428" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">planned phases</text>
-<text x="632" y="412" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">README.md only</text>
-<text x="632" y="426" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">no source code</text>
+<text x="488.0" y="428" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">tac_generator · mips_generator</text>
+<text x="632" y="412" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">TAC, optimizer, interpreter; MIPS</text>
+<text x="632" y="426" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 32 programs + logs</text>
 <line x1="32" y1="532" x2="928" y2="532" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
 <text x="32" y="548" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
 <rect x="32" y="564" width="24" height="12" rx="2" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
 <text x="68" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Library every phase links</text>
 <rect x="216" y="564" width="24" height="12" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="252" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Implemented phase</text>
-<rect x="364" y="564" width="24" height="12" rx="2" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.20)" stroke-width="1" stroke-dasharray="4,3"/>
-<text x="400" y="574" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif" text-anchor="start">Planned, README only</text>
-      </svg>
+</svg>
     </div>
   </div>
 </body>

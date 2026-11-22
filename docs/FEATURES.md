@@ -73,14 +73,12 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Classes, objects, `this`, methods, static members, `const` member functions, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test7 test8 test13 test30, S:v10 e09 v27 e23 | all phases |
-| Inheritance (single, multiple), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
+| Classes, objects, `this`, methods, static members, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test7 test8 test13 test30, S:v10 e09 v27 e23 | all phases; no nested or local classes (D35) |
+| Single inheritance (chains allowed), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 v27 e09 e14 | all phases; a second base and object slicing are errors (D35) |
 | Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
-| Constructors / destructors (in-class, out-of-class), member initializer lists, `explicit` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24 test30, S:v17 e15 v27 e23 | all phases |
-| Virtual functions, pure virtual functions, abstract classes, virtual destructors | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test30, S:v27 e23 | all phases (a table of (function, this-adjustment) pairs per class and sub-object; `call *t, n` in TAC, `jalr` in MIPS) |
+| Default constructors `T()` (in-class, out-of-class) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24 test30, S:v17 e15 e23 | all phases; base, then members, then body; global objects built before `main` |
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v17 e15 | all phases |
-| Function overloading (C++ ranking, ambiguity, converting constructors for arguments and returns) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test12, S:v11 v16 e04 v27 | all phases |
-| Preprocessor (`#define` object/function-like, `#` `##` `__VA_ARGS__`, `#undef`, `#if/#ifdef/#ifndef/#elif/#else/#endif`, `#include "…"`, `#error`, `#pragma once`) | ✓ | ✓ | ✓ | ✓ | — | — | L:test11, P:test26, S:v20 e16 e17 | front end complete; `#include <…>` system headers are accepted and ignored |
+| Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test12, S:v11 v16 e04 | all phases |
 | `const`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
 | `extern` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test28, S:v24 e20 | all phases (linkage, composite types) |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test25, S:v19 | all phases |
@@ -97,7 +95,6 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 
 | Capability | Where | Tests |
 |---|---|---|
-| Preprocessing with a line map (errors reported at the original file and line, including headers) | `shared/preprocessor`, `shared/diagnostics` | P:test26, S:v20 e16 e17 |
 | Multiple-error reporting: lexer collects all errors; parser recovers at `;` / `}` (Bison `error` productions); semantic analysis reports every error once (de-duplicated) | `lexer.l`, `parser.y`, `SemanticAnalyzer::error()` | L:test6, P:test14–test21, test23, test29 |
 | GCC/Clang-style diagnostics: `file:line:col: kind: message`, source line, caret | `printDiagnostic()` in `shared/diagnostics` | all invalid tests |
 | Partial AST on syntax errors (`ErrorNode`) | `parser.y` | P:test5, test14–test21, test23, test29 |
@@ -109,7 +106,10 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 84 checks |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 86 checks |
+| Run-time checks: integer division by zero, stack overflow (same message in the interpreter and on SPIM) | `mips.cpp` (`binary`, prologue), `runtime.s`, `interp.cpp` | probes in D37 |
+| Uninitialized-variable warning from reaching definitions, at the line of the read | `reachingDefinitions()`, `readBeforeAssigned()` in `opt.cpp` | T:diagnostics/uninitialized |
+| Combined driver: one binary stops after any phase (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) | `phase4-codegen/src/main.cpp` | — |
 
 ## Feature catalog
 
@@ -129,9 +129,8 @@ arrays.
 
 ### C. Additional features discovered in the code
 
-Classes/objects/`this`, single and multiple inheritance, access
-modifiers, constructors/destructors, operator overloading, function
-overloading, a C preprocessor, `const`/`auto`,
+Classes/objects/`this`, single inheritance, access modifiers, default
+constructors, operator overloading, function overloading, `const`/`auto`,
 `extern`, C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
 structs and anonymous struct members, hex/octal/binary literals with
@@ -141,12 +140,10 @@ layouts, gcc-style printf/scanf format checking).
 
 ### D. Partial features
 
-None left. The six listed here until 2026-10-15 (class features,
-brace elision into struct members, flow checks, converting constructors
-for arguments and returns, member-name classification in the parser's
-Token_Type table, columns in the phase-1 lexer) are implemented; see
-decision D32 in [`DESIGN_LOG.md`](DESIGN_LOG.md). What remains outside
-the language is listed under G.
+None left. The six listed here until 2026-10-15 were finished by
+decision D32 in [`DESIGN_LOG.md`](DESIGN_LOG.md); most of those class
+features were later removed by D35 (see G). What remains outside the
+language is listed under G.
 
 ### E. Parser-only features
 
@@ -160,9 +157,10 @@ semantic phase redoes all name resolution.)
 | Item | State |
 |---|---|
 | Three Address Code generation (phase 3) | **done** — [`phase3-ir/README.md`](../phase3-ir/README.md) |
-| TAC optimizations | `-O1` (local), `-O2` (global constants/copies, dead assignments) and `-O3` (inlining, tail recursion, global common subexpressions, loop-invariant code motion) **done** |
+| TAC optimizations | `-O1` (local), `-O2` (global constants/copies, dead assignments) and `-O3` (inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal) **done**; loop-invariant code motion was removed (D36) |
 | MIPS code generation (phase 4) | **done** (SPIM) — [`phase4-codegen/README.md`](../phase4-codegen/README.md) |
 | Register allocation (usage counts with live intervals; integer and floating-point registers), immediates, peephole | **done** |
+| Register arguments (`$a0`–`$a3` with a home area, `-O1` and above), frame slot reclamation | **done** (D39) |
 
 ### G. Unsupported (no implementation; rejected as syntax errors)
 
@@ -189,6 +187,18 @@ this target changes a variable behind the program's back), and
 words are ordinary identifiers again and each use is a syntax error
 (P:test29 [12]–[15]); `long double` is "invalid combination of type
 specifiers" (S:e19).
+
+**Removed on 2026-11-21** (decisions D34–D36, at the user's request):
+the preprocessor (any `#` line is a lexical error; S:e16); from C++:
+destructors, constructors with parameters, copy and converting
+constructors, member initializer lists, `const` member functions,
+virtual functions with everything serving them (vtables, dynamic
+dispatch, this-adjustment, pure virtual functions, abstract classes,
+virtual destructors), `explicit`, multiple inheritance, object slicing,
+nested and local classes, static local objects whose class has a
+constructor (S:e23, e24, P:test31); and loop-invariant code motion in
+`-O3`. `virtual` and `explicit` stay reserved words so the scanner can
+name them in its error.
 
 **Never implemented:**
 
