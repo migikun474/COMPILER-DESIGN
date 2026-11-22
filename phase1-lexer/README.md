@@ -18,11 +18,10 @@ run as the specification requires.
 
 ## Input
 
-A source file path: `./lexer file.c`. The file is first run through the
-shared preprocessor (`openPreprocessed()` from
-[`../shared/preprocessor`](../shared/README.md)), so `#define`d names are
-expanded, `#include "file"` is inlined and `#if` branches are resolved
-before lexing. Each line keeps its line number.
+A source file path: `./lexer file.c`. The file is read as written
+(`openSource()` from [`../shared/diagnostics`](../shared/README.md)).
+There is no preprocessor (D34): a line starting with `#` is reported as
+`Preprocessor directive not supported` and skipped.
 
 ## Output
 
@@ -44,8 +43,7 @@ directory): `No lexical errors found.` or a numbered list of errors.
 | [`src/token.cpp`](src/token.cpp), [`include/token.h`](include/token.h) | `struct Token { lexeme; type; }`, the `tokens` vector, `addToken()` |
 | [`src/logger.cpp`](src/logger.cpp), [`include/logger.h`](include/logger.h) | `writeLexerLog()` — the `logs/` report |
 | `../shared/token/token_type.hpp/.cpp` | `enum class TokenType`, `keyword_map`, `operator_map`, `reserved_word()`, `operator_token()`, `to_string()` |
-| `../shared/diagnostics/` | `reportDiagnostic()`, `hasErrors()`, `errorDiagnostics()`, `displayLine()` |
-| `../shared/preprocessor/` | `openPreprocessed()` |
+| `../shared/diagnostics/` | `openSource()`, `reportDiagnostic()`, `hasErrors()`, `errorDiagnostics()`, `displayLine()` |
 
 **Driving model.** `main()` calls `yylex()` **once**. No rule returns a
 value; each one calls `addToken()` (or reports a diagnostic) and the
@@ -217,7 +215,6 @@ with the shared library. `./run.sh` runs the lexer on every file in
 | `test6_lexical_errors.c` | every lexical error kind: **11 errors and 1 warning** |
 | `test7_type_modifiers_and_custom_keywords.c` | type modifiers, numeric literal forms, suffixes, booleans, I/O and memory keywords |
 | `test9_classes_and_objects.c` | class keywords, access modifiers, `this`, `::` |
-| `test11_preprocessor.c` | macros and conditionals expanded before lexing |
 
 `run.sh` only prints results; checking them is manual for this phase.
 

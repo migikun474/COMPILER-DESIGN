@@ -1,5 +1,15 @@
 # Advanced Compiler Feature Analysis
 
+> **Historical snapshot.** This analysis describes the compiler as it was
+> on 2026-10-31. Since then the preprocessor (D34), most of the C++
+> subset — destructors, constructors with parameters, virtual functions,
+> multiple inheritance and the rest (D35) — and loop-invariant code motion
+> (D36) were removed, and reaching definitions, loop unrolling, dead
+> function removal, register arguments and run-time checks were added
+> (D37–D41). The current state is in [`FEATURES.md`](FEATURES.md),
+> [`FEATURE_CONNECTIVITY.md`](FEATURE_CONNECTIVITY.md) and
+> [`DESIGN_LOG.md`](DESIGN_LOG.md).
+
 A feature-selection blueprint for this compiler, based on an audit of the code at commit `4d17807` on `main` (2026-10-31). It lists what truly works, what could be added, what each addition involves, and which pieces belong together. **This document changes nothing:** no compiler, grammar or test file was modified to write it.
 
 > **How to use it.** Find a feature in [section 5](#-5-detailed-internal-feature-decomposition), read its graph in [section 7](#-7-mermaid-connectivity-graphs), then mark your choices in the [final checklist](#-14-final-feature-selection-checklist). Each feature has the same three-letter prefix everywhere (`CLS`, `INH`, `FPT` and so on), so you can delete one by removing its blocks without touching the rest.

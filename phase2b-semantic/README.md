@@ -3,11 +3,11 @@
 Walks the parser's AST, builds a persistent typed symbol table, checks
 every static rule of the language, and annotates the tree with types,
 lvalue-ness, constant values and resolved symbols — the representation
-the (future) IR phase will lower.
+the IR phase ([`../phase3-ir`](../phase3-ir)) lowers.
 
-> Status: **implemented and tested** (87 automated checks, all
-> passing). This is the last implemented phase: nothing consumes its
-> output yet.
+> Status: **implemented and tested** (86 automated checks, all
+> passing). Its annotated AST and symbol table are the input of the IR
+> phase.
 
 ## Purpose
 
@@ -21,10 +21,11 @@ every object lives, and the memory layout of every record.
 ## Input
 
 A source file path: `./semantic_analyzer [-q] file.c`. The executable
-contains the preprocessor and phase 2's scanner and parser (its makefile
+contains phase 2's scanner and parser (its makefile
 compiles [`../phase2-parser/src/parser.y`](../phase2-parser/src/parser.y)
-and `scanner.l` into its own `build/`). If there are preprocessor or
-syntax errors, it reports them and stops:
+and `scanner.l` into its own `build/`). If there are lexical or
+syntax errors (a `#` line is a lexical error: there is no preprocessor,
+D34), it reports them and stops:
 `Syntax analysis failed: N error(s); semantic analysis was not run.`
 Otherwise the AST (`g_astRoot`) is analysed.
 
@@ -49,10 +50,10 @@ source line and a caret. A report goes to `logs/<file-stem>.log`.
 | [`src/declarations.cpp`](src/declarations.cpp) | `error()` / `warning()`, `analyze()`, `prescan()`, `hoistFunction()`; type resolution `resolveType()`, `resolveSpecifiers()`, `resolveTag()`, `resolveParams()`, `arrayDimension()`; `declaration()`, `variable()`, `typedefDecl()`, `functionSignature()`, `functionDefinition()`, `functionBody()`, `recordDefinition()`, `checkInitializer()`, `checkMainSignature()`, anonymous struct members |
 | [`src/statements.cpp`](src/statements.cpp) | `statement()`, `subStatement()`, `blockItems()`, `condition()`, `collectLabels()`, `returnStatement()` |
 | [`src/expressions.cpp`](src/expressions.cpp) | `expr()` dispatcher and `value()`; `identifier()`, `binary()`, `unary()`, `assignment()`, `ternary()`, `call()`, `builtinCall()`, `member()`, `scopeMember()`, `index()`, `cast()`, `sizeofExpr()`; `checkModifiable()`, `convertible()`, `checkConstantConversion()`, `resolveOverload()`, `checkCallArgs()`, `checkAccess()`, `checkFormat()`, `foldBinary()` |
-| [`src/cxx.cpp`](src/cxx.cpp) | constructors (`construct()`, `defaultConstruct()`, `constructorInit()`, `constructExpr()`), `newExpr()`, out-of-class constructors/destructors, operator overloading (`checkOperatorDeclaration()`, `overloadedOperator()`), `varargBuiltin()` |
+| [`src/cxx.cpp`](src/cxx.cpp) | constructors (`construct()`, `defaultConstruct()`, `constructorInit()`, `constructExpr()`), out-of-class constructors (`outOfClassSpecial()`), operator overloading (`checkOperatorDeclaration()`, `overloadedOperator()`), `varargBuiltin()` |
 | [`src/sequencing.cpp`](src/sequencing.cpp) | `checkSequencing()` — the sequence-point pass |
 | [`src/report.cpp`](src/report.cpp), [`include/report.h`](include/report.h) | `printAnnotatedAST()` |
-| [`src/main.cpp`](src/main.cpp) | driver: preprocess, parse, `SymbolTable table; SemanticAnalyzer(table).analyze(g_astRoot)`, print |
+| [`src/main.cpp`](src/main.cpp) | driver: read the file, parse, `SymbolTable table; SemanticAnalyzer(table).analyze(g_astRoot)`, print |
 | `../shared/types/` | the type system: `Type`, `RecordInfo`, constructors (`pointerTo`, `arrayOf`, `functionType` …), predicates, `sameType()`, `implicitConversion()`, `checkCast()`, `usualArithmetic()`, `integerPromotion()`, `decay()`, `sizeOf()`, `layoutRecord()`, `lookupMember()`, `wrapToType()` |
 | `../shared/symbol_table/` (part 2) | `sem::Symbol`, `sem::Scope`, `sem::SymbolTable` — see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md) |
 
@@ -276,7 +277,7 @@ qualifier` …); modifiable-lvalue rules for `=`, compound assignment,
 `++`/`--` (rvalues, arrays, `const` objects, structs with a
 `const` member); `&` needs an lvalue; `*` needs a non-`void` pointer; subscripts;
 member access (`.` vs `->` with a hint, unknown member, ambiguous member
-in multiple inheritance); casts (no struct casts, no casts from `void`);
+in an inheritance chain); casts (no struct casts, no casts from `void`);
 conditional-operator operand compatibility; `sizeof` on functions or
 incomplete types;
 typed constant folding with warnings for integer overflow, bad shift
@@ -300,11 +301,16 @@ duplicate case values (after folding); multiple `default`s; switch on a
 non-integer; non-scalar conditions; `goto` to an undeclared label;
 duplicate labels.
 
-**Classes and objects** — constructor selection by overload resolution
-(`Dog d(4)`, `Dog(4)`, `Dog d = 4`, `Dog d;`), implicit
-default and copy constructors, no default construction when none is
-callable without arguments, private constructors, out-of-class
-definitions must match a declaration; operator overloading (arity,
+**Classes and objects** — the reduced C++ subset (D35): only default
+constructors `T()` (a constructor with parameters is an error, and so
+is `Dog d(4)` / `Dog(4)` / `Dog d = 4`), implicit default constructors,
+private constructors, out-of-class definitions must match a
+declaration; single inheritance only (a second base is an error; chains
+are fine); no object slicing (a derived object copied or assigned into
+a base object); no nested or local classes; no `static` local object
+whose class has a constructor; no member function call on a `const`
+object (there are no `const` member functions); a `goto` or `case` may
+not jump over an initialization; operator overloading (arity,
 `=` `[]` `()` must be members, non-members need a class operand;
 uses resolve `operator<op>`); members of incomplete type; base class
 checks (undeclared, incomplete, itself, repeated); access control
@@ -353,8 +359,8 @@ After `analyze()`:
 - **Conversions** are not materialized in the tree: where an operand's
   type differs from its context, the IR phase inserts the conversion
   using `usualArithmetic()`, `integerPromotion()`, `implicitConversion()`.
-- Still to be decided in phase 3: how `this` is passed, and `long long`
-  on a 32-bit target.
+- Phase 3 passes `this` as a hidden first parameter; `long long` is
+  two words on the 32-bit target (D24).
 
 ## Building and testing
 
@@ -368,15 +374,18 @@ make
 
 `run_tests.sh` is self-checking and runs three groups:
 
-1. **`test/valid/`** — 27 programs that must be accepted (`v01`–`v27`:
+1. **`test/valid/`** — 26 programs that must be accepted (`v01`–`v27`
+   without `v20`:
    declarations, expressions, scopes, functions, arrays, pointers,
    structs, control flow, built-ins, classes, overloading and
    references, `main` arguments, warnings, declarators, name resolution,
-   constructors and operators, preprocessor, mangling, unnamed
+   constructors and operators, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
    rules).
-2. **`test/invalid/`** — 23 programs that must be rejected (`e01`–`e23`).
-3. **End to end** — the 37 programs of `../phase2-parser/test`: the 12
+2. **`test/invalid/`** — 23 programs that must be rejected (`e01`–`e24`
+   without `e17`; `e16` shows a `#` line rejected, `e23` the reduced
+   class subset, `e24` the reserved words `virtual` and `explicit`).
+3. **End to end** — the 37 programs of `../phase2-parser/test`: the 13
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which
    g++ also rejects, and which must fail with the expected message).
@@ -390,7 +399,7 @@ int over(double a) { return 0; }    // mangled: _Z4overd
 ```
 
 The runner requires each annotated message on its line **and** fails on
-any diagnostic that is not annotated. Result today: `passed: 87 failed: 0`.
+any diagnostic that is not annotated. Result today: `passed: 86 failed: 0`.
 `./run.sh` just prints the output for every test.
 
 ## Limitations

@@ -57,9 +57,9 @@ One report entry (`SymbolTableEntry` in `g_symbolTable`): `name`,
 
 | Operation | Function | Algorithm | Called from |
 |---|---|---|---|
-| open scope | `pushScope(label)` | push an empty map onto `g_scopes` and `g_typeNameScopes`, push the label (or a pending `hintScope()` label, or `"block"`) | grammar mid-rule actions: `compound_stmt`, `function_definition` (`name()`), `for_open` (`"for"`), struct/class bodies, constructors/destructors, `param_scope` |
+| open scope | `pushScope(label)` | push an empty map onto `g_scopes` and `g_typeNameScopes`, push the label (or a pending `hintScope()` label, or `"block"`) | grammar mid-rule actions: `compound_stmt`, `function_definition` (`name()`), `for_open` (`"for"`), struct/class bodies, constructors, `param_scope` |
 | close scope | `popScope()` | pop all three stacks — the scope's symbols are **gone** (only `g_symbolTable` remembers them) | end of the same rules |
-| insert | `declareSymbol(name, kind, typeStr, extra)` | build a `SymbolTableEntry` (qualified name from the class stack, scope path, declaration line from the token log) and append it to `g_symbolTable`; push a `Symbol` onto `g_scopes.back()[name]` | `registerDeclarator()` in `declarators.cpp` for every declarator; tag rules; enumerators; labels; parameters |
+| insert | `declareSymbol(name, kind, typeStr, extra)` | build a `SymbolTableEntry` (qualified name from the class stack, scope path, declaration line from the token log) and append it to `g_symbolTable`; push a `Symbol` onto `g_scopes.back()[name]` | `registerDeclarator()` in `declarators.cpp` for every declarator; tag rules; labels; parameters |
 | lookup | `lookupSymbol(name)` | walk `g_scopes` from innermost to outermost; first scope containing the name wins; return its **last** pushed symbol | identifier classification in `primary_expr`, member access, `recordUsage()` |
 | type lookup | `lookupTypeSymbol(name)` | same walk, but only `TYPEDEF_NAME` and tag kinds | the `TYPE_NAME` specifier rule |
 | overloads | `isOverloaded(name)`, `lookupOverload(name, argTypes)` | in the innermost scope that has the name, compare each `PROCEDURE`'s `paramTypes` with `inferExprType()` of the arguments; fall back to the last declared | call expressions: the `CallExpr` label becomes the chosen mangled name |
@@ -112,11 +112,11 @@ A **`sem::Symbol`** (every field that exists):
 | `isConstant`, `constValue` | `const` objects with a known integer value |
 | `hasInitializer`, `useCount`, `evaluatedUses` | bookkeeping (`evaluatedUses` excludes uses inside `sizeof`) |
 | `isDefined` | functions: body seen; objects: defined, not just declared `extern` |
-| `isRegister`, `isStatic` | storage-class keywords |
-| `isMethod`, `isConstructor`, `isDestructor`, `mangledName` | callables |
+| `isStatic` | `static` function or member |
+| `isMethod`, `isConstructor`, `mangledName` | callables |
 | `params`, `locals`, `bodyScopeId` | functions: parameter symbols in order (unnamed ones too), every local, the body scope |
 | `ownerRecord`, `access`, `offset` | members: owning `RecordInfo`, `public`/`protected`/`private`, byte offset (MIPS32 layout) |
-| `record`, `enumInfo` | tags: the `RecordInfo` / `EnumInfo` |
+| `record` | tags: the `RecordInfo` |
 | `declNode` | the declaring AST node |
 
 ### Operations
@@ -127,10 +127,10 @@ A **`sem::Symbol`** (every field that exists):
 | enter a scope | `enterScope(kind, label, record, function)` | append a new `Scope` with `parent = stack_.back()`, push its id | `functionBody()` (Function), `statement()` for `CompoundStmt` and `ForStmt` (Block), `subStatement()` for `if`/`while`/… bodies (Block), `recordDefinition()` (Record), `lambda()` (Lambda) |
 | leave a scope | `exitScope()` | pop `stack_` — the scope and its symbols **stay** in `scopes_` | the same functions |
 | re-activate | `reenterScope(id)` | push an existing scope id | out-of-class member bodies (`void Dog::bark() {…}`) re-enter the class's Record scope so members resolve |
-| insert (visible) | `declare(s)` / `declareIn(id, s)` | `assignNames()` (scope id, path, `uniqueName`), then `names[s->name].push_back(s)`, `ordered`, `all_` | every variable, parameter, function, typedef, enumerator |
+| insert (visible) | `declare(s)` / `declareIn(id, s)` | `assignNames()` (scope id, path, `uniqueName`), then `names[s->name].push_back(s)`, `ordered`, `all_` | every variable, parameter, function, typedef |
 | insert (hidden) | `declareHidden(id, s)` | recorded in `ordered`/`all_` but **not** in `names` — lookup cannot find it | labels, unnamed parameters, constructors |
 | insert a tag | `declareTag` / `declareTagIn(id, s)` | `tags[s->name] = s` | struct/class definitions and first mentions (`struct Node *next;`) |
-| current-scope lookup | `lookupLocal(name)`, `lookupTagLocal(name)` | only `scopes_[stack_.back()]` | **duplicate detection** in `variable()`, `functionSignature()`, `typedefDecl()`, `enumDefinition()` |
+| current-scope lookup | `lookupLocal(name)`, `lookupTagLocal(name)` | only `scopes_[stack_.back()]` | **duplicate detection** in `variable()`, `functionSignature()`, `typedefDecl()` |
 | full lookup | `lookup(name)` → `Lookup` | walk `stack_` innermost → outermost (algorithm below) | `identifier()`, call resolution |
 | tag lookup | `lookupTag(name)` | walk `stack_` innermost → outermost over `tags` | `resolveTag()` |
 | file scope only | `saveAndResetToGlobal()` / `restoreStack()` | temporarily make only scope 0 active | `hoistFunction()`: declaring a function that is called before its definition |

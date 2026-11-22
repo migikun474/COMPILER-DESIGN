@@ -1,5 +1,5 @@
 /* t28 -- -O3: inlining, tail recursion, expressions shared across
-   blocks, code moved out of loops, stored values reused -- next to the
+   blocks, loops unrolled, stored values reused -- next to the
    cases where each of them would be wrong */
 
 int calls = 0;

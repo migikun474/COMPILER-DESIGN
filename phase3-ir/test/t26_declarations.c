@@ -1,6 +1,5 @@
 /* t26 -- declarations: typedef, sizeof, const, struct layout, nested
-   initializers, designators, multi-dimensional and string arrays,
-   macros from the preprocessor */
+   initializers, designators, multi-dimensional and string arrays */
 
 
 typedef int Number;

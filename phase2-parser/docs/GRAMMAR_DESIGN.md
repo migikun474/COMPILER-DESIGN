@@ -610,7 +610,7 @@ ClassDecl "Dog : Animal"
 
 ---
 
-## 5. Constructors and destructors
+## 5. Constructors
 
 ```yacc
 constructor_def
@@ -642,15 +642,19 @@ different first tokens.
 started being parsed (§4), which is exactly why `enterClass()`/
 `leaveClass()` needed to bracket the member list in the first place.
 
-**Example** — inside `class Dog { public: Dog(int n) { legs = n; } };`:
+The rule still accepts a parameter list; semantic analysis then rejects
+any constructor that has parameters, because the language keeps only
+default constructors `T()` (D35). Destructors have no rule at all: a
+`~T()` is an ordinary syntax error.
+
+**Example** — inside `class Dog { public: int legs; Dog() { legs = 4; } };`:
 ```
-ConstructorDef "Dog : _ZN3Dog3DogEi"
-|-- ParamDecl "n : INT"
+ConstructorDef "Dog : _ZN3DogC1Ev"
 `-- CompoundStmt
     `-- ExprStmt
         `-- AssignExpr "="
             |-- Identifier "legs"
-            `-- Identifier "n"
+            `-- IntLiteral "4"
 ```
 
 ---
@@ -937,7 +941,7 @@ link name g++ would emit, like `_Z3addii`, `_ZN3Dog4barkEv` or
 | Arrays, multi-dimensional arrays | `direct_declarator '[' ']'` | §3b |
 | Functions | `direct_declarator '(' ')'` | §3c |
 | struct/class, inheritance | `struct_or_class_specifier` | §4 |
-| Constructors/destructors | `constructor_def`/`destructor_def` | §5 |
+| Constructors | `constructor_def`, `out_of_class_special` | §5 |
 | if/else | `selection_stmt` | §6a |
 | for/while/do-while/until | `iteration_stmt` | §6b |
 | switch/case/default | `selection_stmt`, `labeled_stmt` | §6c |

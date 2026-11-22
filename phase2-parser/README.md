@@ -18,7 +18,8 @@ every syntax error it can, and produce the structured representation
 ## Input
 
 A source file path: `./syntax_analyzer file.c`. Like every phase, the
-file is preprocessed first (`openPreprocessed()`), then scanned by
+file is read as written (`openSource()`; there is no preprocessor, D34),
+then scanned by
 [`src/scanner.l`](src/scanner.l) one token at a time, on demand.
 
 ## Output
@@ -36,13 +37,13 @@ A report is written to `logs/<file-stem>.log` either way.
 
 | File | Role |
 |---|---|
-| [`src/parser.y`](src/parser.y) | the grammar (1,492 lines): 393 rules over 76 nonterminals, precedence declarations, AST-building actions, symbol-table calls |
+| [`src/parser.y`](src/parser.y) | the grammar (1,212 lines): 321 rules over 65 nonterminals, precedence declarations, AST-building actions, symbol-table calls |
 | [`src/scanner.l`](src/scanner.l) | the scanner Bison calls (`yylex()`), one token per call; decides `TYPE_NAME` vs `IDENTIFIER` (the "lexer hack") and three lookahead tokens |
 | [`src/scanner_support.cpp`](src/scanner_support.cpp) | bounded lookahead over the source text (`parenGroupIsExpression()`, `abstractDeclaratorGroup()`, `bracketIsDesignator()`) and declarator-list state (`markDeclaratorList()`, `inDeclaratorListAt()`) |
 | [`src/token_converter.cpp`](src/token_converter.cpp) | shared `TokenType` → Bison token code |
-| [`src/declarators.cpp`](src/declarators.cpp) | turns a reduced declaration into an AST node and a symbol-table entry: `registerDeclarator()`, `makeTypeExpr()`, `computeTypeStr()`, `makeConstructorNode()`, `makeDestructorNode()` |
+| [`src/declarators.cpp`](src/declarators.cpp) | turns a reduced declaration into an AST node and a symbol-table entry: `registerDeclarator()`, `makeTypeExpr()`, `computeTypeStr()`, `makeConstructorNode()` |
 | [`include/parser_value.h`](include/parser_value.h) | `ParserValue` — Bison's semantic value type (`%define api.value.type {ParserValue}`), plus `TypeSpec` and `DeclInfo` |
-| [`src/main.cpp`](src/main.cpp) | driver: preprocess, `yyparse()`, print or report |
+| [`src/main.cpp`](src/main.cpp) | driver: read the file, `yyparse()`, print or report |
 | `../shared/ast`, `../shared/symbol_table`, `../shared/token`, `../shared/diagnostics` | AST nodes and printer, parse-time symbol table and mangling, token log and table printer, diagnostics |
 
 The build (`makefile`) runs `bison -d` on `parser.y` and `flex` on
@@ -112,12 +113,12 @@ log; see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md#part-1--the-parse-t
 
 | Area | Main nonterminals |
 |---|---|
-| Program | `translation_unit` → `external_decl` (function definitions, declarations, out-of-class constructors/destructors) |
+| Program | `translation_unit` → `external_decl` (function definitions, declarations, out-of-class constructors) |
 | Declarations | `declaration`, `declaration_specifiers`, `storage_or_type_specifier`, `type_specifier`, `init_declarator_list`, `declarator`, `direct_declarator`, `pointer`, `abstract_declarator`, `initializer`, `initializer_list` |
-| Aggregates | `struct_or_class_specifier` (named and unnamed struct/class), `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `destructor_def` |
+| Aggregates | `struct_or_class_specifier` (named and unnamed struct/class), `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `out_of_class_special` |
 | Functions | `function_definition`, `parameter_list`, `parameter_decl`, `operator_function_id` |
 | Statements | `statement`, `compound_stmt`, `expr_stmt`, `selection_stmt` (if/else, switch), `iteration_stmt` (while, do-while, for, until), `labeled_stmt` (case, default, labels), `jump_stmt` (goto, break, continue, return) |
-| Expressions | `expr` (comma), `assignment_expr`, `binary_expr`, `unary_expr`, `postfix_expr`, `primary_expr`, `builtin_call`, `new_type_id` |
+| Expressions | `expr` (comma), `assignment_expr`, `binary_expr`, `unary_expr`, `postfix_expr`, `primary_expr`, `builtin_call` |
 
 A production-by-production walkthrough is in
 [`docs/GRAMMAR_DESIGN.md`](docs/GRAMMAR_DESIGN.md).
@@ -218,8 +219,8 @@ break/continue/return; declarations with pointers, arrays (any number of
 dimensions), parenthesized declarators
 (`int (*pa)[3]`), references, `const`, `static`/`extern`/
 `typedef`/`auto`; initializer lists with designators;
-structs (named or unnamed); classes with inheritance, access
-specifiers, constructors/destructors (in or out of class), operator
+structs (named or unnamed); classes with single inheritance, access
+specifiers, default constructors (in or out of class), `friend`, operator
 overloading; C-style and functional casts;
 `sizeof`; the built-in I/O, memory and varargs operations.
 
@@ -232,13 +233,17 @@ in the `direct_declarator` action with a syntax error;
 `test/test29_dropped_features.c` shows every dropped construct being
 rejected.
 
-**Class syntax added last** (`test/test30_class_syntax.c`): member
-initializer lists (`Dog(int n) : Animal(4), legs(n) { }`, in and out of
-the class; a base's name before `(` arrives as `FCAST`), `virtual` and
-pure virtual functions (`virtual int f() = 0;`), `virtual ~T()`,
-`explicit` constructors, `const` member functions (`method_cv_opt`
-after a parameter list), and `friend` functions and classes. The
-grammar still has no conflicts (`%expect 0`).
+**Class syntax** (`test/test30_class_syntax.c`): default constructors
+`T()` (in or out of the class), single inheritance, access specifiers
+and `friend` functions and classes. The class syntax removed by D35 is
+rejected (`test/test31_dropped_class_features.c`): `virtual` and
+`explicit` are still reserved words, so the scanner reports them by
+name ("'virtual' is not supported: this language has no virtual
+functions"); destructors, `const` member functions, member
+initializer lists and `= 0` have no grammar rules left, so each is an
+ordinary syntax error. Constructors with parameters still parse and are
+rejected by semantic analysis. The grammar still has no conflicts
+(`%expect 0`).
 
 **Token_Type of member names**: a member name after `.` or `->` is
 classified with the member's type whatever stands before it
@@ -276,11 +281,11 @@ result:
 
 | Kind | Files |
 |---|---|
-| valid (25) | `array`, `funcCall`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`–`test28`, `test30` |
-| deliberate syntax errors (12) | `negative`, `test5`, `test14`–`test21`, `test23`, `test29` (declarations, control flow, `do`-`while` recovery, functions, arrays/pointers, aggregates, expressions/builtins, cascading recovery, forward references, the dropped features) |
+| valid (24) | `array`, `funcCall`, `if_else`, `loops`, `operators`, `pointers`, `printf_scanf`, `test1`–`test4`, `test6`–`test13`, `test24`, `test25`, `test27`, `test28`, `test30` |
+| deliberate syntax errors (13) | `negative`, `test5`, `test14`–`test21`, `test23`, `test29`, `test31` (declarations, control flow, `do`-`while` recovery, functions, arrays/pointers, aggregates, expressions/builtins, cascading recovery, forward references, the dropped features, the dropped class syntax) |
 
 The parser corpus is also run end to end by
-`../phase2b-semantic/run_tests.sh`, which checks that the 12 broken files
+`../phase2b-semantic/run_tests.sh`, which checks that the 13 broken files
 stop before semantic analysis and the valid ones are accepted.
 
 ## Limitations
