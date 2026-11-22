@@ -1,4 +1,3 @@
-#define N 4
 int add(int a, int b) {
-    return a + b * N; /* sum */
+    return a + b * 4; /* sum */
 }

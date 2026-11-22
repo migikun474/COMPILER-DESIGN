@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test24_cpp_and_c99_syntax.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test24_cpp_and_c99_syntax.c
 
 No errors found.
 
@@ -27,32 +27,6 @@ next                           CLASS_POINTER
 ;                              semicolon_op        
 Node                           CONSTRUCTOR         
 (                              open_paren_op       
-int                            int                 
-v                              INT                 
-)                              close_paren_op      
-;                              semicolon_op        
-Node                           CONSTRUCTOR         
-(                              open_paren_op       
-int                            int                 
-v                              INT                 
-,                              comma_op            
-Node                           CLASS               
-*                              star_op             
-n                              CLASS_POINTER       
-)                              close_paren_op      
-{                              open_brace_op       
-value                          INT                 
-=                              assign_op           
-v                              INT                 
-;                              semicolon_op        
-next                           CLASS_POINTER       
-=                              assign_op           
-n                              CLASS_POINTER       
-;                              semicolon_op        
-}                              close_brace_op      
-~                              tilde_op            
-Node                           DESTRUCTOR          
-(                              open_paren_op       
 )                              close_paren_op      
 ;                              semicolon_op        
 static                         static              
@@ -69,15 +43,21 @@ Node                           CLASS
 o                              CLASS               
 )                              close_paren_op      
 {                              open_brace_op       
-return                         return              
-Node                           CONSTRUCTOR         
-(                              open_paren_op       
+Node                           CLASS               
+r                              CLASS               
+;                              semicolon_op        
+r                              CLASS               
+.                              dot_op              
+value                          INT                 
+=                              assign_op           
 value                          INT                 
 +                              plus_op             
 o                              CLASS               
 .                              dot_op              
 value                          INT                 
-)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+r                              CLASS               
 ;                              semicolon_op        
 }                              close_brace_op      
 int                            int                 
@@ -97,26 +77,16 @@ Node                           CLASS
 ::                             scope_resolution_op 
 Node                           CONSTRUCTOR         
 (                              open_paren_op       
-int                            int                 
-v                              INT                 
 )                              close_paren_op      
 {                              open_brace_op       
 value                          IDENTIFIER          
 =                              assign_op           
-v                              INT                 
+1                              INT_LITERAL         
 ;                              semicolon_op        
 next                           IDENTIFIER          
 =                              assign_op           
 0                              INT_LITERAL         
 ;                              semicolon_op        
-}                              close_brace_op      
-Node                           CLASS               
-::                             scope_resolution_op 
-~                              tilde_op            
-Node                           DESTRUCTOR          
-(                              open_paren_op       
-)                              close_paren_op      
-{                              open_brace_op       
 }                              close_brace_op      
 int                            int                 
 Node                           CLASS               
@@ -225,18 +195,16 @@ main                           PROCEDURE
 {                              open_brace_op       
 Node                           CLASS               
 a                              CLASS               
-(                              open_paren_op       
-1                              INT_LITERAL         
-)                              close_paren_op      
 ;                              semicolon_op        
 Node                           CLASS               
 b                              CLASS               
-(                              open_paren_op       
-2                              INT_LITERAL         
-,                              comma_op            
+;                              semicolon_op        
+b                              CLASS               
+.                              dot_op              
+next                           CLASS_POINTER       
+=                              assign_op           
 &                              ampersand_op        
 a                              CLASS               
-)                              close_paren_op      
 ;                              semicolon_op        
 Node                           CLASS               
 c                              CLASS               
@@ -454,50 +422,37 @@ Program "translation_unit"
 |-- ClassDecl "Node"
 |   |-- VarDecl "value : INT"
 |   |-- VarDecl "next : CLASS_POINTER"
-|   |-- ConstructorDef "Node : _ZN4NodeC1Ei"
-|   |   `-- ParamDecl "v : INT"
-|   |-- ConstructorDef "Node : _ZN4NodeC1EiPS_"
-|   |   |-- ParamDecl "v : INT"
-|   |   |-- ParamDecl "n : CLASS_POINTER"
-|   |   `-- CompoundStmt
-|   |       |-- ExprStmt
-|   |       |   `-- AssignExpr "="
-|   |       |       |-- Identifier "value"
-|   |       |       `-- Identifier "v"
-|   |       `-- ExprStmt
-|   |           `-- AssignExpr "="
-|   |               |-- Identifier "next"
-|   |               `-- Identifier "n"
-|   |-- DestructorDef "Node : _ZN4NodeD1Ev"
+|   |-- ConstructorDef "Node : _ZN4NodeC1Ev"
 |   |-- FunctionDecl "count : _ZN4Node5countEv"
 |   |-- FunctionDef "operator+ : _ZN4NodeplES_"
 |   |   |-- ParamDecl "o : CLASS"
 |   |   `-- CompoundStmt
+|   |       |-- VarDecl "r : CLASS"
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="
+|   |       |       |-- MemberExpr "value"
+|   |       |       |   `-- Identifier "r"
+|   |       |       `-- BinaryExpr "+"
+|   |       |           |-- Identifier "value"
+|   |       |           `-- MemberExpr "value"
+|   |       |               `-- Identifier "o"
 |   |       `-- ReturnStmt
-|   |           `-- CallExpr
-|   |               |-- Identifier "Node"
-|   |               `-- BinaryExpr "+"
-|   |                   |-- Identifier "value"
-|   |                   `-- MemberExpr "value"
-|   |                       `-- Identifier "o"
+|   |           `-- Identifier "r"
 |   `-- FunctionDef "get : _ZN4Node3getEv"
 |       `-- CompoundStmt
 |           `-- ReturnStmt
 |               `-- ArrowExpr "value"
 |                   `-- ThisExpr
-|-- ConstructorDef "Node : _ZN4NodeC1Ei"
-|   |-- ParamDecl "v : INT"
+|-- ConstructorDef "Node : _ZN4NodeC1Ev"
 |   `-- CompoundStmt
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="
 |       |       |-- Identifier "value"
-|       |       `-- Identifier "v"
+|       |       `-- IntLiteral "1"
 |       `-- ExprStmt
 |           `-- AssignExpr "="
 |               |-- Identifier "next"
 |               `-- IntLiteral "0"
-|-- DestructorDef "Node : _ZN4NodeD1Ev"
-|   `-- CompoundStmt
 |-- FunctionDef "count : _ZN4Node5countEv"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
@@ -542,11 +497,11 @@ Program "translation_unit"
 `-- FunctionDef "main : main"
     `-- CompoundStmt
         |-- VarDecl "a : CLASS"
-        |   `-- ConstructExpr "CLASS"
-        |       `-- IntLiteral "1"
         |-- VarDecl "b : CLASS"
-        |   `-- ConstructExpr "CLASS"
-        |       |-- IntLiteral "2"
+        |-- ExprStmt
+        |   `-- AssignExpr "="
+        |       |-- MemberExpr "next"
+        |       |   `-- Identifier "b"
         |       `-- UnaryExpr "&"
         |           `-- Identifier "a"
         |-- VarDecl "c : CLASS"
@@ -656,49 +611,43 @@ Name                 Kind           Line   Scope                        Type    
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
 T                    typedef        11     global                       INT                                       0                                
 Node                 class_tag      12     global                       CLASS                                     0                                
-Node::value          class_member   14     global > class Node          INT                                       2                                
-Node::next           class_member   15     global > class Node          CLASS_POINTER    *                        1                                
-Node::v              parameter      16     global > class Node > Node::Node() INT                                       0                                
-Node::Node           class_method   16     global > class Node          CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
-Node::v              parameter      17     global > class Node > Node::Node() INT                                       1                                
-Node::n              parameter      17     global > class Node > Node::Node() CLASS_POINTER                             1                                
-Node::Node           class_method   17     global > class Node          CONSTRUCTOR                               1         VOID (INT, CLASS_POINTER) _ZN4NodeC1EiPS_
-Node::~Node          class_method   18     global > class Node          DESTRUCTOR                                0         VOID ()                _ZN4NodeD1Ev
-Node::count          class_method   19     global > class Node          PROCEDURE        static                   0         INT ()                 _ZN4Node5countEv
-Node::operator+      class_method   20     global > class Node          PROCEDURE                                 0         CLASS (CLASS)          _ZN4NodeplES_
-Node::o              parameter      20     global > class Node > operator+() CLASS                                     1                                
-Node::get            class_method   21     global > class Node          PROCEDURE                                 0         INT ()                 _ZN4Node3getEv
-Node::v              parameter      23     global > Node::Node()        INT                                       1                                
-Node::Node           procedure      23     global                       CONSTRUCTOR                               0         VOID (INT)             _ZN4NodeC1Ei
-Node::~Node          procedure      24     global                       DESTRUCTOR                                0         VOID ()                _ZN4NodeD1Ev
-Node::count          procedure      25     global                       PROCEDURE                                 0         INT ()                 _ZN4Node5countEv
-Pt                   struct_tag     26     global                       STRUCT                                    0                                
-Pt::x                struct_member  26     global > struct Pt           INT                                       0                                
-Pt::y                struct_member  26     global > struct Pt           INT                                       0                                
-sum                  procedure      27     global                       PROCEDURE                                 1         INT (INT)              _Z3sumiz
-n                    parameter      27     global > sum()               INT                                       1                                
-ap                   variable       28     global > sum()               VA_LIST                                   3                                
-s                    variable       30     global > sum()               INT                                       1                                
-apply                procedure      34     global                       PROCEDURE                                 0         INT (INT_POINTER, INT) _Z5applyPii
-apply                procedure      35     global                       PROCEDURE                                 1         INT (INT_POINTER, INT) _Z5applyPii
-f                    parameter      35     global > apply()             INT_POINTER                               1                                
-v                    parameter      35     global > apply()             INT                                       1                                
-twice                procedure      36     global                       PROCEDURE                                 1         INT (INT)              _Z5twicei
-v                    parameter      36     global > twice()             INT                                       1                                
-main                 procedure      37     global                       PROCEDURE                                 0         INT ()                 main
-a                    variable       38     global > main()              CLASS                                     2                                
-b                    variable       39     global > main()              CLASS                                     1                                
-c                    variable       40     global > main()              CLASS                                     1                                
-many                 variable       41     global > main()              INT_POINTER      *                        2                                
-x                    variable       42     global > main()              INT                                       2                                
-cp                   variable       43     global > main()              INT_POINTER      *                        1                                
-rp                   variable       44     global > main()              INT_POINTER_POINTER **                       1                                
-p                    variable       45     global > main()              STRUCT                                    1                                
-arr                  variable       46     global > main()              INT_ARRAY        []                       2                                
-zeros                variable       47     global > main()              INT_ARRAY        []                       1                                
-s                    variable       48     global > main()              CHAR_POINTER     *                        1                                
-grid                 variable       49     global > main()              INT_POINTER_ARRAY * []                     1                                
-Local                struct_tag     51     global > main() > block      STRUCT                                    0                                
-Local::k             struct_member  51     global > main() > block > struct Local INT                                       0                                
-Local                variable       53     global > main()              INT                                       1                                
-T                    variable       54     global > main()              INT                                       1                                
+Node::value          class_member   14     global > class Node          INT                                       1                                
+Node::next           class_member   15     global > class Node          CLASS_POINTER    *                        0                                
+Node::Node           class_method   16     global > class Node          CONSTRUCTOR                               0         VOID ()                _ZN4NodeC1Ev
+Node::count          class_method   17     global > class Node          PROCEDURE        static                   0         INT ()                 _ZN4Node5countEv
+Node::operator+      class_method   18     global > class Node          PROCEDURE                                 0         CLASS (CLASS)          _ZN4NodeplES_
+Node::o              parameter      18     global > class Node > operator+() CLASS                                     1                                
+Node::r              variable       18     global > class Node > operator+() CLASS                                     2                                
+Node::get            class_method   19     global > class Node          PROCEDURE                                 0         INT ()                 _ZN4Node3getEv
+Node::Node           procedure      21     global                       CONSTRUCTOR                               0         VOID ()                _ZN4NodeC1Ev
+Node::count          procedure      22     global                       PROCEDURE                                 0         INT ()                 _ZN4Node5countEv
+Pt                   struct_tag     23     global                       STRUCT                                    0                                
+Pt::x                struct_member  23     global > struct Pt           INT                                       0                                
+Pt::y                struct_member  23     global > struct Pt           INT                                       0                                
+sum                  procedure      24     global                       PROCEDURE                                 1         INT (INT)              _Z3sumiz
+n                    parameter      24     global > sum()               INT                                       1                                
+ap                   variable       25     global > sum()               VA_LIST                                   3                                
+s                    variable       27     global > sum()               INT                                       1                                
+apply                procedure      31     global                       PROCEDURE                                 0         INT (INT_POINTER, INT) _Z5applyPii
+apply                procedure      32     global                       PROCEDURE                                 1         INT (INT_POINTER, INT) _Z5applyPii
+f                    parameter      32     global > apply()             INT_POINTER                               1                                
+v                    parameter      32     global > apply()             INT                                       1                                
+twice                procedure      33     global                       PROCEDURE                                 1         INT (INT)              _Z5twicei
+v                    parameter      33     global > twice()             INT                                       1                                
+main                 procedure      34     global                       PROCEDURE                                 0         INT ()                 main
+a                    variable       35     global > main()              CLASS                                     2                                
+b                    variable       36     global > main()              CLASS                                     2                                
+c                    variable       38     global > main()              CLASS                                     1                                
+many                 variable       39     global > main()              INT_POINTER      *                        2                                
+x                    variable       40     global > main()              INT                                       2                                
+cp                   variable       41     global > main()              INT_POINTER      *                        1                                
+rp                   variable       42     global > main()              INT_POINTER_POINTER **                       1                                
+p                    variable       43     global > main()              STRUCT                                    1                                
+arr                  variable       44     global > main()              INT_ARRAY        []                       2                                
+zeros                variable       45     global > main()              INT_ARRAY        []                       1                                
+s                    variable       46     global > main()              CHAR_POINTER     *                        1                                
+grid                 variable       47     global > main()              INT_POINTER_ARRAY * []                     1                                
+Local                struct_tag     49     global > main() > block      STRUCT                                    0                                
+Local::k             struct_member  49     global > main() > block > struct Local INT                                       0                                
+Local                variable       51     global > main()              INT                                       1                                
+T                    variable       52     global > main()              INT                                       1                                

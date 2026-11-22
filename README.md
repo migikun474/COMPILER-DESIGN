@@ -6,7 +6,7 @@ then MIPS.
 
 | | |
 |---|---|
-| Source language | C-like (a C core plus classes, references and overloading — see the [feature audit](docs/FEATURES.md)) |
+| Source language | C-like (a C core plus a small C++ subset: classes with single inheritance and default constructors, references, overloading — see the [feature audit](docs/FEATURES.md)) |
 | Intermediate representation | Three Address Code: generator, interpreter and optimizer ([`phase3-ir`](phase3-ir/README.md)) |
 | Target | MIPS assembly for SPIM / QtSpim ([`phase4-codegen`](phase4-codegen/README.md)) |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2, g++ 13 |
@@ -27,7 +27,8 @@ Front end
 Back end
 ├── IR / TAC              ✓  phase3-ir                  (quadruples, backpatching, TAC interpreter)
 ├── Optimization          ✓  phase3-ir                  (-O1 local, -O2 data-flow, -O3 inlining and loops)
-└── MIPS generation       ✓  phase4-codegen             (SPIM; stack frames, run-time library)
+└── MIPS generation       ✓  phase4-codegen             (SPIM; frames, register allocation, run-time library;
+                                                         also the combined driver)
 ```
 
 ✓ implemented and tested. Every test program is also compiled with
@@ -73,7 +74,7 @@ library, `shared/build/libshared.a`:
 | `phase2-parser/syntax_analyzer` | a source file | Token/Token_Type table, AST, symbol table | every syntax error (gcc-style, with caret) + partial AST |
 | `phase2b-semantic/semantic_analyzer` | a source file | annotated AST, semantic symbol table, MIPS32 record layouts | every semantic error and warning (gcc-style) |
 | `phase3-ir/tac_generator` | a source file | the Three Address Code of every function with its symbol table; `--run` also executes it | the errors of the earlier phases; no code is generated |
-| `phase4-codegen/mips_generator` | a source file | MIPS assembly on standard output, run-time library included | the errors of the earlier phases; no code is generated |
+| `phase4-codegen/mips_generator` | a source file | MIPS assembly on standard output, run-time library included; with `--tokens`, `--ast`, `--symbols`, `--tac` or `--run` it stops at that phase (the combined driver) | the errors of the earlier phases; no code is generated |
 
 Each executable runs all the phases before its own (the later ones
 compile phase 2's grammar and the semantic analyzer into their own
@@ -92,11 +93,13 @@ a report to `logs/` in the current directory (`logs/<file>.log`, or
 │   ├── project_description.md    the project specification
 │   ├── FEATURES.md               feature audit: matrix and catalog
 │   ├── TRANSLATION.md            how source becomes TAC: passes, SDT rules, flowcharts
-│   ├── DESIGN_LOG.md             every design decision (D1–D31) with its reason
+│   ├── DESIGN_LOG.md             every design decision (D1–D41) with its reason
+│   ├── FEATURE_CONNECTIVITY.md   how the features depend on each other; change impact
+│   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   candidate features (written before D34–D41)
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
 │   ├── examples/                 example programs used in the docs
 │   └── diagrams/                 architecture diagrams (HTML + SVG)
-├── shared/                   libshared.a — token vocabulary, diagnostics, preprocessor,
+├── shared/                   libshared.a — token vocabulary, diagnostics,
 │                             AST, type system, symbol tables
 ├── phase1-lexer/             standalone flex lexer
 ├── phase2-parser/            flex scanner + bison LALR(1) parser
@@ -176,6 +179,35 @@ Four more, none of them in the project specification, were removed on
 **`register`**, **`volatile`** and **`long double`**. They are gone
 from every phase and are covered by the same two test files.
 
+On 2026-11-21 the language was reduced further (decisions D34–D36):
+
+- **The preprocessor** (D34). Any line starting with `#` is a lexical
+  error; `printf`, `scanf`, `malloc`, `free` and `va_list` are built in,
+  so no `#include` is needed (`e16_no_preprocessor.c`).
+- **Most of the C++ subset** (D35): destructors, constructors with
+  parameters, copy and converting constructors, member initializer
+  lists, `const` member functions, virtual functions (with vtables,
+  dynamic dispatch and abstract classes), `explicit`, multiple
+  inheritance, object slicing, nested and local classes, and static
+  local objects whose class has a constructor. `virtual` and `explicit`
+  stay reserved so the scanner can name them in its error
+  (`e23_class_features.c`, `e24_removed_keywords.c`,
+  `test31_dropped_class_features.c`).
+- **Loop-invariant code motion** in `-O3` (D36).
+
+## Added on 2026-11-21
+
+- A warning for an assignment used as a condition (`if (a = b)`).
+- Run-time checks in the MIPS code for integer division by zero and for
+  stack overflow, with the interpreter's messages (D37).
+- `-O3`: more algebraic identities, loop unrolling by two, removal of
+  functions `main` never calls; reaching definitions, which now drive
+  the uninitialized-variable warning (D38).
+- Frame slots only for values kept in memory, and the first 16 bytes of
+  arguments passed in `$a0`–`$a3` at `-O1` and above (D39).
+- The combined driver (D40). An audit then fixed an `-O3` hang in global
+  common-subexpression elimination (D41).
+
 ## Partially implemented
 
 Nothing. The last six partial features (class features, brace elision
@@ -200,7 +232,7 @@ functions, wide characters.
 
 | Phase | Documentation |
 |---|---|
-| Shared library (vocabulary, diagnostics, preprocessor, AST, types, symbol tables) | [`shared/README.md`](shared/README.md) |
+| Shared library (vocabulary, diagnostics, AST, types, symbol tables) | [`shared/README.md`](shared/README.md) |
 | Lexical analysis | [`phase1-lexer/README.md`](phase1-lexer/README.md) |
 | Syntax analysis | [`phase2-parser/README.md`](phase2-parser/README.md) · grammar walkthrough [`phase2-parser/docs/GRAMMAR_DESIGN.md`](phase2-parser/docs/GRAMMAR_DESIGN.md) |
 | Semantic analysis | [`phase2b-semantic/README.md`](phase2b-semantic/README.md) |
@@ -285,12 +317,25 @@ spim -file add.s
 | `-O2` | both | `-O1` plus constants and copies across blocks and dead assignments (liveness) |
 | `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal |
 | `--run`, `-q` | `tac_generator` | execute the code; `-q` prints only what the program prints |
-| `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the stack frame |
+| `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the stack frame and pass arguments on the stack |
+| `--tokens`, `--ast`, `--symbols`, `--tac`, `--run` | `mips_generator` | stop after that phase and print it instead of the assembly |
 
 Without an `-O` flag the MIPS code keeps every value in the stack
-frame, one fixed sequence per TAC instruction. With one, the most used
-names live in `$s0`–`$s7` / `$f20`–`$f30`, small constants go into the
-instructions, and a peephole pass runs.
+frame, one fixed sequence per TAC instruction, and passes every
+argument on the stack. With one, the most used names live in
+`$s0`–`$s7` / `$f20`–`$f30`, the first 16 bytes of arguments travel in
+`$a0`–`$a3`, small constants go into the instructions, and a peephole
+pass runs.
+
+Every phase from one command (the combined driver):
+
+```bash
+./phase4-codegen/mips_generator --tac docs/examples/add.c
+```
+
+```bash
+./phase4-codegen/mips_generator -O2 --run docs/examples/add.c
+```
 
 Example — a program with a semantic error:
 
@@ -318,11 +363,11 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 
 | Suite | Command | Contents |
 |---|---|---|
-| Lexer | `cd phase1-lexer && ./run.sh` | 9 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
-| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 25 valid, 12 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 23 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **87 checks, all passing** |
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **34 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 33 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **33 checks, all passing** |
+| Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
+| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`, `test31`) |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 26 valid + 23 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **86 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 32 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **33 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 32 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **32 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**
@@ -331,27 +376,31 @@ program's output or exit code).
 
 ## Known limitations
 
-- Removed features (see above): `enum`, `union`, file manipulation,
-  lambdas, function pointers, `new`/`delete`, `register`, `volatile`,
-  `long double`; the preprocessor (D34); and from C++ (D35): destructors,
-  constructors with parameters, copy and converting constructors,
-  member initializer lists, `const` member functions, virtual functions
-  and abstract classes, `explicit`, multiple inheritance, object
-  slicing, nested and local classes, static local objects with a
-  constructor.
+- Removed features: see [Removed features](#removed-features).
 - Constructs rejected as syntax errors: bit-fields, default arguments,
   templates, namespaces, `using`, exceptions, `inline`, `override` /
   `final`, virtual inheritance, compound literals, nested function
   definitions, `wchar_t` / wide literals.
 - `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
-  reserved words of this language (they cannot be used as identifiers);
-  `#include <stdio.h>` and other system headers are accepted and ignored.
+  reserved words of this language (they cannot be used as identifiers),
+  so no `#include` is needed; any `#` line is an error.
+- `if ((a = b))` still gets the assignment-as-condition warning: the
+  syntax tree keeps no parentheses.
+- Recursion depth: SPIM's default stack (256 KB in practice) holds about
+  8,000 frames of 32 bytes; the TAC interpreter stops at 10,000 calls.
+  Both report `stack overflow (recursion too deep)`.
+- Calls into the run-time library (`printf`, `scanf`, `malloc` …)
+  always pass their arguments on the stack.
+- `free` does not reuse memory (the heap only grows).
 
 ## Future work
 
 Everything in the agreed plan is implemented. What a next version could
 add, in order of value:
 
-1. **One driver** that runs every phase and SPIM in a single command.
-2. **More of C++** — `override` / `final`, covariant return types,
-   default arguments.
+1. **A free list** in the run-time library, so `free`d memory is reused.
+2. **Induction-variable strength reduction** (`i * 4` in a loop becomes
+   an addition), and unrolling by more than two when the trip count is
+   known.
+3. **Register arguments for the run-time library**, so `printf` and
+   `scanf` calls also skip the stack.
