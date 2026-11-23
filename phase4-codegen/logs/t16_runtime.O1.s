@@ -335,19 +335,19 @@ _Z7averageiz:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -56
+        addiu $sp, $sp, -48
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        s.d   $f20, -48($fp)
+        s.d   $f20, -40($fp)
         s.d   $f22, -16($fp)
         s.d   $f24, -32($fp)
         sw    $s0, -20($fp)
-        sw    $s1, -52($fp)
+        sw    $s1, -48($fp)
         sw    $s2, -24($fp)
-        sw    $s3, -36($fp)
+        sw    $s3, -44($fp)
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         sw    $a2, 16($fp)
@@ -424,13 +424,13 @@ L2_8:
         mov.d $f0, $f24
         j     _Z7averageiz_exit
 _Z7averageiz_exit:
-        l.d   $f20, -48($fp)
+        l.d   $f20, -40($fp)
         l.d   $f22, -16($fp)
         l.d   $f24, -32($fp)
         lw    $s0, -20($fp)
-        lw    $s1, -52($fp)
+        lw    $s1, -48($fp)
         lw    $s2, -24($fp)
-        lw    $s3, -36($fp)
+        lw    $s3, -44($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

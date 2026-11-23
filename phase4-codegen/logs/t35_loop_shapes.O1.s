@@ -40,10 +40,10 @@ main_:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -16($fp)
+        sw    $s0, -20($fp)
         sw    $s1, -8($fp)
-        sw    $s2, -12($fp)
-        sw    $s3, -20($fp)
+        sw    $s2, -16($fp)
+        sw    $s3, -12($fp)
         # s = 0
         li    $s0, 0
         # k = 0
@@ -171,10 +171,10 @@ L0_42:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -16($fp)
+        lw    $s0, -20($fp)
         lw    $s1, -8($fp)
-        lw    $s2, -12($fp)
-        lw    $s3, -20($fp)
+        lw    $s2, -16($fp)
+        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

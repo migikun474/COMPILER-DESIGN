@@ -64,6 +64,13 @@ TypePtr recordType(const std::shared_ptr<RecordInfo> &r) {
     return make(t);
 }
 
+TypePtr enumType(const std::shared_ptr<EnumInfo> &e) {
+    Type t;
+    t.kind = TypeKind::Int;
+    t.enumInfo = e;
+    return make(t);
+}
+
 TypePtr opaqueType(const std::string &name) {
     Type t;
     t.kind = TypeKind::Opaque;
@@ -92,6 +99,7 @@ static TypeKind kindOf(const TypePtr &t) { return t ? t->kind : TypeKind::Error;
 bool isError(const TypePtr &t) { return kindOf(t) == TypeKind::Error; }
 bool isVoid(const TypePtr &t) { return kindOf(t) == TypeKind::Void; }
 bool isBool(const TypePtr &t) { return kindOf(t) == TypeKind::Bool; }
+bool isEnum(const TypePtr &t) { return t && t->kind == TypeKind::Int && t->enumInfo; }
 bool isIntegral(const TypePtr &t) {
     switch (kindOf(t)) {
         case TypeKind::Bool: case TypeKind::Char: case TypeKind::Short: case TypeKind::Int:
@@ -135,7 +143,7 @@ bool sameType(const TypePtr &a, const TypePtr &b, bool exactQualifiers) {
     switch (a->kind) {
         case TypeKind::Char: case TypeKind::Short: case TypeKind::Int:
         case TypeKind::Long: case TypeKind::LongLong:
-            return a->isUnsigned == b->isUnsigned;
+            return a->isUnsigned == b->isUnsigned && a->enumInfo == b->enumInfo; /* each enum is its own type */
         case TypeKind::Pointer: case TypeKind::Reference:
             return sameType(a->elem, b->elem, true);
         case TypeKind::Array:
@@ -185,6 +193,7 @@ TypePtr decay(const TypePtr &t) {
 }
 
 TypePtr integerPromotion(const TypePtr &t) {
+    if (isEnum(t)) return intType(); /* an enum promotes to its underlying int */
     switch (kindOf(t)) {
         case TypeKind::Bool: case TypeKind::Char: case TypeKind::Short:
             return intType();
@@ -224,6 +233,19 @@ Conversion implicitConversion(const TypePtr &fromIn, const TypePtr &toIn, bool f
         return c;
     }
     if (sameType(from, to)) { c.rank = ConvRank::Exact; return c; }
+
+    /* enums follow C++ (D42): an enum converts to an arithmetic type (to
+       int it is an integral promotion), nothing converts to an enum
+       implicitly -- that takes a cast */
+    if (isEnum(to)) {
+        c.why = isEnum(from) ? "different enum types do not convert to each other"
+                             : "a value converts to an enum type only with a cast";
+        return c;
+    }
+    if (isEnum(from) && isArithmetic(to) && !isBool(to)) {
+        c.rank = to->kind == TypeKind::Int && !to->isUnsigned ? ConvRank::Promotion : ConvRank::Conversion;
+        return c;
+    }
 
     if (isBool(to)) {
         if (isArithmetic(from) || isPointer(from)) c.rank = ConvRank::Conversion;
@@ -283,7 +305,7 @@ std::string checkCast(const TypePtr &fromIn, const TypePtr &to) {
     if (isVoid(from)) return "a void expression cannot be cast to a non-void type";
     if (isRecord(to) || isRecord(from)) {
         if (sameType(from, to)) return "";
-        return "cannot cast between a struct/class type and another type";
+        return "cannot cast between a struct/union/class type and another type";
     }
     if (isArithmetic(from) && isArithmetic(to)) return "";
     if (isPointer(from) && isPointer(to)) return "";
@@ -340,16 +362,22 @@ void layoutRecord(RecordInfo &r) {
         offset += b.record->size;
         align = std::max(align, b.record->align);
     }
+    long long largest = 0; /* union: every member at offset 0, the size of the largest */
     for (auto &f : r.fields) {
         if (f->storage != Storage::Member) continue; /* static members live elsewhere */
         long long fs = std::max(0LL, sizeOf(f->type));
         int fa = alignOf(f->type);
         align = std::max(align, fa);
+        if (r.kind == RecordKind::Union) {
+            f->offset = 0;
+            largest = std::max(largest, fs);
+            continue;
+        }
         offset = alignUp(offset, fa);
         f->offset = offset;
         offset += fs;
     }
-    long long size = offset;
+    long long size = r.kind == RecordKind::Union ? largest : offset;
     if (size == 0) size = 1; /* no zero-sized objects (C++ rule) */
     r.size = alignUp(size, align);
     r.align = align;
@@ -370,6 +398,7 @@ std::string accessName(Access a) {
 std::string recordKindName(RecordKind k) {
     switch (k) {
         case RecordKind::Struct: return "struct";
+        case RecordKind::Union: return "union";
         case RecordKind::Class: return "class";
     }
     return "?";
@@ -383,7 +412,9 @@ static std::string baseName(const TypePtr &t) {
         case TypeKind::Bool: return "bool";
         case TypeKind::Char: return u + "char";
         case TypeKind::Short: return u + "short";
-        case TypeKind::Int: return t->isUnsigned ? "unsigned int" : "int";
+        case TypeKind::Int:
+            if (t->enumInfo) return enumDisplayName(*t->enumInfo);
+            return t->isUnsigned ? "unsigned int" : "int";
         case TypeKind::Long: return u + "long";
         case TypeKind::LongLong: return u + "long long";
         case TypeKind::Float: return "float";
@@ -485,6 +516,10 @@ std::string constantToString(long long v, const TypePtr &t) {
 
 std::string recordDisplayName(const RecordInfo &r) {
     return r.typedefName.empty() ? recordKindName(r.kind) + " " + r.tag : r.typedefName;
+}
+
+std::string enumDisplayName(const EnumInfo &e) {
+    return e.typedefName.empty() ? "enum " + e.tag : e.typedefName;
 }
 
 /* ---------------- member lookup ---------------- */

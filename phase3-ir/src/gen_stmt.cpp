@@ -57,7 +57,7 @@ List Generator::stmt(const ASTNodePtr &n) {
             return {};
         case ASTKind::EmptyStmt:
             return {};
-        case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::StructDecl: case ASTKind::ClassDecl:
+        case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl:
         case ASTKind::FunctionDecl: case ASTKind::TypedefDecl:
             localDecl(n);
             return {};
@@ -223,7 +223,7 @@ void Generator::localDecl(const ASTNodePtr &n) {
 void Generator::localVariable(const ASTNodePtr &n) {
     sem::Symbol *s = n->symbol.get();
     if (!s || s->kind != sem::SymbolKind::Variable) return;
-    if (s->storage != sem::Storage::Local) return; /* static / extern: data, not code (see globals()) */
+    if (s->storage != sem::Storage::Local) return; /* static: data, not code (see globals()) */
     if (n->line) curLine = n->line;
     ASTNodePtr init = n->children.empty() ? nullptr : n->children[0];
     TypePtr T = s->type;
@@ -551,7 +551,6 @@ void Generator::globals() {
         bool object = s->kind == sem::SymbolKind::Variable || s->kind == sem::SymbolKind::Field;
         bool isStaticData = s->storage == sem::Storage::Global || s->storage == sem::Storage::Static;
         if (!object || !isStaticData || !s->type) continue;
-        if (s->kind == sem::SymbolKind::Variable && s->storage == sem::Storage::Global && !s->isDefined) continue; /* extern */
         Global g;
         g.sym = s;
         const ASTNode *decl = s->declNode;
@@ -654,7 +653,7 @@ void Generator::collect(const ASTNodePtr &n) {
         case ASTKind::FunctionDef: case ASTKind::ConstructorDef:
             function(n);
             break;
-        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::DeclGroup: case ASTKind::Program:
+        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl: case ASTKind::DeclGroup: case ASTKind::Program:
             for (const auto &c : n->children) collect(c);
             break;
         default:

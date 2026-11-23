@@ -60,26 +60,26 @@ _Z5totalPii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -20($fp)
+        sw    $s0, -28($fp)
+        sw    $s1, -24($fp)
         sw    $s2, -4($fp)
         sw    $s3, -8($fp)
         sw    $s4, -12($fp)
         sw    $s5, -16($fp)
-        sw    $s6, -28($fp)
-        move  $s6, $a0
-        move  $s5, $a1
+        sw    $s6, -20($fp)
+        move  $s5, $a0
+        move  $s6, $a1
         # s = 0
         li    $s1, 0
         # i = 0
         li    $s0, 0
 L0_2:
         # if i int>= n goto 9
-        bge   $s0, $s5, L0_9
+        bge   $s0, $s6, L0_9
         # t1 = i int<< 2
         sll   $s2, $s0, 2
         # t2 = a ptr+ t1
-        addu  $s3, $s6, $s2
+        addu  $s3, $s5, $s2
         # t3 = *t2
         lw    $s4, 0($s3)
         # s = s int+ t3
@@ -93,13 +93,13 @@ L0_9:
         move  $v0, $s1
         j     _Z5totalPii_exit
 _Z5totalPii_exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -20($fp)
+        lw    $s0, -28($fp)
+        lw    $s1, -24($fp)
         lw    $s2, -4($fp)
         lw    $s3, -8($fp)
         lw    $s4, -12($fp)
         lw    $s5, -16($fp)
-        lw    $s6, -28($fp)
+        lw    $s6, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8

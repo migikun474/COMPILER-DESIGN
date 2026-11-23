@@ -1,0 +1,76 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c
+
+Semantic analysis failed: 17 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c'.
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:7:22: semantic error: union 'V' cannot have member functions, constructors or friends: unions hold data only [union]
+ 7 | union V { int i; int get() { return i; } };     // error: union 'V' cannot have member functions
+   |                      ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:8:13: semantic error: member 'k' of union 'W' has a class type with a constructor [union]
+ 8 | union W { K k; int j; };                        // error: member 'k' of union 'W' has a class type with a constructor
+   |             ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:9:16: semantic error: member 'r' of union 'X' cannot be a reference [union]
+ 9 | union X { int &r; };                            // error: member 'r' of union 'X' cannot be a reference
+   |                ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:10:6: semantic error: redefinition of 'enum Color' (previous definition at line 2) [redefinition]
+ 10 | enum Color { Again };                           // error: redefinition of 'enum Color'
+    |      ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:11:11: semantic error: use of 'U' with tag type 'struct' that does not match its declaration as 'union' [tag-mismatch]
+ 11 | struct U *pu;                                   // error: use of 'U' with tag type 'struct' that does not match its declaration as 'union'
+    |           ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:12:12: semantic error: redefinition of 'Red' (previously declared as an enumerator at line 2) [redeclaration]
+ 12 | enum Dup { Red };                               // error: redefinition of 'Red' (previously declared as an enumerator
+    |            ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:13:8: semantic error: value 3000000000 of enumerator 'Big' does not fit the enum's underlying type 'int' [enum]
+ 13 | enum { Big = 3000000000 };                      // error: does not fit the enum's underlying type 'int'
+    |        ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:14:17: semantic error: anonymous unions are not supported: give the union member a name [anonymous-union]
+ 14 | struct Holder { union { int a; float b; }; };   // error: anonymous unions are not supported
+    |                 ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:15:21: semantic error: an enum cannot be defined inside 'Outer': define it at file scope or in a function [nested-enum]
+ 15 | struct Outer { enum Inner { A, B } in; };       // error: an enum cannot be defined inside 'Outer'
+    |                     ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:19:20: semantic error: type mismatch: cannot initialize variable 'c' of type 'enum Color' with a value of type 'int' (a value converts to an enum type only with a cast) [type-mismatch]
+ 19 |     enum Color c = 1;                           // error: a value converts to an enum type only with a cast
+    |                    ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:20:15: semantic error: type mismatch: cannot initialize variable 'd' of type 'enum Color' with a value of type 'enum Size' (different enum types do not convert to each other) [type-mismatch]
+ 20 |     Color d = Small;                            // error: different enum types do not convert to each other
+    |               ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:21:11: semantic error: type mismatch: cannot assign 'int' to 'enum Color' (a value converts to an enum type only with a cast) [type-mismatch]
+ 21 |     c = c + 1;                                  // error: cannot assign 'int' to 'enum Color'
+    |           ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:22:6: semantic error: cannot increment a value of type 'enum Color' [invalid-operands]
+ 22 |     c++;                                        // error: cannot increment a value of type 'enum Color'
+    |      ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:23:5: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+ 23 |     Red = 4;                                    // error: lvalue required
+    |     ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:24:22: semantic error: excess elements in union initializer for 'union U' (a union holds one member at a time) [initializer]
+ 24 |     union U u = { 1, 2.0f };                    // error: excess elements in union initializer
+    |                      ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:25:15: semantic error: use of undeclared enum 'enum Nope' [unknown-type]
+ 25 |     enum Nope e;                                // error: use of undeclared enum 'enum Nope'
+    |               ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e25_enums_unions.c:26:12: semantic error: 'S' is not an enum (it is a struct) [tag-mismatch]
+ 26 |     enum S s2;                                  // error: 'S' is not an enum
+    |            ^
+

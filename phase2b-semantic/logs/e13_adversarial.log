@@ -2,43 +2,43 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c
 
-Semantic analysis failed: 9 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c'.
+Semantic analysis failed: 9 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c'.
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:11:24: semantic error: reference to non-static member function 'x' must be called [member-access]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:11:24: semantic error: reference to non-static member function 'x' must be called [member-access]
  11 |     int sum() { return x + 1; }   // error: reference to non-static member function 'x' must be called
     |                        ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:22:13: semantic error: type mismatch: cannot initialize variable 'pb' of type 'class B *' with a value of type 'class A *' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:22:13: semantic error: type mismatch: cannot initialize variable 'pb' of type 'class B *' with a value of type 'class A *' (incompatible pointer types) [type-mismatch]
  22 |     B *pb = &a;                   // error: cannot initialize variable 'pb' of type 'class B *'
     |             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:23:15: semantic error: function 'get' expects 0 arguments but 1 was provided [argument-count]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:23:15: semantic error: function 'get' expects 0 arguments but 1 was provided [argument-count]
  23 |     int v = a.get(1);             // error: function 'get' expects 0 arguments but 1 was provided
     |               ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:24:11: semantic error: 'helper' is a private member of 'class A' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:24:11: semantic error: 'helper' is a private member of 'class A' and is not accessible outside the class [access]
  24 |     v = a.helper();               // error: 'helper' is a private member of 'class A'
     |           ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:27:14: semantic error: duplicate case value '97' (previously used at line 26) [duplicate-case]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:27:14: semantic error: duplicate case value '97' (previously used at line 26) [duplicate-case]
  27 |         case 97: break;           // error: duplicate case value '97'
     |              ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:29:16: semantic error: duplicate case value '1' (previously used at line 28) [duplicate-case]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:29:16: semantic error: duplicate case value '1' (previously used at line 28) [duplicate-case]
  29 |         case 2 - 1: break;        // error: duplicate case value '1'
     |                ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:31:9: semantic error: call to overloaded function 'h(int)' is ambiguous; candidates are: h(long), h(double) [ambiguous-call]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:31:9: semantic error: call to overloaded function 'h(int)' is ambiguous; candidates are: h(long), h(double) [ambiguous-call]
  31 |     v = h(x);                     // error: call to overloaded function 'h(int)' is ambiguous
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:32:7: semantic error: reference to function 'h' must be called (a function is not a value: function pointers are not supported) [function-value]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:32:7: semantic error: reference to function 'h' must be called (a function is not a value: function pointers are not supported) [function-value]
  32 |     k(h);                         // error: reference to function 'h' must be called
     |       ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e13_adversarial.c:33:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e13_adversarial.c:33:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
  33 |     int (*pa)[3] = &x;            // error: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *'
     |                    ^
 

@@ -12,16 +12,14 @@ int u7[-2147483647 - 1 < 0 ? 1 : -1];
 int u8[(char)200 == -56 ? 1 : -1];
 int u9[sizeof(3000000000) == 8 && sizeof(0xFFFFFFFF) == 4 ? 1 : -1]; /* long long, unsigned int */
 
-/* linkage: one object, composite type */
-extern int table[];
+/* file-scope objects used from functions (there is no `extern`: one
+   definition per object) */
 int table[4] = { 1, 2, 3, 4 };
 int table_ok[sizeof(table) == 16 ? 1 : -1];
-extern int counter;
 int counter = 0;
-extern int counter;
-int bump(void) { extern int counter; return ++counter; }
+int bump(void) { return ++counter; }
 int total = 10;
-int read_total(void) { extern int total; return total; }
+int read_total(void) { return total; }
 
 struct Mutable { int a, b; };
 

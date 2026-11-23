@@ -1,13 +1,10 @@
-/* Storage classes: extern (declares an object defined elsewhere, or later)
-   alongside static and typedef. */
-extern int limit;
-extern int lookup[];
-extern int scale(int factor);
+/* Storage classes: static and typedef (extern was removed, D43), and a
+   function declared before its definition. */
+int scale(int factor);
 int lookup[3] = { 1, 2, 4 };
 int limit = 3;
 
 int scale(int factor) {
-    extern int limit;              /* the file-scope limit */
     int k;
     int sum = 0;
     for (k = 0; k < limit; k++) sum += lookup[k] * factor;

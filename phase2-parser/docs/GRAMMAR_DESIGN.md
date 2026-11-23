@@ -17,7 +17,9 @@ any interesting ambiguity/precedence decisions behind the rule's shape.
 > built-ins, lambdas and function pointers (see
 > [`../../docs/DESIGN_LOG.md`](../../docs/DESIGN_LOG.md)). Sections 3c
 > and 4 below were updated; any other mention of those constructs in
-> this document is historical.
+> this document is historical. `enum` and `union` came back on
+> 2026-11-23 (D42: `union` shares the struct rules, `enum` has
+> `enumerator_list` / `enumerator`), and `extern` was removed (D43).
 
 ---
 

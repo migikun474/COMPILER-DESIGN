@@ -2,107 +2,107 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c
 
-Semantic analysis failed: 24 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c'.
+Semantic analysis failed: 24 error(s), 1 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c'.
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:4:14: semantic error: typedef redefinition with different types ('char' vs 'int') [redeclaration]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:4:14: semantic error: typedef redefinition with different types ('char' vs 'int') [redeclaration]
  4 | typedef char T;                   // error: typedef redefinition with different types ('char' vs 'int')
    |              ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:6:8: semantic error: redefinition of 'struct S' (previous definition at line 5) [redefinition]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:6:8: semantic error: redefinition of 'struct S' (previous definition at line 5) [redefinition]
  6 | struct S { int b; };              // error: redefinition of 'struct S'
    |        ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:10:5: semantic error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported [constructor]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:10:5: semantic error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported [constructor]
  10 |     Vec(int a) { x = a; }         // error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:11:9: semantic error: overloaded 'operator+' must be a unary or binary operator (it has 3 operands) [operator-overload]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:11:9: semantic error: overloaded 'operator+' must be a unary or binary operator (it has 3 operands) [operator-overload]
  11 |     Vec operator+(Vec o, Vec p);  // error: must be a unary or binary operator (it has 3 operands)
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:12:9: semantic error: overloaded 'operator!' must be a unary operator (it has 2 operands) [operator-overload]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:12:9: semantic error: overloaded 'operator!' must be a unary operator (it has 2 operands) [operator-overload]
  12 |     int operator!(int k);         // error: overloaded 'operator!' must be a unary operator
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:16:5: semantic error: overloaded 'operator+' must have at least one parameter of class type [operator-overload]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:16:5: semantic error: overloaded 'operator+' must have at least one parameter of class type [operator-overload]
  16 | int operator+(int a, int b);      // error: must have at least one parameter of class type
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:17:5: semantic error: overloaded 'operator=' must be a non-static member function [operator-overload]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:17:5: semantic error: overloaded 'operator=' must be a non-static member function [operator-overload]
  17 | Vec operator=(Vec a, Vec b);      // error: overloaded 'operator=' must be a non-static member function
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:18:6: semantic error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported [constructor]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:18:6: semantic error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported [constructor]
  18 | Vec::Vec(double d) { x = 0; }     // error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported
     |      ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:19:32: semantic error: 'va_start' used in function 'fixed', which has fixed arguments [varargs]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:19:32: semantic error: 'va_start' used in function 'fixed', which has fixed arguments [varargs]
  19 | int fixed(int n) { va_list ap; va_start(ap, n); return 0; }   // error: 'va_start' used in function 'fixed', which has fixed arguments
     |                                ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:23:14: semantic error: argument 1 of 'va_start' must be a 'va_list' variable, not 'int' [varargs]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:23:14: semantic error: argument 1 of 'va_start' must be a 'va_list' variable, not 'int' [varargs]
  23 |     va_start(k, n);               // error: argument 1 of 'va_start' must be a 'va_list' variable
     |              ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:24:29: semantic warning: 'char' is promoted to 'int' when passed through '...', so 'va_arg' must ask for 'int' [varargs]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:24:29: semantic warning: 'char' is promoted to 'int' when passed through '...', so 'va_arg' must ask for 'int' [varargs]
  24 |     char c = va_arg(ap, char);    // warning: 'char' is promoted to 'int' when passed through '...'
     |                             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:25:24: semantic error: second argument of 'va_arg' must be a type [varargs]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:25:24: semantic error: second argument of 'va_arg' must be a type [varargs]
  25 |     int z = va_arg(ap, 3);        // error: second argument of 'va_arg' must be a type
     |                        ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:30:9: semantic error: 'Vec::Vec()' is a private member of 'class Vec' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:30:9: semantic error: 'Vec::Vec()' is a private member of 'class Vec' and is not accessible outside the class [access]
  30 |     Vec a;                        // error: 'Vec::Vec()' is a private member of 'class Vec'
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:31:10: semantic error: 'class Vec' cannot be constructed from 2 arguments: only default construction is supported ('Vec x;') [constructor]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:31:10: semantic error: 'class Vec' cannot be constructed from 2 arguments: only default construction is supported ('Vec x;') [constructor]
  31 |     Vec b(1, 2);                  // error: 'class Vec' cannot be constructed from 2 arguments: only default construction is supported
     |          ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:33:15: semantic error: invalid operands to binary '*' ('class Vec' and 'int'): no 'operator*' is declared for these operands [invalid-operands]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:33:15: semantic error: invalid operands to binary '*' ('class Vec' and 'int'): no 'operator*' is declared for these operands [invalid-operands]
  33 |     Vec d = c * 2;                // error: no 'operator*' is declared for these operands
     |               ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:34:7: semantic error: invalid operands to compound assignment '+=' ('class Vec' and 'class Vec'): no 'operator+=' is declared [invalid-operands]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:34:7: semantic error: invalid operands to compound assignment '+=' ('class Vec' and 'class Vec'): no 'operator+=' is declared [invalid-operands]
  34 |     c += d;                       // error: no 'operator+=' is declared
     |       ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:37:5: semantic error: cannot assign to variable 'cp' with const-qualified type 'int * const' [const]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:37:5: semantic error: cannot assign to variable 'cp' with const-qualified type 'int * const' [const]
  37 |     cp = 0;                       // error: cannot assign to variable 'cp' with const-qualified type 'int * const'
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:38:11: semantic error: 'bad' declared as a pointer to a reference [invalid-declarator]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:38:11: semantic error: 'bad' declared as a pointer to a reference [invalid-declarator]
  38 |     int &*bad;                    // error: 'bad' declared as a pointer to a reference
     |           ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:39:20: semantic error: unknown member 'nope': no member named 'nope' in 'struct S' [unknown-member]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:39:20: semantic error: unknown member 'nope': no member named 'nope' in 'struct S' [unknown-member]
  39 |     struct S s = {.nope = 1};     // error: no member named 'nope' in 'struct S'
     |                    ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:40:19: semantic error: array index 5 in initializer exceeds the bounds of variable 'arr' (2 elements) [initializer]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:40:19: semantic error: array index 5 in initializer exceeds the bounds of variable 'arr' (2 elements) [initializer]
  40 |     int arr[2] = {[5] = 1};       // error: array index 5 in initializer exceeds the bounds
     |                   ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:41:15: semantic error: designator '.a' cannot be used to initialize the scalar variable 'k' [initializer]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:41:15: semantic error: designator '.a' cannot be used to initialize the scalar variable 'k' [initializer]
  41 |     int k = {.a = 1};             // error: designator '.a' cannot be used to initialize the scalar
     |               ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:42:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:42:10: semantic error: a scalar variable 'q' is initialized with exactly one value, not 2 [initializer]
  42 |     int q(1, 2);                  // error: is initialized with exactly one value, not 2
     |          ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:43:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:43:9: semantic error: zero-size array 'empty' (an empty initializer gives the array no elements) [array-size]
  43 |     int empty[] = {};             // error: zero-size array 'empty'
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:44:25: semantic error: array designator index must be an integer constant expression [initializer]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:44:25: semantic error: array designator index must be an integer constant expression [initializer]
  44 |     int notConst[3] = {[x] = 1};  // error: array designator index must be an integer constant expression
     |                         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/invalid/e15_cxx_features.c:45:22: semantic error: array designator index -1 is negative [initializer]
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e15_cxx_features.c:45:22: semantic error: array designator index -1 is negative [initializer]
  45 |     int below[3] = {[-1] = 1};    // error: array designator index -1 is negative
     |                      ^
 

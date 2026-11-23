@@ -28,7 +28,6 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->tagName = ts.tagName;
     t->typedefName = ts.typedefName;
     t->isStatic = ts.isStatic;
-    t->isExtern = ts.isExtern;
     t->storageClasses = ts.storageClasses;
     t->isConst = ts.isConst;
     t->isAuto = ts.isAuto;

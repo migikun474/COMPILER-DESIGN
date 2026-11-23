@@ -2,36 +2,36 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c
+Source File : test/test17_syntax_errors_functions.c
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:10:1: syntax error: syntax error, unexpected IDENTIFIER
+test/test17_syntax_errors_functions.c:10:1: syntax error: syntax error, unexpected IDENTIFIER
  10 | missing_return_type() {
     | ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:15:37: syntax error: syntax error, unexpected ')'
+test/test17_syntax_errors_functions.c:15:37: syntax error: syntax error, unexpected ')'
  15 | int t02_trailing_comma_param(int a, ) {
     |                                     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:20:30: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
+test/test17_syntax_errors_functions.c:20:30: syntax error: syntax error, unexpected IDENTIFIER, expecting '('
  20 | int t03_untyped_param(a, int b) {
     |                              ^
     | note: insert '(' here
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:26:33: syntax error: syntax error, unexpected ELLIPSIS, expecting ')'
+test/test17_syntax_errors_functions.c:26:33: syntax error: syntax error, unexpected ELLIPSIS, expecting ')'
  26 | int t04_ellipsis_with_no_params(...) {
     |                                 ^
     | note: insert ')' here
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:31:42: syntax error: syntax error, unexpected '{', expecting ')'
+test/test17_syntax_errors_functions.c:31:42: syntax error: syntax error, unexpected '{', expecting ')'
  31 | int t05_missing_close_paren(int a, int b {
     |                                          ^
     | note: insert ')' here
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:42:13: syntax error: syntax error, unexpected end of file
+test/test17_syntax_errors_functions.c:42:13: syntax error: syntax error, unexpected end of file
  42 |     return b;
     |             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2-parser/test/test17_syntax_errors_functions.c:42:1: fatal error: parser could not recover after the preceding error(s) -- the rest of the file was not analyzed
+test/test17_syntax_errors_functions.c:42:1: fatal error: parser could not recover after the preceding error(s) -- the rest of the file was not analyzed
  42 |     return b;
     | ^
 

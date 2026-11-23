@@ -10,7 +10,7 @@ enum class ASTKind {
     Program,
 
     VarDecl, ParamDecl, FunctionDecl, FunctionDef, DeclGroup,
-    StructDecl, ClassDecl, TypedefDecl,
+    StructDecl, UnionDecl, ClassDecl, EnumDecl, Enumerator, TypedefDecl,
     ConstructorDef, FriendDecl, InitDeclarator, InitializerList,
 
     CompoundStmt, IfStmt, WhileStmt, DoWhileStmt, UntilStmt, ForStmt,
@@ -48,10 +48,9 @@ using ASTNodePtr = std::shared_ptr<ASTNode>;
    analysis resolves it into a structural sem::Type. Never printed. */
 struct ASTTypeExpr {
     std::vector<std::string> specParts; /* same as TypeSpec::parts */
-    std::string tagName;                /* struct/class tag, if any */
+    std::string tagName;                /* struct/union/class/enum tag, if any */
     std::string typedefName;            /* set when spelled via a TYPE_NAME */
     bool isStatic = false;
-    bool isExtern = false;              /* `extern`: declares, does not define */
     int storageClasses = 0;             /* how many storage-class keywords (> 1 is an error) */
     bool isConst = false;
     bool isAuto = false;

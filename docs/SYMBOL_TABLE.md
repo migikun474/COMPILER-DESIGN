@@ -40,7 +40,7 @@ One live entry (`::Symbol`, in a scope's map):
 
 | Field | Meaning |
 |---|---|
-| `kind` | `SymKind`: `VARIABLE, PROCEDURE, PARAMETER, STRUCT_TAG, CLASS_TAG, TYPEDEF_NAME, LABEL` |
+| `kind` | `SymKind`: `VARIABLE, PROCEDURE, PARAMETER, STRUCT_TAG, CLASS_TAG, UNION_TAG, ENUM_TAG, ENUM_CONST, TYPEDEF_NAME, LABEL` |
 | `typeStr` | the Token_Type text (`"INT"`, `"CHAR_POINTER"`, `"PROCEDURE"`, `"STRUCT"`) |
 | `mangledName` | Itanium link name, callables only |
 | `aggregateTagName` | for a variable of struct/class type: its tag, so `p.x` can find `x` |
@@ -105,18 +105,18 @@ A **`sem::Symbol`** (every field that exists):
 |---|---|
 | `name` | as written |
 | `uniqueName` | program-wide unique name for IR: globals keep their name, functions their mangled name, locals and parameters get `name.N` (`x.4`, `x.5`), fields `Tag::name` |
-| `kind` | `SymbolKind::Variable, Parameter, Function, Field, Typedef, Label, Tag` |
+| `kind` | `SymbolKind::Variable, Parameter, Function, Field, Typedef, EnumConstant, Label, Tag` |
 | `type` | `sem::TypePtr` — the structural type |
 | `storage` | `Storage::None, Global, Static, Local, Param, Member` |
 | `scopeId`, `scopePath`, `line`, `column` | where it was declared |
 | `isConstant`, `constValue` | `const` objects with a known integer value |
 | `hasInitializer`, `useCount`, `evaluatedUses` | bookkeeping (`evaluatedUses` excludes uses inside `sizeof`) |
-| `isDefined` | functions: body seen; objects: defined, not just declared `extern` |
+| `isDefined` | functions: body seen (objects are always defined: there is no `extern`, D43) |
 | `isStatic` | `static` function or member |
 | `isMethod`, `isConstructor`, `mangledName` | callables |
 | `params`, `locals`, `bodyScopeId` | functions: parameter symbols in order (unnamed ones too), every local, the body scope |
 | `ownerRecord`, `access`, `offset` | members: owning `RecordInfo`, `public`/`protected`/`private`, byte offset (MIPS32 layout) |
-| `record` | tags: the `RecordInfo` |
+| `record`, `enumInfo` | tags: the `RecordInfo` of a struct/union/class, or the `EnumInfo` of an enum |
 | `declNode` | the declaring AST node |
 
 ### Operations

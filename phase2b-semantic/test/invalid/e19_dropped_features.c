@@ -1,6 +1,6 @@
 /* invalid: what is left of the dropped features once a program parses.
    Function pointers are gone, so a function is never a value: its name
-   can only be called. (enum, union, FILE, lambdas and `int (*fp)(int)`
+   can only be called. (FILE, lambdas and `int (*fp)(int)`
    are rejected earlier, as syntax errors: phase2-parser/test/
    test29_dropped_features.c, and so are `new`, `delete`, `register`
    and `volatile`, dropped later. `long double` is no longer a spelling
