@@ -57,7 +57,7 @@ List Generator::stmt(const ASTNodePtr &n) {
             return {};
         case ASTKind::EmptyStmt:
             return {};
-        case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::StructDecl: case ASTKind::ClassDecl:
+        case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl:
         case ASTKind::FunctionDecl: case ASTKind::TypedefDecl:
             localDecl(n);
             return {};
@@ -654,7 +654,7 @@ void Generator::collect(const ASTNodePtr &n) {
         case ASTKind::FunctionDef: case ASTKind::ConstructorDef:
             function(n);
             break;
-        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::DeclGroup: case ASTKind::Program:
+        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl: case ASTKind::DeclGroup: case ASTKind::Program:
             for (const auto &c : n->children) collect(c);
             break;
         default:

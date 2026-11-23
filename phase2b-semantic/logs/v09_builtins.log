@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v09_builtins.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/valid/v09_builtins.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/reduce/phase2b-semantic/test/valid/v09_builtins.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/valid/v09_builtins.c'.
 
 === Annotated AST ===
 Program "translation_unit"

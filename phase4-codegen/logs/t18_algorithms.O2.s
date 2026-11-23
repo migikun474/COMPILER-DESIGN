@@ -43,8 +43,8 @@ _Z6bubblePii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -80
-        sw    $s0, -76($fp)
-        sw    $s1, -80($fp)
+        sw    $s0, -80($fp)
+        sw    $s1, -76($fp)
         sw    $s2, -68($fp)
         sw    $s3, -72($fp)
         sw    $s4, -52($fp)
@@ -143,8 +143,8 @@ L0_28:
         # return
         j     _Z6bubblePii_exit
 _Z6bubblePii_exit:
-        lw    $s0, -76($fp)
-        lw    $s1, -80($fp)
+        lw    $s0, -80($fp)
+        lw    $s1, -76($fp)
         lw    $s2, -68($fp)
         lw    $s3, -72($fp)
         lw    $s4, -52($fp)

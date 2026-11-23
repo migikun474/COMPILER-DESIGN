@@ -356,7 +356,7 @@ TypePtr SemanticAnalyzer::expr(const ASTNodePtr &n) {
             }
             std::string what = n->label == "++" ? "increment operand" : "decrement operand";
             TypePtr vt = decay(ot);
-            if (!isError(vt) && !(isArithmetic(vt) || (isPointer(vt) && isComplete(vt->elem)))) {
+            if (!isError(vt) && (isEnum(vt) || !(isArithmetic(vt) || (isPointer(vt) && isComplete(vt->elem))))) {
                 error(n.get(), "cannot " + std::string(n->label == "++" ? "increment" : "decrement") +
                                    " a value of type " + q(ot),
                       "invalid-operands");
@@ -457,6 +457,10 @@ TypePtr SemanticAnalyzer::identifier(const ASTNodePtr &n) {
     if (isReference(t)) t = t->elem;
     if (l.viaRecord && sym->storage == Storage::Member && f && f->fn && f->fn->type && f->fn->type->isConst)
         t = qualified(t, true); /* a member seen from `... const` */
+    if (sym->kind == SymbolKind::EnumConstant) { /* a constant, not an object: `Red = 3` is an error */
+        setConst(n, sym->constValue);
+        return t;
+    }
     n->isLValue = true;
     if (sym->isConstant) setConst(n, sym->constValue);
     return t;
@@ -656,7 +660,7 @@ TypePtr SemanticAnalyzer::unary(const ASTNodePtr &n) {
         if (overloadedOperator(n, op.substr(0, 2), {c}, overloaded)) return overloaded;
         TypePtr vt = decay(ot);
         if (isError(vt)) return errorType();
-        if (!(isArithmetic(vt) || (isPointer(vt) && isComplete(vt->elem)))) {
+        if (isEnum(vt) || !(isArithmetic(vt) || (isPointer(vt) && isComplete(vt->elem)))) { /* `++c` on an enum: C++ forbids */
             error(n.get(), "cannot " + std::string(op[0] == '+' ? "increment" : "decrement") + " a value of type " + q(ot),
                   "invalid-operands");
             return errorType();
@@ -789,7 +793,8 @@ TypePtr SemanticAnalyzer::ternary(const ASTNodePtr &n) {
     TypePtr a = value(A), b = value(B);
     if (isError(a) || isError(b)) return errorType();
     TypePtr t;
-    if (isArithmetic(a) && isArithmetic(b)) t = usualArithmetic(a, b);
+    if (isEnum(a) && sameType(a, b)) t = unqualified(a); /* `c ? Red : Blue` keeps the enum type (C++) */
+    else if (isArithmetic(a) && isArithmetic(b)) t = usualArithmetic(a, b);
     else if (isVoid(a) && isVoid(b)) t = voidType();
     else if (isRecord(a) && sameType(a, b)) t = a;
     else if (isPointer(a) && isPointer(b)) {

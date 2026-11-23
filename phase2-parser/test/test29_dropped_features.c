@@ -1,10 +1,10 @@
-/* test29 -- the four features dropped before the back end was built:
-   enum and union, file manipulation, lambdas, function pointers. Their
-   keywords are no longer reserved and their grammar rules are gone, so
-   each construct below is an ordinary syntax error. One per top-level
-   declaration or function, each followed by a resync anchor (17 errors
-   for 15 constructs: [2] and [4] are each reported twice, at the start
-   of the construct and again inside its body).
+/* test29 -- the features dropped before the back end was built: file
+   manipulation, lambdas, function pointers (enum and union were dropped
+   too, and came back with D42), and new/delete/register/volatile, dropped
+   later. Their keywords are no longer reserved and their grammar rules
+   are gone, so each construct below is an ordinary syntax error. One per
+   top-level declaration or function, each followed by a resync anchor
+   (11 errors for 11 constructs).
 
    (File I/O leaves no syntax behind: `FILE *f = fopen("a", "r");` now
    reads as the expression `FILE * f = fopen(...)` over undeclared names,
@@ -13,91 +13,71 @@
 
 void resync_marker() {}
 
-/* [1] an enum definition */
-enum T01_Color { RED, GREEN, BLUE };
-int resync_after_1;
-
-/* [2] a union definition */
-union T02_Number { int i; float f; };
-int resync_after_2;
-
-/* [3] a variable of an enum type */
-void t03_enum_variable() {
-    enum T01_Color c;
-    resync_marker();
-}
-
-/* [4] an unnamed union object */
-void t04_unnamed_union() {
-    union { int word; char bytes[4]; } u;
-    resync_marker();
-}
-
-/* [5] a lambda with a capture list */
-void t05_lambda() {
+/* [1] a lambda with a capture list */
+void t01_lambda() {
     int x = 1;
     auto add = [x](int a) { return a + x; };
     resync_marker();
 }
 
-/* [6] a lambda with a capture-default */
-void t06_lambda_capture_default() {
+/* [2] a lambda with a capture-default */
+void t02_lambda_capture_default() {
     int x = 1;
     auto get = [&]() { return x; };
     resync_marker();
 }
 
-/* [7] a function-pointer variable */
-void t07_function_pointer_variable() {
+/* [3] a function-pointer variable */
+void t03_function_pointer_variable() {
     int (*fp)(int, int);
     resync_marker();
 }
 
-/* [8] a function-pointer parameter */
-int t08_function_pointer_parameter(int (*op)(int), int v) { return v; }
+/* [4] a function-pointer parameter */
+int t04_function_pointer_parameter(int (*op)(int), int v) { return v; }
 
-/* [9] a typedef of a function-pointer type */
-typedef int (*T09_BinOp)(int, int);
+/* [5] a typedef of a function-pointer type */
+typedef int (*T05_BinOp)(int, int);
 
-/* [10] a cast to a function-pointer type */
-void t10_function_pointer_cast() {
+/* [6] a cast to a function-pointer type */
+void t06_function_pointer_cast() {
     int x = 0;
     x = (int (*)(int)) x;
     resync_marker();
 }
 
-/* [11] an array of function pointers */
-void t11_function_pointer_array() {
+/* [7] an array of function pointers */
+void t07_function_pointer_array() {
     int (*table[2])(int, int);
     resync_marker();
 }
 
 /* The second batch (dropped after the back end was complete): `new`,
    `delete`, `register` and `volatile` are ordinary identifiers too, so
-   each of [12]-[15] is one more syntax error. Dynamic memory is
+   each of [8]-[11] is one more syntax error. Dynamic memory is
    malloc / calloc / realloc / free. */
 
-/* [12] a new-expression */
-void t12_new() {
+/* [8] a new-expression */
+void t08_new() {
     int *p = new int;
     resync_marker();
 }
 
-/* [13] a delete-expression */
-void t13_delete() {
+/* [9] a delete-expression */
+void t09_delete() {
     int *p = 0;
     delete p;
     resync_marker();
 }
 
-/* [14] the register storage class */
-void t14_register() {
+/* [10] the register storage class */
+void t10_register() {
     register int fast = 1;
     resync_marker();
 }
 
-/* [15] the volatile qualifier */
-void t15_volatile() {
+/* [11] the volatile qualifier */
+void t11_volatile() {
     volatile int sensor = 1;
     resync_marker();
 }

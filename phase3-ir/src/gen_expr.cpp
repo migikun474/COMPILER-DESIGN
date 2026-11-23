@@ -617,6 +617,8 @@ Operand Generator::rvalue(const ASTNodePtr &n, bool discard) {
         case ASTKind::Identifier: case ASTKind::MemberExpr: case ASTKind::ArrowExpr: case ASTKind::IndexExpr:
         case ASTKind::ScopeExpr: {
             if (discard && n->kind == ASTKind::Identifier) return {};
+            if (n->symbol && n->symbol->kind == sem::SymbolKind::EnumConstant)
+                return icon(n->constValue, n->semType); /* an enumerator is a constant, it has no storage */
             return load(lvalue(n));
         }
         case ASTKind::ThisExpr: return thisOperand();

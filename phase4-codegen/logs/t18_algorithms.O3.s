@@ -194,11 +194,11 @@ _Z5quickPiii:
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
-        sw    $s0, -56($fp)
+        sw    $s0, -60($fp)
         sw    $s1, -64($fp)
         sw    $s2, -40($fp)
         sw    $s3, -48($fp)
-        sw    $s4, -60($fp)
+        sw    $s4, -56($fp)
         sw    $s5, -52($fp)
         sw    $s6, -36($fp)
         sw    $s7, -44($fp)
@@ -329,11 +329,11 @@ L1_40:
         # goto 0
         j     L1_0
 _Z5quickPiii_exit:
-        lw    $s0, -56($fp)
+        lw    $s0, -60($fp)
         lw    $s1, -64($fp)
         lw    $s2, -40($fp)
         lw    $s3, -48($fp)
-        lw    $s4, -60($fp)
+        lw    $s4, -56($fp)
         lw    $s5, -52($fp)
         lw    $s6, -36($fp)
         lw    $s7, -44($fp)

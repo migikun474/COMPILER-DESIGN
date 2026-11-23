@@ -66,7 +66,7 @@ static int emitShared(TokenType t) {
    `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
 static bool typePositionAfter(int tok) {
     switch (tok) {
-        case SCOPE_RES: case '~': case STRUCT: case CLASS: case OPERATOR:
+        case SCOPE_RES: case '~': case STRUCT: case CLASS: case UNION: case ENUM: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
         case EXTERN: case VA_LIST:

@@ -21,6 +21,8 @@ static const std::unordered_map<std::string, TokenType> keyword_map = {
     // composite types
     {"struct", TokenType::STRUCT},
     {"class", TokenType::CLASS},
+    {"union", TokenType::UNION},
+    {"enum", TokenType::ENUM},
 
     // access modifiers
     {"public", TokenType::PUBLIC},
@@ -164,6 +166,8 @@ static const std::unordered_map<TokenType, std::string> token_to_string_map = {
 
     {TokenType::STRUCT, "struct"},
     {TokenType::CLASS, "class"},
+    {TokenType::UNION, "union"},
+    {TokenType::ENUM, "enum"},
 
     {TokenType::PUBLIC, "public"},
     {TokenType::PRIVATE, "private"},

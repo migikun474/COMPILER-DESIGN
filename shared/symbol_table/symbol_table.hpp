@@ -37,6 +37,9 @@ enum class SymKind {
     PARAMETER,
     STRUCT_TAG,
     CLASS_TAG,
+    UNION_TAG,
+    ENUM_TAG,
+    ENUM_CONST,
     TYPEDEF_NAME,
     LABEL
 };
@@ -283,10 +286,10 @@ struct ASTNode;
 
 namespace sem {
 
-enum class SymbolKind { Variable, Parameter, Function, Field, Typedef, Label, Tag };
+enum class SymbolKind { Variable, Parameter, Function, Field, Typedef, EnumConstant, Label, Tag };
 
 enum class Storage {
-    None,     /* functions, typedefs, tags, labels */
+    None,     /* functions, typedefs, tags, enumerators, labels */
     Global,   /* file-scope object: lives in .data/.bss */
     Static,   /* `static` local or `static` class member: also .data/.bss */
     Local,    /* automatic: lives in the stack frame */
@@ -308,7 +311,7 @@ struct Symbol {
     int line = 0;
     int column = 0;
 
-    bool isConstant = false;  /* const-qualified object with a known value */
+    bool isConstant = false;  /* enumerator, or const-qualified object with a known value */
     long long constValue = 0;
     bool hasInitializer = false;
     int useCount = 0;
@@ -330,8 +333,9 @@ struct Symbol {
     Access access = Access::Public;
     long long offset = -1;    /* data members: byte offset in the record */
 
-    /* tags */
+    /* tags: one of the two is set */
     std::shared_ptr<RecordInfo> record;
+    std::shared_ptr<EnumInfo> enumInfo;
 
     const ASTNode *declNode = nullptr;
 };

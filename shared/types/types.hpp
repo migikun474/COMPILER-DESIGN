@@ -6,15 +6,21 @@
    ---------------------------------------------------------------------
    A type is a small immutable graph of type constructors over basic
    types (Dragon Book 6.3.1): pointer(t), reference(t), array(n, t),
-   function(params -> ret), plus named record types. Pointer
+   function(params -> ret), plus named record and enum types. Pointer
    depth is therefore structural -- `int **` is Pointer(Pointer(Int)) --
    never a counter. The qualifier (const) lives on the level it
    qualify, so `const int *p` is Pointer(const Int): *p is read-only, p
    is not.
 
    Equivalence is structural for the constructors and *by name* for
-   records (C's rule): two struct types are the same type iff they share
-   the same RecordInfo, which is what the tag in scope resolves to.
+   records and enums (C's rule): two struct types are the same type iff
+   they share the same RecordInfo, which is what the tag in scope
+   resolves to.
+
+   An enum type is an Int type that carries its EnumInfo (D42): every
+   later phase sees a plain 4-byte int, and only the semantic rules
+   (C++: enum -> int is implicit, int -> enum needs a cast) look at
+   `enumInfo`.
 
    A Function type only ever describes a declared function: the language
    has no function pointers, so Pointer(Function) is never built and a
@@ -37,20 +43,21 @@ using TypePtr = std::shared_ptr<const Type>;
 struct Symbol;
 using SymbolPtr = std::shared_ptr<Symbol>;
 struct RecordInfo;
+struct EnumInfo;
 
 enum class TypeKind {
     Error,     /* result of an expression that already produced an error;
                   accepted silently everywhere to avoid cascades */
     Void, Bool, Char, Short, Int, Long, LongLong, Float, Double,
     Pointer, Reference, Array, Function,
-    Record,    /* struct / class */
+    Record,    /* struct / union / class */
     Opaque     /* va_list */
 };
 
 /* NoAccess = "not accessible at all from here", e.g. a base class's
    private member seen through a derived class */
 enum class Access { Public, Protected, Private, NoAccess };
-enum class RecordKind { Struct, Class };
+enum class RecordKind { Struct, Union, Class };
 
 struct Type {
     TypeKind kind = TypeKind::Error;
@@ -65,6 +72,7 @@ struct Type {
     bool variadic = false;
 
     std::shared_ptr<RecordInfo> record; /* Record */
+    std::shared_ptr<EnumInfo> enumInfo; /* Int: this int is an enum type (D42) */
     std::string name;            /* Opaque: "va_list" */
 };
 
@@ -102,6 +110,15 @@ struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
     int scopeId = -1;            /* scope holding the members (see SymbolTable) */
 };
 
+/* enum Color { Red, Green = 5, Blue }; -- the underlying type is int */
+struct EnumInfo {
+    std::string tag;             /* "(unnamed at L:C)" for an unnamed enum */
+    std::string typedefName;     /* unnamed enum: the first typedef naming it */
+    bool complete = false;       /* closing '}' seen */
+    int declLine = 0;
+    std::vector<std::pair<std::string, long long>> enumerators; /* in order, with values */
+};
+
 /* ---------------- construction ---------------- */
 TypePtr errorType();
 TypePtr voidType();
@@ -116,6 +133,7 @@ TypePtr referenceTo(const TypePtr &t);
 TypePtr arrayOf(const TypePtr &elem, long long size);
 TypePtr functionType(const TypePtr &ret, const std::vector<TypePtr> &params, bool variadic);
 TypePtr recordType(const std::shared_ptr<RecordInfo> &r);
+TypePtr enumType(const std::shared_ptr<EnumInfo> &e);
 TypePtr opaqueType(const std::string &name);
 TypePtr qualified(const TypePtr &t, bool isConst); /* adds to existing */
 TypePtr unqualified(const TypePtr &t);
@@ -124,7 +142,8 @@ TypePtr unqualified(const TypePtr &t);
 bool isError(const TypePtr &t);
 bool isVoid(const TypePtr &t);
 bool isBool(const TypePtr &t);
-bool isIntegral(const TypePtr &t);   /* bool, char, short, int, long, long long */
+bool isIntegral(const TypePtr &t);   /* bool, char, short, int, long, long long, enum */
+bool isEnum(const TypePtr &t);
 bool isFloating(const TypePtr &t);
 bool isArithmetic(const TypePtr &t);
 bool isPointer(const TypePtr &t);
@@ -199,6 +218,8 @@ std::string typeToString(const TypePtr &t);
 /* "struct Point", or for an unnamed type its typedef name ("Pt") or
    "struct (unnamed at 3:9)" */
 std::string recordDisplayName(const RecordInfo &r);
+/* "enum Color", or an unnamed enum's typedef name */
+std::string enumDisplayName(const EnumInfo &e);
 std::string accessName(Access a);
 std::string recordKindName(RecordKind k);
 

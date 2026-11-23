@@ -48,6 +48,8 @@ enum class TokenType {
     // ---- composite-type keywords (introduce a user-defined type) ----
     STRUCT,
     CLASS,
+    UNION,
+    ENUM,
 
     // ---- access modifiers ----
     PUBLIC,

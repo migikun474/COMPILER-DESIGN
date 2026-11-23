@@ -222,6 +222,7 @@ const Symbol *lookupTypeSymbol(const std::string &name) {
         for (auto s = found->second.rbegin(); s != found->second.rend(); ++s) {
             switch (s->kind) {
                 case SymKind::TYPEDEF_NAME: case SymKind::STRUCT_TAG: case SymKind::CLASS_TAG:
+                case SymKind::UNION_TAG: case SymKind::ENUM_TAG:
                     return &*s;
                 default:
                     break;
@@ -296,7 +297,7 @@ std::string categoryForTypeName(const Symbol *s) {
     if (!s) return "TYPEDEF";
     switch (s->kind) {
         case SymKind::TYPEDEF_NAME: return "TYPEDEF";
-        default: return s->typeStr; /* CLASS / STRUCT tags */
+        default: return s->typeStr; /* CLASS / STRUCT / UNION / ENUM tags */
     }
 }
 
@@ -307,6 +308,9 @@ std::string symKindName(SymKind k) {
         case SymKind::PARAMETER: return "parameter";
         case SymKind::STRUCT_TAG: return "struct_tag";
         case SymKind::CLASS_TAG: return "class_tag";
+        case SymKind::UNION_TAG: return "union_tag";
+        case SymKind::ENUM_TAG: return "enum_tag";
+        case SymKind::ENUM_CONST: return "enum_constant";
         case SymKind::TYPEDEF_NAME: return "typedef";
         case SymKind::LABEL: return "label";
     }
@@ -363,7 +367,7 @@ class Mangler {
     std::string type(const TypePtr &tIn) {
         TypePtr t = normalize(tIn);
         std::string plain = canonical(t);
-        if (!t->isConst && !builtinCode(*t).empty()) return plain;
+        if (!t->isConst && !t->enumInfo && !builtinCode(*t).empty()) return plain;
         for (size_t i = 0; i < subs_.size(); ++i) {
             if (subs_[i] == plain) return seqId(i);
         }
@@ -381,7 +385,7 @@ class Mangler {
                     out += "E";
                     break;
                 }
-                default: out = plain; break; /* record, va_list */
+                default: out = plain; break; /* record, enum, va_list */
             }
         }
         subs_.push_back(plain);
@@ -428,6 +432,7 @@ class Mangler {
     static std::string canonical(const TypePtr &tIn) {
         TypePtr t = normalize(tIn);
         if (t->isConst) return "K" + canonical(sem::unqualified(t));
+        if (t->enumInfo) return typeName(t->enumInfo->tag, t->enumInfo->typedefName); /* an enum is mangled by name */
         std::string b = builtinCode(*t);
         if (!b.empty()) return b;
         switch (t->kind) {
@@ -494,6 +499,10 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
             ASTTypeExpr alias = *s->typeExpr;
             alias.isStatic = alias.isTypedef = false;
             base = parseTimeType(alias, false);
+        } else if (s && s->kind == SymKind::ENUM_TAG) { /* `Color c` (C++) */
+            auto e = std::make_shared<EnumInfo>();
+            e->tag = te.typedefName;
+            base = enumType(e);
         } else {
             auto r = std::make_shared<RecordInfo>();
             r->tag = te.typedefName;
@@ -504,11 +513,16 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
     std::map<std::string, int> n;
     for (const auto &p : te.specParts) n[p]++;
     auto c = [&](const char *k) { return n.count(k) ? n[k] : 0; };
-    if (c("STRUCT") || c("CLASS")) {
+    if (c("STRUCT") || c("CLASS") || c("UNION")) {
         auto r = std::make_shared<RecordInfo>();
         r->tag = te.tagName;
         r->typedefName = anonymousTagName(te.tagName);
         base = recordType(r);
+    } else if (c("ENUM")) {
+        auto e = std::make_shared<EnumInfo>();
+        e->tag = te.tagName;
+        e->typedefName = anonymousTagName(te.tagName);
+        base = enumType(e);
     } else if (c("VOID")) base = voidType();
     else if (c("BOOL")) base = boolType();
     else if (c("VA_LIST")) base = opaqueType("va_list");
@@ -776,6 +790,7 @@ std::string symbolKindName(SymbolKind k) {
         case SymbolKind::Function: return "function";
         case SymbolKind::Field: return "field";
         case SymbolKind::Typedef: return "typedef";
+        case SymbolKind::EnumConstant: return "enumerator";
         case SymbolKind::Label: return "label";
         case SymbolKind::Tag: return "tag";
     }
@@ -798,7 +813,7 @@ std::string storageName(Storage s) {
 
 static std::string kindLabel(const Symbol &s) {
     if (s.kind == SymbolKind::Tag) {
-        return s.record ? recordKindName(s.record->kind) + "_tag" : "tag";
+        return s.record ? recordKindName(s.record->kind) + "_tag" : s.enumInfo ? "enum_tag" : "tag";
     }
     if (s.kind == SymbolKind::Function) {
         if (s.isConstructor) return "constructor";
@@ -810,6 +825,7 @@ static std::string kindLabel(const Symbol &s) {
 static std::string typeLabel(const Symbol &s) {
     if (s.kind == SymbolKind::Tag) {
         if (s.record) return recordKindName(s.record->kind) + " " + s.name + (s.record->complete ? "" : " (incomplete)");
+        if (s.enumInfo) return "enum " + s.name;
     }
     if (s.kind == SymbolKind::Label) return "-";
     return s.type ? typeToString(s.type) : "-";
@@ -907,6 +923,12 @@ void printRecordLayouts(const SymbolTable &st, std::ostream &out) {
             out << "    +" << p->offset << "  " << typeToString(p->type) << " " << p->name << "  ["
                 << accessName(p->access) << "]  (from the unnamed member)\n";
         }
+    }
+    for (const auto &sp : st.allSymbols()) { /* enums: their enumerators and values */
+        if (sp->kind != SymbolKind::Tag || !sp->enumInfo || !sp->enumInfo->complete) continue;
+        any = true;
+        out << enumDisplayName(*sp->enumInfo) << ": int\n";
+        for (const auto &[name, value] : sp->enumInfo->enumerators) out << "    " << name << " = " << value << "\n";
     }
     if (!any) out << "(no records)\n";
 }
