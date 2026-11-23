@@ -1,86 +1,143 @@
 # C-Like Compiler
 
-A compiler for a C-like source language with C++-style extensions,
-written in C++17 with Flex and Bison, targeting Three Address Code and
-then MIPS.
+A **multi-pass compiler** for a C-like language with a small C++
+subset, written in C++17 with Flex and Bison. It translates a source
+file into Three Address Code, optimizes it, and generates MIPS assembly
+that runs on SPIM / QtSpim.
 
 | | |
 |---|---|
-| Source language | C-like (a C core plus a small C++ subset: classes with single inheritance and default constructors, references, overloading — see the [feature audit](docs/FEATURES.md)) |
-| Intermediate representation | Three Address Code: generator, interpreter and optimizer ([`phase3-ir`](phase3-ir/README.md)) |
-| Target | MIPS assembly for SPIM / QtSpim ([`phase4-codegen`](phase4-codegen/README.md)) |
-| Implementation | C++17, Flex 2.6.4, Bison 3.8.2, g++ 13 |
+| Source language | A C core plus a small C++ subset: classes with single inheritance and default constructors, access control, `friend`, references, function and operator overloading, `enum` (C++ rules) and plain unions — see the [feature audit](docs/FEATURES.md) |
+| Intermediate representation | Three Address Code as quadruples, with an interpreter and a three-level optimizer ([`phase3-ir`](phase3-ir/README.md)) |
+| Target | MIPS32 assembly for SPIM / QtSpim, with a hand-written run-time library ([`phase4-codegen`](phase4-codegen/README.md)) |
+| Implementation | C++17, Flex 2.6.4, Bison 3.8.2 (LALR(1), 0 conflicts), g++ 13 |
 | Specification | [`docs/project_description.md`](docs/project_description.md) |
+| Status | Every phase is implemented and tested end to end; every test program's output is checked against gcc / g++ |
 
-## Current development status
+## Contents
 
-> **Current implementation status: every phase works end to end —
-> front end, Three Address Code (with an interpreter), the optimizer
-> (`-O1`, `-O2`, `-O3`) and MIPS code that runs on SPIM, with register
-> allocation.**
+1. [A multi-pass compiler](#a-multi-pass-compiler)
+2. [The passes in detail](#the-passes-in-detail)
+3. [Executables](#executables)
+4. [The language](#the-language)
+5. [Building](#building)
+6. [Running](#running)
+7. [Testing](#testing)
+8. [Documentation](#documentation)
+9. [Known limitations](#known-limitations)
+10. [Future work](#future-work)
 
-```
-Front end
-├── Lexical analysis      ✓  phase1-lexer
-├── Syntax analysis       ✓  phase2-parser              (LALR(1), AST, parse-time symbol table)
-└── Semantic analysis     ✓  phase2b-semantic           (types, scopes, annotated AST)
-Back end
-├── IR / TAC              ✓  phase3-ir                  (quadruples, backpatching, TAC interpreter)
-├── Optimization          ✓  phase3-ir                  (-O1 local, -O2 data-flow, -O3 inlining and loops)
-└── MIPS generation       ✓  phase4-codegen             (SPIM; frames, register allocation, run-time library;
-                                                         also the combined driver)
-```
+---
 
-✓ implemented and tested. Every test program is also compiled with
-gcc / g++, and the TAC interpreter and SPIM must print exactly what
-that binary prints.
+## A multi-pass compiler
 
-**How the translation works, with diagrams:**
-[`docs/TRANSLATION.md`](docs/TRANSLATION.md) explains why this is a
-multi-pass compiler, how the syntax-directed translation of Lectures 25–27
-is implemented, and, construct by construct (`if`, `if-else`, `while`,
-`do-while`, `for`, `switch`, `&&`, `||`, `!`, `break` / `continue`,
-`goto`, arrays, calls), the rule, the code that implements it, a
-flowchart of the generated code and the real TAC it produces.
-
-## Compiler architecture
+A *pass* is one complete trip over the whole program, or over one
+complete representation of it. This compiler makes a pass per phase,
+and each pass reads the finished result of the one before it:
 
 ![Compiler architecture](docs/diagrams/compiler-architecture.svg)
 
 *(Interactive source: [`docs/diagrams/compiler-architecture.html`](docs/diagrams/compiler-architecture.html).)*
 
+| Pass | Reads | Produces | Code |
+|---|---|---|---|
+| 1. Scan + parse | the source file (read as written: there is no preprocessor) | the syntax tree (`g_astRoot`), a parse-time symbol table, the Token / Token_Type table | `phase2-parser/src/scanner.l`, `parser.y` |
+| 2. Semantic analysis | the whole syntax tree | the same tree annotated with types, lvalue-ness, constant values and the symbol each name means; the persistent symbol table; record layouts | `phase2b-semantic/src/*.cpp` |
+| 3. TAC generation | the annotated tree | quadruples, one array per function, with frame tables | `phase3-ir/src/gen_*.cpp` |
+| 4. Flow analysis | the unoptimized TAC | uninitialized-variable warnings (reaching definitions) | `phase3-ir/src/opt.cpp` |
+| 5. Optimization (`-O1`…`-O3`) | the TAC | shorter TAC that behaves the same | `phase3-ir/src/opt.cpp` |
+| 6. Code generation | the (optimized) TAC | MIPS assembly plus the run-time library | `phase4-codegen/src/mips.cpp`, `runtime/runtime.s` |
+
+The passes communicate only through these data structures:
+
 ```
 source.c
-   (no preprocessor: a `#` line is a lexical error, D34)
-   ↓  yylex()                     phase1-lexer/src/lexer.l   → Lexeme / Token table   (standalone tool)
-   ↓  yylex() ⇄ yyparse()         phase2-parser/src/scanner.l + parser.y
-tokens → AST (g_astRoot) + parse-time symbol table + Token/Token_Type table
-   ↓  sem::SemanticAnalyzer::analyze()   phase2b-semantic/src/*.cpp
-annotated AST (types, lvalues, constants, symbols) + sem::SymbolTable + record layouts
-   ↓
-generate()                    phase3-ir             quadruples per function, labels, frame offsets
-   ↓
-tac::Program  →  TAC interpreter (--run)
-   ↓  mips::generate()            phase4-codegen        one fixed sequence per TAC instruction + run-time library
-file.s  →  spim -file file.s
+  │  pass 1   yylex() ⇄ yyparse()                         scanner.l + parser.y
+  ▼
+syntax tree (g_astRoot)  +  parse-time symbol table
+  │  pass 2   SemanticAnalyzer::analyze()                 phase2b-semantic
+  ▼
+annotated syntax tree  +  sem::SymbolTable  +  record layouts
+  │  pass 3   Generator::generate()                       phase3-ir
+  ▼
+tac::Program (quadruples per function, globals, strings) ──► TAC interpreter (--run)
+  │  pass 4   uninitializedReads()      pass 5   optimize(-O1/-O2/-O3)
+  ▼
+optimized tac::Program
+  │  pass 6   mips::generate()                            phase4-codegen
+  ▼
+file.s  ──►  spim -file file.s
 ```
 
-The phases are five separate executables that share one static
-library, `shared/build/libshared.a`:
+### Why multi-pass and not one pass
 
-| Executable | Input | Output on success | Output on failure |
+The lecture slides generate TAC inside the parser's actions, while each
+rule is reduced. That only works if every fact a rule needs is known at
+that moment, and in this language it is not (decision D10 in
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md)):
+
+- **Forward references.** A function may be called before it is
+  declared, so its parameter types, and which overload a call picks,
+  are known only after the rest of the file has been seen.
+- **Classes.** A method body may use members declared below it, so
+  bodies can only be checked once the class is complete.
+- **Types drive the code.** TAC needs each expression's type (`int+` or
+  `double+`, which conversions to insert) and every field's offset;
+  those come from the semantic pass.
+- **Optimization needs whole functions.** Basic blocks, the flow graph
+  and every data-flow analysis need a function's complete code.
+- **Testability.** Each pass has its own output and its own test suite,
+  so a failing test points at the pass that broke.
+
+### What is still done in a single walk
+
+- **Scanning and parsing are one pass.** The parser calls `yylex()`
+  whenever it needs the next token; there is no separate token stream.
+- **TAC generation is one walk per function.** Jumps to code that does
+  not exist yet are filled in by **backpatching** (truelist, falselist,
+  nextlist), so no second pass over the code is needed to fix targets.
+
+How the syntax-directed translation of Lectures 25–27 maps onto these
+passes, construct by construct, with flowcharts and real TAC, is in
+[`docs/TRANSLATION.md`](docs/TRANSLATION.md).
+
+---
+
+## The passes in detail
+
+Some passes are made of smaller passes of their own:
+
+| Pass | Inside it |
+|---|---|
+| 1. Scan + parse | The scanner classifies each identifier as a variable or a type name from the parse-time symbol table (the "lexer hack"), so the grammar stays LALR(1). Syntax errors are recovered with `error` productions, so every error in the file is reported. |
+| 2. Semantic analysis | **(a)** `prescan()` records every top-level function and variable, so calls before a declaration resolve. **(b)** One walk in source order declares, type-checks and annotates (an L-attributed definition: declarations push types down, expressions synthesize them up); class member bodies are checked after their class. **(c)** `checkSequencing()` walks the tree again for unsequenced side effects (`i = i++`). |
+| 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). |
+| 4. Flow analysis | Basic blocks, the flow graph and reaching definitions over the unoptimized code; a read reached by the "not assigned yet" definition is warned about. |
+| 5. Optimization | `-O1`: value numbering per basic block (constant folding, algebraic identities, common subexpressions, copies, dead temporaries, jump clean-up), repeated until nothing changes. `-O2`: adds global constant/copy propagation and dead-assignment elimination (liveness). `-O3`: adds inlining, tail recursion, global common subexpressions (available expressions), loop unrolling by two (dominators), then removes functions no call reaches. |
+| 6. Code generation | Per function: lay out the frame, allocate registers (use counts and live intervals; `-O1` and above), lay out the frame again for what stays in memory, emit one fixed sequence per TAC instruction, run the peephole pass. Then the start-up code and the run-time library are added. |
+
+The **TAC interpreter** (`--run`) executes the output of pass 3 or 5
+with the MIPS32 data model. With an `-O` flag it runs the program both
+unoptimized and optimized and reports `OPTIMIZER BUG` if they differ.
+
+---
+
+## Executables
+
+Each phase is its own executable, and each one runs all the passes
+before its own, so every tool takes a source file directly. They share
+one static library, `shared/build/libshared.a` (vocabulary,
+diagnostics, syntax tree, type system, symbol tables).
+
+| Executable | Runs passes | Prints on success | On failure |
 |---|---|---|---|
-| `phase1-lexer/lexer` | a source file | two-column Lexeme / Token table | every lexical error (`Line N: message (near 'x')`) |
-| `phase2-parser/syntax_analyzer` | a source file | Token/Token_Type table, AST, symbol table | every syntax error (gcc-style, with caret) + partial AST |
-| `phase2b-semantic/semantic_analyzer` | a source file | annotated AST, semantic symbol table, MIPS32 record layouts | every semantic error and warning (gcc-style) |
-| `phase3-ir/tac_generator` | a source file | the Three Address Code of every function with its symbol table; `--run` also executes it | the errors of the earlier phases; no code is generated |
-| `phase4-codegen/mips_generator` | a source file | MIPS assembly on standard output, run-time library included; with `--tokens`, `--ast`, `--symbols`, `--tac` or `--run` it stops at that phase (the combined driver) | the errors of the earlier phases; no code is generated |
+| `phase1-lexer/lexer` | a standalone lexer | the Lexeme / Token table | every lexical error with line and column |
+| `phase2-parser/syntax_analyzer` | 1 | Token / Token_Type table, syntax tree, parse-time symbol table | every syntax error (gcc style, with a caret) and a partial tree |
+| `phase2b-semantic/semantic_analyzer` | 1–2 | annotated tree, semantic symbol table, record and enum layouts | every semantic error and warning |
+| `phase3-ir/tac_generator` | 1–5 | the TAC of every function with its frame table; `--run` executes it | the errors of the earlier passes; no code |
+| `phase4-codegen/mips_generator` | 1–6 | MIPS assembly; with `--tokens`, `--ast`, `--symbols`, `--tac` or `--run` it stops at that pass instead (the combined driver) | the errors of the earlier passes; no code |
 
-Each executable runs all the phases before its own (the later ones
-compile phase 2's grammar and the semantic analyzer into their own
-build), so each takes a source file directly. The first four also write
-a report to `logs/` in the current directory (`logs/<file>.log`, or
-`logs/<file>.tac` for the TAC generator).
+Every tool also writes its report to `logs/` in the current directory.
 
 ### Repository layout
 
@@ -91,188 +148,76 @@ a report to `logs/` in the current directory (`logs/<file>.log`, or
 ├── README.md                 this file
 ├── docs/
 │   ├── project_description.md    the project specification
-│   ├── FEATURES.md               feature audit: matrix and catalog
-│   ├── TRANSLATION.md            how source becomes TAC: passes, SDT rules, flowcharts
-│   ├── DESIGN_LOG.md             every design decision (D1–D41) with its reason
+│   ├── TRANSLATION.md            the passes, the SDT rules, flowcharts and real TAC
+│   ├── FEATURES.md               feature audit: matrix with test evidence
 │   ├── FEATURE_CONNECTIVITY.md   how the features depend on each other; change impact
-│   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   candidate features (written before D34–D41)
+│   ├── DESIGN_LOG.md             every design decision (D1–D43) with its reason
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
+│   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   historical analysis (before D34)
 │   ├── examples/                 example programs used in the docs
 │   └── diagrams/                 architecture diagrams (HTML + SVG)
-├── shared/                   libshared.a — token vocabulary, diagnostics,
-│                             AST, type system, symbol tables
+├── shared/                   libshared.a
 ├── phase1-lexer/             standalone flex lexer
-├── phase2-parser/            flex scanner + bison LALR(1) parser
-├── phase2b-semantic/         semantic analyzer
-├── phase3-ir/                Three Address Code: generator, interpreter, optimizer, tests
-└── phase4-codegen/           MIPS for SPIM / QtSpim: generator, run-time library, tests
+├── phase2-parser/            pass 1: flex scanner + bison LALR(1) parser
+├── phase2b-semantic/         pass 2: semantic analyzer
+├── phase3-ir/                passes 3–5: TAC generator, flow analysis, optimizer, interpreter
+└── phase4-codegen/           pass 6: MIPS generator, run-time library
 ```
 
-## Feature matrix
+---
 
-Abridged; the full matrix with test evidence for every row is in
-[`docs/FEATURES.md`](docs/FEATURES.md); how each feature is built, what
-it relies on and what a change to it affects is in
-[`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md).
-✓ implemented and tested, ◐ implemented with documented gaps, — not
-applicable.
+## The language
 
-| Feature | Lexer | Parser | Semantic | IR | MIPS | Status |
-|---|---|---|---|---|---|---|
-| Arithmetic, logical, relational, bitwise, assignment, unary operators | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| if-else, for, while, do-while, `until` | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| switch/case/default | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| goto, labels, break, continue | ✓ | ✓ | ✓ | ✓ | ✓ | all phases; a jump over an initialization is an error |
-| int, char, void, short, long, float, double, bool, unsigned | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Arrays, multi-dimensional arrays | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Pointers, multi-level pointers, pointer arithmetic | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Structures, unnamed structs, anonymous struct members, brace elision | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| printf / scanf | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (format strings checked) |
-| static, const | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| enum (C++ rules), plain unions | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (D42) |
-| Variable arguments (`...`, `va_*`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Dynamic memory (`malloc` … `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| typedef, references | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Classes, single inheritance, access modifiers, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Default constructors, operator overloading | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
-| Function overloading | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+### Features
 
-## Implemented basic features
+Everything below is implemented and tested in every phase, down to MIPS.
+The full matrix with the test that covers each row is in
+[`docs/FEATURES.md`](docs/FEATURES.md).
 
-Every basic feature of the specification is implemented and tested in
-all phases, down to MIPS: all arithmetic and logical operators, if-else, for,
-while, do-while, switch cases, integer and char arrays, pointers,
-structures, printf and scanf, function calls with arguments, goto /
-break / continue, and the `static` keyword.
-
-## Implemented advanced features
-
-Every advanced feature of the specification is implemented and tested
-in all phases: variable-argument functions, dynamic memory
-allocation, command-line input, typedef, references, the `until` loop,
-multi-level pointers and multi-dimensional arrays. Dynamic memory is
-`malloc` / `calloc` / `realloc` / `free`.
-
-Beyond the specification, the code also implements classes and objects,
-single inheritance, access modifiers, default constructors, operator
-and function overloading, `enum` and `union`, casts,
-designated initializers, unnamed structs with anonymous members, and
-Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
-for sequence-point violations (`i = i++`), integer overflow in constant
-expressions and printf/scanf format mismatches. See
-[`docs/FEATURES.md`](docs/FEATURES.md#c-additional-features-discovered-in-the-code).
-
-## Removed features
-
-Four features that an earlier version of the front end supported were
-removed on 2026-10-07, before the back end was started, to keep TAC and
-MIPS generation focused: **enum and union** (brought back on 2026-11-23,
-D42), **file manipulation** (`FILE`, `fopen` …), **lambdas**, and
-**function pointers**. Their
-keywords are no longer reserved and their grammar rules, types and
-checks are gone; a program that uses one gets an ordinary error
-(`phase2-parser/test/test29_dropped_features.c`,
-`phase2b-semantic/test/invalid/e19_dropped_features.c`). The decision
-and its consequences are recorded in
-[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
-
-Four more, none of them in the project specification, were removed on
-2026-10-10 after a feature audit (decision D31): **`new` / `delete`**
-(dynamic memory is `malloc` / `calloc` / `realloc` / `free`),
-**`register`**, **`volatile`** and **`long double`**. They are gone
-from every phase and are covered by the same two test files.
-
-On 2026-11-21 the language was reduced further (decisions D34–D36):
-
-- **The preprocessor** (D34). Any line starting with `#` is a lexical
-  error; `printf`, `scanf`, `malloc`, `free` and `va_list` are built in,
-  so no `#include` is needed (`e16_no_preprocessor.c`).
-- **Most of the C++ subset** (D35): destructors, constructors with
-  parameters, copy and converting constructors, member initializer
-  lists, `const` member functions, virtual functions (with vtables,
-  dynamic dispatch and abstract classes), `explicit`, multiple
-  inheritance, object slicing, nested and local classes, and static
-  local objects whose class has a constructor. `virtual` and `explicit`
-  stay reserved so the scanner can name them in its error
-  (`e23_class_features.c`, `e24_removed_keywords.c`,
-  `test31_dropped_class_features.c`).
-- **Loop-invariant code motion** in `-O3` (D36).
-
-On 2026-11-23 **`extern`** was removed too (D43): like `register`, it
-is an ordinary identifier again and an `extern` declaration is a syntax
-error (`test29_dropped_features.c`); every object declaration is a
-definition.
-
-## Added on 2026-11-21
-
-- A warning for an assignment used as a condition (`if (a = b)`).
-- Run-time checks in the MIPS code for integer division by zero and for
-  stack overflow, with the interpreter's messages (D37).
-- `-O3`: more algebraic identities, loop unrolling by two, removal of
-  functions `main` never calls; reaching definitions, which now drive
-  the uninitialized-variable warning (D38).
-- Frame slots only for values kept in memory, and the first 16 bytes of
-  arguments passed in `$a0`–`$a3` at `-O1` and above (D39).
-- The combined driver (D40). An audit then fixed an `-O3` hang in global
-  common-subexpression elimination (D41).
-
-## Added on 2026-11-23
-
-- **`enum`**, with C++ rules (D42): each enum is its own type; it
-  converts to `int` implicitly, but an `int` (or another enum) becomes
-  an enum only with a cast; no `++`/`--` on an enum; overloads tell
-  enums apart and the link name carries the enum's name
-  (`_Z4show5Color`). In TAC and MIPS an enum is a plain `int`.
-- **Plain unions** (D42): data members only, all at offset 0; a brace
-  initializer sets the first or the designated member; no anonymous
-  unions. Reading a union through another member works at every `-O`
-  level (`t36_enums_unions.c`).
-
-## Partially implemented
-
-Nothing. The last six partial features (class features, brace elision
-into struct members, flow checks, converting constructors for arguments
-and returns, member classification in the Token_Type table, columns in
-the phase-1 lexer) were finished on 2026-10-15 (decision D32 in
-[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md); most of those class features were later removed by D35). The semantic phase now
-warns about a missing `return` on some path and about unreachable code,
-and rejects a `goto` or `case` that jumps over an initialization; a read
-of an uninitialized local is warned about one phase later, by
-`tac_generator` / `mips_generator`, which have the flow graph.
-
-## Planned
-
-Nothing is in progress: every phase of the agreed plan is implemented.
-
-Not supported and not planned so far: bit-fields, default arguments,
-templates, namespaces, exceptions, `inline`, compound literals, nested
-functions, wide characters.
-
-## Compiler phases
-
-| Phase | Documentation |
+| Area | Features |
 |---|---|
-| Shared library (vocabulary, diagnostics, AST, types, symbol tables) | [`shared/README.md`](shared/README.md) |
-| Lexical analysis | [`phase1-lexer/README.md`](phase1-lexer/README.md) |
-| Syntax analysis | [`phase2-parser/README.md`](phase2-parser/README.md) · grammar walkthrough [`phase2-parser/docs/GRAMMAR_DESIGN.md`](phase2-parser/docs/GRAMMAR_DESIGN.md) |
-| Semantic analysis | [`phase2b-semantic/README.md`](phase2b-semantic/README.md) |
-| IR / TAC and its interpreter | [`phase3-ir/README.md`](phase3-ir/README.md) |
-| Design decisions | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
-| Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
-| Optimization (`-O1`, `-O2`, `-O3`) | [`phase3-ir/README.md`](phase3-ir/README.md) |
-| MIPS code generation | [`phase4-codegen/README.md`](phase4-codegen/README.md) |
+| Operators | arithmetic, logical (short-circuit), relational, bitwise, assignment and compound assignment, unary, `?:`, comma, `sizeof`, C-style and functional casts |
+| Control flow | if / else, for, while, do-while, `until`, switch / case / default, goto and labels, break, continue |
+| Types | `int`, `char`, `short`, `long`, `long long`, `float`, `double`, `bool`, `void`, signed / unsigned; arrays of any dimension; pointers and pointer arithmetic; structures (named, unnamed, anonymous members); plain unions; `enum` with C++ rules; `typedef`; references; `const`; `auto` |
+| Functions | recursion, prototypes, calls before the declaration, variable arguments (`...`, `va_*`), `main(argc, argv)` |
+| Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` |
+| Storage | locals, globals, `static` locals and members |
+| C++ subset | classes, objects and `this`; single inheritance with access control; `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
+| Checks | gcc-style errors and warnings: types, scopes, overload ambiguity, missing returns, unreachable code, jumps over initializations, unsequenced side effects, constant overflow, format mismatches, assignment used as a condition, possibly uninitialized variables |
+| Run time | division by zero and too-deep recursion stop with a message (exit code 2) on SPIM and in the interpreter |
 
-Each phase folder also keeps its development history in
-`docs/DEVELOPMENT_NOTES.md` (not maintained; may be outdated).
+All the specification's basic features (operators, if-else, loops,
+switch, int and char arrays, pointers, structures, printf / scanf,
+calls with arguments, goto / break / continue, `static`) and advanced
+features (variable arguments, dynamic memory, command-line input,
+typedef, references, `until`, multi-level pointers, multi-dimensional
+arrays) are covered.
 
-## Symbol table
+### Not supported
 
-The compiler has two symbol tables — a parse-time scope stack that the
-parser and scanner use while parsing, and a persistent, typed scope tree
-built by semantic analysis. Both are documented in
-[`docs/SYMBOL_TABLE.md`](docs/SYMBOL_TABLE.md).
+| Rejected | Examples | Why |
+|---|---|---|
+| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, virtual functions, multiple inheritance, object slicing, nested and local classes, anonymous unions, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Never implemented | bit-fields, default arguments, templates, namespaces, `using`, exceptions, `inline`, `override` / `final`, compound literals, nested functions, wide characters | out of scope |
+
+`printf`, `scanf`, `malloc` and the other built-ins are part of the
+language, so programs need no `#include`; any line starting with `#` is
+a lexical error. `virtual` and `explicit` are still reserved words, only
+so that their error message can name them.
+
+### Language history
+
+| Date | Decisions | Change |
+|---|---|---|
+| 2026-10-07 | D1–D6 | `enum`, `union`, file I/O, lambdas and function pointers removed before the back end was written |
+| 2026-10-10 | D31 | `new` / `delete`, `register`, `volatile`, `long double` removed |
+| 2026-10-15 | D32 | the last partial features finished |
+| 2026-11-21 | D34–D36 | preprocessor removed; the C++ subset reduced to default constructors and single inheritance; loop-invariant code motion removed |
+| 2026-11-21 | D37–D41 | run-time checks and the assignment warning; more algebraic rules, loop unrolling, dead function removal, reaching definitions; register arguments and frame slot reclamation; the combined driver; an audit |
+| 2026-11-23 | D42 | `enum` (C++ rules: its own type, converts to `int`, an `int` needs a cast to become one) and plain unions brought back |
+| 2026-11-23 | D43 | `extern` removed |
+
+---
 
 ## Building
 
@@ -288,13 +233,14 @@ Each phase's `makefile` builds `shared/build/libshared.a` first if
 needed. `make clean` in a phase removes its own build; `make -C shared clean`
 removes the library.
 
+---
+
 ## Running
 
-Front end:
+The example program [`docs/examples/add.c`](docs/examples/add.c) is used
+throughout.
 
-```bash
-./phase1-lexer/lexer docs/examples/add.c
-```
+Front end (passes 1 and 2):
 
 ```bash
 ./phase2-parser/syntax_analyzer docs/examples/add.c
@@ -304,10 +250,12 @@ Front end:
 ./phase2b-semantic/semantic_analyzer docs/examples/add.c
 ```
 
-`semantic_analyzer -q file.c` prints only the verdict and diagnostics.
-Exit status is 0 on success (warnings allowed) and 1 on any error.
+`semantic_analyzer -q file.c` prints only the verdict and the
+diagnostics. The exit status is 0 on success (warnings allowed) and 1 on
+any error.
 
-Three Address Code — print it, or execute it in the interpreter:
+Three Address Code (passes 3–5): print it, or execute it in the
+interpreter:
 
 ```bash
 ./phase3-ir/tac_generator docs/examples/add.c
@@ -321,10 +269,7 @@ Three Address Code — print it, or execute it in the interpreter:
 [exit code 9, 8 instructions executed; 11 without -O2: 27% fewer]
 ```
 
-With an `-O` flag and `--run` the program is executed twice, optimized
-and not, and the two runs must behave the same.
-
-MIPS — generate the assembly and run it in SPIM:
+MIPS (all six passes): generate the assembly and run it in SPIM:
 
 ```bash
 ./phase4-codegen/mips_generator -O2 docs/examples/add.c > add.s
@@ -334,23 +279,7 @@ MIPS — generate the assembly and run it in SPIM:
 spim -file add.s
 ```
 
-| Flag | Tool | Meaning |
-|---|---|---|
-| `-O1` | both | value numbering in each basic block: constant folding, copies, common subexpressions, dead temporaries, jump clean-up |
-| `-O2` | both | `-O1` plus constants and copies across blocks and dead assignments (liveness) |
-| `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal |
-| `--run`, `-q` | `tac_generator` | execute the code; `-q` prints only what the program prints |
-| `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the stack frame and pass arguments on the stack |
-| `--tokens`, `--ast`, `--symbols`, `--tac`, `--run` | `mips_generator` | stop after that phase and print it instead of the assembly |
-
-Without an `-O` flag the MIPS code keeps every value in the stack
-frame, one fixed sequence per TAC instruction, and passes every
-argument on the stack. With one, the most used names live in
-`$s0`–`$s7` / `$f20`–`$f30`, the first 16 bytes of arguments travel in
-`$a0`–`$a3`, small constants go into the instructions, and a peephole
-pass runs.
-
-Every phase from one command (the combined driver):
+Any pass from one command (the combined driver):
 
 ```bash
 ./phase4-codegen/mips_generator --tac docs/examples/add.c
@@ -360,7 +289,22 @@ Every phase from one command (the combined driver):
 ./phase4-codegen/mips_generator -O2 --run docs/examples/add.c
 ```
 
-Example — a program with a semantic error:
+| Flag | Tool | Meaning |
+|---|---|---|
+| `-O1` | both | value numbering in each basic block |
+| `-O2` | both | `-O1` plus constants and copies across blocks and dead assignments |
+| `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal |
+| `--run`, `-q` | `tac_generator` | execute the code; `-q` prints only what the program prints |
+| `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the frame and every argument on the stack |
+| `--tokens`, `--ast`, `--symbols`, `--tac`, `--run` | `mips_generator` | stop after that pass and print its result instead of the assembly |
+
+Without an `-O` flag the MIPS code is a direct translation: every value
+lives in the stack frame and every argument is passed on the stack. With
+one, the most used names live in `$s0`–`$s7` / `$f20`–`$f30`, the first
+16 bytes of arguments to user functions travel in `$a0`–`$a3`, small
+constants go into the instructions, and a peephole pass runs.
+
+A program with errors stops at the pass that finds them:
 
 ```c
 int main() {
@@ -382,31 +326,50 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
    |            ^
 ```
 
+---
+
 ## Testing
+
+One suite per pass:
 
 | Suite | Command | Contents |
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
-| Parser | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`, `test31`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **34 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 33 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **33 checks, all passing** |
+| Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
+| Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **34 checks, all passing** |
+| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 33 programs compiled to MIPS at every level and run in SPIM against the same outputs — **33 checks, all passing** |
 
-`run.sh` scripts print each program's output for inspection; only
-`run_tests.sh` checks results automatically (any missing **or**
-unexpected diagnostic fails the test, and so does any difference in a
-program's output or exit code).
+The `run.sh` scripts print each program's output for inspection; the
+`run_tests.sh` scripts check results automatically, and any missing
+**or** unexpected diagnostic, or any difference in output or exit code,
+fails the test.
+
+---
+
+## Documentation
+
+| Topic | Document |
+|---|---|
+| The passes and the syntax-directed translation | [`docs/TRANSLATION.md`](docs/TRANSLATION.md) |
+| Shared library (vocabulary, diagnostics, syntax tree, types, symbol tables) | [`shared/README.md`](shared/README.md) |
+| Standalone lexer | [`phase1-lexer/README.md`](phase1-lexer/README.md) |
+| Pass 1: scanner and parser | [`phase2-parser/README.md`](phase2-parser/README.md) · grammar walkthrough [`phase2-parser/docs/GRAMMAR_DESIGN.md`](phase2-parser/docs/GRAMMAR_DESIGN.md) |
+| Pass 2: semantic analysis | [`phase2b-semantic/README.md`](phase2b-semantic/README.md) |
+| Passes 3–5: TAC, flow analysis, optimizer, interpreter | [`phase3-ir/README.md`](phase3-ir/README.md) |
+| Pass 6: MIPS generation and the run-time library | [`phase4-codegen/README.md`](phase4-codegen/README.md) |
+| Symbol tables | [`docs/SYMBOL_TABLE.md`](docs/SYMBOL_TABLE.md) |
+| Feature matrix and test evidence | [`docs/FEATURES.md`](docs/FEATURES.md) |
+| Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
+| Design decisions D1–D43 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+
+Each phase folder also keeps its development history in
+`docs/DEVELOPMENT_NOTES.md` (not maintained; may be outdated).
+
+---
 
 ## Known limitations
 
-- Removed features: see [Removed features](#removed-features).
-- Constructs rejected as syntax errors: bit-fields, default arguments,
-  templates, namespaces, `using`, exceptions, `inline`, `override` /
-  `final`, virtual inheritance, compound literals, nested function
-  definitions, `wchar_t` / wide literals.
-- `printf`, `scanf`, `malloc`/`calloc`/`realloc`/`free` and `va_*` are
-  reserved words of this language (they cannot be used as identifiers),
-  so no `#include` is needed; any `#` line is an error.
 - `if ((a = b))` still gets the assignment-as-condition warning: the
   syntax tree keeps no parentheses.
 - Recursion depth: SPIM's default stack (256 KB in practice) holds about
@@ -414,12 +377,13 @@ program's output or exit code).
   Both report `stack overflow (recursion too deep)`.
 - Calls into the run-time library (`printf`, `scanf`, `malloc` …)
   always pass their arguments on the stack.
-- `free` does not reuse memory (the heap only grows).
+- `free` does not reuse memory (the heap only grows), and the whole
+  run-time library is appended to every program.
+- One source file per compilation: there is no linker for SPIM.
 
 ## Future work
 
-Everything in the agreed plan is implemented. What a next version could
-add, in order of value:
+What a next version could add, in order of value:
 
 1. **A free list** in the run-time library, so `free`d memory is reused.
 2. **Induction-variable strength reduction** (`i * 4` in a loop becomes
