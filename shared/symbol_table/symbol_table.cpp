@@ -838,7 +838,6 @@ static std::string notes(const Symbol &s) {
     if (s.isStatic) add("static");
     if (s.kind == SymbolKind::Function && !s.isConstructor) add(s.isDefined ? "defined" : "declared only");
     if (s.isConstant) add("value " + std::to_string(s.constValue));
-    if (s.kind == SymbolKind::Variable && s.storage == Storage::Global && !s.isDefined) add("extern, not defined here");
     if (s.offset >= 0) add("offset " + std::to_string(s.offset));
     if (s.kind == SymbolKind::Tag && s.record && s.record->complete) {
         add("size " + std::to_string(s.record->size));

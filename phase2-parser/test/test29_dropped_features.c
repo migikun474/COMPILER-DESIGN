@@ -4,7 +4,7 @@
    later. Their keywords are no longer reserved and their grammar rules
    are gone, so each construct below is an ordinary syntax error. One per
    top-level declaration or function, each followed by a resync anchor
-   (11 errors for 11 constructs).
+   (12 errors for 12 constructs; extern was removed by D43).
 
    (File I/O leaves no syntax behind: `FILE *f = fopen("a", "r");` now
    reads as the expression `FILE * f = fopen(...)` over undeclared names,
@@ -81,6 +81,10 @@ void t11_volatile() {
     volatile int sensor = 1;
     resync_marker();
 }
+
+/* [12] the extern storage class (D43) */
+extern int t12_elsewhere;
+int resync_after_12;
 
 /* a fully valid function proving the parser recovered after every
    dropped construct above -- the features that stay still work */

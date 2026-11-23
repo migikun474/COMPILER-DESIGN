@@ -30,8 +30,7 @@ struct TypeSpec {
                                  analysis resolve it itself */
     bool isTypedefStorage = false;
     bool isStatic = false;
-    bool isExtern = false;
-    int storageClasses = 0;     /* static/extern/typedef keywords seen */
+    int storageClasses = 0;     /* static/typedef keywords seen */
     bool isConst = false;
     bool isAuto = false;
     bool isFriend = false;

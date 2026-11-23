@@ -319,7 +319,7 @@ struct Symbol {
 
     /* functions (incl. methods / constructors) */
     bool isDefined = false;   /* functions: body seen; objects: defined here, not just
-                                 declared `extern` */
+                                 declared */
     bool isStatic = false;    /* `static` function / member */
     bool isMethod = false;
     bool isConstructor = false;

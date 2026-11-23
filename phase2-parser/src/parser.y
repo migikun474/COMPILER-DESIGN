@@ -75,7 +75,7 @@
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
 %token STRUCT CLASS UNION ENUM
 %token PUBLIC PRIVATE PROTECTED THIS
-%token STATIC TYPEDEF AUTO EXTERN CONST FRIEND
+%token STATIC TYPEDEF AUTO CONST FRIEND
 %token VIRTUAL EXPLICIT   /* reserved but rejected by the scanner (D35); never reach the grammar */
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
@@ -193,7 +193,6 @@ declaration_specifiers
           for (auto &p : $2.typeSpec.parts) $$.typeSpec.parts.push_back(p);
           if ($2.typeSpec.isStatic) $$.typeSpec.isStatic = true;
           if ($2.typeSpec.isTypedefStorage) $$.typeSpec.isTypedefStorage = true;
-          if ($2.typeSpec.isExtern) $$.typeSpec.isExtern = true;
           $$.typeSpec.storageClasses += $2.typeSpec.storageClasses;
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
           if ($2.typeSpec.isAuto) $$.typeSpec.isAuto = true;
@@ -207,7 +206,6 @@ declaration_specifiers
 
 storage_or_type_specifier
     : STATIC   { $$.typeSpec.isStatic = true; $$.typeSpec.storageClasses = 1; }
-    | EXTERN   { $$.typeSpec.isExtern = true; $$.typeSpec.storageClasses = 1; }
     | AUTO     { $$ = ParserValue(); $$.typeSpec.isAuto = true; }
     | TYPEDEF  { $$.typeSpec.isTypedefStorage = true; $$.typeSpec.storageClasses = 1; }
     | CONST    { $$.typeSpec.isConst = true; } /* now actually tracked -- see Symbol/SymbolTableEntry */

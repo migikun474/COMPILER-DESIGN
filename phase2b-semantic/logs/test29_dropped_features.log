@@ -4,7 +4,7 @@
 
 Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c
 
-Syntax analysis failed: 11 error(s); semantic analysis was not run.
+Syntax analysis failed: 12 error(s); semantic analysis was not run.
 
 /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:19:16: syntax error: syntax error, unexpected '['
  19 |     auto add = [x](int a) { return a + x; };
@@ -51,4 +51,8 @@ Syntax analysis failed: 11 error(s); semantic analysis was not run.
 /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:81:14: syntax error: syntax error, unexpected INT, expecting ';' or ','
  81 |     volatile int sensor = 1;
     |              ^
+
+/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/../phase2-parser/test/test29_dropped_features.c:86:1: syntax error: syntax error, unexpected IDENTIFIER
+ 86 | extern int t12_elsewhere;
+    | ^
 

@@ -9,17 +9,6 @@ No errors found.
 --- Token / Token_Type ---
 Token                          Token_Type          
 -----                          ----------          
-extern                         extern              
-int                            int                 
-limit                          INT                 
-;                              semicolon_op        
-extern                         extern              
-int                            int                 
-lookup                         INT_ARRAY           
-[                              open_bracket_op     
-]                              close_bracket_op    
-;                              semicolon_op        
-extern                         extern              
 int                            int                 
 scale                          PROCEDURE           
 (                              open_paren_op       
@@ -53,10 +42,6 @@ int                            int
 factor                         INT                 
 )                              close_paren_op      
 {                              open_brace_op       
-extern                         extern              
-int                            int                 
-limit                          INT                 
-;                              semicolon_op        
 int                            int                 
 k                              INT                 
 ;                              semicolon_op        
@@ -139,8 +124,6 @@ n                              UNSIGNED_LONG
 
 --- Abstract Syntax Tree ---
 Program "translation_unit"
-|-- VarDecl "limit : INT"
-|-- VarDecl "lookup : INT_ARRAY"
 |-- FunctionDecl "scale : _Z5scalei"
 |   `-- ParamDecl "factor : INT"
 |-- VarDecl "lookup : INT_ARRAY"
@@ -153,7 +136,6 @@ Program "translation_unit"
 |-- FunctionDef "scale : _Z5scalei"
 |   |-- ParamDecl "factor : INT"
 |   `-- CompoundStmt
-|       |-- VarDecl "limit : INT"
 |       |-- VarDecl "k : INT"
 |       |-- VarDecl "sum : INT"
 |       |   `-- IntLiteral "0"
@@ -207,18 +189,15 @@ Program "translation_unit"
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-limit                variable       3      global                       INT                                       0                                
-lookup               variable       4      global                       INT_ARRAY        []                       0                                
-scale                procedure      5      global                       PROCEDURE                                 1         INT (INT)              _Z5scalei
-lookup               variable       6      global                       INT_ARRAY        []                       1                                
-limit                variable       7      global                       INT                                       0                                
-scale                procedure      9      global                       PROCEDURE                                 0         INT (INT)              _Z5scalei
-factor               parameter      9      global > scale()             INT                                       1                                
-limit                variable       10     global > scale()             INT                                       1                                
-k                    variable       11     global > scale()             INT                                       4                                
-sum                  variable       12     global > scale()             INT                                       2                                
-calls                variable       17     global                       INT              static                   2                                
-counter_t            typedef        18     global                       UNSIGNED_LONG                             0                                
-main                 procedure      20     global                       PROCEDURE                                 0         INT ()                 main
-n                    variable       21     global > main()              UNSIGNED_LONG                             3                                
-r                    variable       22     global > main()              INT                                       1                                
+scale                procedure      3      global                       PROCEDURE                                 1         INT (INT)              _Z5scalei
+lookup               variable       4      global                       INT_ARRAY        []                       1                                
+limit                variable       5      global                       INT                                       1                                
+scale                procedure      7      global                       PROCEDURE                                 0         INT (INT)              _Z5scalei
+factor               parameter      7      global > scale()             INT                                       1                                
+k                    variable       8      global > scale()             INT                                       4                                
+sum                  variable       9      global > scale()             INT                                       2                                
+calls                variable       14     global                       INT              static                   2                                
+counter_t            typedef        15     global                       UNSIGNED_LONG                             0                                
+main                 procedure      17     global                       PROCEDURE                                 0         INT ()                 main
+n                    variable       18     global > main()              UNSIGNED_LONG                             3                                
+r                    variable       19     global > main()              INT                                       1                                

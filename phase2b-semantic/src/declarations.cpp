@@ -92,13 +92,8 @@ void SemanticAnalyzer::analyze(const ASTNodePtr &root) {
     checkSequencing(root); /* needs the symbols typing attached */
 
     /* a function that is called but has no body anywhere in the program
-       can never be linked -- there is no separate compilation here; the
-       same holds for an `extern` object that is never defined */
+       can never be linked -- there is no separate compilation here */
     for (const auto &s : st.allSymbols()) {
-        if (s->kind == SymbolKind::Variable && s->storage == Storage::Global && !s->isDefined && s->evaluatedUses > 0) {
-            warning(s->line, s->column, "variable '" + s->name + "' is declared 'extern' and used but never defined",
-                    "undefined-variable");
-        }
         if (s->kind == SymbolKind::Function && !s->isDefined && s->useCount > 0 &&
             !s->isConstructor) {
             warning(s->line, s->column, "function '" + s->name + "' is used but never defined",
@@ -573,22 +568,8 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     std::string what = ctx == DeclCtx::Member ? "field" : "variable";
 
     /* storage classes (C11 6.7.1) */
-    bool isExtern = te.isExtern && ctx != DeclCtx::Member;
     if (te.storageClasses > 1)
         error(line, col, "multiple storage classes in the declaration of '" + name + "'", "storage-class");
-    if (te.isExtern && ctx == DeclCtx::Member)
-        error(line, col, "'extern' is not allowed on a member ('" + name + "')", "storage-class");
-    if (isExtern && init) {
-        if (ctx == DeclCtx::Local) {
-            error(line, col, "'" + name + "' has both 'extern' and an initializer (a block-scope 'extern' only refers "
-                                          "to an object defined elsewhere)",
-                  "storage-class");
-            init = nullptr;
-        } else {
-            warning(line, col, "'" + name + "' initialized and declared 'extern'", "storage-class");
-        }
-    }
-    bool declarationOnly = isExtern && !init; /* `extern int a[];` may stay incomplete */
 
     /* `int a[] = {1, 2, 3};` / `char s[] = "abc";`: the size comes from the initializer */
     if (isArray(t) && t->arraySize < 0) {
@@ -607,7 +588,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
         } else if (init && init->kind == ASTKind::StringLiteral && t->elem && t->elem->kind == TypeKind::Char) {
             TypePtr lit = expr(init);
             t = arrayOf(t->elem, lit->arraySize);
-        } else if (!declarationOnly && (ctx != DeclCtx::Member || !init)) {
+        } else if (ctx != DeclCtx::Member || !init) {
             error(line, col, "definition of " + what + " '" + name +
                                  "' with array type needs an explicit size or an initializer",
                   "array-size");
@@ -618,71 +599,12 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     if (isVoid(t)) {
         error(line, col, what + " '" + name + "' has incomplete type 'void'", "incomplete-type");
         t = errorType();
-    } else if (!isError(t) && !isComplete(t) && !isReference(t) && !declarationOnly) {
+    } else if (!isError(t) && !isComplete(t) && !isReference(t)) {
         error(line, col, what + " '" + name + "' has incomplete type " + q(t), "incomplete-type");
         t = errorType();
     }
     if (isReference(t) && !init && ctx != DeclCtx::Member) {
         error(line, col, "declaration of reference variable '" + name + "' requires an initializer", "reference");
-    }
-
-    /* external linkage (C11 6.2.2): `extern int x;` and the definition
-       `int x = 1;` are one object, so they share one symbol -- whose type
-       becomes the composite of the two (`extern int a[]; int a[5];` makes
-       a an int[5], Papaspyrou's composite) -- and a block-scope `extern`
-       names that file-scope object */
-    if ((ctx == DeclCtx::Global || isExtern) && !isError(t)) {
-        SymbolPtr prev;
-        for (const auto &c : st.scope(0).names[name])
-            if (c->kind == SymbolKind::Variable) prev = c;
-        std::vector<SymbolPtr> here = ctx == DeclCtx::Local ? st.lookupLocal(name) : std::vector<SymbolPtr>{};
-        bool localClash = !here.empty() && here.front() != prev;
-        if (!localClash && prev && (!prev->isDefined || declarationOnly)) {
-            TypePtr composite;
-            if (sameType(prev->type, t, true)) {
-                composite = prev->type;
-            } else if (isArray(prev->type) && isArray(t) && sameType(prev->type->elem, t->elem, true) &&
-                       (prev->type->arraySize < 0 || t->arraySize < 0)) {
-                composite = prev->type->arraySize < 0 ? t : prev->type;
-            }
-            if (!composite) {
-                error(line, col, "conflicting types for '" + name + "': " + q(t) + " does not match the previous "
-                                     "declaration " + q(prev->type) + " at line " + displayLine(prev->line),
-                      "conflicting-types");
-                return nullptr;
-            }
-            prev->type = composite;
-            if (!declarationOnly) {
-                prev->isDefined = true;
-                prev->declNode = n.get();
-                prev->line = line;
-                prev->column = col;
-            }
-            if (ctx == DeclCtx::Local && here.empty()) st.current().names[name].push_back(prev);
-            n->symbol = prev;
-            n->semType = prev->type;
-            if (init) {
-                prev->hasInitializer = true;
-                checkInitializer(prev->type, init, true, "variable '" + name + "'");
-            }
-            return prev;
-        }
-        if (!localClash && !prev && ctx == DeclCtx::Local) {
-            /* `extern int g;` in a block before any file-scope `g`: declares it there */
-            auto g = std::make_shared<Symbol>();
-            g->name = name;
-            g->kind = SymbolKind::Variable;
-            g->type = t;
-            g->storage = Storage::Global;
-            g->line = line;
-            g->column = col;
-            g->declNode = n.get();
-            st.declareIn(0, g);
-            st.current().names[name].push_back(g);
-            n->symbol = g;
-            n->semType = t;
-            return g;
-        }
     }
 
     if (ctx != DeclCtx::Member) {
@@ -713,7 +635,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
     sym->line = line;
     sym->column = col;
     sym->isStatic = te.isStatic;
-    sym->isDefined = !declarationOnly; /* `extern int x;` declares; any other object declaration defines */
+    sym->isDefined = true; /* every object declaration defines it (there is no `extern`) */
     sym->declNode = n.get();
     if (ctx == DeclCtx::Member) {
         sym->kind = SymbolKind::Field;

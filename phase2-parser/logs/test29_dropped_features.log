@@ -50,8 +50,12 @@ test/test29_dropped_features.c:81:14: syntax error: syntax error, unexpected INT
  81 |     volatile int sensor = 1;
     |              ^
 
+test/test29_dropped_features.c:86:1: syntax error: syntax error, unexpected IDENTIFIER
+ 86 | extern int t12_elsewhere;
+    | ^
+
 -----------------------------------------
-Total Errors : 11
+Total Errors : 12
 
 --- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
 Program "translation_unit"
@@ -122,6 +126,8 @@ Program "translation_unit"
 |       `-- ExprStmt
 |           `-- CallExpr
 |               `-- Identifier "resync_marker"
+|-- ErrorNode "line 86: near 'extern'"
+|-- VarDecl "resync_after_12 : INT"
 |-- FunctionDef "twice : _Z5twicei"
 |   |-- ParamDecl "v : INT"
 |   `-- CompoundStmt

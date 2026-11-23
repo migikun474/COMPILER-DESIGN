@@ -51,7 +51,6 @@ struct ASTTypeExpr {
     std::string tagName;                /* struct/union/class/enum tag, if any */
     std::string typedefName;            /* set when spelled via a TYPE_NAME */
     bool isStatic = false;
-    bool isExtern = false;              /* `extern`: declares, does not define */
     int storageClasses = 0;             /* how many storage-class keywords (> 1 is an error) */
     bool isConst = false;
     bool isAuto = false;

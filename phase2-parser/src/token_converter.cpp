@@ -47,7 +47,6 @@ int to_bison_token(TokenType t) {
         case TokenType::VIRTUAL:  return VIRTUAL;
         case TokenType::EXPLICIT: return EXPLICIT;
         case TokenType::FRIEND:   return FRIEND;
-        case TokenType::EXTERN:  return EXTERN;
 
         // ---- control-flow keywords ----
         case TokenType::IF:       return IF;

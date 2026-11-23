@@ -66,7 +66,6 @@ enum class TokenType {
     VIRTUAL,
     EXPLICIT,
     FRIEND,
-    EXTERN,
 
     // ---- control-flow keywords ----
     IF,
