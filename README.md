@@ -129,7 +129,8 @@ applicable.
 | Structures, unnamed structs, anonymous struct members, brace elision | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | Functions, recursion, prototypes, forward calls | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | printf / scanf | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (format strings checked) |
-| static, extern, const | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| static, const | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
+| enum (C++ rules), plain unions | ✓ | ✓ | ✓ | ✓ | ✓ | all phases (D42) |
 | Variable arguments (`...`, `va_*`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | Dynamic memory (`malloc` … `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
 | Command-line input (`argc`, `argv`) | ✓ | ✓ | ✓ | ✓ | ✓ | all phases |
@@ -156,7 +157,7 @@ multi-level pointers and multi-dimensional arrays. Dynamic memory is
 
 Beyond the specification, the code also implements classes and objects,
 single inheritance, access modifiers, default constructors, operator
-and function overloading, `extern`, casts,
+and function overloading, `enum` and `union`, casts,
 designated initializers, unnamed structs with anonymous members, and
 Itanium C++ name mangling. The semantic analyzer additionally gives gcc-style warnings
 for sequence-point violations (`i = i++`), integer overflow in constant
@@ -167,8 +168,9 @@ expressions and printf/scanf format mismatches. See
 
 Four features that an earlier version of the front end supported were
 removed on 2026-10-07, before the back end was started, to keep TAC and
-MIPS generation focused: **enum and union**, **file manipulation**
-(`FILE`, `fopen` …), **lambdas**, and **function pointers**. Their
+MIPS generation focused: **enum and union** (brought back on 2026-11-23,
+D42), **file manipulation** (`FILE`, `fopen` …), **lambdas**, and
+**function pointers**. Their
 keywords are no longer reserved and their grammar rules, types and
 checks are gone; a program that uses one gets an ordinary error
 (`phase2-parser/test/test29_dropped_features.c`,
@@ -198,6 +200,11 @@ On 2026-11-21 the language was reduced further (decisions D34–D36):
   `test31_dropped_class_features.c`).
 - **Loop-invariant code motion** in `-O3` (D36).
 
+On 2026-11-23 **`extern`** was removed too (D43): like `register`, it
+is an ordinary identifier again and an `extern` declaration is a syntax
+error (`test29_dropped_features.c`); every object declaration is a
+definition.
+
 ## Added on 2026-11-21
 
 - A warning for an assignment used as a condition (`if (a = b)`).
@@ -210,6 +217,18 @@ On 2026-11-21 the language was reduced further (decisions D34–D36):
   arguments passed in `$a0`–`$a3` at `-O1` and above (D39).
 - The combined driver (D40). An audit then fixed an `-O3` hang in global
   common-subexpression elimination (D41).
+
+## Added on 2026-11-23
+
+- **`enum`**, with C++ rules (D42): each enum is its own type; it
+  converts to `int` implicitly, but an `int` (or another enum) becomes
+  an enum only with a cast; no `++`/`--` on an enum; overloads tell
+  enums apart and the link name carries the enum's name
+  (`_Z4show5Color`). In TAC and MIPS an enum is a plain `int`.
+- **Plain unions** (D42): data members only, all at offset 0; a brace
+  initializer sets the first or the designated member; no anonymous
+  unions. Reading a union through another member works at every `-O`
+  level (`t36_enums_unions.c`).
 
 ## Partially implemented
 
@@ -369,9 +388,9 @@ bad.c:4:12: semantic error: undeclared identifier 'y' [undeclared]
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Parser | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors (`negative.c`, `test5`, `test14`–`test21`, `test23`, `test29`, `test31`) |
-| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 26 valid + 23 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **86 checks, all passing** |
-| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 32 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **33 checks, all passing** |
-| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 32 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **32 checks, all passing** |
+| Semantic (self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
+| TAC (self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs generated and executed by the TAC interpreter, raw and with `-O1`, `-O2`, `-O3`; printed output and exit code must equal `test/expected/*.out` (verified against gcc/g++), plus one check of the generator's own warnings — **34 checks, all passing** |
+| MIPS on SPIM (self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 33 programs compiled to MIPS at `-O0`, `-O1`, `-O2`, `-O3` and run in SPIM against the same expected outputs — **33 checks, all passing** |
 
 `run.sh` scripts print each program's output for inspection; only
 `run_tests.sh` checks results automatically (any missing **or**

@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 32 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 33 test programs are
 > generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 33 passed, the 32 programs and one warnings check).
+> (`./run_tests.sh`: 34 passed, the 33 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -151,7 +151,8 @@ a type or an overload.
 | `if`, `while`, `for`, `do`, `until`, `?:`, `&&`, `\|\|`, `!` | jumping code with backpatching |
 | `switch` | subject in a temporary, body, then a chain of `if t == v goto Lcase` and a `goto` to the default |
 | `break`, `continue`, `goto` | `goto` |
-| arrays, `struct` fields | `x = a[offset]`, offset from the slides' formula or the field's layout offset |
+| arrays, `struct` / `union` fields | `x = a[offset]`, offset from the slides' formula or the field's layout offset (always 0 in a union) |
+| enums | an enum value is an `int`; an enumerator is an integer constant operand (it has no storage) |
 | pointers, `p->f`, `p[i]` | `ptr+` and `*` |
 | references | hold an address: `r = &x`, a use is `*r` |
 | member functions | `this` is a hidden first parameter; fields are `this ptr+ offset` |
@@ -278,6 +279,7 @@ the output of the same source compiled with gcc/g++.
 | `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` at `-O3` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
+| `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 
 ## Warnings from this phase

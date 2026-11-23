@@ -5,7 +5,7 @@ every static rule of the language, and annotates the tree with types,
 lvalue-ness, constant values and resolved symbols — the representation
 the IR phase ([`../phase3-ir`](../phase3-ir)) lowers.
 
-> Status: **implemented and tested** (86 automated checks, all
+> Status: **implemented and tested** (88 automated checks, all
 > passing). Its annotated AST and symbol table are the input of the IR
 > phase.
 
@@ -47,7 +47,7 @@ source line and a caret. A report goes to `logs/<file-stem>.log`.
 | File | Contents (functions are members of `sem::SemanticAnalyzer` unless noted) |
 |---|---|
 | [`include/semantic.h`](include/semantic.h) | the class: contexts (`FunctionCtx`, `SwitchCtx`), state, every method below |
-| [`src/declarations.cpp`](src/declarations.cpp) | `error()` / `warning()`, `analyze()`, `prescan()`, `hoistFunction()`; type resolution `resolveType()`, `resolveSpecifiers()`, `resolveTag()`, `resolveParams()`, `arrayDimension()`; `declaration()`, `variable()`, `typedefDecl()`, `functionSignature()`, `functionDefinition()`, `functionBody()`, `recordDefinition()`, `checkInitializer()`, `checkMainSignature()`, anonymous struct members |
+| [`src/declarations.cpp`](src/declarations.cpp) | `error()` / `warning()`, `analyze()`, `prescan()`, `hoistFunction()`; type resolution `resolveType()`, `resolveSpecifiers()`, `resolveTag()`, `resolveParams()`, `arrayDimension()`; `declaration()`, `variable()`, `typedefDecl()`, `functionSignature()`, `functionDefinition()`, `functionBody()`, `recordDefinition()`, `enumDefinition()`, `checkInitializer()`, `checkMainSignature()`, anonymous struct members |
 | [`src/statements.cpp`](src/statements.cpp) | `statement()`, `subStatement()`, `blockItems()`, `condition()`, `collectLabels()`, `returnStatement()` |
 | [`src/expressions.cpp`](src/expressions.cpp) | `expr()` dispatcher and `value()`; `identifier()`, `binary()`, `unary()`, `assignment()`, `ternary()`, `call()`, `builtinCall()`, `member()`, `scopeMember()`, `index()`, `cast()`, `sizeofExpr()`; `checkModifiable()`, `convertible()`, `checkConstantConversion()`, `resolveOverload()`, `checkCallArgs()`, `checkAccess()`, `checkFormat()`, `foldBinary()` |
 | [`src/cxx.cpp`](src/cxx.cpp) | constructors (`construct()`, `defaultConstruct()`, `constructorInit()`, `constructExpr()`), out-of-class constructors (`outOfClassSpecial()`), operator overloading (`checkOperatorDeclaration()`, `overloadedOperator()`), `varargBuiltin()` |
@@ -84,10 +84,11 @@ analyze(root)
  ├─ prescan(root)              record every top-level function and variable line
  ├─ for each top-level item:   declaration(item, Global)      ← one walk, in source order
  │     VarDecl → variable()    FunctionDef → functionDefinition() → functionBody()
- │     StructDecl/ClassDecl → recordDefinition() (member bodies after the class is complete)
+ │     StructDecl/UnionDecl/ClassDecl → recordDefinition() (member bodies after the class is complete)
+ │     EnumDecl → enumDefinition()   (enumerators: constants of the enclosing scope)
  │     TypedefDecl → typedefDecl()
  ├─ checkSequencing(root)      sequence-point warnings (needs the symbols)
- └─ undefined-function / undefined-extern-variable warnings
+ └─ undefined-function warnings
 ```
 
 It is a single **L-attributed traversal**: declarations push types
@@ -103,8 +104,8 @@ Language decisions:
   are analysed after the class is complete, as in C++).
 - Labels have function scope (collected before the body is walked), so
   a forward `goto` works.
-- `int x; int x;` is an error even at file scope; `extern int x;`
-  followed by `int x = 1;` is one object.
+- `int x; int x;` is an error even at file scope (C++); there is no
+  `extern` (D43), so every object declaration is a definition.
 - `auto x = expr;` takes the type of the initializer.
 
 ### Declarations
@@ -114,13 +115,11 @@ reads the declarator **inside-out** (`int (*pa)[3]` is a pointer to an
 array, `int *pa[3]` an array of pointers) — then:
 
 1. infers an unsized array's length from its initializer;
-2. rejects `void` and incomplete objects (unless only declared `extern`);
-3. handles linkage (`extern` declarations and the definition share one
-   symbol; their composite type completes `extern int a[];`);
-4. detects redeclaration with `st.lookupLocal(name)`;
-5. creates the `sem::Symbol` (storage `Global`/`Static`/`Local`) and
+2. rejects `void` and incomplete objects;
+3. detects redeclaration with `st.lookupLocal(name)`;
+4. creates the `sem::Symbol` (storage `Global`/`Static`/`Local`) and
    `st.declare()`s it, registering locals in the function's `locals`;
-6. checks the initializer with `checkInitializer()` (brace lists,
+5. checks the initializer with `checkInitializer()` (brace lists,
    designators, nested aggregates, constant initializers for statics).
 
 ### Expressions
@@ -264,9 +263,8 @@ lists, brace elision into arrays and struct members (the list is
 rewritten in fully braced form by `elideBraces()`), struct member order, string
 literals into `char` arrays, size inference for `int a[] = {...}`);
 designators (`.field` must name a field, `[N]` must be inside the array);
-typedef redefinition with a different type; storage classes (`extern` with an initializer in a block,
-several storage classes, conflicting `extern`
-types, an `extern` object used but never defined — warning).
+typedef redefinition with a different type; several storage classes in
+one declaration.
 
 **Expressions** — undeclared identifiers; type names used as values;
 operand rules for every operator; pointer arithmetic on `void *` or
@@ -318,12 +316,25 @@ including inheritance access; `this` only in non-static members;
 non-static members in static functions; derived-to-base pointer
 conversion.
 
-**Unnamed aggregates** — unnamed struct/class types (a typedef names
-them); anonymous struct members promote their fields (`s.i`) at the
+**Enums and unions** (D42) — an enum is its own type with C++ rules:
+enum → int is implicit (a promotion in overload ranking), int → enum
+and enum → another enum need a cast, `++`/`--` on an enum are errors,
+`c ? Red : Blue` keeps the enum type; enumerators are constants
+(previous value + 1, or an integer constant expression that must fit
+`int`) usable in `case` labels and array sizes; redefinitions, unknown
+enums and tag mismatches (`enum S` for a struct, `struct U` for a
+union) are errors; no enum defined inside a struct or class. Unions
+hold data members only (no methods, constructors, friends, static or
+reference members, no member whose class has a constructor), every
+member at offset 0; a brace initializer sets one member (the first or
+the designated one); anonymous unions are errors.
+
+**Unnamed aggregates** — unnamed struct/union/class types (a typedef
+names them); anonymous struct members promote their fields (`s.i`) at the
 right offset; an unnamed struct that declares nothing is a warning.
 
-**Dropped features** — `enum`, `union`, file manipulation, lambdas and
-function pointers were removed on 2026-10-07
+**Dropped features** — file manipulation, lambdas and function pointers
+were removed on 2026-10-07 (and `extern` on 2026-11-23, D43)
 ([`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)). Most uses are syntax
 errors and never reach this phase; what does reach it is rejected here:
 a function name used as a value (`x = f;`, `&f`, `g(f)`), a parameter
@@ -353,8 +364,9 @@ After `analyze()`:
   `this->field`.
 - **Symbols** give storage (`global`/`static` → data segment,
   `local`/`param` → stack frame, `member` → `offset`), a collision-free
-  `uniqueName`, and for functions `params`, `locals`, `mangledName`. A
-  global with `isDefined` false is only declared `extern`.
+  `uniqueName`, and for functions `params`, `locals`, `mangledName`. An
+  enumerator (`SymbolKind::EnumConstant`) has no storage: its value is
+  `constValue`, and every use of it is already folded on the node.
 - **Sizes and layouts**: `sizeOf()`, `alignOf()`, `RecordInfo` offsets.
 - **Conversions** are not materialized in the tree: where an operand's
   type differs from its context, the IR phase inserts the conversion
@@ -374,17 +386,18 @@ make
 
 `run_tests.sh` is self-checking and runs three groups:
 
-1. **`test/valid/`** — 26 programs that must be accepted (`v01`–`v27`
+1. **`test/valid/`** — 27 programs that must be accepted (`v01`–`v28`
    without `v20`:
    declarations, expressions, scopes, functions, arrays, pointers,
    structs, control flow, built-ins, classes, overloading and
    references, `main` arguments, warnings, declarators, name resolution,
    constructors and operators, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
-   rules).
-2. **`test/invalid/`** — 23 programs that must be rejected (`e01`–`e24`
+   rules, enums and unions).
+2. **`test/invalid/`** — 24 programs that must be rejected (`e01`–`e25`
    without `e17`; `e16` shows a `#` line rejected, `e23` the reduced
-   class subset, `e24` the reserved words `virtual` and `explicit`).
+   class subset, `e24` the reserved words `virtual` and `explicit`, `e25`
+   what enums and unions do not allow).
 3. **End to end** — the 37 programs of `../phase2-parser/test`: the 13
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which
@@ -399,7 +412,7 @@ int over(double a) { return 0; }    // mangled: _Z4overd
 ```
 
 The runner requires each annotated message on its line **and** fails on
-any diagnostic that is not annotated. Result today: `passed: 86 failed: 0`.
+any diagnostic that is not annotated. Result today: `passed: 88 failed: 0`.
 `./run.sh` just prints the output for every test.
 
 ## Limitations

@@ -1145,6 +1145,60 @@ plus the run-time errors in both back ends. Two changes came out of it:
   `--stack-only` keep the all-stack convention of D25 (the direct
   translation); `-O1` and above pass arguments in `$a0`-`$a3` (D39).
 
+### D42. enum and union come back (2026-11-23)
+
+**Decided by:** the user (reverses the enum/union part of D1/D2).
+**Choices:** enums follow **C++ rules**; unions are **plain unions**.
+
+- **Lexer/parser:** `enum` and `union` are keywords again. `union` shares
+  the struct rules (`UnionDecl`); `enum Tag { A, B = 5, C, }` (trailing
+  comma allowed) builds `EnumDecl` / `Enumerator`. The enumerators are
+  declared in the parse-time table as they are read, so later values may
+  use earlier ones. The grammar still has no conflicts.
+- **Representation:** an enum type is a `TypeKind::Int` type that carries
+  its `EnumInfo` (`Type::enumInfo`). Every later phase -- TAC, the
+  interpreter, the optimizer, MIPS -- sees a plain 4-byte int and needs
+  no change; only the semantic rules look at `enumInfo`.
+- **Enum rules (C++):** each enum is its own type. enum -> int is an
+  integral promotion, enum -> other arithmetic a conversion; int -> enum
+  and enum -> another enum only with a cast (`(Color)2`, `Color(2)`).
+  `++`/`--` on an enum are errors; `c ? Red : Blue` keeps the enum type;
+  overloads can tell an enum from int and enums are mangled by name
+  (`_Z4show5Color`, an unnamed enum by its typedef name). Enumerators are
+  constants of the enclosing scope with the enum's type: the previous
+  value plus one, or an integer constant expression, which must fit
+  `int`. No opaque (forward-declared) enums, no `enum class`; an enum
+  cannot be defined inside a struct or class.
+- **Plain unions:** data members only -- no member functions,
+  constructors, friends, static or reference members, and no member
+  whose class has a constructor. Every member is at offset 0 and the size
+  is the largest member rounded to the largest alignment. A brace
+  initializer sets the first member, or the designated one (`{ .f = 1.0f
+  }`); more than one value is an error. No anonymous unions (`union {
+  ... };` as a member or a statement). `struct U` naming a union (and the
+  reverse) is a tag mismatch.
+- **Optimizer check:** reading a union through another member than the
+  one written (type punning) needed no change: value numbering keys a
+  load by its machine class, every store invalidates what is known about
+  memory, and a union is a block object, so it is never in a register or
+  in global propagation. `t36_enums_unions` checks this at every level
+  on the interpreter and on SPIM against g++.
+
+### D43. extern removed (2026-11-23)
+
+**Decided by:** the user. **Done like D31** (`register`, `volatile`):
+`extern` is no longer a keyword, so it scans as an identifier and an
+`extern` declaration is an ordinary syntax error (`test29` [12]).
+
+Every object declaration is now a definition. The semantic phase loses
+the external-linkage merging (one symbol and a composite type for
+`extern int a[]; int a[5];`), the block-scope `extern`, the checks for
+`extern` with an initializer, and the "declared 'extern' and used but
+never defined" warning; a second file-scope definition of a name is the
+usual duplicate-declaration error. TAC no longer skips globals that are
+declared but not defined, because there are none. (D31 had kept
+`extern` when `register` and `volatile` went; this reverses that choice.)
+
 ---
 
 ## Open questions

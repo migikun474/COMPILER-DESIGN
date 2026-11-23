@@ -1,6 +1,6 @@
 # Feature Connectivity
 
-How every feature in the [README feature table](../README.md) is built inside the compiler, which shared parts it relies on, and what else has to change if you change or remove it. Written after the reductions and additions of D34–D41 (2026-11-22); every location below is in the current source.
+How every feature in the [README feature table](../README.md) is built inside the compiler, which shared parts it relies on, and what else has to change if you change or remove it. Written after the reductions and additions of D34–D41 (2026-11-22), updated for D42 (enum and union back) and D43 (`extern` removed); every location below is in the current source.
 
 Use it to plan a change: find the feature, read **Relies on** (what must keep working for it), **Used by** (what breaks if you remove it), and the [impact table](#5-change-impact).
 
@@ -55,7 +55,8 @@ flowchart LR
         F6["F6 arrays"]
         F7["F7 pointers"]
         F8["F8 structures"]
-        F11["F11 static extern const"]
+        F11["F11 static const"]
+        F19["F19 enum union"]
         F13["F13 dynamic memory"]
         F15["F15 typedef references"]
     end
@@ -89,6 +90,9 @@ flowchart LR
     F16 --> F17
     F15 --> F17
     F9 --> F16
+    F5 --> F19
+    F8 --> F19
+    F18 --> F19
 ```
 
 An arrow `A --> B` means **B is built on A**: removing A breaks B. There are no cycles, so features can be removed from the right-hand side without touching the left.
@@ -234,11 +238,13 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 - **Relies on:** F9, F12 (variadic arguments), S8.
 - **Used by:** nearly every test program, so it is the riskiest to change.
 
-### F11 static, extern, const
+### F11 static, const
+
+(`extern` was removed by D43: every object declaration is a definition.)
 
 | Internal piece | Phase | Code |
 |---|---|---|
-| Storage classes | S | `Storage::Global`, `Static`; `isExtern`, `declarationOnly` |
+| Storage classes | S | `Storage::Global`, `Static`; `storageClasses` (more than one is an error) |
 | Static data, initial values | T | `globals()`, `globalInit`, `GlobalInit` |
 | Const correctness | S | `checkModifiable`, `convertible` (const per level) |
 | Static local with a constructor is an error | S | `hasConstructor` check in `variable()` (D35) |
@@ -334,6 +340,21 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 - **Relies on:** F9, S2, S3.
 - **Used by:** F17.
 
+### F19 enum and union (D42)
+
+| Internal piece | Phase | Code |
+|---|---|---|
+| Keywords, enum and union rules | L/P | `ENUM`, `UNION` tokens; `struct_or_class_specifier` (`UnionDecl`, `EnumDecl`), `enumerator_list`, `enumerator`; `UNION_TAG`, `ENUM_TAG`, `ENUM_CONST` in the parse-time table |
+| Enum type | S | an Int `Type` with `enumInfo` (`enumType`, `isEnum`, `EnumInfo`); C++ conversions in `implicitConversion`; promotion in `integerPromotion`; `?:` in `ternary()`; no `++`/`--` |
+| Enumerators | S | `enumDefinition()`: `SymbolKind::EnumConstant`, value folded onto each use by `identifier()` |
+| Enum link names | S | `Mangler::canonical` (an enum by its name) |
+| Union layout and rules | S | `RecordKind::Union` in `layoutRecord` (every member at 0); member checks in `recordDefinition`; one-member initializer in `checkInitializer` / `takeElided` |
+| Lowering | T | an enumerator is `icon()` in `rvalue()`; an enum is a plain int; a union member is offset 0 |
+| Back end | O/M | nothing new: loads are keyed by machine class and every store invalidates memory, so type punning stays correct |
+
+- **Relies on:** F5 (an enum is an int), F8 (a union is a record), F18 (overloading on enums), S2, S3.
+- **Used by:** nothing.
+
 ---
 
 ## 4. Infrastructure features (not rows in the table, but connected to many)
@@ -382,24 +403,25 @@ What you must touch if you **remove** or **change** each feature. "Tests" names 
 | F8 structs | `recordDefinition`, `layoutRecord`, block copies | F16 | `t06`, `t33` |
 | F9 functions | (not removable) | most features | all |
 | F10 printf / scanf | `builtin()`, `checkFormat`, `__printf`, `__scanf` | every test's output | all |
-| F11 static / extern / const | `Storage`, `globals()`, `checkModifiable` | static members (F16) | `t19`, `t26` |
+| F11 static / const | `Storage`, `globals()`, `checkModifiable` | static members (F16) | `t19`, `t26` |
 | F12 varargs | `varargBuiltin`, `VaStart`…, `varargStart`, variadic spill in prologue | F10 if written in C; the runtime does not need it | `t07`, `t16` |
 | F13 malloc | built-ins, `__malloc` | nothing in the compiler | `t09` |
 | F14 argc / argv | start-up code, `checkMainSignature` | nothing | `t11` |
 | F15 typedef / references | lexer hack, `typedefDecl`, `referenceTo` | reference parameters in F16 and F17 | `t24`, `t26` |
 | F16 classes | `recordDefinition` class parts, `this`, `checkAccess`, friends | F17 | `t08`, `t23`, `t27`, `v10`, `v27`, `e09`, `e23` |
 | F17 constructors / operators | `construct`, `constructSubobjects`, `overloadedOperator` | nothing | `t08`, `t27`, `v17` |
-| F18 overloading | `resolveOverload`, `mangle` | F17 operators | `v21`, `e15` |
+| F18 overloading | `resolveOverload`, `mangle` | F17 operators, F19 enum overloads | `v21`, `e15` |
+| F19 enum / union | the tokens and rules, `enumDefinition`, `enumInfo` checks, `RecordKind::Union` paths, `icon()` for enumerators | nothing | `v28`, `e25`, `t36` |
 
 ### Changes that are cheap because nothing depends on them
 
-F3, F4, F13, F14, F17 and every infrastructure analysis except I2 are leaves: removing or rewriting one touches only its own code and tests.
+F3, F4, F13, F14, F17, F19 and every infrastructure analysis except I2 are leaves: removing or rewriting one touches only its own code and tests.
 
 ### Changes that ripple
 
 - **F7 pointers** feeds arrays, the heap, references and classes.
 - **F9 functions / S6 calls** is shared by every call; the D39 register convention lives here, so any change to argument passing must be mirrored in `Emitter::call` (caller), the prologue in `Emitter::function` (callee), and `varargStart` (variadic walk).
-- **F10 printf** is in every test program; a change there must keep all 32 TAC and 32 SPIM outputs identical.
+- **F10 printf** is in every test program; a change there must keep all 33 TAC and 33 SPIM outputs identical.
 
 ---
 
@@ -420,3 +442,5 @@ The earlier [advanced feature analysis](ADVANCED_COMPILER_FEATURE_ANALYSIS.md) w
 | INF-04 reaching definitions | Implemented (D38), drives the uninitialized warning |
 | BCK-06 register calling convention, BCK-09 frame slot reclamation | Implemented (D39) |
 | INF-16 combined driver | Implemented (D40) |
+| enum, union (dropped by D1) | Back (D42): enums with C++ rules, plain unions |
+| `extern` | Removed (D43) |

@@ -54,7 +54,7 @@ scanner keeps going until end of file. After the single call,
 
 - `std::vector<Token> tokens` — every recognized token, in order
   (`Token { std::string lexeme; TokenType type; }`).
-- `enum class TokenType` — the whole vocabulary (102 values): literals,
+- `enum class TokenType` — the whole vocabulary (103 values): literals,
   type keywords, qualifiers, aggregate keywords, access modifiers,
   storage classes, control-flow keywords, the language's reserved
   library names, and every operator.
@@ -94,8 +94,8 @@ first rule**. On top of that:
 |---|---|
 | Identifiers | `[a-zA-Z_][a-zA-Z0-9_]*` |
 | Type keywords | `int char float double void short long signed unsigned bool` |
-| Qualifiers, storage classes | `const static typedef auto extern` |
-| Aggregates, OOP | `struct class public private protected this new delete operator` |
+| Qualifiers, storage classes | `const static typedef auto` (`extern` was removed, D43) |
+| Aggregates, OOP | `struct class union enum public private protected this operator friend`; `virtual` and `explicit` are reserved only to be reported (D35) |
 | Control flow | `if else for while do until switch case default break continue goto return` |
 | Reserved library names (custom to this language) | `printf scanf malloc free calloc realloc va_list va_start va_arg va_end` |
 | Other | `sizeof`, `true`, `false` (`BOOL_LITERAL`) |

@@ -25,7 +25,8 @@ test programs compiled to MIPS and run in SPIM).
 So "all phases" is the strongest status a feature can have.
 
 Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
-`S:` phase2b-semantic/test (valid `v..`, invalid `e..`).
+`S:` phase2b-semantic/test (valid `v..`, invalid `e..`), `I:` phase3-ir/test
+(also run on SPIM by phase4-codegen).
 
 ![Feature implementation map](diagrams/feature-map.svg)
 
@@ -80,7 +81,8 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v17 e15 | all phases |
 | Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test12, S:v11 v16 e04 | all phases |
 | `const`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
-| `extern` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test28, S:v24 e20 | all phases (linkage, composite types) |
+| `enum` (C++ rules: its own type, enum → int implicit, int → enum by cast, mangled by name) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v28 e25, I:t36 | D42; an int in TAC and MIPS |
+| `union` (plain: data members at offset 0, one-member initializer) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v28 e25, I:t36 | D42; no anonymous unions, no methods |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test25, S:v19 | all phases |
 | `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 v22 v24 | all phases |
 | Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 | all phases |
@@ -106,7 +108,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 86 checks |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 88 checks |
 | Run-time checks: integer division by zero, stack overflow (same message in the interpreter and on SPIM) | `mips.cpp` (`binary`, prologue), `runtime.s`, `interp.cpp` | probes in D37 |
 | Uninitialized-variable warning from reaching definitions, at the line of the read | `reachingDefinitions()`, `readBeforeAssigned()` in `opt.cpp` | T:diagnostics/uninitialized |
 | Combined driver: one binary stops after any phase (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) | `phase4-codegen/src/main.cpp` | — |
@@ -131,7 +133,7 @@ arrays.
 
 Classes/objects/`this`, single inheritance, access modifiers, default
 constructors, operator overloading, function overloading, `const`/`auto`,
-`extern`, C-style and functional casts, `sizeof`, ternary
+`enum` and `union` (D42), C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
 structs and anonymous struct members, hex/octal/binary literals with
 suffixes, `bool`, Itanium name mangling — plus the analysis capabilities
@@ -166,11 +168,11 @@ semantic phase redoes all name resolution.)
 
 **Removed on 2026-10-07** (they were implemented in the front end and
 then dropped before the back end was started — see
-[`DESIGN_LOG.md`](DESIGN_LOG.md), decisions D1–D6): `enum`, `union`
-(including anonymous unions), file manipulation (`FILE`, `fopen`,
-`fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`, `fgets`, `fputs`,
-`feof`), lambdas, and function pointers. Their keywords are ordinary
-identifiers again. `enum`/`union` definitions, lambdas and
+[`DESIGN_LOG.md`](DESIGN_LOG.md), decisions D1–D6): file manipulation
+(`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`,
+`fgets`, `fputs`, `feof`), lambdas, and function pointers (`enum` and
+`union` were dropped too and came back with D42; anonymous unions did
+not). Their keywords are ordinary identifiers again. Lambdas and
 function-pointer declarators are syntax errors
 (P:test29); a function name used as a value, a parameter of function
 type and the now-undeclared file names are semantic errors (S:e19);
@@ -185,7 +187,7 @@ allocator decides by use count), the `volatile` qualifier (nothing in
 this target changes a variable behind the program's back), and
 `long double` (it was only another spelling of `double`). The four
 words are ordinary identifiers again and each use is a syntax error
-(P:test29 [12]–[15]); `long double` is "invalid combination of type
+(P:test29 [8]–[11]); `long double` is "invalid combination of type
 specifiers" (S:e19).
 
 **Removed on 2026-11-21** (decisions D34–D36, at the user's request):
@@ -199,6 +201,11 @@ nested and local classes, static local objects whose class has a
 constructor (S:e23, e24, P:test31); and loop-invariant code motion in
 `-O3`. `virtual` and `explicit` stay reserved words so the scanner can
 name them in its error.
+
+**Removed on 2026-11-23** (decision D43, at the user's request): the
+`extern` storage class. As with `register`, the word is an ordinary
+identifier again and an `extern` declaration is a syntax error
+(P:test29 [12]); every object declaration is a definition.
 
 **Never implemented:**
 
