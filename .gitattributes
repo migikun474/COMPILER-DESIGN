@@ -1,0 +1,5 @@
+# Generated output (TAC listings, assembly, reports, parser copies) is not
+# source: keep it out of GitHub's language statistics. (.tac would otherwise
+# be counted as Python.)
+**/logs/** linguist-generated
+**/build/** linguist-generated
