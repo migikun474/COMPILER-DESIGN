@@ -102,6 +102,7 @@ struct ASTNode {
     std::shared_ptr<const sem::Type> semType;
     std::shared_ptr<sem::Symbol> symbol;
     bool isLValue = false;
+    bool parenthesized = false;          /* written inside an extra `( ... )` (only the assignment-as-condition warning looks) */
     bool hasConstValue = false;
     long long constValue = 0;
 };

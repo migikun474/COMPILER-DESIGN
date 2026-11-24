@@ -44,9 +44,9 @@ void SemanticAnalyzer::subStatement(const ASTNodePtr &n, const std::string &scop
 void SemanticAnalyzer::condition(const ASTNodePtr &n, const std::string &construct) {
     if (!n) return;
     TypePtr t = value(n);
-    /* ponytail: the AST keeps no parentheses, so gcc's `if ((x = f()))` way of
-       saying "I meant it" still warns; add a parenthesized flag on ASTNode if needed */
-    if (n->kind == ASTKind::AssignExpr && n->label == "=")
+    /* gcc's convention: an extra pair of parentheses, `if ((x = f()))`, says
+       the assignment is meant (the statement's own parentheses are syntax) */
+    if (n->kind == ASTKind::AssignExpr && n->label == "=" && !n->parenthesized)
         warning(n.get(), "assignment used as the condition of '" + construct + "'; did you mean '=='?", "assign-condition");
     if (!isError(t) && !isScalar(t)) {
         error(n.get(), "condition of '" + construct + "' must have a scalar (arithmetic or pointer) type, not " + q(t),

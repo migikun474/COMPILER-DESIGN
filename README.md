@@ -480,8 +480,6 @@ Each phase folder also keeps its development history in
 
 ## Known limitations
 
-- `if ((a = b))` still gets the assignment-as-condition warning: the
-  syntax tree keeps no parentheses.
 - Recursion depth: SPIM's default stack (256 KB in practice) holds about
   8,000 frames of 32 bytes; the TAC interpreter stops at 10,000 calls.
   Both report `stack overflow (recursion too deep)`.

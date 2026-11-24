@@ -1067,8 +1067,10 @@ analysis (`loops()`) stays, for the loop unrolling planned next.
 ### D37. Run-time checks and the assignment warning (2026-11-21)
 
 - **Assignment as a condition:** `if (a = b)`, loops and `?:` warn
-  `assignment used as the condition`. The AST keeps no parentheses, so
-  gcc's `if ((a = b))` escape still warns.
+  `assignment used as the condition`. As in gcc, an extra pair of
+  parentheses (`if ((a = b))`) says the assignment is meant: the parser
+  marks a parenthesized expression (`ASTNode::parenthesized`, added
+  2026-11-24) and the warning skips it.
 - **Division by zero:** the MIPS code checks the divisor of every
   integer `/` and `%` (not a nonzero constant), and `__udivmodll` checks
   it for `long long`. On zero it prints the interpreter's message,
