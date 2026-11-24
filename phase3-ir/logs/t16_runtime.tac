@@ -4,7 +4,7 @@
 
    Source file   : test/t16_runtime.c
    Optimization  : no optimization
-   Result        : Three address code generated: 5 function(s), 310 instruction(s)
+   Result        : Three address code generated: 5 function(s), 316 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -179,7 +179,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 15 parameter(s)/local(s), 77 temporaries, frame 684 bytes
+ Symbol table: 16 parameter(s)/local(s), 77 temporaries, frame 692 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -198,85 +198,86 @@
    t                local   struct Big                     40     112
    p                local   int *                           4     152
    z                local   int *                           4     156
-   t1               temp    long long                       8     160
-   t2               temp    long long                       8     168
-   t3               temp    long long                       8     176
-   t4               temp    long long                       8     184
-   t5               temp    long long                       8     192
-   t6               temp    long long                       8     200
-   t7               temp    long long                       8     208
-   t8               temp    long long                       8     216
-   t9               temp    long long                       8     224
-   t10              temp    long long                       8     232
-   t11              temp    unsigned long long              8     240
-   t12              temp    unsigned long long              8     248
-   t13              temp    unsigned long long              8     256
-   t14              temp    long long                       8     264
-   t15              temp    long long                       8     272
-   t16              temp    long long                       8     280
-   t17              temp    long long                       8     288
-   t18              temp    int                             4     296
-   t19              temp    int                             4     300
-   t20              temp    int                             4     304
-   t21              temp    int                             4     308
-   t22              temp    long long                       8     312
-   t23              temp    long long                       8     320
-   t24              temp    long long                       8     328
-   t25              temp    int                             4     336
-   t26              temp    double                          8     344
-   t27              temp    double                          8     352
-   t28              temp    double                          8     360
-   t29              temp    float                           4     368
-   t30              temp    double                          8     376
-   t31              temp    double                          8     384
-   t32              temp    int                             4     392
-   t33              temp    double                          8     400
-   t34              temp    long long                       8     408
-   t35              temp    float                           4     416
-   t36              temp    double                          8     424
-   t37              temp    float                           4     432
-   t38              temp    double                          8     440
-   t39              temp    float                           4     448
-   t40              temp    double                          8     456
-   t41              temp    float                           4     464
-   t42              temp    double                          8     472
-   t43              temp    int                             4     480
-   t44              temp    double                          8     488
-   t45              temp    int                             4     496
-   t46              temp    int                             4     500
-   t47              temp    struct Big                     40     504
-   t48              temp    struct Big *                    4     544
-   t49              temp    struct Big *                    4     548
-   t50              temp    double                          8     552
-   t51              temp    int                             4     560
-   t52              temp    int                             4     564
-   t53              temp    char                            1     568
-   t54              temp    int                             4     572
-   t55              temp    long long                       8     576
-   t56              temp    double                          8     584
-   t57              temp    double                          8     592
-   t58              temp    unsigned int                    4     600
-   t59              temp    void *                          4     604
-   t60              temp    int *                           4     608
-   t61              temp    int *                           4     612
-   t62              temp    unsigned int                    4     616
-   t63              temp    void *                          4     620
-   t64              temp    void *                          4     624
-   t65              temp    int                             4     628
-   t66              temp    int *                           4     632
-   t67              temp    int                             4     636
-   t68              temp    int                             4     640
-   t69              temp    int *                           4     644
-   t70              temp    int                             4     648
-   t71              temp    int                             4     652
-   t72              temp    int                             4     656
-   t73              temp    int *                           4     660
-   t74              temp    int                             4     664
-   t75              temp    int                             4     668
-   t76              temp    long long                       8     672
-   t77              temp    int                             4     680
+   none             local   int *                           4     160
+   t1               temp    long long                       8     168
+   t2               temp    long long                       8     176
+   t3               temp    long long                       8     184
+   t4               temp    long long                       8     192
+   t5               temp    long long                       8     200
+   t6               temp    long long                       8     208
+   t7               temp    long long                       8     216
+   t8               temp    long long                       8     224
+   t9               temp    long long                       8     232
+   t10              temp    long long                       8     240
+   t11              temp    unsigned long long              8     248
+   t12              temp    unsigned long long              8     256
+   t13              temp    unsigned long long              8     264
+   t14              temp    long long                       8     272
+   t15              temp    long long                       8     280
+   t16              temp    long long                       8     288
+   t17              temp    long long                       8     296
+   t18              temp    int                             4     304
+   t19              temp    int                             4     308
+   t20              temp    int                             4     312
+   t21              temp    int                             4     316
+   t22              temp    long long                       8     320
+   t23              temp    long long                       8     328
+   t24              temp    long long                       8     336
+   t25              temp    int                             4     344
+   t26              temp    double                          8     352
+   t27              temp    double                          8     360
+   t28              temp    double                          8     368
+   t29              temp    float                           4     376
+   t30              temp    double                          8     384
+   t31              temp    double                          8     392
+   t32              temp    int                             4     400
+   t33              temp    double                          8     408
+   t34              temp    long long                       8     416
+   t35              temp    float                           4     424
+   t36              temp    double                          8     432
+   t37              temp    float                           4     440
+   t38              temp    double                          8     448
+   t39              temp    float                           4     456
+   t40              temp    double                          8     464
+   t41              temp    float                           4     472
+   t42              temp    double                          8     480
+   t43              temp    int                             4     488
+   t44              temp    double                          8     496
+   t45              temp    int                             4     504
+   t46              temp    int                             4     508
+   t47              temp    struct Big                     40     512
+   t48              temp    struct Big *                    4     552
+   t49              temp    struct Big *                    4     556
+   t50              temp    double                          8     560
+   t51              temp    int                             4     568
+   t52              temp    int                             4     572
+   t53              temp    char                            1     576
+   t54              temp    int                             4     580
+   t55              temp    long long                       8     584
+   t56              temp    double                          8     592
+   t57              temp    double                          8     600
+   t58              temp    unsigned int                    4     608
+   t59              temp    void *                          4     612
+   t60              temp    int *                           4     616
+   t61              temp    int *                           4     620
+   t62              temp    unsigned int                    4     624
+   t63              temp    void *                          4     628
+   t64              temp    void *                          4     632
+   t65              temp    int                             4     636
+   t66              temp    int *                           4     640
+   t67              temp    int                             4     644
+   t68              temp    int                             4     648
+   t69              temp    int *                           4     652
+   t70              temp    int                             4     656
+   t71              temp    int                             4     660
+   t72              temp    int                             4     664
+   t73              temp    int *                           4     668
+   t74              temp    int                             4     672
+   t75              temp    int                             4     676
+   t76              temp    long long                       8     680
+   t77              temp    int                             4     688
 
- Code: 242 instruction(s)
+ Code: 248 instruction(s)
 
     168        a = 123456789012345
     169        t1 = llong- 987654321
@@ -517,9 +518,15 @@
     404        param t74
     405        param t75
     406        call printf, 5
-    407        t76 = a llong% 100
-    408        t77 = llongtoint t76
-    409        return t77
+    407        none = 0
+    408        param "[%p] [%8p] [%-8p]\n"
+    409        param none
+    410        param none
+    411        param none
+    412        call printf, 4
+    413        t76 = a llong% 100
+    414        t77 = llongtoint t76
+    415        return t77
 
 
 ----------------------------------------------------------------------------
@@ -601,6 +608,7 @@
    t                  variable      struct Big                 local      61   40    2  t.28
    p                  variable      int *                      local      67    4    9  p.29
    z                  variable      int *                      local      70    4    3  z.30
+   none               variable      int *                      local      72    4    3  none.31
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

@@ -1282,6 +1282,30 @@ constant space; calloc of a reused dirty block is zero; realloc grows and
 shrinks keeping the contents), on the interpreter and SPIM at every level
 against g++.
 
+### D46. Small focused tests, and exact printf rounding (2026-11-24)
+
+**Decided by:** the user (smaller tests that still catch issues, in
+phases 3 and 4).
+
+Ten small programs (under ~40 lines each) were added to the shared
+phase 3 / phase 4 suite, each aimed at one area where compilers break:
+`t30_int_edges`, `t31_short_circuit`, `t32_calls_registers` (reusing the
+numbers left free when D35 removed the old t30–t32), `t40_aliasing`,
+`t41_loop_edges`, `t42_statics_globals`, `t43_float_conv`,
+`t44_long_long`, `t45_strings_chars`, `t46_classes_small`. They avoid
+what legitimately differs from a 64-bit g++ (`long`, pointer sizes,
+unspecified argument order) so that any difference is a bug.
+
+They found one: the run-time `printf` scaled a value by 10 once per
+decimal, rounding each time, so `%.2f` of 2.675 (stored as 2.67499...)
+became 267.5 and printed `2.68`; glibc prints `2.67`. `__pf_fixed` now
+computes 10^precision first (exact up to 10^22), multiplies once, and
+when the product is exactly a half takes the exact error of that
+multiplication (Dekker's two-product with Veltkamp splitting) to decide
+which side the true value lies on; only a true half rounds to even.
+Checked on 480 values near halves at `%.0f`...`%.6f`, `%e`, `%g`: the old
+runtime differed from glibc on 76 lines, the new one on none.
+
 ---
 
 ## Open questions

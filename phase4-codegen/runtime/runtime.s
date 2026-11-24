@@ -32,6 +32,7 @@ __c_ten:     .double 10.0
 __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
+__c_split:   .double 134217729.0         # 2^27 + 1, Veltkamp's splitting constant
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
 __stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
 __heap_free: .word 0                    # the free list: freed blocks, most recent first (D45)
@@ -814,14 +815,33 @@ __pf_fixed:                             # the digits of $f12 (>= 0) with $s5 dec
         addiu $sp, $sp, -8              # end at $s6; returns their start in $s6. Keeps $t2.
         sw    $ra, 0($sp)
 __pf_fscale:                            # N = the value * 10^precision, rounded to nearest (ties to even)
-        l.d   $f18, __c_ten
+        l.d   $f16, __c_ten             # 10^precision first (exact up to 10^22) ...
+        l.d   $f18, __c_one
         move  $t5, $s5
 __pf_fscale1:
         blez  $t5, __pf_fscale2
-        mul.d $f12, $f12, $f18
+        mul.d $f18, $f18, $f16
         addiu $t5, $t5, -1
         j     __pf_fscale1
-__pf_fscale2:
+__pf_fscale2:                           # ... then one multiplication, with its exact rounding error
+        l.d   $f0, __c_split            # in $f0 (Dekker's two-product, Veltkamp splitting): when
+        mul.d $f4, $f0, $f12            # the product lands exactly on a half, the error says which
+        sub.d $f6, $f4, $f12            # side of it the true value is (2.675 is 2.67499999...)
+        sub.d $f4, $f4, $f6             # $f4 = high half of the value
+        sub.d $f6, $f12, $f4            # $f6 = low half
+        mul.d $f8, $f0, $f18
+        sub.d $f10, $f8, $f18
+        sub.d $f8, $f8, $f10            # $f8 = high half of 10^precision
+        sub.d $f10, $f18, $f8           # $f10 = low half
+        mul.d $f12, $f12, $f18          # the rounded product
+        mul.d $f0, $f4, $f8
+        sub.d $f0, $f0, $f12
+        mul.d $f18, $f4, $f10
+        add.d $f0, $f0, $f18
+        mul.d $f18, $f6, $f8
+        add.d $f0, $f0, $f18
+        mul.d $f18, $f6, $f10
+        add.d $f0, $f0, $f18            # $f0 = exact product - rounded product
         jal   __dtoll                   # $v1:$v0 = N truncated ($f12 is not negative, so it is kept)
         mtc1  $v1, $f14                 # back to double, to see what was cut off
         cvt.d.w $f14, $f14
@@ -839,7 +859,12 @@ __pf_fback:
         bc1t  __pf_fup
         c.eq.d $f16, $f12
         bc1f  __pf_fdigits
-        andi  $t5, $v0, 1               # exactly half: round to the even neighbour
+        l.d   $f16, __c_zero            # exactly half as computed: the true value decides
+        c.lt.d $f0, $f16
+        bc1t  __pf_fdigits              # it was just below the half: down
+        c.lt.d $f16, $f0
+        bc1t  __pf_fup                  # just above: up
+        andi  $t5, $v0, 1               # a true half: round to the even neighbour
         beqz  $t5, __pf_fdigits
 __pf_fup:
         addiu $v0, $v0, 1

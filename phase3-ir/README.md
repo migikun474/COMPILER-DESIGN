@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 36 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 46 test programs are
 > generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 37 passed, the 36 programs and one warnings check).
+> (`./run_tests.sh`: 47 passed, the 46 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -277,6 +277,9 @@ the output of the same source compiled with gcc/g++.
 | `t27_object_semantics` | object rules of the reduced subset (D35): objects passed and returned by value are block copies, `?:` as an lvalue, arrays of objects built by the default constructor, a global object built before `main`, friends |
 | `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, loops (unrolled, or run zero times), a division that must stay, values reused or not across branches and stores |
 | `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
+| `t30_int_edges` | small: `/` and `%` with negative operands, shifts of signed and unsigned values, unsigned wrap-around, `char`/`short` sign and zero extension, signed vs unsigned comparison, `INT_MAX`/`INT_MIN` |
+| `t31_short_circuit` | small: `&&`/`\|\|` skipping their right operand, `?:` evaluating one branch, comma, chained and compound assignment, `i++` in an index, side effects in a loop condition |
+| `t32_calls_registers` | small: more arguments than `$a0`–`$a3`, mixed `char`/`double`/`long long` arguments, calls as arguments, values kept across calls, a struct by value and returned, recursion with live values |
 | `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` at `-O3` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
@@ -284,6 +287,13 @@ the output of the same source compiled with gcc/g++.
 | `t37_virtual` | virtual functions (D44): overriding at three levels with and without the keyword, an abstract base used through pointers, calls through pointers, references and `this`, qualified calls, a virtual call inside a base constructor, copies and assignments keeping each object's class, by-value parameters and results, a virtual operator, overloaded virtuals, arguments wider than `$a0`–`$a3`, a global object |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
 | `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
+| `t40_aliasing` | small: the optimizer must not reuse a value changed through a pointer, through a second pointer, through another array index, by a call to a global or through an address passed to a call |
+| `t41_loop_edges` | small: loops running 0, 1, 2, 3 and 7 times (the unrolled copy keeps each exit test), do-while once, `break`/`continue` in nested loops, a backward `goto`, `continue` from a `switch` |
+| `t42_statics_globals` | small: static locals across calls and in recursion, partly initialized global arrays and structs, string literals in globals |
+| `t43_float_conv` | small: double/float → int truncation toward zero, int ↔ double, float precision, `printf` rounding (`%.2f` of 2.675 is `2.67`), int/double comparison, unsigned → double |
+| `t44_long_long` | small: carries between the halves, multiply/divide/remainder with negatives, shifts across 32, comparisons, conversion to and from double, values across calls |
+| `t45_strings_chars` | small: walking, copying and comparing strings with pointers, escapes, character arithmetic, digits ↔ number, `%5s` `%-5s` `%.2s` |
+| `t46_classes_small` | small: constructor order down a chain, a static member counting objects, virtual and non-virtual functions with the same name, an operator returning a reference, an array of objects |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 
 ## Warnings from this phase
