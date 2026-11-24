@@ -58,5 +58,7 @@ int main() {
 int conds(int a, int b) {
     if (a = b) return 1;                      // warning: assignment used as the condition of 'if'; did you mean '=='?
     while (a = 0) { }                         // warning: assignment used as the condition of 'while'
-    return a == b ? 1 : (a = 2) ? 2 : 3;      // warning: assignment used as the condition of '?:'
+    if ((a = b)) return 4;                    /* extra parentheses: the assignment is meant, no warning (gcc) */
+    while ((a = 0)) { }
+    return a == b ? 1 : (a = 2) ? 2 : 3;      /* parenthesized as well: no warning, as in gcc */
 }

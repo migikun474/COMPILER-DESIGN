@@ -1315,7 +1315,10 @@ primary_expr
           auto base = atToken(mkNode(ASTKind::Identifier, $1.str), $1.idx);
           $$.node = atToken(mkNode(ASTKind::ScopeExpr, $3.str, {base}), $3.idx);
       }
-    | '(' expr ')' { $$.node = $2.node; }
+    | '(' expr ')' {
+          $$.node = $2.node; /* parentheses build no node, but are remembered: */
+          if ($$.node) $$.node->parenthesized = true; /* `if ((x = f()))` means the assignment */
+      }
     ;
 
 /* adjacent literals are one string, as in C: "adj" "acent" == "adjacent" */

@@ -790,7 +790,7 @@ static const yytype_int16 yyrline[] =
     1244,  1245,  1246,  1247,  1248,  1252,  1253,  1257,  1258,  1262,
     1263,  1267,  1268,  1275,  1284,  1285,  1286,  1287,  1288,  1289,
     1290,  1294,  1301,  1302,  1303,  1304,  1305,  1306,  1307,  1308,
-    1309,  1310,  1311,  1318,  1323,  1324
+    1309,  1310,  1311,  1318,  1326,  1327
 };
 #endif
 
@@ -5154,28 +5154,31 @@ yyreduce:
 
   case 343: /* primary_expr: '(' expr ')'  */
 #line 1318 "src/parser.y"
-                   { yyval.node = yyvsp[-1].node; }
-#line 5159 "build/parser.tab.cpp"
+                   {
+          yyval.node = yyvsp[-1].node; /* parentheses build no node, but are remembered: */
+          if (yyval.node) yyval.node->parenthesized = true; /* `if ((x = f()))` means the assignment */
+      }
+#line 5162 "build/parser.tab.cpp"
     break;
 
   case 344: /* string_literal: STRING_LITERAL  */
-#line 1323 "src/parser.y"
+#line 1326 "src/parser.y"
                      { yyval.node = atToken(mkNode(ASTKind::StringLiteral, yyvsp[0].str), yyvsp[0].idx); }
-#line 5165 "build/parser.tab.cpp"
+#line 5168 "build/parser.tab.cpp"
     break;
 
   case 345: /* string_literal: string_literal STRING_LITERAL  */
-#line 1324 "src/parser.y"
+#line 1327 "src/parser.y"
                                     {
           yyval = yyvsp[-1];
           std::string &text = yyval.node->label;
           text = text.substr(0, text.size() - 1) + yyvsp[0].str.substr(1);
       }
-#line 5175 "build/parser.tab.cpp"
+#line 5178 "build/parser.tab.cpp"
     break;
 
 
-#line 5179 "build/parser.tab.cpp"
+#line 5182 "build/parser.tab.cpp"
 
       default: break;
     }
@@ -5404,7 +5407,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1331 "src/parser.y"
+#line 1334 "src/parser.y"
 
 
 void yyerror(const char *s) {
