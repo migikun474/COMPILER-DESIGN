@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t09_memory.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -44,6 +44,8 @@ _Z4pushP4Nodei:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -110,13 +112,11 @@ L1_5:
         # param list
         # param i
         # t1 = call push(struct Node *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -12($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -4($fp)
+        lw    $a1, -12($fp)
         jal   _Z4pushP4Nodei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -56($fp)
         # list = t1
         lw    $t0, -56($fp)

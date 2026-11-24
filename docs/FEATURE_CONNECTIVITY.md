@@ -362,26 +362,18 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 | ID | Feature | Code | Connected to |
 |---|---|---|---|
 | I1 | Diagnostics, error recovery | `shared/diagnostics`; `error ';'`, `error '}'` rules; Error type | every phase |
-| I2 | Basic blocks, CFG | `leaders`, `flowGraph` | F2, F3, F4 and all of S7 |
-| I3 | Liveness | `liveness`, `liveStep` | dead-assignment removal |
-| I4 | Reaching definitions | `reachingDefinitions` (D38) | uninitialized-variable warning |
-| I5 | Available expressions, global CSE | `globalCommon` (fixed by D41) | `-O3` |
-| I6 | Dominators, natural loops | `loops` | unrolling (D38) |
-| I7 | Register allocation, peephole | `assignRegisters`, `peephole` | F9 (callee-saved registers, register arguments) |
+| I2 | Basic blocks, CFG | `blockLeaders`, `basicBlocks`, `flowGraph` | F2, F3, F4 and all of S7 |
+| I4 | Reaching definitions | `ReachingDefinitions` (D38) | uninitialized-variable warning |
+| I7 | Register arguments | `loadArgumentRegisters`, `saveArgumentRegisters` | F9 (calls) |
 | I8 | TAC interpreter | `interp.cpp` | optimizer self-check, `--run`, depth limit (D37) |
 | I9 | Combined driver | `mips_generator` with `--tokens`, `--ast`, `--symbols`, `--tac`, `--run` (D40) | all phases |
 
 ```mermaid
 flowchart LR
-    I2["I2 blocks and CFG"] --> I3["I3 liveness"]
-    I2 --> I4["I4 reaching definitions"]
-    I2 --> I5["I5 global CSE"]
-    I2 --> I6["I6 dominators and loops"]
-    I3 --> DA["dead assignments"]
+    I2["I2 blocks and CFG"] --> I4["I4 reaching definitions"]
+    I2 --> VN["value numbering"]
     I4 --> UW["uninitialized warning"]
-    I6 --> UN["loop unrolling"]
-    I3 --> I7["I7 register allocation"]
-    I7 --> RA["register arguments"]
+    I7["I7 register arguments"] --> CALL["calls"]
     I8["I8 interpreter"] --> CK["optimizer self-check"]
 ```
 

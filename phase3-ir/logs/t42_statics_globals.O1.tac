@@ -4,7 +4,7 @@
 
    Source file   : test/t42_statics_globals.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 75 -> 71 instruction(s)
+   Result        : Optimized three address code (-O1): 75 -> 74 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                           75 -> 71   (5% fewer)
+   instructions                           75 -> 74   (1% fewer)
 
+   calls inlined                           3
    constants folded                        0
    algebraic simplifications               0
    common subexpressions                   0
-   copies / constants forwarded            5
+   copies / constants forwarded           11
    temporaries merged away                 3
-   dead instructions removed               0
+   dead instructions removed               3
    jumps removed or redirected             1
    unreachable instructions removed        0
 
@@ -98,7 +99,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 20 temporaries, frame 96 bytes
+ Symbol table: 4 parameter(s)/local(s), 20 temporaries, frame 108 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -106,9 +107,6 @@
    n2               local   int                             4       4
    n3               local   int                             4       8
    p                local   int *                           4      12
-   t1               temp    int                             4      16
-   t2               temp    int                             4      20
-   t3               temp    int                             4      24
    t4               temp    int                             4      28
    t5               temp    int                             4      32
    t6               temp    int                             4      36
@@ -126,69 +124,76 @@
    t18              temp    int *                           4      84
    t19              temp    int                             4      88
    t20              temp    int                             4      92
+   t21              temp    int                             4      96
+   t22              temp    int                             4     100
+   t23              temp    int                             4     104
+   (3 temporaries no longer used after optimization not shown)
 
- Code: 60 instruction(s)
+ Code: 63 instruction(s)
 
-    111       t1 = call next(), 0
-    112       n1 = t1
-    113       t2 = call next(), 0
-    114       n2 = t2
-    115       t3 = call next(), 0
-    116       n3 = t3
-    117       param "%d %d %d\n"
-    118       param t1
-    119       param t2
-    120       param t3
-    121       call printf, 4
-    122       param 4
-    123       t4 = call depth(int), 1
-    124       param "%d\n"
-    125       param t4
-    126       call printf, 2
-    127       t5 = table[0]
-    128       t6 = table[4]
-    129       t7 = table[8]
-    130       t8 = table[20]
-    131       param "%d %d %d %d\n"
-    132       param t5
-    133       param t6
-    134       param t7
-    135       param t8
-    136       call printf, 5
-    137       t9 = origin[0]
-    138       t10 = origin[4]
-    139       t11 = pts[8]
-    140       t12 = pts[12]
-    141       t13 = pts[16]
-    142       param "%d %d %d %d %d\n"
-    143       param t9
-    144       param t10
-    145       param t11
-    146       param t12
-    147       param t13
-    148       call printf, 6
-    149       t14 = names[0]
-    150       t15 = names[4]
-    151       t17 = names[8]
-    152       if t17 ptr== 0 goto L3
-    153       t16 = 0
-    154       goto L4
-    155  L3:  t16 = 1
-    156  L4:  param "%s %s %d\n"
-    157       param t14
-    158       param t15
-    159       param t16
-    160       call printf, 4
-    161       t18 = &total
-    162       p = t18
-    163       *t18 = 42
-    164       t19 = table[0]
-    165       t20 = total int+ t19
-    166       total = t20
-    167       param "%d\n"
-    168       param t20
-    169       call printf, 2
-    170       return 0
+    111       t21 = n.1
+    112       n.1 = n.1 int+ 1
+    113       n1 = t21
+    114       t22 = n.1
+    115       n.1 = n.1 int+ 1
+    116       n2 = t22
+    117       t23 = n.1
+    118       n.1 = n.1 int+ 1
+    119       n3 = t23
+    120       param "%d %d %d\n"
+    121       param t21
+    122       param t22
+    123       param t23
+    124       call printf, 4
+    125       param 4
+    126       t4 = call depth(int), 1
+    127       param "%d\n"
+    128       param t4
+    129       call printf, 2
+    130       t5 = table[0]
+    131       t6 = table[4]
+    132       t7 = table[8]
+    133       t8 = table[20]
+    134       param "%d %d %d %d\n"
+    135       param t5
+    136       param t6
+    137       param t7
+    138       param t8
+    139       call printf, 5
+    140       t9 = origin[0]
+    141       t10 = origin[4]
+    142       t11 = pts[8]
+    143       t12 = pts[12]
+    144       t13 = pts[16]
+    145       param "%d %d %d %d %d\n"
+    146       param t9
+    147       param t10
+    148       param t11
+    149       param t12
+    150       param t13
+    151       call printf, 6
+    152       t14 = names[0]
+    153       t15 = names[4]
+    154       t17 = names[8]
+    155       if t17 ptr== 0 goto L3
+    156       t16 = 0
+    157       goto L4
+    158  L3:  t16 = 1
+    159  L4:  param "%s %s %d\n"
+    160       param t14
+    161       param t15
+    162       param t16
+    163       call printf, 4
+    164       t18 = &total
+    165       p = t18
+    166       *t18 = 42
+    167       t19 = table[0]
+    168       t20 = total int+ t19
+    169       total = t20
+    170       param "%d\n"
+    171       param t20
+    172       call printf, 2
+    173       return 0
 
 
 ----------------------------------------------------------------------------
@@ -240,3 +245,16 @@
 struct Point: size 8, align 4
     +0  int x  [public]
     +4  int y  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+100 101 102
+5
+5 6 0 0
+3 0 3 0 0
+zero one 1
+47
+
+   exit code 0, 90 instructions executed

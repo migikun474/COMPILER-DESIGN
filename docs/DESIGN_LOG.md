@@ -1347,6 +1347,42 @@ enough to catch problems, in phases 3 and 4.
   designator; `t02_control_flow` with `until(c)` defined as
   `while(!(c))`).
 
+### D49. One optimization level, a modular optimizer, MIPS argument registers always (2026-11-24)
+
+**Decided by:** the user: keep the easiest optimizations (chosen:
+textbook basics plus local common subexpressions), bring back function
+inlining, make the optimizer modular and readable without comments,
+follow the MIPS convention of arguments in `$a0`–`$a3`, and put the
+program's output in the TAC logs.
+
+- **Kept (`-O1`, the only level):** value numbering per basic block
+  (constant folding, algebraic identities, local common subexpressions,
+  copy and constant propagation), temporary merging, dead temporaries,
+  jump clean-up, and inlining of functions of at most 16 instructions
+  (not recursive, not variadic), with the block passes run before and
+  after it.
+- **Removed:** `-O2` (global constant/copy propagation, dead
+  assignments by liveness) and `-O3` (tail recursion, global common
+  subexpressions, loop unrolling, dead function removal); in the MIPS
+  back end, register allocation, the peephole pass, the branch-free
+  comparison pattern, the second frame layout and `--stack-only`. The
+  flags `-O2` and `-O3` are no longer accepted.
+- **Kept for the warning:** reaching definitions still drive the
+  uninitialized-variable warning (D38), now in `opt_uninitialized.cpp`.
+- **Modules:** `opt.cpp` (driver), `opt_common.cpp`,
+  `opt_numbering.cpp`, `opt_algebra.cpp`, `opt_cleanup.cpp`,
+  `opt_inline.cpp`, `opt_uninitialized.cpp`, with the shared
+  declarations in `include/opt_internal.h`. The code has no comments;
+  each step is a small function whose name says what it does.
+- **Calls (amends D39):** a call to a user function passes the first 16
+  bytes of arguments in `$a0`–`$a3` at every level, not only when
+  optimizing; the caller always reserves those 16 bytes and the callee
+  stores the registers into their slots. Calls into the run-time
+  library keep the all-stack convention.
+- **Logs:** with `--run`, `logs/<file>.tac` / `.O1.tac` end with a
+  PROGRAM OUTPUT section: what the program printed, its exit code and
+  the instructions executed.
+
 ---
 
 ## Open questions

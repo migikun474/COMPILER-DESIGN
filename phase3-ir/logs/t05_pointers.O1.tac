@@ -4,7 +4,7 @@
 
    Source file   : test/t05_pointers.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 104 -> 96 instruction(s)
+   Result        : Optimized three address code (-O1): 104 -> 93 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          104 -> 96   (7% fewer)
+   instructions                          104 -> 93   (10% fewer)
 
+   calls inlined                           1
    constants folded                        0
    algebraic simplifications               1
-   common subexpressions                   2
-   copies / constants forwarded           16
+   common subexpressions                   3
+   copies / constants forwarded           19
    temporaries merged away                 4
-   dead instructions removed               3
+   dead instructions removed               6
    jumps removed or redirected             1
    unreachable instructions removed        0
 
@@ -45,7 +46,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 15 parameter(s)/local(s), 31 temporaries, frame 244 bytes
+ Symbol table: 15 parameter(s)/local(s), 30 temporaries, frame 252 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -69,7 +70,6 @@
    t5               temp    int *                           4     108
    t6               temp    int *                           4     112
    t7               temp    int                             4     116
-   t8               temp    int *                           4     120
    t9               temp    int                             4     124
    t10              temp    int *                           4     128
    t11              temp    int *                           4     132
@@ -95,9 +95,9 @@
    t34              temp    int                             4     224
    t35              temp    int *                           4     228
    t36              temp    int                             4     232
-   (7 temporaries no longer used after optimization not shown)
+   (10 temporaries no longer used after optimization not shown)
 
- Code: 94 instruction(s)
+ Code: 91 instruction(s)
 
     102       x = 3
     103       y = 9
@@ -109,90 +109,87 @@
     109       t5 = *t4
     110       *t5 = 4
     111       t6 = &y
-    112       param pp
-    113       param t6
-    114       call redirect(int **, int *), 2
-    115       t7 = *p
-    116       t8 = *pp
-    117       t9 = *t8
-    118       param "%d %d %d\n"
-    119       param x
-    120       param t7
-    121       param t9
-    122       call printf, 4
-    123       a[0] = 10
-    124       a[4] = 20
-    125       a[8] = 30
-    126       a[12] = 40
-    127       a[16] = 50
-    128       t10 = &a
-    129       t11 = t10 ptr+ 4
-    130       q = t11
-    131       t13 = t10 ptr+ 16
-    132       r = t13
-    133       t14 = *t11
-    134       t15 = t11 ptr+ 8
-    135       t16 = *t15
-    136       t17 = t13 ptr- t11
-    137       t18 = t17 int/ 4
-    138       if t13 ptr> t11 goto L1
-    139       t19 = 0
-    140       goto L2
-    141  L1:  t19 = 1
-    142  L2:  param "%d %d %d %d\n"
-    143       param t14
-    144       param t16
-    145       param t18
-    146       param t19
-    147       call printf, 5
-    148       t20 = q ptr+ 8
-    149       q = t20
-    150       t22 = t20 ptr- 4
-    151       q = t22
-    152       *t20 = 7
-    153       t23 = a[12]
-    154       t24 = *t22
-    155       param "%d %d\n"
-    156       param t23
-    157       param t24
-    158       call printf, 3
-    159       t25 = &a
-    160       t26 = t25 ptr+ 8
-    161       v = t26
-    162       back = t26
-    163       t27 = *t26
-    164       param "%d\n"
-    165       param t27
-    166       call printf, 2
-    167       row[0] = 1
-    168       row[4] = 2
-    169       row[8] = 3
-    170       t28 = &row
-    171       pa = t28
-    172       t29 = t28 ptr+ 8
-    173       t30 = *t29
-    174       param "%d %d\n"
-    175       param t30
-    176       param 12
-    177       call printf, 3
-    178       t31 = &x
-    179       t32 = &y
-    180       list[0] = t31
-    181       list[4] = t32
-    182       list[8] = t25
-    183       s = 0
-    184       i = 0
-    185  L3:  if i int>= 3 goto L4
-    186       t34 = i int<< 2                     (w = 4)
-    187       t35 = list[t34]
-    188       t36 = *t35
-    189       s = s int+ t36
-    190       i = i int+ 1
-    191       goto L3
-    192  L4:  param "%d\n"
-    193       param s
-    194       call printf, 2
-    195       return 0
+    112       *pp = t6
+    113       t7 = *p
+    114       t9 = *t6
+    115       param "%d %d %d\n"
+    116       param x
+    117       param t7
+    118       param t9
+    119       call printf, 4
+    120       a[0] = 10
+    121       a[4] = 20
+    122       a[8] = 30
+    123       a[12] = 40
+    124       a[16] = 50
+    125       t10 = &a
+    126       t11 = t10 ptr+ 4
+    127       q = t11
+    128       t13 = t10 ptr+ 16
+    129       r = t13
+    130       t14 = *t11
+    131       t15 = t11 ptr+ 8
+    132       t16 = *t15
+    133       t17 = t13 ptr- t11
+    134       t18 = t17 int/ 4
+    135       if t13 ptr> t11 goto L1
+    136       t19 = 0
+    137       goto L2
+    138  L1:  t19 = 1
+    139  L2:  param "%d %d %d %d\n"
+    140       param t14
+    141       param t16
+    142       param t18
+    143       param t19
+    144       call printf, 5
+    145       t20 = q ptr+ 8
+    146       q = t20
+    147       t22 = t20 ptr- 4
+    148       q = t22
+    149       *t20 = 7
+    150       t23 = a[12]
+    151       t24 = *t22
+    152       param "%d %d\n"
+    153       param t23
+    154       param t24
+    155       call printf, 3
+    156       t25 = &a
+    157       t26 = t25 ptr+ 8
+    158       v = t26
+    159       back = t26
+    160       t27 = *t26
+    161       param "%d\n"
+    162       param t27
+    163       call printf, 2
+    164       row[0] = 1
+    165       row[4] = 2
+    166       row[8] = 3
+    167       t28 = &row
+    168       pa = t28
+    169       t29 = t28 ptr+ 8
+    170       t30 = *t29
+    171       param "%d %d\n"
+    172       param t30
+    173       param 12
+    174       call printf, 3
+    175       t31 = &x
+    176       t32 = &y
+    177       list[0] = t31
+    178       list[4] = t32
+    179       list[8] = t25
+    180       s = 0
+    181       i = 0
+    182  L3:  if i int>= 3 goto L4
+    183       t34 = i int<< 2                     (w = 4)
+    184       t35 = list[t34]
+    185       t36 = *t35
+    186       s = s int+ t36
+    187       i = i int+ 1
+    188       goto L3
+    189  L4:  param "%d\n"
+    190       param s
+    191       call printf, 2
+    192       return 0
 
 
 ----------------------------------------------------------------------------
@@ -235,3 +232,16 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+4 9 9
+20 40 3 1
+7 30
+30
+3 12
+23
+
+   exit code 0, 104 instructions executed

@@ -44,8 +44,8 @@ and each pass reads the finished result of the one before it:
 | 1. Scan + parse | the source file (read as written: there is no preprocessor) | the syntax tree (`g_astRoot`), a parse-time symbol table, the Token / Token_Type table | `phase2-parser/src/scanner.l`, `parser.y` |
 | 2. Semantic analysis | the whole syntax tree | the same tree annotated with types, lvalue-ness, constant values and the symbol each name means; the persistent symbol table; record layouts | `phase2b-semantic/src/*.cpp` |
 | 3. TAC generation | the annotated tree | quadruples, one array per function, with frame tables | `phase3-ir/src/gen_*.cpp` |
-| 4. Flow analysis | the unoptimized TAC | uninitialized-variable warnings (reaching definitions) | `phase3-ir/src/opt.cpp` |
-| 5. Optimization (`-O1`…`-O3`) | the TAC | shorter TAC that behaves the same | `phase3-ir/src/opt.cpp` |
+| 4. Flow analysis | the unoptimized TAC | uninitialized-variable warnings (reaching definitions) | `phase3-ir/src/opt_uninitialized.cpp` |
+| 5. Optimization (`-O1`) | the TAC | shorter TAC that behaves the same | `phase3-ir/src/opt*.cpp` |
 | 6. Code generation | the (optimized) TAC | MIPS assembly plus the run-time library | `phase4-codegen/src/mips.cpp`, `runtime/runtime.s` |
 
 The passes communicate only through these data structures:
@@ -61,7 +61,7 @@ annotated syntax tree  +  sem::SymbolTable  +  record layouts
   │  pass 3   Generator::generate()                       phase3-ir
   ▼
 tac::Program (quadruples per function, globals, strings) ──► TAC interpreter (--run)
-  │  pass 4   uninitializedReads()      pass 5   optimize(-O1/-O2/-O3)
+  │  pass 4   uninitializedReads()      pass 5   optimize(-O1)
   ▼
 optimized tac::Program
   │  pass 6   mips::generate()                            phase4-codegen
@@ -113,8 +113,8 @@ Some passes are made of smaller passes of their own:
 | 2. Semantic analysis | **(a)** `prescan()` records every top-level function and variable, so calls before a declaration resolve. **(b)** One walk in source order declares, type-checks and annotates (an L-attributed definition: declarations push types down, expressions synthesize them up); class member bodies are checked after their class. **(c)** `checkSequencing()` walks the tree again for unsequenced side effects (`i = i++`). |
 | 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). |
 | 4. Flow analysis | Basic blocks, the flow graph and reaching definitions over the unoptimized code; a read reached by the "not assigned yet" definition is warned about. |
-| 5. Optimization | `-O1`: value numbering per basic block (constant folding, algebraic identities, common subexpressions, copies, dead temporaries, jump clean-up), repeated until nothing changes. `-O2`: adds global constant/copy propagation and dead-assignment elimination (liveness). `-O3`: adds inlining, tail recursion, global common subexpressions (available expressions), loop unrolling by two (dominators), then removes functions no call reaches. |
-| 6. Code generation | Per function: lay out the frame, allocate registers (use counts and live intervals; `-O1` and above), lay out the frame again for what stays in memory, emit one fixed sequence per TAC instruction, run the peephole pass. Then the start-up code and the run-time library are added. |
+| 5. Optimization | `-O1`: value numbering per basic block (constant folding, algebraic identities, common subexpressions, copies, dead temporaries, jump clean-up), repeated until nothing changes; then small functions are inlined and the block passes run again. |
+| 6. Code generation | Per function: lay out the frame, store the arguments that arrived in `$a0`–`$a3`, emit one fixed sequence per TAC instruction. Then the start-up code and the run-time library are added. |
 
 The **TAC interpreter** (`--run`) executes the output of pass 3 or 5
 with the MIPS32 data model. With an `-O` flag it runs the program both
@@ -265,17 +265,17 @@ interpreter:
 ```
 
 ```bash
-./phase3-ir/tac_generator -O2 --run -q docs/examples/add.c
+./phase3-ir/tac_generator -O1 --run -q docs/examples/add.c
 ```
 
 ```
-[exit code 9, 8 instructions executed; 11 without -O2: 27% fewer]
+[exit code 9, 4 instructions executed; 11 without -O1: 63% fewer]
 ```
 
 MIPS (all six passes): generate the assembly and run it in SPIM:
 
 ```bash
-./phase4-codegen/mips_generator -O2 docs/examples/add.c > add.s
+./phase4-codegen/mips_generator -O1 docs/examples/add.c > add.s
 ```
 
 ```bash
@@ -289,23 +289,19 @@ Any pass from one command (the combined driver):
 ```
 
 ```bash
-./phase4-codegen/mips_generator -O2 --run docs/examples/add.c
+./phase4-codegen/mips_generator -O1 --run docs/examples/add.c
 ```
 
 | Flag | Tool | Meaning |
 |---|---|---|
-| `-O1` | both | value numbering in each basic block |
-| `-O2` | both | `-O1` plus constants and copies across blocks and dead assignments |
-| `-O3` | both | `-O2` plus inlining, tail recursion, global common subexpressions, loop unrolling by two, dead function removal |
+| `-O1` | both | value numbering in each basic block and inlining of small functions |
 | `--run`, `-q` | `tac_generator` | execute the code; `-q` prints only what the program prints |
-| `--stack-only` | `mips_generator` | with an `-O` flag, still keep every value in the frame and every argument on the stack |
 | `--tokens`, `--ast`, `--symbols`, `--tac`, `--run` | `mips_generator` | stop after that pass and print its result instead of the assembly |
 
-Without an `-O` flag the MIPS code is a direct translation: every value
-lives in the stack frame and every argument is passed on the stack. With
-one, the most used names live in `$s0`–`$s7` / `$f20`–`$f30`, the first
-16 bytes of arguments to user functions travel in `$a0`–`$a3`, small
-constants go into the instructions, and a peephole pass runs.
+Every value lives in the stack frame, and, as in the MIPS convention,
+the first 16 bytes of arguments to user functions travel in
+`$a0`–`$a3`. With `-O1` small constants also go into the instructions
+and leaf functions do not save `$ra`.
 
 A program with errors stops at the pass that finds them:
 
@@ -340,8 +336,8 @@ One suite per pass:
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
 | Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
-| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 45 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **45 checks, all passing** |
-| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 45 programs compiled to MIPS at every level and run in SPIM against the same outputs — **45 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 34 programs executed by the TAC interpreter, raw and at `-O1`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **35 checks, all passing** |
+| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 34 programs compiled to MIPS without optimization and at `-O1` and run in SPIM against the same outputs — **34 checks, all passing** |
 
 The `run.sh` scripts print each program's output for inspection; the
 `run_tests.sh` scripts check results automatically, and any missing

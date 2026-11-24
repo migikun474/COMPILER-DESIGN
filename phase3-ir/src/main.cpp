@@ -3,12 +3,12 @@
    with no lexical, syntax or semantic errors.
 
      tac_generator file.c              print the TAC (also written to logs/file.tac,
-                                       with the symbol tables; -O<n>: logs/file.O<n>.tac)
+                                       with the symbol tables; -O1: logs/file.O1.tac)
      tac_generator --run file.c [args] print the TAC, then execute it
      tac_generator --run -q file.c     execute only: the program's own output
-     tac_generator -O1 file.c          optimize (-O2: also across basic blocks); with
-                                       --run the program is run before and after
-                                       and must behave the same                    */
+     tac_generator -O1 file.c          optimize inside basic blocks; with --run the
+                                       program is run before and after and must
+                                       behave the same                             */
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -31,26 +31,37 @@
 extern FILE *yyin;
 namespace fs = std::filesystem;
 
-/* logs/<file>.tac (unoptimized) or logs/<file>.O<n>.tac: the TAC, then
+static std::string logPath(const std::string &sourceFile, int level) {
+    return "logs/" + fs::path(sourceFile).stem().string() + (level > 0 ? ".O1.tac" : ".tac");
+}
+
+/* logs/<file>.tac (unoptimized) or logs/<file>.O1.tac: the TAC, then
    the semantic symbol table and record layouts it was generated from */
 static void writeLog(const std::string &sourceFile, int level, const std::string &status, const std::string &body,
                      const std::string &symbols = "") {
     fs::create_directories("logs");
-    std::string suffix = level > 0 ? ".O" + std::to_string(level) + ".tac" : ".tac";
-    std::ofstream log("logs/" + fs::path(sourceFile).stem().string() + suffix);
+    std::ofstream log(logPath(sourceFile, level));
     if (!log) return;
-    static const char *what[] = {"no optimization", "-O1: optimized inside basic blocks",
-                                 "-O2: -O1 plus data flow across blocks", "-O3: -O2 plus inlining and loop optimizations"};
     std::string heavy(76, '=');
     log << heavy << "\n THREE ADDRESS CODE\n" << heavy << "\n\n";
     log << "   Source file   : " << sourceFile << "\n";
-    log << "   Optimization  : " << what[level < 0 || level > 3 ? 0 : level] << "\n";
+    log << "   Optimization  : " << (level > 0 ? "-O1: optimized inside basic blocks" : "no optimization") << "\n";
     log << "   Result        : " << status.substr(0, status.find(" for '")) << "\n\n";
     log << "   Contents      : " << (level > 0 ? "optimization summary, " : "") << "globals, one section per function\n"
         << "                   (its symbol table, then its code), the semantic symbol table,\n"
         << "                   record layouts\n\n"
         << body;
     if (!symbols.empty()) log << "\n" << symbols;
+}
+
+static void appendRunToLog(const std::string &sourceFile, int level, const tac::RunResult &result) {
+    std::ofstream log(logPath(sourceFile, level), std::ios::app);
+    if (!log) return;
+    std::string rule(76, '-');
+    log << "\n" << rule << "\n PROGRAM OUTPUT (the TAC run by the interpreter)\n" << rule << "\n\n" << result.output;
+    if (!result.output.empty() && result.output.back() != '\n') log << "\n";
+    if (!result.error.empty()) log << "\nrun-time error: " << result.error << "\n";
+    log << "\n   exit code " << result.exitCode << ", " << result.executed << " instructions executed\n";
 }
 
 int main(int argc, char **argv) {
@@ -62,17 +73,16 @@ int main(int argc, char **argv) {
         if (!path && !std::strcmp(argv[i], "--run")) runIt = true;
         else if (!path && !std::strcmp(argv[i], "-q")) quiet = true;
         else if (!path && !std::strcmp(argv[i], "-O1")) level = 1;
-        else if (!path && !std::strcmp(argv[i], "-O2")) level = 2;
-        else if (!path && !std::strcmp(argv[i], "-O3")) level = 3;
         else if (!path && !std::strcmp(argv[i], "-O0")) level = 0;
-        else if (!path) path = argv[i];
+        else if (!path && argv[i][0] == '-') {
+            fprintf(stderr, "unknown option '%s' (the only optimization level is -O1)\n", argv[i]);
+            return 1;
+        } else if (!path) path = argv[i];
         else programArgs.push_back(argv[i]); /* passed to the program's main */
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--run [-q]] <source-file> [program arguments]\n"
+        fprintf(stderr, "Usage: %s [-O1] [--run [-q]] <source-file> [program arguments]\n"
                         "  -O1    optimize inside basic blocks\n"
-                        "  -O2    -O1 plus constant/copy propagation and dead assignments across blocks\n"
-                        "  -O3    -O2 plus inlining, tail recursion, global common subexpressions\n"
                         "  --run  execute the generated code with the TAC interpreter\n"
                         "  -q     with --run: print only what the program prints\n", argv[0]);
         return 1;
@@ -137,7 +147,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "%s:%s: warning: %s [uninitialized]\n", path, displayLine(w.first).c_str(), w.second.c_str());
     tac::Program raw = program; /* kept to compare behaviour with the optimized code */
     if (level > 0) {
-        tac::OptStats stats = tac::optimize(program, level);
+        tac::OptStats stats = tac::optimize(program);
         body.str("");
         tac::printStats(stats, body);
         tac::printProgram(program, body);
@@ -161,6 +171,7 @@ int main(int argc, char **argv) {
     if (readsInput) input.assign(std::istreambuf_iterator<char>(std::cin), std::istreambuf_iterator<char>());
     programArgs.insert(programArgs.begin(), fs::path(path).stem().string());
     tac::RunResult result = tac::run(program, programArgs, input);
+    appendRunToLog(path, level, result);
     if (!quiet) printf("=== program output ===\n");
     fputs(result.output.c_str(), stdout);
     fflush(stdout);

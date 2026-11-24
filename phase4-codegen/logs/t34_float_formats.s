@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t34_float_formats.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`

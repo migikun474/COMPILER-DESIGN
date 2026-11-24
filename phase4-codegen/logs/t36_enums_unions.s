@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t36_enums_unions.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -57,6 +57,7 @@ _Z4showi:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 1
         li    $v0, 1
         j     _Z4showi_exit
@@ -73,6 +74,7 @@ _Z4show5Color:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 2
         li    $v0, 2
         j     _Z4show5Color_exit
@@ -89,6 +91,7 @@ _Z4show5Level:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 3
         li    $v0, 3
         j     _Z4show5Level_exit
@@ -106,6 +109,7 @@ _Z4name5Color:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = c
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -153,6 +157,7 @@ _Z4flip4Word:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = w[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -187,6 +192,7 @@ _Z8sumBytesP4Word:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -56
+        sw    $a0, 8($fp)
         # t1 = *p
         lw    $t8, 8($fp)
         lbu   $t0, 0($t8)
@@ -352,46 +358,41 @@ L6_19:
         sw    $t0, 0($t8)
         # param c
         # t5 = call name(enum Color), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -4($fp)
         jal   _Z4name5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -120($fp)
         # param d
         # t6 = call name(enum Color), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -8($fp)
         jal   _Z4name5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -124($fp)
         # t7 = booltoint big
         lbu   $t0, -17($fp)
         sw    $t0, -128($fp)
         # param c
         # t8 = call show(enum Color), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -4($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -4($fp)
         jal   _Z4show5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -132($fp)
         # param 5
         # t9 = call show(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z4showi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -136($fp)
         # param l
         # t10 = call show(Level), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _Z4show5Level
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -140($fp)
         # param "%s %s %d %d %d %d %d\n"
         # param t5
@@ -543,13 +544,14 @@ L6_19:
         sw    $t0, -60($fp)
         # param w
         # t20 = call flip(union Word), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         addiu $a0, $sp, 0
         addiu $a1, $fp, -40
         li    $a2, 4
         jal   __memcpy
+        lw    $a0, 0($sp)
         jal   _Z4flip4Word
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -180
         li    $a2, 4
@@ -797,11 +799,10 @@ L6_120:
         sw    $t0, -284($fp)
         # param t44
         # t45 = call sumBytes(union Word *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -284($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -284($fp)
         jal   _Z8sumBytesP4Word
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -288($fp)
         # t46 = x[0]
         addiu $t8, $fp, -96

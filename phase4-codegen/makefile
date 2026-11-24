@@ -15,7 +15,7 @@ TARGET  = mips_generator
 PARSER_SRC = $(PARSER)/src/declarators.cpp $(PARSER)/src/scanner_support.cpp $(PARSER)/src/token_converter.cpp
 SEM_SRC    = $(SEM)/src/declarations.cpp $(SEM)/src/statements.cpp $(SEM)/src/expressions.cpp \
              $(SEM)/src/cxx.cpp $(SEM)/src/sequencing.cpp $(SEM)/src/report.cpp
-IR_SRC     = $(IR)/src/tac.cpp $(IR)/src/gen_expr.cpp $(IR)/src/gen_stmt.cpp $(IR)/src/interp.cpp $(IR)/src/opt.cpp
+IR_SRC     = $(IR)/src/tac.cpp $(IR)/src/gen_expr.cpp $(IR)/src/gen_stmt.cpp $(IR)/src/interp.cpp $(IR)/src/opt.cpp $(IR)/src/opt_common.cpp $(IR)/src/opt_algebra.cpp $(IR)/src/opt_numbering.cpp $(IR)/src/opt_cleanup.cpp $(IR)/src/opt_inline.cpp $(IR)/src/opt_uninitialized.cpp
 MIPS_SRC   = src/mips.cpp src/main.cpp
 HEADERS    = $(wildcard include/*.h) $(wildcard $(IR)/include/*.h) $(wildcard $(SEM)/include/*.h) $(wildcard $(PARSER)/include/*)
 LIBSHARED  = $(SHARED)/build/libshared.a

@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t31_short_circuit.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -40,6 +40,7 @@ _Z1ti:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = calls int* 10
         lw    $t0, g_calls
         li    $t1, 10
@@ -77,11 +78,10 @@ main_:
 M1_0:
         # param 0
         # t2 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 0
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 0
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -72($fp)
         # if t2 int!= 0 goto 4
         lw    $t0, -72($fp)
@@ -92,11 +92,10 @@ M1_0:
 L1_4:
         # param 1
         # t3 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -76($fp)
         # if t3 int!= 0 goto 10
         lw    $t0, -76($fp)
@@ -120,11 +119,10 @@ L1_11:
         sw    $t0, -4($fp)
         # param 2
         # t5 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -84($fp)
         # if t5 int!= 0 goto 22
         lw    $t0, -84($fp)
@@ -135,11 +133,10 @@ L1_11:
 L1_16:
         # param 3
         # t6 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -88($fp)
         # if t6 int!= 0 goto 22
         lw    $t0, -88($fp)
@@ -163,11 +160,10 @@ L1_23:
         sw    $t0, -8($fp)
         # param 0
         # t8 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 0
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 0
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -96($fp)
         # if t8 int!= 0 goto 32
         lw    $t0, -96($fp)
@@ -178,11 +174,10 @@ L1_23:
 L1_28:
         # param 4
         # t9 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -100($fp)
         # if t9 int!= 0 goto 32
         lw    $t0, -100($fp)
@@ -193,11 +188,10 @@ L1_28:
 L1_32:
         # param 5
         # t10 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -104($fp)
         # if t10 int!= 0 goto 42
         lw    $t0, -104($fp)
@@ -208,11 +202,10 @@ L1_32:
 L1_36:
         # param 6
         # t11 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 6
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 6
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -108($fp)
         # if t11 int!= 0 goto 42
         lw    $t0, -108($fp)
@@ -258,11 +251,10 @@ L1_43:
         sw    $t0, g_calls
         # param 1
         # t13 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -116($fp)
         # if t13 int!= 0 goto 55
         lw    $t0, -116($fp)
@@ -273,11 +265,10 @@ L1_43:
 L1_55:
         # param 7
         # t14 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 7
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 7
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -120($fp)
         # t12 = t14
         lw    $t0, -120($fp)
@@ -287,11 +278,10 @@ L1_55:
 L1_59:
         # param 8
         # t15 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 8
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 8
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -124($fp)
         # t12 = t15
         lw    $t0, -124($fp)
@@ -302,18 +292,16 @@ L1_62:
         sw    $t0, -16($fp)
         # param 0
         # call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 0
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 0
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param 9
         # t16 = call t(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 9
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 9
         jal   _Z1ti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -128($fp)
         # r5 = t16
         lw    $t0, -128($fp)

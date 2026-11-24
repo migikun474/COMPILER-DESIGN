@@ -4,7 +4,7 @@
 
    Source file   : test/t13_runtime.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 127 -> 111 instruction(s)
+   Result        : Optimized three address code (-O1): 127 -> 114 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          127 -> 111   (12% fewer)
+   instructions                          127 -> 114   (10% fewer)
 
-   constants folded                       12
+   calls inlined                           2
+   constants folded                       20
    algebraic simplifications               0
    common subexpressions                   0
-   copies / constants forwarded           22
+   copies / constants forwarded           38
    temporaries merged away                 3
-   dead instructions removed              12
+   dead instructions removed              25
    jumps removed or redirected             1
    unreachable instructions removed        0
 
@@ -132,7 +133,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 6 parameter(s)/local(s), 9 temporaries, frame 268 bytes
+ Symbol table: 6 parameter(s)/local(s), 14 temporaries, frame 440 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -147,13 +148,18 @@
    t16              temp    char                            1     204
    t17              temp    int                             4     208
    t18              temp    long long                       8     216
-   t19              temp    double                          8     224
    t20              temp    double                          8     232
    t21              temp    double                          8     240
    t22              temp    double                          8     248
-   (15 temporaries no longer used after optimization not shown)
+   t28              temp    struct Big                     32     288
+   t33              temp    struct Big                     32     344
+   t37              temp    double                          8     392
+   t38              temp    double                          8     400
+   t40              temp    double                          8     416
+   t42              temp    double                          8     432
+   (28 temporaries no longer used after optimization not shown)
 
- Code: 77 instruction(s)
+ Code: 80 instruction(s)
 
     134       big = 123456789012345
     135       other = 987654321098
@@ -192,46 +198,49 @@
     168       param 1e-05
     169       param 0.6666666666666666
     170       call printf, 6
-    171       param 2
-    172       s = call make(int), 1
-    173       t14 = s[0]
-    174       t15 = s[16]
-    175       t16 = s[20]
-    176       t17 = chartoint t16
-    177       t18 = s[24]
-    178       param s
-    179       param 2.0
-    180       param 97
-    181       param 5
-    182       t19 = call weigh(struct Big, double, char, int), 4
-    183       param "%.1f %d %c %lld %.1f\n"
-    184       param t14
-    185       param t15
-    186       param t17
-    187       param t18
-    188       param t19
-    189       call printf, 6
-    190       param 1
-    191       param 2.5
-    192       param 3
-    193       param "Z"
-    194       t20 = call mix(int, ...), 4
-    195       param "%.2f\n"
-    196       param t20
-    197       call printf, 2
-    198       x = 2.0
-    199       r = 1.0
-    200       i = 0
-    201  L1:  if i int>= 20 goto L2
-    202       t21 = x double/ r
-    203       t22 = r double+ t21
-    204       r = t22 double/ 2.0
-    205       i = i int+ 1
-    206       goto L1
-    207  L2:  param "%.10f\n"
-    208       param r
-    209       call printf, 2
-    210       return 0
+    171       t28[0] = 3.0
+    172       t28[16] = 2
+    173       t28[20] = 67
+    174       t28[24] = 20000000000
+    175       s = t28
+    176       t14 = s[0]
+    177       t15 = s[16]
+    178       t16 = s[20]
+    179       t17 = chartoint t16
+    180       t18 = s[24]
+    181       t33 = s
+    182       t37 = t33[0]
+    183       t38 = t37 double* 2.0
+    184       t40 = t38 double+ 97.0
+    185       t42 = t40 double+ 5.0
+    186       param "%.1f %d %c %lld %.1f\n"
+    187       param t14
+    188       param t15
+    189       param t17
+    190       param t18
+    191       param t42
+    192       call printf, 6
+    193       param 1
+    194       param 2.5
+    195       param 3
+    196       param "Z"
+    197       t20 = call mix(int, ...), 4
+    198       param "%.2f\n"
+    199       param t20
+    200       call printf, 2
+    201       x = 2.0
+    202       r = 1.0
+    203       i = 0
+    204  L1:  if i int>= 20 goto L2
+    205       t21 = x double/ r
+    206       t22 = r double+ t21
+    207       r = t22 double/ 2.0
+    208       i = i int+ 1
+    209       goto L1
+    210  L2:  param "%.10f\n"
+    211       param r
+    212       call printf, 2
+    213       return 0
 
 
 ----------------------------------------------------------------------------
@@ -297,3 +306,18 @@ struct Big: size 32, align 8
     +8  int[3] n  [public]
     +20  char tag  [public]
     +24  long long w  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+123456789012345 -17636684144620 370370367037035 122469134691247 -987654321099
+123456789012345.0 39900000000 -2
+[  3.14] [-2.500  ] [00007.12] [0] [2]
+[  -42] [42   ] [-0042] [ff] [FF] [10] [z] [%]
+1.234568e+04 1.230000E-04 100000 1e-05 0.667
+3.0 2 C 20000000000 108.0
+96.50
+1.4142135624
+
+   exit code 0, 211 instructions executed

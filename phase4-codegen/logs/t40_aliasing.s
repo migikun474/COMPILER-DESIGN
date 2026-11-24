@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t40_aliasing.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -63,6 +63,8 @@ _Z4setpPii:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # *p = v
         lw    $t8, 8($fp)
         lw    $t0, 12($fp)
@@ -83,6 +85,8 @@ _Z4swapPiS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *a
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -299,7 +303,9 @@ M3_0:
         lw    $t0, g_g
         sw    $t0, -52($fp)
         # call bump(), 0
+        addiu $sp, $sp, -16
         jal   _Z4bumpv
+        addiu $sp, $sp, 16
         # param "%d %d\n"
         # param h
         # param g
@@ -322,13 +328,11 @@ M3_0:
         # param t16
         # param 4
         # call setp(int *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -128($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 4
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -128($fp)
+        li    $a1, 4
         jal   _Z4setpPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t17 = v int* v
         lw    $t0, -56($fp)
         lw    $t1, -56($fp)
@@ -359,13 +363,11 @@ M3_0:
         # param t18
         # param t19
         # call swap(int *, int *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -136($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -140($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -136($fp)
+        lw    $a1, -140($fp)
         jal   _Z4swapPiS_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t20 = &m
         addiu $t0, $fp, -60
         sw    $t0, -144($fp)
@@ -375,13 +377,11 @@ M3_0:
         # param t20
         # param t21
         # call swap(int *, int *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -144($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -148($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -144($fp)
+        lw    $a1, -148($fp)
         jal   _Z4swapPiS_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param "%d %d\n"
         # param m
         # param n

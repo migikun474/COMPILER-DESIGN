@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t17_algorithms.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -40,6 +40,8 @@ _Z6bubblePii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -104
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # i = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -225,6 +227,9 @@ _Z5quickPiii:
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # if lo int>= hi goto 2
         lw    $t0, 12($fp)
         lw    $t1, 16($fp)
@@ -431,12 +436,9 @@ L1_49:
         # param j
         # call quick(int *, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, 12($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -12($fp)
-        sw    $t0, 8($sp)
+        lw    $a0, 8($fp)
+        lw    $a1, 12($fp)
+        lw    $a2, -12($fp)
         jal   _Z5quickPiii
         addiu $sp, $sp, 16
         # param a
@@ -444,12 +446,9 @@ L1_49:
         # param hi
         # call quick(int *, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -8($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, 16($fp)
-        sw    $t0, 8($sp)
+        lw    $a0, 8($fp)
+        lw    $a1, -8($fp)
+        lw    $a2, 16($fp)
         jal   _Z5quickPiii
         addiu $sp, $sp, 16
         # return
@@ -468,6 +467,9 @@ _Z4findPiii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -64
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # lo = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -595,6 +597,7 @@ _Z5hanoii:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
+        sw    $a0, 8($fp)
         # if n int== 0 goto 2
         lw    $t0, 8($fp)
         li    $t1, 0
@@ -615,11 +618,10 @@ L3_4:
         sw    $t0, -8($fp)
         # param t2
         # t3 = call hanoi(int), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -8($fp)
         jal   _Z5hanoii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -12($fp)
         # t4 = 2 int* t3
         li    $t0, 2
@@ -657,6 +659,8 @@ _Z3ackii:
         beqz  $t8, M4_0
         j     __stack_overflow
 M4_0:
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # if m int== 0 goto 2
         lw    $t0, 8($fp)
         li    $t1, 0
@@ -690,13 +694,11 @@ L4_7:
         # param t4
         # param 1
         # t5 = call ack(int, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -16($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -16($fp)
+        li    $a1, 1
         jal   _Z3ackii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -20($fp)
         # t3 = t5
         lw    $t0, -20($fp)
@@ -717,24 +719,20 @@ L4_13:
         # param m
         # param t7
         # t8 = call ack(int, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -28($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, 8($fp)
+        lw    $a1, -28($fp)
         jal   _Z3ackii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -32($fp)
         # param t6
         # param t8
         # t9 = call ack(int, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -24($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -32($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -24($fp)
+        lw    $a1, -32($fp)
         jal   _Z3ackii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -36($fp)
         # t3 = t9
         lw    $t0, -36($fp)
@@ -868,13 +866,11 @@ M5_0:
         # param t1
         # param 8
         # call bubble(int *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -216($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -216($fp)
+        li    $a1, 8
         jal   _Z6bubblePii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = &b
         addiu $t0, $fp, -64
         sw    $t0, -220($fp)
@@ -883,12 +879,9 @@ M5_0:
         # param 7
         # call quick(int *, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -220($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 0
-        sw    $t0, 4($sp)
-        li    $t0, 7
-        sw    $t0, 8($sp)
+        lw    $a0, -220($fp)
+        li    $a1, 0
+        li    $a2, 7
         jal   _Z5quickPiii
         addiu $sp, $sp, 16
         # t3 = a[0]
@@ -923,12 +916,9 @@ M5_0:
         # param 7
         # t8 = call find(int *, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -240($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, 7
-        sw    $t0, 8($sp)
+        lw    $a0, -240($fp)
+        li    $a1, 8
+        li    $a2, 7
         jal   _Z4findPiii
         addiu $sp, $sp, 16
         sw    $v0, -244($fp)
@@ -940,12 +930,9 @@ M5_0:
         # param 4
         # t10 = call find(int *, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -248($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 8
-        sw    $t0, 4($sp)
-        li    $t0, 4
-        sw    $t0, 8($sp)
+        lw    $a0, -248($fp)
+        li    $a1, 8
+        li    $a2, 4
         jal   _Z4findPiii
         addiu $sp, $sp, 16
         sw    $v0, -252($fp)
@@ -976,22 +963,19 @@ M5_0:
         addiu $sp, $sp, 32
         # param 10
         # t11 = call hanoi(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 10
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 10
         jal   _Z5hanoii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -256($fp)
         # param 2
         # param 3
         # t12 = call ack(int, int), 2
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
+        li    $a1, 3
         jal   _Z3ackii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -260($fp)
         # param "%d %d\n"
         # param t11

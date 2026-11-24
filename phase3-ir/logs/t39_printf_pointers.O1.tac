@@ -16,6 +16,7 @@
 
    instructions                           40 -> 36   (10% fewer)
 
+   calls inlined                           0
    constants folded                        4
    algebraic simplifications               0
    common subexpressions                   0
@@ -109,3 +110,15 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+[(nil)] [0x10] [0x1234abcd] [0xdeadbeef] [0x1]
+[  0x1234abcd] [0x1234abcd  ] [0x1234abcd]
+[     (nil)] [(nil)     ] [(nil)]
+0x10 and 42 and 0xff
+0x18 0x1234abd0 2
+
+   exit code 0, 36 instructions executed

@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t10_io.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -62,29 +62,27 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -80
+        addiu $sp, $sp, -96
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -64($fp)
-        s.d   $f22, -72($fp)
-        sw    $s0, -44($fp)
-        sw    $s1, -76($fp)
-        sw    $s2, -48($fp)
-        sw    $s3, -52($fp)
-        sw    $s4, -56($fp)
         # total = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -8($fp)
         # t1 = &n
-        addiu $s0, $fp, -4
+        addiu $t0, $fp, -4
+        sw    $t0, -56($fp)
         # t2 = &scale
-        addiu $s2, $fp, -16
+        addiu $t0, $fp, -16
+        sw    $t0, -60($fp)
         # t3 = &name
-        addiu $s3, $fp, -32
+        addiu $t0, $fp, -32
+        sw    $t0, -64($fp)
         # t4 = &grade
-        addiu $s4, $fp, -33
+        addiu $t0, $fp, -33
+        sw    $t0, -68($fp)
         # param "%d %lf %15s %c"
         # param t1
         # param t2
@@ -94,50 +92,65 @@ M0_0:
         addiu $sp, $sp, -24
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s3, 12($sp)
-        sw    $s4, 16($sp)
+        lw    $t0, -56($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -60($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -64($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -68($fp)
+        sw    $t0, 16($sp)
         jal   __scanf
         addiu $sp, $sp, 24
         # i = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -40($fp)
 L0_12:
         # if i int>= n goto 20
+        lw    $t0, -40($fp)
         lw    $t1, -4($fp)
-        bge   $s0, $t1, L0_20
+        bge   $t0, $t1, L0_20
         # t5 = &v
-        addiu $s2, $fp, -40
+        addiu $t0, $fp, -44
+        sw    $t0, -72($fp)
         # param "%d"
         # param t5
         # call scanf, 2
         addiu $sp, $sp, -8
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
+        lw    $t0, -72($fp)
+        sw    $t0, 4($sp)
         jal   __scanf
         addiu $sp, $sp, 8
         # total = total int+ v
-        lw    $t1, -40($fp)
-        addu  $s1, $s1, $t1
+        lw    $t0, -8($fp)
+        lw    $t1, -44($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -8($fp)
         # i = i int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -40($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -40($fp)
         # goto 12
         j     L0_12
 L0_20:
         # t8 = &name
-        addiu $s0, $fp, -32
+        addiu $t0, $fp, -32
+        sw    $t0, -76($fp)
         # t9 = chartoint grade
         lb    $t0, -33($fp)
-        move  $s2, $t0
+        sw    $t0, -80($fp)
         # t10 = inttodouble total
-        move  $t0, $s1
+        lw    $t0, -8($fp)
         mtc1  $t0, $f0
         cvt.d.w $f0, $f0
-        mov.d $f20, $f0
+        s.d   $f0, -88($fp)
         # t11 = t10 double* scale
+        l.d   $f0, -88($fp)
         l.d   $f2, -16($fp)
-        mul.d $f22, $f20, $f2
+        mul.d $f0, $f0, $f2
+        s.d   $f0, -96($fp)
         # param "%s %c %d %.2f\n"
         # param t8
         # param t9
@@ -147,10 +160,13 @@ L0_20:
         addiu $sp, $sp, -24
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s1, 12($sp)
-        mov.d $f0, $f22
+        lw    $t0, -76($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -80($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -8($fp)
+        sw    $t0, 12($sp)
+        l.d   $f0, -96($fp)
         s.d   $f0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
@@ -220,11 +236,14 @@ L0_20:
         jal   __printf
         addiu $sp, $sp, 24
         # f = 1.25
-        l.s   $f20, fc2
+        l.s   $f0, fc2
+        s.s   $f0, -48($fp)
         # c = 113
-        li    $s0, 113
+        li    $t0, 113
+        sb    $t0, -49($fp)
         # s = -3
-        li    $s0, -3
+        li    $t0, -3
+        sh    $t0, -52($fp)
         # param "%.2f %c %d\n"
         # param 1.25
         # param 113
@@ -242,16 +261,9 @@ L0_20:
         jal   __printf
         addiu $sp, $sp, 24
         # return total
-        move  $v0, $s1
+        lw    $v0, -8($fp)
         j     main__exit
 main__exit:
-        l.d   $f20, -64($fp)
-        l.d   $f22, -72($fp)
-        lw    $s0, -44($fp)
-        lw    $s1, -76($fp)
-        lw    $s2, -48($fp)
-        lw    $s3, -52($fp)
-        lw    $s4, -56($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

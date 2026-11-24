@@ -7,14 +7,14 @@
 # compiling the same sources. test/<name>.in is the program's input,
 # test/<name>.args its command-line arguments. A test with an
 # expected/<name>.tac file must also produce exactly that listing.
-# Every program is then run again with -O1, -O2 and -O3 and must behave
+# Every program is then run again with -O1 and must behave
 # identically; the line shows the instructions executed without
-# optimization and how many fewer each level executes.
+# optimization and how many fewer -O1 executes.
 #
 # test/diagnostics/<name>.c must produce exactly the warnings in <name>.err.
 #
 # Every program's TAC, with its symbol tables, is kept in logs/:
-# <name>.tac without optimization, <name>.O1.tac, .O2.tac and .O3.tac.
+# <name>.tac without optimization, <name>.O1.tac with -O1.
 #
 # --update rewrites the expected files from the current build.
 
@@ -36,12 +36,12 @@ for f in test/*.c; do
     # the same program optimized: it must print and return exactly the same
     ok=1
     gain=""
-    for level in 1 2 3; do
+    for level in 1; do
         (cd "$TMP" && "$OLDPWD/tac_generator" -O$level --run -q "$OLDPWD/$f" $args < "$in" > out1 2> err1; echo "exit: $?" >> out1)
         cmp -s "$TMP/out1" "test/expected/$n.out" || ok=0
         gain="$gain  -O$level $(grep -o '[0-9]*% fewer' "$TMP/err1")"
     done
-    for l in "$TMP"/logs/"$n".*tac; do # logs/<name>.tac, .O1.tac, .O2.tac, .O3.tac
+    for l in "$TMP"/logs/"$n".*tac; do # logs/<name>.tac, .O1.tac
         [ -f "$l" ] && sed "s|$PWD/||g" "$l" > "logs/$(basename "$l")"
     done
     raw="$(grep -o '[0-9]* instructions executed' "$TMP/err" | grep -o '[0-9]*')"

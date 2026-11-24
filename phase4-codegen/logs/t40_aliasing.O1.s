@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t40_aliasing.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -55,18 +55,15 @@ _Z4setpPii:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        move  $s0, $a0
-        move  $s1, $a1
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # *p = v
-        sw    $s1, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, 12($fp)
+        sw    $t0, 0($t8)
         # return
         j     _Z4setpPii_exit
 _Z4setpPii_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -78,29 +75,30 @@ _Z4swapPiS_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        sw    $s2, -12($fp)
-        sw    $s3, -16($fp)
-        move  $s2, $a0
-        move  $s3, $a1
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *a
-        lw    $s0, 0($s2)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -8($fp)
         # t = t1
-        move  $s1, $s0
+        lw    $t0, -8($fp)
+        sw    $t0, -4($fp)
         # t2 = *b
-        lw    $s1, 0($s3)
+        lw    $t8, 12($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -12($fp)
         # *a = t2
-        sw    $s1, 0($s2)
+        lw    $t8, 8($fp)
+        lw    $t0, -12($fp)
+        sw    $t0, 0($t8)
         # *b = t1
-        sw    $s0, 0($s3)
+        lw    $t8, 12($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # return
         j     _Z4swapPiS__exit
 _Z4swapPiS__exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -12($fp)
-        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -112,32 +110,35 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
+        addiu $sp, $sp, -128
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -36($fp)
-        sw    $s1, -40($fp)
-        sw    $s2, -44($fp)
         # x = 5
         li    $t0, 5
         sw    $t0, -4($fp)
         # t1 = &x
-        addiu $s0, $fp, -4
+        addiu $t0, $fp, -4
+        sw    $t0, -68($fp)
         # p = t1
-        move  $s1, $s0
+        lw    $t0, -68($fp)
+        sw    $t0, -8($fp)
         # y = 6
-        li    $s1, 6
+        li    $t0, 6
+        sw    $t0, -12($fp)
         # *t1 = 100
+        lw    $t8, -68($fp)
         li    $t0, 100
-        sw    $t0, 0($s0)
+        sw    $t0, 0($t8)
         # t3 = x int+ 1
         lw    $t0, -4($fp)
-        addiu $s1, $t0, 1
+        addiu $t0, $t0, 1
+        sw    $t0, -72($fp)
         # z = t3
-        move  $s2, $s1
+        lw    $t0, -72($fp)
+        sw    $t0, -16($fp)
         # param "%d %d\n"
         # param 6
         # param t3
@@ -147,17 +148,21 @@ M3_0:
         sw    $t0, 0($sp)
         li    $t0, 6
         sw    $t0, 4($sp)
-        sw    $s1, 8($sp)
+        lw    $t0, -72($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # q = t1
-        move  $s1, $s0
+        lw    $t0, -68($fp)
+        sw    $t0, -20($fp)
         # *t1 = 7
+        lw    $t8, -68($fp)
         li    $t0, 7
-        sw    $t0, 0($s0)
+        sw    $t0, 0($t8)
         # t6 = x int<< 1
         lw    $t0, -4($fp)
-        sll   $s0, $t0, 1
+        sll   $t0, $t0, 1
+        sw    $t0, -76($fp)
         # param "%d %d\n"
         # param 7
         # param t6
@@ -167,40 +172,52 @@ M3_0:
         sw    $t0, 0($sp)
         li    $t0, 7
         sw    $t0, 4($sp)
-        sw    $s0, 8($sp)
+        lw    $t0, -76($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # a[0] = 1
         li    $t0, 1
-        sw    $t0, -20($fp)
+        sw    $t0, -36($fp)
         # a[4] = 2
         li    $t0, 2
-        sw    $t0, -16($fp)
+        sw    $t0, -32($fp)
         # a[8] = 3
         li    $t0, 3
-        sw    $t0, -12($fp)
+        sw    $t0, -28($fp)
         # a[12] = 4
         li    $t0, 4
-        sw    $t0, -8($fp)
+        sw    $t0, -24($fp)
         # t7 = &a
-        addiu $s1, $fp, -20
+        addiu $t0, $fp, -36
+        sw    $t0, -80($fp)
         # t8 = t7 ptr+ 8
-        addiu $s0, $s1, 8
+        lw    $t0, -80($fp)
+        addiu $t0, $t0, 8
+        sw    $t0, -84($fp)
         # e = t8
-        move  $s1, $s0
+        lw    $t0, -84($fp)
+        sw    $t0, -40($fp)
         # i = 2
-        li    $s1, 2
+        li    $t0, 2
+        sw    $t0, -44($fp)
         # t10 = a[8]
-        lw    $s1, -12($fp)
+        lw    $t0, -28($fp)
+        sw    $t0, -88($fp)
         # before = t10
-        move  $s2, $s1
+        lw    $t0, -88($fp)
+        sw    $t0, -48($fp)
         # *t8 = 9
+        lw    $t8, -84($fp)
         li    $t0, 9
-        sw    $t0, 0($s0)
+        sw    $t0, 0($t8)
         # t12 = a[8]
-        lw    $s0, -12($fp)
+        lw    $t0, -28($fp)
+        sw    $t0, -92($fp)
         # t15 = t12 int+ 9
-        addiu $s2, $s0, 9
+        lw    $t0, -92($fp)
+        addiu $t0, $t0, 9
+        sw    $t0, -96($fp)
         # param "%d %d %d\n"
         # param t10
         # param t12
@@ -209,17 +226,21 @@ M3_0:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s0, 8($sp)
-        sw    $s2, 12($sp)
+        lw    $t0, -88($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -92($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -96($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # h = g
-        lw    $s0, g_g
-        # call bump(), 0
-        addiu $sp, $sp, -16
-        jal   _Z4bumpv
-        addiu $sp, $sp, 16
+        lw    $t0, g_g
+        sw    $t0, -52($fp)
+        # g = g int+ 10
+        lw    $t0, g_g
+        addiu $t0, $t0, 10
+        sw    $t0, g_g
         # param "%d %d\n"
         # param h
         # param g
@@ -227,63 +248,77 @@ M3_0:
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -52($fp)
+        sw    $t0, 4($sp)
         lw    $t0, g_g
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # v = 3
         li    $t0, 3
-        sw    $t0, -24($fp)
+        sw    $t0, -56($fp)
         # t16 = &v
-        addiu $s0, $fp, -24
-        # param t16
-        # param 4
-        # call setp(int *, int), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        li    $a1, 4
-        jal   _Z4setpPii
-        addiu $sp, $sp, 16
+        addiu $t0, $fp, -56
+        sw    $t0, -100($fp)
+        # *t16 = 4
+        lw    $t8, -100($fp)
+        li    $t0, 4
+        sw    $t0, 0($t8)
         # t17 = v int* v
-        lw    $t0, -24($fp)
-        lw    $t1, -24($fp)
-        mul   $s0, $t0, $t1
+        lw    $t0, -56($fp)
+        lw    $t1, -56($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -104($fp)
         # param "%d\n"
         # param t17
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -104($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
         # m = 1
         li    $t0, 1
-        sw    $t0, -28($fp)
+        sw    $t0, -60($fp)
         # n = 2
         li    $t0, 2
-        sw    $t0, -32($fp)
+        sw    $t0, -64($fp)
         # t18 = &m
-        addiu $s0, $fp, -28
+        addiu $t0, $fp, -60
+        sw    $t0, -108($fp)
         # t19 = &n
-        addiu $s1, $fp, -32
-        # param t18
-        # param t19
-        # call swap(int *, int *), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        move  $a1, $s1
-        jal   _Z4swapPiS_
-        addiu $sp, $sp, 16
-        # param t18
-        # param t18
-        # call swap(int *, int *), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        move  $a1, $s0
-        jal   _Z4swapPiS_
-        addiu $sp, $sp, 16
+        addiu $t0, $fp, -64
+        sw    $t0, -112($fp)
+        # t26 = *t18
+        lw    $t8, -108($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -116($fp)
+        # t28 = *t19
+        lw    $t8, -112($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -120($fp)
+        # *t18 = t28
+        lw    $t8, -108($fp)
+        lw    $t0, -120($fp)
+        sw    $t0, 0($t8)
+        # *t19 = t26
+        lw    $t8, -112($fp)
+        lw    $t0, -116($fp)
+        sw    $t0, 0($t8)
+        # t31 = *t18
+        lw    $t8, -108($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -124($fp)
+        # *t18 = t31
+        lw    $t8, -108($fp)
+        lw    $t0, -124($fp)
+        sw    $t0, 0($t8)
+        # *t18 = t31
+        lw    $t8, -108($fp)
+        lw    $t0, -124($fp)
+        sw    $t0, 0($t8)
         # param "%d %d\n"
         # param m
         # param n
@@ -291,9 +326,9 @@ M3_0:
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
-        lw    $t0, -28($fp)
+        lw    $t0, -60($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -32($fp)
+        lw    $t0, -64($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
@@ -301,9 +336,6 @@ M3_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -40($fp)
-        lw    $s2, -44($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

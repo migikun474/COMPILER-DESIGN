@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 45 test programs are
-> generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 46 passed, the 45 programs and one warnings check).
+> interpreter and the optimizer (`-O1`). 34 test programs are
+> generated, executed raw and at `-O1`, and compared with gcc/g++
+> (`./run_tests.sh`: 35 passed, the 34 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -34,10 +34,10 @@ Prints the TAC, then executes it with the interpreter (`-q` after
 `tac_generator`; the number of executed instructions goes to stderr.
 
 ```bash
-./tac_generator -O2 --run file.c
+./tac_generator -O1 --run file.c
 ```
 
-Optimizes first (`-O1`, `-O2` or `-O3`, see [Optimization](#optimization--o1--o2--o3)). With `--run`
+Optimizes first (see [Optimization](#optimization--o1)). With `--run`
 the program is executed both ways; a difference in output or exit code
 is reported as `OPTIMIZER BUG`, otherwise the line on stderr shows the
 instructions executed with and without optimization.
@@ -137,7 +137,7 @@ unique in the program); the instruction number stays visible.
 | [`src/gen_expr.cpp`](src/gen_expr.cpp) | expressions: conversions, lvalues and addresses, operators, boolean expressions, calls, constructors |
 | [`src/gen_stmt.cpp`](src/gen_stmt.cpp) | statements, local and static initializers, functions, frame tables |
 | [`include/interp.h`](include/interp.h), [`src/interp.cpp`](src/interp.cpp) | the TAC interpreter |
-| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer (`-O1`, `-O2`, `-O3`) |
+| [`include/opt.h`](include/opt.h), [`src/opt.cpp`](src/opt.cpp) | the optimizer driver (`-O1`); the passes are in `src/opt_*.cpp` (below) |
 | [`src/main.cpp`](src/main.cpp) | driver: phases 2 and 2b (compiled in unchanged), then generation and `--run` |
 
 The generator walks the AST that semantic analysis annotated: it reads
@@ -174,63 +174,48 @@ than 10,000 calls (`stack overflow (recursion too deep)`), a 500-million
 instruction limit) and counts executed instructions — the number the
 optimizer will later be measured by.
 
-## Optimization (`-O1`, `-O2`, `-O3`)
+## Optimization (`-O1`)
 
-[`src/opt.cpp`](src/opt.cpp). Each function is cut into basic blocks
-(a block starts at the first instruction, at every jump target and
-after every jump or return) and each block is optimized by **value
+There is one optimization level (D49). Each function is cut into basic
+blocks (a block starts at the first instruction, at every jump target
+and after every jump or return) and each block is optimized by **value
 numbering**: every value computed in the block gets a number, and two
 instructions that get the same number compute the same value. A value
 number is a node of the block's DAG (Dragon Book 8.5; the hash-table
 construction is 6.1.2), so this is the DAG method without building and
-re-linearizing a graph.
+re-linearizing a graph. Small functions are then inlined and the block
+passes run again on the larger bodies.
 
 | Optimization | Example |
 |---|---|
 | constant folding | `t1 = 3 int+ 4` → `t1 = 7`; `if 1 int== 1 goto L` → `goto L`; folded with the interpreter's own arithmetic, so wrap-around and conversions are exact |
 | algebraic simplification | `x + 0`, `x * 1`, `x / 1`, `x & x`, `x \| x`, `x & -1` → `x`; `x * 0`, `x - x`, `x ^ x`, `x & 0`, `x % 1` → `0`; `x \| -1` → `-1`; `x * 8` → `x << 3` (the identities are for integers only; `x + 0.0` is left alone because of `-0.0`) |
-| common subexpressions | the second `x * y + 3`, `&d`, `a[i]` or `*p` reuses the first result |
+| common subexpressions | the second `x * y + 3`, `&d`, `a[i]` or `*p` in a block reuses the first result; after `a[i] = x`, a load of `a[i]` is `x` |
 | copy and constant propagation | after `t = a`, uses of `t` become `a`; after `b = 2`, uses of `b` in the block become `2` |
 | temporary merging | `t1 = a + b ; x = t1` → `x = a + b` |
 | dead temporaries | an instruction whose result no instruction reads is removed (a call stays, only its unused result goes) |
 | jump clean-up | jump to the next instruction; jump to a jump; `if c goto L1 ; goto L2 ; L1:` → `if !c goto L2`; code no path reaches |
+| function inlining | a call to a function of at most 16 instructions, not recursive and not variadic, is replaced by its body; parameters, locals and temporaries become temporaries of the caller | `square(3)` → `9` after folding |
 
 What keeps it correct: a value read from memory is only reused while
 nothing can have changed it. Any store through a pointer, any array or
 field store, any call, and any assignment to a global or to a variable
-whose address was taken invalidates what is known about memory
-(`memoryChanged()`).
+whose address was taken invalidates what is known about memory.
 
-**`-O2`** adds two optimizations across basic blocks. Both are
-data-flow analyses over the function's flow graph (Dragon Book 9.2)
-and both only reason about scalar locals whose address is never taken:
+The optimizer is split by job, one file each:
 
-| Optimization | Analysis | Example |
-|---|---|---|
-| global constant and copy propagation | forward; a fact (`x = 5`, `b = a`) holds at a block's entry only if it holds at the end of every predecessor | `x = 5; if (c) y = x + 1; else y = x + 2;` → `y = 6` / `y = 7` |
-| dead assignment elimination | backward live-variable analysis | `a = 7; a = 8;` drops the first; a variable never read again loses its assignments (a call stays, its result is dropped) |
+| File | Job |
+|---|---|
+| [`src/opt.cpp`](src/opt.cpp) | the driver: block passes until nothing changes, inlining, block passes again; the summary |
+| [`src/opt_common.cpp`](src/opt_common.cpp) | operands and names, basic blocks, which names memory writes can change |
+| [`src/opt_numbering.cpp`](src/opt_numbering.cpp) | value numbering of one block: folding, propagation, common subexpressions |
+| [`src/opt_algebra.cpp`](src/opt_algebra.cpp) | the algebraic identities |
+| [`src/opt_cleanup.cpp`](src/opt_cleanup.cpp) | temporary merging, dead temporaries, jump clean-up |
+| [`src/opt_inline.cpp`](src/opt_inline.cpp) | function inlining |
+| [`src/opt_uninitialized.cpp`](src/opt_uninitialized.cpp) | reaching definitions for the uninitialized-variable warning (not an optimization) |
 
-After each, `-O1` runs again on the result, until nothing changes.
-
-**`-O3`** adds (decision D27):
-
-| Optimization | How | Example |
-|---|---|---|
-| inlining | a call to a function of at most 16 instructions, not recursive and not variadic, is replaced by its body; parameters, locals and temporaries become temporaries of the caller; one level per run | `square(3)` → `9` after folding; getters and small operators disappear |
-| tail recursion | `return f(args);` inside `f` becomes "assign the arguments, jump to the start" | `gcd(b, a % b)` becomes a loop |
-| common subexpressions across blocks | available-expressions analysis: an expression is reused when the same name still holds it on every path | `x * y + 2` before an `if` and again inside it |
-| loop unrolling by two | natural loops from dominators; a small loop (header first, one back edge, at most 24 instructions) gets a second copy of its test and body, so the jump back is taken every other iteration | `H: test; body; goto H` → `H: test; body; H2: test; body; goto H` |
-| dead function removal | after inlining, a function no call reaches from `main` is dropped | a helper inlined everywhere disappears |
-| store-to-load forwarding (part of `-O1`'s block pass) | after `a[i] = x` or `*p = x`, a load of the same place in the block is `x` until memory may have changed | `arr[i] = 10; a = arr[i];` → `a = 10` |
-
-Loop-invariant code motion was removed (D36); the dominator and
-natural-loop analysis it used now serves unrolling. Strength reduction
-of induction variables is not done: `-O1` already turns `i * 4` into a
-shift, so it would not remove any instruction.
-
-On the test programs `-O1` executes 1% to 50% fewer instructions,
-`-O2` 1% to 64% and `-O3` 1% to 64%; the runner prints the figures per
-test.
+On the test programs `-O1` executes 1% to 50% fewer instructions; the
+runner prints the figure per test.
 
 ## Tests
 
@@ -238,8 +223,8 @@ test.
 ./run_tests.sh
 ```
 
-Each `test/tNN_*.c` is generated and executed raw, with `-O1`, `-O2`
-and `-O3`; every time what it prints and its exit code must equal
+Each `test/tNN_*.c` is generated and executed raw and with `-O1`;
+every time what it prints and its exit code must equal
 `test/expected/<name>.out`. The programs are also
 valid C or C++, and every expected file was checked to be identical to
 the output of the same source compiled with gcc/g++.
@@ -260,9 +245,9 @@ the output of the same source compiled with gcc/g++.
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
 | `t13_runtime` | aimed at the MIPS run-time library: 64-bit `printf`, `long long` ↔ `double`, flags, widths, precision, `%e %g %x %o %c %%`, structs and doubles through calls, varargs with doubles, `long long` and strings |
-| `t14_optimizer` | `-O1`/`-O2` must not reuse what may have changed (through a pointer, a reference, a call, an array element) and must keep what is used: wrapping constants, per-path constants, a loop-carried value, dead assignments, calls whose result is unused |
-| `t15_o3` | `-O3`: inlining (side effects, several returns, a reference, a by-value struct), a recursive function not inlined, a tail call with swapped arguments, a division in a loop that may run zero times |
-| `t16_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short` wrapping in registers, many doubles at once, a loop made of `goto` |
+| `t14_optimizer` | `-O1` must not reuse what may have changed (through a pointer, a reference, a call, an array element) and must keep what is used: wrapping constants, per-path constants, a loop-carried value, dead assignments, calls whose result is unused |
+| `t15_o3` | inlining (side effects, several returns, a reference, a by-value struct), a recursive function not inlined, a tail call with swapped arguments, a division in a loop that may run zero times |
+| `t16_registers` | for the MIPS back end: values across calls and recursion, many live values at once, arguments computed before a call, `char`/`short` wrapping in registers, many doubles at once, a loop made of `goto` |
 | `t17_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve, string reversal, number ↔ text |
 | `t18_scopes_enums` | shadowing (parameters, blocks, loop variables, a local hiding a global from its declaration on), `static` locals, `typedef`, a conditional constant initializer, enums with C++ rules |
 | `t30_int_edges` | small: `/` and `%` with negative operands, shifts of signed and unsigned values, unsigned wrap-around, `char`/`short` sign and zero extension, signed vs unsigned comparison, `INT_MAX`/`INT_MIN` |
@@ -270,7 +255,7 @@ the output of the same source compiled with gcc/g++.
 | `t32_calls_registers` | small: more arguments than `$a0`–`$a3`, mixed `char`/`double`/`long long` arguments, calls as arguments, values kept across calls, a struct by value and returned, recursion with live values |
 | `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
-| `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` at `-O3` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
+| `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
 | `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
 | `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
@@ -366,15 +351,16 @@ is what `backpatch()` writes.
 ## Logs
 
 Every run writes the listing to `logs/` in the current directory:
-`logs/<file>.tac` without optimization and `logs/<file>.O1.tac`,
-`.O2.tac`, `.O3.tac` with `-O1`, `-O2`, `-O3`. Each log is in sections:
+`logs/<file>.tac` without optimization and `logs/<file>.O1.tac` with
+`-O1`. Each log is in sections:
 a header (source, optimization level, instruction count), the
-optimization summary (with `-O<n>`), the globals, one section per
+optimization summary (with `-O1`), the globals, one section per
 function (its symbol table -- name, kind, type, width, offset -- then its
 numbered code with labels), the semantic symbol table grouped by scope,
-and the record layouts. Temporaries the optimized code no longer uses
+and the record layouts; with `--run`, a last section holds what the
+program printed, its exit code and the instructions executed. Temporaries the optimized code no longer uses
 are left out of a function's table (a line says how many).
-`./run_tests.sh` keeps all four logs of every test program in
+`./run_tests.sh` keeps both logs of every test program in
 `phase3-ir/logs/`.
 
 ## Limitations

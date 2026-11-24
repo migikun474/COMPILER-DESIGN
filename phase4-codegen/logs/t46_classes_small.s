@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t46_classes_small.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -51,6 +51,7 @@ _ZN4BaseC1Ev:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
         # *this = 1
         lw    $t8, 8($fp)
         li    $t0, 1
@@ -85,6 +86,7 @@ _ZN4Base3whoEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 1
         li    $v0, 1
         j     _ZN4Base3whoEv_exit
@@ -101,6 +103,7 @@ _ZN4Base5plainEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 10
         li    $v0, 10
         j     _ZN4Base5plainEv_exit
@@ -123,13 +126,13 @@ _ZN3MidC1Ev:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
+        sw    $a0, 8($fp)
         # param this
         # call Base::Base(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, 8($fp)
         jal   _ZN4BaseC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -165,6 +168,7 @@ _ZN3Mid3whoEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 2
         li    $v0, 2
         j     _ZN3Mid3whoEv_exit
@@ -181,6 +185,7 @@ _ZN3Mid5plainEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 20
         li    $v0, 20
         j     _ZN3Mid5plainEv_exit
@@ -203,13 +208,13 @@ _ZN4LeafC1Ev:
         beqz  $t8, M6_0
         j     __stack_overflow
 M6_0:
+        sw    $a0, 8($fp)
         # param this
         # call Mid::Mid(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, 8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, 8($fp)
         jal   _ZN3MidC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -245,6 +250,7 @@ _ZN4Leaf3whoEv:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 3
         li    $v0, 3
         j     _ZN4Leaf3whoEv_exit
@@ -262,6 +268,8 @@ _ZN4LeafpLEi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *this
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -302,11 +310,10 @@ M9_0:
         sw    $t0, -24($fp)
         # param t1
         # call Leaf::Leaf(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -24($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -24($fp)
         jal   _ZN4LeafC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = &l
         addiu $t0, $fp, -4
         sw    $t0, -28($fp)
@@ -327,35 +334,31 @@ M9_0:
         sw    $t0, -36($fp)
         # param b
         # t5 = call Base::who(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -8($fp)
         jal   _ZN4Base3whoEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -40($fp)
         # param m
         # t6 = call Mid::who(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _ZN3Mid3whoEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -44($fp)
         # param b
         # t7 = call Base::plain(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -8($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -8($fp)
         jal   _ZN4Base5plainEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -48($fp)
         # param m
         # t8 = call Mid::plain(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _ZN3Mid5plainEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -52($fp)
         # param "%d %d %d %d %d\n"
         # param t4
@@ -385,24 +388,20 @@ M9_0:
         # param t9
         # param 5
         # t10 = call Leaf::operator+=(int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -56($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 5
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -56($fp)
+        li    $a1, 5
         jal   _ZN4LeafpLEi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -60($fp)
         # param t10
         # param 2
         # t11 = call Leaf::operator+=(int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -60($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -60($fp)
+        li    $a1, 2
         jal   _ZN4LeafpLEi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -64($fp)
         # t12 = l[0]
         addiu $t8, $fp, -4
@@ -425,11 +424,10 @@ M9_0:
         sw    $t0, -72($fp)
         # param t13
         # call Mid::Mid(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -72($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -72($fp)
         jal   _ZN3MidC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t14 = t13 ptr+ 4
         lw    $t0, -72($fp)
         li    $t1, 4
@@ -437,11 +435,10 @@ M9_0:
         sw    $t0, -76($fp)
         # param t14
         # call Mid::Mid(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -76($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -76($fp)
         jal   _ZN3MidC1Ev
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t15 = &arr
         addiu $t0, $fp, -20
         sw    $t0, -80($fp)
@@ -452,11 +449,10 @@ M9_0:
         sw    $t0, -84($fp)
         # param t16
         # t17 = call Mid::who(), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -84($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -84($fp)
         jal   _ZN3Mid3whoEv
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -88($fp)
         # param "\n%d %d\n"
         # param Base::made

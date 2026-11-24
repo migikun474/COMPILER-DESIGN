@@ -4,7 +4,7 @@
 
    Source file   : test/t40_aliasing.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 86 -> 76 instruction(s)
+   Result        : Optimized three address code (-O1): 86 -> 75 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                           86 -> 76   (11% fewer)
+   instructions                           86 -> 75   (12% fewer)
 
+   calls inlined                           4
    constants folded                        3
    algebraic simplifications               1
-   common subexpressions                   6
-   copies / constants forwarded           21
+   common subexpressions                   7
+   copies / constants forwarded           32
    temporaries merged away                 1
-   dead instructions removed               9
+   dead instructions removed              18
    jumps removed or redirected             0
    unreachable instructions removed        0
 
@@ -95,7 +96,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 13 parameter(s)/local(s), 12 temporaries, frame 148 bytes
+ Symbol table: 13 parameter(s)/local(s), 15 temporaries, frame 196 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -124,9 +125,12 @@
    t17              temp    int                             4     128
    t18              temp    int *                           4     132
    t19              temp    int *                           4     136
-   (9 temporaries no longer used after optimization not shown)
+   t26              temp    int                             4     164
+   t28              temp    int                             4     172
+   t31              temp    int                             4     184
+   (18 temporaries no longer used after optimization not shown)
 
- Code: 66 instruction(s)
+ Code: 65 instruction(s)
 
     110     x = 5
     111     t1 = &x
@@ -165,35 +169,34 @@
     144     param t15
     145     call printf, 4
     146     h = g
-    147     call bump(), 0
+    147     g = g int+ 10
     148     param "%d %d\n"
     149     param h
     150     param g
     151     call printf, 3
     152     v = 3
     153     t16 = &v
-    154     param t16
-    155     param 4
-    156     call setp(int *, int), 2
-    157     t17 = v int* v
-    158     param "%d\n"
-    159     param t17
-    160     call printf, 2
-    161     m = 1
-    162     n = 2
-    163     t18 = &m
-    164     t19 = &n
-    165     param t18
-    166     param t19
-    167     call swap(int *, int *), 2
-    168     param t18
-    169     param t18
-    170     call swap(int *, int *), 2
-    171     param "%d %d\n"
-    172     param m
-    173     param n
-    174     call printf, 3
-    175     return 0
+    154     *t16 = 4
+    155     t17 = v int* v
+    156     param "%d\n"
+    157     param t17
+    158     call printf, 2
+    159     m = 1
+    160     n = 2
+    161     t18 = &m
+    162     t19 = &n
+    163     t26 = *t18
+    164     t28 = *t19
+    165     *t18 = t28
+    166     *t19 = t26
+    167     t31 = *t18
+    168     *t18 = t31
+    169     *t18 = t31
+    170     param "%d %d\n"
+    171     param m
+    172     param n
+    173     call printf, 3
+    174     return 0
 
 
 ----------------------------------------------------------------------------
@@ -244,3 +247,16 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+6 101
+7 14
+3 9 18
+1 11
+16
+2 1
+
+   exit code 0, 65 instructions executed

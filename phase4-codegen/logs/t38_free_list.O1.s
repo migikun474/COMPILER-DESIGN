@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t38_free_list.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -47,20 +47,18 @@ _Z5buildi:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -4($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -8($fp)
-        sw    $s4, -12($fp)
-        sw    $s5, -24($fp)
-        move  $s4, $a0
+        sw    $a0, 8($fp)
         # head = 0
-        li    $s2, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
         # i = 1
-        li    $s1, 1
+        li    $t0, 1
+        sw    $t0, -8($fp)
 L0_2:
         # if i int> n goto 12
-        bgt   $s1, $s4, L0_12
+        lw    $t0, -8($fp)
+        lw    $t1, 8($fp)
+        bgt   $t0, $t1, L0_12
         # param 8
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -68,32 +66,36 @@ L0_2:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s0, $v0
+        sw    $v0, -16($fp)
         # p = t1
-        move  $s5, $s0
+        lw    $t0, -16($fp)
+        sw    $t0, -12($fp)
         # *t1 = i
-        sw    $s1, 0($s0)
+        lw    $t8, -16($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # t2 = t1 ptr+ 4
-        addiu $s3, $s0, 4
+        lw    $t0, -16($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -20($fp)
         # *t2 = head
-        sw    $s2, 0($s3)
+        lw    $t8, -20($fp)
+        lw    $t0, -4($fp)
+        sw    $t0, 0($t8)
         # head = t1
-        move  $s2, $s0
+        lw    $t0, -16($fp)
+        sw    $t0, -4($fp)
         # i = i int+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -8($fp)
         # goto 2
         j     L0_2
 L0_12:
         # return head
-        move  $v0, $s2
+        lw    $v0, -4($fp)
         j     _Z5buildi_exit
 _Z5buildi_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -8($fp)
-        lw    $s4, -12($fp)
-        lw    $s5, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -106,35 +108,38 @@ _Z5totalP4Node:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -4($fp)
-        sw    $s3, -8($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
         # s = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
 L1_1:
         # if p ptr== 0 goto 7
-        beq   $s0, $zero, L1_7
+        lw    $t0, 8($fp)
+        beq   $t0, $zero, L1_7
         # t1 = *p
-        lw    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -8($fp)
         # s = s int+ t1
-        addu  $s1, $s1, $s2
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -4($fp)
         # t3 = p ptr+ 4
-        addiu $s3, $s0, 4
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -12($fp)
         # p = *t3
-        lw    $s0, 0($s3)
+        lw    $t8, -12($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, 8($fp)
         # goto 1
         j     L1_1
 L1_7:
         # return s
-        move  $v0, $s1
+        lw    $v0, -4($fp)
         j     _Z5totalP4Node_exit
 _Z5totalP4Node_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -4($fp)
-        lw    $s3, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -152,38 +157,38 @@ _Z7releaseP4Node:
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -8($fp)
-        sw    $s2, -4($fp)
-        sw    $s3, -12($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
 L2_0:
         # if p ptr== 0 goto 8
-        beq   $s0, $zero, L2_8
+        lw    $t0, 8($fp)
+        beq   $t0, $zero, L2_8
         # t1 = p ptr+ 4
-        addiu $s2, $s0, 4
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -8($fp)
         # t2 = *t1
-        lw    $s1, 0($s2)
+        lw    $t8, -8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -12($fp)
         # n = t2
-        move  $s3, $s1
+        lw    $t0, -12($fp)
+        sw    $t0, -4($fp)
         # param p
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        lw    $t0, 8($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # p = t2
-        move  $s0, $s1
+        lw    $t0, -12($fp)
+        sw    $t0, 8($fp)
         # goto 0
         j     L2_0
 L2_8:
         # return
         j     _Z7releaseP4Node_exit
 _Z7releaseP4Node_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -4($fp)
-        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -196,20 +201,12 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
+        addiu $sp, $sp, -272
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -20($fp)
-        sw    $s1, -24($fp)
-        sw    $s2, -28($fp)
-        sw    $s3, -44($fp)
-        sw    $s4, -48($fp)
-        sw    $s5, -32($fp)
-        sw    $s6, -36($fp)
-        sw    $s7, -40($fp)
         # param 1000
         # t1 = call malloc, 1
         addiu $sp, $sp, -8
@@ -217,16 +214,19 @@ M3_0:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s0, $v0
+        sw    $v0, -60($fp)
         # a = t1
-        move  $s1, $s0
+        lw    $t0, -60($fp)
+        sw    $t0, -4($fp)
         # *t1 = 120
+        lw    $t8, -60($fp)
         li    $t0, 120
-        sb    $t0, 0($s0)
+        sb    $t0, 0($t8)
         # param t1
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        lw    $t0, -60($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # param 1000
@@ -236,12 +236,23 @@ M3_0:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s1, $v0
+        sw    $v0, -64($fp)
         # b = t2
-        move  $s2, $s1
+        lw    $t0, -64($fp)
+        sw    $t0, -8($fp)
         # if t1 ptr== t2 goto 12
-        xor   $s0, $s0, $s1
-        sltiu $s0, $s0, 1
+        lw    $t0, -60($fp)
+        lw    $t1, -64($fp)
+        beq   $t0, $t1, L3_12
+        # t3 = 0
+        li    $t0, 0
+        sw    $t0, -68($fp)
+        # goto 13
+        j     L3_13
+L3_12:
+        # t3 = 1
+        li    $t0, 1
+        sw    $t0, -68($fp)
 L3_13:
         # param "reused %d\n"
         # param t3
@@ -249,24 +260,30 @@ L3_13:
         addiu $sp, $sp, -8
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -68($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
         # param b
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s2, 0($sp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # sum = 0
-        li    $s3, 0
-        li    $s4, 0
+        li    $t0, 0
+        li    $t1, 0
+        sw    $t0, -16($fp)
+        sw    $t1, -12($fp)
         # i = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -20($fp)
 L3_20:
         # if i int>= 50000 goto 36
+        lw    $t0, -20($fp)
         li    $t1, 50000
-        bge   $s1, $t1, L3_36
+        bge   $t0, $t1, L3_36
         # param 300
         # t4 = call malloc, 1
         addiu $sp, $sp, -8
@@ -274,44 +291,62 @@ L3_20:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s0, $v0
+        sw    $v0, -72($fp)
         # p = t4
-        move  $t0, $s0
-        sw    $t0, -4($fp)
+        lw    $t0, -72($fp)
+        sw    $t0, -28($fp)
         # *t4 = i
-        sw    $s1, 0($s0)
+        lw    $t8, -72($fp)
+        lw    $t0, -20($fp)
+        sw    $t0, 0($t8)
         # t5 = i int<< 1
-        sll   $s2, $s1, 1
+        lw    $t0, -20($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -76($fp)
         # t6 = t4 ptr+ 296
-        addiu $s5, $s0, 296
+        lw    $t0, -72($fp)
+        addiu $t0, $t0, 296
+        sw    $t0, -80($fp)
         # *t6 = t5
-        sw    $s2, 0($s5)
+        lw    $t8, -80($fp)
+        lw    $t0, -76($fp)
+        sw    $t0, 0($t8)
         # t7 = *t4
-        lw    $s6, 0($s0)
+        lw    $t8, -72($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -84($fp)
         # t10 = t7 int+ t5
-        addu  $s7, $s6, $s2
+        lw    $t0, -84($fp)
+        lw    $t1, -76($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -88($fp)
         # t11 = inttollong t10
-        move  $t0, $s7
+        lw    $t0, -88($fp)
         sra   $t1, $t0, 31
-        sw    $t0, -16($fp)
-        sw    $t1, -12($fp)
+        sw    $t0, -96($fp)
+        sw    $t1, -92($fp)
         # sum = sum llong+ t11
-        lw    $t2, -16($fp)
-        lw    $t3, -12($fp)
-        addu  $t4, $s3, $t2
-        sltu  $t5, $t4, $s3
-        addu  $t6, $s4, $t3
+        lw    $t0, -16($fp)
+        lw    $t1, -12($fp)
+        lw    $t2, -96($fp)
+        lw    $t3, -92($fp)
+        addu  $t4, $t0, $t2
+        sltu  $t5, $t4, $t0
+        addu  $t6, $t1, $t3
         addu  $t6, $t6, $t5
-        move  $s3, $t4
-        move  $s4, $t6
+        sw    $t4, -16($fp)
+        sw    $t6, -12($fp)
         # param t4
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        lw    $t0, -72($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # i = i int+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, -20($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -20($fp)
         # goto 20
         j     L3_20
 L3_36:
@@ -321,72 +356,248 @@ L3_36:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s3, 8($sp)
-        sw    $s4, 12($sp)
+        lw    $t0, -16($fp)
+        lw    $t1, -12($fp)
+        sw    $t0, 8($sp)
+        sw    $t1, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # param 100
-        # t14 = call build(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 100
-        jal   _Z5buildi
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # list = t14
-        move  $s2, $s0
-        # param t14
-        # t15 = call total(struct Node *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z5totalP4Node
-        addiu $sp, $sp, 16
-        move  $s1, $v0
+        # t50 = 100
+        li    $t0, 100
+        sw    $t0, -180($fp)
+        # t51 = 0
+        li    $t0, 0
+        sw    $t0, -184($fp)
+        # t52 = 1
+        li    $t0, 1
+        sw    $t0, -188($fp)
+L3_42:
+        # if t52 int> t50 goto 51
+        lw    $t0, -188($fp)
+        lw    $t1, -180($fp)
+        bgt   $t0, $t1, L3_51
+        # param 8
+        # t53 = call malloc, 1
+        addiu $sp, $sp, -8
+        li    $t0, 8
+        sw    $t0, 0($sp)
+        jal   __malloc
+        addiu $sp, $sp, 8
+        sw    $v0, -192($fp)
+        # *t53 = t52
+        lw    $t8, -192($fp)
+        lw    $t0, -188($fp)
+        sw    $t0, 0($t8)
+        # t55 = t53 ptr+ 4
+        lw    $t0, -192($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -196($fp)
+        # *t55 = t51
+        lw    $t8, -196($fp)
+        lw    $t0, -184($fp)
+        sw    $t0, 0($t8)
+        # t51 = t53
+        lw    $t0, -192($fp)
+        sw    $t0, -184($fp)
+        # t52 = t52 int+ 1
+        lw    $t0, -188($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -188($fp)
+        # goto 42
+        j     L3_42
+L3_51:
+        # t14 = t51
+        lw    $t0, -184($fp)
+        sw    $t0, -100($fp)
+        # list = t51
+        lw    $t0, -184($fp)
+        sw    $t0, -32($fp)
+        # t56 = t51
+        lw    $t0, -184($fp)
+        sw    $t0, -200($fp)
+        # t57 = 0
+        li    $t0, 0
+        sw    $t0, -204($fp)
+L3_55:
+        # if t56 ptr== 0 goto 61
+        lw    $t0, -200($fp)
+        beq   $t0, $zero, L3_61
+        # t58 = *t56
+        lw    $t8, -200($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -208($fp)
+        # t57 = t57 int+ t58
+        lw    $t0, -204($fp)
+        lw    $t1, -208($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -204($fp)
+        # t59 = t56 ptr+ 4
+        lw    $t0, -200($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -212($fp)
+        # t56 = *t59
+        lw    $t8, -212($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -200($fp)
+        # goto 55
+        j     L3_55
+L3_61:
         # param "list %d\n"
-        # param t15
+        # param t57
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -204($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # param t14
-        # call release(struct Node *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z7releaseP4Node
-        addiu $sp, $sp, 16
-        # param 200
-        # t16 = call build(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 200
-        jal   _Z5buildi
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # list = t16
-        move  $s2, $s0
-        # param t16
-        # t17 = call total(struct Node *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z5totalP4Node
-        addiu $sp, $sp, 16
-        move  $s1, $v0
+        # t60 = t14
+        lw    $t0, -100($fp)
+        sw    $t0, -216($fp)
+L3_65:
+        # if t60 ptr== 0 goto 72
+        lw    $t0, -216($fp)
+        beq   $t0, $zero, L3_72
+        # t61 = t60 ptr+ 4
+        lw    $t0, -216($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -220($fp)
+        # t62 = *t61
+        lw    $t8, -220($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -224($fp)
+        # param t60
+        # call free, 1
+        addiu $sp, $sp, -8
+        lw    $t0, -216($fp)
+        sw    $t0, 0($sp)
+        jal   __free
+        addiu $sp, $sp, 8
+        # t60 = t62
+        lw    $t0, -224($fp)
+        sw    $t0, -216($fp)
+        # goto 65
+        j     L3_65
+L3_72:
+        # t64 = 200
+        li    $t0, 200
+        sw    $t0, -228($fp)
+        # t65 = 0
+        li    $t0, 0
+        sw    $t0, -232($fp)
+        # t66 = 1
+        li    $t0, 1
+        sw    $t0, -236($fp)
+L3_75:
+        # if t66 int> t64 goto 84
+        lw    $t0, -236($fp)
+        lw    $t1, -228($fp)
+        bgt   $t0, $t1, L3_84
+        # param 8
+        # t67 = call malloc, 1
+        addiu $sp, $sp, -8
+        li    $t0, 8
+        sw    $t0, 0($sp)
+        jal   __malloc
+        addiu $sp, $sp, 8
+        sw    $v0, -240($fp)
+        # *t67 = t66
+        lw    $t8, -240($fp)
+        lw    $t0, -236($fp)
+        sw    $t0, 0($t8)
+        # t69 = t67 ptr+ 4
+        lw    $t0, -240($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -244($fp)
+        # *t69 = t65
+        lw    $t8, -244($fp)
+        lw    $t0, -232($fp)
+        sw    $t0, 0($t8)
+        # t65 = t67
+        lw    $t0, -240($fp)
+        sw    $t0, -232($fp)
+        # t66 = t66 int+ 1
+        lw    $t0, -236($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -236($fp)
+        # goto 75
+        j     L3_75
+L3_84:
+        # t16 = t65
+        lw    $t0, -232($fp)
+        sw    $t0, -104($fp)
+        # list = t65
+        lw    $t0, -232($fp)
+        sw    $t0, -32($fp)
+        # t70 = t65
+        lw    $t0, -232($fp)
+        sw    $t0, -248($fp)
+        # t71 = 0
+        li    $t0, 0
+        sw    $t0, -252($fp)
+L3_88:
+        # if t70 ptr== 0 goto 94
+        lw    $t0, -248($fp)
+        beq   $t0, $zero, L3_94
+        # t72 = *t70
+        lw    $t8, -248($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -256($fp)
+        # t71 = t71 int+ t72
+        lw    $t0, -252($fp)
+        lw    $t1, -256($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -252($fp)
+        # t73 = t70 ptr+ 4
+        lw    $t0, -248($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -260($fp)
+        # t70 = *t73
+        lw    $t8, -260($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -248($fp)
+        # goto 88
+        j     L3_88
+L3_94:
         # param "list %d\n"
-        # param t17
+        # param t71
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -252($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # param t16
-        # call release(struct Node *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z7releaseP4Node
-        addiu $sp, $sp, 16
+        # t74 = t16
+        lw    $t0, -104($fp)
+        sw    $t0, -264($fp)
+L3_98:
+        # if t74 ptr== 0 goto 105
+        lw    $t0, -264($fp)
+        beq   $t0, $zero, L3_105
+        # t75 = t74 ptr+ 4
+        lw    $t0, -264($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -268($fp)
+        # t76 = *t75
+        lw    $t8, -268($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -272($fp)
+        # param t74
+        # call free, 1
+        addiu $sp, $sp, -8
+        lw    $t0, -264($fp)
+        sw    $t0, 0($sp)
+        jal   __free
+        addiu $sp, $sp, 8
+        # t74 = t76
+        lw    $t0, -272($fp)
+        sw    $t0, -264($fp)
+        # goto 98
+        j     L3_98
+L3_105:
         # param 64
         # dirty = call malloc, 1
         addiu $sp, $sp, -8
@@ -394,29 +605,40 @@ L3_36:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s3, $v0
+        sw    $v0, -36($fp)
         # k = 0
-        li    $s0, 0
-L3_62:
-        # if k int>= 16 goto 68
+        li    $t0, 0
+        sw    $t0, -24($fp)
+L3_108:
+        # if k int>= 16 goto 114
+        lw    $t0, -24($fp)
         li    $t1, 16
-        bge   $s0, $t1, L3_68
+        bge   $t0, $t1, L3_114
         # t19 = k int<< 2
-        sll   $s1, $s0, 2
+        lw    $t0, -24($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -108($fp)
         # t20 = dirty ptr+ t19
-        addu  $s2, $s3, $s1
+        lw    $t0, -36($fp)
+        lw    $t1, -108($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -112($fp)
         # *t20 = 99
+        lw    $t8, -112($fp)
         li    $t0, 99
-        sw    $t0, 0($s2)
+        sw    $t0, 0($t8)
         # k = k int+ 1
-        addiu $s0, $s0, 1
-        # goto 62
-        j     L3_62
-L3_68:
+        lw    $t0, -24($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -24($fp)
+        # goto 108
+        j     L3_108
+L3_114:
         # param dirty
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s3, 0($sp)
+        lw    $t0, -36($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # param 16
@@ -429,44 +651,61 @@ L3_68:
         sw    $t0, 4($sp)
         jal   __calloc
         addiu $sp, $sp, 8
-        move  $s5, $v0
+        sw    $v0, -40($fp)
         # nonzero = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -44($fp)
         # k = 0
-        li    $s0, 0
-L3_75:
-        # if k int>= 16 goto 83
+        li    $t0, 0
+        sw    $t0, -24($fp)
+L3_121:
+        # if k int>= 16 goto 129
+        lw    $t0, -24($fp)
         li    $t1, 16
-        bge   $s0, $t1, L3_83
+        bge   $t0, $t1, L3_129
         # t23 = k int<< 2
-        sll   $s2, $s0, 2
+        lw    $t0, -24($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -116($fp)
         # t24 = clean ptr+ t23
-        addu  $s3, $s5, $s2
+        lw    $t0, -40($fp)
+        lw    $t1, -116($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -120($fp)
         # t25 = *t24
-        lw    $s4, 0($s3)
-        # if t25 int== 0 goto 81
-        beq   $s4, $zero, L3_81
+        lw    $t8, -120($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -124($fp)
+        # if t25 int== 0 goto 127
+        lw    $t0, -124($fp)
+        beq   $t0, $zero, L3_127
         # nonzero = nonzero int+ 1
-        addiu $s1, $s1, 1
-L3_81:
+        lw    $t0, -44($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -44($fp)
+L3_127:
         # k = k int+ 1
-        addiu $s0, $s0, 1
-        # goto 75
-        j     L3_75
-L3_83:
+        lw    $t0, -24($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -24($fp)
+        # goto 121
+        j     L3_121
+L3_129:
         # param "calloc %d\n"
         # param nonzero
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str3
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -44($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
         # param clean
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s5, 0($sp)
+        lw    $t0, -40($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # param 16
@@ -476,101 +715,158 @@ L3_83:
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
-        move  $s5, $v0
+        sw    $v0, -48($fp)
         # n = 4
-        li    $s4, 4
+        li    $t0, 4
+        sw    $t0, -52($fp)
         # k = 0
-        li    $s0, 0
-L3_92:
-        # if k int>= 4 goto 98
+        li    $t0, 0
+        sw    $t0, -24($fp)
+L3_138:
+        # if k int>= 4 goto 144
+        lw    $t0, -24($fp)
         li    $t1, 4
-        bge   $s0, $t1, L3_98
+        bge   $t0, $t1, L3_144
         # t30 = k int<< 2
-        sll   $s1, $s0, 2
+        lw    $t0, -24($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -128($fp)
         # t31 = grow ptr+ t30
-        addu  $s2, $s5, $s1
+        lw    $t0, -48($fp)
+        lw    $t1, -128($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -132($fp)
         # *t31 = k
-        sw    $s0, 0($s2)
+        lw    $t8, -132($fp)
+        lw    $t0, -24($fp)
+        sw    $t0, 0($t8)
         # k = k int+ 1
-        addiu $s0, $s0, 1
-        # goto 92
-        j     L3_92
-L3_98:
-        # if n int>= 64 goto 114
+        lw    $t0, -24($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -24($fp)
+        # goto 138
+        j     L3_138
+L3_144:
+        # if n int>= 64 goto 160
+        lw    $t0, -52($fp)
         li    $t1, 64
-        bge   $s4, $t1, L3_114
+        bge   $t0, $t1, L3_160
         # t33 = n int<< 1
-        sll   $s6, $s4, 1
+        lw    $t0, -52($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -136($fp)
         # t34 = t33 uint<< 2
-        sll   $s7, $s6, 2
+        lw    $t0, -136($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -140($fp)
         # param grow
         # param t34
         # grow = call realloc, 2
         addiu $sp, $sp, -8
-        sw    $s5, 0($sp)
-        sw    $s7, 4($sp)
+        lw    $t0, -48($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -140($fp)
+        sw    $t0, 4($sp)
         jal   __realloc
         addiu $sp, $sp, 8
-        move  $s5, $v0
+        sw    $v0, -48($fp)
         # k = n
-        move  $s0, $s4
-L3_105:
+        lw    $t0, -52($fp)
+        sw    $t0, -24($fp)
+L3_151:
         # t36 = n int<< 1
-        sll   $s1, $s4, 1
-        # if k int>= t36 goto 112
-        bge   $s0, $s1, L3_112
+        lw    $t0, -52($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -144($fp)
+        # if k int>= t36 goto 158
+        lw    $t0, -24($fp)
+        lw    $t1, -144($fp)
+        bge   $t0, $t1, L3_158
         # t37 = k int<< 2
-        sll   $s2, $s0, 2
+        lw    $t0, -24($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -148($fp)
         # t38 = grow ptr+ t37
-        addu  $s3, $s5, $s2
+        lw    $t0, -48($fp)
+        lw    $t1, -148($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -152($fp)
         # *t38 = k
-        sw    $s0, 0($s3)
+        lw    $t8, -152($fp)
+        lw    $t0, -24($fp)
+        sw    $t0, 0($t8)
         # k = k int+ 1
-        addiu $s0, $s0, 1
-        # goto 105
-        j     L3_105
-L3_112:
+        lw    $t0, -24($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -24($fp)
+        # goto 151
+        j     L3_151
+L3_158:
         # n = n int<< 1
-        sll   $s4, $s4, 1
-        # goto 98
-        j     L3_98
-L3_114:
+        lw    $t0, -52($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -52($fp)
+        # goto 144
+        j     L3_144
+L3_160:
         # gsum = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -56($fp)
         # k = 0
-        li    $s0, 0
-L3_116:
-        # if k int>= n goto 123
-        bge   $s0, $s4, L3_123
+        li    $t0, 0
+        sw    $t0, -24($fp)
+L3_162:
+        # if k int>= n goto 169
+        lw    $t0, -24($fp)
+        lw    $t1, -52($fp)
+        bge   $t0, $t1, L3_169
         # t41 = k int<< 2
-        sll   $s2, $s0, 2
+        lw    $t0, -24($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -156($fp)
         # t42 = grow ptr+ t41
-        addu  $s3, $s5, $s2
+        lw    $t0, -48($fp)
+        lw    $t1, -156($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -160($fp)
         # t43 = *t42
-        lw    $s6, 0($s3)
+        lw    $t8, -160($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -164($fp)
         # gsum = gsum int+ t43
-        addu  $s1, $s1, $s6
+        lw    $t0, -56($fp)
+        lw    $t1, -164($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -56($fp)
         # k = k int+ 1
-        addiu $s0, $s0, 1
-        # goto 116
-        j     L3_116
-L3_123:
+        lw    $t0, -24($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -24($fp)
+        # goto 162
+        j     L3_162
+L3_169:
         # param grow
         # param 32
         # t47 = call realloc, 2
         addiu $sp, $sp, -8
-        sw    $s5, 0($sp)
+        lw    $t0, -48($fp)
+        sw    $t0, 0($sp)
         li    $t0, 32
         sw    $t0, 4($sp)
         jal   __realloc
         addiu $sp, $sp, 8
-        move  $s0, $v0
+        sw    $v0, -168($fp)
         # grow = t47
-        move  $s5, $s0
+        lw    $t0, -168($fp)
+        sw    $t0, -48($fp)
         # t48 = t47 ptr+ 28
-        addiu $s2, $s0, 28
+        lw    $t0, -168($fp)
+        addiu $t0, $t0, 28
+        sw    $t0, -172($fp)
         # t49 = *t48
-        lw    $s3, 0($s2)
+        lw    $t8, -172($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -176($fp)
         # param "realloc %d %d %d\n"
         # param n
         # param gsum
@@ -579,15 +875,19 @@ L3_123:
         addiu $sp, $sp, -16
         la    $t0, str4
         sw    $t0, 0($sp)
-        sw    $s4, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s3, 12($sp)
+        lw    $t0, -52($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -56($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -176($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # param t47
         # call free, 1
         addiu $sp, $sp, -8
-        sw    $s0, 0($sp)
+        lw    $t0, -168($fp)
+        sw    $t0, 0($sp)
         jal   __free
         addiu $sp, $sp, 8
         # param 0
@@ -600,14 +900,6 @@ L3_123:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -24($fp)
-        lw    $s2, -28($fp)
-        lw    $s3, -44($fp)
-        lw    $s4, -48($fp)
-        lw    $s5, -32($fp)
-        lw    $s6, -36($fp)
-        lw    $s7, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

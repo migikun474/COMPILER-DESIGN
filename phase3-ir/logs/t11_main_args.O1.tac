@@ -16,6 +16,7 @@
 
    instructions                           31 -> 25   (19% fewer)
 
+   calls inlined                           0
    constants folded                        0
    algebraic simplifications               2
    common subexpressions                   0
@@ -106,3 +107,13 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+1: alpha
+2: beta
+3 9
+
+   exit code 3, 83 instructions executed

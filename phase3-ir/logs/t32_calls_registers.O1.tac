@@ -4,7 +4,7 @@
 
    Source file   : test/t32_calls_registers.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 120 -> 117 instruction(s)
+   Result        : Optimized three address code (-O1): 120 -> 85 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          120 -> 117   (2% fewer)
+   instructions                          120 -> 85   (29% fewer)
 
-   constants folded                        0
+   calls inlined                          14
+   constants folded                       25
    algebraic simplifications               1
    common subexpressions                   0
-   copies / constants forwarded            9
-   temporaries merged away                 2
-   dead instructions removed               0
+   copies / constants forwarded           83
+   temporaries merged away                 3
+   dead instructions removed              64
    jumps removed or redirected             1
    unreachable instructions removed        0
 
@@ -145,7 +146,7 @@
  FUNCTION walk(int, int)        (link name _Z4walkii)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 7 temporaries, frame 48 bytes
+ Symbol table: 4 parameter(s)/local(s), 7 temporaries, frame 56 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -154,37 +155,36 @@
    before           local   int                             4       8
    r                local   int                             4      12
    t2               temp    int                             4      20
-   t3               temp    int                             4      24
    t4               temp    int                             4      28
    t5               temp    int                             4      32
    t6               temp    int                             4      36
    t7               temp    int                             4      40
    t8               temp    int                             4      44
-   (1 temporary no longer used after optimization not shown)
+   t10              temp    int                             4      52
+   (3 temporaries no longer used after optimization not shown)
 
- Code: 15 instruction(s)
+ Code: 14 instruction(s)
 
     125       before = acc int+ n
     126       if n int!= 0 goto L1
     127       return acc
     128  L1:  t2 = n int- 1
-    129       param n
-    130       t3 = call sq(int), 1
-    131       t4 = acc int+ t3
-    132       param t2
-    133       param t4
-    134       t5 = call walk(int, int), 2
-    135       r = t5
-    136       t6 = t5 int+ before
-    137       t7 = t6 int- acc
-    138       t8 = t7 int- n
-    139       return t8
+    129       t10 = n int* n
+    130       t4 = acc int+ t10
+    131       param t2
+    132       param t4
+    133       t5 = call walk(int, int), 2
+    134       r = t5
+    135       t6 = t5 int+ before
+    136       t7 = t6 int- acc
+    137       t8 = t7 int- n
+    138       return t8
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 7 parameter(s)/local(s), 16 temporaries, frame 148 bytes
+ Symbol table: 7 parameter(s)/local(s), 9 temporaries, frame 448 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -195,103 +195,65 @@
    keep5            local   int                             4      16
    s                local   int                             4      20
    p                local   struct Pair                    16      24
-   t1               temp    int                             4      40
-   t2               temp    double                          8      48
-   t3               temp    int                             4      56
-   t4               temp    int                             4      60
-   t5               temp    int                             4      64
-   t6               temp    int                             4      68
-   t7               temp    int                             4      72
-   t8               temp    int                             4      76
-   t9               temp    int                             4      80
-   t10              temp    int                             4      84
-   t11              temp    int                             4      88
-   t12              temp    int                             4      92
-   t13              temp    struct Pair                    16      96
    t15              temp    int                             4     128
    t16              temp    double                          8     136
    t17              temp    int                             4     144
-   (1 temporary no longer used after optimization not shown)
+   t68              temp    struct Pair                    16     392
+   t69              temp    struct Pair                    16     408
+   t70              temp    int                             4     424
+   t71              temp    int                             4     428
+   t72              temp    double                          8     432
+   t73              temp    double                          8     440
+   (64 temporaries no longer used after optimization not shown)
 
- Code: 77 instruction(s)
+ Code: 46 instruction(s)
 
-    140     param 1
-    141     param 2
-    142     param 3
-    143     param 4
-    144     param 5
-    145     param 6
-    146     t1 = call many(int, int, int, int, int, int), 6
-    147     param "%d\n"
-    148     param t1
-    149     call printf, 2
-    150     param 65
-    151     param 1.5
-    152     param 4
-    153     param 10000000000
-    154     t2 = call mixed(char, double, int, long long), 4
-    155     param "%.2f\n"
-    156     param t2
-    157     call printf, 2
-    158     param 1
-    159     t3 = call sq(int), 1
-    160     param 2
-    161     t4 = call sq(int), 1
-    162     param 3
-    163     t5 = call sq(int), 1
-    164     param 4
-    165     t6 = call sq(int), 1
-    166     param 5
-    167     t7 = call sq(int), 1
-    168     param 6
-    169     t8 = call sq(int), 1
-    170     param t3
-    171     param t4
-    172     param t5
-    173     param t6
-    174     param t7
-    175     param t8
-    176     t9 = call many(int, int, int, int, int, int), 6
-    177     param "%d\n"
-    178     param t9
-    179     call printf, 2
-    180     keep1 = 11
-    181     keep2 = 22
-    182     keep3 = 33
-    183     keep4 = 44
-    184     keep5 = 55
-    185     param 11
-    186     t10 = call sq(int), 1
-    187     param 22
-    188     t11 = call sq(int), 1
-    189     t12 = t10 int+ t11
-    190     s = t12
-    191     param "%d %d %d %d %d %d\n"
-    192     param t12
-    193     param 11
-    194     param 22
-    195     param 33
-    196     param 44
-    197     param 55
-    198     call printf, 7
-    199     param 3
-    200     param 1.25
-    201     t13 = call make(int, double), 2
-    202     param t13
-    203     p = call twice(struct Pair), 1
-    204     t15 = p[0]
-    205     t16 = p[8]
-    206     param "%d %.2f\n"
-    207     param t15
-    208     param t16
-    209     call printf, 3
-    210     param 10
-    211     param 0
-    212     t17 = call walk(int, int), 2
-    213     param "%d\n"
-    214     param t17
-    215     call printf, 2
-    216     return 0
+    139     param "%d\n"
+    140     param 12
+    141     call printf, 2
+    142     param "%.2f\n"
+    143     param 10000000071.0
+    144     call printf, 2
+    145     param "%d\n"
+    146     param 152
+    147     call printf, 2
+    148     keep1 = 11
+    149     keep2 = 22
+    150     keep3 = 33
+    151     keep4 = 44
+    152     keep5 = 55
+    153     s = 605
+    154     param "%d %d %d %d %d %d\n"
+    155     param 605
+    156     param 11
+    157     param 22
+    158     param 33
+    159     param 44
+    160     param 55
+    161     call printf, 7
+    162     t68[0] = 3
+    163     t68[8] = 1.25
+    164     t69 = t68
+    165     t70 = t69[0]
+    166     t71 = t70 int<< 1
+    167     t69[0] = t71
+    168     t72 = t69[8]
+    169     t73 = t72 double* 2.0
+    170     t69[8] = t73
+    171     p = t69
+    172     t15 = p[0]
+    173     t16 = p[8]
+    174     param "%d %.2f\n"
+    175     param t15
+    176     param t16
+    177     call printf, 3
+    178     param 10
+    179     param 0
+    180     t17 = call walk(int, int), 2
+    181     param "%d\n"
+    182     param t17
+    183     call printf, 2
+    184     return 0
 
 
 ----------------------------------------------------------------------------
@@ -377,3 +339,16 @@
 struct Pair: size 16, align 8
     +0  int x  [public]
     +8  double y  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+12
+10000000071.00
+152
+605 11 22 33 44 55
+6 2.50
+385
+
+   exit code 0, 179 instructions executed

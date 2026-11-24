@@ -4,7 +4,7 @@
 
    Source file   : test/t15_o3.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 122 -> 109 instruction(s)
+   Result        : Optimized three address code (-O1): 122 -> 113 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,16 +14,17 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          122 -> 109   (10% fewer)
+   instructions                          122 -> 113   (7% fewer)
 
-   constants folded                        2
+   calls inlined                           9
+   constants folded                        6
    algebraic simplifications               0
-   common subexpressions                   0
-   copies / constants forwarded            6
+   common subexpressions                   1
+   copies / constants forwarded           31
    temporaries merged away                 5
-   dead instructions removed               2
-   jumps removed or redirected             6
-   unreachable instructions removed        0
+   dead instructions removed              21
+   jumps removed or redirected             9
+   unreachable instructions removed        7
 
 ----------------------------------------------------------------------------
  GLOBALS: 1 object(s) in static storage
@@ -206,7 +207,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 5 parameter(s)/local(s), 16 temporaries, frame 104 bytes
+ Symbol table: 5 parameter(s)/local(s), 24 temporaries, frame 216 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -215,94 +216,106 @@
    p                local   struct P                        8       8
    x                local   int                             4      16
    t                local   int                             4      20
-   t1               temp    int                             4      24
-   t2               temp    int                             4      28
    t3               temp    int                             4      32
    t4               temp    int *                           4      36
-   t5               temp    int                             4      40
-   t7               temp    int                             4      48
-   t8               temp    int                             4      52
-   t9               temp    int                             4      56
    t10              temp    int                             4      60
    t11              temp    int                             4      64
    t12              temp    int                             4      68
    t13              temp    int                             4      72
-   t14              temp    int                             4      76
    t15              temp    int                             4      80
    t16              temp    int                             4      84
    t18              temp    int                             4      92
-   (4 temporaries no longer used after optimization not shown)
+   t22              temp    int                             4     108
+   t23              temp    int                             4     112
+   t26              temp    int                             4     124
+   t28              temp    int                             4     132
+   t29              temp    int                             4     136
+   t38              temp    struct P                        8     172
+   t39              temp    int                             4     180
+   t40              temp    int                             4     184
+   t41              temp    int                             4     188
+   t42              temp    int                             4     192
+   t43              temp    int                             4     196
+   t44              temp    int                             4     200
+   t45              temp    int                             4     204
+   t46              temp    int                             4     208
+   t47              temp    int                             4     212
+   (23 temporaries no longer used after optimization not shown)
 
- Code: 68 instruction(s)
+ Code: 72 instruction(s)
 
-    141       param 1
-    142       t1 = call counted(int), 1
-    143       param 1
-    144       t2 = call counted(int), 1
-    145       t3 = t1 int+ t2
-    146       r = t3
-    147       v = 3
-    148       t4 = &v
-    149       param t4
-    150       call inc(int &), 1
-    151       p[0] = 5
-    152       p[4] = 6
-    153       param 7
-    154       t5 = call sq(int), 1
-    155       param -4
-    156       param 0
-    157       param 9
-    158       t7 = call clamp(int, int, int), 3
-    159       param 50
-    160       param 0
-    161       param 9
-    162       t8 = call clamp(int, int, int), 3
-    163       param "%d %d %d %d %d\n"
-    164       param t5
-    165       param t7
-    166       param t8
-    167       param t3
-    168       param calls
-    169       call printf, 6
-    170       param p
-    171       t9 = call sumP(struct P), 1
-    172       t10 = p[0]
-    173       param 6
-    174       t11 = call fact(int), 1
-    175       param "%d %d %d %d\n"
-    176       param v
-    177       param t9
-    178       param t10
-    179       param t11
-    180       call printf, 5
-    181       param 7
-    182       param 3
-    183       t12 = call down(int, int), 2
-    184       param 0
-    185       param 0
-    186       t13 = call divide(int, int), 2
-    187       param 3
-    188       param 4
-    189       t14 = call divide(int, int), 2
-    190       param "%d %d %d\n"
-    191       param t12
-    192       param t13
-    193       param t14
-    194       call printf, 4
-    195       t15 = v int* 3
-    196       x = t15
-    197       if t15 int<= 10 goto L8
-    198       t16 = v int* 3
-    199       t = t16 int+ 1
-    200       goto L9
-    201  L8:  t18 = v int* 3
-    202       t = t18 int- 1
-    203  L9:  v = 100
-    204       param "%d %d\n"
-    205       param t
-    206       param 300
-    207       call printf, 3
-    208       return 0
+    141        t22 = calls int+ 1
+    142        calls = t22
+    143        t23 = 1 int+ t22
+    144        calls = t23
+    145        t26 = 1 int+ t23
+    146        t3 = t23 int+ t26
+    147        r = t3
+    148        v = 3
+    149        t4 = &v
+    150        t28 = *t4
+    151        t29 = t28 int+ 1
+    152        *t4 = t29
+    153        p[0] = 5
+    154        p[4] = 6
+    155        param "%d %d %d %d %d\n"
+    156        param 49
+    157        param 0
+    158        param 9
+    159        param t3
+    160        param calls
+    161        call printf, 6
+    162        t38 = p
+    163        t38[0] = 0
+    164        t39 = t38[4]
+    165        t10 = p[0]
+    166        param 6
+    167        t11 = call fact(int), 1
+    168        param "%d %d %d %d\n"
+    169        param v
+    170        param t39
+    171        param t10
+    172        param t11
+    173        call printf, 5
+    174        param 7
+    175        param 3
+    176        t12 = call down(int, int), 2
+    177        t40 = 0
+    178        t41 = 0
+    179        t42 = 0
+    180  L8:   if t40 int<= 0 goto L9
+    181        t43 = 100 int/ t41
+    182        t42 = t42 int+ t43
+    183        t40 = t40 int- 1
+    184        goto L8
+    185  L9:   t13 = t42
+    186        t44 = 3
+    187        t45 = 4
+    188        t46 = 0
+    189  L10:  if t44 int<= 0 goto L11
+    190        t47 = 100 int/ t45
+    191        t46 = t46 int+ t47
+    192        t44 = t44 int- 1
+    193        goto L10
+    194  L11:  param "%d %d %d\n"
+    195        param t12
+    196        param t13
+    197        param t46
+    198        call printf, 4
+    199        t15 = v int* 3
+    200        x = t15
+    201        if t15 int<= 10 goto L12
+    202        t16 = v int* 3
+    203        t = t16 int+ 1
+    204        goto L13
+    205  L12:  t18 = v int* 3
+    206        t = t18 int- 1
+    207  L13:  v = 100
+    208        param "%d %d\n"
+    209        param t
+    210        param 300
+    211        call printf, 3
+    212        return 0
 
 
 ----------------------------------------------------------------------------
@@ -391,3 +404,14 @@
 struct P: size 8, align 4
     +0  int a  [public]
     +4  int b  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+49 0 9 5 2
+4 6 5 720
+4 0 75
+13 300
+
+   exit code 0, 134 instructions executed

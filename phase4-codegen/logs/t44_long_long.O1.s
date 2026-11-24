@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t44_long_long.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -19,9 +19,7 @@ str3:
 str4:
         .byte 37, 46, 48, 102, 32, 37, 108, 108, 100, 10, 0
         .align 3
-fc0:  .word 0, 1106247680        # 4.29497e+09
-        .align 3
-fc1:  .word 0, 1074266112        # 3
+fc0:  .word 138780160, 1121718823        # 1.23457e+14
 
         .text
         .globl main
@@ -43,55 +41,41 @@ _Z6mulAddxxx:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -4($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -8($fp)
-        sw    $s3, -24($fp)
-        sw    $s4, -12($fp)
-        sw    $s5, -28($fp)
-        sw    $s6, -16($fp)
-        sw    $s7, -32($fp)
+        addiu $sp, $sp, -16
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         sw    $a2, 16($fp)
         sw    $a3, 20($fp)
-        lw    $s2, 8($fp)
-        lw    $s3, 12($fp)
-        lw    $s4, 16($fp)
-        lw    $s5, 20($fp)
-        lw    $s6, 24($fp)
-        lw    $s7, 28($fp)
         # t1 = a llong* b
-        multu $s2, $s4
+        lw    $t0, 8($fp)
+        lw    $t1, 12($fp)
+        lw    $t2, 16($fp)
+        lw    $t3, 20($fp)
+        multu $t0, $t2
         mflo  $t4
         mfhi  $t5
-        mul   $t6, $s2, $s5
+        mul   $t6, $t0, $t3
         addu  $t5, $t5, $t6
-        mul   $t6, $s3, $s4
+        mul   $t6, $t1, $t2
         addu  $t6, $t5, $t6
-        move  $s0, $t4
-        move  $s1, $t6
+        sw    $t4, -8($fp)
+        sw    $t6, -4($fp)
         # t2 = t1 llong+ c
-        addu  $t4, $s0, $s6
-        sltu  $t5, $t4, $s0
-        addu  $t6, $s1, $s7
+        lw    $t0, -8($fp)
+        lw    $t1, -4($fp)
+        lw    $t2, 24($fp)
+        lw    $t3, 28($fp)
+        addu  $t4, $t0, $t2
+        sltu  $t5, $t4, $t0
+        addu  $t6, $t1, $t3
         addu  $t6, $t6, $t5
-        move  $s2, $t4
-        move  $s3, $t6
+        sw    $t4, -16($fp)
+        sw    $t6, -12($fp)
         # return t2
-        move  $v0, $s2
-        move  $v1, $s3
+        lw    $v0, -16($fp)
+        lw    $v1, -12($fp)
         j     _Z6mulAddxxx_exit
 _Z6mulAddxxx_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -8($fp)
-        lw    $s3, -24($fp)
-        lw    $s4, -12($fp)
-        lw    $s5, -28($fp)
-        lw    $s6, -16($fp)
-        lw    $s7, -32($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -103,26 +87,22 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -48
+        addiu $sp, $sp, -80
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M1_1
+        beqz  $t8, M1_0
         j     __stack_overflow
-M1_1:
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        sw    $s0, -4($fp)
-        sw    $s1, -36($fp)
-        sw    $s2, -8($fp)
-        sw    $s3, -40($fp)
-        sw    $s4, -12($fp)
-        sw    $s5, -44($fp)
+M1_0:
         # a = 4294967295
-        li    $s0, -1
-        li    $s1, 0
+        li    $t0, -1
+        li    $t1, 0
+        sw    $t0, -8($fp)
+        sw    $t1, -4($fp)
         # b = 1
-        li    $s0, 1
-        li    $s1, 0
+        li    $t0, 1
+        li    $t1, 0
+        sw    $t0, -16($fp)
+        sw    $t1, -12($fp)
         # param "%lld %lld\n"
         # param 4294967296
         # param -4294967296
@@ -140,69 +120,38 @@ M1_1:
         sw    $t1, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param 123456789
-        # param 1000003
-        # param -7
-        # t5 = call mulAdd(long long, long long, long long), 3
-        addiu $sp, $sp, -24
-        li    $t0, 123456789
-        li    $t1, 0
-        sw    $t0, 0($sp)
-        sw    $t1, 4($sp)
-        li    $t0, 1000003
-        li    $t1, 0
-        sw    $t0, 8($sp)
-        sw    $t1, 12($sp)
-        li    $t0, -7
-        li    $t1, -1
-        sw    $t0, 16($sp)
-        sw    $t1, 20($sp)
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        lw    $a2, 8($sp)
-        lw    $a3, 12($sp)
-        jal   _Z6mulAddxxx
-        addiu $sp, $sp, 24
-        move  $s0, $v0
-        move  $s1, $v1
-        # m = t5
-        move  $s2, $s0
-        move  $s3, $s1
-        # t7 = t5 llong/ -1000
-        move  $a0, $s0
-        move  $a1, $s1
-        li    $a2, -1000
-        li    $a3, -1
-        jal   __divll
-        move  $s2, $v0
-        move  $s3, $v1
-        # t8 = t5 llong% 1000
-        move  $a0, $s0
-        move  $a1, $s1
-        li    $a2, 1000
-        li    $a3, 0
-        jal   __modll
-        move  $s4, $v0
-        move  $s5, $v1
+        # m = 123457159370360
+        li    $t0, -1675553160
+        li    $t1, 28744
+        sw    $t0, -24($fp)
+        sw    $t1, -20($fp)
         # param "%lld %lld %lld\n"
-        # param t5
-        # param t7
-        # param t8
+        # param 123457159370360
+        # param -123457159370
+        # param 360
         # call printf, 4
         addiu $sp, $sp, -32
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 8($sp)
-        sw    $s1, 12($sp)
-        sw    $s2, 16($sp)
-        sw    $s3, 20($sp)
-        sw    $s4, 24($sp)
-        sw    $s5, 28($sp)
+        li    $t0, -1675553160
+        li    $t1, 28744
+        sw    $t0, 8($sp)
+        sw    $t1, 12($sp)
+        li    $t0, 1096892214
+        li    $t1, -29
+        sw    $t0, 16($sp)
+        sw    $t1, 20($sp)
+        li    $t0, 360
+        li    $t1, 0
+        sw    $t0, 24($sp)
+        sw    $t1, 28($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # x = 1
-        li    $s2, 1
-        li    $s3, 0
+        li    $t0, 1
+        li    $t1, 0
+        sw    $t0, -32($fp)
+        sw    $t1, -28($fp)
         # param "%lld %lld %lld\n"
         # param 2147483648
         # param 4294967296
@@ -226,8 +175,10 @@ M1_1:
         jal   __printf
         addiu $sp, $sp, 32
         # neg = -1000000000000
-        li    $s2, 727379968
-        li    $s3, -233
+        li    $t0, 727379968
+        li    $t1, -233
+        sw    $t0, -40($fp)
+        sw    $t1, -36($fp)
         # param "%lld %lld\n"
         # param -62500000000
         # param -142857142857
@@ -246,8 +197,10 @@ M1_1:
         jal   __printf
         addiu $sp, $sp, 24
         # big = 18446744073709551615
-        li    $s2, -1
-        li    $s3, -1
+        li    $t0, -1
+        li    $t1, -1
+        sw    $t0, -48($fp)
+        sw    $t1, -44($fp)
         # param "%llu %llu\n"
         # param 18446744073709551615
         # param 6148914691236517205
@@ -281,91 +234,42 @@ M1_1:
         sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t20 = llongtodouble t5
-        move  $t0, $s0
-        move  $t1, $s1
-        mtc1  $t1, $f0
-        cvt.d.w $f0, $f0
-        l.d   $f4, fc0
-        mul.d $f6, $f0, $f4
-        mtc1  $t0, $f0
-        cvt.d.w $f0, $f0
-        bgez  $t0, M1_0
-        l.d   $f2, fc0
-        add.d $f0, $f0, $f2
-M1_0:
-        add.d $f0, $f0, $f6
-        mov.d $f20, $f0
-        # dd = t20
-        mov.d $f22, $f20
-        # t21 = t20 double/ 3.0
-        l.d   $f2, fc1
-        div.d $f22, $f20, $f2
-        # t22 = doubletollong t21
-        mov.d $f0, $f22
-        mov.d $f12, $f0
-        jal   __dtoll
-        move  $s0, $v0
-        move  $s1, $v1
-        # back = t22
-        move  $s2, $s0
-        move  $s3, $s1
+        # dd = 1.2345715937036e+14
+        l.d   $f0, fc0
+        s.d   $f0, -56($fp)
+        # back = 41152386456786
+        li    $t0, -1990173486
+        li    $t1, 9581
+        sw    $t0, -64($fp)
+        sw    $t1, -60($fp)
         # param "%.0f %lld\n"
-        # param t20
-        # param t22
+        # param 1.2345715937036e+14
+        # param 41152386456786
         # call printf, 3
         addiu $sp, $sp, -24
         la    $t0, str4
         sw    $t0, 0($sp)
-        mov.d $f0, $f20
+        l.d   $f0, fc0
         s.d   $f0, 8($sp)
-        sw    $s0, 16($sp)
-        sw    $s1, 20($sp)
+        li    $t0, -1990173486
+        li    $t1, 9581
+        sw    $t0, 16($sp)
+        sw    $t1, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
         # keep = 9000000000
-        li    $s0, 410065408
-        li    $s1, 2
-        # param 2
-        # param 3
-        # param 4
-        # t23 = call mulAdd(long long, long long, long long), 3
-        addiu $sp, $sp, -24
-        li    $t0, 2
+        li    $t0, 410065408
+        li    $t1, 2
+        sw    $t0, -72($fp)
+        sw    $t1, -68($fp)
+        # r = 10
+        li    $t0, 10
         li    $t1, 0
-        sw    $t0, 0($sp)
-        sw    $t1, 4($sp)
-        li    $t0, 3
-        li    $t1, 0
-        sw    $t0, 8($sp)
-        sw    $t1, 12($sp)
-        li    $t0, 4
-        li    $t1, 0
-        sw    $t0, 16($sp)
-        sw    $t1, 20($sp)
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        lw    $a2, 8($sp)
-        lw    $a3, 12($sp)
-        jal   _Z6mulAddxxx
-        addiu $sp, $sp, 24
-        move  $s0, $v0
-        move  $s1, $v1
-        # r = t23
-        move  $s2, $s0
-        move  $s3, $s1
-        # t24 = t23 llong+ 9000000000
-        li    $t2, 410065408
-        li    $t3, 2
-        addu  $t4, $s0, $t2
-        sltu  $t5, $t4, $s0
-        addu  $t6, $s1, $t3
-        addu  $t6, $t6, $t5
-        move  $s2, $t4
-        move  $s3, $t6
+        sw    $t0, -80($fp)
+        sw    $t1, -76($fp)
         # param "%lld %lld\n"
         # param 9000000000
-        # param t24
+        # param 9000000010
         # call printf, 3
         addiu $sp, $sp, -24
         la    $t0, str0
@@ -374,22 +278,16 @@ M1_0:
         li    $t1, 2
         sw    $t0, 8($sp)
         sw    $t1, 12($sp)
-        sw    $s2, 16($sp)
-        sw    $s3, 20($sp)
+        li    $t0, 410065418
+        li    $t1, 2
+        sw    $t0, 16($sp)
+        sw    $t1, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        lw    $s0, -4($fp)
-        lw    $s1, -36($fp)
-        lw    $s2, -8($fp)
-        lw    $s3, -40($fp)
-        lw    $s4, -12($fp)
-        lw    $s5, -44($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

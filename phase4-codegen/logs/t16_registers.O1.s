@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t16_registers.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -58,55 +58,62 @@ _Z5depthi:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -12($fp)
-        sw    $s3, -16($fp)
-        sw    $s4, -20($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
         # a = n
-        move  $s4, $s0
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # b = n int<< 1
-        sll   $s2, $s0, 1
+        lw    $t0, 8($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -8($fp)
         # c = n int* 3
+        lw    $t0, 8($fp)
         li    $t1, 3
-        mul   $s3, $s0, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -12($fp)
         # if n int!= 0 goto 5
-        bne   $s0, $zero, L0_5
+        lw    $t0, 8($fp)
+        bne   $t0, $zero, L0_5
         # return 0
         li    $v0, 0
         j     _Z5depthi_exit
 L0_5:
         # t3 = n int- 1
-        addiu $s1, $s0, -1
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, -1
+        sw    $t0, -16($fp)
         # param t3
         # t4 = call depth(int), 1
         addiu $sp, $sp, -16
-        move  $a0, $s1
+        lw    $a0, -16($fp)
         jal   _Z5depthi
         addiu $sp, $sp, 16
-        move  $s0, $v0
+        sw    $v0, -20($fp)
         # t5 = t4 int+ a
-        addu  $s1, $s0, $s4
+        lw    $t0, -20($fp)
+        lw    $t1, -4($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -24($fp)
         # t6 = t5 int+ b
-        addu  $s0, $s1, $s2
+        lw    $t0, -24($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -28($fp)
         # t7 = t6 int+ c
-        addu  $s1, $s0, $s3
+        lw    $t0, -28($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -32($fp)
         # return t7
-        move  $v0, $s1
+        lw    $v0, -32($fp)
         j     _Z5depthi_exit
 _Z5depthi_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -12($fp)
-        lw    $s3, -16($fp)
-        lw    $s4, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -119,31 +126,33 @@ _Z5threeiii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        sw    $s2, -12($fp)
-        sw    $s3, -16($fp)
-        move  $s1, $a0
-        move  $s2, $a1
-        move  $s3, $a2
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = a int* 100
+        lw    $t0, 8($fp)
         li    $t1, 100
-        mul   $s0, $s1, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -4($fp)
         # t2 = b int* 10
+        lw    $t0, 12($fp)
         li    $t1, 10
-        mul   $s1, $s2, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -8($fp)
         # t3 = t1 int+ t2
-        addu  $s2, $s0, $s1
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -12($fp)
         # t4 = t3 int+ c
-        addu  $s0, $s2, $s3
+        lw    $t0, -12($fp)
+        lw    $t1, 16($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -16($fp)
         # return t4
-        move  $v0, $s0
+        lw    $v0, -16($fp)
         j     _Z5threeiii_exit
 _Z5threeiii_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -12($fp)
-        lw    $s3, -16($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -154,24 +163,24 @@ _Z5twiceRi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -12($fp)
-        move  $s2, $a0
+        addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = *x
-        lw    $s1, 0($s2)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -4($fp)
         # t2 = t1 int<< 1
-        sll   $s0, $s1, 1
+        lw    $t0, -4($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -8($fp)
         # *x = t2
-        sw    $s0, 0($s2)
+        lw    $t8, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # return t2
-        move  $v0, $s0
+        lw    $v0, -8($fp)
         j     _Z5twiceRi_exit
 _Z5twiceRi_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -183,56 +192,59 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -64
+        addiu $sp, $sp, -224
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        s.d   $f20, -64($fp)
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -52($fp)
-        sw    $s4, -36($fp)
-        sw    $s5, -40($fp)
-        sw    $s6, -44($fp)
-        sw    $s7, -48($fp)
         # v1 = 1
-        li    $s0, 1
+        li    $t0, 1
+        sw    $t0, -4($fp)
         # v2 = 2
         li    $t0, 2
-        sw    $t0, -4($fp)
+        sw    $t0, -8($fp)
         # v3 = 3
-        li    $s0, 3
+        li    $t0, 3
+        sw    $t0, -12($fp)
         # v4 = 4
-        li    $s0, 4
+        li    $t0, 4
+        sw    $t0, -16($fp)
         # v5 = 5
-        li    $s0, 5
+        li    $t0, 5
+        sw    $t0, -20($fp)
         # v6 = 6
-        li    $s0, 6
+        li    $t0, 6
+        sw    $t0, -24($fp)
         # v7 = 7
-        li    $s0, 7
+        li    $t0, 7
+        sw    $t0, -28($fp)
         # v8 = 8
-        li    $s0, 8
+        li    $t0, 8
+        sw    $t0, -32($fp)
         # v9 = 9
         li    $t0, 9
-        sw    $t0, -8($fp)
+        sw    $t0, -36($fp)
         # v10 = 10
-        li    $s0, 10
+        li    $t0, 10
+        sw    $t0, -40($fp)
         # param 5
         # t1 = call depth(int), 1
         addiu $sp, $sp, -16
         li    $a0, 5
         jal   _Z5depthi
         addiu $sp, $sp, 16
-        move  $s0, $v0
+        sw    $v0, -140($fp)
         # s = t1
-        move  $s2, $s0
+        lw    $t0, -140($fp)
+        sw    $t0, -44($fp)
         # t11 = t1 int+ 190
-        addiu $s1, $s0, 190
+        lw    $t0, -140($fp)
+        addiu $t0, $t0, 190
+        sw    $t0, -144($fp)
         # s = t11
-        move  $s2, $s1
+        lw    $t0, -144($fp)
+        sw    $t0, -44($fp)
         # param "%d %d %d\n"
         # param t11
         # param 11
@@ -241,7 +253,8 @@ M3_0:
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -144($fp)
+        sw    $t0, 4($sp)
         li    $t0, 11
         sw    $t0, 8($sp)
         li    $t0, 30
@@ -250,102 +263,128 @@ M3_0:
         addiu $sp, $sp, 16
         # x = 3
         li    $t0, 3
-        sw    $t0, -12($fp)
+        sw    $t0, -48($fp)
         # t14 = &x
-        addiu $s1, $fp, -12
-        # param t14
-        # t15 = call twice(int &), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        jal   _Z5twiceRi
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # tw = t15
-        move  $s1, $s0
+        addiu $t0, $fp, -48
+        sw    $t0, -148($fp)
+        # t43 = *t14
+        lw    $t8, -148($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -204($fp)
+        # t44 = t43 int<< 1
+        lw    $t0, -204($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -208($fp)
+        # *t14 = t44
+        lw    $t8, -148($fp)
+        lw    $t0, -208($fp)
+        sw    $t0, 0($t8)
+        # tw = t44
+        lw    $t0, -208($fp)
+        sw    $t0, -52($fp)
         # t16 = x int+ 1
-        lw    $t0, -12($fp)
-        addiu $s2, $t0, 1
-        # param x
-        # param t15
-        # param t16
-        # t17 = call three(int, int, int), 3
-        addiu $sp, $sp, -16
-        lw    $a0, -12($fp)
-        move  $a1, $s0
-        move  $a2, $s2
-        jal   _Z5threeiii
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # r = t17
-        move  $s0, $s1
+        lw    $t0, -48($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -152($fp)
+        # t48 = x int* 100
+        lw    $t0, -48($fp)
+        li    $t1, 100
+        mul   $t0, $t0, $t1
+        sw    $t0, -212($fp)
+        # t49 = t44 int* 10
+        lw    $t0, -208($fp)
+        li    $t1, 10
+        mul   $t0, $t0, $t1
+        sw    $t0, -216($fp)
+        # t50 = t48 int+ t49
+        lw    $t0, -212($fp)
+        lw    $t1, -216($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -220($fp)
+        # t51 = t50 int+ t16
+        lw    $t0, -220($fp)
+        lw    $t1, -152($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -224($fp)
+        # r = t51
+        lw    $t0, -224($fp)
+        sw    $t0, -56($fp)
         # param "%d\n"
-        # param t17
+        # param t51
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -224($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
         # c = 120
-        li    $s2, 120
+        li    $t0, 120
+        sb    $t0, -57($fp)
         # uc = 250
-        li    $s3, 250
+        li    $t0, 250
+        sb    $t0, -58($fp)
         # sh = 32760
-        li    $s1, 32760
+        li    $t0, 32760
+        sh    $t0, -60($fp)
         # i = 0
-        li    $s0, 0
-L3_38:
-        # if i int>= 10 goto 50
+        li    $t0, 0
+        sw    $t0, -64($fp)
+L3_39:
+        # if i int>= 10 goto 51
+        lw    $t0, -64($fp)
         li    $t1, 10
-        bge   $s0, $t1, L3_50
+        bge   $t0, $t1, L3_51
         # t18 = chartoint c
-        move  $t0, $s2
-        move  $s4, $t0
+        lb    $t0, -57($fp)
+        sw    $t0, -156($fp)
         # t19 = t18 int+ 1
-        addiu $s5, $s4, 1
-        # c = inttochar t19
-        move  $t0, $s5
-        move  $s2, $t0
-        sll   $s2, $s2, 24
-        sra   $s2, $s2, 24
-        # t21 = uchartoint uc
-        move  $t0, $s3
-        move  $s6, $t0
-        # t22 = t21 int+ 1
-        addiu $s7, $s6, 1
-        # uc = inttouchar t22
-        move  $t0, $s7
-        move  $s3, $t0
-        andi  $s3, $s3, 255
-        # t24 = shorttoint sh
-        move  $t0, $s1
-        sw    $t0, -16($fp)
-        # t25 = t24 int+ 1
+        lw    $t0, -156($fp)
         addiu $t0, $t0, 1
-        sw    $t0, -20($fp)
+        sw    $t0, -160($fp)
+        # c = inttochar t19
+        lw    $t0, -160($fp)
+        sb    $t0, -57($fp)
+        # t21 = uchartoint uc
+        lbu   $t0, -58($fp)
+        sw    $t0, -164($fp)
+        # t22 = t21 int+ 1
+        lw    $t0, -164($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -168($fp)
+        # uc = inttouchar t22
+        lw    $t0, -168($fp)
+        sb    $t0, -58($fp)
+        # t24 = shorttoint sh
+        lh    $t0, -60($fp)
+        sw    $t0, -172($fp)
+        # t25 = t24 int+ 1
+        lw    $t0, -172($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -176($fp)
         # sh = inttoshort t25
-        move  $s1, $t0
-        sll   $s1, $s1, 16
-        sra   $s1, $s1, 16
+        lw    $t0, -176($fp)
+        sh    $t0, -60($fp)
         # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 38
-        j     L3_38
-L3_50:
+        lw    $t0, -64($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -64($fp)
+        # goto 39
+        j     L3_39
+L3_51:
         # t28 = chartoint c
-        move  $t0, $s2
-        move  $s0, $t0
+        lb    $t0, -57($fp)
+        sw    $t0, -180($fp)
         # t29 = uchartoint uc
-        move  $t0, $s3
-        move  $s2, $t0
+        lbu   $t0, -58($fp)
+        sw    $t0, -184($fp)
         # t30 = shorttoint sh
-        move  $t0, $s1
-        move  $s3, $t0
+        lh    $t0, -60($fp)
+        sw    $t0, -188($fp)
         # t31 = ushorttouint sh
-        move  $t0, $s1
-        andi  $t0, $t0, 65535
-        move  $s4, $t0
+        lhu   $t0, -60($fp)
+        sw    $t0, -192($fp)
         # param "%d %d %d %u\n"
         # param t28
         # param t29
@@ -355,28 +394,40 @@ L3_50:
         addiu $sp, $sp, -24
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s3, 12($sp)
-        sw    $s4, 16($sp)
+        lw    $t0, -180($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -184($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -188($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -192($fp)
+        sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
         # d1 = 1.5
-        l.d   $f20, fc0
+        l.d   $f0, fc0
+        s.d   $f0, -72($fp)
         # d2 = 2.5
-        l.d   $f20, fc1
+        l.d   $f0, fc1
+        s.d   $f0, -80($fp)
         # d3 = 3.5
-        l.d   $f20, fc2
+        l.d   $f0, fc2
+        s.d   $f0, -88($fp)
         # d4 = 4.5
-        l.d   $f20, fc3
+        l.d   $f0, fc3
+        s.d   $f0, -96($fp)
         # d5 = 5.5
-        l.d   $f20, fc4
+        l.d   $f0, fc4
+        s.d   $f0, -104($fp)
         # d6 = 6.5
-        l.d   $f20, fc5
+        l.d   $f0, fc5
+        s.d   $f0, -112($fp)
         # d7 = 7.5
-        l.d   $f20, fc6
+        l.d   $f0, fc6
+        s.d   $f0, -120($fp)
         # dt = 62.75
-        l.d   $f20, fc7
+        l.d   $f0, fc7
+        s.d   $f0, -128($fp)
         # param "%.2f %.2f\n"
         # param 62.75
         # param 9.0
@@ -391,22 +442,33 @@ L3_50:
         jal   __printf
         addiu $sp, $sp, 24
         # n = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -132($fp)
         # t = 0
-        li    $s2, 0
-L3_74:
+        li    $t0, 0
+        sw    $t0, -136($fp)
+L3_75:
         # t39 = n int* v2
-        lw    $t1, -4($fp)
-        mul   $s3, $s0, $t1
+        lw    $t0, -132($fp)
+        lw    $t1, -8($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -196($fp)
         # t = t int+ t39
-        addu  $s2, $s2, $s3
+        lw    $t0, -136($fp)
+        lw    $t1, -196($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -136($fp)
         # t41 = n int+ 1
-        addiu $s1, $s0, 1
+        lw    $t0, -132($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -200($fp)
         # n = t41
-        move  $s0, $s1
-        # if t41 int< 5 goto 74
+        lw    $t0, -200($fp)
+        sw    $t0, -132($fp)
+        # if t41 int< 5 goto 75
+        lw    $t0, -200($fp)
         li    $t1, 5
-        blt   $s1, $t1, L3_74
+        blt   $t0, $t1, L3_75
         # param "%d %d\n"
         # param t
         # param v9
@@ -414,8 +476,9 @@ L3_74:
         addiu $sp, $sp, -16
         la    $t0, str4
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
-        lw    $t0, -8($fp)
+        lw    $t0, -136($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -36($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
@@ -423,15 +486,6 @@ L3_74:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -64($fp)
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -52($fp)
-        lw    $s4, -36($fp)
-        lw    $s5, -40($fp)
-        lw    $s6, -44($fp)
-        lw    $s7, -48($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

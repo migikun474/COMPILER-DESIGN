@@ -1,5 +1,7 @@
 # Advanced Compiler Feature Analysis
 
+> **Note (2026-11-24, D49):** this analysis predates D49, which cut the optimizer down to a single `-O1` level (local value numbering, temporary merging, dead temporaries, jump clean-up, inlining) and removed register allocation and the peephole pass from the MIPS back end. Rows below that describe `-O2`/`-O3` passes, `assignRegisters()` or `peephole()` describe the earlier compiler.
+
 > **Historical snapshot.** This analysis describes the compiler as it was
 > on 2026-10-31. Since then the preprocessor (D34), most of the C++
 > subset — destructors, constructors with parameters, virtual functions,

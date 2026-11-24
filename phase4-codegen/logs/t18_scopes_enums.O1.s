@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t18_scopes_enums.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -102,43 +102,33 @@ _Z7globalXv_exit:
 # hide(int)
 _Z4hidei:
         addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        lw    $t8, __stack_limit
-        sltu  $t8, $sp, $t8
-        beqz  $t8, M3_0
-        j     __stack_overflow
-M3_0:
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        sw    $s2, -12($fp)
-        move  $s1, $a0
+        sw    $a0, 8($fp)
         # r = x.3
-        move  $s2, $s1
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # x.5 = 50
-        li    $s0, 50
+        li    $t0, 50
+        sw    $t0, -8($fp)
         # t1 = x.3 int+ 50
-        addiu $s0, $s1, 50
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 50
+        sw    $t0, -12($fp)
         # r = t1
-        move  $s2, $s0
-        # t2 = call globalX(), 0
-        addiu $sp, $sp, -16
-        jal   _Z7globalXv
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # t3 = t1 int+ t2
-        addu  $s2, $s0, $s1
+        lw    $t0, -12($fp)
+        sw    $t0, -4($fp)
+        # t3 = t1 int+ x
+        lw    $t0, -12($fp)
+        lw    $t1, g_x
+        addu  $t0, $t0, $t1
+        sw    $t0, -16($fp)
         # return t3
-        move  $v0, $s2
+        lw    $v0, -16($fp)
         j     _Z4hidei_exit
 _Z4hidei_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -12($fp)
         move  $sp, $fp
-        lw    $ra, 4($sp)
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
         jr    $ra
@@ -149,18 +139,17 @@ _Z6countAv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
         # t1 = n.6 int+ 1
         lw    $t0, g_n_6
-        addiu $s0, $t0, 1
+        addiu $t0, $t0, 1
+        sw    $t0, -4($fp)
         # n.6 = t1
-        move  $t0, $s0
+        lw    $t0, -4($fp)
         sw    $t0, g_n_6
         # return t1
-        move  $v0, $s0
+        lw    $v0, -4($fp)
         j     _Z6countAv_exit
 _Z6countAv_exit:
-        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -172,18 +161,17 @@ _Z6countBv:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
         # t1 = n.7 int+ 1
         lw    $t0, g_n_7
-        addiu $s0, $t0, 1
+        addiu $t0, $t0, 1
+        sw    $t0, -4($fp)
         # n.7 = t1
-        move  $t0, $s0
+        lw    $t0, -4($fp)
         sw    $t0, g_n_7
         # return t1
-        move  $v0, $s0
+        lw    $v0, -4($fp)
         j     _Z6countBv_exit
 _Z6countBv_exit:
-        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -195,11 +183,10 @@ _Z4name5Color:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
-        move  $s1, $a0
+        sw    $a0, 8($fp)
         # t1 = c
-        move  $s0, $s1
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # goto 5
         j     L6_5
 L6_2:
@@ -216,15 +203,15 @@ L6_4:
         j     _Z4name5Color_exit
 L6_5:
         # if t1 int== 0 goto 2
-        beq   $s0, $zero, L6_2
+        lw    $t0, -4($fp)
+        beq   $t0, $zero, L6_2
         # if t1 int== 5 goto 3
+        lw    $t0, -4($fp)
         li    $t1, 5
-        beq   $s0, $t1, L6_3
+        beq   $t0, $t1, L6_3
         # goto 4
         j     L6_4
 _Z4name5Color_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -236,31 +223,28 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
+        addiu $sp, $sp, -104
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M7_0
         j     __stack_overflow
 M7_0:
-        s.d   $f20, -24($fp)
-        sw    $s0, -16($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -32($fp)
-        sw    $s3, -36($fp)
-        sw    $s4, -40($fp)
-        # param 3
-        # t1 = call hide(int), 1
+        # t18 = call globalX(), 0
         addiu $sp, $sp, -16
-        li    $a0, 3
-        jal   _Z4hidei
+        jal   _Z7globalXv
         addiu $sp, $sp, 16
-        move  $s0, $v0
+        sw    $v0, -76($fp)
+        # t19 = 53 int+ t18
+        li    $t0, 53
+        lw    $t1, -76($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -80($fp)
         # t2 = floattodouble part
         l.s   $f0, g_part
         cvt.d.s $f0, $f0
-        mov.d $f20, $f0
+        s.d   $f0, -56($fp)
         # param "%d %d %.2f %.2f %.1f\n"
-        # param t1
+        # param t19
         # param x
         # param rate
         # param t2
@@ -269,31 +253,40 @@ M7_0:
         addiu $sp, $sp, -40
         la    $t0, str3
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -80($fp)
+        sw    $t0, 4($sp)
         lw    $t0, g_x
         sw    $t0, 8($sp)
         l.d   $f0, g_rate
         s.d   $f0, 16($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -56($fp)
         s.d   $f0, 24($sp)
         l.d   $f0, g_chosen
         s.d   $f0, 32($sp)
         jal   __printf
         addiu $sp, $sp, 40
         # total = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
         # i.10 = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -8($fp)
 L7_12:
         # if i.10 int>= 3 goto 17
+        lw    $t0, -8($fp)
         li    $t1, 3
-        bge   $s0, $t1, L7_17
+        bge   $t0, $t1, L7_17
         # i.11 = 7
-        li    $s2, 7
+        li    $t0, 7
+        sw    $t0, -12($fp)
         # total = total int+ 7
-        addiu $s1, $s1, 7
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 7
+        sw    $t0, -4($fp)
         # i.10 = i.10 int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -8($fp)
         # goto 12
         j     L7_12
 L7_17:
@@ -304,14 +297,18 @@ L7_17:
         addiu $sp, $sp, -16
         la    $t0, str4
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s0, 8($sp)
+        lw    $t0, -4($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -8($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # before = x
-        lw    $s0, g_x
+        lw    $t0, g_x
+        sw    $t0, -16($fp)
         # x.13 = 40
-        li    $s0, 40
+        li    $t0, 40
+        sw    $t0, -20($fp)
         # param "%d %d\n"
         # param x
         # param 40
@@ -325,105 +322,165 @@ L7_17:
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # call countA(), 0
-        addiu $sp, $sp, -16
-        jal   _Z6countAv
-        addiu $sp, $sp, 16
-        # call countB(), 0
-        addiu $sp, $sp, -16
-        jal   _Z6countBv
-        addiu $sp, $sp, 16
-        # call countA(), 0
-        addiu $sp, $sp, -16
-        jal   _Z6countAv
-        addiu $sp, $sp, 16
-        # t5 = call countA(), 0
-        addiu $sp, $sp, -16
-        jal   _Z6countAv
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # t6 = call countB(), 0
-        addiu $sp, $sp, -16
-        jal   _Z6countBv
-        addiu $sp, $sp, 16
-        move  $s1, $v0
+        # n.6 = n.6 int+ 1
+        lw    $t0, g_n_6
+        addiu $t0, $t0, 1
+        sw    $t0, g_n_6
+        # n.7 = n.7 int+ 1
+        lw    $t0, g_n_7
+        addiu $t0, $t0, 1
+        sw    $t0, g_n_7
+        # t22 = n.6 int+ 1
+        lw    $t0, g_n_6
+        addiu $t0, $t0, 1
+        sw    $t0, -84($fp)
+        # n.6 = t22
+        lw    $t0, -84($fp)
+        sw    $t0, g_n_6
+        # t23 = t22 int+ 1
+        lw    $t0, -84($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -88($fp)
+        # n.6 = t23
+        lw    $t0, -88($fp)
+        sw    $t0, g_n_6
+        # t24 = n.7 int+ 1
+        lw    $t0, g_n_7
+        addiu $t0, $t0, 1
+        sw    $t0, -92($fp)
+        # n.7 = t24
+        lw    $t0, -92($fp)
+        sw    $t0, g_n_7
         # param "%d %d\n"
-        # param t5
-        # param t6
+        # param t23
+        # param t24
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str4
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
+        lw    $t0, -88($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -92($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # r[0] = 1
         li    $t0, 1
-        sw    $t0, -12($fp)
+        sw    $t0, -32($fp)
         # r[4] = 2
         li    $t0, 2
-        sw    $t0, -8($fp)
+        sw    $t0, -28($fp)
         # r[8] = 3
         li    $t0, 3
-        sw    $t0, -4($fp)
+        sw    $t0, -24($fp)
         # t7 = r[0]
-        lw    $s1, -12($fp)
+        lw    $t0, -32($fp)
+        sw    $t0, -60($fp)
         # t9 = t7 int+ 3
-        addiu $s0, $s1, 3
+        lw    $t0, -60($fp)
+        addiu $t0, $t0, 3
+        sw    $t0, -64($fp)
         # n.15 = t9
-        move  $s1, $s0
+        lw    $t0, -64($fp)
+        sw    $t0, -36($fp)
         # c = 6
-        li    $s1, 6
+        li    $t0, 6
+        sw    $t0, -40($fp)
         # l = 1
-        li    $s1, 1
-        # param 6
-        # t10 = call name(enum Color), 1
-        addiu $sp, $sp, -16
-        li    $a0, 6
-        jal   _Z4name5Color
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # param 5
-        # t11 = call name(enum Color), 1
-        addiu $sp, $sp, -16
-        li    $a0, 5
-        jal   _Z4name5Color
-        addiu $sp, $sp, 16
-        move  $s2, $v0
-        # param 6
-        # t12 = call show(enum Color), 1
-        addiu $sp, $sp, -16
-        li    $a0, 6
-        jal   _Z4show5Color
-        addiu $sp, $sp, 16
-        move  $s3, $v0
-        # param 3
-        # t13 = call show(int), 1
-        addiu $sp, $sp, -16
-        li    $a0, 3
-        jal   _Z4showi
-        addiu $sp, $sp, 16
-        move  $s4, $v0
+        li    $t0, 1
+        sw    $t0, -44($fp)
+        # t26 = 6
+        li    $t0, 6
+        sw    $t0, -96($fp)
+        # goto 55
+        j     L7_55
+L7_49:
+        # t10 = "red"
+        la    $t0, str0
+        sw    $t0, -68($fp)
+        # goto 58
+        j     L7_58
+L7_51:
+        # t10 = "green"
+        la    $t0, str1
+        sw    $t0, -68($fp)
+        # goto 58
+        j     L7_58
+L7_53:
+        # t10 = "blue"
+        la    $t0, str2
+        sw    $t0, -68($fp)
+        # goto 58
+        j     L7_58
+L7_55:
+        # if t26 int== 0 goto 49
+        lw    $t0, -96($fp)
+        beq   $t0, $zero, L7_49
+        # if t26 int== 5 goto 51
+        lw    $t0, -96($fp)
+        li    $t1, 5
+        beq   $t0, $t1, L7_51
+        # goto 53
+        j     L7_53
+L7_58:
+        # t28 = 5
+        li    $t0, 5
+        sw    $t0, -100($fp)
+        # goto 66
+        j     L7_66
+L7_60:
+        # t11 = "red"
+        la    $t0, str0
+        sw    $t0, -72($fp)
+        # goto 69
+        j     L7_69
+L7_62:
+        # t11 = "green"
+        la    $t0, str1
+        sw    $t0, -72($fp)
+        # goto 69
+        j     L7_69
+L7_64:
+        # t11 = "blue"
+        la    $t0, str2
+        sw    $t0, -72($fp)
+        # goto 69
+        j     L7_69
+L7_66:
+        # if t28 int== 0 goto 60
+        lw    $t0, -100($fp)
+        beq   $t0, $zero, L7_60
+        # if t28 int== 5 goto 62
+        lw    $t0, -100($fp)
+        li    $t1, 5
+        beq   $t0, $t1, L7_62
+        # goto 64
+        j     L7_64
+L7_69:
         # param "%d %s %s %d %d %d %d\n"
         # param t9
         # param t10
         # param t11
         # param 6
-        # param t12
-        # param t13
+        # param 2
+        # param 1
         # param 1
         # call printf, 8
         addiu $sp, $sp, -32
         la    $t0, str5
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
+        lw    $t0, -64($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -68($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -72($fp)
+        sw    $t0, 12($sp)
         li    $t0, 6
         sw    $t0, 16($sp)
-        sw    $s3, 20($sp)
-        sw    $s4, 24($sp)
+        li    $t0, 2
+        sw    $t0, 20($sp)
+        li    $t0, 1
+        sw    $t0, 24($sp)
         li    $t0, 1
         sw    $t0, 28($sp)
         jal   __printf
@@ -432,12 +489,6 @@ L7_17:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -24($fp)
-        lw    $s0, -16($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -32($fp)
-        lw    $s3, -36($fp)
-        lw    $s4, -40($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

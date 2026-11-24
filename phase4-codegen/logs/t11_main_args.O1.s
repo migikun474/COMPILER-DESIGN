@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t11_main_args.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -40,51 +40,64 @@ main_:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -36($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -32($fp)
-        sw    $s4, -8($fp)
-        sw    $s5, -12($fp)
-        sw    $s6, -20($fp)
-        sw    $s7, -24($fp)
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         # letters = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
         # i = 1
-        li    $s3, 1
+        li    $t0, 1
+        sw    $t0, -8($fp)
 L0_2:
         # if i int>= argc goto 20
+        lw    $t0, -8($fp)
         lw    $t1, 8($fp)
-        bge   $s3, $t1, L0_20
+        bge   $t0, $t1, L0_20
         # t1 = i int<< 2
-        sll   $s4, $s3, 2
+        lw    $t0, -8($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -16($fp)
         # t2 = argv ptr+ t1
         lw    $t0, 12($fp)
-        addu  $s5, $t0, $s4
+        lw    $t1, -16($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -20($fp)
         # s = *t2
-        lw    $s0, 0($s5)
+        lw    $t8, -20($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -12($fp)
 L0_6:
         # t4 = *s
-        lb    $s2, 0($s0)
+        lw    $t8, -12($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -21($fp)
         # if t4 char== 0 goto 11
-        beq   $s2, $zero, L0_11
+        lb    $t0, -21($fp)
+        beq   $t0, $zero, L0_11
         # letters = letters int+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -4($fp)
         # s = s ptr+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -12($fp)
         # goto 6
         j     L0_6
 L0_11:
         # t7 = i int<< 2
-        sll   $s6, $s3, 2
+        lw    $t0, -8($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -28($fp)
         # t8 = argv ptr+ t7
         lw    $t0, 12($fp)
-        addu  $s7, $t0, $s6
+        lw    $t1, -28($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -32($fp)
         # t9 = *t8
-        lw    $t0, 0($s7)
-        sw    $t0, -4($fp)
+        lw    $t8, -32($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -36($fp)
         # param "%d: %s\n"
         # param i
         # param t9
@@ -92,13 +105,16 @@ L0_11:
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s3, 4($sp)
-        lw    $t0, -4($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -36($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # i = i int+ 1
-        addiu $s3, $s3, 1
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -8($fp)
         # goto 2
         j     L0_2
 L0_20:
@@ -111,21 +127,14 @@ L0_20:
         sw    $t0, 0($sp)
         lw    $t0, 8($fp)
         sw    $t0, 4($sp)
-        sw    $s1, 8($sp)
+        lw    $t0, -4($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # return argc
         lw    $v0, 8($fp)
         j     main__exit
 main__exit:
-        lw    $s0, -36($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -32($fp)
-        lw    $s4, -8($fp)
-        lw    $s5, -12($fp)
-        lw    $s6, -20($fp)
-        lw    $s7, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

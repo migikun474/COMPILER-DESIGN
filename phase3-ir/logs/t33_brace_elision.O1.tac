@@ -16,6 +16,7 @@
 
    instructions                          106 -> 104   (1% fewer)
 
+   calls inlined                           0
    constants folded                        2
    algebraic simplifications               0
    common subexpressions                   0
@@ -269,3 +270,15 @@ struct S: size 24, align 4
 struct (unnamed at 10:5): size 12, align 4
     +0  struct In p  [public]
     +8  int z  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+1 2 3 4 5 ab
+1 2 3 4 5 xy
+7 0 8 9 0 z
+3 4 5 0 2
+6 7 9 4 0 4 119
+
+   exit code 0, 104 instructions executed

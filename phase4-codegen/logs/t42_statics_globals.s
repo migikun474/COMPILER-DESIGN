@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t42_statics_globals.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -102,6 +102,7 @@ _Z5depthi:
         beqz  $t8, M1_0
         j     __stack_overflow
 M1_0:
+        sw    $a0, 8($fp)
         # t1 = calls.3 int+ 1
         lw    $t0, g_calls_3
         li    $t1, 1
@@ -130,11 +131,10 @@ L1_6:
         sw    $t0, -12($fp)
         # param t3
         # t4 = call depth(int), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -12($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -12($fp)
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -16($fp)
         # t2 = t4
         lw    $t0, -16($fp)
@@ -163,19 +163,25 @@ main_:
         j     __stack_overflow
 M2_0:
         # t1 = call next(), 0
+        addiu $sp, $sp, -16
         jal   _Z4nextv
+        addiu $sp, $sp, 16
         sw    $v0, -20($fp)
         # n1 = t1
         lw    $t0, -20($fp)
         sw    $t0, -4($fp)
         # t2 = call next(), 0
+        addiu $sp, $sp, -16
         jal   _Z4nextv
+        addiu $sp, $sp, 16
         sw    $v0, -24($fp)
         # n2 = t2
         lw    $t0, -24($fp)
         sw    $t0, -8($fp)
         # t3 = call next(), 0
+        addiu $sp, $sp, -16
         jal   _Z4nextv
+        addiu $sp, $sp, 16
         sw    $v0, -28($fp)
         # n3 = t3
         lw    $t0, -28($fp)
@@ -198,11 +204,10 @@ M2_0:
         addiu $sp, $sp, 16
         # param 4
         # t4 = call depth(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 4
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 4
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -32($fp)
         # param "%d\n"
         # param t4

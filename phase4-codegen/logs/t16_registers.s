@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t16_registers.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -60,6 +60,7 @@ _Z5depthi:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
         # a = n
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -97,11 +98,10 @@ L0_8:
         sw    $t0, -24($fp)
         # param t3
         # t4 = call depth(int), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -24($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -24($fp)
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -28($fp)
         # t5 = t4 int+ a
         lw    $t0, -28($fp)
@@ -135,6 +135,9 @@ _Z5threeiii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
         # t1 = a int* 100
         lw    $t0, 8($fp)
         li    $t1, 100
@@ -172,6 +175,7 @@ _Z5twiceRi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
         # t1 = *x
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -243,11 +247,10 @@ M3_0:
         sw    $t0, -40($fp)
         # param 5
         # t1 = call depth(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z5depthi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -140($fp)
         # s = t1
         lw    $t0, -140($fp)
@@ -339,11 +342,10 @@ M3_0:
         sw    $t0, -192($fp)
         # param t14
         # t15 = call twice(int &), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -192($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -192($fp)
         jal   _Z5twiceRi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -196($fp)
         # tw = t15
         lw    $t0, -196($fp)
@@ -358,12 +360,9 @@ M3_0:
         # param t16
         # t17 = call three(int, int, int), 3
         addiu $sp, $sp, -16
-        lw    $t0, -48($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -52($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -200($fp)
-        sw    $t0, 8($sp)
+        lw    $a0, -48($fp)
+        lw    $a1, -52($fp)
+        lw    $a2, -200($fp)
         jal   _Z5threeiii
         addiu $sp, $sp, 16
         sw    $v0, -204($fp)

@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t39_printf_pointers.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -44,25 +44,30 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -4($fp)
         # none = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
         # small = 16
-        li    $s0, 16
+        li    $t0, 16
+        sw    $t0, -8($fp)
         # mid = 305441741
-        li    $s0, 305441741
+        li    $t0, 305441741
+        sw    $t0, -12($fp)
         # big = 3735928559
-        li    $s0, -559038737
+        li    $t0, -559038737
+        sw    $t0, -16($fp)
         # top = 3735928559
-        li    $s0, -559038737
+        li    $t0, -559038737
+        sw    $t0, -20($fp)
         # one = 1
-        li    $s0, 1
+        li    $t0, 1
+        sw    $t0, -24($fp)
         # param "[%p] [%p] [%p] [%p] [%p]\n"
         # param 0
         # param 16
@@ -130,9 +135,11 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 16
         # p = 24
-        li    $s0, 24
+        li    $t0, 24
+        sw    $t0, -28($fp)
         # c = 305441744
-        li    $s0, 305441744
+        li    $t0, 305441744
+        sw    $t0, -32($fp)
         # param "%p %p %d\n"
         # param 24
         # param 305441744
@@ -153,7 +160,6 @@ M0_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

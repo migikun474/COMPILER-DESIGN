@@ -4,7 +4,7 @@
 
    Source file   : test/t38_free_list.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 201 -> 169 instruction(s)
+   Result        : Optimized three address code (-O1): 201 -> 215 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          201 -> 169   (15% fewer)
+   instructions                          201 -> 215   (-6% fewer)
 
+   calls inlined                           6
    constants folded                        2
    algebraic simplifications              10
    common subexpressions                   2
-   copies / constants forwarded           23
+   copies / constants forwarded           29
    temporaries merged away                17
-   dead instructions removed               4
+   dead instructions removed              10
    jumps removed or redirected            11
    unreachable instructions removed        0
 
@@ -111,7 +112,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 13 parameter(s)/local(s), 31 temporaries, frame 260 bytes
+ Symbol table: 13 parameter(s)/local(s), 53 temporaries, frame 372 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -138,9 +139,7 @@
    t10              temp    int                             4      92
    t11              temp    long long                       8      96
    t14              temp    struct Node *                   4     116
-   t15              temp    int                             4     120
    t16              temp    struct Node *                   4     124
-   t17              temp    int                             4     128
    t19              temp    int                             4     136
    t20              temp    int *                           4     140
    t23              temp    int                             4     152
@@ -159,9 +158,33 @@
    t47              temp    void *                          4     248
    t48              temp    int *                           4     252
    t49              temp    int                             4     256
-   (18 temporaries no longer used after optimization not shown)
+   t50              temp    int                             4     260
+   t51              temp    struct Node *                   4     264
+   t52              temp    int                             4     268
+   t53              temp    void *                          4     272
+   t55              temp    struct Node *                   4     280
+   t56              temp    struct Node *                   4     284
+   t57              temp    int                             4     288
+   t58              temp    int                             4     292
+   t59              temp    struct Node *                   4     296
+   t60              temp    struct Node *                   4     300
+   t61              temp    struct Node *                   4     304
+   t62              temp    struct Node *                   4     308
+   t64              temp    int                             4     316
+   t65              temp    struct Node *                   4     320
+   t66              temp    int                             4     324
+   t67              temp    void *                          4     328
+   t69              temp    struct Node *                   4     336
+   t70              temp    struct Node *                   4     340
+   t71              temp    int                             4     344
+   t72              temp    int                             4     348
+   t73              temp    struct Node *                   4     352
+   t74              temp    struct Node *                   4     356
+   t75              temp    struct Node *                   4     360
+   t76              temp    struct Node *                   4     364
+   (24 temporaries no longer used after optimization not shown)
 
- Code: 139 instruction(s)
+ Code: 185 instruction(s)
 
     130        param 1000
     131        t1 = call malloc, 1
@@ -202,106 +225,152 @@
     166  L10:  param "loop %lld\n"
     167        param sum
     168        call printf, 2
-    169        param 100
-    170        t14 = call build(int), 1
-    171        list = t14
-    172        param t14
-    173        t15 = call total(struct Node *), 1
-    174        param "list %d\n"
-    175        param t15
-    176        call printf, 2
-    177        param t14
-    178        call release(struct Node *), 1
-    179        param 200
-    180        t16 = call build(int), 1
-    181        list = t16
-    182        param t16
-    183        t17 = call total(struct Node *), 1
-    184        param "list %d\n"
-    185        param t17
-    186        call printf, 2
-    187        param t16
-    188        call release(struct Node *), 1
-    189        param 64
-    190        dirty = call malloc, 1
-    191        k = 0
-    192  L11:  if k int>= 16 goto L12
-    193        t19 = k int<< 2
-    194        t20 = dirty ptr+ t19
-    195        *t20 = 99
-    196        k = k int+ 1
-    197        goto L11
-    198  L12:  param dirty
+    169        t50 = 100
+    170        t51 = 0
+    171        t52 = 1
+    172  L11:  if t52 int> t50 goto L12
+    173        param 8
+    174        t53 = call malloc, 1
+    175        *t53 = t52
+    176        t55 = t53 ptr+ 4
+    177        *t55 = t51
+    178        t51 = t53
+    179        t52 = t52 int+ 1
+    180        goto L11
+    181  L12:  t14 = t51
+    182        list = t51
+    183        t56 = t51
+    184        t57 = 0
+    185  L13:  if t56 ptr== 0 goto L14
+    186        t58 = *t56
+    187        t57 = t57 int+ t58
+    188        t59 = t56 ptr+ 4
+    189        t56 = *t59
+    190        goto L13
+    191  L14:  param "list %d\n"
+    192        param t57
+    193        call printf, 2
+    194        t60 = t14
+    195  L15:  if t60 ptr== 0 goto L16
+    196        t61 = t60 ptr+ 4
+    197        t62 = *t61
+    198        param t60
     199        call free, 1
-    200        param 16
-    201        param 4
-    202        clean = call calloc, 2
-    203        nonzero = 0
-    204        k = 0
-    205  L13:  if k int>= 16 goto L15
-    206        t23 = k int<< 2
-    207        t24 = clean ptr+ t23
-    208        t25 = *t24
-    209        if t25 int== 0 goto L14
-    210        nonzero = nonzero int+ 1
-    211  L14:  k = k int+ 1
-    212        goto L13
-    213  L15:  param "calloc %d\n"
-    214        param nonzero
-    215        call printf, 2
-    216        param clean
-    217        call free, 1
-    218        param 16
-    219        grow = call malloc, 1
-    220        n = 4
-    221        k = 0
-    222  L16:  if k int>= 4 goto L17
-    223        t30 = k int<< 2
-    224        t31 = grow ptr+ t30
-    225        *t31 = k
-    226        k = k int+ 1
-    227        goto L16
-    228  L17:  if n int>= 64 goto L20
-    229        t33 = n int<< 1
-    230        t34 = t33 uint<< 2
-    231        param grow
-    232        param t34
-    233        grow = call realloc, 2
-    234        k = n
-    235  L18:  t36 = n int<< 1
-    236        if k int>= t36 goto L19
-    237        t37 = k int<< 2
-    238        t38 = grow ptr+ t37
-    239        *t38 = k
-    240        k = k int+ 1
-    241        goto L18
-    242  L19:  n = n int<< 1
-    243        goto L17
-    244  L20:  gsum = 0
-    245        k = 0
-    246  L21:  if k int>= n goto L22
-    247        t41 = k int<< 2
-    248        t42 = grow ptr+ t41
-    249        t43 = *t42
-    250        gsum = gsum int+ t43
-    251        k = k int+ 1
-    252        goto L21
-    253  L22:  param grow
-    254        param 32
-    255        t47 = call realloc, 2
-    256        grow = t47
-    257        t48 = t47 ptr+ 28
-    258        t49 = *t48
-    259        param "realloc %d %d %d\n"
-    260        param n
-    261        param gsum
-    262        param t49
-    263        call printf, 4
-    264        param t47
-    265        call free, 1
-    266        param 0
-    267        call free, 1
-    268        return 0
+    200        t60 = t62
+    201        goto L15
+    202  L16:  t64 = 200
+    203        t65 = 0
+    204        t66 = 1
+    205  L17:  if t66 int> t64 goto L18
+    206        param 8
+    207        t67 = call malloc, 1
+    208        *t67 = t66
+    209        t69 = t67 ptr+ 4
+    210        *t69 = t65
+    211        t65 = t67
+    212        t66 = t66 int+ 1
+    213        goto L17
+    214  L18:  t16 = t65
+    215        list = t65
+    216        t70 = t65
+    217        t71 = 0
+    218  L19:  if t70 ptr== 0 goto L20
+    219        t72 = *t70
+    220        t71 = t71 int+ t72
+    221        t73 = t70 ptr+ 4
+    222        t70 = *t73
+    223        goto L19
+    224  L20:  param "list %d\n"
+    225        param t71
+    226        call printf, 2
+    227        t74 = t16
+    228  L21:  if t74 ptr== 0 goto L22
+    229        t75 = t74 ptr+ 4
+    230        t76 = *t75
+    231        param t74
+    232        call free, 1
+    233        t74 = t76
+    234        goto L21
+    235  L22:  param 64
+    236        dirty = call malloc, 1
+    237        k = 0
+    238  L23:  if k int>= 16 goto L24
+    239        t19 = k int<< 2
+    240        t20 = dirty ptr+ t19
+    241        *t20 = 99
+    242        k = k int+ 1
+    243        goto L23
+    244  L24:  param dirty
+    245        call free, 1
+    246        param 16
+    247        param 4
+    248        clean = call calloc, 2
+    249        nonzero = 0
+    250        k = 0
+    251  L25:  if k int>= 16 goto L27
+    252        t23 = k int<< 2
+    253        t24 = clean ptr+ t23
+    254        t25 = *t24
+    255        if t25 int== 0 goto L26
+    256        nonzero = nonzero int+ 1
+    257  L26:  k = k int+ 1
+    258        goto L25
+    259  L27:  param "calloc %d\n"
+    260        param nonzero
+    261        call printf, 2
+    262        param clean
+    263        call free, 1
+    264        param 16
+    265        grow = call malloc, 1
+    266        n = 4
+    267        k = 0
+    268  L28:  if k int>= 4 goto L29
+    269        t30 = k int<< 2
+    270        t31 = grow ptr+ t30
+    271        *t31 = k
+    272        k = k int+ 1
+    273        goto L28
+    274  L29:  if n int>= 64 goto L32
+    275        t33 = n int<< 1
+    276        t34 = t33 uint<< 2
+    277        param grow
+    278        param t34
+    279        grow = call realloc, 2
+    280        k = n
+    281  L30:  t36 = n int<< 1
+    282        if k int>= t36 goto L31
+    283        t37 = k int<< 2
+    284        t38 = grow ptr+ t37
+    285        *t38 = k
+    286        k = k int+ 1
+    287        goto L30
+    288  L31:  n = n int<< 1
+    289        goto L29
+    290  L32:  gsum = 0
+    291        k = 0
+    292  L33:  if k int>= n goto L34
+    293        t41 = k int<< 2
+    294        t42 = grow ptr+ t41
+    295        t43 = *t42
+    296        gsum = gsum int+ t43
+    297        k = k int+ 1
+    298        goto L33
+    299  L34:  param grow
+    300        param 32
+    301        t47 = call realloc, 2
+    302        grow = t47
+    303        t48 = t47 ptr+ 28
+    304        t49 = *t48
+    305        param "realloc %d %d %d\n"
+    306        param n
+    307        param gsum
+    308        param t49
+    309        call printf, 4
+    310        param t47
+    311        call free, 1
+    312        param 0
+    313        call free, 1
+    314        return 0
 
 
 ----------------------------------------------------------------------------
@@ -379,3 +448,16 @@
 struct Node: size 8, align 4
     +0  int value  [public]
     +4  struct Node * next  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+reused 1
+loop 3749925000
+list 5050
+list 20100
+calloc 0
+realloc 64 2016 7
+
+   exit code 0, 807836 instructions executed

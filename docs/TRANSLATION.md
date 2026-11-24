@@ -40,7 +40,7 @@ flowchart LR
     PP --> PARSE["2 · Lexer + parser<br/>builds the syntax tree"]
     PARSE --> SEM["3 · Semantic analysis<br/>types, symbols, offsets"]
     SEM --> TAC["4 · TAC generation<br/>the SDT rules"]
-    TAC --> OPT["5 · Optimizer<br/>-O1 / -O2 / -O3"]
+    TAC --> OPT["5 · Optimizer<br/>-O1"]
     OPT --> MIPS["6 · MIPS generation"]
     MIPS --> OUT(["file.s → SPIM"])
 

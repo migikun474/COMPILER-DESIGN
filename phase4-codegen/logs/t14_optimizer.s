@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t14_optimizer.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -83,6 +83,7 @@ _Z4bumpRi:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = *r
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -242,7 +243,9 @@ L2_17:
         lw    $t0, g_g
         sw    $t0, -40($fp)
         # call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         # t13 = g int+ h
         lw    $t0, g_g
         lw    $t1, -40($fp)
@@ -256,11 +259,10 @@ L2_17:
         sw    $t0, -172($fp)
         # param t14
         # call bump(int &), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -172($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -172($fp)
         jal   _Z4bumpRi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t15 = x int+ y
         lw    $t0, -12($fp)
         lw    $t1, -16($fp)
@@ -478,7 +480,9 @@ L2_91:
         sw    $t0, -96($fp)
 L2_93:
         # t29 = call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         sw    $v0, -232($fp)
         # ignored = t29
         lw    $t0, -232($fp)
@@ -509,7 +513,9 @@ L2_93:
         li    $t0, 8
         sw    $t0, -104($fp)
         # call touch(), 0
+        addiu $sp, $sp, -16
         jal   _Z5touchv
+        addiu $sp, $sp, 16
         # m[0] = 42
         addiu $t8, $fp, -112
         li    $t9, 0

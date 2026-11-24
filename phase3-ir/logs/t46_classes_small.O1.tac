@@ -4,7 +4,7 @@
 
    Source file   : test/t46_classes_small.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 80 -> 74 instruction(s)
+   Result        : Optimized three address code (-O1): 80 -> 85 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                           80 -> 74   (7% fewer)
+   instructions                           80 -> 85   (-6% fewer)
 
+   calls inlined                          12
    constants folded                        0
    algebraic simplifications               0
-   common subexpressions                   5
-   copies / constants forwarded            9
+   common subexpressions                   6
+   copies / constants forwarded           36
    temporaries merged away                 1
-   dead instructions removed               6
+   dead instructions removed              27
    jumps removed or redirected             0
    unreachable instructions removed        0
 
@@ -88,24 +89,27 @@
  FUNCTION Mid::Mid()        (link name _ZN3MidC1Ev)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Mid *                     4       0
    t1               temp    int                             4       4
    t2               temp    int                             4       8
+   (1 temporary no longer used after optimization not shown)
 
- Code: 8 instruction(s)
+ Code: 10 instruction(s)
 
-    107     param this                          (this)
-    108     call Base::Base(), 1
-    109     t1 = *this
-    110     t2 = t1 int+ 1
-    111     *this = t2
-    112     param "Mid "
-    113     call printf, 1
-    114     return
+    107     *this = 1
+    108     Base::made = Base::made int+ 1
+    109     param "Base "
+    110     call printf, 1
+    111     t1 = *this
+    112     t2 = t1 int+ 1
+    113     *this = t2
+    114     param "Mid "
+    115     call printf, 1
+    116     return
 
 ============================================================================
  FUNCTION Mid::who()        (link name _ZN3Mid3whoEv)
@@ -119,7 +123,7 @@
 
  Code: 1 instruction(s)
 
-    115     return 2
+    117     return 2
 
 ============================================================================
  FUNCTION Mid::plain()        (link name _ZN3Mid5plainEv)
@@ -133,30 +137,38 @@
 
  Code: 1 instruction(s)
 
-    116     return 20
+    118     return 20
 
 ============================================================================
  FUNCTION Leaf::Leaf()        (link name _ZN4LeafC1Ev)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
+ Symbol table: 1 parameter(s)/local(s), 4 temporaries, frame 24 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Leaf *                    4       0
    t1               temp    int                             4       4
    t2               temp    int                             4       8
+   t4               temp    int                             4      16
+   t5               temp    int                             4      20
+   (1 temporary no longer used after optimization not shown)
 
- Code: 8 instruction(s)
+ Code: 13 instruction(s)
 
-    117     param this                          (this)
-    118     call Mid::Mid(), 1
-    119     t1 = *this
-    120     t2 = t1 int* 10
-    121     *this = t2
-    122     param "Leaf\n"
-    123     call printf, 1
-    124     return
+    119     param this                          (this)
+    120     call Base::Base(), 1
+    121     t4 = *this
+    122     t5 = t4 int+ 1
+    123     *this = t5
+    124     param "Mid "
+    125     call printf, 1
+    126     t1 = *this
+    127     t2 = t1 int* 10
+    128     *this = t2
+    129     param "Leaf\n"
+    130     call printf, 1
+    131     return
 
 ============================================================================
  FUNCTION Leaf::who()        (link name _ZN4Leaf3whoEv)
@@ -170,7 +182,7 @@
 
  Code: 1 instruction(s)
 
-    125     return 3
+    132     return 3
 
 ============================================================================
  FUNCTION Leaf::operator+=(int)        (link name _ZN4LeafpLEi)
@@ -187,16 +199,16 @@
 
  Code: 4 instruction(s)
 
-    126     t1 = *this
-    127     t2 = t1 int+ k
-    128     *this = t2
-    129     return this
+    133     t1 = *this
+    134     t2 = t1 int+ k
+    135     *this = t2
+    136     return this
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 11 temporaries, frame 88 bytes
+ Symbol table: 4 parameter(s)/local(s), 14 temporaries, frame 176 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -206,63 +218,70 @@
    arr              local   class Mid[2]                    8      12
    t1               temp    class Leaf *                    4      20
    t4               temp    int                             4      32
-   t5               temp    int                             4      36
-   t6               temp    int                             4      40
-   t7               temp    int                             4      44
-   t8               temp    int                             4      48
-   t10              temp    class Leaf &                    4      56
    t12              temp    int                             4      64
    t13              temp    class Mid (*)[2]                4      68
    t14              temp    class Mid (*)[2]                4      72
-   t17              temp    int                             4      84
-   (6 temporaries no longer used after optimization not shown)
+   t19              temp    int                             4      92
+   t20              temp    int                             4      96
+   t27              temp    int                             4     124
+   t28              temp    int                             4     128
+   t32              temp    int                             4     144
+   t34              temp    int                             4     152
+   t35              temp    int                             4     156
+   t37              temp    int                             4     164
+   t38              temp    int                             4     168
+   (25 temporaries no longer used after optimization not shown)
 
- Code: 44 instruction(s)
+ Code: 48 instruction(s)
 
-    130     t1 = &l
-    131     param t1                            (this)
-    132     call Leaf::Leaf(), 1
-    133     b = t1
-    134     m = t1
-    135     t4 = l[0]
-    136     param t1                            (this)
-    137     t5 = call Base::who(), 1
+    137     t1 = &l
     138     param t1                            (this)
-    139     t6 = call Mid::who(), 1
-    140     param t1                            (this)
-    141     t7 = call Base::plain(), 1
-    142     param t1                            (this)
-    143     t8 = call Mid::plain(), 1
-    144     param "%d %d %d %d %d\n"
-    145     param t4
-    146     param t5
-    147     param t6
-    148     param t7
-    149     param t8
-    150     call printf, 6
-    151     param t1                            (this)
-    152     param 5
-    153     t10 = call Leaf::operator+=(int), 2
-    154     param t10                           (this)
-    155     param 2
-    156     call Leaf::operator+=(int), 2
-    157     t12 = l[0]
-    158     param "%d\n"
-    159     param t12
-    160     call printf, 2
-    161     t13 = &arr
-    162     param t13                           (this)
-    163     call Mid::Mid(), 1
-    164     t14 = t13 ptr+ 4
-    165     param t14                           (this)
-    166     call Mid::Mid(), 1
-    167     param t14                           (this)
-    168     t17 = call Mid::who(), 1
-    169     param "\n%d %d\n"
-    170     param Base::made
-    171     param t17
-    172     call printf, 3
-    173     return 0
+    139     call Mid::Mid(), 1
+    140     t19 = *t1
+    141     t20 = t19 int* 10
+    142     *t1 = t20
+    143     param "Leaf\n"
+    144     call printf, 1
+    145     b = t1
+    146     m = t1
+    147     t4 = l[0]
+    148     param "%d %d %d %d %d\n"
+    149     param t4
+    150     param 1
+    151     param 2
+    152     param 10
+    153     param 20
+    154     call printf, 6
+    155     t27 = *t1
+    156     t28 = t27 int+ 5
+    157     *t1 = t28
+    158     t32 = t28 int+ 2
+    159     *t1 = t32
+    160     t12 = l[0]
+    161     param "%d\n"
+    162     param t12
+    163     call printf, 2
+    164     t13 = &arr
+    165     param t13                           (this)
+    166     call Base::Base(), 1
+    167     t34 = *t13
+    168     t35 = t34 int+ 1
+    169     *t13 = t35
+    170     param "Mid "
+    171     call printf, 1
+    172     t14 = t13 ptr+ 4
+    173     param t14                           (this)
+    174     call Base::Base(), 1
+    175     t37 = *t14
+    176     t38 = t37 int+ 1
+    177     *t14 = t38
+    178     param "Mid "
+    179     call printf, 1
+    180     param "\n%d %d\n"
+    181     param Base::made
+    182     param 2
+    183     call printf, 3
+    184     return 0
 
 
 ----------------------------------------------------------------------------
@@ -324,3 +343,15 @@ class Mid: size 4, align 4
     (base Base, public)
 class Leaf: size 4, align 4
     (base Mid, public)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+Base Mid Leaf
+20 1 2 10 20
+27
+Base Mid Base Mid 
+3 2
+
+   exit code 0, 68 instructions executed

@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t05_pointers.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -38,6 +38,8 @@ _Z8redirectPPiS_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # *pp = to
         lw    $t8, 8($fp)
         lw    $t0, 12($fp)
@@ -105,13 +107,11 @@ M1_0:
         # param pp
         # param t6
         # call redirect(int **, int *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -16($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -116($fp)
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -16($fp)
+        lw    $a1, -116($fp)
         jal   _Z8redirectPPiS_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t7 = *p
         lw    $t8, -12($fp)
         lw    $t0, 0($t8)
