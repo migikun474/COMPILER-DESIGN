@@ -237,14 +237,14 @@ in the `direct_declarator` action with a syntax error;
 rejected.
 
 **Class syntax** (`test/test30_class_syntax.c`): default constructors
-`T()` (in or out of the class), single inheritance, access specifiers
-and `friend` functions and classes. The class syntax removed by D35 is
-rejected (`test/test31_dropped_class_features.c`): `virtual` and
-`explicit` are still reserved words, so the scanner reports them by
-name ("'virtual' is not supported: this language has no virtual
-functions"); destructors, `const` member functions, member
-initializer lists and `= 0` have no grammar rules left, so each is an
-ordinary syntax error. Constructors with parameters still parse and are
+`T()` (in or out of the class), single inheritance, access specifiers,
+`friend` functions and classes, and `virtual` member functions,
+including pure ones (`virtual int area() = 0;`, D44). The class syntax
+removed by D35 is rejected (`test/test31_dropped_class_features.c`):
+`explicit` is still a reserved word, so the scanner reports it by name;
+destructors, `const` member functions and member initializer lists have
+no grammar rules left, so each is an ordinary syntax error; `= 0` on a
+function that is not `virtual` is reported in the declarator action. Constructors with parameters still parse and are
 rejected by semantic analysis. The grammar still has no conflicts
 (`%expect 0`).
 

@@ -114,6 +114,7 @@ A **`sem::Symbol`** (every field that exists):
 | `isDefined` | functions: body seen (objects are always defined: there is no `extern`, D43) |
 | `isStatic` | `static` function or member |
 | `isMethod`, `isConstructor`, `mangledName` | callables |
+| `isVirtual`, `isPure`, `vtableIndex` | virtual functions (D44): declared `virtual` or overriding, `= 0`, the slot in its class's table |
 | `params`, `locals`, `bodyScopeId` | functions: parameter symbols in order (unnamed ones too), every local, the body scope |
 | `ownerRecord`, `access`, `offset` | members: owning `RecordInfo`, `public`/`protected`/`private`, byte offset (MIPS32 layout) |
 | `record`, `enumInfo` | tags: the `RecordInfo` of a struct/union/class, or the `EnumInfo` of an enum |

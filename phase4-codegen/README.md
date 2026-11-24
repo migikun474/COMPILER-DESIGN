@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 33 test
+> Status: **implemented and tested** on the SPIM simulator. All 34 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization and with `-O1`, `-O2` and `-O3`
-> (`./run_tests.sh`: 33 passed).
+> (`./run_tests.sh`: 34 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention,
@@ -102,6 +102,7 @@ registers (next section).
 | conversions | `mtc1` + `cvt.d.w`, `trunc.w.d` + `mfc1`, `cvt.s.d`/`cvt.d.s`; unsigned values adjusted by 2^32 / 2^31 |
 | `if a relop b goto L` | `beq`/`blt`/`bltu` …; floating point `c.lt.d` + `bc1t` |
 | `x = a[i]`, `*p = x` | address in `$t8`, then `lw`/`lb`/`l.d` … or a byte copy for structs |
+| `call *t, n` (a virtual call, D44) | the same as a call, with `jalr` on the address loaded from the object's table; the tables are words in `.data` filled with function labels by the start-up code |
 | `param` / `call` | arguments stored into a freshly reserved stack area, `jal`, area released (at `-O1` and above the first 16 bytes of a call to a user function go in `$a0`–`$a3`, see below) |
 | `/`, `%` by a run-time value | the divisor is tested first: zero jumps to `__div_by_zero` (also in the 64-bit helpers) |
 | entry of a function that calls (or has a frame over 4 KB) | the new `$sp` is compared with `__stack_limit`; below it jumps to `__stack_overflow` |

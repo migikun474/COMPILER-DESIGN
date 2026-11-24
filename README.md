@@ -7,7 +7,7 @@ that runs on SPIM / QtSpim.
 
 | | |
 |---|---|
-| Source language | A C core plus a small C++ subset: classes with single inheritance and default constructors, access control, `friend`, references, function and operator overloading, `enum` (C++ rules) and plain unions — see the [feature audit](docs/FEATURES.md) |
+| Source language | A C core plus a small C++ subset: classes with single inheritance, virtual functions (run-time overriding, abstract classes) and default constructors, access control, `friend`, references, function and operator overloading, `enum` (C++ rules) and plain unions — see the [feature audit](docs/FEATURES.md) |
 | Intermediate representation | Three Address Code as quadruples, with an interpreter and a three-level optimizer ([`phase3-ir`](phase3-ir/README.md)) |
 | Target | MIPS32 assembly for SPIM / QtSpim, with a hand-written run-time library ([`phase4-codegen`](phase4-codegen/README.md)) |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2 (LALR(1), 0 conflicts), g++ 13 |
@@ -111,7 +111,7 @@ Some passes are made of smaller passes of their own:
 |---|---|
 | 1. Scan + parse | The scanner classifies each identifier as a variable or a type name from the parse-time symbol table (the "lexer hack"), so the grammar stays LALR(1). Syntax errors are recovered with `error` productions, so every error in the file is reported. |
 | 2. Semantic analysis | **(a)** `prescan()` records every top-level function and variable, so calls before a declaration resolve. **(b)** One walk in source order declares, type-checks and annotates (an L-attributed definition: declarations push types down, expressions synthesize them up); class member bodies are checked after their class. **(c)** `checkSequencing()` walks the tree again for unsequenced side effects (`i = i++`). |
-| 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). |
+| 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). A polymorphic class gets a vtable (`_ZTV<class>`), and a virtual call becomes an indirect `call *t`. |
 | 4. Flow analysis | Basic blocks, the flow graph and reaching definitions over the unoptimized code; a read reached by the "not assigned yet" definition is warned about. |
 | 5. Optimization | `-O1`: value numbering per basic block (constant folding, algebraic identities, common subexpressions, copies, dead temporaries, jump clean-up), repeated until nothing changes. `-O2`: adds global constant/copy propagation and dead-assignment elimination (liveness). `-O3`: adds inlining, tail recursion, global common subexpressions (available expressions), loop unrolling by two (dominators), then removes functions no call reaches. |
 | 6. Code generation | Per function: lay out the frame, allocate registers (use counts and live intervals; `-O1` and above), lay out the frame again for what stays in memory, emit one fixed sequence per TAC instruction, run the peephole pass. Then the start-up code and the run-time library are added. |
@@ -151,7 +151,7 @@ Every tool also writes its report to `logs/` in the current directory.
 │   ├── TRANSLATION.md            the passes, the SDT rules, flowcharts and real TAC
 │   ├── FEATURES.md               feature audit: matrix with test evidence
 │   ├── FEATURE_CONNECTIVITY.md   how the features depend on each other; change impact
-│   ├── DESIGN_LOG.md             every design decision (D1–D43) with its reason
+│   ├── DESIGN_LOG.md             every design decision (D1–D44) with its reason
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
 │   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   historical analysis (before D34)
 │   ├── examples/                 example programs used in the docs
@@ -182,7 +182,7 @@ The full matrix with the test that covers each row is in
 | Functions | recursion, prototypes, calls before the declaration, variable arguments (`...`, `va_*`), `main(argc, argv)` |
 | Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` |
 | Storage | locals, globals, `static` locals and members |
-| C++ subset | classes, objects and `this`; single inheritance with access control; `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
+| C++ subset | classes, objects and `this`; single inheritance with access control; **virtual functions** (run-time overriding through a vtable, pure virtual functions, abstract classes); `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
 | Checks | gcc-style errors and warnings: types, scopes, overload ambiguity, missing returns, unreachable code, jumps over initializations, unsequenced side effects, constant overflow, format mismatches, assignment used as a condition, possibly uninitialized variables |
 | Run time | division by zero and too-deep recursion stop with a message (exit code 2) on SPIM and in the interpreter |
 
@@ -197,13 +197,13 @@ arrays) are covered.
 
 | Rejected | Examples | Why |
 |---|---|---|
-| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, virtual functions, multiple inheritance, object slicing, nested and local classes, anonymous unions, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, multiple inheritance, object slicing, nested and local classes, anonymous unions, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 | Never implemented | bit-fields, default arguments, templates, namespaces, `using`, exceptions, `inline`, `override` / `final`, compound literals, nested functions, wide characters | out of scope |
 
 `printf`, `scanf`, `malloc` and the other built-ins are part of the
 language, so programs need no `#include`; any line starting with `#` is
-a lexical error. `virtual` and `explicit` are still reserved words, only
-so that their error message can name them.
+a lexical error. `explicit` is still a reserved word, only so that its
+error message can name it.
 
 ### Language history
 
@@ -216,6 +216,7 @@ so that their error message can name them.
 | 2026-11-21 | D37–D41 | run-time checks and the assignment warning; more algebraic rules, loop unrolling, dead function removal, reaching definitions; register arguments and frame slot reclamation; the combined driver; an audit |
 | 2026-11-23 | D42 | `enum` (C++ rules: its own type, converts to `int`, an `int` needs a cast to become one) and plain unions brought back |
 | 2026-11-23 | D43 | `extern` removed |
+| 2026-11-24 | D44 | virtual functions brought back: run-time overriding (C++ rule: a matching function in a derived class overrides), pure virtual functions, abstract classes |
 
 ---
 
@@ -336,9 +337,9 @@ One suite per pass:
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
-| Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
-| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 33 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **34 checks, all passing** |
-| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 33 programs compiled to MIPS at every level and run in SPIM against the same outputs — **33 checks, all passing** |
+| Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 28 valid + 25 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **90 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 34 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **35 checks, all passing** |
+| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 34 programs compiled to MIPS at every level and run in SPIM against the same outputs — **34 checks, all passing** |
 
 The `run.sh` scripts print each program's output for inspection; the
 `run_tests.sh` scripts check results automatically, and any missing
@@ -361,7 +362,7 @@ fails the test.
 | Symbol tables | [`docs/SYMBOL_TABLE.md`](docs/SYMBOL_TABLE.md) |
 | Feature matrix and test evidence | [`docs/FEATURES.md`](docs/FEATURES.md) |
 | Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
-| Design decisions D1–D43 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Design decisions D1–D44 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 
 Each phase folder also keeps its development history in
 `docs/DEVELOPMENT_NOTES.md` (not maintained; may be outdated).
@@ -377,6 +378,9 @@ Each phase folder also keeps its development history in
   Both report `stack overflow (recursion too deep)`.
 - Calls into the run-time library (`printf`, `scanf`, `malloc` …)
   always pass their arguments on the stack.
+- An object made with `malloc` runs no constructor, so a class with
+  virtual functions gets no vtable pointer that way: use it only for
+  plain data, or construct objects as variables.
 - `free` does not reuse memory (the heap only grows), and the whole
   run-time library is appended to every program.
 - One source file per compilation: there is no linker for SPIM.
