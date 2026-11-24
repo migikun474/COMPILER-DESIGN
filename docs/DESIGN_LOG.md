@@ -453,7 +453,8 @@ How it was checked, in the order it happened:
 
 One interpreter decision (Claude's): `free` does not reuse memory. It
 makes use-after-free silently "work", but keeps the interpreter small;
-it can be tightened if a test ever needs it.
+it can be tightened if a test ever needs it. (Superseded by D45: both
+back ends now reuse freed memory.)
 
 Documentation updated: `phase3-ir/README.md` (rewritten), root
 `README.md`, `docs/FEATURES.md` (the IR column is filled in),
@@ -1254,6 +1255,32 @@ functions and abstract classes** are included.
 
 Tests: `t37_virtual` (interpreter and SPIM at every level, against g++),
 `v29_virtual`, `e26_virtual`.
+
+### D45. A free list: freed memory is reused (2026-11-24)
+
+**Decided by:** the user (implement the free list); the shape is Claude's.
+
+- **Blocks:** the word before a block holds its *capacity*, the requested
+  size rounded up to 8 (at least 8). A free block's first word links it to
+  the next free block; the list head is `__heap_free` in the run-time
+  library.
+- **`malloc`:** first fit, most recently freed block first, handed out
+  whole (no splitting); if nothing fits, a fresh block from `sbrk` as
+  before. **`free`:** pushes the block on the list (`free(0)` does
+  nothing). **`calloc`:** clears the block's whole capacity, since a
+  reused block is not zero. **`realloc`:** keeps the block when its
+  capacity is enough, otherwise allocates, copies the old capacity and
+  frees the old block.
+- **Not done:** splitting a large free block, merging neighbouring free
+  blocks, returning memory to the system.
+- **Interpreter:** the same algorithm (so the two back ends behave
+  alike), and it reports `free` of a pointer `malloc` did not return and
+  a double `free` as run-time errors; SPIM cannot check those.
+
+Test: `t38_free_list` (a 50,000-iteration malloc/free loop runs in
+constant space; calloc of a reused dirty block is zero; realloc grows and
+shrinks keeping the contents), on the interpreter and SPIM at every level
+against g++.
 
 ---
 

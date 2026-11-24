@@ -151,7 +151,7 @@ Every tool also writes its report to `logs/` in the current directory.
 │   ├── TRANSLATION.md            the passes, the SDT rules, flowcharts and real TAC
 │   ├── FEATURES.md               feature audit: matrix with test evidence
 │   ├── FEATURE_CONNECTIVITY.md   how the features depend on each other; change impact
-│   ├── DESIGN_LOG.md             every design decision (D1–D44) with its reason
+│   ├── DESIGN_LOG.md             every design decision (D1–D45) with its reason
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
 │   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   historical analysis (before D34)
 │   ├── examples/                 example programs used in the docs
@@ -180,7 +180,7 @@ The full matrix with the test that covers each row is in
 | Control flow | if / else, for, while, do-while, `until`, switch / case / default, goto and labels, break, continue |
 | Types | `int`, `char`, `short`, `long`, `long long`, `float`, `double`, `bool`, `void`, signed / unsigned; arrays of any dimension; pointers and pointer arithmetic; structures (named, unnamed, anonymous members); plain unions; `enum` with C++ rules; `typedef`; references; `const`; `auto` |
 | Functions | recursion, prototypes, calls before the declaration, variable arguments (`...`, `va_*`), `main(argc, argv)` |
-| Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` |
+| Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` (freed memory is reused through a free list) |
 | Storage | locals, globals, `static` locals and members |
 | C++ subset | classes, objects and `this`; single inheritance with access control; **virtual functions** (run-time overriding through a vtable, pure virtual functions, abstract classes); `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
 | Checks | gcc-style errors and warnings: types, scopes, overload ambiguity, missing returns, unreachable code, jumps over initializations, unsequenced side effects, constant overflow, format mismatches, assignment used as a condition, possibly uninitialized variables |
@@ -326,6 +326,7 @@ error message can name it.
 | 2026-11-23 | D42 | `enum` (C++ rules: its own type, converts to `int`, an `int` needs a cast to become one) and plain unions brought back |
 | 2026-11-23 | D43 | `extern` removed |
 | 2026-11-24 | D44 | virtual functions brought back: run-time overriding (C++ rule: a matching function in a derived class overrides), pure virtual functions, abstract classes |
+| 2026-11-24 | D45 | a free list: `free` hands blocks back and `malloc` reuses them |
 
 ---
 
@@ -447,8 +448,8 @@ One suite per pass:
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
 | Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 28 valid + 25 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **90 checks, all passing** |
-| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 34 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **35 checks, all passing** |
-| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 34 programs compiled to MIPS at every level and run in SPIM against the same outputs — **34 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 35 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **36 checks, all passing** |
+| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 35 programs compiled to MIPS at every level and run in SPIM against the same outputs — **35 checks, all passing** |
 
 The `run.sh` scripts print each program's output for inspection; the
 `run_tests.sh` scripts check results automatically, and any missing
@@ -471,7 +472,7 @@ fails the test.
 | Symbol tables | [`docs/SYMBOL_TABLE.md`](docs/SYMBOL_TABLE.md) |
 | Feature matrix and test evidence | [`docs/FEATURES.md`](docs/FEATURES.md) |
 | Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
-| Design decisions D1–D44 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Design decisions D1–D45 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 
 Each phase folder also keeps its development history in
 `docs/DEVELOPMENT_NOTES.md` (not maintained; may be outdated).
@@ -488,17 +489,20 @@ Each phase folder also keeps its development history in
 - An object made with `malloc` runs no constructor, so a class with
   virtual functions gets no vtable pointer that way: use it only for
   plain data, or construct objects as variables.
-- `free` does not reuse memory (the heap only grows), and the whole
-  run-time library is appended to every program.
+- The heap reuses freed blocks whole (first fit, no splitting or
+  merging of neighbours), so many small blocks freed cannot serve one
+  large request; and the whole run-time library is appended to every
+  program.
 - One source file per compilation: there is no linker for SPIM.
 
 ## Future work
 
 What a next version could add, in order of value:
 
-1. **A free list** in the run-time library, so `free`d memory is reused.
-2. **Induction-variable strength reduction** (`i * 4` in a loop becomes
+1. **Induction-variable strength reduction** (`i * 4` in a loop becomes
    an addition), and unrolling by more than two when the trip count is
    known.
-3. **Register arguments for the run-time library**, so `printf` and
+2. **Register arguments for the run-time library**, so `printf` and
    `scanf` calls also skip the stack.
+3. **Splitting and coalescing heap blocks**, so a freed large block can
+   serve several small requests and neighbouring free blocks merge.

@@ -33,6 +33,7 @@ __c_zero:    .double 0.0
 __c_one:     .double 1.0
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
 __stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__heap_free: .word 0                    # the free list: freed blocks, most recent first (D45)
 __m_divzero: .asciiz "\nrun-time error: division by zero\n"
 __m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
@@ -66,45 +67,85 @@ __memcpy_done:
 
 __malloc:                               # malloc(size)
         lw    $t0, 0($sp)
-__malloc_n:                             # size in $t0; the block is 8-byte aligned,
-        addiu $a0, $t0, 23              # with its size in the 8 bytes before it
-        li    $t1, -8
-        and   $a0, $a0, $t1
+__malloc_n:                             # size in $t0 -> block in $v0 (uses $t1, $t4-$t7, $a0)
+        addiu $t1, $t0, 7               # capacity: the size rounded up to 8, at least 8
+        li    $t4, -8
+        and   $t1, $t1, $t4
+        bnez  $t1, __malloc_fit
+        li    $t1, 8
+__malloc_fit:                           # first fit in the free list, most recently freed first
+        la    $t5, __heap_free          # $t5: the word that points at the block looked at
+__malloc_scan:
+        lw    $t6, 0($t5)
+        beqz  $t6, __malloc_new
+        lw    $t7, -8($t6)              # its capacity
+        sltu  $t7, $t7, $t1
+        bnez  $t7, __malloc_next
+        lw    $t7, 0($t6)               # big enough: unlink it and hand it out whole
+        sw    $t7, 0($t5)
+        move  $v0, $t6
+        jr    $ra
+__malloc_next:
+        move  $t5, $t6                  # a free block's first word links to the next one
+        j     __malloc_scan
+__malloc_new:                           # none fits: a fresh block from sbrk, 8-byte aligned,
+        addiu $a0, $t1, 15              # with its capacity in the 8 bytes before it
+        and   $a0, $a0, $t4
         li    $v0, 9                    # sbrk
         syscall
         addiu $v0, $v0, 7
-        and   $v0, $v0, $t1
-        sw    $t0, 0($v0)
+        and   $v0, $v0, $t4
+        sw    $t1, 0($v0)
         addiu $v0, $v0, 8
         jr    $ra
 
-__calloc:                               # calloc(count, size): fresh memory is already zero
+__calloc:                               # calloc(count, size): a block, cleared
         lw    $t0, 0($sp)
         lw    $t1, 4($sp)
         mul   $t0, $t0, $t1
-        j     __malloc_n
+        move  $t9, $ra
+        jal   __malloc_n
+        lw    $t1, -8($v0)              # the whole capacity: a reused block is not zero
+        move  $t2, $v0
+__calloc_zero:
+        sw    $zero, 0($t2)
+        addiu $t2, $t2, 4
+        addiu $t1, $t1, -4
+        bnez  $t1, __calloc_zero
+        jr    $t9
 
-__realloc:                              # realloc(pointer, size): a new block and a copy
+__realloc:                              # realloc(pointer, size)
         lw    $t2, 0($sp)
         lw    $t0, 4($sp)
         move  $t9, $ra
-        jal   __malloc_n
+        beqz  $t2, __realloc_new        # realloc(0, n) is malloc(n)
+        lw    $t3, -8($t2)              # the old block's capacity
+        sltu  $t4, $t3, $t0
+        bnez  $t4, __realloc_new
+        move  $v0, $t2                  # it still fits: the same block
+        jr    $t9
+__realloc_new:
+        jal   __malloc_n                # keeps $t2, $t3, $t9
         beqz  $t2, __realloc_done
-        lw    $t3, -8($t2)              # the old size
-        sltu  $t4, $t0, $t3
-        beqz  $t4, __realloc_copy
-        move  $t3, $t0
-__realloc_copy:
         move  $t5, $v0
-        move  $a0, $v0
+        move  $a0, $v0                  # copy the old capacity (the new block is bigger)
         move  $a1, $t2
         move  $a2, $t3
         jal   __memcpy
+        lw    $t1, __heap_free          # then free the old block
+        sw    $t1, 0($t2)
+        sw    $t2, __heap_free
         move  $v0, $t5
 __realloc_done:
         jr    $t9
 
-__free:                                 # memory is not reused
+__free:                                 # free(pointer): onto the free list, for malloc to reuse
+        lw    $t0, 0($sp)
+        beqz  $t0, __free_done          # free(0) does nothing
+        lw    $t1, __heap_free
+        sw    $t1, 0($t0)
+        sw    $t0, __heap_free
+__free_done:
         jr    $ra
 
 # ------------------------------------------------------- 64-bit arithmetic
