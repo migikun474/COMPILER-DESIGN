@@ -197,7 +197,7 @@ because SPIM has no C library:
 
 | Routine | What it does |
 |---|---|
-| `__printf` | `%d %i %u %x %X %o %c %s %f %e %E %g %G %%` with `-` and `0` flags, width, precision, `*`, lengths `l` `ll` `h` `z`. `%f` rounds to nearest, ties to even, like glibc. |
+| `__printf` | `%d %i %u %x %X %o %c %s %p %f %e %E %g %G %%` with `-` and `0` flags, width, precision, `*`, lengths `l` `ll` `h` `z`. `%f` rounds to nearest, ties to even, like glibc. |
 | `__scanf` | `%d %i %u %c %s %f` (`l` for `double`, a width for `%s`); input is taken a line at a time with the `read_string` system call, so it works in a terminal and in QtSpim's console |
 | `__malloc` `__calloc` `__realloc` `__free` | a free list over the `sbrk` system call (D45): each block's capacity is stored before it; `malloc` takes the most recently freed block that fits, whole, before growing the heap; `free` pushes a block on the list; `calloc` clears the block; `realloc` keeps a block that still fits |
 | `__memcpy` | struct copies |
