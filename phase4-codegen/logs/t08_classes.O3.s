@@ -204,17 +204,17 @@ M4_0:
         move  $a0, $s0
         jal   _ZN6AnimalC1Ev
         addiu $sp, $sp, 16
-        # t52 = t1 ptr+ 8
+        # t48 = t1 ptr+ 8
         addiu $s2, $s0, 8
-        # param t52
+        # param t48
         # call Tag::Tag(), 1
         addiu $sp, $sp, -16
         move  $a0, $s2
         jal   _ZN3TagC1Ev
         addiu $sp, $sp, 16
-        # t53 = t1 ptr+ 4
+        # t49 = t1 ptr+ 4
         addiu $s1, $s0, 4
-        # *t53 = 0
+        # *t49 = 0
         sw    $zero, 0($s1)
         # Dog::made = Dog::made int+ 1
         lw    $t0, g_Dog__made
@@ -230,26 +230,26 @@ M4_0:
         # rex[4] = 3
         li    $t0, 3
         sw    $t0, -8($fp)
-        # t56 = *t53
+        # t52 = *t49
         lw    $s4, 0($s1)
-        # t57 = t56 int+ 1
+        # t53 = t52 int+ 1
         addiu $s3, $s4, 1
-        # *t53 = t57
+        # *t49 = t53
         sw    $s3, 0($s1)
-        # t61 = t57 int* 7
+        # t57 = t53 int* 7
         li    $t1, 7
         mul   $s4, $s3, $t1
-        # t62 = *t1
+        # t58 = *t1
         lw    $s1, 0($s0)
-        # t63 = t61 int+ t62
+        # t59 = t57 int+ t58
         addu  $s3, $s4, $s1
-        # t65 = *t52
+        # t61 = *t48
         lw    $s4, 0($s2)
-        # t66 = t63 int+ t65
+        # t62 = t59 int+ t61
         addu  $s2, $s3, $s4
         # param "%d %d %d\n"
-        # param t66
         # param t62
+        # param t58
         # param Dog::made
         # call printf, 4
         addiu $sp, $sp, -16
@@ -287,17 +287,17 @@ M4_0:
         move  $a0, $s0
         jal   _ZN6AnimalC1Ev
         addiu $sp, $sp, 16
-        # t70 = t10 ptr+ 8
+        # t66 = t10 ptr+ 8
         addiu $s1, $s0, 8
-        # param t70
+        # param t66
         # call Tag::Tag(), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _ZN3TagC1Ev
         addiu $sp, $sp, 16
-        # t71 = t10 ptr+ 4
+        # t67 = t10 ptr+ 4
         addiu $s2, $s0, 4
-        # *t71 = 0
+        # *t67 = 0
         sw    $zero, 0($s2)
         # Dog::made = Dog::made int+ 1
         lw    $t0, g_Dog__made
@@ -313,21 +313,21 @@ M4_0:
         # other[4] = 5
         li    $t0, 5
         sw    $t0, -20($fp)
-        # t74 = *t71
+        # t70 = *t67
         lw    $s3, 0($s2)
-        # t75 = t74 int* 7
+        # t71 = t70 int* 7
         li    $t1, 7
         mul   $s2, $s3, $t1
-        # t76 = *t10
+        # t72 = *t10
         lw    $s3, 0($s0)
-        # t77 = t75 int+ t76
+        # t73 = t71 int+ t72
         addu  $s0, $s2, $s3
-        # t79 = *t70
+        # t75 = *t66
         lw    $s2, 0($s1)
-        # t80 = t77 int+ t79
+        # t76 = t73 int+ t75
         addu  $s1, $s0, $s2
         # param "%d %d\n"
-        # param t80
+        # param t76
         # param Dog::made
         # call printf, 3
         addiu $sp, $sp, -16
@@ -345,132 +345,132 @@ M4_0:
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # t84 = &t83
+        # t80 = &t79
         addiu $s0, $fp, -96
+        # param t80
+        # call Vec::Vec(), 1
+        addiu $sp, $sp, -16
+        move  $a0, $s0
+        jal   _ZN3VecC1Ev
+        addiu $sp, $sp, 16
+        # t79[0] = 1
+        li    $t0, 1
+        sw    $t0, -96($fp)
+        # t79[4] = 2
+        li    $t0, 2
+        sw    $t0, -92($fp)
+        # a = t79
+        addiu $a0, $fp, -32
+        addiu $a1, $fp, -96
+        li    $a2, 8
+        jal   __memcpy
+        # t84 = &t83
+        addiu $s0, $fp, -104
         # param t84
         # call Vec::Vec(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN3VecC1Ev
         addiu $sp, $sp, 16
-        # t83[0] = 1
-        li    $t0, 1
-        sw    $t0, -96($fp)
-        # t83[4] = 2
-        li    $t0, 2
-        sw    $t0, -92($fp)
-        # a = t83
-        addiu $a0, $fp, -32
-        addiu $a1, $fp, -96
-        li    $a2, 8
-        jal   __memcpy
-        # t14 = &a
-        addiu $s0, $fp, -32
-        # t88 = &t87
-        addiu $s1, $fp, -104
-        # param t88
-        # call Vec::Vec(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        jal   _ZN3VecC1Ev
-        addiu $sp, $sp, 16
-        # t87[0] = 3
+        # t83[0] = 3
         li    $t0, 3
         sw    $t0, -104($fp)
-        # t87[4] = 4
+        # t83[4] = 4
         li    $t0, 4
         sw    $t0, -100($fp)
-        # b = t87
+        # b = t83
         addiu $a0, $fp, -40
         addiu $a1, $fp, -104
         li    $a2, 8
         jal   __memcpy
-        # t17 = &c
+        # t15 = &c
         addiu $s2, $fp, -48
-        # *t17 = 0
+        # *t15 = 0
         sw    $zero, 0($s2)
-        # t90 = t17 ptr+ 4
+        # t86 = t15 ptr+ 4
         addiu $s3, $s2, 4
-        # *t90 = 0
+        # *t86 = 0
         sw    $zero, 0($s3)
-        # t92 = b
+        # t16 = &a
+        addiu $s0, $fp, -32
+        # t88 = b
         addiu $a0, $fp, -112
         addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
-        # t94 = &t93
+        # t90 = &t89
         addiu $s1, $fp, -120
-        # param t94
+        # param t90
         # call Vec::Vec(), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _ZN3VecC1Ev
         addiu $sp, $sp, 16
-        # t95 = *t14
+        # t91 = *t16
         lw    $s1, 0($s0)
-        # t96 = t92[0]
+        # t92 = t88[0]
         lw    $s4, -112($fp)
-        # t97 = t95 int+ t96
+        # t93 = t91 int+ t92
         addu  $s5, $s1, $s4
-        # t93[0] = t97
+        # t89[0] = t93
         sw    $s5, -120($fp)
-        # t98 = t14 ptr+ 4
+        # t94 = t16 ptr+ 4
         addiu $s1, $s0, 4
-        # t99 = *t98
+        # t95 = *t94
         lw    $s4, 0($s1)
-        # t100 = t92[4]
+        # t96 = t88[4]
         lw    $s5, -108($fp)
-        # t101 = t99 int+ t100
+        # t97 = t95 int+ t96
         addu  $s6, $s4, $s5
-        # t93[4] = t101
+        # t89[4] = t97
         sw    $s6, -116($fp)
-        # c = t93
+        # c = t89
         addiu $a0, $fp, -48
         addiu $a1, $fp, -120
         li    $a2, 8
         jal   __memcpy
-        # t104 = &t103
+        # t100 = &t99
         addiu $s4, $fp, -128
-        # param t104
+        # param t100
         # call Vec::Vec(), 1
         addiu $sp, $sp, -16
         move  $a0, $s4
         jal   _ZN3VecC1Ev
         addiu $sp, $sp, 16
-        # t105 = *t17
+        # t101 = *t15
         lw    $s4, 0($s2)
-        # t106 = int- t105
+        # t102 = int- t101
         negu  $s5, $s4
-        # t103[0] = t106
+        # t99[0] = t102
         sw    $s5, -128($fp)
-        # t108 = *t90
+        # t104 = *t86
         lw    $s4, 0($s3)
-        # t109 = int- t108
+        # t105 = int- t104
         negu  $s5, $s4
-        # t103[4] = t109
+        # t99[4] = t105
         sw    $s5, -124($fp)
-        # d = t103
+        # d = t99
         addiu $a0, $fp, -56
         addiu $a1, $fp, -128
         li    $a2, 8
         jal   __memcpy
-        # t110 = a
+        # t106 = a
         addiu $a0, $fp, -136
         addiu $a1, $fp, -32
         li    $a2, 8
         jal   __memcpy
-        # t112 = t110[0]
+        # t108 = t106[0]
         lw    $s4, -136($fp)
-        # t113 = t112 int* 3
+        # t109 = t108 int* 3
         li    $t1, 3
         mul   $s5, $s4, $t1
-        # t114 = t110[4]
+        # t110 = t106[4]
         lw    $s4, -132($fp)
-        # t115 = t114 int* 3
+        # t111 = t110 int* 3
         li    $t1, 3
         mul   $s6, $s4, $t1
-        # param t113
-        # param t115
+        # param t109
+        # param t111
         # e = call make(int, int), 2
         addiu $sp, $sp, -16
         move  $a0, $s5
@@ -481,54 +481,54 @@ M4_0:
         addiu $a0, $fp, -64
         li    $a2, 8
         jal   __memcpy
-        # t118 = b
+        # t114 = b
         addiu $a0, $fp, -144
         addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
-        # t119 = *t14
+        # t115 = *t16
         lw    $s4, 0($s0)
-        # t120 = t118[0]
+        # t116 = t114[0]
         lw    $s5, -144($fp)
+        # t117 = t115 int+ t116
+        addu  $s6, $s4, $s5
+        # *t16 = t117
+        sw    $s6, 0($s0)
+        # t119 = *t94
+        lw    $s4, 0($s1)
+        # t120 = t114[4]
+        lw    $s5, -140($fp)
         # t121 = t119 int+ t120
         addu  $s6, $s4, $s5
-        # *t14 = t121
-        sw    $s6, 0($s0)
-        # t123 = *t98
-        lw    $s4, 0($s1)
-        # t124 = t118[4]
-        lw    $s5, -140($fp)
-        # t125 = t123 int+ t124
-        addu  $s6, $s4, $s5
-        # *t98 = t125
+        # *t94 = t121
         sw    $s6, 0($s1)
-        # t127 = *t14
+        # t123 = *t16
         lw    $s4, 0($s0)
-        # t128 = t127 int+ 1
+        # t124 = t123 int+ 1
         addiu $s5, $s4, 1
-        # *t14 = t128
+        # *t16 = t124
         sw    $s5, 0($s0)
-        # t29 = c[0]
+        # t25 = c[0]
         lw    $s4, -48($fp)
-        # t30 = c[4]
+        # t26 = c[4]
         lw    $s5, -44($fp)
-        # t31 = d[0]
+        # t27 = d[0]
         lw    $s6, -56($fp)
-        # t32 = e[4]
+        # t28 = e[4]
         lw    $s7, -60($fp)
-        # t33 = a[0]
+        # t29 = a[0]
         lw    $t0, -32($fp)
         sw    $t0, -84($fp)
-        # t34 = a[4]
+        # t30 = a[4]
         lw    $t0, -28($fp)
         sw    $t0, -88($fp)
         # param "%d %d %d %d %d %d\n"
+        # param t25
+        # param t26
+        # param t27
+        # param t28
         # param t29
         # param t30
-        # param t31
-        # param t32
-        # param t33
-        # param t34
         # call printf, 7
         addiu $sp, $sp, -32
         la    $t0, str7
@@ -543,91 +543,91 @@ M4_0:
         sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t130 = b
+        # t126 = b
         addiu $a0, $fp, -152
         addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
-        # t131 = *t14
+        # t127 = *t16
         lw    $s4, 0($s0)
-        # t132 = t130[0]
+        # t128 = t126[0]
         lw    $s5, -152($fp)
-        # if t131 int!= t132 goto 137
+        # if t127 int!= t128 goto 137
         bne   $s4, $s5, L4_137
-        # t134 = *t98
+        # t130 = *t94
         lw    $s4, 0($s1)
-        # t135 = t130[4]
+        # t131 = t126[4]
         lw    $s5, -148($fp)
-        # if t134 int== t135 goto 139
+        # if t130 int== t131 goto 139
         beq   $s4, $s5, L4_139
 L4_137:
-        # t136 = 0
+        # t132 = 0
         li    $s4, 0
         # goto 140
         j     L4_140
 L4_139:
-        # t136 = 1
+        # t132 = 1
         li    $s4, 1
 L4_140:
-        # t138 = c
+        # t134 = c
         addiu $a0, $fp, -160
         addiu $a1, $fp, -48
         li    $a2, 8
         jal   __memcpy
-        # t139 = *t17
+        # t135 = *t15
         lw    $s5, 0($s2)
-        # t140 = t138[0]
+        # t136 = t134[0]
         lw    $s2, -160($fp)
-        # if t139 int!= t140 goto 147
+        # if t135 int!= t136 goto 147
         bne   $s5, $s2, L4_147
-        # t142 = *t90
+        # t138 = *t86
         lw    $s2, 0($s3)
-        # t143 = t138[4]
+        # t139 = t134[4]
         lw    $s3, -156($fp)
-        # if t142 int== t143 goto 149
+        # if t138 int== t139 goto 149
         beq   $s2, $s3, L4_149
 L4_147:
-        # t144 = 0
+        # t140 = 0
         li    $s2, 0
         # goto 150
         j     L4_150
 L4_149:
-        # t144 = 1
+        # t140 = 1
         li    $s2, 1
 L4_150:
-        # t147 = *t14
+        # t143 = *t16
         lw    $s3, 0($s0)
-        # t152 = t147 int<< 1
+        # t148 = t143 int<< 1
         sll   $s5, $s3, 1
-        # t154 = *t98
+        # t150 = *t94
         lw    $s6, 0($s1)
-        # t155 = t152 int+ t154
+        # t151 = t148 int+ t150
         addu  $s7, $s5, $s6
-        # t157 = b
+        # t153 = b
         addiu $a0, $fp, -168
         addiu $a1, $fp, -40
         li    $a2, 8
         jal   __memcpy
-        # t158 = *t14
+        # t154 = *t16
         lw    $s5, 0($s0)
-        # t159 = t157[0]
+        # t155 = t153[0]
         lw    $s0, -168($fp)
-        # t160 = t158 int* t159
+        # t156 = t154 int* t155
         mul   $s6, $s5, $s0
-        # t162 = *t98
+        # t158 = *t94
         lw    $s0, 0($s1)
-        # t163 = t157[4]
+        # t159 = t153[4]
         lw    $s1, -164($fp)
-        # t164 = t162 int* t163
+        # t160 = t158 int* t159
         mul   $s5, $s0, $s1
-        # t165 = t160 int+ t164
+        # t161 = t156 int+ t160
         addu  $s0, $s6, $s5
         # param "%d %d %d %d %d\n"
-        # param t136
-        # param t144
-        # param t147
-        # param t155
-        # param t165
+        # param t132
+        # param t140
+        # param t143
+        # param t151
+        # param t161
         # call printf, 6
         addiu $sp, $sp, -24
         la    $t0, str8
@@ -639,29 +639,29 @@ L4_150:
         sw    $s0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # t45 = &row
+        # t41 = &row
         addiu $s0, $fp, -80
-        # *t45 = 0
+        # *t41 = 0
         sw    $zero, 0($s0)
-        # t167 = t45 ptr+ 4
+        # t163 = t41 ptr+ 4
         addiu $s1, $s0, 4
-        # *t167 = 0
+        # *t163 = 0
         sw    $zero, 0($s1)
-        # t46 = t45 ptr+ 8
+        # t42 = t41 ptr+ 8
         addiu $s1, $s0, 8
-        # *t46 = 0
+        # *t42 = 0
         sw    $zero, 0($s1)
-        # t169 = t46 ptr+ 4
+        # t165 = t42 ptr+ 4
         addiu $s0, $s1, 4
-        # *t169 = 0
+        # *t165 = 0
         sw    $zero, 0($s0)
         # row[8] = 9
         li    $t0, 9
         sw    $t0, -72($fp)
-        # t47 = row[0]
+        # t43 = row[0]
         lw    $s0, -80($fp)
         # param "%d %d\n"
-        # param t47
+        # param t43
         # param 9
         # call printf, 3
         addiu $sp, $sp, -16
@@ -672,12 +672,12 @@ L4_150:
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t49 = c[0]
+        # t45 = c[0]
         lw    $s0, -48($fp)
-        # t50 = 7 int+ t49
+        # t46 = 7 int+ t45
         li    $t0, 7
         addu  $s1, $t0, $s0
-        # return t50
+        # return t46
         move  $v0, $s1
         j     main__exit
 main__exit:

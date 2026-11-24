@@ -1,13 +1,14 @@
 /* t46 -- classes in a few lines: constructor order down a chain, a static
-   member counting objects, a virtual and a non-virtual function with the
-   same names, an operator returning a reference, an array of objects
-   built by the default constructor. Expected: g++. */
+   member counting objects, functions a derived class hides (bound from
+   the declared type: there are no virtual functions), an operator
+   returning a reference, an array of objects built by the default
+   constructor. Expected: g++. */
 class Base {
 public:
     static int made;
     int v;
     Base() { v = 1; made++; printf("Base "); }
-    virtual int who() { return 1; }
+    int who() { return 1; }
     int plain() { return 10; }
 };
 int Base::made = 0;

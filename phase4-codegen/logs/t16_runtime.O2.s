@@ -879,27 +879,27 @@ M4_0:
         # t[24] = 100
         li    $t0, 100
         sw    $t0, -56($fp)
-        # t50 = s[0]
+        # t48 = s[0]
         l.d   $f0, -40($fp)
         mov.d $f20, $f0
-        # t51 = s[24]
+        # t49 = s[24]
         lw    $s0, -16($fp)
-        # t53 = s[28]
+        # t51 = s[28]
         lb    $s1, -12($fp)
-        # t54 = chartoint t53
+        # t52 = chartoint t51
         move  $t0, $s1
         move  $s2, $t0
-        # t55 = s[32]
+        # t53 = s[32]
         lw    $t1, -4($fp)
         lw    $t0, -8($fp)
         move  $s1, $t0
         move  $s3, $t1
         # param "%.1f %d %d %c %lld\n"
-        # param t50
-        # param t51
+        # param t48
+        # param t49
         # param 100
-        # param t54
-        # param t55
+        # param t52
+        # param t53
         # call printf, 6
         addiu $sp, $sp, -40
         la    $t0, str17
@@ -918,7 +918,7 @@ M4_0:
         # param 2.0
         # param 97
         # param 5
-        # t56 = call weigh(struct Big, double, char, long long), 4
+        # t54 = call weigh(struct Big, double, char, long long), 4
         addiu $sp, $sp, -64
         addiu $a0, $sp, 0
         addiu $a1, $fp, -40
@@ -940,7 +940,7 @@ M4_0:
         addiu $sp, $sp, 64
         mov.d $f20, $f0
         # param "%.1f\n"
-        # param t56
+        # param t54
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str18
@@ -955,7 +955,7 @@ M4_0:
         # param 4.0
         # param 77
         # param "tail"
-        # t57 = call average(int, ...), 6
+        # t55 = call average(int, ...), 6
         addiu $sp, $sp, -48
         l.d   $f0, fc17
         s.d   $f0, 8($sp)
@@ -976,7 +976,7 @@ M4_0:
         addiu $sp, $sp, 48
         mov.d $f20, $f0
         # param "%.2f\n"
-        # param t57
+        # param t55
         # call printf, 2
         addiu $sp, $sp, -16
         la    $t0, str19
@@ -986,29 +986,29 @@ M4_0:
         jal   __printf
         addiu $sp, $sp, 16
         # param 12
-        # t59 = call malloc, 1
+        # t57 = call malloc, 1
         addiu $sp, $sp, -8
         li    $t0, 12
         sw    $t0, 0($sp)
         jal   __malloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # *t59 = 1
+        # *t57 = 1
         li    $t0, 1
         sw    $t0, 0($s0)
-        # t60 = t59 ptr+ 4
+        # t58 = t57 ptr+ 4
         addiu $s1, $s0, 4
-        # *t60 = 2
+        # *t58 = 2
         li    $t0, 2
         sw    $t0, 0($s1)
-        # t61 = t59 ptr+ 8
+        # t59 = t57 ptr+ 8
         addiu $s1, $s0, 8
-        # *t61 = 3
+        # *t59 = 3
         li    $t0, 3
         sw    $t0, 0($s1)
-        # param t59
+        # param t57
         # param 24
-        # t63 = call realloc, 2
+        # t61 = call realloc, 2
         addiu $sp, $sp, -8
         sw    $s0, 0($sp)
         li    $t0, 24
@@ -1018,7 +1018,7 @@ M4_0:
         move  $s1, $v0
         # param 4
         # param 4
-        # t64 = call calloc, 2
+        # t62 = call calloc, 2
         addiu $sp, $sp, -8
         li    $t0, 4
         sw    $t0, 0($sp)
@@ -1027,35 +1027,35 @@ M4_0:
         jal   __calloc
         addiu $sp, $sp, 8
         move  $s0, $v0
-        # t65 = *t63
+        # t63 = *t61
         lw    $s2, 0($s1)
-        # t66 = t63 ptr+ 4
+        # t64 = t61 ptr+ 4
         addiu $s3, $s1, 4
-        # t67 = *t66
+        # t65 = *t64
         lw    $s4, 0($s3)
-        # t68 = t65 int+ t67
+        # t66 = t63 int+ t65
         addu  $s3, $s2, $s4
-        # t69 = t63 ptr+ 8
+        # t67 = t61 ptr+ 8
         addiu $s2, $s1, 8
-        # t70 = *t69
+        # t68 = *t67
         lw    $s4, 0($s2)
-        # t71 = t68 int+ t70
+        # t69 = t66 int+ t68
         addu  $s2, $s3, $s4
-        # t72 = *t64
+        # t70 = *t62
         lw    $s3, 0($s0)
-        # t73 = t64 ptr+ 12
+        # t71 = t62 ptr+ 12
         addiu $s4, $s0, 12
-        # t74 = *t73
+        # t72 = *t71
         lw    $s5, 0($s4)
-        # if t63 ptr!= t64 goto 152
+        # if t61 ptr!= t62 goto 152
         xor   $s0, $s1, $s0
         sltu  $s0, $zero, $s0
 L4_153:
         # param "%d %d %d %d\n"
-        # param t71
+        # param t69
+        # param t70
         # param t72
-        # param t74
-        # param t75
+        # param t73
         # call printf, 5
         addiu $sp, $sp, -24
         la    $t0, str5

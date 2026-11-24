@@ -4,7 +4,7 @@
 
    Source file   : test/t32_calls_registers.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 121 -> 110 instruction(s)
+   Result        : Optimized three address code (-O2): 120 -> 110 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          121 -> 110   (9% fewer)
+   instructions                          120 -> 110   (8% fewer)
 
    constants folded                        0
    algebraic simplifications               1
    common subexpressions                   0
    copies / constants forwarded            9
    temporaries merged away                 2
-   dead instructions removed               1
+   dead instructions removed               0
    jumps removed or redirected             1
    unreachable instructions removed        0
    propagated across blocks                0
@@ -209,10 +209,10 @@
    t11              temp    int                             4      88
    t12              temp    int                             4      92
    t13              temp    struct Pair                    16      96
-   t16              temp    int                             4     132
-   t17              temp    double                          8     136
-   t18              temp    int                             4     144
-   (2 temporaries no longer used after optimization not shown)
+   t15              temp    int                             4     128
+   t16              temp    double                          8     136
+   t17              temp    int                             4     144
+   (1 temporary no longer used after optimization not shown)
 
  Code: 71 instruction(s)
 
@@ -274,17 +274,17 @@
     194     t13 = call make(int, double), 2
     195     param t13
     196     p = call twice(struct Pair), 1
-    197     t16 = p[0]
-    198     t17 = p[8]
+    197     t15 = p[0]
+    198     t16 = p[8]
     199     param "%d %.2f\n"
-    200     param t16
-    201     param t17
+    200     param t15
+    201     param t16
     202     call printf, 3
     203     param 10
     204     param 0
-    205     t18 = call walk(int, int), 2
+    205     t17 = call walk(int, int), 2
     206     param "%d\n"
-    207     param t18
+    207     param t17
     208     call printf, 2
     209     return 0
 

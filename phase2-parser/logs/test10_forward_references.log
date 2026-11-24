@@ -1,0 +1,89 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test10_forward_references.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+)                              close_paren_op      
+{                              open_brace_op       
+goto                           goto                
+done                           LABEL               
+;                              semicolon_op        
+int                            int                 
+x                              INT                 
+;                              semicolon_op        
+x                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+done                           LABEL               
+:                              colon_op            
+return                         return              
+add                            PROCEDURE           
+(                              open_paren_op       
+1                              INT_LITERAL         
+,                              comma_op            
+2                              INT_LITERAL         
+)                              close_paren_op      
+;                              semicolon_op        
+}                              close_brace_op      
+int                            int                 
+add                            PROCEDURE           
+(                              open_paren_op       
+int                            int                 
+a                              INT                 
+,                              comma_op            
+int                            int                 
+b                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+return                         return              
+a                              INT                 
++                              plus_op             
+b                              INT                 
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- GotoStmt "done"
+|       |-- VarDecl "x : INT"
+|       |-- ExprStmt
+|       |   `-- AssignExpr "="
+|       |       |-- Identifier "x"
+|       |       `-- IntLiteral "1"
+|       `-- LabeledStmt "done"
+|           `-- ReturnStmt
+|               `-- CallExpr
+|                   |-- Identifier "add"
+|                   |-- IntLiteral "1"
+|                   `-- IntLiteral "2"
+`-- FunctionDef "add : _Z3addii"
+    |-- ParamDecl "a : INT"
+    |-- ParamDecl "b : INT"
+    `-- CompoundStmt
+        `-- ReturnStmt
+            `-- BinaryExpr "+"
+                |-- Identifier "a"
+                `-- Identifier "b"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      3      global                       PROCEDURE                                 0         INT ()                 main
+x                    variable       5      global > main()              INT                                       1                                
+done                 label          7      global > main()              LABEL                                     0                                
+add                  procedure      11     global                       PROCEDURE                                 0         INT (INT, INT)         _Z3addii
+a                    parameter      11     global > add()               INT                                       1                                
+b                    parameter      11     global > add()               INT                                       1                                

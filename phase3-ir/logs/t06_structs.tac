@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : no optimization
-   Result        : Three address code generated: 6 function(s), 183 instruction(s)
+   Result        : Three address code generated: 6 function(s), 182 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -153,7 +153,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 58 temporaries, frame 444 bytes
+ Symbol table: 14 parameter(s)/local(s), 57 temporaries, frame 436 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -209,28 +209,27 @@
    t36              temp    struct Rect *                   4     328
    t37              temp    int                             4     332
    t38              temp    Complex                        16     336
-   t39              temp    Complex *                       4     352
+   t39              temp    double                          8     352
    t40              temp    double                          8     360
-   t41              temp    double                          8     368
-   t42              temp    struct Node *                   4     376
-   t43              temp    struct Node *                   4     380
-   t44              temp    struct Node *                   4     384
-   t45              temp    int                             4     388
-   t46              temp    struct Node *                   4     392
-   t47              temp    struct Node *                   4     396
-   t48              temp    struct Node *                   4     400
-   t49              temp    int                             4     404
-   t50              temp    int                             4     408
-   t51              temp    int                             4     412
-   t52              temp    char                            1     416
-   t53              temp    int                             4     420
-   t54              temp    short                           2     424
-   t55              temp    int                             4     428
-   t56              temp    int                             4     432
-   t57              temp    int                             4     436
-   t58              temp    int                             4     440
+   t41              temp    struct Node *                   4     368
+   t42              temp    struct Node *                   4     372
+   t43              temp    struct Node *                   4     376
+   t44              temp    int                             4     380
+   t45              temp    struct Node *                   4     384
+   t46              temp    struct Node *                   4     388
+   t47              temp    struct Node *                   4     392
+   t48              temp    int                             4     396
+   t49              temp    int                             4     400
+   t50              temp    int                             4     404
+   t51              temp    char                            1     408
+   t52              temp    int                             4     412
+   t53              temp    short                           2     416
+   t54              temp    int                             4     420
+   t55              temp    int                             4     424
+   t56              temp    int                             4     428
+   t57              temp    int                             4     432
 
- Code: 147 instruction(s)
+ Code: 146 instruction(s)
 
     136       r[0] = 1
     137       r[4] = 2
@@ -326,59 +325,58 @@
     227       param b
     228       t38 = call add(Complex, Complex), 2
     229       c = t38
-    230       t39 = &c
-    231       t40 = c[0]
-    232       t41 = c[8]
-    233       param "%.1f %.1f\n"
+    230       t39 = c[0]
+    231       t40 = c[8]
+    232       param "%.1f %.1f\n"
+    233       param t39
     234       param t40
-    235       param t41
-    236       call printf, 3
-    237       n1[0] = 1
-    238       t42 = &n2
-    239       n1[4] = t42
-    240       n2[0] = 2
-    241       t43 = &n3
-    242       n2[4] = t43
-    243       n3[0] = 3
-    244       n3[4] = 0
-    245       t44 = &n1
-    246       param t44
-    247       t45 = call length(struct Node *), 1
-    248       t46 = n1[4]
-    249       t47 = t46 ptr+ 4
+    235       call printf, 3
+    236       n1[0] = 1
+    237       t41 = &n2
+    238       n1[4] = t41
+    239       n2[0] = 2
+    240       t42 = &n3
+    241       n2[4] = t42
+    242       n3[0] = 3
+    243       n3[4] = 0
+    244       t43 = &n1
+    245       param t43
+    246       t44 = call length(struct Node *), 1
+    247       t45 = n1[4]
+    248       t46 = t45 ptr+ 4
+    249       t47 = *t46
     250       t48 = *t47
-    251       t49 = *t48
-    252       param "%d %d\n"
-    253       param t45
-    254       param t49
-    255       call printf, 3
-    256       k[0] = 1
-    257       k[4] = 16909060
-    258       k[8] = 0
-    259       k[9] = 0
-    260       k[10] = 0
-    261       k[11] = 0
-    262       k[12] = 9
-    263       k[9] = 120
-    264       t50 = k[0]
-    265       t51 = k[4]
-    266       t52 = k[9]
-    267       t53 = chartoint t52
-    268       t54 = k[12]
-    269       t55 = shorttoint t54
-    270       param "%d %d %c %d %d\n"
+    251       param "%d %d\n"
+    252       param t44
+    253       param t48
+    254       call printf, 3
+    255       k[0] = 1
+    256       k[4] = 16909060
+    257       k[8] = 0
+    258       k[9] = 0
+    259       k[10] = 0
+    260       k[11] = 0
+    261       k[12] = 9
+    262       k[9] = 120
+    263       t49 = k[0]
+    264       t50 = k[4]
+    265       t51 = k[9]
+    266       t52 = chartoint t51
+    267       t53 = k[12]
+    268       t54 = shorttoint t53
+    269       param "%d %d %c %d %d\n"
+    270       param t49
     271       param t50
-    272       param t51
-    273       param t53
-    274       param t55
-    275       param 16
-    276       call printf, 6
-    277       zero[0] = 0
-    278       zero[4] = 0
-    279       t56 = zero[0]
-    280       t57 = pts[16]
-    281       t58 = t56 int+ t57
-    282       return t58
+    272       param t52
+    273       param t54
+    274       param 16
+    275       call printf, 6
+    276       zero[0] = 0
+    277       zero[4] = 0
+    278       t55 = zero[0]
+    279       t56 = pts[16]
+    280       t57 = t55 int+ t56
+    281       return t57
 
 
 ----------------------------------------------------------------------------

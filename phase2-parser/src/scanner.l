@@ -91,10 +91,11 @@ static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns n
 
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
-    if (kw.has_value() && kw.value() == TokenType::EXPLICIT) {
+    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT)) {
         /* still reserved so the message is clear, but no longer part of the language (D35) */
         reportDiagnostic(yylineno, g_tokStartCol, yytext,
-                         std::string("'") + yytext + "' is not supported: this language has no converting constructors",
+                         std::string("'") + yytext + "' is not supported: this language has no " +
+                             (kw.value() == TokenType::VIRTUAL ? "virtual functions" : "converting constructors"),
                          "Lexical error");
         return SKIP_TOKEN;
     }

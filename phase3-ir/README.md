@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 46 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 45 test programs are
 > generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 47 passed, the 46 programs and one warnings check).
+> (`./run_tests.sh`: 46 passed, the 45 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -157,8 +157,7 @@ a type or an overload.
 | references | hold an address: `r = &x`, a use is `*r` |
 | member functions | `this` is a hidden first parameter; fields are `this ptr+ offset` |
 | inheritance | single inheritance: the base is at offset 0, so `this` and converted pointers are unchanged |
-| constructors | default constructors only (D35): a call with the object's address; the base is built first, then (for a class with virtual functions) the table pointer is set, then the members, then the body. There are no destructors |
-| virtual functions (D44) | one table `_ZTV<class>` per polymorphic class (a global of function addresses); a call through a pointer, a reference or `this` is `t1 = *p` (the table pointer, at the class's `vptrOffset`), `t2 = t1[4k]`, `param p (this)`, `t3 = call *t2, n`; `obj.f()` and `p->Base::f()` stay direct calls. A copy that creates an object re-installs its declared class's table; an assignment keeps the target's |
+| constructors | default constructors only (D35): a call with the object's address; the base and the members are built first, in declaration order, then the body runs. There are no destructors |
 | operator overloading | a call to `operator<op>` |
 | `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
 | variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
@@ -284,7 +283,6 @@ the output of the same source compiled with gcc/g++.
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` at `-O3` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
 | `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
-| `t37_virtual` | virtual functions (D44): overriding at three levels with and without the keyword, an abstract base used through pointers, calls through pointers, references and `this`, qualified calls, a virtual call inside a base constructor, copies and assignments keeping each object's class, by-value parameters and results, a virtual operator, overloaded virtuals, arguments wider than `$a0`–`$a3`, a global object |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
 | `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
 | `t40_aliasing` | small: the optimizer must not reuse a value changed through a pointer, through a second pointer, through another array index, by a call to a global or through an address passed to a call |
@@ -293,7 +291,7 @@ the output of the same source compiled with gcc/g++.
 | `t43_float_conv` | small: double/float → int truncation toward zero, int ↔ double, float precision, `printf` rounding (`%.2f` of 2.675 is `2.67`), int/double comparison, unsigned → double |
 | `t44_long_long` | small: carries between the halves, multiply/divide/remainder with negatives, shifts across 32, comparisons, conversion to and from double, values across calls |
 | `t45_strings_chars` | small: walking, copying and comparing strings with pointers, escapes, character arithmetic, digits ↔ number, `%5s` `%-5s` `%.2s` |
-| `t46_classes_small` | small: constructor order down a chain, a static member counting objects, virtual and non-virtual functions with the same name, an operator returning a reference, an array of objects |
+| `t46_classes_small` | small: constructor order down a chain, a static member counting objects, functions a derived class hides (bound from the declared type), an operator returning a reference, an array of objects |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 
 ## Warnings from this phase

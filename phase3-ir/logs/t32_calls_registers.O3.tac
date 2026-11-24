@@ -4,7 +4,7 @@
 
    Source file   : test/t32_calls_registers.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 121 -> 53 instruction(s)
+   Result        : Optimized three address code (-O3): 120 -> 53 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          121 -> 53   (56% fewer)
+   instructions                          120 -> 53   (55% fewer)
 
    constants folded                       25
    algebraic simplifications               1
    common subexpressions                   0
    copies / constants forwarded           82
    temporaries merged away                 3
-   dead instructions removed              65
+   dead instructions removed              64
    jumps removed or redirected             1
    unreachable instructions removed        0
    propagated across blocks                0
@@ -84,16 +84,16 @@
    keep5            local   int                             4      16
    s                local   int                             4      20
    p                local   struct Pair                    16      24
-   t16              temp    int                             4     132
-   t17              temp    double                          8     136
-   t18              temp    int                             4     144
-   t69              temp    struct Pair                    16     392
-   t70              temp    struct Pair                    16     408
-   t71              temp    int                             4     424
-   t72              temp    int                             4     428
-   t73              temp    double                          8     432
-   t74              temp    double                          8     440
-   (65 temporaries no longer used after optimization not shown)
+   t15              temp    int                             4     128
+   t16              temp    double                          8     136
+   t17              temp    int                             4     144
+   t68              temp    struct Pair                    16     392
+   t69              temp    struct Pair                    16     408
+   t70              temp    int                             4     424
+   t71              temp    int                             4     428
+   t72              temp    double                          8     432
+   t73              temp    double                          8     440
+   (64 temporaries no longer used after optimization not shown)
 
  Code: 40 instruction(s)
 
@@ -114,27 +114,27 @@
     127     param 44
     128     param 55
     129     call printf, 7
-    130     t69[0] = 3
-    131     t69[8] = 1.25
-    132     t70 = t69
-    133     t71 = t70[0]
-    134     t72 = t71 int<< 1
-    135     t70[0] = t72
-    136     t73 = t70[8]
-    137     t74 = t73 double* 2.0
-    138     t70[8] = t74
-    139     p = t70
-    140     t16 = p[0]
-    141     t17 = p[8]
+    130     t68[0] = 3
+    131     t68[8] = 1.25
+    132     t69 = t68
+    133     t70 = t69[0]
+    134     t71 = t70 int<< 1
+    135     t69[0] = t71
+    136     t72 = t69[8]
+    137     t73 = t72 double* 2.0
+    138     t69[8] = t73
+    139     p = t69
+    140     t15 = p[0]
+    141     t16 = p[8]
     142     param "%d %.2f\n"
-    143     param t16
-    144     param t17
+    143     param t15
+    144     param t16
     145     call printf, 3
     146     param 10
     147     param 0
-    148     t18 = call walk(int, int), 2
+    148     t17 = call walk(int, int), 2
     149     param "%d\n"
-    150     param t18
+    150     param t17
     151     call printf, 2
     152     return 0
 

@@ -175,45 +175,45 @@ M1_0:
         sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t69[0] = 3
+        # t68[0] = 3
         li    $t0, 3
         sw    $t0, -32($fp)
-        # t69[8] = 1.25
+        # t68[8] = 1.25
         l.d   $f0, fc1
         s.d   $f0, -24($fp)
-        # t70 = t69
+        # t69 = t68
         addiu $a0, $fp, -48
         addiu $a1, $fp, -32
         li    $a2, 16
         jal   __memcpy
-        # t71 = t70[0]
+        # t70 = t69[0]
         lw    $s0, -48($fp)
-        # t72 = t71 int<< 1
+        # t71 = t70 int<< 1
         sll   $s1, $s0, 1
-        # t70[0] = t72
+        # t69[0] = t71
         sw    $s1, -48($fp)
-        # t73 = t70[8]
+        # t72 = t69[8]
         l.d   $f0, -40($fp)
         mov.d $f20, $f0
-        # t74 = t73 double* 2.0
+        # t73 = t72 double* 2.0
         l.d   $f2, fc2
         mul.d $f22, $f20, $f2
-        # t70[8] = t74
+        # t69[8] = t73
         mov.d $f0, $f22
         s.d   $f0, -40($fp)
-        # p = t70
+        # p = t69
         addiu $a0, $fp, -16
         addiu $a1, $fp, -48
         li    $a2, 16
         jal   __memcpy
-        # t16 = p[0]
+        # t15 = p[0]
         lw    $s0, -16($fp)
-        # t17 = p[8]
+        # t16 = p[8]
         l.d   $f0, -8($fp)
         mov.d $f20, $f0
         # param "%d %.2f\n"
+        # param t15
         # param t16
-        # param t17
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str3
@@ -225,7 +225,7 @@ M1_0:
         addiu $sp, $sp, 16
         # param 10
         # param 0
-        # t18 = call walk(int, int), 2
+        # t17 = call walk(int, int), 2
         addiu $sp, $sp, -16
         li    $a0, 10
         move  $a1, $zero
@@ -233,7 +233,7 @@ M1_0:
         addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
-        # param t18
+        # param t17
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str0

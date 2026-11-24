@@ -4,7 +4,7 @@
 
    Source file   : test/t08_classes.c
    Optimization  : no optimization
-   Result        : Three address code generated: 19 function(s), 265 instruction(s)
+   Result        : Three address code generated: 19 function(s), 261 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -467,7 +467,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 50 temporaries, frame 308 bytes
+ Symbol table: 10 parameter(s)/local(s), 46 temporaries, frame 292 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -494,26 +494,26 @@
    t11              temp    class Dog *                     4     128
    t12              temp    int                             4     132
    t13              temp    class Vec                       8     136
-   t14              temp    class Vec *                     4     144
-   t15              temp    class Vec                       8     148
+   t14              temp    class Vec                       8     144
+   t15              temp    class Vec *                     4     152
    t16              temp    class Vec *                     4     156
-   t17              temp    class Vec *                     4     160
-   t18              temp    class Vec *                     4     164
-   t19              temp    class Vec                       8     168
-   t20              temp    class Vec *                     4     176
-   t21              temp    class Vec                       8     180
-   t22              temp    class Vec *                     4     188
-   t23              temp    class Vec                       8     192
-   t24              temp    class Vec *                     4     200
-   t25              temp    class Vec *                     4     204
-   t26              temp    class Vec &                     4     208
-   t27              temp    class Vec *                     4     212
-   t28              temp    class Vec &                     4     216
+   t17              temp    class Vec                       8     160
+   t18              temp    class Vec *                     4     168
+   t19              temp    class Vec                       8     172
+   t20              temp    class Vec                       8     180
+   t21              temp    class Vec *                     4     188
+   t22              temp    class Vec &                     4     192
+   t23              temp    class Vec *                     4     196
+   t24              temp    class Vec &                     4     200
+   t25              temp    int                             4     204
+   t26              temp    int                             4     208
+   t27              temp    int                             4     212
+   t28              temp    int                             4     216
    t29              temp    int                             4     220
    t30              temp    int                             4     224
-   t31              temp    int                             4     228
+   t31              temp    class Vec *                     4     228
    t32              temp    int                             4     232
-   t33              temp    int                             4     236
+   t33              temp    class Vec *                     4     236
    t34              temp    int                             4     240
    t35              temp    class Vec *                     4     244
    t36              temp    int                             4     248
@@ -521,18 +521,14 @@
    t38              temp    int                             4     256
    t39              temp    class Vec *                     4     260
    t40              temp    int                             4     264
-   t41              temp    class Vec *                     4     268
-   t42              temp    int                             4     272
-   t43              temp    class Vec *                     4     276
+   t41              temp    class Vec (*)[2]                4     268
+   t42              temp    class Vec (*)[2]                4     272
+   t43              temp    int                             4     276
    t44              temp    int                             4     280
-   t45              temp    class Vec (*)[2]                4     284
-   t46              temp    class Vec (*)[2]                4     288
-   t47              temp    int                             4     292
-   t48              temp    int                             4     296
-   t49              temp    int                             4     300
-   t50              temp    int                             4     304
+   t45              temp    int                             4     284
+   t46              temp    int                             4     288
 
- Code: 133 instruction(s)
+ Code: 129 instruction(s)
 
     232     t1 = &rex
     233     param t1                            (this)
@@ -578,95 +574,91 @@
     273     param 2
     274     t13 = call make(int, int), 2
     275     a = t13
-    276     t14 = &a
-    277     param 3
-    278     param 4
-    279     t15 = call make(int, int), 2
-    280     b = t15
-    281     t16 = &b
-    282     t17 = &c
-    283     param t17                           (this)
-    284     call Vec::Vec(), 1
-    285     t18 = &a
-    286     param t18                           (this)
-    287     param b
-    288     t19 = call Vec::operator+(class Vec), 2
-    289     c = t19
-    290     t20 = &c
-    291     param t20                           (this)
-    292     t21 = call Vec::operator-(), 1
-    293     d = t21
-    294     t22 = &d
-    295     param a
-    296     param 3
-    297     t23 = call operator*(class Vec, int), 2
-    298     e = t23
-    299     t24 = &e
-    300     t25 = &a
-    301     param t25                           (this)
-    302     param b
-    303     t26 = call Vec::operator+=(class Vec), 2
-    304     t27 = &a
-    305     param t27                           (this)
-    306     t28 = call Vec::operator++(), 1
-    307     t29 = c[0]
-    308     t30 = c[4]
-    309     t31 = d[0]
-    310     t32 = e[4]
-    311     t33 = a[0]
-    312     t34 = a[4]
-    313     param "%d %d %d %d %d %d\n"
+    276     param 3
+    277     param 4
+    278     t14 = call make(int, int), 2
+    279     b = t14
+    280     t15 = &c
+    281     param t15                           (this)
+    282     call Vec::Vec(), 1
+    283     t16 = &a
+    284     param t16                           (this)
+    285     param b
+    286     t17 = call Vec::operator+(class Vec), 2
+    287     c = t17
+    288     t18 = &c
+    289     param t18                           (this)
+    290     t19 = call Vec::operator-(), 1
+    291     d = t19
+    292     param a
+    293     param 3
+    294     t20 = call operator*(class Vec, int), 2
+    295     e = t20
+    296     t21 = &a
+    297     param t21                           (this)
+    298     param b
+    299     t22 = call Vec::operator+=(class Vec), 2
+    300     t23 = &a
+    301     param t23                           (this)
+    302     t24 = call Vec::operator++(), 1
+    303     t25 = c[0]
+    304     t26 = c[4]
+    305     t27 = d[0]
+    306     t28 = e[4]
+    307     t29 = a[0]
+    308     t30 = a[4]
+    309     param "%d %d %d %d %d %d\n"
+    310     param t25
+    311     param t26
+    312     param t27
+    313     param t28
     314     param t29
     315     param t30
-    316     param t31
-    317     param t32
-    318     param t33
-    319     param t34
-    320     call printf, 7
-    321     t35 = &a
-    322     param t35                           (this)
-    323     param b
-    324     t36 = call Vec::operator==(class Vec), 2
-    325     t37 = &c
-    326     param t37                           (this)
-    327     param c
-    328     t38 = call Vec::operator==(class Vec), 2
-    329     t39 = &a
-    330     param t39                           (this)
-    331     param 0
-    332     t40 = call Vec::operator[](int), 2
-    333     t41 = &a
-    334     param t41                           (this)
-    335     param 2
-    336     t42 = call Vec::operator()(int), 2
-    337     t43 = &a
-    338     param t43                           (this)
-    339     param b
-    340     t44 = call Vec::dot(class Vec), 2
-    341     param "%d %d %d %d %d\n"
-    342     param t36
-    343     param t38
-    344     param t40
-    345     param t42
-    346     param t44
-    347     call printf, 6
-    348     t45 = &row
-    349     param t45                           (this)
-    350     call Vec::Vec(), 1
-    351     t46 = t45 ptr+ 8
-    352     param t46                           (this)
-    353     call Vec::Vec(), 1
-    354     row[8] = 9
-    355     t47 = row[0]
-    356     t48 = row[8]
-    357     param "%d %d\n"
-    358     param t47
-    359     param t48
-    360     call printf, 3
-    361     w = 7
-    362     t49 = c[0]
-    363     t50 = w int+ t49
-    364     return t50
+    316     call printf, 7
+    317     t31 = &a
+    318     param t31                           (this)
+    319     param b
+    320     t32 = call Vec::operator==(class Vec), 2
+    321     t33 = &c
+    322     param t33                           (this)
+    323     param c
+    324     t34 = call Vec::operator==(class Vec), 2
+    325     t35 = &a
+    326     param t35                           (this)
+    327     param 0
+    328     t36 = call Vec::operator[](int), 2
+    329     t37 = &a
+    330     param t37                           (this)
+    331     param 2
+    332     t38 = call Vec::operator()(int), 2
+    333     t39 = &a
+    334     param t39                           (this)
+    335     param b
+    336     t40 = call Vec::dot(class Vec), 2
+    337     param "%d %d %d %d %d\n"
+    338     param t32
+    339     param t34
+    340     param t36
+    341     param t38
+    342     param t40
+    343     call printf, 6
+    344     t41 = &row
+    345     param t41                           (this)
+    346     call Vec::Vec(), 1
+    347     t42 = t41 ptr+ 8
+    348     param t42                           (this)
+    349     call Vec::Vec(), 1
+    350     row[8] = 9
+    351     t43 = row[0]
+    352     t44 = row[8]
+    353     param "%d %d\n"
+    354     param t43
+    355     param t44
+    356     call printf, 3
+    357     w = 7
+    358     t45 = c[0]
+    359     t46 = w int+ t45
+    360     return t46
 
 
 ----------------------------------------------------------------------------

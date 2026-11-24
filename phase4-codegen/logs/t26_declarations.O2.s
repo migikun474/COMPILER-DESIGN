@@ -368,38 +368,38 @@ L1_15:
         # copy[4] = 100
         li    $t0, 100
         sw    $t0, -156($fp)
-        # t36 = m[0]
+        # t35 = m[0]
         lb    $s0, -128($fp)
-        # t37 = chartoint t36
+        # t36 = chartoint t35
         move  $t0, $s0
         move  $s1, $t0
-        # t38 = m[4]
+        # t37 = m[4]
         lw    $s0, -124($fp)
-        # t39 = m[8]
+        # t38 = m[8]
         lb    $s2, -120($fp)
-        # t40 = chartoint t39
+        # t39 = chartoint t38
         move  $t0, $s2
         move  $s3, $t0
-        # t41 = m[10]
+        # t40 = m[10]
         lh    $s2, -118($fp)
-        # t42 = shorttoint t41
+        # t41 = shorttoint t40
         move  $t0, $s2
         move  $s4, $t0
-        # t43 = m[16]
+        # t42 = m[16]
         l.d   $f0, -112($fp)
         mov.d $f20, $f0
-        # t44 = m[24]
+        # t43 = m[24]
         lb    $s2, -104($fp)
-        # t45 = chartoint t44
+        # t44 = chartoint t43
         move  $t0, $s2
         move  $s5, $t0
         # param "%c %d %c %d %.1f %c %d\n"
+        # param t36
         # param t37
-        # param t38
-        # param t40
+        # param t39
+        # param t41
         # param t42
-        # param t43
-        # param t45
+        # param t44
         # param 100
         # call printf, 8
         addiu $sp, $sp, -40
@@ -416,34 +416,34 @@ L1_15:
         sw    $t0, 36($sp)
         jal   __printf
         addiu $sp, $sp, 40
-        # t47 = &letters
+        # t46 = &letters
         la    $s0, g_letters
-        # t48 = table[0]
+        # t47 = table[0]
         la    $t8, g_table
         l.d   $f0, 0($t8)
         mov.d $f20, $f0
-        # t49 = table[8]
+        # t48 = table[8]
         la    $t8, g_table
         l.d   $f0, 8($t8)
         mov.d $f22, $f0
-        # t50 = table[16]
+        # t49 = table[16]
         la    $t8, g_table
         l.d   $f0, 16($t8)
         mov.d $f24, $f0
-        # t51 = matrix[20]
+        # t50 = matrix[20]
         la    $t8, g_matrix
         lw    $s1, 20($t8)
-        # t52 = matrix[0]
+        # t51 = matrix[0]
         la    $t8, g_matrix
         lw    $s2, 0($t8)
-        # t53 = t51 int- t52
+        # t52 = t50 int- t51
         subu  $s3, $s1, $s2
         # param "%s %.1f %.1f %.1f %d\n"
+        # param t46
         # param t47
         # param t48
         # param t49
-        # param t50
-        # param t53
+        # param t52
         # call printf, 6
         addiu $sp, $sp, -40
         la    $t0, str4
@@ -493,17 +493,17 @@ L1_124:
         # if i int>= 3 goto 132
         li    $t1, 3
         bge   $s0, $t1, L1_132
-        # t54 = i int<< 2
+        # t53 = i int<< 2
         sll   $s2, $s0, 2
-        # t55 = t54 int+ i
+        # t54 = t53 int+ i
         addu  $s3, $s2, $s0
-        # t56 = t55 int<< 2
+        # t55 = t54 int<< 2
         sll   $s4, $s3, 2
-        # t57 = grid[t56]
+        # t56 = grid[t55]
         addiu $t8, $fp, -208
         addu  $t8, $t8, $s4
         lw    $s5, 0($t8)
-        # trace = trace int+ t57
+        # trace = trace int+ t56
         addu  $s1, $s1, $s5
         # i = i int+ 1
         addiu $s0, $s0, 1
@@ -548,20 +548,20 @@ L1_132:
         sb    $zero, -222($fp)
         # rows[11] = 0
         sb    $zero, -221($fp)
-        # t60 = words[8]
+        # t59 = words[8]
         lw    $s0, -212($fp)
-        # t61 = rows[8]
+        # t60 = rows[8]
         lb    $s2, -224($fp)
-        # t62 = chartoint t61
+        # t61 = chartoint t60
         move  $t0, $s2
         move  $s3, $t0
-        # t63 = &rows
+        # t62 = &rows
         addiu $s2, $fp, -232
         # param "%d %s %c %s %d\n"
         # param trace
-        # param t60
+        # param t59
+        # param t61
         # param t62
-        # param t63
         # param 3
         # call printf, 6
         addiu $sp, $sp, -24
@@ -575,11 +575,11 @@ L1_132:
         sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # t66 = 10 int+ kept.17
+        # t65 = 10 int+ kept.17
         li    $t0, 10
         lw    $t1, g_kept_17
         addu  $s0, $t0, $t1
-        # return t66
+        # return t65
         move  $v0, $s0
         j     main__exit
 main__exit:

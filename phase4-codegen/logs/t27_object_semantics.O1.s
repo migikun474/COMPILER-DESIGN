@@ -437,16 +437,16 @@ M9_0:
         addiu $a0, $fp, -12
         li    $a2, 4
         jal   __memcpy
-        # t10 = a[0]
+        # t8 = a[0]
         lw    $s0, -4($fp)
-        # t11 = b[0]
+        # t9 = b[0]
         lw    $s1, -8($fp)
-        # t12 = c[0]
+        # t10 = c[0]
         lw    $s2, -12($fp)
         # param "%d %d %d\n"
+        # param t8
+        # param t9
         # param t10
-        # param t11
-        # param t12
         # call printf, 4
         addiu $sp, $sp, -16
         la    $t0, str3
@@ -466,42 +466,42 @@ M9_0:
         lw    $t0, -16($fp)
         li    $t1, 2
         ble   $t0, $t1, L9_33
-        # t13 = &x
+        # t11 = &x
         addiu $s0, $fp, -16
         # goto 34
         j     L9_34
 L9_33:
-        # t13 = &y
+        # t11 = &y
         addiu $s0, $fp, -20
 L9_34:
-        # r = t13
+        # r = t11
         move  $s1, $s0
-        # *t13 = 20
+        # *t11 = 20
         li    $t0, 20
         sw    $t0, 0($s0)
         # if x int>= y goto 39
         lw    $t0, -16($fp)
         lw    $t1, -20($fp)
         bge   $t0, $t1, L9_39
-        # t16 = &x
+        # t14 = &x
         addiu $s0, $fp, -16
         # goto 40
         j     L9_40
 L9_39:
-        # t16 = &y
+        # t14 = &y
         addiu $s0, $fp, -20
 L9_40:
-        # *t16 = 10
+        # *t14 = 10
         li    $t0, 10
         sw    $t0, 0($s0)
-        # t19 = &x
+        # t17 = &x
         addiu $s1, $fp, -16
-        # t20 = &y
+        # t18 = &y
         addiu $s2, $fp, -20
         # param 1
-        # param t19
-        # param t20
-        # t21 = call pick(int, int &, int &), 3
+        # param t17
+        # param t18
+        # t19 = call pick(int, int &, int &), 3
         addiu $sp, $sp, -16
         li    $a0, 1
         move  $a1, $s1
@@ -509,11 +509,11 @@ L9_40:
         jal   _Z4pickiRiS_
         addiu $sp, $sp, 16
         move  $s0, $v0
-        # t22 = *t21
+        # t20 = *t19
         lw    $s1, 0($s0)
-        # t23 = t22 int+ 5
+        # t21 = t20 int+ 5
         addiu $s2, $s1, 5
-        # *t21 = t23
+        # *t19 = t21
         sw    $s2, 0($s0)
         # p[0] = 1
         li    $t0, 1
@@ -527,41 +527,41 @@ L9_40:
         # q[8] = 99.0
         l.d   $f0, fc1
         s.d   $f0, -48($fp)
-        # t24 = &p
+        # t22 = &p
         addiu $s0, $fp, -40
-        # t25 = &q
+        # t23 = &q
         addiu $s1, $fp, -56
-        # param t24
-        # param t25
-        # t26 = call richer(struct Account &, struct Account &), 2
+        # param t22
+        # param t23
+        # t24 = call richer(struct Account &, struct Account &), 2
         addiu $sp, $sp, -16
         move  $a0, $s0
         move  $a1, $s1
         jal   _Z6richerR7AccountS0_
         addiu $sp, $sp, 16
         move  $s2, $v0
-        # t27 = t26 ptr+ 8
+        # t25 = t24 ptr+ 8
         addiu $s0, $s2, 8
-        # t28 = *t27
+        # t26 = *t25
         l.d   $f0, 0($s0)
         mov.d $f20, $f0
-        # t29 = t28 double- 9.0
+        # t27 = t26 double- 9.0
         l.d   $f2, fc2
         sub.d $f22, $f20, $f2
-        # *t27 = t29
+        # *t25 = t27
         mov.d $f0, $f22
         s.d   $f0, 0($s0)
-        # t31 = p[8]
+        # t29 = p[8]
         l.d   $f0, -32($fp)
         mov.d $f20, $f0
-        # t32 = q[8]
+        # t30 = q[8]
         l.d   $f0, -48($fp)
         mov.d $f22, $f0
         # param "%d %d %.1f %.1f\n"
         # param x
         # param y
-        # param t31
-        # param t32
+        # param t29
+        # param t30
         # call printf, 5
         addiu $sp, $sp, -32
         la    $t0, str4
@@ -576,17 +576,17 @@ L9_40:
         s.d   $f0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t33 = &primes
+        # t31 = &primes
         la    $s0, g_primes
-        # param t33
-        # t34 = call sum(const int *), 1
+        # param t31
+        # t32 = call sum(const int *), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _Z3sumPKi
         addiu $sp, $sp, 16
         move  $s1, $v0
         # param "%d\n"
-        # param t34
+        # param t32
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str5
@@ -594,25 +594,25 @@ L9_40:
         sw    $s1, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # t35 = &pack
+        # t33 = &pack
         addiu $s0, $fp, -80
-        # param t35
+        # param t33
         # call Dog::Dog(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN3DogC1Ev
         addiu $sp, $sp, 16
-        # t36 = t35 ptr+ 8
+        # t34 = t33 ptr+ 8
         addiu $s1, $s0, 8
-        # param t36
+        # param t34
         # call Dog::Dog(), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _ZN3DogC1Ev
         addiu $sp, $sp, 16
-        # t37 = t35 ptr+ 16
+        # t35 = t33 ptr+ 16
         addiu $s1, $s0, 16
-        # param t37
+        # param t35
         # call Dog::Dog(), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
@@ -624,35 +624,35 @@ L9_87:
         # if i int>= 3 goto 94
         li    $t1, 3
         bge   $s0, $t1, L9_94
-        # t38 = i int<< 3
+        # t36 = i int<< 3
         sll   $s2, $s0, 3
-        # t39 = t38 int+ 4
+        # t37 = t36 int+ 4
         addiu $s3, $s2, 4
-        # t40 = i int+ 1
+        # t38 = i int+ 1
         addiu $s1, $s0, 1
-        # pack[t39] = t40
+        # pack[t37] = t38
         addiu $t8, $fp, -80
         addu  $t8, $t8, $s3
         sw    $s1, 0($t8)
-        # i = t40
+        # i = t38
         move  $s0, $s1
         # goto 87
         j     L9_87
 L9_94:
-        # t42 = pack[20]
+        # t40 = pack[20]
         lw    $s0, -60($fp)
-        # t43 = &pack
+        # t41 = &pack
         addiu $s1, $fp, -80
-        # param t43
-        # t44 = call peek(const class Dog &), 1
+        # param t41
+        # t42 = call peek(const class Dog &), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _Z4peekRK3Dog
         addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d\n"
+        # param t40
         # param t42
-        # param t44
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str2
@@ -661,21 +661,21 @@ L9_94:
         sw    $s2, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t45 = keeper[4]
+        # t43 = keeper[4]
         la    $t8, g_keeper
         lw    $s0, 4($t8)
-        # t46 = &keeper
+        # t44 = &keeper
         la    $s1, g_keeper
-        # param t46
-        # t47 = call peek(const class Dog &), 1
+        # param t44
+        # t45 = call peek(const class Dog &), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _Z4peekRK3Dog
         addiu $sp, $sp, 16
         move  $s2, $v0
         # param "%d %d\n"
+        # param t43
         # param t45
-        # param t47
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str2

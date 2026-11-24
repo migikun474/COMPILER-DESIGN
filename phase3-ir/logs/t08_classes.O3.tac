@@ -4,7 +4,7 @@
 
    Source file   : test/t08_classes.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 265 -> 205 instruction(s)
+   Result        : Optimized three address code (-O3): 261 -> 205 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          265 -> 205   (22% fewer)
+   instructions                          261 -> 205   (21% fewer)
 
    constants folded                        1
    algebraic simplifications               1
-   common subexpressions                  28
-   copies / constants forwarded           98
+   common subexpressions                  27
+   copies / constants forwarded           97
    temporaries merged away                 9
-   dead instructions removed              74
+   dead instructions removed              70
    jumps removed or redirected             4
    unreachable instructions removed        2
    propagated across blocks                3
@@ -125,7 +125,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 94 temporaries, frame 828 bytes
+ Symbol table: 10 parameter(s)/local(s), 94 temporaries, frame 812 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -142,124 +142,124 @@
    t1               temp    class Dog *                     4      88
    t9               temp    int                             4     120
    t10              temp    class Dog *                     4     124
-   t14              temp    class Vec *                     4     144
-   t17              temp    class Vec *                     4     160
+   t15              temp    class Vec *                     4     152
+   t16              temp    class Vec *                     4     156
+   t25              temp    int                             4     204
+   t26              temp    int                             4     208
+   t27              temp    int                             4     212
+   t28              temp    int                             4     216
    t29              temp    int                             4     220
    t30              temp    int                             4     224
-   t31              temp    int                             4     228
-   t32              temp    int                             4     232
-   t33              temp    int                             4     236
-   t34              temp    int                             4     240
-   t45              temp    class Vec (*)[2]                4     284
-   t46              temp    class Vec (*)[2]                4     288
-   t47              temp    int                             4     292
-   t49              temp    int                             4     300
-   t50              temp    int                             4     304
-   t52              temp    class Dog *                     4     312
-   t53              temp    class Dog *                     4     316
-   t56              temp    int                             4     328
+   t41              temp    class Vec (*)[2]                4     268
+   t42              temp    class Vec (*)[2]                4     272
+   t43              temp    int                             4     276
+   t45              temp    int                             4     284
+   t46              temp    int                             4     288
+   t48              temp    class Dog *                     4     296
+   t49              temp    class Dog *                     4     300
+   t52              temp    int                             4     312
+   t53              temp    int                             4     316
    t57              temp    int                             4     332
+   t58              temp    int                             4     336
+   t59              temp    int                             4     340
    t61              temp    int                             4     348
    t62              temp    int                             4     352
-   t63              temp    int                             4     356
-   t65              temp    int                             4     364
-   t66              temp    int                             4     368
-   t70              temp    class Dog *                     4     384
-   t71              temp    class Dog *                     4     388
-   t74              temp    int                             4     400
+   t66              temp    class Dog *                     4     368
+   t67              temp    class Dog *                     4     372
+   t70              temp    int                             4     384
+   t71              temp    int                             4     388
+   t72              temp    int                             4     392
+   t73              temp    int                             4     396
    t75              temp    int                             4     404
    t76              temp    int                             4     408
-   t77              temp    int                             4     412
-   t79              temp    int                             4     420
-   t80              temp    int                             4     424
-   t83              temp    class Vec                       8     436
-   t84              temp    class Vec *                     4     444
-   t87              temp    class Vec                       8     456
-   t88              temp    class Vec *                     4     464
-   t90              temp    class Vec *                     4     472
-   t92              temp    class Vec                       8     480
-   t93              temp    class Vec                       8     488
+   t79              temp    class Vec                       8     420
+   t80              temp    class Vec *                     4     428
+   t83              temp    class Vec                       8     440
+   t84              temp    class Vec *                     4     448
+   t86              temp    class Vec *                     4     456
+   t88              temp    class Vec                       8     464
+   t89              temp    class Vec                       8     472
+   t90              temp    class Vec *                     4     480
+   t91              temp    int                             4     484
+   t92              temp    int                             4     488
+   t93              temp    int                             4     492
    t94              temp    class Vec *                     4     496
    t95              temp    int                             4     500
    t96              temp    int                             4     504
    t97              temp    int                             4     508
-   t98              temp    class Vec *                     4     512
-   t99              temp    int                             4     516
-   t100             temp    int                             4     520
-   t101             temp    int                             4     524
-   t103             temp    class Vec                       8     532
-   t104             temp    class Vec *                     4     540
+   t99              temp    class Vec                       8     516
+   t100             temp    class Vec *                     4     524
+   t101             temp    int                             4     528
+   t102             temp    int                             4     532
+   t104             temp    int                             4     540
    t105             temp    int                             4     544
-   t106             temp    int                             4     548
-   t108             temp    int                             4     556
-   t109             temp    int                             4     560
-   t110             temp    class Vec                       8     564
-   t112             temp    int                             4     576
-   t113             temp    int                             4     580
-   t114             temp    int                             4     584
-   t115             temp    int                             4     588
-   t118             temp    class Vec                       8     604
+   t106             temp    class Vec                       8     548
+   t108             temp    int                             4     560
+   t109             temp    int                             4     564
+   t110             temp    int                             4     568
+   t111             temp    int                             4     572
+   t114             temp    class Vec                       8     588
+   t115             temp    int                             4     596
+   t116             temp    int                             4     600
+   t117             temp    int                             4     604
    t119             temp    int                             4     612
    t120             temp    int                             4     616
    t121             temp    int                             4     620
    t123             temp    int                             4     628
    t124             temp    int                             4     632
-   t125             temp    int                             4     636
-   t127             temp    int                             4     644
-   t128             temp    int                             4     648
-   t130             temp    class Vec                       8     656
+   t126             temp    class Vec                       8     640
+   t127             temp    int                             4     648
+   t128             temp    int                             4     652
+   t130             temp    int                             4     660
    t131             temp    int                             4     664
    t132             temp    int                             4     668
-   t134             temp    int                             4     676
-   t135             temp    int                             4     680
-   t136             temp    int                             4     684
-   t138             temp    class Vec                       8     692
+   t134             temp    class Vec                       8     676
+   t135             temp    int                             4     684
+   t136             temp    int                             4     688
+   t138             temp    int                             4     696
    t139             temp    int                             4     700
    t140             temp    int                             4     704
-   t142             temp    int                             4     712
    t143             temp    int                             4     716
-   t144             temp    int                             4     720
-   t147             temp    int                             4     732
-   t152             temp    int                             4     752
-   t154             temp    int                             4     760
-   t155             temp    int                             4     764
-   t157             temp    class Vec                       8     772
+   t148             temp    int                             4     736
+   t150             temp    int                             4     744
+   t151             temp    int                             4     748
+   t153             temp    class Vec                       8     756
+   t154             temp    int                             4     764
+   t155             temp    int                             4     768
+   t156             temp    int                             4     772
    t158             temp    int                             4     780
    t159             temp    int                             4     784
    t160             temp    int                             4     788
-   t162             temp    int                             4     796
-   t163             temp    int                             4     800
-   t164             temp    int                             4     804
-   t165             temp    int                             4     808
-   t167             temp    class Vec *                     4     816
-   t169             temp    class Vec *                     4     824
-   (75 temporaries no longer used after optimization not shown)
+   t161             temp    int                             4     792
+   t163             temp    class Vec *                     4     800
+   t165             temp    class Vec *                     4     808
+   (71 temporaries no longer used after optimization not shown)
 
  Code: 186 instruction(s)
 
     119       t1 = &rex
     120       param t1                            (this)
     121       call Animal::Animal(), 1
-    122       t52 = t1 ptr+ 8
-    123       param t52                           (this)
+    122       t48 = t1 ptr+ 8
+    123       param t48                           (this)
     124       call Tag::Tag(), 1
-    125       t53 = t1 ptr+ 4
-    126       *t53 = 0
+    125       t49 = t1 ptr+ 4
+    126       *t49 = 0
     127       Dog::made = Dog::made int+ 1
     128       param "Dog()\n"
     129       call printf, 1
     130       rex[4] = 3
-    131       t56 = *t53
-    132       t57 = t56 int+ 1
-    133       *t53 = t57
-    134       t61 = t57 int* 7
-    135       t62 = *t1
-    136       t63 = t61 int+ t62
-    137       t65 = *t52
-    138       t66 = t63 int+ t65
+    131       t52 = *t49
+    132       t53 = t52 int+ 1
+    133       *t49 = t53
+    134       t57 = t53 int* 7
+    135       t58 = *t1
+    136       t59 = t57 int+ t58
+    137       t61 = *t48
+    138       t62 = t59 int+ t61
     139       param "%d %d %d\n"
-    140       param t66
-    141       param t62
+    140       param t62
+    141       param t58
     142       param Dog::made
     143       call printf, 4
     144       t9 = *t1
@@ -271,158 +271,158 @@
     150       t10 = &other
     151       param t10                           (this)
     152       call Animal::Animal(), 1
-    153       t70 = t10 ptr+ 8
-    154       param t70                           (this)
+    153       t66 = t10 ptr+ 8
+    154       param t66                           (this)
     155       call Tag::Tag(), 1
-    156       t71 = t10 ptr+ 4
-    157       *t71 = 0
+    156       t67 = t10 ptr+ 4
+    157       *t67 = 0
     158       Dog::made = Dog::made int+ 1
     159       param "Dog()\n"
     160       call printf, 1
     161       other[4] = 5
-    162       t74 = *t71
-    163       t75 = t74 int* 7
-    164       t76 = *t10
-    165       t77 = t75 int+ t76
-    166       t79 = *t70
-    167       t80 = t77 int+ t79
+    162       t70 = *t67
+    163       t71 = t70 int* 7
+    164       t72 = *t10
+    165       t73 = t71 int+ t72
+    166       t75 = *t66
+    167       t76 = t73 int+ t75
     168       param "%d %d\n"
-    169       param t80
+    169       param t76
     170       param Dog::made
     171       call printf, 3
     172       param "--\n"
     173       call printf, 1
-    174       t84 = &t83
-    175       param t84                           (this)
+    174       t80 = &t79
+    175       param t80                           (this)
     176       call Vec::Vec(), 1
-    177       t83[0] = 1
-    178       t83[4] = 2
-    179       a = t83
-    180       t14 = &a
-    181       t88 = &t87
-    182       param t88                           (this)
-    183       call Vec::Vec(), 1
-    184       t87[0] = 3
-    185       t87[4] = 4
-    186       b = t87
-    187       t17 = &c
-    188       *t17 = 0
-    189       t90 = t17 ptr+ 4
-    190       *t90 = 0
-    191       t92 = b
-    192       t94 = &t93
-    193       param t94                           (this)
+    177       t79[0] = 1
+    178       t79[4] = 2
+    179       a = t79
+    180       t84 = &t83
+    181       param t84                           (this)
+    182       call Vec::Vec(), 1
+    183       t83[0] = 3
+    184       t83[4] = 4
+    185       b = t83
+    186       t15 = &c
+    187       *t15 = 0
+    188       t86 = t15 ptr+ 4
+    189       *t86 = 0
+    190       t16 = &a
+    191       t88 = b
+    192       t90 = &t89
+    193       param t90                           (this)
     194       call Vec::Vec(), 1
-    195       t95 = *t14
-    196       t96 = t92[0]
-    197       t97 = t95 int+ t96
-    198       t93[0] = t97
-    199       t98 = t14 ptr+ 4
-    200       t99 = *t98
-    201       t100 = t92[4]
-    202       t101 = t99 int+ t100
-    203       t93[4] = t101
-    204       c = t93
-    205       t104 = &t103
-    206       param t104                          (this)
+    195       t91 = *t16
+    196       t92 = t88[0]
+    197       t93 = t91 int+ t92
+    198       t89[0] = t93
+    199       t94 = t16 ptr+ 4
+    200       t95 = *t94
+    201       t96 = t88[4]
+    202       t97 = t95 int+ t96
+    203       t89[4] = t97
+    204       c = t89
+    205       t100 = &t99
+    206       param t100                          (this)
     207       call Vec::Vec(), 1
-    208       t105 = *t17
-    209       t106 = int- t105
-    210       t103[0] = t106
-    211       t108 = *t90
-    212       t109 = int- t108
-    213       t103[4] = t109
-    214       d = t103
-    215       t110 = a
-    216       t112 = t110[0]
-    217       t113 = t112 int* 3
-    218       t114 = t110[4]
-    219       t115 = t114 int* 3
-    220       param t113
-    221       param t115
+    208       t101 = *t15
+    209       t102 = int- t101
+    210       t99[0] = t102
+    211       t104 = *t86
+    212       t105 = int- t104
+    213       t99[4] = t105
+    214       d = t99
+    215       t106 = a
+    216       t108 = t106[0]
+    217       t109 = t108 int* 3
+    218       t110 = t106[4]
+    219       t111 = t110 int* 3
+    220       param t109
+    221       param t111
     222       e = call make(int, int), 2
-    223       t118 = b
-    224       t119 = *t14
-    225       t120 = t118[0]
-    226       t121 = t119 int+ t120
-    227       *t14 = t121
-    228       t123 = *t98
-    229       t124 = t118[4]
-    230       t125 = t123 int+ t124
-    231       *t98 = t125
-    232       t127 = *t14
-    233       t128 = t127 int+ 1
-    234       *t14 = t128
-    235       t29 = c[0]
-    236       t30 = c[4]
-    237       t31 = d[0]
-    238       t32 = e[4]
-    239       t33 = a[0]
-    240       t34 = a[4]
+    223       t114 = b
+    224       t115 = *t16
+    225       t116 = t114[0]
+    226       t117 = t115 int+ t116
+    227       *t16 = t117
+    228       t119 = *t94
+    229       t120 = t114[4]
+    230       t121 = t119 int+ t120
+    231       *t94 = t121
+    232       t123 = *t16
+    233       t124 = t123 int+ 1
+    234       *t16 = t124
+    235       t25 = c[0]
+    236       t26 = c[4]
+    237       t27 = d[0]
+    238       t28 = e[4]
+    239       t29 = a[0]
+    240       t30 = a[4]
     241       param "%d %d %d %d %d %d\n"
-    242       param t29
-    243       param t30
-    244       param t31
-    245       param t32
-    246       param t33
-    247       param t34
+    242       param t25
+    243       param t26
+    244       param t27
+    245       param t28
+    246       param t29
+    247       param t30
     248       call printf, 7
-    249       t130 = b
-    250       t131 = *t14
-    251       t132 = t130[0]
-    252       if t131 int!= t132 goto L1
-    253       t134 = *t98
-    254       t135 = t130[4]
-    255       if t134 int== t135 goto L2
-    256  L1:  t136 = 0
+    249       t126 = b
+    250       t127 = *t16
+    251       t128 = t126[0]
+    252       if t127 int!= t128 goto L1
+    253       t130 = *t94
+    254       t131 = t126[4]
+    255       if t130 int== t131 goto L2
+    256  L1:  t132 = 0
     257       goto L3
-    258  L2:  t136 = 1
-    259  L3:  t138 = c
-    260       t139 = *t17
-    261       t140 = t138[0]
-    262       if t139 int!= t140 goto L4
-    263       t142 = *t90
-    264       t143 = t138[4]
-    265       if t142 int== t143 goto L5
-    266  L4:  t144 = 0
+    258  L2:  t132 = 1
+    259  L3:  t134 = c
+    260       t135 = *t15
+    261       t136 = t134[0]
+    262       if t135 int!= t136 goto L4
+    263       t138 = *t86
+    264       t139 = t134[4]
+    265       if t138 int== t139 goto L5
+    266  L4:  t140 = 0
     267       goto L6
-    268  L5:  t144 = 1
-    269  L6:  t147 = *t14
-    270       t152 = t147 int<< 1
-    271       t154 = *t98
-    272       t155 = t152 int+ t154
-    273       t157 = b
-    274       t158 = *t14
-    275       t159 = t157[0]
-    276       t160 = t158 int* t159
-    277       t162 = *t98
-    278       t163 = t157[4]
-    279       t164 = t162 int* t163
-    280       t165 = t160 int+ t164
+    268  L5:  t140 = 1
+    269  L6:  t143 = *t16
+    270       t148 = t143 int<< 1
+    271       t150 = *t94
+    272       t151 = t148 int+ t150
+    273       t153 = b
+    274       t154 = *t16
+    275       t155 = t153[0]
+    276       t156 = t154 int* t155
+    277       t158 = *t94
+    278       t159 = t153[4]
+    279       t160 = t158 int* t159
+    280       t161 = t156 int+ t160
     281       param "%d %d %d %d %d\n"
-    282       param t136
-    283       param t144
-    284       param t147
-    285       param t155
-    286       param t165
+    282       param t132
+    283       param t140
+    284       param t143
+    285       param t151
+    286       param t161
     287       call printf, 6
-    288       t45 = &row
-    289       *t45 = 0
-    290       t167 = t45 ptr+ 4
-    291       *t167 = 0
-    292       t46 = t45 ptr+ 8
-    293       *t46 = 0
-    294       t169 = t46 ptr+ 4
-    295       *t169 = 0
+    288       t41 = &row
+    289       *t41 = 0
+    290       t163 = t41 ptr+ 4
+    291       *t163 = 0
+    292       t42 = t41 ptr+ 8
+    293       *t42 = 0
+    294       t165 = t42 ptr+ 4
+    295       *t165 = 0
     296       row[8] = 9
-    297       t47 = row[0]
+    297       t43 = row[0]
     298       param "%d %d\n"
-    299       param t47
+    299       param t43
     300       param 9
     301       call printf, 3
-    302       t49 = c[0]
-    303       t50 = 7 int+ t49
-    304       return t50
+    302       t45 = c[0]
+    303       t46 = 7 int+ t45
+    304       return t46
 
 
 ----------------------------------------------------------------------------

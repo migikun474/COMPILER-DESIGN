@@ -76,7 +76,6 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 |---|---|---|---|---|---|---|---|---|
 | Classes, objects, `this`, methods, static members, `friend` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test7 test8 test13 test30, S:v10 e09 v27 e23 | all phases; no nested or local classes (D35) |
 | Single inheritance (chains allowed), inheritance access | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 v27 e09 e14 | all phases; a second base and object slicing are errors (D35) |
-| Virtual functions: run-time overriding, pure virtual functions, abstract classes | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test31, S:v29 e26, I:t37 | D44; a vtable per polymorphic class, `call *t` / `jalr`; overriding by the C++ rule |
 | Access modifiers `public` / `protected` / `private` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v10 e09 e14 | all phases |
 | Default constructors `T()` (in-class, out-of-class) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24 test30, S:v17 e15 e23 | all phases; base, then members, then body; global objects built before `main` |
 | Operator overloading (member and free) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test24, S:v17 e15 | all phases |
@@ -109,7 +108,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Constant folding in the expression's own type, with overflow / shift / conversion warnings | `foldBinary()`, `wrapToType()` | S:v24 e20 |
 | Sequence-point check (`i = i++`) | `phase2b-semantic/src/sequencing.cpp` | S:v02 v24 e20 |
 | Forward references: calls to functions defined later, `goto` to later labels | `prescan()`, `hoistFunction()`, `collectLabels()`; parser `resolvePendingReferences()` | P:test10, S:v04 |
-| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 90 checks |
+| Self-checking semantic test runner (expected diagnostics written inline) | `phase2b-semantic/run_tests.sh` | 88 checks |
 | Run-time checks: integer division by zero, stack overflow (same message in the interpreter and on SPIM) | `mips.cpp` (`binary`, prologue), `runtime.s`, `interp.cpp` | probes in D37 |
 | Uninitialized-variable warning from reaching definitions, at the line of the read | `reachingDefinitions()`, `readBeforeAssigned()` in `opt.cpp` | T:diagnostics/uninitialized |
 | Combined driver: one binary stops after any phase (`--tokens`, `--ast`, `--symbols`, `--tac`, `--run`) | `phase4-codegen/src/main.cpp` | — |
@@ -132,7 +131,7 @@ arrays.
 
 ### C. Additional features discovered in the code
 
-Classes/objects/`this`, single inheritance, virtual functions and abstract classes, access modifiers, default
+Classes/objects/`this`, single inheritance, access modifiers, default
 constructors, operator overloading, function overloading, `const`/`auto`,
 `enum` and `union` (D42), C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
@@ -195,13 +194,14 @@ specifiers" (S:e19).
 the preprocessor (any `#` line is a lexical error; S:e16); from C++:
 destructors, constructors with parameters, copy and converting
 constructors, member initializer lists, `const` member functions,
-virtual functions with everything serving them (brought back on
-2026-11-24, D44, without the this-adjustment, which single inheritance
-does not need; virtual destructors stay out with destructors),
-`explicit`, multiple inheritance, object slicing, nested and local
-classes, static local objects whose class has a constructor (S:e23, e24,
-P:test31); and loop-invariant code motion in `-O3`. `explicit` stays a
-reserved word so the scanner can name it in its error.
+virtual functions with everything serving them (vtables, dynamic
+dispatch, this-adjustment, pure virtual functions, abstract classes,
+virtual destructors), `explicit`, multiple inheritance, object slicing,
+nested and local classes, static local objects whose class has a
+constructor (S:e23, e24, P:test31); and loop-invariant code motion in
+`-O3`. `virtual` and `explicit` stay reserved words so the scanner can
+name them in its error. (Virtual functions came back on 2026-11-24 with
+D44 and were removed again the same day, D47.)
 
 **Removed on 2026-11-23** (decision D43, at the user's request): the
 `extern` storage class. As with `register`, the word is an ordinary

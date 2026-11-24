@@ -95,7 +95,7 @@ first rule**. On top of that:
 | Identifiers | `[a-zA-Z_][a-zA-Z0-9_]*` |
 | Type keywords | `int char float double void short long signed unsigned bool` |
 | Qualifiers, storage classes | `const static typedef auto` (`extern` was removed, D43) |
-| Aggregates, OOP | `struct class union enum public private protected this operator friend virtual` (D44); `explicit` is reserved only to be reported (D35) |
+| Aggregates, OOP | `struct class union enum public private protected this operator friend`; `virtual` and `explicit` are reserved only to be reported (D35) |
 | Control flow | `if else for while do until switch case default break continue goto return` |
 | Reserved library names (custom to this language) | `printf scanf malloc free calloc realloc va_list va_start va_arg va_end` |
 | Other | `sizeof`, `true`, `false` (`BOOL_LITERAL`) |

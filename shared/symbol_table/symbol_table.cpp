@@ -836,8 +836,7 @@ static std::string notes(const Symbol &s) {
     auto add = [&](const std::string &x) { n += (n.empty() ? "" : ", ") + x; };
     if (s.ownerRecord) add(accessName(s.access));
     if (s.isStatic) add("static");
-    if (s.isVirtual) add(std::string(s.isPure ? "pure virtual" : "virtual") + ", slot " + std::to_string(s.vtableIndex));
-    if (s.kind == SymbolKind::Function && !s.isConstructor && !s.isPure) add(s.isDefined ? "defined" : "declared only");
+    if (s.kind == SymbolKind::Function && !s.isConstructor) add(s.isDefined ? "defined" : "declared only");
     if (s.isConstant) add("value " + std::to_string(s.constValue));
     if (s.offset >= 0) add("offset " + std::to_string(s.offset));
     if (s.kind == SymbolKind::Tag && s.record && s.record->complete) {
@@ -915,12 +914,6 @@ void printRecordLayouts(const SymbolTable &st, std::ostream &out) {
         any = true;
         out << recordKindName(r.kind) << " " << r.tag << ": size " << r.size << ", align " << r.align << "\n";
         for (const auto &b : r.bases) out << "    (base " << b.record->tag << ", " << accessName(b.access) << ")\n";
-        if (r.ownVptr) out << "    +" << r.vptrOffset << "  vtable pointer\n";
-        if (r.polymorphic)
-            for (size_t k = 0; k < r.vtable.size(); ++k)
-                out << "    slot " << k << ": " << (r.vtable[k]->ownerRecord ? r.vtable[k]->ownerRecord->tag + "::" : "")
-                    << r.vtable[k]->name << (r.vtable[k]->isPure ? "  (pure)" : "") << "\n";
-        if (r.abstract) out << "    (abstract)\n";
         for (const auto &f : r.fields) {
             out << "    " << (f->storage == Storage::Member ? "+" + std::to_string(f->offset) : std::string("static"))
                 << "  " << typeToString(f->type) << " " << f->name << "  [" << accessName(f->access) << "]\n";

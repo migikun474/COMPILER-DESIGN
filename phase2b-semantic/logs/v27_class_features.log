@@ -2,15 +2,15 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v27_class_features.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v27_class_features.c
 
-Semantic analysis successful: 0 error(s), 2 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v27_class_features.c'.
+Semantic analysis successful: 0 error(s), 2 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v27_class_features.c'.
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v27_class_features.c:25:5: semantic warning: control reaches end of non-void function 'sign' on some path [return-type]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v27_class_features.c:25:5: semantic warning: control reaches end of non-void function 'sign' on some path [return-type]
  25 |     if (x < 0) return -1;                         // warning: control reaches end of non-void function 'sign' on some path
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v27_class_features.c:29:6: semantic warning: code will never be executed [unreachable-code]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v27_class_features.c:29:6: semantic warning: code will never be executed [unreachable-code]
  29 |     x++;                                          // warning: code will never be executed
     |      ^
 

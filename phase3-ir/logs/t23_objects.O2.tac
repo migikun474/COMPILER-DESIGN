@@ -4,7 +4,7 @@
 
    Source file   : test/t23_objects.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 356 -> 300 instruction(s)
+   Result        : Optimized three address code (-O2): 352 -> 300 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          356 -> 300   (15% fewer)
+   instructions                          352 -> 300   (14% fewer)
 
    constants folded                        0
    algebraic simplifications               2
-   common subexpressions                  45
-   copies / constants forwarded           50
+   common subexpressions                  43
+   copies / constants forwarded           48
    temporaries merged away                 5
-   dead instructions removed              49
+   dead instructions removed              45
    jumps removed or redirected             1
    unreachable instructions removed        0
    propagated across blocks                0
@@ -433,19 +433,19 @@
  FUNCTION Segment::length2()        (link name _ZN7Segment7length2Ev)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 6 temporaries, frame 56 bytes
+ Symbol table: 2 parameter(s)/local(s), 6 temporaries, frame 52 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Segment *                 4       0
    d                local   class Point                     8       4
    t1               temp    class Segment *                 4      12
-   t4               temp    int                             4      28
+   t3               temp    int                             4      24
+   t5               temp    int                             4      32
    t6               temp    int                             4      36
-   t7               temp    int                             4      40
+   t8               temp    int                             4      44
    t9               temp    int                             4      48
-   t10              temp    int                             4      52
-   (4 temporaries no longer used after optimization not shown)
+   (3 temporaries no longer used after optimization not shown)
 
  Code: 10 instruction(s)
 
@@ -453,12 +453,12 @@
     212     param t1                            (this)
     213     param this
     214     d = call Point::operator-(const class Point &), 2
-    215     t4 = d[0]
-    216     t6 = t4 int* t4
-    217     t7 = d[4]
-    218     t9 = t7 int* t7
-    219     t10 = t6 int+ t9
-    220     return t10
+    215     t3 = d[0]
+    216     t5 = t3 int* t3
+    217     t6 = d[4]
+    218     t8 = t6 int* t6
+    219     t9 = t5 int+ t8
+    220     return t9
 
 ============================================================================
  FUNCTION total(class Rect &)        (link name _Z5totalR4Rect)
@@ -537,7 +537,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 11 parameter(s)/local(s), 41 temporaries, frame 444 bytes
+ Symbol table: 11 parameter(s)/local(s), 41 temporaries, frame 432 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -570,30 +570,30 @@
    t31              temp    int                             4     232
    t32              temp    int                             4     236
    t33              temp    int                             4     240
-   t35              temp    class Point *                   4     252
+   t36              temp    class Point *                   4     260
    t37              temp    class Point *                   4     264
-   t43              temp    class Point &                   4     288
+   t41              temp    class Point &                   4     280
+   t45              temp    int &                           4     296
    t47              temp    int &                           4     304
-   t49              temp    int &                           4     312
-   t50              temp    int                             4     316
-   t51              temp    int                             4     320
+   t48              temp    int                             4     308
+   t49              temp    int                             4     312
+   t53              temp    int                             4     332
+   t54              temp    int                             4     336
+   t55              temp    int                             4     340
    t56              temp    int                             4     344
-   t57              temp    int                             4     348
-   t58              temp    int                             4     352
-   t59              temp    int                             4     356
-   t62              temp    bool                            1     368
-   t63              temp    int                             4     372
-   t66              temp    bool                            1     384
-   t67              temp    int                             4     388
-   t68              temp    class Segment *                 4     392
-   t69              temp    class Segment *                 4     396
-   t72              temp    int                             4     408
-   t73              temp    int                             4     412
-   t74              temp    class Rect *                    4     416
-   t78              temp    int                             4     432
-   t79              temp    int                             4     436
-   t80              temp    int                             4     440
-   (39 temporaries no longer used after optimization not shown)
+   t59              temp    bool                            1     356
+   t60              temp    int                             4     360
+   t63              temp    bool                            1     372
+   t64              temp    int                             4     376
+   t65              temp    class Segment *                 4     380
+   t66              temp    class Segment *                 4     384
+   t69              temp    int                             4     396
+   t70              temp    int                             4     400
+   t71              temp    class Rect *                    4     404
+   t75              temp    int                             4     420
+   t76              temp    int                             4     424
+   t77              temp    int                             4     428
+   (36 temporaries no longer used after optimization not shown)
 
  Code: 159 instruction(s)
 
@@ -673,87 +673,87 @@
     314     param 3
     315     param 4
     316     a = call at(int, int), 2
-    317     t35 = &a
+    317     param 1
     318     param 1
-    319     param 1
-    320     b = call at(int, int), 2
+    319     b = call at(int, int), 2
+    320     t36 = &a
     321     t37 = &b
-    322     param t35                           (this)
+    322     param t36                           (this)
     323     param t37
     324     call Point::operator+=(const class Point &), 2
-    325     param t35                           (this)
+    325     param t36                           (this)
     326     param t37
-    327     t43 = call Point::operator+=(const class Point &), 2
-    328     param t43                           (this)
+    327     t41 = call Point::operator+=(const class Point &), 2
+    328     param t41                           (this)
     329     param t37
     330     call Point::operator+=(const class Point &), 2
-    331     param t35                           (this)
+    331     param t36                           (this)
     332     param 0
-    333     t47 = call Point::operator[](int), 2
-    334     param t35                           (this)
+    333     t45 = call Point::operator[](int), 2
+    334     param t36                           (this)
     335     param 1
-    336     t49 = call Point::operator[](int), 2
-    337     t50 = *t49
-    338     t51 = t50 int<< 1
-    339     *t47 = t51
-    340     param t35                           (this)
+    336     t47 = call Point::operator[](int), 2
+    337     t48 = *t47
+    338     t49 = t48 int<< 1
+    339     *t45 = t49
+    340     param t36                           (this)
     341     param t37
     342     c = call Point::operator-(const class Point &), 2
-    343     t56 = a[0]
-    344     t57 = a[4]
-    345     t58 = c[0]
-    346     t59 = c[4]
+    343     t53 = a[0]
+    344     t54 = a[4]
+    345     t55 = c[0]
+    346     t56 = c[4]
     347     param t37                           (this)
-    348     param t35
-    349     t62 = call Point::operator<(const class Point &), 2
-    350     t63 = booltoint t62
-    351     param t35                           (this)
+    348     param t36
+    349     t59 = call Point::operator<(const class Point &), 2
+    350     t60 = booltoint t59
+    351     param t36                           (this)
     352     param t37
-    353     t66 = call Point::operator<(const class Point &), 2
-    354     t67 = booltoint t66
+    353     t63 = call Point::operator<(const class Point &), 2
+    354     t64 = booltoint t63
     355     param "%d %d %d %d %d %d\n"
-    356     param t56
-    357     param t57
-    358     param t58
-    359     param t59
-    360     param t63
-    361     param t67
+    356     param t53
+    357     param t54
+    358     param t55
+    359     param t56
+    360     param t60
+    361     param t64
     362     call printf, 7
-    363     t68 = &s
-    364     param t68                           (this)
+    363     t65 = &s
+    364     param t65                           (this)
     365     call Point::Point(), 1
-    366     t69 = t68 ptr+ 8
-    367     param t69                           (this)
+    366     t66 = t65 ptr+ 8
+    367     param t66                           (this)
     368     call Point::Point(), 1
-    369     param t68                           (this)
+    369     param t65                           (this)
     370     param 1
     371     param 2
     372     param 4
     373     param 6
     374     call Segment::set(int, int, int, int), 5
-    375     param t68                           (this)
-    376     t72 = call Segment::length2(), 1
-    377     t73 = s[12]
+    375     param t65                           (this)
+    376     t69 = call Segment::length2(), 1
+    377     t70 = s[12]
     378     param "%d %d\n"
-    379     param t72
-    380     param t73
+    379     param t69
+    380     param t70
     381     call printf, 3
-    382     t74 = &last
-    383     param t74                           (this)
+    382     t71 = &last
+    383     param t71                           (this)
     384     call Rect::Rect(), 1
-    385     param t74                           (this)
+    385     param t71                           (this)
     386     param 2
     387     param 9
     388     call Rect::set(int, int), 3
-    389     param t74                           (this)
-    390     t78 = call Rect::area(), 1
-    391     param t74                           (this)
-    392     t79 = call Shape::area(), 1
-    393     t80 = *t74
+    389     param t71                           (this)
+    390     t75 = call Rect::area(), 1
+    391     param t71                           (this)
+    392     t76 = call Shape::area(), 1
+    393     t77 = *t71
     394     param "%d %d %d\n"
-    395     param t78
-    396     param t79
-    397     param t80
+    395     param t75
+    396     param t76
+    397     param t77
     398     call printf, 4
     399     return Shape::live
 

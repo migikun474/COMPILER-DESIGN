@@ -4,7 +4,7 @@
 
    Source file   : test/t32_calls_registers.c
    Optimization  : no optimization
-   Result        : Three address code generated: 7 function(s), 121 instruction(s)
+   Result        : Three address code generated: 7 function(s), 120 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -171,7 +171,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 7 parameter(s)/local(s), 18 temporaries, frame 148 bytes
+ Symbol table: 7 parameter(s)/local(s), 17 temporaries, frame 148 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -196,12 +196,11 @@
    t12              temp    int                             4      92
    t13              temp    struct Pair                    16      96
    t14              temp    struct Pair                    16     112
-   t15              temp    struct Pair *                   4     128
-   t16              temp    int                             4     132
-   t17              temp    double                          8     136
-   t18              temp    int                             4     144
+   t15              temp    int                             4     128
+   t16              temp    double                          8     136
+   t17              temp    int                             4     144
 
- Code: 79 instruction(s)
+ Code: 78 instruction(s)
 
     142     param 1
     143     param 2
@@ -268,20 +267,19 @@
     204     param t13
     205     t14 = call twice(struct Pair), 1
     206     p = t14
-    207     t15 = &p
-    208     t16 = p[0]
-    209     t17 = p[8]
-    210     param "%d %.2f\n"
+    207     t15 = p[0]
+    208     t16 = p[8]
+    209     param "%d %.2f\n"
+    210     param t15
     211     param t16
-    212     param t17
-    213     call printf, 3
-    214     param 10
-    215     param 0
-    216     t18 = call walk(int, int), 2
-    217     param "%d\n"
-    218     param t18
-    219     call printf, 2
-    220     return 0
+    212     call printf, 3
+    213     param 10
+    214     param 0
+    215     t17 = call walk(int, int), 2
+    216     param "%d\n"
+    217     param t17
+    218     call printf, 2
+    219     return 0
 
 
 ----------------------------------------------------------------------------
