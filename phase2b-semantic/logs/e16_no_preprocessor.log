@@ -2,23 +2,23 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e16_no_preprocessor.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e16_no_preprocessor.c
 
 Syntax analysis failed: 4 error(s); semantic analysis was not run.
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e16_no_preprocessor.c:2:1: lexical error: preprocessor directive '#include' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e16_no_preprocessor.c:2:1: lexical error: preprocessor directive '#include' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
  2 | #include <stdio.h>          // error: preprocessor directive '#include' is not supported
    | ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e16_no_preprocessor.c:3:1: lexical error: preprocessor directive '#define' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e16_no_preprocessor.c:3:1: lexical error: preprocessor directive '#define' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
  3 | #define N 3                 // error: preprocessor directive '#define' is not supported
    | ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e16_no_preprocessor.c:4:3: lexical error: preprocessor directive '#if' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e16_no_preprocessor.c:4:3: lexical error: preprocessor directive '#if' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
  4 |   #if 1                     // error: preprocessor directive '#if' is not supported
    |   ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e16_no_preprocessor.c:5:1: lexical error: preprocessor directive '#endif' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e16_no_preprocessor.c:5:1: lexical error: preprocessor directive '#endif' is not supported: this compiler has no preprocessor (printf, scanf, malloc, free and va_list are built in, so no #include is needed)
  5 | #endif                      // error: preprocessor directive '#endif' is not supported
    | ^
 

@@ -396,25 +396,25 @@ M6_0:
         la    $t8, g_g
         l.s   $f0, fc1
         s.s   $f0, 0($t8)
-        # t22 = g[0]
+        # t23 = g[0]
         la    $t8, g_g
         lw    $s3, 0($t8)
-        # gb = t22
+        # gb = t23
         move  $s4, $s3
-        # t23 = floattodouble t13
+        # t24 = floattodouble t13
         mov.s $f0, $f20
         cvt.d.s $f0, $f0
         mov.d $f22, $f0
-        # t24 = fl[0]
+        # t25 = fl[0]
         lw    $s4, -16($fp)
         # param "%.4f %x %d %x %x %x %x\n"
-        # param t23
+        # param t24
         # param t14
         # param 14
         # param t18
         # param t19
-        # param t24
-        # param t22
+        # param t25
+        # param t23
         # call printf, 8
         addiu $sp, $sp, -40
         la    $t0, str5
@@ -438,13 +438,13 @@ L6_69:
         # if k int>= 3 goto 76
         li    $t1, 3
         bge   $s0, $t1, L6_76
-        # t25 = k int<< 2
+        # t26 = k int<< 2
         sll   $s1, $s0, 2
-        # t26 = k int<< 8
+        # t27 = k int<< 8
         sll   $s3, $s0, 8
-        # t27 = t26 int+ 1
+        # t28 = t27 int+ 1
         addiu $s4, $s3, 1
-        # arr[t25] = t27
+        # arr[t26] = t28
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         sw    $s4, 0($t8)
@@ -459,46 +459,46 @@ L6_77:
         # if k int>= 3 goto 93
         li    $t1, 3
         bge   $s0, $t1, L6_93
-        # t29 = k int<< 2
+        # t30 = k int<< 2
         sll   $s3, $s0, 2
-        # t30 = t29 int+ 1
+        # t31 = t30 int+ 1
         addiu $s4, $s3, 1
-        # t31 = arr[t30]
+        # t32 = arr[t31]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s4
         lbu   $s5, 0($t8)
-        # t32 = uchartoint t31
+        # t33 = uchartoint t32
         move  $t0, $s5
         move  $s6, $t0
-        # if t32 int<= 0 goto 91
+        # if t33 int<= 0 goto 91
         ble   $s6, $zero, L6_91
-        # t33 = k int<< 2
+        # t34 = k int<< 2
         sll   $s1, $s0, 2
-        # t34 = arr[t33]
+        # t35 = arr[t34]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         lbu   $s7, 0($t8)
-        # t35 = uchartoint t34
+        # t36 = uchartoint t35
         move  $t0, $s7
         sw    $t0, -44($fp)
-        # t37 = t33 int+ 1
+        # t38 = t34 int+ 1
         addiu $t0, $s1, 1
         sw    $t0, -48($fp)
-        # t38 = arr[t37]
+        # t39 = arr[t38]
         addiu $t8, $fp, -28
         lw    $t9, -48($fp)
         addu  $t8, $t8, $t9
         lbu   $t0, 0($t8)
         sb    $t0, -49($fp)
-        # t39 = uchartoint t38
+        # t40 = uchartoint t39
         lbu   $t0, -49($fp)
         sw    $t0, -56($fp)
-        # t40 = t35 int+ t39
+        # t41 = t36 int+ t40
         lw    $t0, -44($fp)
         lw    $t1, -56($fp)
         addu  $t0, $t0, $t1
         sw    $t0, -60($fp)
-        # s = s int+ t40
+        # s = s int+ t41
         move  $t1, $t0
         addu  $s2, $s2, $t1
 L6_91:
@@ -510,9 +510,9 @@ L6_93:
         # x[0] = 1.0
         l.d   $f0, fc2
         s.d   $f0, -40($fp)
-        # t43 = x[4]
+        # t44 = x[4]
         lw    $s0, -36($fp)
-        # hi = t43
+        # hi = t44
         move  $s1, $s0
         # x[0] = 5
         li    $t0, 5
@@ -524,23 +524,23 @@ L6_93:
         # x[4] = 1073741824
         li    $t0, 1073741824
         sw    $t0, -36($fp)
-        # t44 = &w
+        # t45 = &w
         addiu $s1, $fp, -12
-        # param t44
-        # t45 = call sumBytes(union Word *), 1
+        # param t45
+        # t46 = call sumBytes(union Word *), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _Z8sumBytesP4Word
         addiu $sp, $sp, 16
         move  $s3, $v0
-        # t46 = x[0]
+        # t47 = x[0]
         l.d   $f0, -40($fp)
         mov.d $f20, $f0
         # param "%d %d %x %.1f %d %d\n"
         # param s
-        # param t45
-        # param t43
         # param t46
+        # param t44
+        # param t47
         # param 8
         # param 4
         # call printf, 7

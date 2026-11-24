@@ -557,85 +557,88 @@ L1_26:
         addiu $a1, $fp, -144
         li    $a2, 32
         jal   __memcpy
+        # t35 = &copy
+        addiu $t0, $fp, -176
+        sw    $t0, -444($fp)
         # copy[4] = 100
         addiu $t8, $fp, -176
         li    $t9, 4
         addu  $t8, $t8, $t9
         li    $t0, 100
         sw    $t0, 0($t8)
-        # t35 = m[0]
+        # t36 = m[0]
         addiu $t8, $fp, -144
         li    $t9, 0
         addu  $t8, $t8, $t9
         lb    $t0, 0($t8)
-        sb    $t0, -441($fp)
-        # t36 = chartoint t35
-        lb    $t0, -441($fp)
-        sw    $t0, -448($fp)
-        # t37 = m[4]
+        sb    $t0, -445($fp)
+        # t37 = chartoint t36
+        lb    $t0, -445($fp)
+        sw    $t0, -452($fp)
+        # t38 = m[4]
         addiu $t8, $fp, -144
         li    $t9, 4
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
-        sw    $t0, -452($fp)
-        # t38 = m[8]
+        sw    $t0, -456($fp)
+        # t39 = m[8]
         addiu $t8, $fp, -144
         li    $t9, 8
         addu  $t8, $t8, $t9
         lb    $t0, 0($t8)
-        sb    $t0, -453($fp)
-        # t39 = chartoint t38
-        lb    $t0, -453($fp)
-        sw    $t0, -460($fp)
-        # t40 = m[10]
+        sb    $t0, -457($fp)
+        # t40 = chartoint t39
+        lb    $t0, -457($fp)
+        sw    $t0, -464($fp)
+        # t41 = m[10]
         addiu $t8, $fp, -144
         li    $t9, 10
         addu  $t8, $t8, $t9
         lh    $t0, 0($t8)
-        sh    $t0, -462($fp)
-        # t41 = shorttoint t40
-        lh    $t0, -462($fp)
-        sw    $t0, -468($fp)
-        # t42 = m[16]
+        sh    $t0, -466($fp)
+        # t42 = shorttoint t41
+        lh    $t0, -466($fp)
+        sw    $t0, -472($fp)
+        # t43 = m[16]
         addiu $t8, $fp, -144
         li    $t9, 16
         addu  $t8, $t8, $t9
         l.d   $f0, 0($t8)
         s.d   $f0, -480($fp)
-        # t43 = m[24]
+        # t44 = m[24]
         addiu $t8, $fp, -144
         li    $t9, 24
         addu  $t8, $t8, $t9
         lb    $t0, 0($t8)
         sb    $t0, -481($fp)
-        # t44 = chartoint t43
+        # t45 = chartoint t44
         lb    $t0, -481($fp)
         sw    $t0, -488($fp)
-        # t45 = copy[4]
+        # t46 = copy[4]
         addiu $t8, $fp, -176
         li    $t9, 4
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -492($fp)
         # param "%c %d %c %d %.1f %c %d\n"
-        # param t36
         # param t37
-        # param t39
-        # param t41
+        # param t38
+        # param t40
         # param t42
-        # param t44
+        # param t43
         # param t45
+        # param t46
         # call printf, 8
         addiu $sp, $sp, -40
         la    $t0, str3
         sw    $t0, 0($sp)
-        lw    $t0, -448($fp)
-        sw    $t0, 4($sp)
         lw    $t0, -452($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -456($fp)
         sw    $t0, 8($sp)
-        lw    $t0, -460($fp)
+        lw    $t0, -464($fp)
         sw    $t0, 12($sp)
-        lw    $t0, -468($fp)
+        lw    $t0, -472($fp)
         sw    $t0, 16($sp)
         l.d   $f0, -480($fp)
         s.d   $f0, 24($sp)
@@ -645,50 +648,50 @@ L1_26:
         sw    $t0, 36($sp)
         jal   __printf
         addiu $sp, $sp, 40
-        # t46 = &letters
+        # t47 = &letters
         la    $t0, g_letters
         sw    $t0, -496($fp)
-        # t47 = table[0]
+        # t48 = table[0]
         la    $t8, g_table
         li    $t9, 0
         addu  $t8, $t8, $t9
         l.d   $f0, 0($t8)
         s.d   $f0, -504($fp)
-        # t48 = table[8]
+        # t49 = table[8]
         la    $t8, g_table
         li    $t9, 8
         addu  $t8, $t8, $t9
         l.d   $f0, 0($t8)
         s.d   $f0, -512($fp)
-        # t49 = table[16]
+        # t50 = table[16]
         la    $t8, g_table
         li    $t9, 16
         addu  $t8, $t8, $t9
         l.d   $f0, 0($t8)
         s.d   $f0, -520($fp)
-        # t50 = matrix[20]
+        # t51 = matrix[20]
         la    $t8, g_matrix
         li    $t9, 20
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -524($fp)
-        # t51 = matrix[0]
+        # t52 = matrix[0]
         la    $t8, g_matrix
         li    $t9, 0
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -528($fp)
-        # t52 = t50 int- t51
+        # t53 = t51 int- t52
         lw    $t0, -524($fp)
         lw    $t1, -528($fp)
         subu  $t0, $t0, $t1
         sw    $t0, -532($fp)
         # param "%s %.1f %.1f %.1f %d\n"
-        # param t46
         # param t47
         # param t48
         # param t49
-        # param t52
+        # param t50
+        # param t53
         # call printf, 6
         addiu $sp, $sp, -40
         la    $t0, str4
@@ -783,54 +786,54 @@ L1_26:
         # i = 0
         li    $t0, 0
         sw    $t0, -232($fp)
-L1_140:
-        # if i int< 3 goto 142
+L1_141:
+        # if i int< 3 goto 143
         lw    $t0, -232($fp)
         li    $t1, 3
-        blt   $t0, $t1, L1_142
-        # goto 151
-        j     L1_151
-L1_142:
-        # t53 = i int* 4
+        blt   $t0, $t1, L1_143
+        # goto 152
+        j     L1_152
+L1_143:
+        # t54 = i int* 4
         lw    $t0, -232($fp)
         li    $t1, 4
         mul   $t0, $t0, $t1
         sw    $t0, -536($fp)
-        # t54 = t53 int+ i
+        # t55 = t54 int+ i
         lw    $t0, -536($fp)
         lw    $t1, -232($fp)
         addu  $t0, $t0, $t1
         sw    $t0, -540($fp)
-        # t55 = t54 int* 4
+        # t56 = t55 int* 4
         lw    $t0, -540($fp)
         li    $t1, 4
         mul   $t0, $t0, $t1
         sw    $t0, -544($fp)
-        # t56 = grid[t55]
+        # t57 = grid[t56]
         addiu $t8, $fp, -224
         lw    $t9, -544($fp)
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -548($fp)
-        # t57 = trace int+ t56
+        # t58 = trace int+ t57
         lw    $t0, -228($fp)
         lw    $t1, -548($fp)
         addu  $t0, $t0, $t1
         sw    $t0, -552($fp)
-        # trace = t57
+        # trace = t58
         lw    $t0, -552($fp)
         sw    $t0, -228($fp)
-        # t58 = i int+ 1
+        # t59 = i int+ 1
         lw    $t0, -232($fp)
         li    $t1, 1
         addu  $t0, $t0, $t1
         sw    $t0, -556($fp)
-        # i = t58
+        # i = t59
         lw    $t0, -556($fp)
         sw    $t0, -232($fp)
-        # goto 140
-        j     L1_140
-L1_151:
+        # goto 141
+        j     L1_141
+L1_152:
         # words[0] = "one"
         addiu $t8, $fp, -244
         li    $t9, 0
@@ -921,25 +924,25 @@ L1_151:
         addu  $t8, $t8, $t9
         li    $t0, 0
         sb    $t0, 0($t8)
-        # t59 = words[8]
+        # t60 = words[8]
         addiu $t8, $fp, -244
         li    $t9, 8
         addu  $t8, $t8, $t9
         lw    $t0, 0($t8)
         sw    $t0, -560($fp)
-        # t60 = rows[8]
+        # t61 = rows[8]
         addiu $t8, $fp, -256
         li    $t9, 8
         addu  $t8, $t8, $t9
         lb    $t0, 0($t8)
         sb    $t0, -561($fp)
-        # t61 = chartoint t60
+        # t62 = chartoint t61
         lb    $t0, -561($fp)
         sw    $t0, -568($fp)
-        # t62 = &rows
+        # t63 = &rows
         addiu $t0, $fp, -256
         sw    $t0, -572($fp)
-        # t63 = 12 uint/ 4
+        # t64 = 12 uint/ 4
         li    $t0, 12
         li    $t1, 4
         divu  $t0, $t1
@@ -947,10 +950,10 @@ L1_151:
         sw    $t0, -576($fp)
         # param "%d %s %c %s %d\n"
         # param trace
-        # param t59
-        # param t61
+        # param t60
         # param t62
         # param t63
+        # param t64
         # call printf, 6
         addiu $sp, $sp, -24
         la    $t0, str8
@@ -970,20 +973,20 @@ L1_151:
         # sensor = 5
         li    $t0, 5
         sw    $t0, -260($fp)
-        # t64 = sensor int* 2
+        # t65 = sensor int* 2
         lw    $t0, -260($fp)
         li    $t1, 2
         mul   $t0, $t0, $t1
         sw    $t0, -580($fp)
-        # fast = t64
+        # fast = t65
         lw    $t0, -580($fp)
         sw    $t0, -264($fp)
-        # t65 = fast int+ kept.17
+        # t66 = fast int+ kept.17
         lw    $t0, -264($fp)
         lw    $t1, g_kept_17
         addu  $t0, $t0, $t1
         sw    $t0, -584($fp)
-        # deduced = t65
+        # deduced = t66
         lw    $t0, -584($fp)
         sw    $t0, -268($fp)
         # return deduced

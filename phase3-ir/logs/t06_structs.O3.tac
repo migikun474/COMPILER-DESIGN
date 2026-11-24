@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 182 -> 166 instruction(s)
+   Result        : Optimized three address code (-O3): 183 -> 166 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          182 -> 166   (8% fewer)
+   instructions                          183 -> 166   (9% fewer)
 
    constants folded                        1
    algebraic simplifications               1
    common subexpressions                   6
    copies / constants forwarded           23
    temporaries merged away                 5
-   dead instructions removed              17
+   dead instructions removed              18
    jumps removed or redirected             2
    unreachable instructions removed        0
    propagated across blocks                0
@@ -49,7 +49,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 71 temporaries, frame 660 bytes
+ Symbol table: 14 parameter(s)/local(s), 71 temporaries, frame 668 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -98,47 +98,47 @@
    t35              temp    int                             4     324
    t36              temp    struct Rect *                   4     328
    t37              temp    int                             4     332
-   t39              temp    double                          8     352
    t40              temp    double                          8     360
-   t41              temp    struct Node *                   4     368
-   t42              temp    struct Node *                   4     372
-   t45              temp    struct Node *                   4     384
-   t46              temp    struct Node *                   4     388
-   t47              temp    struct Node *                   4     392
-   t48              temp    int                             4     396
-   t49              temp    int                             4     400
-   t50              temp    int                             4     404
-   t53              temp    short                           2     416
-   t54              temp    int                             4     420
-   t55              temp    int                             4     424
-   t56              temp    int                             4     428
-   t57              temp    int                             4     432
-   t58              temp    struct Rect                    20     436
-   t59              temp    int                             4     456
-   t60              temp    int                             4     460
-   t61              temp    int                             4     464
-   t62              temp    int                             4     468
-   t63              temp    int                             4     472
-   t64              temp    int                             4     476
-   t65              temp    int                             4     480
-   t68              temp    struct Point                    8     492
-   t71              temp    int                             4     508
-   t72              temp    int                             4     512
-   t75              temp    struct Point                    8     524
-   t78              temp    struct Point                    8     540
-   t79              temp    Complex                        16     552
-   t80              temp    Complex                        16     568
-   t81              temp    double                          8     584
+   t41              temp    double                          8     368
+   t42              temp    struct Node *                   4     376
+   t43              temp    struct Node *                   4     380
+   t46              temp    struct Node *                   4     392
+   t47              temp    struct Node *                   4     396
+   t48              temp    struct Node *                   4     400
+   t49              temp    int                             4     404
+   t50              temp    int                             4     408
+   t51              temp    int                             4     412
+   t54              temp    short                           2     424
+   t55              temp    int                             4     428
+   t56              temp    int                             4     432
+   t57              temp    int                             4     436
+   t58              temp    int                             4     440
+   t59              temp    struct Rect                    20     444
+   t60              temp    int                             4     464
+   t61              temp    int                             4     468
+   t62              temp    int                             4     472
+   t63              temp    int                             4     476
+   t64              temp    int                             4     480
+   t65              temp    int                             4     484
+   t66              temp    int                             4     488
+   t69              temp    struct Point                    8     500
+   t72              temp    int                             4     516
+   t73              temp    int                             4     520
+   t76              temp    struct Point                    8     532
+   t79              temp    struct Point                    8     548
+   t80              temp    Complex                        16     560
+   t81              temp    Complex                        16     576
    t82              temp    double                          8     592
    t83              temp    double                          8     600
-   t84              temp    Complex                        16     608
-   t85              temp    double                          8     624
+   t84              temp    double                          8     608
+   t85              temp    Complex                        16     616
    t86              temp    double                          8     632
    t87              temp    double                          8     640
-   t88              temp    struct Node *                   4     648
-   t89              temp    int                             4     652
-   t90              temp    struct Node *                   4     656
-   (19 temporaries no longer used after optimization not shown)
+   t88              temp    double                          8     648
+   t89              temp    struct Node *                   4     656
+   t90              temp    int                             4     660
+   t91              temp    struct Node *                   4     664
+   (20 temporaries no longer used after optimization not shown)
 
  Code: 166 instruction(s)
 
@@ -150,21 +150,21 @@
     105       copy = r
     106       copy[0] = 100
     107       t1 = r[0]
-    108       t58 = r
-    109       t59 = t58[8]
-    110       t60 = t58[0]
-    111       t61 = t59 int- t60
-    112       t58[8] = t61
-    113       t62 = t58[12]
-    114       t63 = t58[4]
-    115       t64 = t62 int- t63
-    116       t65 = t61 int* t64
+    108       t59 = r
+    109       t60 = t59[8]
+    110       t61 = t59[0]
+    111       t62 = t60 int- t61
+    112       t59[8] = t62
+    113       t63 = t59[12]
+    114       t64 = t59[4]
+    115       t65 = t63 int- t64
+    116       t66 = t62 int* t65
     117       t4 = r[16]
     118       t5 = chartoint t4
     119       param "%d %d %d %c\n"
     120       param t1
     121       param 100
-    122       param t65
+    122       param t66
     123       param t5
     124       call printf, 5
     125       t6 = r[8]
@@ -179,25 +179,25 @@
     134  L1:  if i int>= 3 goto L2
     135       t10 = i int<< 3                     (w = 8)
     136       t11 = i int* i
-    137       t68[0] = i
-    138       t68[4] = t11
-    139       t12 = t68
+    137       t69[0] = i
+    138       t69[4] = t11
+    139       t12 = t69
     140       pts[t10] = t12
     141       i = i int+ 1
     142       if i int>= 3 goto L2
     143       t10 = i int<< 3                     (w = 8)
     144       t11 = i int* i
-    145       t68[0] = i
-    146       t68[4] = t11
-    147       t12 = t68
+    145       t69[0] = i
+    146       t69[4] = t11
+    147       t12 = t69
     148       pts[t10] = t12
     149       i = i int+ 1
     150       goto L1
     151  L2:  t14 = &pts
     152       t15 = t14 ptr+ 8
-    153       t71 = *t15
-    154       t72 = t71 int+ 10
-    155       *t15 = t72
+    153       t72 = *t15
+    154       t73 = t72 int+ 10
+    155       *t15 = t73
     156       t17 = t14 ptr+ 16
     157       t18 = t17 ptr+ 4
     158       t19 = *t18
@@ -206,9 +206,9 @@
     161       t22 = pts[8]
     162       t23 = pts[12]
     163       t24 = pts[20]
-    164       t75[0] = 3
-    165       t75[4] = 4
-    166       t25 = t75
+    164       t76[0] = 3
+    165       t76[4] = 4
+    166       t25 = t76
     167       t26 = t25[4]
     168       param "%d %d %d %d\n"
     169       param t22
@@ -222,9 +222,9 @@
     177       t30 = *t29
     178       t31 = t30 int+ 1
     179       *t28 = t31
-    180       t78[0] = 7
-    181       t78[4] = 7
-    182       t33 = t78
+    180       t79[0] = 7
+    181       t79[4] = 7
+    182       t33 = t79
     183       *t27 = t33
     184       t34 = r[8]
     185       t35 = *t27
@@ -239,49 +239,49 @@
     194       a[8] = 2.0
     195       b[0] = 1.0
     196       b[8] = 0.5
-    197       t79 = a
-    198       t80 = b
-    199       t81 = t79[0]
-    200       t82 = t80[0]
-    201       t83 = t81 double+ t82
-    202       t84[0] = t83
-    203       t85 = t79[8]
-    204       t86 = t80[8]
-    205       t87 = t85 double+ t86
-    206       t84[8] = t87
-    207       c = t84
-    208       t39 = c[0]
-    209       t40 = c[8]
+    197       t80 = a
+    198       t81 = b
+    199       t82 = t80[0]
+    200       t83 = t81[0]
+    201       t84 = t82 double+ t83
+    202       t85[0] = t84
+    203       t86 = t80[8]
+    204       t87 = t81[8]
+    205       t88 = t86 double+ t87
+    206       t85[8] = t88
+    207       c = t85
+    208       t40 = c[0]
+    209       t41 = c[8]
     210       param "%.1f %.1f\n"
-    211       param t39
-    212       param t40
+    211       param t40
+    212       param t41
     213       call printf, 3
     214       n1[0] = 1
-    215       t41 = &n2
-    216       n1[4] = t41
+    215       t42 = &n2
+    216       n1[4] = t42
     217       n2[0] = 2
-    218       t42 = &n3
-    219       n2[4] = t42
+    218       t43 = &n3
+    219       n2[4] = t43
     220       n3[0] = 3
     221       n3[4] = 0
-    222       t88 = &n1
-    223       t89 = 0
-    224  L3:  if t88 ptr== 0 goto L4
-    225       t89 = t89 int+ 1
-    226       t90 = t88 ptr+ 4
-    227       t88 = *t90
-    228       if t88 ptr== 0 goto L4
-    229       t89 = t89 int+ 1
-    230       t90 = t88 ptr+ 4
-    231       t88 = *t90
+    222       t89 = &n1
+    223       t90 = 0
+    224  L3:  if t89 ptr== 0 goto L4
+    225       t90 = t90 int+ 1
+    226       t91 = t89 ptr+ 4
+    227       t89 = *t91
+    228       if t89 ptr== 0 goto L4
+    229       t90 = t90 int+ 1
+    230       t91 = t89 ptr+ 4
+    231       t89 = *t91
     232       goto L3
-    233  L4:  t45 = n1[4]
-    234       t46 = t45 ptr+ 4
-    235       t47 = *t46
-    236       t48 = *t47
+    233  L4:  t46 = n1[4]
+    234       t47 = t46 ptr+ 4
+    235       t48 = *t47
+    236       t49 = *t48
     237       param "%d %d\n"
-    238       param t89
-    239       param t48
+    238       param t90
+    239       param t49
     240       call printf, 3
     241       k[0] = 1
     242       k[4] = 16909060
@@ -291,23 +291,23 @@
     246       k[11] = 0
     247       k[12] = 9
     248       k[9] = 120
-    249       t49 = k[0]
-    250       t50 = k[4]
-    251       t53 = k[12]
-    252       t54 = shorttoint t53
+    249       t50 = k[0]
+    250       t51 = k[4]
+    251       t54 = k[12]
+    252       t55 = shorttoint t54
     253       param "%d %d %c %d %d\n"
-    254       param t49
-    255       param t50
+    254       param t50
+    255       param t51
     256       param 120
-    257       param t54
+    257       param t55
     258       param 16
     259       call printf, 6
     260       zero[0] = 0
     261       zero[4] = 0
-    262       t55 = zero[0]
-    263       t56 = pts[16]
-    264       t57 = t55 int+ t56
-    265       return t57
+    262       t56 = zero[0]
+    263       t57 = pts[16]
+    264       t58 = t56 int+ t57
+    265       return t58
 
 
 ----------------------------------------------------------------------------

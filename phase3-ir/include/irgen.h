@@ -108,6 +108,11 @@ class Generator {
     bool needsConstruction(const sem::TypePtr &t);
     void defaultConstruct(const Operand &addr, const sem::TypePtr &t);
     void constructSubobjects(const Operand &addr, sem::RecordInfo *rec);
+    /* virtual functions (D44): one table per polymorphic class, `_ZTV<class>` */
+    std::map<sem::RecordInfo *, sem::SymbolPtr> vtables;
+    sem::Symbol *vtable(sem::RecordInfo *rec);
+    void installVptr(const Operand &addr, sem::RecordInfo *rec);
+    LValue vptrOf(const Operand &addr, sem::RecordInfo *rec);
     void constructInto(const Operand &addr, sem::RecordInfo *rec, const std::vector<ASTNodePtr> &args);
 
     /* ---- statements: each returns its S.next list ---- */
@@ -134,7 +139,7 @@ class Generator {
     Operand callExpr(const ASTNodePtr &n, bool discard);
     Operand overloaded(const ASTNodePtr &n);
     Operand call(sem::Symbol *callee, const Operand &thisArg, const std::vector<ASTNodePtr> &args,
-                 const std::vector<Operand> &extraArgs, bool wantResult);
+                 const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch = false);
     bool isOverloaded(const ASTNodePtr &n) const;
     bool isLValueKind(const ASTNodePtr &n) const;
 

@@ -1,0 +1,161 @@
+=========================================
+       SEMANTIC ANALYSIS REPORT
+=========================================
+
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v29_virtual.c
+
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/valid/v29_virtual.c'.
+
+=== Annotated AST ===
+Program "translation_unit"
+|-- ClassDecl "Shape"  <class Shape>  -> Shape (tag)
+|   |-- FunctionDecl "area : _ZN5Shape4areaEv"  <int (void)>  -> _ZN5Shape4areaEv (function)
+|   |-- FunctionDef "sides : _ZN5Shape5sidesEv"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- IntLiteral "0"  <int> =0
+|   `-- FunctionDef "twice : _ZN5Shape5twiceEv"  <int (void)>  -> _ZN5Shape5twiceEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- BinaryExpr "*"  <int>
+|                   |-- IntLiteral "2"  <int> =2
+|                   `-- CallExpr  <int>  -> _ZN5Shape4areaEv (function)
+|                       `-- Identifier "area"  <int (void)>  -> _ZN5Shape4areaEv (function)
+|-- ClassDecl "Rect : Shape"  <class Rect>  -> Rect (tag)
+|   |-- DeclGroup
+|   |   |-- VarDecl "w : INT"  <int>  -> Rect::w (field, member)
+|   |   `-- VarDecl "h : INT"  <int>  -> Rect::h (field, member)
+|   |-- ConstructorDef "Rect : _ZN4RectC1Ev"  -> _ZN4RectC1Ev (function)
+|   |   `-- CompoundStmt
+|   |       |-- ExprStmt
+|   |       |   `-- AssignExpr "="  <int>
+|   |       |       |-- Identifier "w"  <int> lvalue  -> Rect::w (field, member)
+|   |       |       `-- IntLiteral "2"  <int> =2
+|   |       `-- ExprStmt
+|   |           `-- AssignExpr "="  <int>
+|   |               |-- Identifier "h"  <int> lvalue  -> Rect::h (field, member)
+|   |               `-- IntLiteral "3"  <int> =3
+|   |-- FunctionDef "area : _ZN4Rect4areaEv"  <int (void)>  -> _ZN4Rect4areaEv (function)
+|   |   `-- CompoundStmt
+|   |       `-- ReturnStmt
+|   |           `-- BinaryExpr "*"  <int>
+|   |               |-- Identifier "w"  <int> lvalue  -> Rect::w (field, member)
+|   |               `-- Identifier "h"  <int> lvalue  -> Rect::h (field, member)
+|   `-- FunctionDef "sides : _ZN4Rect5sidesEv"  <int (void)>  -> _ZN4Rect5sidesEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- IntLiteral "4"  <int> =4
+|-- ClassDecl "Square : Rect"  <class Square>  -> Square (tag)
+|   `-- FunctionDef "area : _ZN6Square4areaEv"  <int (void)>  -> _ZN6Square4areaEv (function)
+|       `-- CompoundStmt
+|           `-- ReturnStmt
+|               `-- BinaryExpr "*"  <int>
+|                   |-- Identifier "w"  <int> lvalue  -> Rect::w (field, member)
+|                   `-- Identifier "w"  <int> lvalue  -> Rect::w (field, member)
+|-- FunctionDef "total : _Z5totalR5ShapePS_"  <int (class Shape &, class Shape *)>  -> _Z5totalR5ShapePS_ (function)
+|   |-- ParamDecl "s : CLASS_POINTER"  <class Shape &>  -> s.1 (parameter, param)
+|   |-- ParamDecl "p : CLASS_POINTER"  <class Shape *>  -> p.2 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- BinaryExpr "+"  <int>
+|               |-- BinaryExpr "+"  <int>
+|               |   |-- CallExpr  <int>  -> _ZN5Shape4areaEv (function)
+|               |   |   `-- MemberExpr "area"  <int (void)>  -> _ZN5Shape4areaEv (function)
+|               |   |       `-- Identifier "s"  <class Shape> lvalue  -> s.1 (parameter, param)
+|               |   `-- CallExpr  <int>  -> _ZN5Shape5sidesEv (function)
+|               |       `-- ArrowExpr "sides"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|               |           `-- Identifier "p"  <class Shape *> lvalue  -> p.2 (parameter, param)
+|               `-- CallExpr  <int>  -> _ZN5Shape5sidesEv (function)
+|                   `-- ArrowExpr "sides"  <int (void)>  -> _ZN5Shape5sidesEv (function)
+|                       `-- Identifier "p"  <class Shape *> lvalue  -> p.2 (parameter, param)
+|-- FunctionDef "pick : _Z4pickP4Rect"  <class Shape *(class Rect *)>  -> _Z4pickP4Rect (function)
+|   |-- ParamDecl "r : CLASS_POINTER"  <class Rect *>  -> r.3 (parameter, param)
+|   `-- CompoundStmt
+|       `-- ReturnStmt
+|           `-- Identifier "r"  <class Rect *> lvalue  -> r.3 (parameter, param)
+`-- FunctionDef "main : main"  <int (void)>  -> main (function)
+    `-- CompoundStmt
+        |-- VarDecl "q : CLASS"  <class Square>  -> q.4 (variable, local)
+        |-- VarDecl "r : CLASS"  <class Rect>  -> r.5 (variable, local)
+        |-- VarDecl "all : CLASS_POINTER_ARRAY"  <class Shape *[2]>  -> all.6 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <class Shape *>
+        |       |-- IndexExpr  <class Shape *> lvalue
+        |       |   |-- Identifier "all"  <class Shape *[2]> lvalue  -> all.6 (variable, local)
+        |       |   `-- IntLiteral "0"  <int> =0
+        |       `-- UnaryExpr "&"  <class Square *>
+        |           `-- Identifier "q"  <class Square> lvalue  -> q.4 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <class Shape *>
+        |       |-- IndexExpr  <class Shape *> lvalue
+        |       |   |-- Identifier "all"  <class Shape *[2]> lvalue  -> all.6 (variable, local)
+        |       |   `-- IntLiteral "1"  <int> =1
+        |       `-- UnaryExpr "&"  <class Rect *>
+        |           `-- Identifier "r"  <class Rect> lvalue  -> r.5 (variable, local)
+        |-- VarDecl "copy : CLASS"  <class Rect>  -> copy.7 (variable, local)
+        |   `-- Identifier "r"  <class Rect> lvalue  -> r.5 (variable, local)
+        |-- ExprStmt
+        |   `-- AssignExpr "="  <class Rect>
+        |       |-- Identifier "r"  <class Rect> lvalue  -> r.5 (variable, local)
+        |       `-- Identifier "copy"  <class Rect> lvalue  -> copy.7 (variable, local)
+        `-- ReturnStmt
+            `-- BinaryExpr "+"  <int>
+                |-- BinaryExpr "+"  <int>
+                |   |-- CallExpr  <int>  -> _Z5totalR5ShapePS_ (function)
+                |   |   |-- Identifier "total"  <int (class Shape &, class Shape *)>  -> _Z5totalR5ShapePS_ (function)
+                |   |   |-- Identifier "q"  <class Square> lvalue  -> q.4 (variable, local)
+                |   |   `-- IndexExpr  <class Shape *> lvalue
+                |   |       |-- Identifier "all"  <class Shape *[2]> lvalue  -> all.6 (variable, local)
+                |   |       `-- IntLiteral "1"  <int> =1
+                |   `-- CallExpr  <int>  -> _ZN5Shape5twiceEv (function)
+                |       `-- ArrowExpr "twice"  <int (void)>  -> _ZN5Shape5twiceEv (function)
+                |           `-- CallExpr  <class Shape *>  -> _Z4pickP4Rect (function)
+                |               |-- Identifier "pick"  <class Shape *(class Rect *)>  -> _Z4pickP4Rect (function)
+                |               `-- UnaryExpr "&"  <class Square *>
+                |                   `-- Identifier "q"  <class Square> lvalue  -> q.4 (variable, local)
+                `-- CallExpr  <int>  -> _ZN4Rect4areaEv (function)
+                    `-- MemberExpr "area"  <int (void)>  -> _ZN4Rect4areaEv (function)
+                        `-- Identifier "copy"  <class Rect> lvalue  -> copy.7 (variable, local)
+
+=== Semantic Symbol Table ===
+Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
+----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
+Shape              class_tag      class Shape                -        global                         5     -     0     Shape                -                        size 4
+Shape::area        method         int (void)                 -        global > class Shape           7     -     2     _ZN5Shape4areaEv     _ZN5Shape4areaEv         public, pure virtual, slot 0
+Shape::sides       method         int (void)                 -        global > class Shape           8     -     2     _ZN5Shape5sidesEv    _ZN5Shape5sidesEv        public, virtual, slot 1, defined
+Shape::twice       method         int (void)                 -        global > class Shape           9     -     1     _ZN5Shape5twiceEv    _ZN5Shape5twiceEv        public, defined
+Rect               class_tag      class Rect                 -        global                         11    -     0     Rect                 -                        size 12, public base Shape
+Rect::w            field          int                        member   global > class Rect            13    4     4     Rect::w              -                        public, offset 4
+Rect::h            field          int                        member   global > class Rect            13    4     2     Rect::h              -                        public, offset 8
+Rect::Rect         constructor    void (void)                -        global > class Rect            14    -     1     _ZN4RectC1Ev         _ZN4RectC1Ev             public
+Rect::area         method         int (void)                 -        global > class Rect            15    -     1     _ZN4Rect4areaEv      _ZN4Rect4areaEv          public, virtual, slot 0, defined
+Rect::sides        method         int (void)                 -        global > class Rect            16    -     0     _ZN4Rect5sidesEv     _ZN4Rect5sidesEv         public, virtual, slot 1, defined
+Square             class_tag      class Square               -        global                         18    -     0     Square               -                        size 12, public base Rect
+Square::area       method         int (void)                 -        global > class Square          20    -     0     _ZN6Square4areaEv    _ZN6Square4areaEv        public, virtual, slot 0, defined
+total              function       int (class Shape &, class Shape *) -        global                         22    -     1     _Z5totalR5ShapePS_   _Z5totalR5ShapePS_       defined
+s                  parameter      class Shape &              param    global > total()               22    4     1     s.1                  -                        
+p                  parameter      class Shape *              param    global > total()               22    4     2     p.2                  -                        
+pick               function       class Shape *(class Rect *) -        global                         23    -     1     _Z4pickP4Rect        _Z4pickP4Rect            defined
+r                  parameter      class Rect *               param    global > pick()                23    4     1     r.3                  -                        
+main               function       int (void)                 -        global                         24    -     0     main                 main                     defined
+q                  variable       class Square               local    global > main()                25    12    3     q.4                  -                        
+r                  variable       class Rect                 local    global > main()                26    12    3     r.5                  -                        
+all                variable       class Shape *[2]           local    global > main()                27    8     3     all.6                -                        
+copy               variable       class Rect                 local    global > main()                30    12    2     copy.7               -                        
+
+=== Record Layouts (MIPS32) ===
+class Shape: size 4, align 4
+    +0  vtable pointer
+    slot 0: Shape::area  (pure)
+    slot 1: Shape::sides
+    (abstract)
+class Rect: size 12, align 4
+    (base Shape, public)
+    slot 0: Rect::area
+    slot 1: Rect::sides
+    +4  int w  [public]
+    +8  int h  [public]
+class Square: size 12, align 4
+    (base Rect, public)
+    slot 0: Square::area
+    slot 1: Rect::sides

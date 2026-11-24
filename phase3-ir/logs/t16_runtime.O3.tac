@@ -4,7 +4,7 @@
 
    Source file   : test/t16_runtime.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 308 -> 222 instruction(s)
+   Result        : Optimized three address code (-O3): 310 -> 222 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          308 -> 222   (27% fewer)
+   instructions                          310 -> 222   (28% fewer)
 
    constants folded                       51
    algebraic simplifications               1
    common subexpressions                   1
    copies / constants forwarded          114
    temporaries merged away                 5
-   dead instructions removed              56
+   dead instructions removed              58
    jumps removed or redirected             9
    unreachable instructions removed       10
    propagated across blocks                1
@@ -158,7 +158,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 15 parameter(s)/local(s), 35 temporaries, frame 848 bytes
+ Symbol table: 15 parameter(s)/local(s), 35 temporaries, frame 856 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -178,41 +178,41 @@
    p                local   int *                           4     152
    z                local   int *                           4     156
    t22              temp    long long                       8     312
-   t48              temp    double                          8     544
-   t49              temp    int                             4     552
-   t51              temp    char                            1     560
-   t52              temp    int                             4     564
-   t53              temp    long long                       8     568
-   t55              temp    double                          8     584
-   t57              temp    void *                          4     596
-   t58              temp    int *                           4     600
-   t59              temp    int *                           4     604
-   t61              temp    void *                          4     612
-   t62              temp    void *                          4     616
-   t63              temp    int                             4     620
-   t64              temp    int *                           4     624
+   t50              temp    double                          8     552
+   t51              temp    int                             4     560
+   t53              temp    char                            1     568
+   t54              temp    int                             4     572
+   t55              temp    long long                       8     576
+   t57              temp    double                          8     592
+   t59              temp    void *                          4     604
+   t60              temp    int *                           4     608
+   t61              temp    int *                           4     612
+   t63              temp    void *                          4     620
+   t64              temp    void *                          4     624
    t65              temp    int                             4     628
-   t66              temp    int                             4     632
-   t67              temp    int *                           4     636
+   t66              temp    int *                           4     632
+   t67              temp    int                             4     636
    t68              temp    int                             4     640
-   t69              temp    int                             4     644
+   t69              temp    int *                           4     644
    t70              temp    int                             4     648
-   t71              temp    int *                           4     652
+   t71              temp    int                             4     652
    t72              temp    int                             4     656
-   t73              temp    int                             4     660
-   t76              temp    struct Big                     40     680
-   t80              temp    double                          8     744
-   t81              temp    double                          8     752
-   t82              temp    int                             4     760
-   t83              temp    double                          8     768
-   t84              temp    double                          8     776
-   t86              temp    double                          8     792
-   t87              temp    long long                       8     800
-   t88              temp    long long                       8     808
-   t89              temp    double                          8     816
-   t90              temp    double                          8     824
-   t92              temp    double                          8     840
-   (57 temporaries no longer used after optimization not shown)
+   t73              temp    int *                           4     660
+   t74              temp    int                             4     664
+   t75              temp    int                             4     668
+   t78              temp    struct Big                     40     688
+   t82              temp    double                          8     752
+   t83              temp    double                          8     760
+   t84              temp    int                             4     768
+   t85              temp    double                          8     776
+   t86              temp    double                          8     784
+   t88              temp    double                          8     800
+   t89              temp    long long                       8     808
+   t90              temp    long long                       8     816
+   t91              temp    double                          8     824
+   t92              temp    double                          8     832
+   t94              temp    double                          8     848
+   (59 temporaries no longer used after optimization not shown)
 
  Code: 167 instruction(s)
 
@@ -312,32 +312,32 @@
     248       s = call make(int), 1
     249       t = s
     250       t[24] = 100
-    251       t48 = s[0]
-    252       t49 = s[24]
-    253       t51 = s[28]
-    254       t52 = chartoint t51
-    255       t53 = s[32]
+    251       t50 = s[0]
+    252       t51 = s[24]
+    253       t53 = s[28]
+    254       t54 = chartoint t53
+    255       t55 = s[32]
     256       param "%.1f %d %d %c %lld\n"
-    257       param t48
-    258       param t49
+    257       param t50
+    258       param t51
     259       param 100
-    260       param t52
-    261       param t53
+    260       param t54
+    261       param t55
     262       call printf, 6
-    263       t76 = s
-    264       t80 = t76[0]
-    265       t81 = t80 double* 2.0
-    266       t82 = t76[24]
-    267       t83 = inttodouble t82
-    268       t84 = t81 double+ t83
-    269       t86 = t84 double+ 97.0
-    270       t87 = t76[32]
-    271       t88 = t87 llong/ 1000000000
-    272       t89 = llongtodouble t88
-    273       t90 = t86 double+ t89
-    274       t92 = t90 double+ 5.0
+    263       t78 = s
+    264       t82 = t78[0]
+    265       t83 = t82 double* 2.0
+    266       t84 = t78[24]
+    267       t85 = inttodouble t84
+    268       t86 = t83 double+ t85
+    269       t88 = t86 double+ 97.0
+    270       t89 = t78[32]
+    271       t90 = t89 llong/ 1000000000
+    272       t91 = llongtodouble t90
+    273       t92 = t88 double+ t91
+    274       t94 = t92 double+ 5.0
     275       param "%.1f\n"
-    276       param t92
+    276       param t94
     277       call printf, 2
     278       param 3
     279       param 1.0
@@ -345,42 +345,42 @@
     281       param 4.0
     282       param 77
     283       param "tail"
-    284       t55 = call average(int, ...), 6
+    284       t57 = call average(int, ...), 6
     285       param "%.2f\n"
-    286       param t55
+    286       param t57
     287       call printf, 2
     288       param 12
-    289       t57 = call malloc, 1
-    290       *t57 = 1
-    291       t58 = t57 ptr+ 4
-    292       *t58 = 2
-    293       t59 = t57 ptr+ 8
-    294       *t59 = 3
-    295       param t57
+    289       t59 = call malloc, 1
+    290       *t59 = 1
+    291       t60 = t59 ptr+ 4
+    292       *t60 = 2
+    293       t61 = t59 ptr+ 8
+    294       *t61 = 3
+    295       param t59
     296       param 24
-    297       t61 = call realloc, 2
+    297       t63 = call realloc, 2
     298       param 4
     299       param 4
-    300       t62 = call calloc, 2
-    301       t63 = *t61
-    302       t64 = t61 ptr+ 4
-    303       t65 = *t64
-    304       t66 = t63 int+ t65
-    305       t67 = t61 ptr+ 8
-    306       t68 = *t67
-    307       t69 = t66 int+ t68
-    308       t70 = *t62
-    309       t71 = t62 ptr+ 12
-    310       t72 = *t71
-    311       if t61 ptr!= t62 goto L7
-    312       t73 = 0
+    300       t64 = call calloc, 2
+    301       t65 = *t63
+    302       t66 = t63 ptr+ 4
+    303       t67 = *t66
+    304       t68 = t65 int+ t67
+    305       t69 = t63 ptr+ 8
+    306       t70 = *t69
+    307       t71 = t68 int+ t70
+    308       t72 = *t64
+    309       t73 = t64 ptr+ 12
+    310       t74 = *t73
+    311       if t63 ptr!= t64 goto L7
+    312       t75 = 0
     313       goto L8
-    314  L7:  t73 = 1
+    314  L7:  t75 = 1
     315  L8:  param "%d %d %d %d\n"
-    316       param t69
-    317       param t70
-    318       param t72
-    319       param t73
+    316       param t71
+    317       param t72
+    318       param t74
+    319       param t75
     320       call printf, 5
     321       return 45
 

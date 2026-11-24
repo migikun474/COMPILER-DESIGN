@@ -711,11 +711,10 @@ static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns n
 
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
-    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT)) {
+    if (kw.has_value() && kw.value() == TokenType::EXPLICIT) {
         /* still reserved so the message is clear, but no longer part of the language (D35) */
         reportDiagnostic(yylineno, g_tokStartCol, yytext,
-                         std::string("'") + yytext + "' is not supported: this language has no " +
-                             (kw.value() == TokenType::VIRTUAL ? "virtual functions" : "converting constructors"),
+                         std::string("'") + yytext + "' is not supported: this language has no converting constructors",
                          "Lexical error");
         return SKIP_TOKEN;
     }
@@ -740,9 +739,9 @@ static int identifierOrKeyword(bool beforeParen) {
     }
     return emit(IDENTIFIER, "IDENTIFIER");
 }
-#line 744 "build/lex.yy.cpp"
+#line 743 "build/lex.yy.cpp"
 
-#line 746 "build/lex.yy.cpp"
+#line 745 "build/lex.yy.cpp"
 
 #define INITIAL 0
 #define STRSTATE 1
@@ -969,10 +968,10 @@ YY_DECL
 		}
 
 	{
-#line 139 "../phase2-parser/src/scanner.l"
+#line 138 "../phase2-parser/src/scanner.l"
 
 
-#line 976 "build/lex.yy.cpp"
+#line 975 "build/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1065,37 +1064,37 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 141 "../phase2-parser/src/scanner.l"
+#line 140 "../phase2-parser/src/scanner.l"
 { litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(COMMENTSTATE); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 142 "../phase2-parser/src/scanner.l"
+#line 141 "../phase2-parser/src/scanner.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 143 "../phase2-parser/src/scanner.l"
+#line 142 "../phase2-parser/src/scanner.l"
 { g_col = 1; }
 	YY_BREAK
 case YY_STATE_EOF(COMMENTSTATE):
-#line 144 "../phase2-parser/src/scanner.l"
+#line 143 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, "/*", "Unterminated block comment", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 145 "../phase2-parser/src/scanner.l"
+#line 144 "../phase2-parser/src/scanner.l"
 { }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 147 "../phase2-parser/src/scanner.l"
+#line 146 "../phase2-parser/src/scanner.l"
 { }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 149 "../phase2-parser/src/scanner.l"
+#line 148 "../phase2-parser/src/scanner.l"
 {
     /* there is no preprocessor (D34): a directive is an error, and the
        rest of its line is skipped so it does not cascade into syntax errors */
@@ -1111,107 +1110,107 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 162 "../phase2-parser/src/scanner.l"
+#line 161 "../phase2-parser/src/scanner.l"
 { int t = identifierOrKeyword(/*beforeParen=*/true); if (t != SKIP_TOKEN) return t; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 163 "../phase2-parser/src/scanner.l"
+#line 162 "../phase2-parser/src/scanner.l"
 { int t = identifierOrKeyword(/*beforeParen=*/false); if (t != SKIP_TOKEN) return t; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 165 "../phase2-parser/src/scanner.l"
+#line 164 "../phase2-parser/src/scanner.l"
 { strbuf = "\""; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(STRSTATE); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 166 "../phase2-parser/src/scanner.l"
+#line 165 "../phase2-parser/src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 167 "../phase2-parser/src/scanner.l"
+#line 166 "../phase2-parser/src/scanner.l"
 { strbuf += "\""; BEGIN(INITIAL); return emitText(STRING_LITERAL, strbuf, "STRING_LITERAL"); }
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 168 "../phase2-parser/src/scanner.l"
+#line 167 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(STRSTATE):
-#line 169 "../phase2-parser/src/scanner.l"
+#line 168 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 170 "../phase2-parser/src/scanner.l"
+#line 169 "../phase2-parser/src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 172 "../phase2-parser/src/scanner.l"
+#line 171 "../phase2-parser/src/scanner.l"
 { strbuf = "'"; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(CHRSTATE); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 173 "../phase2-parser/src/scanner.l"
+#line 172 "../phase2-parser/src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 174 "../phase2-parser/src/scanner.l"
+#line 173 "../phase2-parser/src/scanner.l"
 { strbuf += "'"; BEGIN(INITIAL); return emitText(CHAR_LITERAL, strbuf, "CHAR_LITERAL"); }
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 175 "../phase2-parser/src/scanner.l"
+#line 174 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(CHRSTATE):
-#line 176 "../phase2-parser/src/scanner.l"
+#line 175 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 177 "../phase2-parser/src/scanner.l"
+#line 176 "../phase2-parser/src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 179 "../phase2-parser/src/scanner.l"
+#line 178 "../phase2-parser/src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 180 "../phase2-parser/src/scanner.l"
+#line 179 "../phase2-parser/src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 181 "../phase2-parser/src/scanner.l"
+#line 180 "../phase2-parser/src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 182 "../phase2-parser/src/scanner.l"
+#line 181 "../phase2-parser/src/scanner.l"
 { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 183 "../phase2-parser/src/scanner.l"
+#line 182 "../phase2-parser/src/scanner.l"
 { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 184 "../phase2-parser/src/scanner.l"
+#line 183 "../phase2-parser/src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 186 "../phase2-parser/src/scanner.l"
+#line 185 "../phase2-parser/src/scanner.l"
 {
     /* `(*)` / `(&)` right after a type: a nameless declarator, as in
        `sizeof(int (*)[3])`, never the argument list of `int(...)` */
@@ -1222,54 +1221,54 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 26:
-#line 196 "../phase2-parser/src/scanner.l"
+#line 195 "../phase2-parser/src/scanner.l"
 case 27:
-#line 197 "../phase2-parser/src/scanner.l"
+#line 196 "../phase2-parser/src/scanner.l"
 case 28:
-#line 198 "../phase2-parser/src/scanner.l"
+#line 197 "../phase2-parser/src/scanner.l"
 case 29:
-#line 199 "../phase2-parser/src/scanner.l"
+#line 198 "../phase2-parser/src/scanner.l"
 case 30:
-#line 200 "../phase2-parser/src/scanner.l"
+#line 199 "../phase2-parser/src/scanner.l"
 case 31:
-#line 201 "../phase2-parser/src/scanner.l"
+#line 200 "../phase2-parser/src/scanner.l"
 case 32:
-#line 202 "../phase2-parser/src/scanner.l"
+#line 201 "../phase2-parser/src/scanner.l"
 case 33:
-#line 203 "../phase2-parser/src/scanner.l"
+#line 202 "../phase2-parser/src/scanner.l"
 case 34:
-#line 204 "../phase2-parser/src/scanner.l"
+#line 203 "../phase2-parser/src/scanner.l"
 case 35:
-#line 205 "../phase2-parser/src/scanner.l"
+#line 204 "../phase2-parser/src/scanner.l"
 case 36:
-#line 206 "../phase2-parser/src/scanner.l"
+#line 205 "../phase2-parser/src/scanner.l"
 case 37:
-#line 207 "../phase2-parser/src/scanner.l"
+#line 206 "../phase2-parser/src/scanner.l"
 case 38:
-#line 208 "../phase2-parser/src/scanner.l"
+#line 207 "../phase2-parser/src/scanner.l"
 case 39:
-#line 209 "../phase2-parser/src/scanner.l"
+#line 208 "../phase2-parser/src/scanner.l"
 case 40:
-#line 210 "../phase2-parser/src/scanner.l"
+#line 209 "../phase2-parser/src/scanner.l"
 case 41:
-#line 211 "../phase2-parser/src/scanner.l"
+#line 210 "../phase2-parser/src/scanner.l"
 case 42:
-#line 212 "../phase2-parser/src/scanner.l"
+#line 211 "../phase2-parser/src/scanner.l"
 case 43:
-#line 213 "../phase2-parser/src/scanner.l"
+#line 212 "../phase2-parser/src/scanner.l"
 case 44:
-#line 214 "../phase2-parser/src/scanner.l"
+#line 213 "../phase2-parser/src/scanner.l"
 case 45:
-#line 215 "../phase2-parser/src/scanner.l"
+#line 214 "../phase2-parser/src/scanner.l"
 case 46:
-#line 216 "../phase2-parser/src/scanner.l"
+#line 215 "../phase2-parser/src/scanner.l"
 case 47:
-#line 217 "../phase2-parser/src/scanner.l"
+#line 216 "../phase2-parser/src/scanner.l"
 case 48:
-#line 218 "../phase2-parser/src/scanner.l"
+#line 217 "../phase2-parser/src/scanner.l"
 case 49:
 YY_RULE_SETUP
-#line 218 "../phase2-parser/src/scanner.l"
+#line 217 "../phase2-parser/src/scanner.l"
 {
     auto op = operator_token(yytext);
     if (op.has_value()) {
@@ -1280,26 +1279,26 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 226 "../phase2-parser/src/scanner.l"
+#line 225 "../phase2-parser/src/scanner.l"
 { }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 227 "../phase2-parser/src/scanner.l"
+#line 226 "../phase2-parser/src/scanner.l"
 { g_col = 1; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 229 "../phase2-parser/src/scanner.l"
+#line 228 "../phase2-parser/src/scanner.l"
 { reportDiagnostic(yylineno, g_tokStartCol, yytext, "Illegal character", "Lexical error"); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 231 "../phase2-parser/src/scanner.l"
+#line 230 "../phase2-parser/src/scanner.l"
 ECHO;
 	YY_BREAK
-#line 1303 "build/lex.yy.cpp"
+#line 1302 "build/lex.yy.cpp"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -2250,6 +2249,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 231 "../phase2-parser/src/scanner.l"
+#line 230 "../phase2-parser/src/scanner.l"
 
 

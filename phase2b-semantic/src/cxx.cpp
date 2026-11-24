@@ -116,6 +116,10 @@ TypePtr SemanticAnalyzer::constructExpr(const ASTNodePtr &n) {
     for (const auto &a : args) expr(a);
     if (isError(t)) return errorType();
     if (RecordInfo *rec = isRecord(t) ? t->record.get() : nullptr) {
+        if (rec->abstract) {
+            checkNotAbstract(t, n->line, n->column, "the object 'T()'");
+            return errorType();
+        }
         n->symbol = construct(rec, args, n.get());
         return t;
     }

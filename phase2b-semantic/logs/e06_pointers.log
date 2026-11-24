@@ -2,63 +2,63 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c
 
-Semantic analysis failed: 14 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c'.
+Semantic analysis failed: 14 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c'.
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:10:9: semantic error: indirection requires a pointer operand ('int' is not a pointer) [dereference]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:10:9: semantic error: indirection requires a pointer operand ('int' is not a pointer) [dereference]
  10 |     x = *x;                       // error: indirection requires a pointer operand ('int' is not a pointer)
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:11:9: semantic error: indirection requires a pointer operand ('int' is not a pointer) [dereference]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:11:9: semantic error: indirection requires a pointer operand ('int' is not a pointer) [dereference]
  11 |     x = ***pp;                    // error: indirection requires a pointer operand
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:12:9: semantic error: cannot dereference a 'void *' pointer (cast it to a typed pointer first) [dereference]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:12:9: semantic error: cannot dereference a 'void *' pointer (cast it to a typed pointer first) [dereference]
  12 |     x = *vp;                      // error: cannot dereference a 'void *' pointer
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:13:9: semantic error: cannot take the address of an rvalue of type 'int' [address-of]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:13:9: semantic error: cannot take the address of an rvalue of type 'int' [address-of]
  13 |     p = &5;                       // error: cannot take the address of an rvalue of type 'int'
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:14:9: semantic error: cannot take the address of an rvalue of type 'int' [address-of]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:14:9: semantic error: cannot take the address of an rvalue of type 'int' [address-of]
  14 |     p = &(x + 1);                 // error: cannot take the address of an rvalue
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:15:9: semantic error: type mismatch: cannot assign 'char *' to 'int *' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:15:9: semantic error: type mismatch: cannot assign 'char *' to 'int *' (incompatible pointer types) [type-mismatch]
  15 |     p = cp;                       // error: incompatible pointer types
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:16:10: semantic error: type mismatch: cannot assign 'int *' to 'int **' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:16:10: semantic error: type mismatch: cannot assign 'int *' to 'int **' (incompatible pointer types) [type-mismatch]
  16 |     pp = p;                       // error: cannot assign 'int *' to 'int **'
     |          ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:17:9: semantic error: type mismatch: cannot assign 'int ***' to 'int *' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:17:9: semantic error: type mismatch: cannot assign 'int ***' to 'int *' (incompatible pointer types) [type-mismatch]
  17 |     p = &pp;                      // error: cannot assign 'int ***' to 'int *'
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:18:13: semantic error: arithmetic on a pointer to void ('void *') [invalid-operands]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:18:13: semantic error: arithmetic on a pointer to void ('void *') [invalid-operands]
  18 |     vp = vp + 1;                  // error: arithmetic on a pointer to void
     |             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:19:11: semantic error: comparison of distinct pointer types ('int *' and 'char *') [invalid-operands]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:19:11: semantic error: comparison of distinct pointer types ('int *' and 'char *') [invalid-operands]
  19 |     x = p < cp;                   // error: comparison of distinct pointer types
     |           ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:20:9: semantic error: type mismatch: cannot assign 'double' to 'int *' (no conversion to a pointer type) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:20:9: semantic error: type mismatch: cannot assign 'double' to 'int *' (no conversion to a pointer type) [type-mismatch]
  20 |     p = d;                        // error: cannot assign 'double' to 'int *'
     |         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:21:12: semantic error: invalid operands to binary '-' ('char *' and 'int *'): pointers to different types cannot be subtracted [invalid-operands]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:21:12: semantic error: invalid operands to binary '-' ('char *' and 'int *'): pointers to different types cannot be subtracted [invalid-operands]
  21 |     x = cp - p;                   // error: pointers to different types cannot be subtracted
     |            ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:22:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:22:20: semantic error: type mismatch: cannot initialize variable 'pa' of type 'int (*)[3]' with a value of type 'int *' (incompatible pointer types) [type-mismatch]
  22 |     int (*pa)[3] = &x;            // error: incompatible pointer types
     |                    ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/eu/phase2b-semantic/test/invalid/e06_pointers.c:23:11: semantic error: type mismatch: argument 1 of 'f' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
+/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e06_pointers.c:23:11: semantic error: type mismatch: argument 1 of 'f' expects 'int' but got 'int *' (incompatible pointer to integer conversion) [argument-type]
  23 |     x = f(*pp);                   // error: argument 1 of 'f' expects 'int' but got 'int *'
     |           ^
 

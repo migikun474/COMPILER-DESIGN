@@ -749,6 +749,14 @@ Operand Generator::assignment(const ASTNodePtr &n, bool discard) {
     LValue lv = lvalue(L);
     if (op == "=") {
         Operand v = sem::isRecord(lv.type) ? rvalue(R) : convert(rvalue(R), lv.type); /* an object: a block copy */
+        RecordInfo *rec = recordOf(lv.type);
+        if (rec && rec->polymorphic) { /* assignment copies the members, never the table pointer (C++) */
+            Operand addr = address(lv);
+            Operand saved = load(vptrOf(addr, rec));
+            store(lv, v);
+            store(vptrOf(addr, rec), saved);
+            return v;
+        }
         store(lv, v);
         return v;
     }
@@ -924,7 +932,7 @@ Operand Generator::argumentFor(const TypePtr &param, const ASTNodePtr &arg) {
    all arguments are evaluated before the first `param` (an argument may
    itself contain a call); a method gets `this` as its first parameter */
 Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std::vector<ASTNodePtr> &args,
-                        const std::vector<Operand> &extraArgs, bool wantResult) {
+                        const std::vector<Operand> &extraArgs, bool wantResult, bool dispatch) {
     Operand thisArg = thisArgIn;
     TypePtr ft = callee->type;
     std::vector<Operand> values; /* all arguments first: an argument may itself contain a call */
@@ -933,6 +941,16 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std
         else values.push_back(promoteVariadic(rvalue(args[i])));
     }
     for (const auto &e : extraArgs) values.push_back(e);
+    Operand target;
+    if (dispatch) { /* a virtual call (D44): the function's address from the object's table, slot k at 4k */
+        LValue entry;
+        entry.kind = LValue::Deref;
+        entry.base = load(vptrOf(thisArg, callee->ownerRecord));
+        entry.base.type = sem::pointerTo(sem::unsignedIntType());
+        entry.disp = 4LL * callee->vtableIndex;
+        entry.type = sem::unsignedIntType();
+        target = load(entry);
+    }
     if (!thisArg.isNone()) {
         Quad p;
         p.op = Op::Param;
@@ -949,12 +967,36 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std
     Quad q;
     q.op = Op::Call;
     q.callee = callee;
+    if (dispatch) { /* `call *t, n`: which function runs is known only when the program runs */
+        q.callee = nullptr;
+        q.a = target;
+        q.note = "(virtual " + signatureOf(*callee) + ")";
+    }
     q.nargs = static_cast<int>(values.size()) + (thisArg.isNone() ? 0 : 1);
     TypePtr ret = ft ? ft->ret : nullptr;
-    if (wantResult && ret && !sem::isVoid(ret) && !callee->isConstructor) q.r = newTemp(ret);
+    RecordInfo *retRec = ret && !sem::isReference(ret) ? recordOf(ret) : nullptr;
+    if ((wantResult || (retRec && retRec->polymorphic)) && ret && !sem::isVoid(ret) && !callee->isConstructor)
+        q.r = newTemp(ret);
     if (!q.r.isNone()) q.r.type = ret; /* keeps `T &`: the caller dereferences */
     emit(q);
+    if (retRec && retRec->polymorphic && !q.r.isNone()) { /* the copy the caller receives is a `ret` */
+        LValue lv;
+        lv.kind = LValue::Direct;
+        lv.base = q.r;
+        lv.type = ret;
+        installVptr(address(lv), retRec);
+    }
     return q.r;
+}
+
+/* an object reached through a pointer or a reference: its class may be a
+   derived one, so a virtual call on it goes through its table */
+static bool dynamicObject(const ASTNodePtr &n) {
+    if (n->kind == ASTKind::UnaryExpr && n->label == "*") return true;
+    if (n->kind == ASTKind::CallExpr) return n->symbol && n->symbol->type && sem::isFunction(n->symbol->type) &&
+                                             sem::isReference(n->symbol->type->ret); /* returns T & */
+    bool named = n->kind == ASTKind::Identifier || n->kind == ASTKind::MemberExpr || n->kind == ASTKind::ArrowExpr;
+    return named && n->symbol && n->symbol->type && sem::isReference(n->symbol->type);
 }
 
 Operand Generator::callExpr(const ASTNodePtr &n, bool discard) {
@@ -963,14 +1005,27 @@ Operand Generator::callExpr(const ASTNodePtr &n, bool discard) {
     const ASTNodePtr &callee = n->children[0];
     std::vector<ASTNodePtr> args(n->children.begin() + 1, n->children.end());
     Operand thisArg; /* the object's address; with single inheritance a base starts where the object does */
+    /* a virtual function is dispatched through the table unless the call
+       names a class (`p->Base::f()`) or the object's class is known (`obj.f()`) */
+    bool qualified = callee->kind == ASTKind::ScopeExpr || (callee->typeExpr && !callee->typeExpr->className.empty());
+    bool isVirtual = f->isVirtual && f->vtableIndex >= 0 && !qualified;
+    bool dispatch = false;
     if (f->ownerRecord && !f->isStatic) {
-        if (callee->kind == ASTKind::MemberExpr) thisArg = address(lvalueOrTemp(callee->children[0]));
-        else if (callee->kind == ASTKind::ArrowExpr) thisArg = rvalue(callee->children[0]);
-        else if (callee->semType && sem::isFunction(callee->semType)) thisArg = thisOperand(); /* an implicit this->f() */
-        else thisArg = address(lvalueOrTemp(callee)); /* a function object: obj(args) is obj.operator()(args) */
+        if (callee->kind == ASTKind::MemberExpr) {
+            thisArg = address(lvalueOrTemp(callee->children[0]));
+            dispatch = isVirtual && dynamicObject(callee->children[0]);
+        } else if (callee->kind == ASTKind::ArrowExpr) {
+            thisArg = rvalue(callee->children[0]);
+            dispatch = isVirtual;
+        } else if (callee->semType && sem::isFunction(callee->semType)) { /* an implicit this->f() */
+            thisArg = thisOperand();
+            dispatch = isVirtual && callee->kind == ASTKind::Identifier;
+        } else {
+            thisArg = address(lvalueOrTemp(callee)); /* a function object: obj(args) is obj.operator()(args) */
+        }
         thisArg.type = sem::pointerTo(sem::recordType(f->ownerRecord->shared_from_this()));
     }
-    return call(f, thisArg, args, {}, !discard);
+    return call(f, thisArg, args, {}, !discard, dispatch);
 }
 
 /* a + b, -a, a[i], a = b, a++ on a class: a call to operator<op> */
@@ -980,12 +1035,14 @@ Operand Generator::overloaded(const ASTNodePtr &n) {
     std::vector<Operand> extra;
     if (n->kind == ASTKind::PostfixOpExpr) extra.push_back(icon(0)); /* the dummy int of operator++(int) */
     Operand thisArg;
+    bool dispatch = false;
     if (f->ownerRecord && !f->isStatic) {
+        dispatch = f->isVirtual && f->vtableIndex >= 0 && dynamicObject(operands[0]); /* a virtual operator on `*p` or a reference */
         thisArg = address(lvalueOrTemp(operands[0]));
         thisArg.type = sem::pointerTo(sem::recordType(f->ownerRecord->shared_from_this()));
         operands.erase(operands.begin());
     }
-    return call(f, thisArg, operands, extra, true);
+    return call(f, thisArg, operands, extra, true, dispatch);
 }
 
 Operand Generator::builtin(const ASTNodePtr &n, bool discard) {
@@ -1043,7 +1100,7 @@ bool Generator::needsConstruction(const TypePtr &tIn) {
     while (t && sem::isArray(t)) t = t->elem;
     RecordInfo *rec = t && sem::isRecord(t) ? t->record.get() : nullptr;
     if (!rec || !rec->complete) return false;
-    if (!rec->constructors.empty()) return true;
+    if (!rec->constructors.empty() || rec->polymorphic) return true; /* a vptr to install */
     for (const auto &b : rec->bases)
         if (b.record && needsConstruction(sem::recordType(b.record))) return true;
     for (const auto &f : rec->fields)
@@ -1061,6 +1118,7 @@ void Generator::constructSubobjects(const Operand &addr, RecordInfo *rec) {
         p.type = sem::pointerTo(sem::recordType(b.record));
         defaultConstruct(p, sem::recordType(b.record));
     }
+    installVptr(addr, rec); /* after the base (C++): from here on virtual calls reach this class's functions */
     for (const auto &f : rec->fields) {
         if (f->storage != sem::Storage::Member || !needsConstruction(f->type)) continue;
         Operand p = pointerAdd(addr, icon(f->offset));
@@ -1095,9 +1153,67 @@ void Generator::constructInto(const Operand &addr, RecordInfo *rec, const std::v
         q.r = rvalue(args[0]);
         q.cls = Cls::Block;
         emit(q);
+        installVptr(addr, rec); /* a copy of an object reached through a base pointer is only a `rec` */
         return;
     }
     defaultConstruct(addr, sem::recordType(rec->shared_from_this()));
+}
+
+/* ---------------- virtual functions (D44) ---------------- */
+
+/* where the table pointer of a `rec` object at `addr` lives */
+Generator::LValue Generator::vptrOf(const Operand &addr, RecordInfo *rec) {
+    LValue slot;
+    slot.kind = LValue::Deref;
+    slot.base = addr;
+    slot.base.type = sem::pointerTo(sem::unsignedIntType());
+    slot.disp = rec->vptrOffset;
+    slot.type = sem::unsignedIntType();
+    return slot;
+}
+
+/* the table of `rec`: for each slot, the address of the function that
+   class calls for it (0 for a pure virtual function, never called) */
+sem::Symbol *Generator::vtable(RecordInfo *rec) {
+    auto known = vtables.find(rec);
+    if (known != vtables.end()) return known->second.get();
+    auto sym = std::make_shared<sem::Symbol>();
+    sym->name = sym->uniqueName = "_ZTV" + std::to_string(rec->tag.size()) + rec->tag;
+    sym->kind = sem::SymbolKind::Variable;
+    sym->storage = sem::Storage::Global;
+    sym->isDefined = true;
+    sym->type = sem::arrayOf(sem::unsignedIntType(), std::max<long long>(1, static_cast<long long>(rec->vtable.size())));
+    Global g;
+    g.sym = sym;
+    for (size_t k = 0; k < rec->vtable.size(); ++k) {
+        sem::Symbol *f = rec->vtable[k];
+        GlobalInit e;
+        e.offset = 4 * static_cast<long long>(k);
+        e.cls = Cls::Ptr;
+        if (f->isPure) {
+            e.value = "0";
+        } else {
+            e.kind = GlobalInit::Address;
+            e.target = f;
+            e.value = "&" + signatureOf(*f);
+        }
+        g.init.push_back(e);
+    }
+    prog.globals.push_back(g);
+    vtables[rec] = sym;
+    return sym.get();
+}
+
+/* the object at `addr` becomes a `rec`: its table pointer is `rec`'s table */
+void Generator::installVptr(const Operand &addr, RecordInfo *rec) {
+    if (!rec || !rec->polymorphic) return;
+    LValue table;
+    table.kind = LValue::Direct;
+    table.base = var(vtable(rec));
+    table.type = table.base.type;
+    Operand at = address(table);
+    at.type = sem::unsignedIntType();
+    store(vptrOf(addr, rec), at);
 }
 
 /* T(): a default-constructed temporary, or for a non-class type a conversion */

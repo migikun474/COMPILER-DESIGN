@@ -1,9 +1,10 @@
-/* invalid: 'virtual' and 'explicit' are still reserved words, but the
-   language no longer has virtual functions or converting constructors
-   (D35); the scanner reports them and the rest of the file is not analyzed */
+/* invalid: 'explicit' is still a reserved word, but the language has no
+   converting constructors (D35); the scanner reports it and the rest of
+   the file is not analyzed. ('virtual' was reserved the same way until
+   virtual functions came back with D44.) */
 class Shape {
 public:
-    virtual int area() { return 0; }          // error: 'virtual' is not supported: this language has no virtual functions
+    int id;
     explicit Shape() { }                      // error: 'explicit' is not supported: this language has no converting constructors
 };
 int main() {

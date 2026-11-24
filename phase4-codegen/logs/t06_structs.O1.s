@@ -506,15 +506,15 @@ L5_36:
         addiu $a0, $fp, -112
         li    $a2, 16
         jal   __memcpy
-        # t39 = c[0]
+        # t40 = c[0]
         l.d   $f0, -112($fp)
         mov.d $f20, $f0
-        # t40 = c[8]
+        # t41 = c[8]
         l.d   $f0, -104($fp)
         mov.d $f22, $f0
         # param "%.1f %.1f\n"
-        # param t39
         # param t40
+        # param t41
         # call printf, 3
         addiu $sp, $sp, -24
         la    $t0, str4
@@ -528,42 +528,42 @@ L5_36:
         # n1[0] = 1
         li    $t0, 1
         sw    $t0, -120($fp)
-        # t41 = &n2
+        # t42 = &n2
         addiu $s0, $fp, -128
-        # n1[4] = t41
+        # n1[4] = t42
         sw    $s0, -116($fp)
         # n2[0] = 2
         li    $t0, 2
         sw    $t0, -128($fp)
-        # t42 = &n3
+        # t43 = &n3
         addiu $s0, $fp, -136
-        # n2[4] = t42
+        # n2[4] = t43
         sw    $s0, -124($fp)
         # n3[0] = 3
         li    $t0, 3
         sw    $t0, -136($fp)
         # n3[4] = 0
         sw    $zero, -132($fp)
-        # t43 = &n1
+        # t44 = &n1
         addiu $s0, $fp, -120
-        # param t43
-        # t44 = call length(struct Node *), 1
+        # param t44
+        # t45 = call length(struct Node *), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _Z6lengthP4Node
         addiu $sp, $sp, 16
         move  $s1, $v0
-        # t45 = n1[4]
+        # t46 = n1[4]
         lw    $s0, -116($fp)
-        # t46 = t45 ptr+ 4
+        # t47 = t46 ptr+ 4
         addiu $s2, $s0, 4
-        # t47 = *t46
-        lw    $s0, 0($s2)
         # t48 = *t47
+        lw    $s0, 0($s2)
+        # t49 = *t48
         lw    $s2, 0($s0)
         # param "%d %d\n"
-        # param t44
-        # param t48
+        # param t45
+        # param t49
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str1
@@ -592,20 +592,20 @@ L5_36:
         # k[9] = 120
         li    $t0, 120
         sb    $t0, -143($fp)
-        # t49 = k[0]
+        # t50 = k[0]
         lw    $s0, -152($fp)
-        # t50 = k[4]
+        # t51 = k[4]
         lw    $s1, -148($fp)
-        # t53 = k[12]
+        # t54 = k[12]
         lh    $s2, -140($fp)
-        # t54 = shorttoint t53
+        # t55 = shorttoint t54
         move  $t0, $s2
         move  $s3, $t0
         # param "%d %d %c %d %d\n"
-        # param t49
         # param t50
+        # param t51
         # param 120
-        # param t54
+        # param t55
         # param 16
         # call printf, 6
         addiu $sp, $sp, -24
@@ -624,13 +624,13 @@ L5_36:
         sw    $zero, -160($fp)
         # zero[4] = 0
         sw    $zero, -156($fp)
-        # t55 = zero[0]
+        # t56 = zero[0]
         lw    $s0, -160($fp)
-        # t56 = pts[16]
+        # t57 = pts[16]
         lw    $s1, -48($fp)
-        # t57 = t55 int+ t56
+        # t58 = t56 int+ t57
         addu  $s2, $s0, $s1
-        # return t57
+        # return t58
         move  $v0, $s2
         j     main__exit
 main__exit:

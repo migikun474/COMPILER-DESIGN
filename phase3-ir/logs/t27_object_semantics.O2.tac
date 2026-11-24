@@ -4,7 +4,7 @@
 
    Source file   : test/t27_object_semantics.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 172 -> 154 instruction(s)
+   Result        : Optimized three address code (-O2): 174 -> 154 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          172 -> 154   (10% fewer)
+   instructions                          174 -> 154   (11% fewer)
 
    constants folded                        0
    algebraic simplifications               2
    common subexpressions                   4
    copies / constants forwarded            6
    temporaries merged away                 8
-   dead instructions removed               4
+   dead instructions removed               6
    jumps removed or redirected             5
    unreachable instructions removed        0
    propagated across blocks                0
@@ -230,7 +230,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 36 temporaries, frame 284 bytes
+ Symbol table: 10 parameter(s)/local(s), 36 temporaries, frame 292 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -248,39 +248,39 @@
    t2               temp    class Counted *                 4      88
    t3               temp    int                             4      92
    t4               temp    int                             4      96
-   t8               temp    int                             4     112
-   t9               temp    int                             4     116
    t10              temp    int                             4     120
-   t11              temp    int *                           4     124
-   t14              temp    int *                           4     136
-   t17              temp    int *                           4     148
-   t18              temp    int *                           4     152
-   t19              temp    int &                           4     156
-   t20              temp    int                             4     160
-   t21              temp    int                             4     164
-   t22              temp    struct Account *                4     168
-   t23              temp    struct Account *                4     172
-   t24              temp    struct Account &                4     176
+   t11              temp    int                             4     124
+   t12              temp    int                             4     128
+   t13              temp    int *                           4     132
+   t16              temp    int *                           4     144
+   t19              temp    int *                           4     156
+   t20              temp    int *                           4     160
+   t21              temp    int &                           4     164
+   t22              temp    int                             4     168
+   t23              temp    int                             4     172
+   t24              temp    struct Account *                4     176
    t25              temp    struct Account *                4     180
-   t26              temp    double                          8     184
-   t27              temp    double                          8     192
-   t29              temp    double                          8     208
-   t30              temp    double                          8     216
-   t31              temp    const int *                     4     224
-   t32              temp    int                             4     228
-   t33              temp    class Dog (*)[3]                4     232
-   t34              temp    class Dog (*)[3]                4     236
+   t26              temp    struct Account &                4     184
+   t27              temp    struct Account *                4     188
+   t28              temp    double                          8     192
+   t29              temp    double                          8     200
+   t31              temp    double                          8     216
+   t32              temp    double                          8     224
+   t33              temp    const int *                     4     232
+   t34              temp    int                             4     236
    t35              temp    class Dog (*)[3]                4     240
-   t36              temp    int                             4     244
-   t37              temp    int                             4     248
+   t36              temp    class Dog (*)[3]                4     244
+   t37              temp    class Dog (*)[3]                4     248
    t38              temp    int                             4     252
+   t39              temp    int                             4     256
    t40              temp    int                             4     260
-   t41              temp    class Dog *                     4     264
    t42              temp    int                             4     268
-   t43              temp    int                             4     272
-   t44              temp    class Dog *                     4     276
+   t43              temp    class Dog *                     4     272
+   t44              temp    int                             4     276
    t45              temp    int                             4     280
-   (9 temporaries no longer used after optimization not shown)
+   t46              temp    class Dog *                     4     284
+   t47              temp    int                             4     288
+   (11 temporaries no longer used after optimization not shown)
 
  Code: 110 instruction(s)
 
@@ -304,94 +304,94 @@
     161        b[0] = 7
     162        param 5
     163        c = call fresh(int), 1
-    164        t8 = a[0]
-    165        t9 = b[0]
-    166        t10 = c[0]
+    164        t10 = a[0]
+    165        t11 = b[0]
+    166        t12 = c[0]
     167        param "%d %d %d\n"
-    168        param t8
-    169        param t9
-    170        param t10
+    168        param t10
+    169        param t11
+    170        param t12
     171        call printf, 4
     172        x = 1
     173        y = 2
     174        if x int<= 2 goto L8
-    175        t11 = &x
+    175        t13 = &x
     176        goto L9
-    177  L8:   t11 = &y
-    178  L9:   *t11 = 20
+    177  L8:   t13 = &y
+    178  L9:   *t13 = 20
     179        if x int>= y goto L10
-    180        t14 = &x
+    180        t16 = &x
     181        goto L11
-    182  L10:  t14 = &y
-    183  L11:  *t14 = 10
-    184        t17 = &x
-    185        t18 = &y
+    182  L10:  t16 = &y
+    183  L11:  *t16 = 10
+    184        t19 = &x
+    185        t20 = &y
     186        param 1
-    187        param t17
-    188        param t18
-    189        t19 = call pick(int, int &, int &), 3
-    190        t20 = *t19
-    191        t21 = t20 int+ 5
-    192        *t19 = t21
+    187        param t19
+    188        param t20
+    189        t21 = call pick(int, int &, int &), 3
+    190        t22 = *t21
+    191        t23 = t22 int+ 5
+    192        *t21 = t23
     193        p[0] = 1
     194        p[8] = 10.5
     195        q[0] = 2
     196        q[8] = 99.0
-    197        t22 = &p
-    198        t23 = &q
-    199        param t22
-    200        param t23
-    201        t24 = call richer(struct Account &, struct Account &), 2
-    202        t25 = t24 ptr+ 8
-    203        t26 = *t25
-    204        t27 = t26 double- 9.0
-    205        *t25 = t27
-    206        t29 = p[8]
-    207        t30 = q[8]
+    197        t24 = &p
+    198        t25 = &q
+    199        param t24
+    200        param t25
+    201        t26 = call richer(struct Account &, struct Account &), 2
+    202        t27 = t26 ptr+ 8
+    203        t28 = *t27
+    204        t29 = t28 double- 9.0
+    205        *t27 = t29
+    206        t31 = p[8]
+    207        t32 = q[8]
     208        param "%d %d %.1f %.1f\n"
     209        param x
     210        param y
-    211        param t29
-    212        param t30
+    211        param t31
+    212        param t32
     213        call printf, 5
-    214        t31 = &primes
-    215        param t31
-    216        t32 = call sum(const int *), 1
+    214        t33 = &primes
+    215        param t33
+    216        t34 = call sum(const int *), 1
     217        param "%d\n"
-    218        param t32
+    218        param t34
     219        call printf, 2
-    220        t33 = &pack
-    221        param t33                           (this)
+    220        t35 = &pack
+    221        param t35                           (this)
     222        call Dog::Dog(), 1
-    223        t34 = t33 ptr+ 8
-    224        param t34                           (this)
+    223        t36 = t35 ptr+ 8
+    224        param t36                           (this)
     225        call Dog::Dog(), 1
-    226        t35 = t33 ptr+ 16
-    227        param t35                           (this)
+    226        t37 = t35 ptr+ 16
+    227        param t37                           (this)
     228        call Dog::Dog(), 1
     229        i = 0
     230  L12:  if i int>= 3 goto L13
-    231        t36 = i int<< 3                     (w = 8)
-    232        t37 = t36 int+ 4
-    233        t38 = i int+ 1
-    234        pack[t37] = t38
-    235        i = t38
+    231        t38 = i int<< 3                     (w = 8)
+    232        t39 = t38 int+ 4
+    233        t40 = i int+ 1
+    234        pack[t39] = t40
+    235        i = t40
     236        goto L12
-    237  L13:  t40 = pack[20]
-    238        t41 = &pack
-    239        param t41
-    240        t42 = call peek(const class Dog &), 1
+    237  L13:  t42 = pack[20]
+    238        t43 = &pack
+    239        param t43
+    240        t44 = call peek(const class Dog &), 1
     241        param "%d %d\n"
-    242        param t40
-    243        param t42
+    242        param t42
+    243        param t44
     244        call printf, 3
-    245        t43 = keeper[4]
-    246        t44 = &keeper
-    247        param t44
-    248        t45 = call peek(const class Dog &), 1
+    245        t45 = keeper[4]
+    246        t46 = &keeper
+    247        param t46
+    248        t47 = call peek(const class Dog &), 1
     249        param "%d %d\n"
-    250        param t43
-    251        param t45
+    250        param t45
+    251        param t47
     252        call printf, 3
     253        return 0
 

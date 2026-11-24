@@ -105,6 +105,17 @@ struct RecordInfo : std::enable_shared_from_this<RecordInfo> {
     std::set<const Symbol *> friendFunctions;
     std::set<std::string> friendClasses;
 
+    /* virtual functions (D44). A polymorphic object holds a pointer to its
+       class's table (the vptr). The first polymorphic class of a chain adds
+       it, right after its base part -- so the base stays at offset 0 -- and
+       every class derived from it uses the same place. With single
+       inheritance a slot is just the address of a function. */
+    bool polymorphic = false;     /* has or inherits a virtual function */
+    bool ownVptr = false;         /* adds the vptr itself (its base has none) */
+    bool abstract = false;        /* some slot's final overrider is pure */
+    long long vptrOffset = -1;    /* set by layoutRecord */
+    std::vector<Symbol *> vtable; /* slot -> the function this class calls for it */
+
     long long size = 0;          /* MIPS32 layout, valid once complete */
     int align = 1;
     int scopeId = -1;            /* scope holding the members (see SymbolTable) */

@@ -116,6 +116,9 @@ class SemanticAnalyzer {
     void functionBody(const ASTNodePtr &n, const SymbolPtr &fnSym, RecordInfo *cls);
     void outOfClassDefinition(const ASTNodePtr &n);
     void recordDefinition(const ASTNodePtr &n);
+    void virtualFunctions(RecordInfo *rec, const ASTNodePtr &n);
+    bool isAbstractType(const TypePtr &t) const;
+    void checkNotAbstract(const TypePtr &t, int line, int col, const std::string &what);
     void enumDefinition(const ASTNodePtr &n);
     void checkMainSignature(const SymbolPtr &s, const ASTNode *at);
     int unevaluated = 0; /* inside `sizeof`: uses there need no definition */

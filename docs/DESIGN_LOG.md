@@ -1199,6 +1199,60 @@ usual duplicate-declaration error. TAC no longer skips globals that are
 declared but not defined, because there are none. (D31 had kept
 `extern` when `register` and `volatile` went; this reverses that choice.)
 
+### D44. Virtual functions come back (2026-11-24)
+
+**Decided by:** the user (reverses the virtual-function part of D35).
+**Choices:** overriding follows the **C++ rule**; **pure virtual
+functions and abstract classes** are included.
+
+- **Syntax:** `virtual` is a keyword of the grammar again (`explicit`
+  stays reserved and rejected). `virtual T f(...) = 0;` declares a pure
+  virtual function; `= 0` on anything else is a syntax error. `virtual`
+  is only allowed on a member function declared inside its class (not on
+  a free, static or out-of-class definition).
+- **Overriding:** when a class is complete, `virtualFunctions()` copies
+  its base's table and lets each of its member functions with the same
+  name and parameters as a slot take that slot -- it becomes virtual with
+  or without the keyword, and must return the same type. A new virtual
+  function gets the next slot. The class is abstract if some slot's final
+  overrider is pure.
+- **Abstract classes:** no variable, member, array, by-value parameter or
+  result, or `T()` of an abstract class; pointers and references are
+  fine. A class with virtual functions cannot be brace-initialized.
+- **Layout (Claude's choice):** the first polymorphic class of a chain
+  adds the vtable pointer right after its base part -- not at offset 0 --
+  so the base sub-object stays at offset 0 and derived-to-base conversion
+  stays free, as the rest of the compiler assumes since D35; every class
+  derived from it uses the same place (`RecordInfo::vptrOffset`). With
+  single inheritance a slot is just a function address (4 bytes): no
+  this-adjustment is ever needed.
+- **TAC:** one global table `_ZTV<class>` per polymorphic class (a pure
+  slot holds 0). A constructor -- user-written or implicit -- installs its
+  class's table after constructing the base, so a virtual call made while
+  a base constructor runs reaches the base's function (C++). A copy that
+  creates an object (initialization, by-value parameter, returned value)
+  re-installs the declared class's table; an assignment keeps the target's
+  table pointer (`*basePtr = other;` leaves a derived object derived).
+  A call through a pointer, a reference, `*p` or an implicit `this` loads
+  the address from the table and becomes `t = call *a, n`; a call on a
+  named object and a qualified call (`p->Base::f()`) stay direct.
+  Virtual operators dispatch the same way.
+- **Interpreter:** each function gets an address (0x00400000 + 16 k) so a
+  table can hold it; `call *t` looks the function up by that address.
+- **Optimizer:** dead function removal keeps every function a table names;
+  inlining and tail recursion only see direct calls.
+- **MIPS:** `jalr` on the address; at `-O1` and above a virtual call uses
+  the `$a0`-`$a3` convention of a direct user call (D39), since its target
+  is always a user function. The table entries are filled in by the
+  start-up code like any other address initializer.
+- **Not included:** `override` / `final`, covariant return types, RTTI,
+  virtual inheritance; an object obtained from `malloc` runs no
+  constructor, so it has no table pointer and must not be used for a
+  virtual call.
+
+Tests: `t37_virtual` (interpreter and SPIM at every level, against g++),
+`v29_virtual`, `e26_virtual`.
+
 ---
 
 ## Open questions

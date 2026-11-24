@@ -4,7 +4,7 @@
 
    Source file   : test/t08_classes.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 261 -> 232 instruction(s)
+   Result        : Optimized three address code (-O2): 265 -> 232 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          261 -> 232   (11% fewer)
+   instructions                          265 -> 232   (12% fewer)
 
    constants folded                        0
    algebraic simplifications               0
-   common subexpressions                  16
-   copies / constants forwarded           18
+   common subexpressions                  17
+   copies / constants forwarded           19
    temporaries merged away                 8
-   dead instructions removed              18
+   dead instructions removed              22
    jumps removed or redirected             3
    unreachable instructions removed        0
    propagated across blocks                0
@@ -475,7 +475,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 25 temporaries, frame 292 bytes
+ Symbol table: 10 parameter(s)/local(s), 25 temporaries, frame 308 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -496,25 +496,25 @@
    t9               temp    int                             4     120
    t10              temp    class Dog *                     4     124
    t12              temp    int                             4     132
-   t15              temp    class Vec *                     4     152
-   t16              temp    class Vec *                     4     156
-   t25              temp    int                             4     204
-   t26              temp    int                             4     208
-   t27              temp    int                             4     212
-   t28              temp    int                             4     216
+   t14              temp    class Vec *                     4     144
+   t17              temp    class Vec *                     4     160
    t29              temp    int                             4     220
    t30              temp    int                             4     224
+   t31              temp    int                             4     228
    t32              temp    int                             4     232
+   t33              temp    int                             4     236
    t34              temp    int                             4     240
    t36              temp    int                             4     248
    t38              temp    int                             4     256
    t40              temp    int                             4     264
-   t41              temp    class Vec (*)[2]                4     268
-   t42              temp    class Vec (*)[2]                4     272
-   t43              temp    int                             4     276
-   t45              temp    int                             4     284
-   t46              temp    int                             4     288
-   (21 temporaries no longer used after optimization not shown)
+   t42              temp    int                             4     272
+   t44              temp    int                             4     280
+   t45              temp    class Vec (*)[2]                4     284
+   t46              temp    class Vec (*)[2]                4     288
+   t47              temp    int                             4     292
+   t49              temp    int                             4     300
+   t50              temp    int                             4     304
+   (25 temporaries no longer used after optimization not shown)
 
  Code: 108 instruction(s)
 
@@ -555,77 +555,77 @@
     258     param 1
     259     param 2
     260     a = call make(int, int), 2
-    261     param 3
-    262     param 4
-    263     b = call make(int, int), 2
-    264     t15 = &c
-    265     param t15                           (this)
-    266     call Vec::Vec(), 1
-    267     t16 = &a
-    268     param t16                           (this)
+    261     t14 = &a
+    262     param 3
+    263     param 4
+    264     b = call make(int, int), 2
+    265     t17 = &c
+    266     param t17                           (this)
+    267     call Vec::Vec(), 1
+    268     param t14                           (this)
     269     param b
     270     c = call Vec::operator+(class Vec), 2
-    271     param t15                           (this)
+    271     param t17                           (this)
     272     d = call Vec::operator-(), 1
     273     param a
     274     param 3
     275     e = call operator*(class Vec, int), 2
-    276     param t16                           (this)
+    276     param t14                           (this)
     277     param b
     278     call Vec::operator+=(class Vec), 2
-    279     param t16                           (this)
+    279     param t14                           (this)
     280     call Vec::operator++(), 1
-    281     t25 = c[0]
-    282     t26 = c[4]
-    283     t27 = d[0]
-    284     t28 = e[4]
-    285     t29 = a[0]
-    286     t30 = a[4]
+    281     t29 = c[0]
+    282     t30 = c[4]
+    283     t31 = d[0]
+    284     t32 = e[4]
+    285     t33 = a[0]
+    286     t34 = a[4]
     287     param "%d %d %d %d %d %d\n"
-    288     param t25
-    289     param t26
-    290     param t27
-    291     param t28
-    292     param t29
-    293     param t30
+    288     param t29
+    289     param t30
+    290     param t31
+    291     param t32
+    292     param t33
+    293     param t34
     294     call printf, 7
-    295     param t16                           (this)
+    295     param t14                           (this)
     296     param b
-    297     t32 = call Vec::operator==(class Vec), 2
-    298     param t15                           (this)
+    297     t36 = call Vec::operator==(class Vec), 2
+    298     param t17                           (this)
     299     param c
-    300     t34 = call Vec::operator==(class Vec), 2
-    301     param t16                           (this)
+    300     t38 = call Vec::operator==(class Vec), 2
+    301     param t14                           (this)
     302     param 0
-    303     t36 = call Vec::operator[](int), 2
-    304     param t16                           (this)
+    303     t40 = call Vec::operator[](int), 2
+    304     param t14                           (this)
     305     param 2
-    306     t38 = call Vec::operator()(int), 2
-    307     param t16                           (this)
+    306     t42 = call Vec::operator()(int), 2
+    307     param t14                           (this)
     308     param b
-    309     t40 = call Vec::dot(class Vec), 2
+    309     t44 = call Vec::dot(class Vec), 2
     310     param "%d %d %d %d %d\n"
-    311     param t32
-    312     param t34
-    313     param t36
-    314     param t38
-    315     param t40
+    311     param t36
+    312     param t38
+    313     param t40
+    314     param t42
+    315     param t44
     316     call printf, 6
-    317     t41 = &row
-    318     param t41                           (this)
+    317     t45 = &row
+    318     param t45                           (this)
     319     call Vec::Vec(), 1
-    320     t42 = t41 ptr+ 8
-    321     param t42                           (this)
+    320     t46 = t45 ptr+ 8
+    321     param t46                           (this)
     322     call Vec::Vec(), 1
     323     row[8] = 9
-    324     t43 = row[0]
+    324     t47 = row[0]
     325     param "%d %d\n"
-    326     param t43
+    326     param t47
     327     param 9
     328     call printf, 3
-    329     t45 = c[0]
-    330     t46 = 7 int+ t45
-    331     return t46
+    329     t49 = c[0]
+    330     t50 = 7 int+ t49
+    331     return t50
 
 
 ----------------------------------------------------------------------------

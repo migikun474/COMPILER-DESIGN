@@ -361,6 +361,13 @@ void layoutRecord(RecordInfo &r) {
         b.offset = offset;
         offset += b.record->size;
         align = std::max(align, b.record->align);
+        if (b.record->polymorphic) r.vptrOffset = b.offset + b.record->vptrOffset; /* shared with the base */
+    }
+    if (r.ownVptr) { /* the vtable pointer, after the (non-polymorphic) base part */
+        offset = alignUp(offset, 4);
+        r.vptrOffset = offset;
+        offset += 4;
+        align = std::max(align, 4);
     }
     long long largest = 0; /* union: every member at offset 0, the size of the largest */
     for (auto &f : r.fields) {

@@ -4,7 +4,7 @@
 
    Source file   : test/t26_declarations.c
    Optimization  : no optimization
-   Result        : Three address code generated: 2 function(s), 197 instruction(s)
+   Result        : Three address code generated: 2 function(s), 198 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -82,7 +82,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 65 temporaries, frame 584 bytes
+ Symbol table: 14 parameter(s)/local(s), 66 temporaries, frame 584 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -134,39 +134,40 @@
    t32              temp    short                           2     416
    t33              temp    double                          8     424
    t34              temp    double                          8     432
-   t35              temp    char                            1     440
-   t36              temp    int                             4     444
+   t35              temp    struct Mixed *                  4     440
+   t36              temp    char                            1     444
    t37              temp    int                             4     448
-   t38              temp    char                            1     452
-   t39              temp    int                             4     456
-   t40              temp    short                           2     460
-   t41              temp    int                             4     464
-   t42              temp    double                          8     472
-   t43              temp    char                            1     480
-   t44              temp    int                             4     484
-   t45              temp    int                             4     488
-   t46              temp    char *                          4     492
-   t47              temp    double                          8     496
-   t48              temp    double                          8     504
-   t49              temp    double                          8     512
-   t50              temp    int                             4     520
-   t51              temp    int                             4     524
-   t52              temp    int                             4     528
-   t53              temp    int                             4     532
-   t54              temp    int                             4     536
-   t55              temp    int                             4     540
-   t56              temp    int                             4     544
-   t57              temp    int                             4     548
-   t58              temp    int                             4     552
-   t59              temp    const char *                    4     556
-   t60              temp    char                            1     560
-   t61              temp    int                             4     564
-   t62              temp    char *                          4     568
-   t63              temp    unsigned int                    4     572
-   t64              temp    int                             4     576
-   t65              temp    int                             4     580
+   t38              temp    int                             4     452
+   t39              temp    char                            1     456
+   t40              temp    int                             4     460
+   t41              temp    short                           2     464
+   t42              temp    int                             4     468
+   t43              temp    double                          8     472
+   t44              temp    char                            1     480
+   t45              temp    int                             4     484
+   t46              temp    int                             4     488
+   t47              temp    char *                          4     492
+   t48              temp    double                          8     496
+   t49              temp    double                          8     504
+   t50              temp    double                          8     512
+   t51              temp    int                             4     520
+   t52              temp    int                             4     524
+   t53              temp    int                             4     528
+   t54              temp    int                             4     532
+   t55              temp    int                             4     536
+   t56              temp    int                             4     540
+   t57              temp    int                             4     544
+   t58              temp    int                             4     548
+   t59              temp    int                             4     552
+   t60              temp    const char *                    4     556
+   t61              temp    char                            1     560
+   t62              temp    int                             4     564
+   t63              temp    char *                          4     568
+   t64              temp    unsigned int                    4     572
+   t65              temp    int                             4     576
+   t66              temp    int                             4     580
 
- Code: 184 instruction(s)
+ Code: 185 instruction(s)
 
     113        t1 = 2 int* 2
     114        if 3 int> 9 goto L4
@@ -259,99 +260,100 @@
     201        m[16] = 3.5
     202        m[24] = 122
     203        copy = m
-    204        copy[4] = 100
-    205        t35 = m[0]
-    206        t36 = chartoint t35
-    207        t37 = m[4]
-    208        t38 = m[8]
-    209        t39 = chartoint t38
-    210        t40 = m[10]
-    211        t41 = shorttoint t40
-    212        t42 = m[16]
-    213        t43 = m[24]
-    214        t44 = chartoint t43
-    215        t45 = copy[4]
-    216        param "%c %d %c %d %.1f %c %d\n"
-    217        param t36
+    204        t35 = &copy
+    205        copy[4] = 100
+    206        t36 = m[0]
+    207        t37 = chartoint t36
+    208        t38 = m[4]
+    209        t39 = m[8]
+    210        t40 = chartoint t39
+    211        t41 = m[10]
+    212        t42 = shorttoint t41
+    213        t43 = m[16]
+    214        t44 = m[24]
+    215        t45 = chartoint t44
+    216        t46 = copy[4]
+    217        param "%c %d %c %d %.1f %c %d\n"
     218        param t37
-    219        param t39
-    220        param t41
+    219        param t38
+    220        param t40
     221        param t42
-    222        param t44
+    222        param t43
     223        param t45
-    224        call printf, 8
-    225        t46 = &letters
-    226        t47 = table[0]
-    227        t48 = table[8]
-    228        t49 = table[16]
-    229        t50 = matrix[20]
-    230        t51 = matrix[0]
-    231        t52 = t50 int- t51
-    232        param "%s %.1f %.1f %.1f %d\n"
-    233        param t46
+    224        param t46
+    225        call printf, 8
+    226        t47 = &letters
+    227        t48 = table[0]
+    228        t49 = table[8]
+    229        t50 = table[16]
+    230        t51 = matrix[20]
+    231        t52 = matrix[0]
+    232        t53 = t51 int- t52
+    233        param "%s %.1f %.1f %.1f %d\n"
     234        param t47
     235        param t48
     236        param t49
-    237        param t52
-    238        call printf, 6
-    239        grid[0] = 1
-    240        grid[4] = 0
-    241        grid[8] = 0
-    242        grid[12] = 0
-    243        grid[16] = 0
-    244        grid[20] = 2
-    245        grid[24] = 0
-    246        grid[28] = 0
-    247        grid[32] = 0
-    248        grid[36] = 0
-    249        grid[40] = 3
-    250        grid[44] = 0
-    251        trace = 0
-    252        i = 0
-    253  L10:  if i int< 3 goto L11
-    254        goto L12
-    255  L11:  t53 = i int* 4                      (n2 = 4)
-    256        t54 = t53 int+ i
-    257        t55 = t54 int* 4                    (w = 4)
-    258        t56 = grid[t55]
-    259        t57 = trace int+ t56
-    260        trace = t57
-    261        t58 = i int+ 1
-    262        i = t58
-    263        goto L10
-    264  L12:  words[0] = "one"
-    265        words[4] = "two"
-    266        words[8] = "three"
-    267        rows[0] = 97
-    268        rows[1] = 98
-    269        rows[2] = 0
-    270        rows[3] = 0
-    271        rows[4] = 0
-    272        rows[5] = 0
-    273        rows[6] = 99
-    274        rows[7] = 100
-    275        rows[8] = 101
-    276        rows[9] = 0
-    277        rows[10] = 0
-    278        rows[11] = 0
-    279        t59 = words[8]
-    280        t60 = rows[8]
-    281        t61 = chartoint t60
-    282        t62 = &rows
-    283        t63 = 12 uint/ 4
-    284        param "%d %s %c %s %d\n"
-    285        param trace
-    286        param t59
-    287        param t61
+    237        param t50
+    238        param t53
+    239        call printf, 6
+    240        grid[0] = 1
+    241        grid[4] = 0
+    242        grid[8] = 0
+    243        grid[12] = 0
+    244        grid[16] = 0
+    245        grid[20] = 2
+    246        grid[24] = 0
+    247        grid[28] = 0
+    248        grid[32] = 0
+    249        grid[36] = 0
+    250        grid[40] = 3
+    251        grid[44] = 0
+    252        trace = 0
+    253        i = 0
+    254  L10:  if i int< 3 goto L11
+    255        goto L12
+    256  L11:  t54 = i int* 4                      (n2 = 4)
+    257        t55 = t54 int+ i
+    258        t56 = t55 int* 4                    (w = 4)
+    259        t57 = grid[t56]
+    260        t58 = trace int+ t57
+    261        trace = t58
+    262        t59 = i int+ 1
+    263        i = t59
+    264        goto L10
+    265  L12:  words[0] = "one"
+    266        words[4] = "two"
+    267        words[8] = "three"
+    268        rows[0] = 97
+    269        rows[1] = 98
+    270        rows[2] = 0
+    271        rows[3] = 0
+    272        rows[4] = 0
+    273        rows[5] = 0
+    274        rows[6] = 99
+    275        rows[7] = 100
+    276        rows[8] = 101
+    277        rows[9] = 0
+    278        rows[10] = 0
+    279        rows[11] = 0
+    280        t60 = words[8]
+    281        t61 = rows[8]
+    282        t62 = chartoint t61
+    283        t63 = &rows
+    284        t64 = 12 uint/ 4
+    285        param "%d %s %c %s %d\n"
+    286        param trace
+    287        param t60
     288        param t62
     289        param t63
-    290        call printf, 6
-    291        sensor = 5
-    292        t64 = sensor int* 2
-    293        fast = t64
-    294        t65 = fast int+ kept.17
-    295        deduced = t65
-    296        return deduced
+    290        param t64
+    291        call printf, 6
+    292        sensor = 5
+    293        t65 = sensor int* 2
+    294        fast = t65
+    295        t66 = fast int+ kept.17
+    296        deduced = t66
+    297        return deduced
 
 
 ----------------------------------------------------------------------------

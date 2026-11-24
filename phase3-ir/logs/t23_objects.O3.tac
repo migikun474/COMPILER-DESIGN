@@ -4,7 +4,7 @@
 
    Source file   : test/t23_objects.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 352 -> 283 instruction(s)
+   Result        : Optimized three address code (-O3): 356 -> 283 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          352 -> 283   (19% fewer)
+   instructions                          356 -> 283   (20% fewer)
 
    constants folded                        3
    algebraic simplifications               2
-   common subexpressions                  82
-   copies / constants forwarded          222
+   common subexpressions                  84
+   copies / constants forwarded          224
    temporaries merged away                 5
-   dead instructions removed             173
+   dead instructions removed             177
    jumps removed or redirected             3
    unreachable instructions removed        3
    propagated across blocks                0
@@ -278,7 +278,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 11 parameter(s)/local(s), 104 temporaries, frame 1144 bytes
+ Symbol table: 11 parameter(s)/local(s), 104 temporaries, frame 1156 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -299,194 +299,194 @@
    t26              temp    class Rect (*)[2]               4     212
    t32              temp    int                             4     236
    t33              temp    int                             4     240
-   t36              temp    class Point *                   4     260
+   t35              temp    class Point *                   4     252
    t37              temp    class Point *                   4     264
-   t49              temp    int                             4     312
-   t53              temp    int                             4     332
-   t54              temp    int                             4     336
-   t55              temp    int                             4     340
+   t51              temp    int                             4     320
    t56              temp    int                             4     344
-   t59              temp    bool                            1     356
-   t60              temp    int                             4     360
-   t63              temp    bool                            1     372
-   t64              temp    int                             4     376
-   t65              temp    class Segment *                 4     380
-   t66              temp    class Segment *                 4     384
-   t70              temp    int                             4     400
-   t71              temp    class Rect *                    4     404
-   t77              temp    int                             4     428
-   t79              temp    class Rect *                    4     436
-   t80              temp    class Rect *                    4     440
-   t87              temp    class Rect *                    4     468
-   t88              temp    class Rect *                    4     472
-   t93              temp    int                             4     492
-   t95              temp    int                             4     500
+   t57              temp    int                             4     348
+   t58              temp    int                             4     352
+   t59              temp    int                             4     356
+   t62              temp    bool                            1     368
+   t63              temp    int                             4     372
+   t66              temp    bool                            1     384
+   t67              temp    int                             4     388
+   t68              temp    class Segment *                 4     392
+   t69              temp    class Segment *                 4     396
+   t73              temp    int                             4     412
+   t74              temp    class Rect *                    4     416
+   t80              temp    int                             4     440
+   t82              temp    class Rect *                    4     448
+   t83              temp    class Rect *                    4     452
+   t90              temp    class Rect *                    4     480
+   t91              temp    class Rect *                    4     484
    t96              temp    int                             4     504
+   t98              temp    int                             4     512
    t99              temp    int                             4     516
-   t101             temp    int                             4     524
    t102             temp    int                             4     528
-   t108             temp    int                             4     552
-   t109             temp    int                             4     556
+   t104             temp    int                             4     536
+   t105             temp    int                             4     540
    t111             temp    int                             4     564
    t112             temp    int                             4     568
-   t113             temp    int                             4     572
+   t114             temp    int                             4     576
    t115             temp    int                             4     580
    t116             temp    int                             4     584
-   t117             temp    int                             4     588
-   t123             temp    int                             4     612
-   t124             temp    int                             4     616
+   t118             temp    int                             4     592
+   t119             temp    int                             4     596
+   t120             temp    int                             4     600
    t126             temp    int                             4     624
    t127             temp    int                             4     628
-   t132             temp    int                             4     648
-   t133             temp    int                             4     652
-   t139             temp    int                             4     676
-   t140             temp    int                             4     680
-   t142             temp    class Rect *                    4     688
-   t143             temp    class Rect *                    4     692
+   t129             temp    int                             4     636
+   t130             temp    int                             4     640
+   t135             temp    int                             4     660
+   t136             temp    int                             4     664
+   t142             temp    int                             4     688
+   t143             temp    int                             4     692
    t145             temp    class Rect *                    4     700
    t146             temp    class Rect *                    4     704
-   t149             temp    int                             4     716
-   t151             temp    int                             4     724
+   t148             temp    class Rect *                    4     712
+   t149             temp    class Rect *                    4     716
    t152             temp    int                             4     728
+   t154             temp    int                             4     736
    t155             temp    int                             4     740
-   t157             temp    int                             4     748
    t158             temp    int                             4     752
-   t161             temp    class Point                     8     764
-   t162             temp    class Point *                   4     772
-   t165             temp    class Point                     8     784
-   t166             temp    class Point *                   4     792
-   t169             temp    int                             4     804
-   t170             temp    int                             4     808
-   t171             temp    int                             4     812
-   t172             temp    class Point *                   4     816
+   t160             temp    int                             4     760
+   t161             temp    int                             4     764
+   t164             temp    class Point                     8     776
+   t165             temp    class Point *                   4     784
+   t168             temp    class Point                     8     796
+   t169             temp    class Point *                   4     804
+   t172             temp    int                             4     816
    t173             temp    int                             4     820
-   t174             temp    const class Point *             4     824
-   t175             temp    int                             4     828
+   t174             temp    int                             4     824
+   t175             temp    class Point *                   4     828
    t176             temp    int                             4     832
+   t177             temp    const class Point *             4     836
+   t178             temp    int                             4     840
    t179             temp    int                             4     844
-   t180             temp    int                             4     848
-   t181             temp    int                             4     852
+   t182             temp    int                             4     856
    t183             temp    int                             4     860
-   t185             temp    int                             4     868
+   t184             temp    int                             4     864
    t186             temp    int                             4     872
+   t188             temp    int                             4     880
    t189             temp    int                             4     884
-   t190             temp    int                             4     888
-   t191             temp    int                             4     892
+   t192             temp    int                             4     896
    t193             temp    int                             4     900
-   t195             temp    int                             4     908
+   t194             temp    int                             4     904
    t196             temp    int                             4     912
-   t205             temp    class Point                     8     948
-   t206             temp    class Point *                   4     956
-   t207             temp    int                             4     960
-   t208             temp    int                             4     964
-   t209             temp    int                             4     968
+   t198             temp    int                             4     920
+   t199             temp    int                             4     924
+   t208             temp    class Point                     8     960
+   t209             temp    class Point *                   4     968
+   t210             temp    int                             4     972
    t211             temp    int                             4     976
-   t213             temp    int                             4     984
+   t212             temp    int                             4     980
    t214             temp    int                             4     988
-   t216             temp    class Point *                   4     996
-   t218             temp    class Point *                   4    1004
-   t224             temp    class Point                     8    1028
-   t225             temp    class Point                     8    1036
-   t229             temp    class Point                     8    1056
-   t230             temp    int                             4    1064
-   t231             temp    int                             4    1068
-   t232             temp    int                             4    1072
+   t216             temp    int                             4     996
+   t217             temp    int                             4    1000
+   t219             temp    class Point *                   4    1008
+   t221             temp    class Point *                   4    1016
+   t227             temp    class Point                     8    1040
+   t228             temp    class Point                     8    1048
+   t232             temp    class Point                     8    1068
    t233             temp    int                             4    1076
    t234             temp    int                             4    1080
-   t236             temp    class Rect *                    4    1088
-   t237             temp    class Rect *                    4    1092
-   t245             temp    int                             4    1124
+   t235             temp    int                             4    1084
+   t236             temp    int                             4    1088
+   t237             temp    int                             4    1092
+   t239             temp    class Rect *                    4    1100
+   t240             temp    class Rect *                    4    1104
    t248             temp    int                             4    1136
-   (145 temporaries no longer used after optimization not shown)
+   t251             temp    int                             4    1148
+   (148 temporaries no longer used after optimization not shown)
 
  Code: 216 instruction(s)
 
     167     t1 = &r
     168     param t1                            (this)
     169     call Shape::Shape(), 1
-    170     t79 = t1 ptr+ 4
-    171     *t79 = 1
-    172     t80 = t1 ptr+ 8
-    173     *t80 = 1
-    174     *t79 = 3
-    175     *t80 = 4
+    170     t82 = t1 ptr+ 4
+    171     *t82 = 1
+    172     t83 = t1 ptr+ 8
+    173     *t83 = 1
+    174     *t82 = 3
+    175     *t83 = 4
     176     t3 = &q
     177     param t3                            (this)
     178     call Shape::Shape(), 1
-    179     t87 = t3 ptr+ 4
-    180     *t87 = 1
-    181     t88 = t3 ptr+ 8
-    182     *t88 = 1
+    179     t90 = t3 ptr+ 4
+    180     *t90 = 1
+    181     t91 = t3 ptr+ 8
+    182     *t91 = 1
     183     param t3                            (this)
     184     param 5
     185     param 5
     186     call Rect::set(int, int), 3
-    187     t93 = *t79
-    188     t95 = *t80
-    189     t96 = t93 int* t95
-    190     t99 = *t87
-    191     t101 = *t88
-    192     t102 = t99 int* t101
-    193     t108 = t99 int+ t101
-    194     t109 = t108 int<< 1
+    187     t96 = *t82
+    188     t98 = *t83
+    189     t99 = t96 int* t98
+    190     t102 = *t90
+    191     t104 = *t91
+    192     t105 = t102 int* t104
+    193     t111 = t102 int+ t104
+    194     t112 = t111 int<< 1
     195     param "%d %d %d %d\n"
-    196     param t96
-    197     param t102
-    198     param t109
+    196     param t99
+    197     param t105
+    198     param t112
     199     param Shape::live
     200     call printf, 5
     201     param t1                            (this)
-    202     t111 = call Rect::area(), 1
-    203     t112 = *t1
-    204     t113 = t111 int+ t112
+    202     t114 = call Rect::area(), 1
+    203     t115 = *t1
+    204     t116 = t114 int+ t115
     205     param t3                            (this)
-    206     t115 = call Shape::area(), 1
+    206     t118 = call Shape::area(), 1
     207     param t3                            (this)
-    208     t116 = call Shape::name(), 1
-    209     t117 = t115 int+ t116
+    208     t119 = call Shape::name(), 1
+    209     t120 = t118 int+ t119
     210     param "%d %d %c %c\n"
-    211     param t113
-    212     param t117
+    211     param t116
+    212     param t120
     213     param 81
     214     param 83
     215     call printf, 5
-    216     t123 = *t87
-    217     t124 = t123 int+ 1
-    218     *t87 = t124
-    219     t126 = *t88
-    220     t127 = t126 int+ 1
-    221     *t88 = t127
-    222     *t87 = 10
-    223     t132 = *t88
-    224     t133 = t132 int* 10
-    225     t139 = 10 int+ t132
-    226     t140 = t139 int<< 1
+    216     t126 = *t90
+    217     t127 = t126 int+ 1
+    218     *t90 = t127
+    219     t129 = *t91
+    220     t130 = t129 int+ 1
+    221     *t91 = t130
+    222     *t90 = 10
+    223     t135 = *t91
+    224     t136 = t135 int* 10
+    225     t142 = 10 int+ t135
+    226     t143 = t142 int<< 1
     227     param "%d %d\n"
-    228     param t133
-    229     param t140
+    228     param t136
+    229     param t143
     230     call printf, 3
     231     t25 = &pair
     232     param t25                           (this)
     233     call Shape::Shape(), 1
-    234     t142 = t25 ptr+ 4
-    235     *t142 = 1
-    236     t143 = t25 ptr+ 8
-    237     *t143 = 1
+    234     t145 = t25 ptr+ 4
+    235     *t145 = 1
+    236     t146 = t25 ptr+ 8
+    237     *t146 = 1
     238     t26 = t25 ptr+ 12
     239     param t26                           (this)
     240     call Shape::Shape(), 1
-    241     t145 = t26 ptr+ 4
-    242     *t145 = 1
-    243     t146 = t26 ptr+ 8
-    244     *t146 = 1
+    241     t148 = t26 ptr+ 4
+    242     *t148 = 1
+    243     t149 = t26 ptr+ 8
+    244     *t149 = 1
     245     pair[16] = 6
-    246     t149 = *t142
-    247     t151 = *t143
-    248     t152 = t149 int* t151
-    249     t155 = *t145
-    250     t157 = *t146
-    251     t158 = t155 int* t157
-    252     t32 = t152 int+ t158
+    246     t152 = *t145
+    247     t154 = *t146
+    248     t155 = t152 int* t154
+    249     t158 = *t148
+    250     t160 = *t149
+    251     t161 = t158 int* t160
+    252     t32 = t155 int+ t161
     253     t33 = pair[12]
     254     param "%d %d %d\n"
     255     param t32
@@ -496,125 +496,125 @@
     259     param "%d\n"
     260     param Shape::live
     261     call printf, 2
-    262     t162 = &t161
-    263     param t162                          (this)
+    262     t165 = &t164
+    263     param t165                          (this)
     264     call Point::Point(), 1
-    265     t161[0] = 3
-    266     t161[4] = 4
-    267     a = t161
-    268     t166 = &t165
-    269     param t166                          (this)
-    270     call Point::Point(), 1
-    271     t165[0] = 1
-    272     t165[4] = 1
-    273     b = t165
-    274     t36 = &a
+    265     t164[0] = 3
+    266     t164[4] = 4
+    267     a = t164
+    268     t35 = &a
+    269     t169 = &t168
+    270     param t169                          (this)
+    271     call Point::Point(), 1
+    272     t168[0] = 1
+    273     t168[4] = 1
+    274     b = t168
     275     t37 = &b
-    276     t169 = *t36
-    277     t170 = *t37
-    278     t171 = t169 int+ t170
-    279     *t36 = t171
-    280     t172 = t36 ptr+ 4
-    281     t173 = *t172
-    282     t174 = t37 ptr+ 4
-    283     t175 = *t174
-    284     t176 = t173 int+ t175
-    285     *t172 = t176
-    286     t179 = *t36
-    287     t180 = *t37
-    288     t181 = t179 int+ t180
-    289     *t36 = t181
-    290     t183 = *t172
-    291     t185 = *t174
-    292     t186 = t183 int+ t185
-    293     *t172 = t186
-    294     t189 = *t36
-    295     t190 = *t37
-    296     t191 = t189 int+ t190
-    297     *t36 = t191
-    298     t193 = *t172
-    299     t195 = *t174
-    300     t196 = t193 int+ t195
-    301     *t172 = t196
-    302     t49 = t196 int<< 1
-    303     *t36 = t49
-    304     t206 = &t205
-    305     param t206                          (this)
+    276     t172 = *t35
+    277     t173 = *t37
+    278     t174 = t172 int+ t173
+    279     *t35 = t174
+    280     t175 = t35 ptr+ 4
+    281     t176 = *t175
+    282     t177 = t37 ptr+ 4
+    283     t178 = *t177
+    284     t179 = t176 int+ t178
+    285     *t175 = t179
+    286     t182 = *t35
+    287     t183 = *t37
+    288     t184 = t182 int+ t183
+    289     *t35 = t184
+    290     t186 = *t175
+    291     t188 = *t177
+    292     t189 = t186 int+ t188
+    293     *t175 = t189
+    294     t192 = *t35
+    295     t193 = *t37
+    296     t194 = t192 int+ t193
+    297     *t35 = t194
+    298     t196 = *t175
+    299     t198 = *t177
+    300     t199 = t196 int+ t198
+    301     *t175 = t199
+    302     t51 = t199 int<< 1
+    303     *t35 = t51
+    304     t209 = &t208
+    305     param t209                          (this)
     306     call Point::Point(), 1
-    307     t207 = *t36
-    308     t208 = *t37
-    309     t209 = t207 int- t208
-    310     t205[0] = t209
-    311     t211 = *t172
-    312     t213 = *t174
-    313     t214 = t211 int- t213
-    314     t205[4] = t214
-    315     c = t205
-    316     t53 = a[0]
-    317     t54 = a[4]
-    318     t55 = c[0]
-    319     t56 = c[4]
+    307     t210 = *t35
+    308     t211 = *t37
+    309     t212 = t210 int- t211
+    310     t208[0] = t212
+    311     t214 = *t175
+    312     t216 = *t177
+    313     t217 = t214 int- t216
+    314     t208[4] = t217
+    315     c = t208
+    316     t56 = a[0]
+    317     t57 = a[4]
+    318     t58 = c[0]
+    319     t59 = c[4]
     320     param t37                           (this)
-    321     param t36
-    322     t59 = call Point::operator<(const class Point &), 2
-    323     t60 = booltoint t59
-    324     param t36                           (this)
+    321     param t35
+    322     t62 = call Point::operator<(const class Point &), 2
+    323     t63 = booltoint t62
+    324     param t35                           (this)
     325     param t37
-    326     t63 = call Point::operator<(const class Point &), 2
-    327     t64 = booltoint t63
+    326     t66 = call Point::operator<(const class Point &), 2
+    327     t67 = booltoint t66
     328     param "%d %d %d %d %d %d\n"
-    329     param t53
-    330     param t54
-    331     param t55
-    332     param t56
-    333     param t60
-    334     param t64
+    329     param t56
+    330     param t57
+    331     param t58
+    332     param t59
+    333     param t63
+    334     param t67
     335     call printf, 7
-    336     t65 = &s
-    337     *t65 = 0
-    338     t216 = t65 ptr+ 4
-    339     *t216 = 0
-    340     t66 = t65 ptr+ 8
-    341     *t66 = 0
-    342     t218 = t66 ptr+ 4
-    343     *t218 = 0
+    336     t68 = &s
+    337     *t68 = 0
+    338     t219 = t68 ptr+ 4
+    339     *t219 = 0
+    340     t69 = t68 ptr+ 8
+    341     *t69 = 0
+    342     t221 = t69 ptr+ 4
+    343     *t221 = 0
     344     param 1
     345     param 2
-    346     t224 = call at(int, int), 2
-    347     *t65 = t224
+    346     t227 = call at(int, int), 2
+    347     *t68 = t227
     348     param 4
     349     param 6
-    350     t225 = call at(int, int), 2
-    351     *t66 = t225
-    352     param t66                           (this)
-    353     param t65
-    354     t229 = call Point::operator-(const class Point &), 2
-    355     t230 = t229[0]
-    356     t231 = t230 int* t230
-    357     t232 = t229[4]
-    358     t233 = t232 int* t232
-    359     t234 = t231 int+ t233
-    360     t70 = s[12]
+    350     t228 = call at(int, int), 2
+    351     *t69 = t228
+    352     param t69                           (this)
+    353     param t68
+    354     t232 = call Point::operator-(const class Point &), 2
+    355     t233 = t232[0]
+    356     t234 = t233 int* t233
+    357     t235 = t232[4]
+    358     t236 = t235 int* t235
+    359     t237 = t234 int+ t236
+    360     t73 = s[12]
     361     param "%d %d\n"
-    362     param t234
-    363     param t70
+    362     param t237
+    363     param t73
     364     call printf, 3
-    365     t71 = &last
-    366     param t71                           (this)
+    365     t74 = &last
+    366     param t74                           (this)
     367     call Shape::Shape(), 1
-    368     t236 = t71 ptr+ 4
-    369     *t236 = 1
-    370     t237 = t71 ptr+ 8
-    371     *t237 = 1
-    372     *t236 = 2
-    373     *t237 = 9
-    374     t245 = *t236
-    375     t248 = t245 int* 9
-    376     t77 = *t71
+    368     t239 = t74 ptr+ 4
+    369     *t239 = 1
+    370     t240 = t74 ptr+ 8
+    371     *t240 = 1
+    372     *t239 = 2
+    373     *t240 = 9
+    374     t248 = *t239
+    375     t251 = t248 int* 9
+    376     t80 = *t74
     377     param "%d %d %d\n"
-    378     param t248
+    378     param t251
     379     param 0
-    380     param t77
+    380     param t80
     381     call printf, 4
     382     return Shape::live
 
