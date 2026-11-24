@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 35 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 36 test programs are
 > generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 36 passed, the 35 programs and one warnings check).
+> (`./run_tests.sh`: 37 passed, the 36 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -283,6 +283,7 @@ the output of the same source compiled with gcc/g++.
 | `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
 | `t37_virtual` | virtual functions (D44): overriding at three levels with and without the keyword, an abstract base used through pointers, calls through pointers, references and `this`, qualified calls, a virtual call inside a base constructor, copies and assignments keeping each object's class, by-value parameters and results, a virtual operator, overloaded virtuals, arguments wider than `$a0`–`$a3`, a global object |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
+| `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 
 ## Warnings from this phase
