@@ -2,8 +2,10 @@
 
 Each diagram exists as a standalone page (`.html`, open in a browser)
 and as an image (`.svg`, embedded in the READMEs). They were generated
-with the diagram-design skill in its default style and describe the
-implementation as audited on 2026-10-06.
+with the diagram-design skill in its default style. They were drawn for
+the audit of 2026-10-06 and kept up to date since (last on 2026-11-24:
+the feature map counts virtual functions, enum and union; the repository
+layout has the current test counts).
 
 | Diagram | Type | Shows | Used in |
 |---|---|---|---|

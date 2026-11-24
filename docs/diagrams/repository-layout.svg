@@ -53,13 +53,13 @@
 <text x="488.0" y="341" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase2b-semantic/</text>
 <text x="488.0" y="356" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">executable: semantic_analyzer</text>
 <text x="632" y="340" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">src/*.cpp · run_tests.sh</text>
-<text x="632" y="354" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/valid 26 · test/invalid 23</text>
+<text x="632" y="354" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/valid 28 · test/invalid 25</text>
 <rect x="368" y="392" width="240" height="48" rx="6" fill="#f5f5f5"/>
 <rect x="368" y="392" width="240" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
 <text x="488.0" y="413" fill="#2d3142" font-size="12" font-family="'Geist', sans-serif" text-anchor="middle" font-weight="600">phase3-ir/ · phase4-codegen/</text>
 <text x="488.0" y="428" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">tac_generator · mips_generator</text>
 <text x="632" y="412" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">TAC, optimizer, interpreter; MIPS</text>
-<text x="632" y="426" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 32 programs + logs</text>
+<text x="632" y="426" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="start">test/ · 36 programs + logs</text>
 <line x1="32" y1="532" x2="928" y2="532" stroke="#2d3142" stroke-opacity="0.10" stroke-width="0.8"/>
 <text x="32" y="548" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="start" letter-spacing="0.14em">LEGEND</text>
 <rect x="32" y="564" width="24" height="12" rx="2" fill="#eb6c36" fill-opacity="0.08" stroke="#eb6c36" stroke-width="1"/>
