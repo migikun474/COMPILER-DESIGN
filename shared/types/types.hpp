@@ -50,14 +50,14 @@ enum class TypeKind {
                   accepted silently everywhere to avoid cascades */
     Void, Bool, Char, Short, Int, Long, LongLong, Float, Double,
     Pointer, Reference, Array, Function,
-    Record,    /* struct / union / class */
+    Record,    /* struct / class */
     Opaque     /* va_list */
 };
 
 /* NoAccess = "not accessible at all from here", e.g. a base class's
    private member seen through a derived class */
 enum class Access { Public, Protected, Private, NoAccess };
-enum class RecordKind { Struct, Union, Class };
+enum class RecordKind { Struct, Class };
 
 struct Type {
     TypeKind kind = TypeKind::Error;

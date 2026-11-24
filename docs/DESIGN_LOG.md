@@ -1383,6 +1383,24 @@ program's output in the TAC logs.
   PROGRAM OUTPUT section: what the program printed, its exit code and
   the instructions executed.
 
+### D50. union removed again; enum stays (2026-11-24)
+
+**Decided by:** the user: remove unions, keep enums. This reverses the
+union half of D42.
+
+- `union` is a reserved word again and the scanner rejects it:
+  "'union' is not supported: this language has no unions" (like
+  `virtual` and `explicit`, D35/D47).
+- Gone: the union grammar rules and `UNION` token in the parser,
+  `UnionDecl`, `UNION_TAG`, `RecordKind::Union` and every check that
+  used it (layout at offset 0, one-member initializers, the data-only
+  member rules, anonymous unions, union/struct tag mismatches).
+- Enums are unchanged (C++ rules, D42).
+- Tests: `t36_enums_unions` becomes `t36_enums` (enums only, expected
+  output from g++); `t06_structs` loses its union; `v28` and `e25`
+  become `v28_enums` and `e25_enums`; `e24_removed_keywords` checks
+  that `union` is rejected.
+
 ---
 
 ## Open questions

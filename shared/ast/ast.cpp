@@ -40,7 +40,6 @@ const char *astKindName(ASTKind k) {
         case ASTKind::DeclGroup: return "DeclGroup";
         case ASTKind::StructDecl: return "StructDecl";
         case ASTKind::ClassDecl: return "ClassDecl";
-        case ASTKind::UnionDecl: return "UnionDecl";
         case ASTKind::EnumDecl: return "EnumDecl";
         case ASTKind::Enumerator: return "Enumerator";
         case ASTKind::TypedefDecl: return "TypedefDecl";

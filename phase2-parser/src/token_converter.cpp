@@ -29,7 +29,6 @@ int to_bison_token(TokenType t) {
         // ---- composite-type keywords ----
         case TokenType::STRUCT: return STRUCT;
         case TokenType::CLASS:  return CLASS;
-        case TokenType::UNION:  return UNION;
         case TokenType::ENUM:   return ENUM;
 
         // ---- access modifiers ----

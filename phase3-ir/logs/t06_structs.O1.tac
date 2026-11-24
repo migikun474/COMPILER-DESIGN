@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 109 -> 110 instruction(s)
+   Result        : Optimized three address code (-O1): 100 -> 101 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,7 +14,7 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          109 -> 110   (0% fewer)
+   instructions                          100 -> 101   (-1% fewer)
 
    calls inlined                           3
    constants folded                        8
@@ -74,7 +74,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 36 temporaries, frame 504 bytes
+ Symbol table: 9 parameter(s)/local(s), 33 temporaries, frame 480 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -87,46 +87,42 @@
    jj               local   int                             4     144
    ps               local   Pt[2]                          16     148
    h                local   struct Holder                  12     164
-   b                local   union Bits                      4     176
-   t2               temp    int                             4     216
-   t3               temp    int                             4     220
-   t4               temp    char                            1     224
-   t5               temp    int                             4     228
-   t6               temp    int                             4     232
-   t7               temp    int                             4     236
-   t8               temp    int                             4     240
-   t9               temp    double                          8     248
-   t11              temp    int                             4     260
-   t12              temp    struct Out *                    4     264
-   t13              temp    struct Out *                    4     268
-   t19              temp    struct Out *                    4     292
-   t20              temp    struct Out *                    4     296
-   t21              temp    int                             4     300
-   t25              temp    int                             4     316
-   t26              temp    struct Out                     32     320
-   t27              temp    int                             4     352
-   t28              temp    Pt                              8     356
-   t29              temp    int                             4     364
-   t31              temp    int                             4     372
-   t32              temp    int                             4     376
-   t33              temp    int                             4     380
-   t34              temp    unsigned int                    4     384
-   t35              temp    unsigned char                   1     388
-   t36              temp    int                             4     392
-   t37              temp    struct Out                     32     400
-   t38              temp    int                             4     432
-   t39              temp    int                             4     436
-   t40              temp    Pt                              8     440
-   t41              temp    int                             4     448
-   t42              temp    int                             4     452
-   t43              temp    int                             4     456
-   t44              temp    int                             4     460
-   t45              temp    struct Out                     32     464
-   t46              temp    int                             4     496
-   t47              temp    int                             4     500
+   t2               temp    int                             4     208
+   t3               temp    int                             4     212
+   t4               temp    char                            1     216
+   t5               temp    int                             4     220
+   t6               temp    int                             4     224
+   t7               temp    int                             4     228
+   t8               temp    int                             4     232
+   t9               temp    double                          8     240
+   t11              temp    int                             4     252
+   t12              temp    struct Out *                    4     256
+   t13              temp    struct Out *                    4     260
+   t19              temp    struct Out *                    4     284
+   t20              temp    struct Out *                    4     288
+   t21              temp    int                             4     292
+   t25              temp    int                             4     308
+   t26              temp    struct Out                     32     312
+   t27              temp    int                             4     344
+   t28              temp    Pt                              8     348
+   t29              temp    int                             4     356
+   t31              temp    int                             4     364
+   t32              temp    int                             4     368
+   t33              temp    int                             4     372
+   t34              temp    struct Out                     32     376
+   t35              temp    int                             4     408
+   t36              temp    int                             4     412
+   t37              temp    Pt                              8     416
+   t38              temp    int                             4     424
+   t39              temp    int                             4     428
+   t40              temp    int                             4     432
+   t41              temp    int                             4     436
+   t42              temp    struct Out                     32     440
+   t43              temp    int                             4     472
+   t44              temp    int                             4     476
    (11 temporaries no longer used after optimization not shown)
 
- Code: 99 instruction(s)
+ Code: 90 instruction(s)
 
     111     o[0] = 1
     112     o[4] = 107
@@ -134,12 +130,12 @@
     114     o[12] = 6
     115     o[16] = 7
     116     o[24] = 2.5
-    117     t37 = o
-    118     t38 = t37[0]
-    119     t39 = t38 int+ 100
-    120     t37[0] = t39
-    121     t37[16] = 9
-    122     g = t37
+    117     t34 = o
+    118     t35 = t34[0]
+    119     t36 = t35 int+ 100
+    120     t34[0] = t36
+    121     t34[16] = 9
+    122     g = t34
     123     t2 = o[0]
     124     t3 = g[0]
     125     t4 = g[4]
@@ -157,15 +153,15 @@
     137     call printf, 6
     138     p[0] = 3
     139     p[4] = 4
-    140     t40 = p
-    141     t41 = t40[0]
-    142     t42 = t41 int<< 1
-    143     t40[0] = t42
-    144     t43 = t40[4]
-    145     t44 = t42 int* t43
+    140     t37 = p
+    141     t38 = t37[0]
+    142     t39 = t38 int<< 1
+    143     t37[0] = t39
+    144     t40 = t37[4]
+    145     t41 = t39 int* t40
     146     t11 = p[0]
     147     param "%d %d\n"
-    148     param t44
+    148     param t41
     149     param t11
     150     call printf, 3
     151     t12 = &os
@@ -179,12 +175,12 @@
     159     *t20 = 17
     160     t21 = os[48]
     161     t25 = os[44]
-    162     t45 = o
-    163     t46 = t45[0]
-    164     t47 = t46 int+ 100
-    165     t45[0] = t47
-    166     t45[16] = 9
-    167     t26 = t45
+    162     t42 = o
+    163     t43 = t42[0]
+    164     t44 = t43 int+ 100
+    165     t42[0] = t44
+    166     t42[16] = 9
+    167     t26 = t42
     168     t27 = t26[0]
     169     param "%d %d %d\n"
     170     param t21
@@ -217,16 +213,7 @@
     197     param 8
     198     param 32
     199     call printf, 3
-    200     b[0] = 1.0
-    201     t34 = b[0]
-    202     t35 = b[3]
-    203     t36 = uchartoint t35
-    204     param "%x %d %d\n"
-    205     param t34
-    206     param t36
-    207     param 4
-    208     call printf, 4
-    209     return 0
+    200     return 0
 
 
 ----------------------------------------------------------------------------
@@ -242,10 +229,9 @@
    Pt                 typedef       Pt                         -           8    -    0  
    Holder             struct_tag    struct Holder              -           9    -    0  size 12
    (unnamed at 9:25)  struct_tag    struct (unnamed at 9:25)   -           9    -    0  size 8
-   Bits               union_tag     union Bits                 -          10    -    0  size 4
-   grow               function      struct Out (struct Out)    -          11    -    2  _Z4grow3Out; defined
-   area               function      int (Pt)                   -          12    -    1  _Z4area2Pt; defined
-   main               function      int (void)                 -          13    -    0  defined
+   grow               function      struct Out (struct Out)    -          10    -    2  _Z4grow3Out; defined
+   area               function      int (Pt)                   -          11    -    1  _Z4area2Pt; defined
+   main               function      int (void)                 -          12    -    0  defined
 
  scope: global > struct In
    name               kind          type                       storage  line size uses  TAC name / notes
@@ -278,36 +264,28 @@
    lo                 field         int                        member      9    4    0  (unnamed at 9:25)::lo; public, offset 0
    hi                 field         int                        member      9    4    0  (unnamed at 9:25)::hi; public, offset 4
 
- scope: global > union Bits
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   f                  field         float                      member     10    4    1  Bits::f; public, offset 0
-   u                  field         unsigned int               member     10    4    1  Bits::u; public, offset 0
-   b                  field         unsigned char[4]           member     10    4    1  Bits::b; public, offset 0
-
  scope: global > grow()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  parameter     struct Out                 param      11   32    3  o.1
+   o                  parameter     struct Out                 param      10   32    3  o.1
 
  scope: global > area()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   p                  parameter     Pt                         param      12    8    4  p.2
+   p                  parameter     Pt                         param      11    8    4  p.2
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  variable      struct Out                 local      14   32    4  o.3
-   g                  variable      struct Out                 local      15   32    4  g.4
-   p                  variable      Pt                         local      17    8    2  p.5
-   os                 variable      struct Out[2]              local      19   64    4  os.6
-   op                 variable      struct Out *               local      20    4    1  op.7
-   ii                 variable      int                        local      21    4    3  ii.8
-   jj                 variable      int                        local      21    4    1  jj.9
-   ps                 variable      Pt[2]                      local      25   16    5  ps.10
-   h                  variable      struct Holder              local      29   12    5  h.11
-   b                  variable      union Bits                 local      33    4    3  b.12
+   o                  variable      struct Out                 local      13   32    4  o.3
+   g                  variable      struct Out                 local      14   32    4  g.4
+   p                  variable      Pt                         local      16    8    2  p.5
+   os                 variable      struct Out[2]              local      18   64    4  os.6
+   op                 variable      struct Out *               local      19    4    1  op.7
+   ii                 variable      int                        local      20    4    3  ii.8
+   jj                 variable      int                        local      20    4    1  jj.9
+   ps                 variable      Pt[2]                      local      24   16    5  ps.10
+   h                  variable      struct Holder              local      28   12    5  h.11
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -331,10 +309,6 @@ struct Holder: size 12, align 4
 struct (unnamed at 9:25): size 8, align 4
     +0  int lo  [public]
     +4  int hi  [public]
-union Bits: size 4, align 4
-    +0  float f  [public]
-    +0  unsigned int u  [public]
-    +0  unsigned char[4] b  [public]
 
 ----------------------------------------------------------------------------
  PROGRAM OUTPUT (the TAC run by the interpreter)
@@ -346,6 +320,5 @@ union Bits: size 4, align 4
 2 50
 5 12
 8 32
-3f800000 63 4
 
-   exit code 0, 99 instructions executed
+   exit code 0, 90 instructions executed

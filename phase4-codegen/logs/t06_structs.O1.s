@@ -15,12 +15,8 @@ str1:
         .byte 37, 100, 32, 37, 100, 10, 0
 str2:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str3:
-        .byte 37, 120, 32, 37, 100, 32, 37, 100, 10, 0
         .align 3
 fc0:  .word 0, 1074003968        # 2.5
-        .align 3
-fc1:  .word 1065353216        # 1
 
         .text
         .globl main
@@ -110,7 +106,7 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -424
+        addiu $sp, $sp, -416
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
@@ -134,52 +130,52 @@ M2_0:
         # o[24] = 2.5
         l.d   $f0, fc0
         s.d   $f0, -8($fp)
-        # t37 = o
-        addiu $a0, $fp, -352
+        # t34 = o
+        addiu $a0, $fp, -344
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
-        # t38 = t37[0]
-        lw    $t0, -352($fp)
-        sw    $t0, -356($fp)
-        # t39 = t38 int+ 100
-        lw    $t0, -356($fp)
+        # t35 = t34[0]
+        lw    $t0, -344($fp)
+        sw    $t0, -348($fp)
+        # t36 = t35 int+ 100
+        lw    $t0, -348($fp)
         addiu $t0, $t0, 100
-        sw    $t0, -360($fp)
-        # t37[0] = t39
-        lw    $t0, -360($fp)
         sw    $t0, -352($fp)
-        # t37[16] = 9
+        # t34[0] = t36
+        lw    $t0, -352($fp)
+        sw    $t0, -344($fp)
+        # t34[16] = 9
         li    $t0, 9
-        sw    $t0, -336($fp)
-        # g = t37
+        sw    $t0, -328($fp)
+        # g = t34
         addiu $a0, $fp, -64
-        addiu $a1, $fp, -352
+        addiu $a1, $fp, -344
         li    $a2, 32
         jal   __memcpy
         # t2 = o[0]
         lw    $t0, -32($fp)
-        sw    $t0, -184($fp)
+        sw    $t0, -180($fp)
         # t3 = g[0]
         lw    $t0, -64($fp)
-        sw    $t0, -188($fp)
+        sw    $t0, -184($fp)
         # t4 = g[4]
         lb    $t0, -60($fp)
-        sb    $t0, -189($fp)
+        sb    $t0, -185($fp)
         # t5 = chartoint t4
-        lb    $t0, -189($fp)
-        sw    $t0, -196($fp)
+        lb    $t0, -185($fp)
+        sw    $t0, -192($fp)
         # t6 = g[16]
         lw    $t0, -48($fp)
-        sw    $t0, -200($fp)
+        sw    $t0, -196($fp)
         # t7 = o[16]
         lw    $t0, -16($fp)
-        sw    $t0, -204($fp)
+        sw    $t0, -200($fp)
         # t8 = t6 int+ t7
-        lw    $t0, -200($fp)
-        lw    $t1, -204($fp)
+        lw    $t0, -196($fp)
+        lw    $t1, -200($fp)
         addu  $t0, $t0, $t1
-        sw    $t0, -208($fp)
+        sw    $t0, -204($fp)
         # t9 = g[24]
         l.d   $f0, -40($fp)
         s.d   $f0, -216($fp)
@@ -193,13 +189,13 @@ M2_0:
         addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
-        lw    $t0, -184($fp)
+        lw    $t0, -180($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -188($fp)
+        lw    $t0, -184($fp)
         sw    $t0, 8($sp)
-        lw    $t0, -196($fp)
+        lw    $t0, -192($fp)
         sw    $t0, 12($sp)
-        lw    $t0, -208($fp)
+        lw    $t0, -204($fp)
         sw    $t0, 16($sp)
         l.d   $f0, -216($fp)
         s.d   $f0, 24($sp)
@@ -211,40 +207,40 @@ M2_0:
         # p[4] = 4
         li    $t0, 4
         sw    $t0, -68($fp)
-        # t40 = p
-        addiu $a0, $fp, -368
+        # t37 = p
+        addiu $a0, $fp, -360
         addiu $a1, $fp, -72
         li    $a2, 8
         jal   __memcpy
-        # t41 = t40[0]
-        lw    $t0, -368($fp)
-        sw    $t0, -372($fp)
-        # t42 = t41 int<< 1
-        lw    $t0, -372($fp)
-        sll   $t0, $t0, 1
-        sw    $t0, -376($fp)
-        # t40[0] = t42
-        lw    $t0, -376($fp)
-        sw    $t0, -368($fp)
-        # t43 = t40[4]
+        # t38 = t37[0]
+        lw    $t0, -360($fp)
+        sw    $t0, -364($fp)
+        # t39 = t38 int<< 1
         lw    $t0, -364($fp)
-        sw    $t0, -380($fp)
-        # t44 = t42 int* t43
-        lw    $t0, -376($fp)
-        lw    $t1, -380($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -368($fp)
+        # t37[0] = t39
+        lw    $t0, -368($fp)
+        sw    $t0, -360($fp)
+        # t40 = t37[4]
+        lw    $t0, -356($fp)
+        sw    $t0, -372($fp)
+        # t41 = t39 int* t40
+        lw    $t0, -368($fp)
+        lw    $t1, -372($fp)
         mul   $t0, $t0, $t1
-        sw    $t0, -384($fp)
+        sw    $t0, -376($fp)
         # t11 = p[0]
         lw    $t0, -72($fp)
         sw    $t0, -220($fp)
         # param "%d %d\n"
-        # param t44
+        # param t41
         # param t11
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        lw    $t0, -384($fp)
+        lw    $t0, -376($fp)
         sw    $t0, 4($sp)
         lw    $t0, -220($fp)
         sw    $t0, 8($sp)
@@ -287,27 +283,27 @@ M2_0:
         # t25 = os[44]
         lw    $t0, -92($fp)
         sw    $t0, -244($fp)
-        # t45 = o
-        addiu $a0, $fp, -416
+        # t42 = o
+        addiu $a0, $fp, -408
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
-        # t46 = t45[0]
-        lw    $t0, -416($fp)
-        sw    $t0, -420($fp)
-        # t47 = t46 int+ 100
-        lw    $t0, -420($fp)
+        # t43 = t42[0]
+        lw    $t0, -408($fp)
+        sw    $t0, -412($fp)
+        # t44 = t43 int+ 100
+        lw    $t0, -412($fp)
         addiu $t0, $t0, 100
-        sw    $t0, -424($fp)
-        # t45[0] = t47
-        lw    $t0, -424($fp)
         sw    $t0, -416($fp)
-        # t45[16] = 9
+        # t42[0] = t44
+        lw    $t0, -416($fp)
+        sw    $t0, -408($fp)
+        # t42[16] = 9
         li    $t0, 9
-        sw    $t0, -400($fp)
-        # t26 = t45
+        sw    $t0, -392($fp)
+        # t26 = t42
         addiu $a0, $fp, -280
-        addiu $a1, $fp, -416
+        addiu $a1, $fp, -408
         li    $a2, 32
         jal   __memcpy
         # t27 = t26[0]
@@ -414,34 +410,6 @@ M2_0:
         sw    $t0, 4($sp)
         li    $t0, 32
         sw    $t0, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # b[0] = 1.0
-        l.s   $f0, fc1
-        s.s   $f0, -180($fp)
-        # t34 = b[0]
-        lw    $t0, -180($fp)
-        sw    $t0, -312($fp)
-        # t35 = b[3]
-        lbu   $t0, -177($fp)
-        sb    $t0, -313($fp)
-        # t36 = uchartoint t35
-        lbu   $t0, -313($fp)
-        sw    $t0, -320($fp)
-        # param "%x %d %d\n"
-        # param t34
-        # param t36
-        # param 4
-        # call printf, 4
-        addiu $sp, $sp, -16
-        la    $t0, str3
-        sw    $t0, 0($sp)
-        lw    $t0, -312($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -320($fp)
-        sw    $t0, 8($sp)
-        li    $t0, 4
-        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # return 0

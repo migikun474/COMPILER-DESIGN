@@ -66,7 +66,7 @@ static int emitShared(TokenType t) {
    `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
 static bool typePositionAfter(int tok) {
     switch (tok) {
-        case SCOPE_RES: case '~': case STRUCT: case CLASS: case UNION: case ENUM: case OPERATOR:
+        case SCOPE_RES: case '~': case STRUCT: case CLASS: case ENUM: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
         case VA_LIST:
@@ -91,11 +91,14 @@ static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns n
 
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
-    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT)) {
-        /* still reserved so the message is clear, but no longer part of the language (D35) */
+    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT ||
+                           kw.value() == TokenType::UNION)) {
+        /* still reserved so the message is clear, but no longer part of the language (D35, D50) */
+        const char *missing = kw.value() == TokenType::VIRTUAL ? "virtual functions"
+                              : kw.value() == TokenType::UNION ? "unions"
+                                                                : "converting constructors";
         reportDiagnostic(yylineno, g_tokStartCol, yytext,
-                         std::string("'") + yytext + "' is not supported: this language has no " +
-                             (kw.value() == TokenType::VIRTUAL ? "virtual functions" : "converting constructors"),
+                         std::string("'") + yytext + "' is not supported: this language has no " + missing,
                          "Lexical error");
         return SKIP_TOKEN;
     }

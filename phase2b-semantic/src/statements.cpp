@@ -186,7 +186,7 @@ void SemanticAnalyzer::statement(const ASTNodePtr &n) {
             break;
         }
         case ASTKind::VarDecl: case ASTKind::DeclGroup: case ASTKind::FunctionDecl: case ASTKind::TypedefDecl:
-        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl:
+        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::EnumDecl:
             declaration(n, DeclCtx::Local);
             break;
         default:
@@ -342,7 +342,7 @@ void SemanticAnalyzer::jumpScopes(const ASTNodePtr &n, std::vector<const Symbol 
         return !d->children.empty() || constructed ? s : nullptr;
     };
     switch (n->kind) {
-        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::UnionDecl: case ASTKind::EnumDecl:
+        case ASTKind::StructDecl: case ASTKind::ClassDecl: case ASTKind::EnumDecl:
         case ASTKind::FunctionDef:
             return; /* a struct's or a function's own declarations */
         case ASTKind::LabeledStmt:

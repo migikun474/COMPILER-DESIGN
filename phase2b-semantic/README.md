@@ -316,20 +316,17 @@ including inheritance access; `this` only in non-static members;
 non-static members in static functions; derived-to-base pointer
 conversion.
 
-**Enums and unions** (D42) — an enum is its own type with C++ rules:
+**Enums** (D42) — an enum is its own type with C++ rules:
 enum → int is implicit (a promotion in overload ranking), int → enum
 and enum → another enum need a cast, `++`/`--` on an enum are errors,
 `c ? Red : Blue` keeps the enum type; enumerators are constants
 (previous value + 1, or an integer constant expression that must fit
 `int`) usable in `case` labels and array sizes; redefinitions, unknown
-enums and tag mismatches (`enum S` for a struct, `struct U` for a
-union) are errors; no enum defined inside a struct or class. Unions
-hold data members only (no methods, constructors, friends, static or
-reference members, no member whose class has a constructor), every
-member at offset 0; a brace initializer sets one member (the first or
-the designated one); anonymous unions are errors.
+enums and tag mismatches (`enum S` for a struct) are errors; no enum
+defined inside a struct or class. Unions were removed (D50): `union`
+is a reserved word the scanner rejects.
 
-**Unnamed aggregates** — unnamed struct/union/class types (a typedef
+**Unnamed aggregates** — unnamed struct/class types (a typedef
 names them); anonymous struct members promote their fields (`s.i`) at the
 right offset; an unnamed struct that declares nothing is a warning.
 
@@ -393,11 +390,11 @@ make
    references, `main` arguments, warnings, declarators, name resolution,
    constructors and operators, mangling, unnamed
    aggregates, former keywords used as identifiers, the formal-semantics
-   rules, enums and unions).
+   rules, enums).
 2. **`test/invalid/`** — 24 programs that must be rejected (`e01`–`e25`
    without `e17`; `e16` shows a `#` line rejected, `e23` the reduced
-   class subset, `e24` the reserved words `virtual` and `explicit`, `e25`
-   what enums and unions do not allow).
+   class subset, `e24` the reserved words `virtual`, `explicit` and
+   `union`, `e25` what enums do not allow).
 3. **End to end** — the 37 programs of `../phase2-parser/test`: the 13
    with syntax errors must stop before semantic analysis, the others must
    be accepted (except `operators.c` and `test7_cpp_features.c`, which

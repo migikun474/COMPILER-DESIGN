@@ -2,7 +2,8 @@
    `FILE`, `mutable` and the file-I/O names were keywords while those
    features existed; now they are ordinary identifiers that a program may
    declare and use like any other name. (`enum` and `union` were dropped
-   too, but came back as keywords with D42.) */
+   too; `enum` came back with D42, and `union` is a reserved word again
+   that the scanner rejects, D50.) */
 struct FILE { int fd; };
 
 int fopen(int mode) { return mode + 1; }

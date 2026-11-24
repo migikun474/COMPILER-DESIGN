@@ -20,6 +20,7 @@ any interesting ambiguity/precedence decisions behind the rule's shape.
 > this document is historical. `enum` and `union` came back on
 > 2026-11-23 (D42: `union` shares the struct rules, `enum` has
 > `enumerator_list` / `enumerator`), and `extern` was removed (D43).
+> `union` was removed again on 2026-11-24 (D50).
 
 ---
 
