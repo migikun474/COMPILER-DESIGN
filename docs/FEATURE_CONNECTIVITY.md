@@ -1,6 +1,6 @@
 # Feature Connectivity
 
-How every feature in the [README feature table](../README.md) is built inside the compiler, which shared parts it relies on, and what else has to change if you change or remove it. Written after the reductions and additions of D34–D41 (2026-11-22), updated for D42 (enum and union back), D43 (`extern` removed) and D44 (virtual functions back); every location below is in the current source.
+How every feature in the [README feature table](../README.md) is built inside the compiler, which shared parts it relies on, and what else has to change if you change or remove it. Written after the reductions and additions of D34–D41 (2026-11-22), updated for D42 (enum and union back) and D43 (`extern` removed); every location below is in the current source.
 
 Use it to plan a change: find the feature, read **Relies on** (what must keep working for it), **Used by** (what breaks if you remove it), and the [impact table](#5-change-impact).
 
@@ -70,7 +70,6 @@ flowchart LR
     subgraph OOP["Classes"]
         F16["F16 classes inheritance access friend"]
         F17["F17 default constructors operator overloading"]
-        F20["F20 virtual functions"]
     end
     F1 --> F2
     F1 --> F3
@@ -94,8 +93,6 @@ flowchart LR
     F5 --> F19
     F8 --> F19
     F18 --> F19
-    F16 --> F20
-    F17 --> F20
 ```
 
 An arrow `A --> B` means **B is built on A**: removing A breaks B. There are no cycles, so features can be removed from the right-hand side without touching the left.
@@ -318,21 +315,6 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 - **Relies on:** F8, F9, F7, F11, S2.
 - **Used by:** F17.
 
-### F20 Virtual functions, pure virtual functions, abstract classes (D44)
-
-| Internal piece | Phase | Code |
-|---|---|---|
-| `virtual`, `= 0` | L/P | `VIRTUAL` in `storage_or_type_specifier`; `isPure` set in the declarator action |
-| Slots, overriding, abstractness | S | `virtualFunctions()` (C++ rule), `RecordInfo::vtable`, `polymorphic`, `ownVptr`, `abstract`; `Symbol::isVirtual`, `isPure`, `vtableIndex` |
-| Abstract-class checks | S | `checkNotAbstract` in `variable()`, `functionSignature()`, `constructExpr()` |
-| Vtable pointer placement | S | `layoutRecord` (after the base part; `vptrOffset`) |
-| Tables, vptr installation | T | `Generator::vtable`, `installVptr` (in `constructSubobjects`, copies, results, by-value parameters), vptr kept on assignment |
-| Dispatch | T | `callExpr` / `overloaded` → `call(..., dispatch)` → `call *t, n` |
-| Indirect call | I/O/M | interpreter `codeAddress` / `atAddress`; dead function removal keeps table entries; MIPS `jalr`, `$a0`–`$a3` |
-
-- **Relies on:** F16 (classes, inheritance), F17 (constructors install the table), F9 / S6 (calls), S8 (start-up code fills the tables).
-- **Used by:** nothing.
-
 ### F17 Default constructors, operator overloading
 
 | Internal piece | Phase | Code |
@@ -429,18 +411,17 @@ What you must touch if you **remove** or **change** each feature. "Tests" names 
 | F16 classes | `recordDefinition` class parts, `this`, `checkAccess`, friends | F17 | `t08`, `t23`, `t27`, `v10`, `v27`, `e09`, `e23` |
 | F17 constructors / operators | `construct`, `constructSubobjects`, `overloadedOperator` | nothing | `t08`, `t27`, `v17` |
 | F18 overloading | `resolveOverload`, `mangle` | F17 operators, F19 enum overloads | `v21`, `e15` |
-| F20 virtual functions | `VIRTUAL` rule, `virtualFunctions`, `vtable` / `installVptr`, the `dispatch` path, `jalr` | nothing | `t37`, `v29`, `e26`, `test31` |
 | F19 enum / union | the tokens and rules, `enumDefinition`, `enumInfo` checks, `RecordKind::Union` paths, `icon()` for enumerators | nothing | `v28`, `e25`, `t36` |
 
 ### Changes that are cheap because nothing depends on them
 
-F3, F4, F13, F14, F17, F19, F20 and every infrastructure analysis except I2 are leaves: removing or rewriting one touches only its own code and tests.
+F3, F4, F13, F14, F17, F19 and every infrastructure analysis except I2 are leaves: removing or rewriting one touches only its own code and tests.
 
 ### Changes that ripple
 
 - **F7 pointers** feeds arrays, the heap, references and classes.
 - **F9 functions / S6 calls** is shared by every call; the D39 register convention lives here, so any change to argument passing must be mirrored in `Emitter::call` (caller), the prologue in `Emitter::function` (callee), and `varargStart` (variadic walk).
-- **F10 printf** is in every test program; a change there must keep all 46 TAC and 46 SPIM outputs identical.
+- **F10 printf** is in every test program; a change there must keep all 45 TAC and 45 SPIM outputs identical.
 
 ---
 
@@ -452,7 +433,7 @@ The earlier [advanced feature analysis](ADVANCED_COMPILER_FEATURE_ANALYSIS.md) w
 |---|---|
 | Preprocessor | Removed (D34): any `#` line is a lexical error |
 | CLS-09–13, 14, 16, 17, 20 (constructors with parameters, initializer lists, copy constructors, destructors, temporaries, const methods, explicit, nested/local classes, static objects) | Removed (D35); only `T()` remains |
-| INH-02, 05–15 (multiple inheritance, slicing, virtual functions and everything serving them) | Removed (D35); virtual functions, pure virtual functions and abstract classes back with D44 (INH-06–09, 11); multiple inheritance, slicing and this-adjustment stay out |
+| INH-02, 05–15 (multiple inheritance, slicing, virtual functions and everything serving them) | Removed (D35); single inheritance only |
 | OVL-06 converting constructors | Removed (D35) |
 | OPT-06 loop-invariant code motion | Removed (D36) |
 | SAF-08 assignment as a condition | Implemented (D37) |

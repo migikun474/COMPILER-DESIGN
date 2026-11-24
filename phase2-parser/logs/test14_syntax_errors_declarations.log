@@ -1,0 +1,97 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test14_syntax_errors_declarations.c
+
+test/test14_syntax_errors_declarations.c:21:1: syntax error: syntax error, unexpected INT, expecting ';'
+ 21 | int b;
+    | ^
+    | note: insert ';' here
+
+test/test14_syntax_errors_declarations.c:37:9: syntax error: syntax error, unexpected ';'
+ 37 | int c = ;
+    |         ^
+
+test/test14_syntax_errors_declarations.c:42:1: syntax error: syntax error, unexpected IDENTIFIER
+ 42 | Whatsit d;
+    | ^
+
+test/test14_syntax_errors_declarations.c:46:8: syntax error: syntax error, unexpected ';'
+ 46 | int e, ;
+    |        ^
+
+test/test14_syntax_errors_declarations.c:56:23: syntax error: syntax error, unexpected ';', expecting '}' or ','
+ 56 | int arr1[3] = {1, 2, 3;
+    |                       ^
+
+test/test14_syntax_errors_declarations.c:60:19: syntax error: syntax error, unexpected ','
+ 60 | int arr2[3] = {1, , 3};
+    |                   ^
+
+test/test14_syntax_errors_declarations.c:65:1: syntax error: syntax error, unexpected IDENTIFIER
+ 65 | global_undeclared_but_thats_not_the_point = 2;
+    | ^
+
+test/test14_syntax_errors_declarations.c:70:15: syntax error: syntax error, unexpected ';'
+ 70 |     int *p = &;
+    |               ^
+
+test/test14_syntax_errors_declarations.c:74:15: syntax error: syntax error, unexpected ';', expecting ']'
+ 74 |     int m[2][3;
+    |               ^
+    | note: insert ']' here
+
+test/test14_syntax_errors_declarations.c:78:18: syntax error: syntax error, unexpected ';', expecting ')'
+ 78 |     int y = (int ;
+    |                  ^
+    | note: insert ')' here
+
+-----------------------------------------
+Total Errors : 10
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- VarDecl "resync0 : INT"
+|   `-- IntLiteral "0"
+|-- ErrorNode "line 21: near 'int'"
+|-- VarDecl "resync1 : INT"
+|   `-- IntLiteral "1"
+|-- VarDecl "resync2 : INT"
+|   `-- IntLiteral "2"
+|-- VarDecl "resync3 : INT"
+|   `-- IntLiteral "3"
+|-- ErrorNode "line 37: near ';'"
+|-- VarDecl "resync4 : INT"
+|   `-- IntLiteral "4"
+|-- ErrorNode "line 42: near 'Whatsit'"
+|-- VarDecl "resync5 : INT"
+|   `-- IntLiteral "5"
+|-- ErrorNode "line 46: near ';'"
+|-- VarDecl "resync6 : INT"
+|   `-- IntLiteral "6"
+|-- VarDecl "resync7 : INT"
+|   `-- IntLiteral "7"
+|-- ErrorNode "line 56: near ';'"
+|-- VarDecl "resync8 : INT"
+|   `-- IntLiteral "8"
+|-- ErrorNode "line 60: near ','"
+|-- ErrorNode "line 60: near ','"
+|-- VarDecl "resync9 : INT"
+|   `-- IntLiteral "9"
+|-- ErrorNode "line 65: near 'global_undeclared_but_thats_not_the_point'"
+|-- VarDecl "resync10 : INT"
+|   `-- IntLiteral "10"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- ErrorNode "line 70: near ';'"
+        |-- VarDecl "resync11 : INT"
+        |   `-- IntLiteral "11"
+        |-- ErrorNode "line 74: near ';'"
+        |-- VarDecl "resync12 : INT"
+        |   `-- IntLiteral "12"
+        |-- ErrorNode "line 78: near ';'"
+        |-- VarDecl "resync13 : INT"
+        |   `-- IntLiteral "13"
+        `-- ReturnStmt
+            `-- IntLiteral "0"

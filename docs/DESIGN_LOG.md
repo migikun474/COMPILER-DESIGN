@@ -1306,6 +1306,47 @@ which side the true value lies on; only a true half rounds to even.
 Checked on 480 values near halves at `%.0f`...`%.6f`, `%e`, `%g`: the old
 runtime differed from glibc on 76 lines, the new one on none.
 
+### D47. Virtual functions removed again (2026-11-24)
+
+**Decided by:** the user: remove function overriding, vtables and
+everything related to them. This reverses D44 and restores D35's state.
+
+- `virtual` is a reserved word again and the scanner rejects it:
+  "'virtual' is not supported: this language has no virtual functions";
+  `= 0` is again an ordinary error.
+- Gone from every phase: `virtualFunctions()`, abstract classes and
+  their checks, the vtable pointer in `layoutRecord`, `_ZTV<class>`
+  tables and their installation, `call *t` and dispatch, function
+  addresses in the interpreter, vtable roots in dead function removal,
+  and `jalr` in the MIPS back end.
+- A member function with the same name as a base member function hides
+  it and is bound from the declared type (D35).
+- Tests: `t37_virtual`, `v29_virtual` and `e26_virtual` are removed;
+  `e24` and `test31` reject `virtual` again; `t46_classes_small` tests
+  hiding instead of overriding.
+
+### D48. Smaller phase 3/4 tests chosen by coverage (2026-11-24)
+
+**Decided by:** the user: smaller test programs that are still strong
+enough to catch problems, in phases 3 and 4.
+
+- The 26 long programs `t01`–`t09` and `t13`–`t29` (1,730 lines) are
+  replaced by 15 short ones `t01`–`t09` and `t13`–`t18` (509 lines).
+  `t10`–`t12`, `t30`–`t36` and `t38`–`t46` stay. The suite went from
+  2,336 to 1,054 lines of test source.
+- They were chosen by line coverage (gcov) of `phase3-ir/src` and
+  `mips.cpp` over every test at `-O0`...`-O3`, in the interpreter and as
+  MIPS: the old suite reached 3,848 lines, the new one 3,879, and every
+  line the old suite reached is still reached.
+- Writing them found a real bug: `va_start(ap, …)` did not count as a
+  definition of `ap` for reaching definitions, so passing a `va_list`
+  on gave a false "may be used uninitialized" warning. `assigned()` in
+  `opt.cpp` now treats it as one; `diagnostics/uninitialized.c` has the
+  case.
+- Expected outputs come from g++ (gcc for `t04_arrays`, which uses a C
+  designator; `t02_control_flow` with `until(c)` defined as
+  `while(!(c))`).
+
 ---
 
 ## Open questions

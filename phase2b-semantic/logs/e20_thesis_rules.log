@@ -2,87 +2,87 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c
+Source File : /home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c
 
-Semantic analysis failed: 6 error(s), 14 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c'.
+Semantic analysis failed: 6 error(s), 14 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c'.
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:7:22: semantic warning: integer overflow in expression of type 'int' results in '-2147483648' [overflow]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:7:22: semantic warning: integer overflow in expression of type 'int' results in '-2147483648' [overflow]
  7 | int over1[2147483647 + 1];             // warning: integer overflow in expression of type 'int' results in '-2147483648'  // error: array size must be greater than zero
    |                      ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:7:22: semantic error: array size must be greater than zero ('-2147483648' given) [array-size]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:7:22: semantic error: array size must be greater than zero ('-2147483648' given) [array-size]
  7 | int over1[2147483647 + 1];             // warning: integer overflow in expression of type 'int' results in '-2147483648'  // error: array size must be greater than zero
    |                      ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:8:19: semantic warning: left shift count >= width of type 'int' (32 bits) [shift-count]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:8:19: semantic warning: left shift count >= width of type 'int' (32 bits) [shift-count]
  8 | int shift1 = 1 << 32;                  // warning: left shift count >= width of type 'int'
    |                   ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:9:19: semantic warning: right shift count is negative [shift-count]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:9:19: semantic warning: right shift count is negative [shift-count]
  9 | int shift2 = 1 >> -1;                  // warning: right shift count is negative
    |                   ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:10:15: semantic warning: overflow in conversion from 'int' to 'char' changes value from '300' to '44' [overflow]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:10:15: semantic warning: overflow in conversion from 'int' to 'char' changes value from '300' to '44' [overflow]
  10 | char narrow = 300;                     // warning: overflow in conversion from 'int' to 'char' changes value from '300' to '44'
     |               ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:11:25: semantic warning: unsigned conversion from 'int' to 'unsigned char' changes value from '256' to '0' [overflow]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:11:25: semantic warning: unsigned conversion from 'int' to 'unsigned char' changes value from '256' to '0' [overflow]
  11 | unsigned char unarrow = 256;           // warning: unsigned conversion from 'int' to 'unsigned char' changes value from '256' to '0'
     |                         ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:14:11: semantic error: invalid application of 'sizeof' to an incomplete type 'struct Fwd' [sizeof]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:14:11: semantic error: invalid application of 'sizeof' to an incomplete type 'struct Fwd' [sizeof]
  14 | int bad = sizeof(struct Fwd);          // error: invalid application of 'sizeof' to an incomplete type
     |           ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:16:8: semantic error: duplicate declaration of 'x' in the same scope (previous declaration at line 15) [redeclaration]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:16:8: semantic error: duplicate declaration of 'x' in the same scope (previous declaration at line 15) [redeclaration]
  16 | double x;                              // error: duplicate declaration of 'x'
     |        ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:17:19: semantic error: multiple storage classes in the declaration of 'z' [storage-class]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:17:19: semantic error: multiple storage classes in the declaration of 'z' [storage-class]
  17 | static static int z;                   // error: multiple storage classes in the declaration of 'z'
     |                   ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:22:5: semantic error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified [const]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:22:5: semantic error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified [const]
  22 |     k1 = k2;                           // error: cannot assign to variable 'k1' of type 'struct Key': its member 'id' is const-qualified
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:23:5: semantic error: cannot assign to variable 'w1' of type 'struct Wrap': its member 'k.id' is const-qualified [const]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:23:5: semantic error: cannot assign to variable 'w1' of type 'struct Wrap': its member 'k.id' is const-qualified [const]
  23 |     w1 = w2;                           // error: its member 'k.id' is const-qualified
     |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:25:7: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:25:7: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  25 |     i = i++;                           // warning: operation on 'i' may be undefined
     |       ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:26:13: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:26:13: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  26 |     a[i] = i++;                        // warning: operation on 'i' may be undefined
     |             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:27:16: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:27:16: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  27 |     j = i++ + i++;                     // warning: operation on 'i' may be undefined
     |                ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:28:12: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:28:12: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  28 |     j = (i = 1) + i;                   // warning: operation on 'i' may be undefined
     |            ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:29:29: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:29:29: semantic warning: operation on 'i' may be undefined: it is modified and also read or modified without an intervening sequence point [sequence-point]
  29 |     printf("%d %d\n", i++, i++);       // warning: operation on 'i' may be undefined
     |                             ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:31:20: semantic warning: format '%d' expects 'int', but argument 2 has type 'long' [format]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:31:20: semantic warning: format '%d' expects 'int', but argument 2 has type 'long' [format]
  31 |     printf("%d\n", l);                 // warning: format '%d' expects 'int', but argument 2 has type 'long'
     |                    ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:32:20: semantic warning: format '%f' expects a floating-point value ('double'), but argument 2 has type 'int' [format]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:32:20: semantic warning: format '%f' expects a floating-point value ('double'), but argument 2 has type 'int' [format]
  32 |     printf("%f\n", i);                 // warning: format '%f' expects a floating-point value
     |                    ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:33:17: semantic warning: format '%f' expects 'float *' (use '%lf' for a double), but argument 2 has type 'double *' [format]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:33:17: semantic warning: format '%f' expects 'float *' (use '%lf' for a double), but argument 2 has type 'double *' [format]
  33 |     scanf("%f", &d);                   // warning: format '%f' expects 'float *' (use '%lf' for a double)
     |                 ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/vf/phase2b-semantic/test/invalid/e20_thesis_rules.c:34:17: semantic warning: format '%d' expects 'int *', but argument 2 has type 'char *' [format]
+/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e20_thesis_rules.c:34:17: semantic warning: format '%d' expects 'int *', but argument 2 has type 'char *' [format]
  34 |     scanf("%d", &c);                   // warning: format '%d' expects 'int *', but argument 2 has type 'char *'
     |                 ^
 

@@ -155,19 +155,19 @@ M0_0:
         sh    $t0, -10($fp)
         # t19 = w[0]
         lw    $s2, -12($fp)
-        # t53 = w
+        # t52 = w
         addiu $a0, $fp, -56
         addiu $a1, $fp, -12
         li    $a2, 4
         jal   __memcpy
-        # t54 = t53[0]
+        # t53 = t52[0]
         lw    $s3, -56($fp)
-        # t55 = t54 uint^ 2147483648
+        # t54 = t53 uint^ 2147483648
         li    $t1, -2147483648
         xor   $s4, $s3, $t1
-        # t53[0] = t55
+        # t52[0] = t54
         sw    $s4, -56($fp)
-        # fl = t53
+        # fl = t52
         addiu $a0, $fp, -16
         addiu $a1, $fp, -56
         li    $a2, 4
@@ -176,23 +176,23 @@ M0_0:
         la    $t8, g_g
         l.s   $f0, fc1
         s.s   $f0, 0($t8)
-        # t23 = g[0]
+        # t22 = g[0]
         la    $t8, g_g
         lw    $s3, 0($t8)
-        # t24 = floattodouble t13
+        # t23 = floattodouble t13
         mov.s $f0, $f20
         cvt.d.s $f0, $f0
         mov.d $f22, $f0
-        # t25 = fl[0]
+        # t24 = fl[0]
         lw    $s4, -16($fp)
         # param "%.4f %x %d %x %x %x %x\n"
-        # param t24
+        # param t23
         # param t14
         # param 14
         # param t18
         # param t19
-        # param t25
-        # param t23
+        # param t24
+        # param t22
         # call printf, 8
         addiu $sp, $sp, -40
         la    $t0, str5
@@ -216,13 +216,13 @@ L0_49:
         # if k int>= 3 goto 62
         li    $t1, 3
         bge   $s0, $t1, L0_62
-        # t26 = k int<< 2
+        # t25 = k int<< 2
         sll   $s1, $s0, 2
-        # t27 = k int<< 8
+        # t26 = k int<< 8
         sll   $s2, $s0, 8
-        # t28 = t27 int+ 1
+        # t27 = t26 int+ 1
         addiu $s4, $s2, 1
-        # arr[t26] = t28
+        # arr[t25] = t27
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         sw    $s4, 0($t8)
@@ -231,13 +231,13 @@ L0_49:
         # if k int>= 3 goto 62
         li    $t1, 3
         bge   $s0, $t1, L0_62
-        # t26 = k int<< 2
+        # t25 = k int<< 2
         sll   $s1, $s0, 2
-        # t27 = k int<< 8
+        # t26 = k int<< 8
         sll   $s2, $s0, 8
-        # t28 = t27 int+ 1
+        # t27 = t26 int+ 1
         addiu $s4, $s2, 1
-        # arr[t26] = t28
+        # arr[t25] = t27
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         sw    $s4, 0($t8)
@@ -252,39 +252,39 @@ L0_63:
         # if k int>= 3 goto 90
         li    $t1, 3
         bge   $s0, $t1, L0_90
-        # t30 = k int<< 2
+        # t29 = k int<< 2
         sll   $s1, $s0, 2
-        # t31 = t30 int+ 1
+        # t30 = t29 int+ 1
         addiu $s2, $s1, 1
-        # t32 = arr[t31]
+        # t31 = arr[t30]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s2
         lbu   $s4, 0($t8)
-        # t33 = uchartoint t32
+        # t32 = uchartoint t31
         move  $t0, $s4
         move  $s5, $t0
-        # if t33 int<= 0 goto 75
+        # if t32 int<= 0 goto 75
         ble   $s5, $zero, L0_75
-        # t35 = arr[t30]
+        # t34 = arr[t29]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         lbu   $s6, 0($t8)
-        # t36 = uchartoint t35
+        # t35 = uchartoint t34
         move  $t0, $s6
         move  $s7, $t0
-        # t39 = arr[t31]
+        # t38 = arr[t30]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s2
         lbu   $t0, 0($t8)
         sb    $t0, -41($fp)
-        # t40 = uchartoint t39
+        # t39 = uchartoint t38
         lbu   $t0, -41($fp)
         sw    $t0, -48($fp)
-        # t41 = t36 int+ t40
+        # t40 = t35 int+ t39
         move  $t1, $t0
         addu  $t0, $s7, $t1
         sw    $t0, -52($fp)
-        # s = s int+ t41
+        # s = s int+ t40
         move  $t1, $t0
         addu  $s3, $s3, $t1
 L0_75:
@@ -293,39 +293,39 @@ L0_75:
         # if k int>= 3 goto 90
         li    $t1, 3
         bge   $s0, $t1, L0_90
-        # t30 = k int<< 2
+        # t29 = k int<< 2
         sll   $s1, $s0, 2
-        # t31 = t30 int+ 1
+        # t30 = t29 int+ 1
         addiu $s2, $s1, 1
-        # t32 = arr[t31]
+        # t31 = arr[t30]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s2
         lbu   $s4, 0($t8)
-        # t33 = uchartoint t32
+        # t32 = uchartoint t31
         move  $t0, $s4
         move  $s5, $t0
-        # if t33 int<= 0 goto 88
+        # if t32 int<= 0 goto 88
         ble   $s5, $zero, L0_88
-        # t35 = arr[t30]
+        # t34 = arr[t29]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s1
         lbu   $s6, 0($t8)
-        # t36 = uchartoint t35
+        # t35 = uchartoint t34
         move  $t0, $s6
         move  $s7, $t0
-        # t39 = arr[t31]
+        # t38 = arr[t30]
         addiu $t8, $fp, -28
         addu  $t8, $t8, $s2
         lbu   $t0, 0($t8)
         sb    $t0, -41($fp)
-        # t40 = uchartoint t39
+        # t39 = uchartoint t38
         lbu   $t0, -41($fp)
         sw    $t0, -48($fp)
-        # t41 = t36 int+ t40
+        # t40 = t35 int+ t39
         move  $t1, $t0
         addu  $t0, $s7, $t1
         sw    $t0, -52($fp)
-        # s = s int+ t41
+        # s = s int+ t40
         move  $t1, $t0
         addu  $s3, $s3, $t1
 L0_88:
@@ -337,7 +337,7 @@ L0_90:
         # x[0] = 1.0
         l.d   $f0, fc2
         s.d   $f0, -40($fp)
-        # t44 = x[4]
+        # t43 = x[4]
         lw    $s1, -36($fp)
         # x[0] = 5
         li    $t0, 5
@@ -349,48 +349,48 @@ L0_90:
         # x[4] = 1073741824
         li    $t0, 1073741824
         sw    $t0, -36($fp)
-        # t45 = &w
+        # t44 = &w
         addiu $s0, $fp, -12
-        # t57 = *t45
+        # t56 = *t44
         lbu   $s2, 0($s0)
-        # t58 = uchartoint t57
+        # t57 = uchartoint t56
         move  $t0, $s2
         move  $s4, $t0
-        # t59 = t45 ptr+ 1
+        # t58 = t44 ptr+ 1
         addiu $s2, $s0, 1
-        # t60 = *t59
+        # t59 = *t58
         lbu   $s5, 0($s2)
-        # t61 = uchartoint t60
+        # t60 = uchartoint t59
         move  $t0, $s5
         move  $s2, $t0
-        # t62 = t58 int+ t61
+        # t61 = t57 int+ t60
         addu  $s5, $s4, $s2
-        # t63 = t45 ptr+ 2
+        # t62 = t44 ptr+ 2
         addiu $s2, $s0, 2
-        # t64 = *t63
+        # t63 = *t62
         lbu   $s4, 0($s2)
-        # t65 = uchartoint t64
+        # t64 = uchartoint t63
         move  $t0, $s4
         move  $s2, $t0
-        # t66 = t62 int+ t65
+        # t65 = t61 int+ t64
         addu  $s4, $s5, $s2
-        # t67 = t45 ptr+ 3
+        # t66 = t44 ptr+ 3
         addiu $s2, $s0, 3
-        # t68 = *t67
+        # t67 = *t66
         lbu   $s0, 0($s2)
-        # t69 = uchartoint t68
+        # t68 = uchartoint t67
         move  $t0, $s0
         move  $s2, $t0
-        # t70 = t66 int+ t69
+        # t69 = t65 int+ t68
         addu  $s0, $s4, $s2
-        # t47 = x[0]
+        # t46 = x[0]
         l.d   $f0, -40($fp)
         mov.d $f20, $f0
         # param "%d %d %x %.1f %d %d\n"
         # param s
-        # param t70
-        # param t44
-        # param t47
+        # param t69
+        # param t43
+        # param t46
         # param 8
         # param 4
         # call printf, 7

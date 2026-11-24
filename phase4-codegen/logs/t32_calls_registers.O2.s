@@ -537,14 +537,14 @@ M6_0:
         addiu $a0, $fp, -16
         li    $a2, 16
         jal   __memcpy
-        # t16 = p[0]
+        # t15 = p[0]
         lw    $s0, -16($fp)
-        # t17 = p[8]
+        # t16 = p[8]
         l.d   $f0, -8($fp)
         mov.d $f20, $f0
         # param "%d %.2f\n"
+        # param t15
         # param t16
-        # param t17
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str3
@@ -556,7 +556,7 @@ M6_0:
         addiu $sp, $sp, 16
         # param 10
         # param 0
-        # t18 = call walk(int, int), 2
+        # t17 = call walk(int, int), 2
         addiu $sp, $sp, -16
         li    $a0, 10
         move  $a1, $zero
@@ -564,7 +564,7 @@ M6_0:
         addiu $sp, $sp, 16
         move  $s0, $v0
         # param "%d\n"
-        # param t18
+        # param t17
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str0

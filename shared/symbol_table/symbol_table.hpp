@@ -323,9 +323,6 @@ struct Symbol {
     bool isStatic = false;    /* `static` function / member */
     bool isMethod = false;
     bool isConstructor = false;
-    bool isVirtual = false;   /* declared `virtual`, or overrides a virtual function (D44) */
-    bool isPure = false;      /* `= 0` */
-    int vtableIndex = -1;     /* its slot in its class's table */
     std::string mangledName;
     std::vector<SymbolPtr> params; /* in order; unnamed ones too */
     std::vector<SymbolPtr> locals; /* every local / static local in the body */

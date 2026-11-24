@@ -1,15 +1,7 @@
-Animal()
-Tag()
-Dog()
-39 4 1
-4
---
-Animal()
-Tag()
-Dog()
-46 2
---
-4 6 -4 6 5 6
-0 1 5 16 39
-0 9
-exit: 11
+Base Part Shape
+12 7 2
+4 5 0 405
+8 4
+Base 9 12 0 1
+5 8 0
+exit: 0

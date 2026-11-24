@@ -1,0 +1,202 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/if_else.c
+
+No errors found.
+
+--- Token / Token_Type ---
+Token                          Token_Type          
+-----                          ----------          
+int                            int                 
+main                           PROCEDURE           
+(                              open_paren_op       
+void                           void                
+)                              close_paren_op      
+{                              open_brace_op       
+int                            int                 
+x                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+,                              comma_op            
+y                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+,                              comma_op            
+z                              INT                 
+=                              assign_op           
+0                              INT_LITERAL         
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+x                              INT                 
+)                              close_paren_op      
+if                             if                  
+(                              open_paren_op       
+y                              INT                 
+)                              close_paren_op      
+z                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+else                           else                
+z                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+x                              INT                 
+)                              close_paren_op      
+{                              open_brace_op       
+if                             if                  
+(                              open_paren_op       
+y                              INT                 
+)                              close_paren_op      
+z                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+else                           else                
+z                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+if                             if                  
+(                              open_paren_op       
+x                              INT                 
+)                              close_paren_op      
+z                              INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+;                              semicolon_op        
+else                           else                
+if                             if                  
+(                              open_paren_op       
+y                              INT                 
+)                              close_paren_op      
+z                              INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+;                              semicolon_op        
+else                           else                
+z                              INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+int                            int                 
+iffy                           INT                 
+=                              assign_op           
+1                              INT_LITERAL         
+,                              comma_op            
+elsewhere                      INT                 
+=                              assign_op           
+2                              INT_LITERAL         
+,                              comma_op            
+ifelse                         INT                 
+=                              assign_op           
+3                              INT_LITERAL         
+;                              semicolon_op        
+printf                         printf              
+(                              open_paren_op       
+"%d"                           STRING_LITERAL      
+,                              comma_op            
+z                              INT                 
++                              plus_op             
+iffy                           INT                 
++                              plus_op             
+elsewhere                      INT                 
++                              plus_op             
+ifelse                         INT                 
+)                              close_paren_op      
+;                              semicolon_op        
+return                         return              
+0                              INT_LITERAL         
+;                              semicolon_op        
+}                              close_brace_op      
+
+--- Abstract Syntax Tree ---
+Program "translation_unit"
+`-- FunctionDef "main : main"
+    `-- CompoundStmt
+        |-- DeclGroup
+        |   |-- VarDecl "x : INT"
+        |   |   `-- IntLiteral "1"
+        |   |-- VarDecl "y : INT"
+        |   |   `-- IntLiteral "0"
+        |   `-- VarDecl "z : INT"
+        |       `-- IntLiteral "0"
+        |-- IfStmt
+        |   |-- Identifier "x"
+        |   `-- IfStmt
+        |       |-- Identifier "y"
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="
+        |       |       |-- Identifier "z"
+        |       |       `-- IntLiteral "1"
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "z"
+        |               `-- IntLiteral "2"
+        |-- IfStmt
+        |   |-- Identifier "x"
+        |   |-- CompoundStmt
+        |   |   `-- IfStmt
+        |   |       |-- Identifier "y"
+        |   |       `-- ExprStmt
+        |   |           `-- AssignExpr "="
+        |   |               |-- Identifier "z"
+        |   |               `-- IntLiteral "1"
+        |   `-- ExprStmt
+        |       `-- AssignExpr "="
+        |           |-- Identifier "z"
+        |           `-- IntLiteral "3"
+        |-- IfStmt
+        |   |-- Identifier "x"
+        |   |-- ExprStmt
+        |   |   `-- AssignExpr "="
+        |   |       |-- Identifier "z"
+        |   |       `-- IntLiteral "1"
+        |   `-- IfStmt
+        |       |-- Identifier "y"
+        |       |-- ExprStmt
+        |       |   `-- AssignExpr "="
+        |       |       |-- Identifier "z"
+        |       |       `-- IntLiteral "2"
+        |       `-- ExprStmt
+        |           `-- AssignExpr "="
+        |               |-- Identifier "z"
+        |               `-- IntLiteral "3"
+        |-- DeclGroup
+        |   |-- VarDecl "iffy : INT"
+        |   |   `-- IntLiteral "1"
+        |   |-- VarDecl "elsewhere : INT"
+        |   |   `-- IntLiteral "2"
+        |   `-- VarDecl "ifelse : INT"
+        |       `-- IntLiteral "3"
+        |-- ExprStmt
+        |   `-- BuiltinCallExpr "printf"
+        |       |-- StringLiteral ""%d""
+        |       `-- BinaryExpr "+"
+        |           |-- BinaryExpr "+"
+        |           |   |-- BinaryExpr "+"
+        |           |   |   |-- Identifier "z"
+        |           |   |   `-- Identifier "iffy"
+        |           |   `-- Identifier "elsewhere"
+        |           `-- Identifier "ifelse"
+        `-- ReturnStmt
+            `-- IntLiteral "0"
+
+
+=== Symbol Table ===
+Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
+----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
+main                 procedure      1      global                       PROCEDURE                                 0         INT (VOID)             main
+x                    variable       2      global > main()              INT                                       3                                
+y                    variable       2      global > main()              INT                                       3                                
+z                    variable       2      global > main()              INT                                       8                                
+iffy                 variable       6      global > main()              INT                                       1                                
+elsewhere            variable       6      global > main()              INT                                       1                                
+ifelse               variable       6      global > main()              INT                                       1                                

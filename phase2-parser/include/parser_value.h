@@ -34,7 +34,6 @@ struct TypeSpec {
     bool isConst = false;
     bool isAuto = false;
     bool isFriend = false;
-    bool isVirtual = false;
 };
 
 struct DeclInfo {

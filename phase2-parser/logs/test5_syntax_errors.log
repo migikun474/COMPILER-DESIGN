@@ -1,0 +1,31 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test5_syntax_errors.c
+
+test/test5_syntax_errors.c:5:5: syntax error: syntax error, unexpected IDENTIFIER, expecting ';'
+ 5 |     a = 5;
+   |     ^
+   | note: insert ';' here
+
+test/test5_syntax_errors.c:7:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 7 |     if (a > 0 {
+   |               ^
+
+test/test5_syntax_errors.c:11:13: syntax error: syntax error, unexpected ';'
+ 11 |     int b = ;
+    |             ^
+
+-----------------------------------------
+Total Errors : 3
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- ErrorNode "line 5: near 'a'"
+|       `-- ErrorNode "line 7: near '{'"
+|-- ErrorNode "line 11: near ';'"
+|-- ErrorNode "line 11: near ';'"
+`-- ErrorNode "line 11: near ';'"

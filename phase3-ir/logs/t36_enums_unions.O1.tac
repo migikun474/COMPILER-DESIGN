@@ -4,7 +4,7 @@
 
    Source file   : test/t36_enums_unions.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 172 -> 142 instruction(s)
+   Result        : Optimized three address code (-O1): 171 -> 142 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          172 -> 142   (17% fewer)
+   instructions                          171 -> 142   (16% fewer)
 
    constants folded                        7
    algebraic simplifications               5
    common subexpressions                   3
    copies / constants forwarded           29
    temporaries merged away                 4
-   dead instructions removed              11
+   dead instructions removed              10
    jumps removed or redirected             7
    unreachable instructions removed        8
 
@@ -204,28 +204,28 @@
    t14              temp    int                             4     152
    t18              temp    int                             4     168
    t19              temp    int                             4     172
-   t23              temp    int                             4     188
-   t24              temp    double                          8     192
-   t25              temp    int                             4     200
-   t26              temp    int                             4     204
-   t27              temp    int                             4     208
-   t28              temp    int                             4     212
-   t30              temp    int                             4     220
-   t31              temp    int                             4     224
-   t32              temp    unsigned char                   1     228
-   t33              temp    int                             4     232
-   t34              temp    int                             4     236
-   t35              temp    unsigned char                   1     240
-   t36              temp    int                             4     244
-   t38              temp    int                             4     252
-   t39              temp    unsigned char                   1     256
-   t40              temp    int                             4     260
-   t41              temp    int                             4     264
-   t44              temp    int                             4     276
-   t45              temp    union Word *                    4     280
-   t46              temp    int                             4     284
-   t47              temp    double                          8     288
-   (15 temporaries no longer used after optimization not shown)
+   t22              temp    int                             4     184
+   t23              temp    double                          8     192
+   t24              temp    int                             4     200
+   t25              temp    int                             4     204
+   t26              temp    int                             4     208
+   t27              temp    int                             4     212
+   t29              temp    int                             4     220
+   t30              temp    int                             4     224
+   t31              temp    unsigned char                   1     228
+   t32              temp    int                             4     232
+   t33              temp    int                             4     236
+   t34              temp    unsigned char                   1     240
+   t35              temp    int                             4     244
+   t37              temp    int                             4     252
+   t38              temp    unsigned char                   1     256
+   t39              temp    int                             4     260
+   t40              temp    int                             4     264
+   t43              temp    int                             4     276
+   t44              temp    union Word *                    4     280
+   t45              temp    int                             4     284
+   t46              temp    double                          8     288
+   (14 temporaries no longer used after optimization not shown)
 
  Code: 112 instruction(s)
 
@@ -283,60 +283,60 @@
     181       param w
     182       fl = call flip(union Word), 1
     183       g[0] = -1.5
-    184       t23 = g[0]
-    185       gb = t23
-    186       t24 = floattodouble t13
-    187       t25 = fl[0]
+    184       t22 = g[0]
+    185       gb = t22
+    186       t23 = floattodouble t13
+    187       t24 = fl[0]
     188       param "%.4f %x %d %x %x %x %x\n"
-    189       param t24
+    189       param t23
     190       param t14
     191       param 14
     192       param t18
     193       param t19
-    194       param t25
-    195       param t23
+    194       param t24
+    195       param t22
     196       call printf, 8
     197       s = 0
     198       k = 0
     199  L5:  if k int>= 3 goto L6
-    200       t26 = k int<< 2                     (w = 4)
-    201       t27 = k int<< 8
-    202       t28 = t27 int+ 1
-    203       arr[t26] = t28
+    200       t25 = k int<< 2                     (w = 4)
+    201       t26 = k int<< 8
+    202       t27 = t26 int+ 1
+    203       arr[t25] = t27
     204       k = k int+ 1
     205       goto L5
     206  L6:  k = 0
     207  L7:  if k int>= 3 goto L9
-    208       t30 = k int<< 2                     (w = 4)
-    209       t31 = t30 int+ 1
-    210       t32 = arr[t31]
-    211       t33 = uchartoint t32
-    212       if t33 int<= 0 goto L8
-    213       t34 = k int<< 2                     (w = 4)
-    214       t35 = arr[t34]
-    215       t36 = uchartoint t35
-    216       t38 = t34 int+ 1
-    217       t39 = arr[t38]
-    218       t40 = uchartoint t39
-    219       t41 = t36 int+ t40
-    220       s = s int+ t41
+    208       t29 = k int<< 2                     (w = 4)
+    209       t30 = t29 int+ 1
+    210       t31 = arr[t30]
+    211       t32 = uchartoint t31
+    212       if t32 int<= 0 goto L8
+    213       t33 = k int<< 2                     (w = 4)
+    214       t34 = arr[t33]
+    215       t35 = uchartoint t34
+    216       t37 = t33 int+ 1
+    217       t38 = arr[t37]
+    218       t39 = uchartoint t38
+    219       t40 = t35 int+ t39
+    220       s = s int+ t40
     221  L8:  k = k int+ 1
     222       goto L7
     223  L9:  x[0] = 1.0
-    224       t44 = x[4]
-    225       hi = t44
+    224       t43 = x[4]
+    225       hi = t43
     226       x[0] = 5
     227       x[0] = 0
     228       x[4] = 1073741824
-    229       t45 = &w
-    230       param t45
-    231       t46 = call sumBytes(union Word *), 1
-    232       t47 = x[0]
+    229       t44 = &w
+    230       param t44
+    231       t45 = call sumBytes(union Word *), 1
+    232       t46 = x[0]
     233       param "%d %d %x %.1f %d %d\n"
     234       param s
-    235       param t46
-    236       param t44
-    237       param t47
+    235       param t45
+    236       param t43
+    237       param t46
     238       param 8
     239       param 4
     240       call printf, 7

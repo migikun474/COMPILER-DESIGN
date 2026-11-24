@@ -7,7 +7,7 @@ that runs on SPIM / QtSpim.
 
 | | |
 |---|---|
-| Source language | A C core plus a small C++ subset: classes with single inheritance, virtual functions (run-time overriding, abstract classes) and default constructors, access control, `friend`, references, function and operator overloading, `enum` (C++ rules) and plain unions — see the [feature audit](docs/FEATURES.md) |
+| Source language | A C core plus a small C++ subset: classes with single inheritance and default constructors, access control, `friend`, references, function and operator overloading, `enum` (C++ rules) and plain unions — see the [feature audit](docs/FEATURES.md) |
 | Intermediate representation | Three Address Code as quadruples, with an interpreter and a three-level optimizer ([`phase3-ir`](phase3-ir/README.md)) |
 | Target | MIPS32 assembly for SPIM / QtSpim, with a hand-written run-time library ([`phase4-codegen`](phase4-codegen/README.md)) |
 | Implementation | C++17, Flex 2.6.4, Bison 3.8.2 (LALR(1), 0 conflicts), g++ 13 |
@@ -111,7 +111,7 @@ Some passes are made of smaller passes of their own:
 |---|---|
 | 1. Scan + parse | The scanner classifies each identifier as a variable or a type name from the parse-time symbol table (the "lexer hack"), so the grammar stays LALR(1). Syntax errors are recovered with `error` productions, so every error in the file is reported. |
 | 2. Semantic analysis | **(a)** `prescan()` records every top-level function and variable, so calls before a declaration resolve. **(b)** One walk in source order declares, type-checks and annotates (an L-attributed definition: declarations push types down, expressions synthesize them up); class member bodies are checked after their class. **(c)** `checkSequencing()` walks the tree again for unsequenced side effects (`i = i++`). |
-| 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). A polymorphic class gets a vtable (`_ZTV<class>`), and a virtual call becomes an indirect `call *t`. |
+| 3. TAC generation | `collect()` gathers every function (including methods and out-of-class definitions), then each function is translated in one walk with backpatching, and its frame table is laid out (`buildFrame()`). |
 | 4. Flow analysis | Basic blocks, the flow graph and reaching definitions over the unoptimized code; a read reached by the "not assigned yet" definition is warned about. |
 | 5. Optimization | `-O1`: value numbering per basic block (constant folding, algebraic identities, common subexpressions, copies, dead temporaries, jump clean-up), repeated until nothing changes. `-O2`: adds global constant/copy propagation and dead-assignment elimination (liveness). `-O3`: adds inlining, tail recursion, global common subexpressions (available expressions), loop unrolling by two (dominators), then removes functions no call reaches. |
 | 6. Code generation | Per function: lay out the frame, allocate registers (use counts and live intervals; `-O1` and above), lay out the frame again for what stays in memory, emit one fixed sequence per TAC instruction, run the peephole pass. Then the start-up code and the run-time library are added. |
@@ -151,7 +151,7 @@ Every tool also writes its report to `logs/` in the current directory.
 │   ├── TRANSLATION.md            the passes, the SDT rules, flowcharts and real TAC
 │   ├── FEATURES.md               feature audit: matrix with test evidence
 │   ├── FEATURE_CONNECTIVITY.md   how the features depend on each other; change impact
-│   ├── DESIGN_LOG.md             every design decision (D1–D45) with its reason
+│   ├── DESIGN_LOG.md             every design decision (D1–D47) with its reason
 │   ├── SYMBOL_TABLE.md           both symbol tables in detail
 │   ├── ADVANCED_COMPILER_FEATURE_ANALYSIS.md   historical analysis (before D34)
 │   ├── examples/                 example programs used in the docs
@@ -182,7 +182,7 @@ The full matrix with the test that covers each row is in
 | Functions | recursion, prototypes, calls before the declaration, variable arguments (`...`, `va_*`), `main(argc, argv)` |
 | Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` (freed memory is reused through a free list) |
 | Storage | locals, globals, `static` locals and members |
-| C++ subset | classes, objects and `this`; single inheritance with access control; **virtual functions** (run-time overriding through a vtable, pure virtual functions, abstract classes); `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
+| C++ subset | classes, objects and `this`; single inheritance with access control; `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
 | Checks | gcc-style errors and warnings: types, scopes, overload ambiguity, missing returns, unreachable code, jumps over initializations, unsequenced side effects, constant overflow, format mismatches, assignment used as a condition, possibly uninitialized variables |
 | Run time | division by zero and too-deep recursion stop with a message (exit code 2) on SPIM and in the interpreter |
 
@@ -193,126 +193,17 @@ features (variable arguments, dynamic memory, command-line input,
 typedef, references, `until`, multi-level pointers, multi-dimensional
 arrays) are covered.
 
-### Virtual functions (run-time overriding)
-
-Calls to a virtual function through a pointer or a reference are bound
-**at run time**, from the object's real class (decision D44):
-
-```cpp
-class Shape {
-public:
-    virtual int area() = 0;              /* pure virtual: Shape is abstract */
-    virtual int sides() { return 0; }
-};
-class Rect : public Shape {
-public:
-    int w, h;
-    Rect() { w = 2; h = 3; }
-    int area() { return w * h; }         /* overrides, with or without `virtual` */
-    int sides() { return 4; }
-};
-class Square : public Rect {
-public:
-    Square() { w = 4; h = 4; }
-    int area() { return w * w; }         /* overrides again; sides() is inherited */
-};
-int describe(Shape *s) { return s->area() * 10 + s->sides(); }
-int main() {
-    Rect r;
-    Square q;
-    Shape *all[2];
-    all[0] = &r;
-    all[1] = &q;
-    printf("%d %d %d\n", describe(all[0]), describe(all[1]), q.Rect::area());
-    return 0;
-}
-```
-
-Output, the same from g++, the TAC interpreter and SPIM at every `-O`
-level: `64 164 16`. The same `describe()` call runs `Rect::area` for `r`
-and `Square::area` for `q`; `q.Rect::area()` names a class, so it is an
-ordinary direct call.
-
-**The rules** (C++):
-
-| Rule | What happens |
-|---|---|
-| Overriding | Mark a function `virtual` once in a base class. A function in a derived class with the same name and parameters overrides it, with or without `virtual`, and must return the same type |
-| Pure virtual, abstract | `virtual int area() = 0;` is pure. A class with a pure function not overridden is **abstract**: no variables, members, arrays, by-value parameters or results, or `T()` of it; pointers and references are fine |
-| Which calls dispatch | A call through a pointer (`p->f()`), a reference (`r.f()`), `*p` or the implicit `this` inside a method is dispatched at run time; a call on a named object (`obj.f()`) or with a class name (`p->Base::f()`) is direct |
-| During construction | A virtual call made while a base constructor runs reaches the base's version |
-| Copies | A copy that creates an object (`Rect c = *p;`, a by-value parameter, a returned value) is exactly its declared class; an assignment (`*p = other;`) copies the members and keeps the object's own class |
-| Operators | A virtual `operator` called on `*p` or a reference dispatches too |
-| Not supported | `override` / `final`, covariant return types, RTTI, multiple and virtual inheritance |
-
-**How each pass handles it:**
-
-| Pass | What it does | Code |
-|---|---|---|
-| 1. Parse | `virtual` is a declaration specifier; `= 0` after a virtual function makes it pure | `parser.y`, `declarators.cpp` |
-| 2. Semantic | When a class is complete, `virtualFunctions()` copies the base's table, lets matching functions take over their slots, appends new virtual functions, and marks the class abstract if a pure slot is left. `layoutRecord()` puts the **vtable pointer** right after the base part of the first class with virtual functions (here at `+0` of `Shape`), so a base still starts at offset 0 of a derived object | `declarations.cpp`, `types.cpp` |
-| 3. TAC | One global table per class (`_ZTV<class>`), each slot a function address. Constructors store the table's address after building the base. A virtual call loads the table pointer, then the slot, and calls through it: `call *t` | `gen_expr.cpp` |
-| 5. Optimizer | Functions named in a table count as used, so `-O3` never removes them; only direct calls are inlined | `opt.cpp` |
-| 6. MIPS | `jalr` on the loaded address; the start-up code fills each table with the function labels | `mips.cpp` |
-
-The semantic analyzer prints each class's slots:
-
-```
-class Shape: size 4, align 4
-    +0  vtable pointer
-    slot 0: Shape::area  (pure)
-    slot 1: Shape::sides
-    (abstract)
-class Square: size 12, align 4
-    (base Rect, public)
-    slot 0: Square::area
-    slot 1: Rect::sides
-```
-
-The tables and the dispatch in TAC:
-
-```
-   _ZTV4Rect        unsigned int[2]                 8  { +0: &Rect::area(), +4: &Rect::sides() }
-   _ZTV6Square      unsigned int[2]                 8  { +0: &Square::area(), +4: &Rect::sides() }
-
- FUNCTION Rect::Rect()
-    101     t1 = &_ZTV5Shape           <- the base part is a Shape first
-    102     *this = t1
-    103     t2 = &_ZTV4Rect            <- then a Rect
-    104     *this = t2
-
- FUNCTION describe(class Shape *)
-    132     t1 = *s                    <- the table pointer
-    133     t2 = *t1                   <- slot 0: area
-    134     param s                             (this)
-    135     t3 = call *t2, 1                    (virtual Shape::area())
-```
-
-and in MIPS (`-O1`):
-
-```asm
-        lw    $s1, 0($s0)       # t1 = *s: the table pointer
-        lw    $s2, 0($s1)       # t2 = *t1: slot 0
-        addiu $sp, $sp, -16
-        move  $a0, $s0          # this
-        jalr  $s2               # call through the address
-```
-
-The full test is `phase3-ir/test/t37_virtual.c` (run on the interpreter
-and SPIM at every level); the design is decision D44 in
-[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
-
 ### Not supported
 
 | Rejected | Examples | Why |
 |---|---|---|
-| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, multiple inheritance, object slicing, nested and local classes, anonymous unions, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, virtual functions, multiple inheritance, object slicing, nested and local classes, anonymous unions, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43, D47 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 | Never implemented | bit-fields, default arguments, templates, namespaces, `using`, exceptions, `inline`, `override` / `final`, compound literals, nested functions, wide characters | out of scope |
 
 `printf`, `scanf`, `malloc` and the other built-ins are part of the
 language, so programs need no `#include`; any line starting with `#` is
-a lexical error. `explicit` is still a reserved word, only so that its
-error message can name it.
+a lexical error. `virtual` and `explicit` are still reserved words, only
+so that their error message can name them.
 
 ### Language history
 
@@ -327,6 +218,7 @@ error message can name it.
 | 2026-11-23 | D43 | `extern` removed |
 | 2026-11-24 | D44 | virtual functions brought back: run-time overriding (C++ rule: a matching function in a derived class overrides), pure virtual functions, abstract classes |
 | 2026-11-24 | D45 | a free list: `free` hands blocks back and `malloc` reuses them |
+| 2026-11-24 | D47 | virtual functions removed again: no run-time overriding, vtables or abstract classes; `virtual` is reserved and rejected |
 
 ---
 
@@ -447,9 +339,9 @@ One suite per pass:
 |---|---|---|
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
-| Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 28 valid + 25 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **90 checks, all passing** |
-| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 46 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **47 checks, all passing** |
-| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 46 programs compiled to MIPS at every level and run in SPIM against the same outputs — **46 checks, all passing** |
+| Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 45 programs executed by the TAC interpreter, raw and at `-O1`, `-O2`, `-O3`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **45 checks, all passing** |
+| Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 45 programs compiled to MIPS at every level and run in SPIM against the same outputs — **45 checks, all passing** |
 
 The `run.sh` scripts print each program's output for inspection; the
 `run_tests.sh` scripts check results automatically, and any missing
@@ -472,7 +364,7 @@ fails the test.
 | Symbol tables | [`docs/SYMBOL_TABLE.md`](docs/SYMBOL_TABLE.md) |
 | Feature matrix and test evidence | [`docs/FEATURES.md`](docs/FEATURES.md) |
 | Feature connectivity and change impact | [`docs/FEATURE_CONNECTIVITY.md`](docs/FEATURE_CONNECTIVITY.md) |
-| Design decisions D1–D45 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Design decisions D1–D47 | [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 
 Each phase folder also keeps its development history in
 `docs/DEVELOPMENT_NOTES.md` (not maintained; may be outdated).
@@ -486,9 +378,6 @@ Each phase folder also keeps its development history in
   Both report `stack overflow (recursion too deep)`.
 - Calls into the run-time library (`printf`, `scanf`, `malloc` …)
   always pass their arguments on the stack.
-- An object made with `malloc` runs no constructor, so a class with
-  virtual functions gets no vtable pointer that way: use it only for
-  plain data, or construct objects as variables.
 - The heap reuses freed blocks whole (first fit, no splitting or
   merging of neighbours), so many small blocks freed cannot serve one
   large request; and the whole run-time library is appended to every

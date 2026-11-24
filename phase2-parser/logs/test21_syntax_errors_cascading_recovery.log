@@ -1,0 +1,57 @@
+=========================================
+        SYNTAX ANALYSIS REPORT
+=========================================
+
+Source File : test/test21_syntax_errors_cascading_recovery.c
+
+test/test21_syntax_errors_cascading_recovery.c:30:1: syntax error: syntax error, unexpected INT, expecting ';'
+ 30 | int c;
+    | ^
+    | note: insert ';' here
+
+test/test21_syntax_errors_cascading_recovery.c:31:9: syntax error: syntax error, unexpected ';'
+ 31 | int d = ;
+    |         ^
+
+test/test21_syntax_errors_cascading_recovery.c:32:8: syntax error: syntax error, unexpected ';'
+ 32 | int e, ;
+    |        ^
+
+test/test21_syntax_errors_cascading_recovery.c:33:20: syntax error: syntax error, unexpected ';', expecting '}' or ','
+ 33 | int f[3] = {1, 2, 3;
+    |                    ^
+
+test/test21_syntax_errors_cascading_recovery.c:34:16: syntax error: syntax error, unexpected ','
+ 34 | int g[3] = {1, , 3};
+    |                ^
+
+test/test21_syntax_errors_cascading_recovery.c:39:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+ 39 |     if (x > 0 {
+    |               ^
+
+-----------------------------------------
+Total Errors : 6
+
+--- Partial AST (best-effort; each broken construct shows as ErrorNode) ---
+Program "translation_unit"
+|-- VarDecl "a : INT"
+|-- ErrorNode "line 30: near 'int'"
+|-- ErrorNode "line 31: near ';'"
+|-- ErrorNode "line 32: near ';'"
+|-- ErrorNode "line 33: near ';'"
+|-- ErrorNode "line 34: near ','"
+|-- ErrorNode "line 34: near ','"
+|-- FunctionDef "main : main"
+|   `-- CompoundStmt
+|       |-- VarDecl "x : INT"
+|       |   `-- IntLiteral "1"
+|       `-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+|-- ErrorNode "line 39: near '{'"
+`-- ErrorNode "line 39: near '{'"

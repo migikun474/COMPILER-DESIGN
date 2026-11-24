@@ -11,35 +11,31 @@
 str0:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str1:
-        .byte 37, 100, 10, 0
+        .byte 37, 46, 50, 102, 32, 37, 46, 49, 102, 32, 37, 100, 32, 37, 46, 51
+        .byte 102, 10, 0
 str2:
-        .byte 37, 46, 50, 102, 32, 37, 46, 50, 102, 32, 37, 100, 10, 0
+        .byte 37, 117, 32, 37, 117, 32, 37, 100, 10, 0
 str3:
-        .byte 37, 117, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 120, 32, 37, 120, 10, 0
 str4:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
+        .byte 37, 100, 10, 0
 str5:
-        .byte 37, 99, 32, 37, 100, 32, 37, 100, 32, 37, 108, 108, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str6:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 46, 49, 102, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str7:
         .byte 37, 100, 32, 37, 100, 10, 0
 str8:
-        .byte 37, 100, 32, 37, 46, 49, 102, 10, 0
-str9:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str10:
-        .byte 37, 100, 32, 37, 46, 51, 102, 32, 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 46, 50, 102
+        .byte 32, 37, 100, 10, 0
         .align 3
-fc0:  .word 0, 1076822016        # 15.5
+fc0:  .word 0, 1074528256        # 3.5
         .align 3
-fc1:  .word 0, 1075707904        # 7.5
+fc1:  .word 0, 1074266112        # 3
         .align 3
-fc2:  .word 0, 1077805056        # 30
+fc2:  .word 2684354560, 1073916586        # 2.33333
         .align 3
-fc3:  .word 0, 1074003968        # 2.5
-        .align 3
-fc4:  .word 0, 1074266112        # 3
+fc3:  .word 0, 1073741824        # 2
 
         .text
         .globl main
@@ -62,186 +58,156 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $s0, -12($fp)
+        sw    $s1, -8($fp)
+        sw    $s2, -4($fp)
         # param "%d %d %d %d %d\n"
-        # param 12
-        # param 4
-        # param 21
-        # param 2
+        # param -12
+        # param 13
+        # param 27
+        # param 3
         # param 1
         # call printf, 6
         addiu $sp, $sp, -24
         la    $t0, str0
         sw    $t0, 0($sp)
-        li    $t0, 12
+        li    $t0, -12
         sw    $t0, 4($sp)
-        li    $t0, 4
+        li    $t0, 13
         sw    $t0, 8($sp)
-        li    $t0, 21
+        li    $t0, 27
         sw    $t0, 12($sp)
-        li    $t0, 2
+        li    $t0, 3
         sw    $t0, 16($sp)
         li    $t0, 1
         sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param "%d\n"
-        # param -42
-        # call printf, 2
-        addiu $sp, $sp, -8
+        # param "%.2f %.1f %d %.3f\n"
+        # param 3.5
+        # param 3.0
+        # param 4
+        # param 2.3333332538604736
+        # call printf, 5
+        addiu $sp, $sp, -40
         la    $t0, str1
-        sw    $t0, 0($sp)
-        li    $t0, -42
-        sw    $t0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "%.2f %.2f %d\n"
-        # param 15.5
-        # param 7.5
-        # param 7
-        # call printf, 4
-        addiu $sp, $sp, -32
-        la    $t0, str2
         sw    $t0, 0($sp)
         l.d   $f0, fc0
         s.d   $f0, 8($sp)
         l.d   $f0, fc1
         s.d   $f0, 16($sp)
-        li    $t0, 7
+        li    $t0, 4
         sw    $t0, 24($sp)
+        l.d   $f0, fc2
+        s.d   $f0, 32($sp)
         jal   __printf
-        addiu $sp, $sp, 32
-        # param "%u %d %d %d\n"
-        # param 33
-        # param -4
-        # param -5
-        # param -1
-        # call printf, 5
+        addiu $sp, $sp, 40
+        # param "%u %u %d\n"
+        # param 4294967295
+        # param 7
+        # param 5
+        # call printf, 4
+        addiu $sp, $sp, -16
+        la    $t0, str2
+        sw    $t0, 0($sp)
+        li    $t0, -1
+        sw    $t0, 4($sp)
+        li    $t0, 7
+        sw    $t0, 8($sp)
+        li    $t0, 5
+        sw    $t0, 12($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # bits = 0
+        li    $s1, 0
+        # t = 182
+        li    $s0, 182
+L0_20:
+        # if t int== 0 goto 29
+        beq   $s0, $zero, L0_29
+        # t28 = t int& 1
+        andi  $s2, $s0, 1
+        # bits = bits int+ t28
+        addu  $s1, $s1, $s2
+        # t = t int>> 1
+        sra   $s0, $s0, 1
+        # if t int== 0 goto 29
+        beq   $s0, $zero, L0_29
+        # t28 = t int& 1
+        andi  $s2, $s0, 1
+        # bits = bits int+ t28
+        addu  $s1, $s1, $s2
+        # t = t int>> 1
+        sra   $s0, $s0, 1
+        # goto 20
+        j     L0_20
+L0_29:
+        # param "%d %d %d %x %x\n"
+        # param bits
+        # param 0
+        # param 1
+        # param 73
+        # param 73
+        # call printf, 6
         addiu $sp, $sp, -24
         la    $t0, str3
         sw    $t0, 0($sp)
-        li    $t0, 33
-        sw    $t0, 4($sp)
-        li    $t0, -4
-        sw    $t0, 8($sp)
-        li    $t0, -5
+        sw    $s1, 4($sp)
+        sw    $zero, 8($sp)
+        li    $t0, 1
         sw    $t0, 12($sp)
-        li    $t0, -1
+        li    $t0, 73
         sw    $t0, 16($sp)
+        li    $t0, 73
+        sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param "%d %d %d %d\n"
-        # param 3
+        # param "%d\n"
         # param 7
-        # param 4
-        # param -8
-        # call printf, 5
-        addiu $sp, $sp, -24
+        # call printf, 2
+        addiu $sp, $sp, -8
         la    $t0, str4
         sw    $t0, 0($sp)
-        li    $t0, 3
-        sw    $t0, 4($sp)
         li    $t0, 7
-        sw    $t0, 8($sp)
-        li    $t0, 4
-        sw    $t0, 12($sp)
-        li    $t0, -8
-        sw    $t0, 16($sp)
+        sw    $t0, 4($sp)
         jal   __printf
-        addiu $sp, $sp, 24
-        # param "%c %d %d %lld\n"
-        # param 67
-        # param 67
-        # param 600
-        # param 10000000007
-        # call printf, 5
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, 8
+        # param "%d %d %d\n"
+        # param 5
+        # param 6
+        # param 10
+        # call printf, 4
+        addiu $sp, $sp, -16
         la    $t0, str5
         sw    $t0, 0($sp)
-        li    $t0, 67
-        sw    $t0, 4($sp)
-        li    $t0, 67
-        sw    $t0, 8($sp)
-        li    $t0, 600
-        sw    $t0, 12($sp)
-        li    $t0, 1410065415
-        li    $t1, 2
-        sw    $t0, 16($sp)
-        sw    $t1, 20($sp)
-        jal   __printf
-        addiu $sp, $sp, 24
-        # param "%d %d %d %.1f\n"
-        # param 12
-        # param 0
-        # param 5
-        # param 3e+01
-        # call printf, 5
-        addiu $sp, $sp, -24
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        li    $t0, 12
-        sw    $t0, 4($sp)
-        sw    $zero, 8($sp)
         li    $t0, 5
+        sw    $t0, 4($sp)
+        li    $t0, 6
+        sw    $t0, 8($sp)
+        li    $t0, 10
         sw    $t0, 12($sp)
-        l.d   $f0, fc2
-        s.d   $f0, 16($sp)
-        jal   __printf
-        addiu $sp, $sp, 24
-        # param "%d %d\n"
-        # param 6
-        # param 6
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str7
-        sw    $t0, 0($sp)
-        li    $t0, 6
-        sw    $t0, 4($sp)
-        li    $t0, 6
-        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # param "%d %d\n"
-        # param 7
-        # param 14
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str7
-        sw    $t0, 0($sp)
-        li    $t0, 7
-        sw    $t0, 4($sp)
-        li    $t0, 14
-        sw    $t0, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # param "%d %d\n"
-        # param 7
-        # param 3
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str7
-        sw    $t0, 0($sp)
-        li    $t0, 7
-        sw    $t0, 4($sp)
-        li    $t0, 3
-        sw    $t0, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # param "%d %.1f\n"
+        # param "%d %d %d\n"
         # param 12
-        # param 2.5
-        # call printf, 3
+        # param 10
+        # param 2
+        # call printf, 4
         addiu $sp, $sp, -16
-        la    $t0, str8
+        la    $t0, str5
         sw    $t0, 0($sp)
         li    $t0, 12
         sw    $t0, 4($sp)
-        l.d   $f0, fc3
-        s.d   $f0, 8($sp)
+        li    $t0, 10
+        sw    $t0, 8($sp)
+        li    $t0, 2
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # param "%d %d %d\n"
@@ -250,7 +216,7 @@ M0_0:
         # param 1
         # call printf, 4
         addiu $sp, $sp, -16
-        la    $t0, str9
+        la    $t0, str5
         sw    $t0, 0($sp)
         li    $t0, 4
         sw    $t0, 4($sp)
@@ -260,36 +226,68 @@ M0_0:
         sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # param "%d %.3f %d\n"
-        # param 3
-        # param 3.0
-        # param 65
-        # call printf, 4
+        # param "%d %d %d %d\n"
+        # param -126
+        # param 44
+        # param 1
+        # param 74
+        # call printf, 5
         addiu $sp, $sp, -24
-        la    $t0, str10
+        la    $t0, str6
         sw    $t0, 0($sp)
-        li    $t0, 3
+        li    $t0, -126
         sw    $t0, 4($sp)
-        l.d   $f0, fc4
-        s.d   $f0, 8($sp)
-        li    $t0, 65
+        li    $t0, 44
+        sw    $t0, 8($sp)
+        li    $t0, 1
+        sw    $t0, 12($sp)
+        li    $t0, 74
         sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param "%d\n"
-        # param 4
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str1
+        # param "%d %d\n"
+        # param -4
+        # param 7
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str7
         sw    $t0, 0($sp)
-        li    $t0, 4
+        li    $t0, -4
         sw    $t0, 4($sp)
+        li    $t0, 7
+        sw    $t0, 8($sp)
         jal   __printf
-        addiu $sp, $sp, 8
-        # return 12
-        li    $v0, 12
+        addiu $sp, $sp, 16
+        # param "%d %d %d %d %.2f %d\n"
+        # param 0
+        # param 5
+        # param 6
+        # param 2
+        # param 2.0
+        # param 0
+        # call printf, 7
+        addiu $sp, $sp, -40
+        la    $t0, str8
+        sw    $t0, 0($sp)
+        sw    $zero, 4($sp)
+        li    $t0, 5
+        sw    $t0, 8($sp)
+        li    $t0, 6
+        sw    $t0, 12($sp)
+        li    $t0, 2
+        sw    $t0, 16($sp)
+        l.d   $f0, fc3
+        s.d   $f0, 24($sp)
+        sw    $zero, 32($sp)
+        jal   __printf
+        addiu $sp, $sp, 40
+        # return 0
+        li    $v0, 0
         j     main__exit
 main__exit:
+        lw    $s0, -12($fp)
+        lw    $s1, -8($fp)
+        lw    $s2, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

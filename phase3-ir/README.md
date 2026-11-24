@@ -1,9 +1,9 @@
 # Phase 3 — Intermediate Representation (Three Address Code)
 
 > Status: **implemented and tested** — a TAC generator, a TAC
-> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 46 test programs are
+> interpreter and the optimizer (`-O1`, `-O2`, `-O3`). 45 test programs are
 > generated, executed raw and at every level, and compared with gcc/g++
-> (`./run_tests.sh`: 47 passed, the 46 programs and one warnings check).
+> (`./run_tests.sh`: 46 passed, the 45 programs and one warnings check).
 
 The format follows the course slides (Lectures 25–27) and Dragon Book
 chapter 6. Every choice between two valid forms was put to the user;
@@ -157,8 +157,7 @@ a type or an overload.
 | references | hold an address: `r = &x`, a use is `*r` |
 | member functions | `this` is a hidden first parameter; fields are `this ptr+ offset` |
 | inheritance | single inheritance: the base is at offset 0, so `this` and converted pointers are unchanged |
-| constructors | default constructors only (D35): a call with the object's address; the base is built first, then (for a class with virtual functions) the table pointer is set, then the members, then the body. There are no destructors |
-| virtual functions (D44) | one table `_ZTV<class>` per polymorphic class (a global of function addresses); a call through a pointer, a reference or `this` is `t1 = *p` (the table pointer, at the class's `vptrOffset`), `t2 = t1[4k]`, `param p (this)`, `t3 = call *t2, n`; `obj.f()` and `p->Base::f()` stay direct calls. A copy that creates an object re-installs its declared class's table; an assignment keeps the target's |
+| constructors | default constructors only (D35): a call with the object's address; the base and the members are built first, in declaration order, then the body runs. There are no destructors |
 | operator overloading | a call to `operator<op>` |
 | `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
 | variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
@@ -248,35 +247,24 @@ the output of the same source compiled with gcc/g++.
 
 | Test | Covers |
 |---|---|
-| `t01_expressions` | arithmetic, conversions, unsigned, `long long`, bitwise, compound assignment, `++`/`--`, comma, `?:`, casts |
-| `t02_control_flow` | `if`, loops, `until`, `switch` with fall-through, `break`, `continue`, `goto` |
-| `t03_booleans` | short circuit with side effects, comparisons as values, `!` |
-| `t04_arrays` | 1-D to 3-D arrays, initializers, designators, strings, array parameters |
-| `t05_pointers` | multi-level pointers, pointer arithmetic, `void *`, pointer to array |
-| `t06_structs` | nesting, copies, by-value parameters and results, anonymous members |
-| `t07_functions` | recursion, overloading, references, varargs, `static` locals, forward calls |
-| `t08_classes` | default constructor order (base, members, body), single inheritance, static members, operators, arrays of objects |
-| `t09_memory` | `malloc` family, a linked list |
+| `t01_expressions` | arithmetic, conversions, unsigned, bitwise, compound assignment, `++`/`--`, comma, `?:`, C-style and functional casts, `sizeof`, scalar brace and paren initialization, wrap-around of every width |
+| `t02_control_flow` | `if`/`else` chains, `while`, `do`-`while`, `for` with a declaration, `until`, `switch` with fall-through and `default` in the middle, `break`, `continue`, `goto` out of two loops, a state machine |
+| `t03_booleans` | the slides' `a < b \|\| c < d && e < f`, comparisons and `!` as values, booleans stored and summed, `&&`/`\|\|` in loop conditions, `bool` |
+| `t04_arrays` | 1-D to 3-D arrays, partial and designated initializers, zeroed static data, `i[a]`, array parameters (1-D and 2-D), strings, `sizeof` of an array (plain C: expected output from gcc) |
+| `t05_pointers` | two and three levels, arithmetic and differences, `void *`, pointer to an array, array of pointers, writing through a pointer to a pointer |
+| `t06_structs` | nesting, copies, by-value parameters and results, arrays of structs, array members, anonymous members, padding, a union read through another member |
+| `t07_functions` | recursion, mutual recursion, overloading, references (to a pointer, returned, `const T &` to another type), varargs with a `va_list` passed on, `static` locals, tail recursion |
+| `t08_classes` | construction order (base, members, body), a static member, operators, arrays of objects, objects inside objects, a hidden base function called through `Base::`, `this`, a friend, a global object built before `main`, block copies |
+| `t09_memory` | `malloc`/`calloc`/`realloc`/`free`, a freed block reused, a linked list built, reversed and freed, rows from `malloc`, a long malloc/free loop |
 | `t10_io` | `printf` formats, `scanf` (input in `t10_io.in`) |
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
-| `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, an inheritance chain, null base pointers, `va_list` passed on |
-| `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls |
-| `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
-| `t16_runtime` | 64-bit arithmetic, int/float conversions, `printf` formats, structs and doubles through calls (aimed at the MIPS run-time library) |
-| `t17_strings` | strings by hand: length, copy, compare, reverse, number ↔ text |
-| `t18_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve |
-| `t19_scopes` | shadowing, nested blocks, `static` locals, globals |
-| `t20_bits` | bit tricks, shifts, wrap-around of every integer width, signed/unsigned comparison |
-| `t21_numeric` | `float` and `double`: Newton's method, series, rounding, mixed conversions |
-| `t22_data_structures` | linked list, binary tree, stack, table of rows from `malloc`, pointers to pointers |
-| `t23_objects` | three-level inheritance, objects inside objects, arrays of objects, operators returning references |
-| `t24_references` | reference parameters and results, references to structs and pointers, `const` references |
-| `t25_control` | state machine in a `switch`, nested loops, `goto` out of loops, `?:` chains, comma |
-| `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers |
-| `t27_object_semantics` | object rules of the reduced subset (D35): objects passed and returned by value are block copies, `?:` as an lvalue, arrays of objects built by the default constructor, a global object built before `main`, friends |
-| `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, loops (unrolled, or run zero times), a division that must stay, values reused or not across branches and stores |
-| `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
+| `t13_runtime` | aimed at the MIPS run-time library: 64-bit `printf`, `long long` ↔ `double`, flags, widths, precision, `%e %g %x %o %c %%`, structs and doubles through calls, varargs with doubles, `long long` and strings |
+| `t14_optimizer` | `-O1`/`-O2` must not reuse what may have changed (through a pointer, a reference, a call, an array element) and must keep what is used: wrapping constants, per-path constants, a loop-carried value, dead assignments, calls whose result is unused |
+| `t15_o3` | `-O3`: inlining (side effects, several returns, a reference, a by-value struct), a recursive function not inlined, a tail call with swapped arguments, a division in a loop that may run zero times |
+| `t16_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short` wrapping in registers, many doubles at once, a loop made of `goto` |
+| `t17_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve, string reversal, number ↔ text |
+| `t18_scopes_enums` | shadowing (parameters, blocks, loop variables, a local hiding a global from its declaration on), `static` locals, `typedef`, a conditional constant initializer, enums with C++ rules |
 | `t30_int_edges` | small: `/` and `%` with negative operands, shifts of signed and unsigned values, unsigned wrap-around, `char`/`short` sign and zero extension, signed vs unsigned comparison, `INT_MAX`/`INT_MIN` |
 | `t31_short_circuit` | small: `&&`/`\|\|` skipping their right operand, `?:` evaluating one branch, comma, chained and compound assignment, `i++` in an index, side effects in a loop condition |
 | `t32_calls_registers` | small: more arguments than `$a0`–`$a3`, mixed `char`/`double`/`long long` arguments, calls as arguments, values kept across calls, a struct by value and returned, recursion with live values |
@@ -284,7 +272,6 @@ the output of the same source compiled with gcc/g++.
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` at `-O3` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
 | `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
-| `t37_virtual` | virtual functions (D44): overriding at three levels with and without the keyword, an abstract base used through pointers, calls through pointers, references and `this`, qualified calls, a virtual call inside a base constructor, copies and assignments keeping each object's class, by-value parameters and results, a virtual operator, overloaded virtuals, arguments wider than `$a0`–`$a3`, a global object |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
 | `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
 | `t40_aliasing` | small: the optimizer must not reuse a value changed through a pointer, through a second pointer, through another array index, by a call to a global or through an address passed to a call |
@@ -293,7 +280,7 @@ the output of the same source compiled with gcc/g++.
 | `t43_float_conv` | small: double/float → int truncation toward zero, int ↔ double, float precision, `printf` rounding (`%.2f` of 2.675 is `2.67`), int/double comparison, unsigned → double |
 | `t44_long_long` | small: carries between the halves, multiply/divide/remainder with negatives, shifts across 32, comparisons, conversion to and from double, values across calls |
 | `t45_strings_chars` | small: walking, copying and comparing strings with pointers, escapes, character arithmetic, digits ↔ number, `%5s` `%-5s` `%.2s` |
-| `t46_classes_small` | small: constructor order down a chain, a static member counting objects, virtual and non-virtual functions with the same name, an operator returning a reference, an array of objects |
+| `t46_classes_small` | small: constructor order down a chain, a static member counting objects, functions a derived class hides (bound from the declared type), an operator returning a reference, an array of objects |
 | `diagnostics/uninitialized` | not run: the warnings it must produce are in `uninitialized.err` |
 
 ## Warnings from this phase

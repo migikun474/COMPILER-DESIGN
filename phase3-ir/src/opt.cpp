@@ -578,6 +578,10 @@ struct FunctionPass {
         }
     }
 
+    /* what a quad assigns, for reaching definitions: also `va_start(ap, last)`,
+       which gives ap its value without a result operand */
+    static Operand assigned(const Quad &q) { return q.op == Op::VaStart && isName(q.a) ? q.a : defined(q); }
+
     /* a scalar local nothing but its own assignments can change */
     bool isPrivate(const Operand &o) const { return isName(o) && !inMemory(o) && !isBlock(o); }
 
@@ -727,13 +731,13 @@ struct FunctionPass {
         }
         size_t entryDefs = defs.size();
         for (size_t i = 0; i < fn.quads.size(); ++i) {
-            Operand r = defined(fn.quads[i]);
+            Operand r = assigned(fn.quads[i]);
             if (isName(r)) addDef(nameOf(r), static_cast<int>(i));
         }
         std::vector<std::set<int>> gen(blocks.size()), kill(blocks.size()), in(blocks.size()), out(blocks.size());
         for (size_t k = 0; k < blocks.size(); ++k)
             for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
-                Operand r = defined(fn.quads[i]);
+                Operand r = assigned(fn.quads[i]);
                 if (!isName(r)) continue;
                 for (int d : byName[nameOf(r)]) { /* this definition replaces every other one of the name */
                     gen[k].erase(d);
@@ -783,7 +787,7 @@ struct FunctionPass {
                             return;
                         }
                 });
-                Operand r = defined(fn.quads[i]);
+                Operand r = assigned(fn.quads[i]);
                 if (!isName(r)) continue;
                 for (auto it = reach.begin(); it != reach.end();) /* this quad's definition replaces the name's others */
                     it = defs[*it].name == nameOf(r) ? reach.erase(it) : std::next(it);
@@ -1253,18 +1257,12 @@ OptStats optimize(Program &program, int level) {
             pass.runLoops();
             if (pass.unrollLoops()) pass.run(); /* once: unrolling again would double the copies */
         }
-        /* dead functions: keep only what main reaches through calls, and what a
-           table of virtual functions names (there are no function pointers) */
+        /* dead functions: keep only what main reaches through calls (there are no
+           function pointers, so every use of a function is a `call`) */
         std::set<const sem::Symbol *> live;
         std::vector<const Function *> work;
         for (const auto &f : program.functions)
             if (f.sym && f.sym->name == "main" && !f.sym->ownerRecord) work.push_back(&f);
-        /* a function whose address is in a table of virtual functions (D44) may be called through it */
-        for (const auto &g : program.globals)
-            for (const auto &init : g.init)
-                if (init.kind == GlobalInit::Address)
-                    for (const auto &f : program.functions)
-                        if (f.sym.get() == init.target) work.push_back(&f);
         while (!work.empty()) {
             const Function *f = work.back();
             work.pop_back();

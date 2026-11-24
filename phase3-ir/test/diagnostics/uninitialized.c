@@ -25,3 +25,12 @@ int main() {
     printf("%d %d %d %d\n", b, c, table[0], pick(1) + total(2, 3, 4));
     return (int) wide;
 }
+
+int addAll(va_list ap, int n) { int s = 0; while (n--) s += va_arg(ap, int); return s; }
+int passOn(int n, ...) { /* no warning: va_start gives ap its value before it is passed on */
+    va_list ap;
+    va_start(ap, n);
+    int s = addAll(ap, n);
+    va_end(ap);
+    return s;
+}

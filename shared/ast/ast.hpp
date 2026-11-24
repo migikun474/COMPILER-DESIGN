@@ -56,8 +56,6 @@ struct ASTTypeExpr {
     bool isAuto = false;
     bool isTypedef = false;
     bool isFriend = false;              /* `friend` declaration inside a class */
-    bool isVirtual = false;             /* `virtual` member function (D44) */
-    bool isPure = false;                /* `virtual ... = 0;`: a pure virtual function */
 
     int pointerLevel = 0;               /* counts a leading '&' too, see isReference */
     bool isReference = false;           /* declarator began with '&' */

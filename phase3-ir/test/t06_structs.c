@@ -1,76 +1,37 @@
-/* t06 -- structures: nesting, arrays of structs, pointers, copies,
-   by-value parameters and results, initializers, anonymous members */
-
-struct Point { int x; int y; };
-struct Rect { struct Point low; struct Point high; char tag; };
-struct Node { int value; struct Node *next; };
-typedef struct { double re; double im; } Complex;
-struct Packet {
-    int kind;
-    struct { int word; char bytes[4]; };
-    short tail;
-};
-
-struct Point make(int x, int y) {
-    struct Point p = {x, y};
-    return p;
-}
-
-int area(struct Rect r) {
-    r.high.x = r.high.x - r.low.x;       /* a copy: the caller's object is unchanged */
-    return r.high.x * (r.high.y - r.low.y);
-}
-
-void move(struct Point *p, int dx) { p->x += dx; }
-
-Complex add(Complex a, Complex b) {
-    Complex c;
-    c.re = a.re + b.re;
-    c.im = a.im + b.im;
-    return c;
-}
-
-int length(struct Node *head) {
-    int n = 0;
-    while (head) { n++; head = head->next; }
-    return n;
-}
-
-struct Point origin = {3, 4};
-
+/* t06 -- structs and unions: nesting, copies (the original stays the
+   same), by-value parameters and results, an array of structs, a struct
+   with an array member, anonymous struct members, a typedef'd unnamed
+   struct, layout with padding, a union read through another member.
+   Expected: g++. */
+struct In { int a; char tag; };
+struct Out { struct In in; int list[3]; double w; };
+typedef struct { int x, y; } Pt;
+struct Holder { int id; struct { int lo, hi; }; };
+union Bits { float f; unsigned u; unsigned char b[4]; };
+struct Out grow(struct Out o) { o.in.a += 100; o.list[2] = 9; return o; }
+int area(Pt p) { p.x = p.x * 2; return p.x * p.y; }
 int main() {
-    struct Rect r = {{1, 2}, {5, 8}, 'r'};
-    struct Rect copy;
-    copy = r;
-    copy.low.x = 100;
-    printf("%d %d %d %c\n", r.low.x, copy.low.x, area(r), r.tag);
-    printf("%d %d\n", r.high.x, origin.x * origin.y);
-
-    struct Point pts[3];
-    for (int i = 0; i < 3; i++) pts[i] = make(i, i * i);
-    move(&pts[1], 10);
-    (&pts[2])->y += 1;
-    printf("%d %d %d %d\n", pts[1].x, pts[1].y, pts[2].y, make(3, 4).y);
-
-    struct Point *pp = &r.high;
-    pp->x = pp->y + 1;
-    struct Rect *rp = &r;
-    rp->low = make(7, 7);
-    printf("%d %d %d\n", r.high.x, rp->low.x, rp->high.y);
-
-    Complex a = {1.5, 2.0}, b = {.im = 0.5, .re = 1.0};
-    Complex c = add(a, b);
-    printf("%.1f %.1f\n", c.re, c.im);
-
-    struct Node n1, n2, n3;
-    n1.value = 1; n1.next = &n2;
-    n2.value = 2; n2.next = &n3;
-    n3.value = 3; n3.next = 0;
-    printf("%d %d\n", length(&n1), n1.next->next->value);
-
-    struct Packet k = {1, {0x01020304}, 9};
-    k.bytes[1] = 'x';
-    printf("%d %d %c %d %d\n", k.kind, k.word, k.bytes[1], k.tail, (int) sizeof(struct Packet));
-    struct Point zero = {};
-    return zero.x + pts[2].x;
+    struct Out o = {{1, 'k'}, {5, 6, 7}, 2.5};
+    struct Out g = grow(o);
+    printf("%d %d %c %d %.1f\n", o.in.a, g.in.a, g.in.tag, g.list[2] + o.list[2], g.w);
+    Pt p = {3, 4};
+    printf("%d %d\n", area(p), p.x);
+    struct Out os[2];
+    struct Out *op = &os[1];
+    int ii = 1, jj = 2;
+    os[ii].list[jj] = 31;
+    op->list[ii] = 17;
+    printf("%d %d %d\n", os[1].list[2], os[ii].list[1], grow(o).in.a);
+    Pt ps[2] = {{1, 2}, {3, 4}};
+    ps[1] = ps[0];
+    ps[0].y = 50;
+    printf("%d %d\n", ps[1].y, ps[0].y);
+    struct Holder h;
+    h.lo = 3; h.hi = 8; h.id = 1;
+    printf("%d %d\n", h.hi - h.lo, (int)sizeof(struct Holder));
+    printf("%d %d\n", (int)sizeof(struct In), (int)sizeof(struct Out));
+    union Bits b;
+    b.f = 1.0f;
+    printf("%x %d %d\n", b.u, b.b[3], (int)sizeof(union Bits));
+    return 0;
 }
