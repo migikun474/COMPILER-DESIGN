@@ -1325,6 +1325,28 @@ everything related to them. This reverses D44 and restores D35's state.
   `e24` and `test31` reject `virtual` again; `t46_classes_small` tests
   hiding instead of overriding.
 
+### D48. Smaller phase 3/4 tests chosen by coverage (2026-11-24)
+
+**Decided by:** the user: smaller test programs that are still strong
+enough to catch problems, in phases 3 and 4.
+
+- The 26 long programs `t01`–`t09` and `t13`–`t29` (1,730 lines) are
+  replaced by 15 short ones `t01`–`t09` and `t13`–`t18` (509 lines).
+  `t10`–`t12`, `t30`–`t36` and `t38`–`t46` stay. The suite went from
+  2,336 to 1,054 lines of test source.
+- They were chosen by line coverage (gcov) of `phase3-ir/src` and
+  `mips.cpp` over every test at `-O0`...`-O3`, in the interpreter and as
+  MIPS: the old suite reached 3,848 lines, the new one 3,879, and every
+  line the old suite reached is still reached.
+- Writing them found a real bug: `va_start(ap, …)` did not count as a
+  definition of `ap` for reaching definitions, so passing a `va_list`
+  on gave a false "may be used uninitialized" warning. `assigned()` in
+  `opt.cpp` now treats it as one; `diagnostics/uninitialized.c` has the
+  case.
+- Expected outputs come from g++ (gcc for `t04_arrays`, which uses a C
+  designator; `t02_control_flow` with `until(c)` defined as
+  `while(!(c))`).
+
 ---
 
 ## Open questions

@@ -4,7 +4,7 @@
 
    Source file   : test/t02_control_flow.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 140 -> 93 instruction(s)
+   Result        : Optimized three address code (-O1): 158 -> 111 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,148 +14,181 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          140 -> 93   (33% fewer)
+   instructions                          158 -> 111   (29% fewer)
 
-   constants folded                        3
+   constants folded                        0
    algebraic simplifications               1
    common subexpressions                   0
-   copies / constants forwarded            7
-   temporaries merged away                10
-   dead instructions removed               2
-   jumps removed or redirected            28
-   unreachable instructions removed       15
+   copies / constants forwarded            1
+   temporaries merged away                18
+   dead instructions removed               0
+   jumps removed or redirected            25
+   unreachable instructions removed        7
 
 ============================================================================
- FUNCTION classify(int)        (link name _Z8classifyi)
+ FUNCTION kind(char)        (link name _Z4kindc)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 20 bytes
+ Symbol table: 1 parameter(s)/local(s), 6 temporaries, frame 28 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
+   c                param   char                            1       0
    t1               temp    int                             4       4
-   (3 temporaries no longer used after optimization not shown)
+   t2               temp    int                             4       8
+   t3               temp    int                             4      12
+   t4               temp    int                             4      16
+   t5               temp    int                             4      20
+   t6               temp    int                             4      24
 
- Code: 14 instruction(s)
+ Code: 15 instruction(s)
 
-    100       t1 = n
-    101       goto L5
-    102  L1:  return 100
-    103  L2:  n = n int+ 10
-    104  L3:  n = n int<< 1
-    105       goto L6
-    106  L4:  n = -1
-    107       goto L6
-    108  L5:  if t1 int== 0 goto L1
-    109       if t1 int== 1 goto L2
-    110       if t1 int== 2 goto L2
-    111       if t1 int== 3 goto L3
-    112       goto L4
-    113  L6:  return n
+    100       t1 = chartoint c
+    101       if t1 int< 48 goto L1
+    102       t2 = chartoint c
+    103       if t2 int> 57 goto L1
+    104       return 1
+    105  L1:  t3 = chartoint c
+    106       if t3 int< 97 goto L2
+    107       t4 = chartoint c
+    108       if t4 int<= 122 goto L3
+    109  L2:  t5 = chartoint c
+    110       if t5 int< 65 goto L4
+    111       t6 = chartoint c
+    112       if t6 int> 90 goto L4
+    113  L3:  return 2
+    114  L4:  return 0
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 7 parameter(s)/local(s), 4 temporaries, frame 80 bytes
+ Symbol table: 12 parameter(s)/local(s), 10 temporaries, frame 160 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   i                local   int                             4       0
-   total            local   int                             4       4
-   n                local   int                             4       8
-   fact             local   int                             4      12
-   j                local   int                             4      16
-   count            local   int                             4      20
-   x                local   int                             4      24
-   t5               temp    int                             4      44
-   t7               temp    int                             4      52
-   t11              temp    int                             4      68
-   t12              temp    int                             4      72
-   (9 temporaries no longer used after optimization not shown)
+   s                local   int                             4       0
+   i                local   int                             4       4
+   k.4              local   int                             4       8
+   u                local   int                             4      12
+   out              local   int                             4      16
+   r                local   int                             4      20
+   c                local   int                             4      24
+   hit              local   int                             4      28
+   text             local   const char *                    4      32
+   state            local   int                             4      36
+   words            local   int                             4      40
+   k.13             local   int                             4      44
+   t1               temp    int                             4      48
+   t4               temp    int                             4      60
+   t9               temp    int                             4      80
+   t16              temp    int                             4     108
+   t17              temp    int                             4     112
+   t18              temp    int                             4     116
+   t22              temp    const char *                    4     132
+   t23              temp    char                            1     136
+   t24              temp    const char *                    4     140
+   t25              temp    char                            1     144
+   (18 temporaries no longer used after optimization not shown)
 
- Code: 79 instruction(s)
+ Code: 96 instruction(s)
 
-    114        total = 0
-    115        i = 0
-    116  L7:   if i int>= 10 goto L9
-    117        if i int== 2 goto L8
-    118        if i int== 8 goto L9
-    119        total = total int+ i
-    120  L8:   i = i int+ 1
-    121        goto L7
-    122  L9:   param "for: %d %d\n"
-    123        param i
-    124        param total
-    125        call printf, 3
-    126        n = 5
-    127        fact = 1
-    128  L10:  if n int<= 1 goto L11
-    129        fact = fact int* n
-    130        n = n int- 1
-    131        goto L10
-    132  L11:  param "while: %d\n"
-    133        param fact
-    134        call printf, 2
-    135  L12:  t5 = n int+ 3
-    136        n = t5
-    137        if t5 int< 10 goto L12
-    138        param "do: %d\n"
-    139        param n
-    140        call printf, 2
-    141  L13:  if n int>= 20 goto L14
-    142        n = n int+ 4
-    143        goto L13
-    144  L14:  param "until: %d\n"
-    145        param n
-    146        call printf, 2
-    147        i = 0
-    148  L15:  if i int>= 6 goto L16
-    149        param i
-    150        t7 = call classify(int), 1
-    151        param "%d "
-    152        param t7
-    153        call printf, 2
-    154        i = i int+ 1
-    155        goto L15
-    156  L16:  param "\n"
-    157        call printf, 1
-    158        i = 0
-    159  L17:  if i int>= 3 goto L20
-    160        j = 0
-    161  L18:  if j int>= 3 goto L19
-    162        if j int> i goto L19
-    163        param "%d%d "
-    164        param i
-    165        param j
-    166        call printf, 3
-    167        j = j int+ 1
-    168        goto L18
-    169  L19:  i = i int+ 1
-    170        goto L17
-    171  L20:  param "\n"
-    172        call printf, 1
-    173        count = 0
-    174  L21:  t11 = count int+ 1
-    175        count = t11
-    176        if t11 int< 4 goto L21
-    177        if count int== 4 goto L22
-    178        count = 99
-    179  L22:  param "goto: %d\n"
-    180        param count
-    181        call printf, 2
-    182        x = 3
-    183        param "medium\n"
-    184        call printf, 1
-    185  L23:  t12 = x int- 1
-    186        x = t12
-    187        if t12 int== 1 goto L23
-    188        if x int> 0 goto L23
-    189        param "x: %d\n"
-    190        param x
-    191        call printf, 2
-    192        return total
+    115        s = 0
+    116        i = 0
+    117  L5:   if i int>= 5 goto L6
+    118        t1 = i
+    119        i = i int+ 1
+    120        s = s int+ t1
+    121        goto L5
+    122  L6:   t4 = s int<< 1
+    123        s = t4
+    124        if t4 int< 100 goto L6
+    125        k.4 = 0
+    126  L7:   if k.4 int>= 3 goto L8
+    127        s = s int- k.4
+    128        k.4 = k.4 int+ 1
+    129        goto L7
+    130  L8:   i = 0
+    131  L9:   if i int>= 4 goto L10
+    132        i = i int+ 1
+    133        goto L9
+    134  L10:  u = 0
+    135  L11:  if u int>= 4 goto L12
+    136        u = u int+ 1
+    137        goto L11
+    138  L12:  param "%d %d\n"
+    139        param s
+    140        param u
+    141        call printf, 3
+    142        out = 0
+    143        i = 0
+    144  L13:  if i int>= 6 goto L21
+    145        t9 = i
+    146        goto L18
+    147  L14:  out = out int+ 1
+    148  L15:  out = out int+ 10
+    149        goto L19
+    150  L16:  out = out int+ 100
+    151  L17:  out = out int+ 1000
+    152        goto L20
+    153  L18:  if t9 int== 0 goto L14
+    154        if t9 int== 1 goto L14
+    155        if t9 int== 4 goto L16
+    156        if t9 int== 5 goto L17
+    157        goto L15
+    158  L19:  out = out int+ 5
+    159  L20:  i = i int+ 1
+    160        goto L13
+    161  L21:  param "%d\n"
+    162        param out
+    163        call printf, 2
+    164        c = 0
+    165        hit = 0
+    166        r = 0
+    167  L22:  if r int>= 4 goto L26
+    168        c = 0
+    169  L23:  if c int>= 4 goto L25
+    170        if c int> r goto L25
+    171        t16 = r int+ c
+    172        t17 = t16 int% 2
+    173        if t17 int!= 0 goto L24
+    174        t18 = r int* c
+    175        if t18 int== 4 goto L26
+    176        hit = hit int+ 1
+    177  L24:  c = c int+ 1
+    178        goto L23
+    179  L25:  r = r int+ 1
+    180        goto L22
+    181  L26:  param "%d %d %d\n"
+    182        param hit
+    183        param r
+    184        param c
+    185        call printf, 4
+    186        text = "ab 12 x9;"
+    187        state = 0
+    188        words = 0
+    189        i = 0
+    190  L27:  t22 = text ptr+ i
+    191        t23 = *t22
+    192        if t23 char== 0 goto L30
+    193        t24 = text ptr+ i
+    194        t25 = *t24
+    195        param t25
+    196        k.13 = call kind(char), 1
+    197        if state int!= 0 goto L28
+    198        if k.13 int== 0 goto L28
+    199        words = words int+ 1
+    200        state = 1
+    201        goto L29
+    202  L28:  if state int!= 1 goto L29
+    203        if k.13 int!= 0 goto L29
+    204        state = 0
+    205  L29:  i = i int+ 1
+    206        goto L27
+    207  L30:  param "%d\n"
+    208        param words
+    209        call printf, 2
+    210        return 0
 
 
 ----------------------------------------------------------------------------
@@ -165,30 +198,38 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   classify           function      int (int)                  -           3    -    1  _Z8classifyi; defined
-   main               function      int (void)                 -          14    -    0  defined
+   kind               function      int (char)                 -           4    -    1  _Z4kindc; defined
+   main               function      int (void)                 -           9    -    0  defined
 
- scope: global > classify()
+ scope: global > kind()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       3    4    7  n.1
+   c                  parameter     char                       param       4    1    6  c.1
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   again              label         -                          -          45    -    1  main.again
-   done               label         -                          -          50    -    1  main.done
-   i                  variable      int                        local      15    4   16  i.2
-   total              variable      int                        local      15    4    3  total.3
-   n                  variable      int                        local      23    4   11  n.4
-   fact               variable      int                        local      23    4    3  fact.5
-   count              variable      int                        local      44    4    5  count.7
-   x                  variable      int                        local      53    4    6  x.8
+   done               label         -                          -          37    -    1  main.done
+   s                  variable      int                        local      10    4    5  s.2
+   i                  variable      int                        local      10    4   13  i.3
+   u                  variable      int                        local      15    4    3  u.5
+   out                variable      int                        local      18    4    6  out.6
+   r                  variable      int                        local      29    4    7  r.7
+   c                  variable      int                        local      29    4    7  c.8
+   hit                variable      int                        local      29    4    2  hit.9
+   text               variable      const char *               local      39    4    2  text.10
+   state              variable      int                        local      40    4    4  state.11
+   words              variable      int                        local      40    4    2  words.12
 
- scope: global > main() > for > for body > for
+ scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   j                  variable      int                        local      37    4    4  j.6
+   k                  variable      int                        local      13    4    3  k.4
+
+ scope: global > main() > for > for body
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   k                  variable      int                        local      42    4    2  k.13
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

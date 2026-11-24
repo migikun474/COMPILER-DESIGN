@@ -11,13 +11,11 @@
 str0:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str1:
-        .byte 37, 100, 32, 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str2:
-        .byte 37, 46, 49, 102, 32, 37, 100, 32, 37, 99, 10, 0
-        .align 3
-fc0:  .word 0, 1074003968        # 2.5
-        .align 3
-fc1:  .word 0, 1073741824        # 2
+        .byte 37, 100, 32, 37, 100, 10, 0
+str3:
+        .byte 37, 100, 10, 0
 
         .text
         .globl main
@@ -34,89 +32,19 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# swap(int *, int *)
-_Z4swapPiS_:
+# redirect(int **, int *)
+_Z8redirectPPiS_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        # t1 = *a
+        # *pp = to
         lw    $t8, 8($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -8($fp)
-        # t = t1
-        lw    $t0, -8($fp)
-        sw    $t0, -4($fp)
-        # t2 = *b
-        lw    $t8, 12($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -12($fp)
-        # *a = t2
-        lw    $t8, 8($fp)
-        lw    $t0, -12($fp)
-        sw    $t0, 0($t8)
-        # *b = t
-        lw    $t8, 12($fp)
-        lw    $t0, -4($fp)
+        lw    $t0, 12($fp)
         sw    $t0, 0($t8)
         # return
-        j     _Z4swapPiS__exit
-_Z4swapPiS__exit:
-        move  $sp, $fp
-        lw    $ra, 4($sp)
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# sum(int *, int *)
-_Z3sumPiS_:
-        addiu $sp, $sp, -8
-        sw    $ra, 4($sp)
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -24
-        # s = 0
-        li    $t0, 0
-        sw    $t0, -4($fp)
-L1_1:
-        # if first ptr< last goto 3
-        lw    $t0, 8($fp)
-        lw    $t1, 12($fp)
-        bltu  $t0, $t1, L1_3
-        # goto 10
-        j     L1_10
-L1_3:
-        # t1 = first
-        lw    $t0, 8($fp)
-        sw    $t0, -8($fp)
-        # t2 = first ptr+ 4
-        lw    $t0, 8($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -12($fp)
-        # first = t2
-        lw    $t0, -12($fp)
-        sw    $t0, 8($fp)
-        # t3 = *t1
-        lw    $t8, -8($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -16($fp)
-        # t4 = s int+ t3
-        lw    $t0, -4($fp)
-        lw    $t1, -16($fp)
-        addu  $t0, $t0, $t1
-        sw    $t0, -20($fp)
-        # s = t4
-        lw    $t0, -20($fp)
-        sw    $t0, -4($fp)
-        # goto 1
-        j     L1_1
-L1_10:
-        # return s
-        lw    $v0, -4($fp)
-        j     _Z3sumPiS__exit
-_Z3sumPiS__exit:
+        j     _Z8redirectPPiS__exit
+_Z8redirectPPiS__exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -129,671 +57,405 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -400
+        addiu $sp, $sp, -248
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M2_0
+        beqz  $t8, M1_0
         j     __stack_overflow
-M2_0:
-        # x = 5
-        li    $t0, 5
+M1_0:
+        # x = 3
+        li    $t0, 3
         sw    $t0, -4($fp)
-        # y = 6
-        li    $t0, 6
+        # y = 9
+        li    $t0, 9
         sw    $t0, -8($fp)
         # t1 = &x
         addiu $t0, $fp, -4
-        sw    $t0, -116($fp)
+        sw    $t0, -96($fp)
         # p = t1
-        lw    $t0, -116($fp)
+        lw    $t0, -96($fp)
         sw    $t0, -12($fp)
         # t2 = &p
         addiu $t0, $fp, -12
-        sw    $t0, -120($fp)
+        sw    $t0, -100($fp)
         # pp = t2
-        lw    $t0, -120($fp)
+        lw    $t0, -100($fp)
         sw    $t0, -16($fp)
         # t3 = &pp
         addiu $t0, $fp, -16
-        sw    $t0, -124($fp)
+        sw    $t0, -104($fp)
         # ppp = t3
-        lw    $t0, -124($fp)
+        lw    $t0, -104($fp)
         sw    $t0, -20($fp)
-        # t4 = *p
-        lw    $t8, -12($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -128($fp)
-        # t5 = *pp
-        lw    $t8, -16($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -132($fp)
-        # t6 = *t5
-        lw    $t8, -132($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -136($fp)
-        # t7 = *ppp
+        # t4 = *ppp
         lw    $t8, -20($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -140($fp)
-        # t8 = *t7
-        lw    $t8, -140($fp)
+        sw    $t0, -108($fp)
+        # t5 = *t4
+        lw    $t8, -108($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -144($fp)
-        # t9 = *t8
-        lw    $t8, -144($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -148($fp)
-        # param "%d %d %d\n"
-        # param t4
+        sw    $t0, -112($fp)
+        # *t5 = 4
+        lw    $t8, -112($fp)
+        li    $t0, 4
+        sw    $t0, 0($t8)
+        # t6 = &y
+        addiu $t0, $fp, -8
+        sw    $t0, -116($fp)
+        # param pp
         # param t6
+        # call redirect(int **, int *), 2
+        addiu $sp, $sp, -8
+        lw    $t0, -16($fp)
+        sw    $t0, 0($sp)
+        lw    $t0, -116($fp)
+        sw    $t0, 4($sp)
+        jal   _Z8redirectPPiS_
+        addiu $sp, $sp, 8
+        # t7 = *p
+        lw    $t8, -12($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -120($fp)
+        # t8 = *pp
+        lw    $t8, -16($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -124($fp)
+        # t9 = *t8
+        lw    $t8, -124($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -128($fp)
+        # param "%d %d %d\n"
+        # param x
+        # param t7
         # param t9
         # call printf, 4
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
-        lw    $t0, -128($fp)
+        lw    $t0, -4($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -136($fp)
+        lw    $t0, -120($fp)
         sw    $t0, 8($sp)
-        lw    $t0, -148($fp)
+        lw    $t0, -128($fp)
         sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t10 = *pp
-        lw    $t8, -16($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -152($fp)
-        # *t10 = 9
-        lw    $t8, -152($fp)
-        li    $t0, 9
-        sw    $t0, 0($t8)
-        # t11 = *ppp
-        lw    $t8, -20($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -156($fp)
-        # t12 = *t11
-        lw    $t8, -156($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -160($fp)
-        # t13 = *t12
-        lw    $t8, -160($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -164($fp)
-        # t14 = t13 int+ 1
-        lw    $t0, -164($fp)
-        li    $t1, 1
-        addu  $t0, $t0, $t1
-        sw    $t0, -168($fp)
-        # *t12 = t14
-        lw    $t8, -160($fp)
-        lw    $t0, -168($fp)
-        sw    $t0, 0($t8)
-        # t15 = &x
-        addiu $t0, $fp, -4
-        sw    $t0, -172($fp)
-        # t16 = &y
-        addiu $t0, $fp, -8
-        sw    $t0, -176($fp)
-        # param t15
-        # param t16
-        # call swap(int *, int *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -172($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -176($fp)
-        sw    $t0, 4($sp)
-        jal   _Z4swapPiS_
-        addiu $sp, $sp, 8
-        # param "%d %d\n"
-        # param x
-        # param y
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str1
-        sw    $t0, 0($sp)
-        lw    $t0, -4($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -8($fp)
-        sw    $t0, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # arr[0] = 10
+        # a[0] = 10
         addiu $t8, $fp, -40
         li    $t9, 0
         addu  $t8, $t8, $t9
         li    $t0, 10
         sw    $t0, 0($t8)
-        # arr[4] = 20
+        # a[4] = 20
         addiu $t8, $fp, -40
         li    $t9, 4
         addu  $t8, $t8, $t9
         li    $t0, 20
         sw    $t0, 0($t8)
-        # arr[8] = 30
+        # a[8] = 30
         addiu $t8, $fp, -40
         li    $t9, 8
         addu  $t8, $t8, $t9
         li    $t0, 30
         sw    $t0, 0($t8)
-        # arr[12] = 40
+        # a[12] = 40
         addiu $t8, $fp, -40
         li    $t9, 12
         addu  $t8, $t8, $t9
         li    $t0, 40
         sw    $t0, 0($t8)
-        # arr[16] = 50
+        # a[16] = 50
         addiu $t8, $fp, -40
         li    $t9, 16
         addu  $t8, $t8, $t9
         li    $t0, 50
         sw    $t0, 0($t8)
-        # t17 = &arr
+        # t10 = &a
         addiu $t0, $fp, -40
-        sw    $t0, -180($fp)
-        # t18 = t17 ptr+ 8
-        lw    $t0, -180($fp)
-        li    $t1, 8
-        addu  $t0, $t0, $t1
-        sw    $t0, -184($fp)
-        # q = t18
-        lw    $t0, -184($fp)
-        sw    $t0, -44($fp)
-        # t19 = q ptr- 4
-        lw    $t0, -44($fp)
+        sw    $t0, -132($fp)
+        # t11 = t10 ptr+ 4
+        lw    $t0, -132($fp)
         li    $t1, 4
-        subu  $t0, $t0, $t1
-        sw    $t0, -188($fp)
-        # q = t19
-        lw    $t0, -188($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -136($fp)
+        # q = t11
+        lw    $t0, -136($fp)
         sw    $t0, -44($fp)
-        # t20 = &arr
+        # t12 = &a
         addiu $t0, $fp, -40
-        sw    $t0, -192($fp)
-        # t21 = t20 ptr+ 16
-        lw    $t0, -192($fp)
+        sw    $t0, -140($fp)
+        # t13 = t12 ptr+ 16
+        lw    $t0, -140($fp)
         li    $t1, 16
         addu  $t0, $t0, $t1
-        sw    $t0, -196($fp)
-        # t22 = t21 ptr- q
-        lw    $t0, -196($fp)
+        sw    $t0, -144($fp)
+        # r = t13
+        lw    $t0, -144($fp)
+        sw    $t0, -48($fp)
+        # t14 = *q
+        lw    $t8, -44($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -148($fp)
+        # t15 = q ptr+ 8
+        lw    $t0, -44($fp)
+        li    $t1, 8
+        addu  $t0, $t0, $t1
+        sw    $t0, -152($fp)
+        # t16 = *t15
+        lw    $t8, -152($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -156($fp)
+        # t17 = r ptr- q
+        lw    $t0, -48($fp)
         lw    $t1, -44($fp)
         subu  $t0, $t0, $t1
-        sw    $t0, -200($fp)
-        # t23 = t22 int/ 4
-        lw    $t0, -200($fp)
+        sw    $t0, -160($fp)
+        # t18 = t17 int/ 4
+        lw    $t0, -160($fp)
         li    $t1, 4
         div   $t0, $t1
         mflo  $t0
-        sw    $t0, -204($fp)
-        # gap = t23
-        lw    $t0, -204($fp)
-        sw    $t0, -48($fp)
-        # t24 = *q
-        lw    $t8, -44($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -208($fp)
-        # t25 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -212($fp)
-        # t26 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -216($fp)
-        # t27 = t26 ptr+ 20
-        lw    $t0, -216($fp)
-        li    $t1, 20
-        addu  $t0, $t0, $t1
-        sw    $t0, -220($fp)
-        # param t25
-        # param t27
-        # t28 = call sum(int *, int *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -212($fp)
-        sw    $t0, 0($sp)
-        lw    $t0, -220($fp)
-        sw    $t0, 4($sp)
-        jal   _Z3sumPiS_
-        addiu $sp, $sp, 8
-        sw    $v0, -224($fp)
-        # param "%d %d %d\n"
-        # param t24
-        # param gap
-        # param t28
-        # call printf, 4
-        addiu $sp, $sp, -16
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        lw    $t0, -208($fp)
-        sw    $t0, 4($sp)
+        sw    $t0, -164($fp)
+        # if r ptr> q goto 42
         lw    $t0, -48($fp)
+        lw    $t1, -44($fp)
+        bgtu  $t0, $t1, L1_42
+        # t19 = 0
+        li    $t0, 0
+        sw    $t0, -168($fp)
+        # goto 43
+        j     L1_43
+L1_42:
+        # t19 = 1
+        li    $t0, 1
+        sw    $t0, -168($fp)
+L1_43:
+        # param "%d %d %d %d\n"
+        # param t14
+        # param t16
+        # param t18
+        # param t19
+        # call printf, 5
+        addiu $sp, $sp, -24
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        lw    $t0, -148($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -156($fp)
         sw    $t0, 8($sp)
-        lw    $t0, -224($fp)
+        lw    $t0, -164($fp)
         sw    $t0, 12($sp)
+        lw    $t0, -168($fp)
+        sw    $t0, 16($sp)
         jal   __printf
-        addiu $sp, $sp, 16
-        # t29 = q ptr+ 4
-        lw    $t0, -44($fp)
-        li    $t1, 4
-        addu  $t0, $t0, $t1
-        sw    $t0, -228($fp)
-        # q = t29
-        lw    $t0, -228($fp)
-        sw    $t0, -44($fp)
-        # t30 = q ptr- 4
-        lw    $t0, -44($fp)
-        li    $t1, 4
-        subu  $t0, $t0, $t1
-        sw    $t0, -232($fp)
-        # q = t30
-        lw    $t0, -232($fp)
-        sw    $t0, -44($fp)
-        # t31 = q ptr+ 8
+        addiu $sp, $sp, 24
+        # t20 = q ptr+ 8
         lw    $t0, -44($fp)
         li    $t1, 8
         addu  $t0, $t0, $t1
-        sw    $t0, -236($fp)
-        # q = t31
-        lw    $t0, -236($fp)
+        sw    $t0, -172($fp)
+        # q = t20
+        lw    $t0, -172($fp)
         sw    $t0, -44($fp)
-        # t32 = *q
+        # t21 = q
+        lw    $t0, -44($fp)
+        sw    $t0, -176($fp)
+        # t22 = q ptr- 4
+        lw    $t0, -44($fp)
+        li    $t1, 4
+        subu  $t0, $t0, $t1
+        sw    $t0, -180($fp)
+        # q = t22
+        lw    $t0, -180($fp)
+        sw    $t0, -44($fp)
+        # *t21 = 7
+        lw    $t8, -176($fp)
+        li    $t0, 7
+        sw    $t0, 0($t8)
+        # t23 = a[12]
+        addiu $t8, $fp, -40
+        li    $t9, 12
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -184($fp)
+        # t24 = *q
         lw    $t8, -44($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -240($fp)
-        # t33 = int- 1
-        li    $t0, 1
-        negu  $t0, $t0
-        sw    $t0, -244($fp)
-        # t34 = t33 int* 4
-        lw    $t0, -244($fp)
-        li    $t1, 4
-        mul   $t0, $t0, $t1
-        sw    $t0, -248($fp)
-        # t35 = q ptr+ t34
-        lw    $t0, -44($fp)
-        lw    $t1, -248($fp)
-        addu  $t0, $t0, $t1
-        sw    $t0, -252($fp)
-        # t36 = *t35
-        lw    $t8, -252($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -256($fp)
-        # t37 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -260($fp)
-        # t38 = t37 ptr+ 16
-        lw    $t0, -260($fp)
-        li    $t1, 16
-        addu  $t0, $t0, $t1
-        sw    $t0, -264($fp)
-        # t39 = *t38
-        lw    $t8, -264($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -268($fp)
-        # param "%d %d %d\n"
-        # param t32
-        # param t36
-        # param t39
-        # call printf, 4
-        addiu $sp, $sp, -16
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        lw    $t0, -240($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -256($fp)
-        sw    $t0, 8($sp)
-        lw    $t0, -268($fp)
-        sw    $t0, 12($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # t41 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -276($fp)
-        # t42 = t41 ptr+ 12
-        lw    $t0, -276($fp)
-        li    $t1, 12
-        addu  $t0, $t0, $t1
-        sw    $t0, -280($fp)
-        # if q ptr== t42 goto 86
-        lw    $t0, -44($fp)
-        lw    $t1, -280($fp)
-        beq   $t0, $t1, L2_86
-        # t40 = 0
-        li    $t0, 0
-        sw    $t0, -272($fp)
-        # goto 87
-        j     L2_87
-L2_86:
-        # t40 = 1
-        li    $t0, 1
-        sw    $t0, -272($fp)
-L2_87:
-        # t44 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -288($fp)
-        # if q ptr!= t44 goto 91
-        lw    $t0, -44($fp)
-        lw    $t1, -288($fp)
-        bne   $t0, $t1, L2_91
-        # t43 = 0
-        li    $t0, 0
-        sw    $t0, -284($fp)
-        # goto 92
-        j     L2_92
-L2_91:
-        # t43 = 1
-        li    $t0, 1
-        sw    $t0, -284($fp)
-L2_92:
-        # t46 = &arr
-        addiu $t0, $fp, -40
-        sw    $t0, -296($fp)
-        # t47 = t46 ptr+ 16
-        lw    $t0, -296($fp)
-        li    $t1, 16
-        addu  $t0, $t0, $t1
-        sw    $t0, -300($fp)
-        # if q ptr< t47 goto 97
-        lw    $t0, -44($fp)
-        lw    $t1, -300($fp)
-        bltu  $t0, $t1, L2_97
-        # t45 = 0
-        li    $t0, 0
-        sw    $t0, -292($fp)
-        # goto 98
-        j     L2_98
-L2_97:
-        # t45 = 1
-        li    $t0, 1
-        sw    $t0, -292($fp)
-L2_98:
-        # param "%d %d %d\n"
-        # param t40
-        # param t43
-        # param t45
-        # call printf, 4
-        addiu $sp, $sp, -16
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        lw    $t0, -272($fp)
-        sw    $t0, 4($sp)
-        lw    $t0, -284($fp)
-        sw    $t0, 8($sp)
-        lw    $t0, -292($fp)
-        sw    $t0, 12($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # t48 = &x
-        addiu $t0, $fp, -4
-        sw    $t0, -304($fp)
-        # raw = t48
-        lw    $t0, -304($fp)
-        sw    $t0, -52($fp)
-        # back = raw
-        lw    $t0, -52($fp)
-        sw    $t0, -56($fp)
-        # t49 = &y
-        addiu $t0, $fp, -8
-        sw    $t0, -308($fp)
-        # bytes = t49
-        lw    $t0, -308($fp)
-        sw    $t0, -60($fp)
-        # *back = 258
-        lw    $t8, -56($fp)
-        li    $t0, 258
-        sw    $t0, 0($t8)
-        # t50 = *bytes
-        lw    $t8, -60($fp)
-        lb    $t0, 0($t8)
-        sb    $t0, -309($fp)
-        # t51 = chartoint t50
-        lb    $t0, -309($fp)
-        sw    $t0, -316($fp)
+        sw    $t0, -188($fp)
         # param "%d %d\n"
-        # param x
-        # param t51
+        # param t23
+        # param t24
         # call printf, 3
         addiu $sp, $sp, -16
-        la    $t0, str1
+        la    $t0, str2
         sw    $t0, 0($sp)
-        lw    $t0, -4($fp)
+        lw    $t0, -184($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -316($fp)
+        lw    $t0, -188($fp)
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # grid[0] = 1
-        addiu $t8, $fp, -84
+        # t25 = &a
+        addiu $t0, $fp, -40
+        sw    $t0, -192($fp)
+        # t26 = t25 ptr+ 8
+        lw    $t0, -192($fp)
+        li    $t1, 8
+        addu  $t0, $t0, $t1
+        sw    $t0, -196($fp)
+        # v = t26
+        lw    $t0, -196($fp)
+        sw    $t0, -52($fp)
+        # back = v
+        lw    $t0, -52($fp)
+        sw    $t0, -56($fp)
+        # t27 = *back
+        lw    $t8, -56($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -200($fp)
+        # param "%d\n"
+        # param t27
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str3
+        sw    $t0, 0($sp)
+        lw    $t0, -200($fp)
+        sw    $t0, 4($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # row[0] = 1
+        addiu $t8, $fp, -68
         li    $t9, 0
         addu  $t8, $t8, $t9
         li    $t0, 1
         sw    $t0, 0($t8)
-        # grid[4] = 2
-        addiu $t8, $fp, -84
+        # row[4] = 2
+        addiu $t8, $fp, -68
         li    $t9, 4
         addu  $t8, $t8, $t9
         li    $t0, 2
         sw    $t0, 0($t8)
-        # grid[8] = 3
-        addiu $t8, $fp, -84
+        # row[8] = 3
+        addiu $t8, $fp, -68
         li    $t9, 8
         addu  $t8, $t8, $t9
         li    $t0, 3
         sw    $t0, 0($t8)
-        # grid[12] = 4
-        addiu $t8, $fp, -84
-        li    $t9, 12
-        addu  $t8, $t8, $t9
-        li    $t0, 4
-        sw    $t0, 0($t8)
-        # grid[16] = 5
-        addiu $t8, $fp, -84
-        li    $t9, 16
-        addu  $t8, $t8, $t9
-        li    $t0, 5
-        sw    $t0, 0($t8)
-        # grid[20] = 6
-        addiu $t8, $fp, -84
-        li    $t9, 20
-        addu  $t8, $t8, $t9
-        li    $t0, 6
-        sw    $t0, 0($t8)
-        # t52 = &grid
-        addiu $t0, $fp, -84
-        sw    $t0, -320($fp)
-        # row = t52
-        lw    $t0, -320($fp)
-        sw    $t0, -88($fp)
-        # t53 = row ptr+ 12
-        lw    $t0, -88($fp)
-        li    $t1, 12
-        addu  $t0, $t0, $t1
-        sw    $t0, -324($fp)
-        # row = t53
-        lw    $t0, -324($fp)
-        sw    $t0, -88($fp)
-        # t54 = row ptr+ 8
-        lw    $t0, -88($fp)
+        # t28 = &row
+        addiu $t0, $fp, -68
+        sw    $t0, -204($fp)
+        # pa = t28
+        lw    $t0, -204($fp)
+        sw    $t0, -72($fp)
+        # t29 = pa ptr+ 8
+        lw    $t0, -72($fp)
         li    $t1, 8
         addu  $t0, $t0, $t1
-        sw    $t0, -328($fp)
-        # t55 = *t54
-        lw    $t8, -328($fp)
+        sw    $t0, -208($fp)
+        # t30 = *t29
+        lw    $t8, -208($fp)
         lw    $t0, 0($t8)
-        sw    $t0, -332($fp)
-        # t56 = *row
-        lw    $t8, -88($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -336($fp)
+        sw    $t0, -212($fp)
         # param "%d %d\n"
-        # param t55
-        # param t56
+        # param t30
+        # param 12
         # call printf, 3
         addiu $sp, $sp, -16
-        la    $t0, str1
+        la    $t0, str2
         sw    $t0, 0($sp)
-        lw    $t0, -332($fp)
+        lw    $t0, -212($fp)
         sw    $t0, 4($sp)
-        lw    $t0, -336($fp)
+        li    $t0, 12
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # p = 0
-        li    $t0, 0
-        sw    $t0, -12($fp)
-        # if p ptr!= 0 goto 137
-        lw    $t0, -12($fp)
-        li    $t1, 0
-        bne   $t0, $t1, L2_137
-        # goto 135
-        j     L2_135
-L2_135:
-        # t57 = &y
+        # t31 = &x
+        addiu $t0, $fp, -4
+        sw    $t0, -216($fp)
+        # t32 = &y
         addiu $t0, $fp, -8
-        sw    $t0, -340($fp)
-        # p = t57
-        lw    $t0, -340($fp)
-        sw    $t0, -12($fp)
-L2_137:
-        # d = 2.5
-        l.d   $f0, fc0
-        s.d   $f0, -96($fp)
-        # t58 = &d
-        addiu $t0, $fp, -96
-        sw    $t0, -344($fp)
-        # dp = t58
-        lw    $t0, -344($fp)
-        sw    $t0, -100($fp)
-        # t59 = *dp
-        lw    $t8, -100($fp)
-        l.d   $f0, 0($t8)
-        s.d   $f0, -352($fp)
-        # t60 = t59 double* 2.0
-        l.d   $f0, -352($fp)
-        l.d   $f2, fc1
-        mul.d $f0, $f0, $f2
-        s.d   $f0, -360($fp)
-        # *dp = t60
-        lw    $t8, -100($fp)
-        l.d   $f0, -360($fp)
-        s.d   $f0, 0($t8)
-        # text[0] = 112
-        addiu $t8, $fp, -108
+        sw    $t0, -220($fp)
+        # t33 = &a
+        addiu $t0, $fp, -40
+        sw    $t0, -224($fp)
+        # list[0] = t31
+        addiu $t8, $fp, -84
         li    $t9, 0
         addu  $t8, $t8, $t9
-        li    $t0, 112
-        sb    $t0, 0($t8)
-        # text[1] = 111
-        addiu $t8, $fp, -108
-        li    $t9, 1
-        addu  $t8, $t8, $t9
-        li    $t0, 111
-        sb    $t0, 0($t8)
-        # text[2] = 105
-        addiu $t8, $fp, -108
-        li    $t9, 2
-        addu  $t8, $t8, $t9
-        li    $t0, 105
-        sb    $t0, 0($t8)
-        # text[3] = 110
-        addiu $t8, $fp, -108
-        li    $t9, 3
-        addu  $t8, $t8, $t9
-        li    $t0, 110
-        sb    $t0, 0($t8)
-        # text[4] = 116
-        addiu $t8, $fp, -108
+        lw    $t0, -216($fp)
+        sw    $t0, 0($t8)
+        # list[4] = t32
+        addiu $t8, $fp, -84
         li    $t9, 4
         addu  $t8, $t8, $t9
-        li    $t0, 116
-        sb    $t0, 0($t8)
-        # text[5] = 101
-        addiu $t8, $fp, -108
-        li    $t9, 5
+        lw    $t0, -220($fp)
+        sw    $t0, 0($t8)
+        # list[8] = t33
+        addiu $t8, $fp, -84
+        li    $t9, 8
         addu  $t8, $t8, $t9
-        li    $t0, 101
-        sb    $t0, 0($t8)
-        # text[6] = 114
-        addiu $t8, $fp, -108
-        li    $t9, 6
-        addu  $t8, $t8, $t9
-        li    $t0, 114
-        sb    $t0, 0($t8)
-        # text[7] = 0
-        addiu $t8, $fp, -108
-        li    $t9, 7
-        addu  $t8, $t8, $t9
+        lw    $t0, -224($fp)
+        sw    $t0, 0($t8)
+        # s = 0
         li    $t0, 0
-        sb    $t0, 0($t8)
-        # t61 = &text
-        addiu $t0, $fp, -108
-        sw    $t0, -364($fp)
-        # t = t61
-        lw    $t0, -364($fp)
-        sw    $t0, -112($fp)
-L2_153:
-        # t62 = *t
-        lw    $t8, -112($fp)
-        lb    $t0, 0($t8)
-        sb    $t0, -365($fp)
-        # if t62 char!= 0 goto 156
-        lb    $t0, -365($fp)
-        li    $t1, 0
-        bne   $t0, $t1, L2_156
-        # goto 159
-        j     L2_159
-L2_156:
-        # t63 = t ptr+ 1
-        lw    $t0, -112($fp)
+        sw    $t0, -88($fp)
+        # i = 0
+        li    $t0, 0
+        sw    $t0, -92($fp)
+L1_88:
+        # if i int< 3 goto 90
+        lw    $t0, -92($fp)
+        li    $t1, 3
+        blt   $t0, $t1, L1_90
+        # goto 98
+        j     L1_98
+L1_90:
+        # t34 = i int* 4
+        lw    $t0, -92($fp)
+        li    $t1, 4
+        mul   $t0, $t0, $t1
+        sw    $t0, -228($fp)
+        # t35 = list[t34]
+        addiu $t8, $fp, -84
+        lw    $t9, -228($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -232($fp)
+        # t36 = *t35
+        lw    $t8, -232($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -236($fp)
+        # t37 = s int+ t36
+        lw    $t0, -88($fp)
+        lw    $t1, -236($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -240($fp)
+        # s = t37
+        lw    $t0, -240($fp)
+        sw    $t0, -88($fp)
+        # t38 = i int+ 1
+        lw    $t0, -92($fp)
         li    $t1, 1
         addu  $t0, $t0, $t1
-        sw    $t0, -372($fp)
-        # t = t63
-        lw    $t0, -372($fp)
-        sw    $t0, -112($fp)
-        # goto 153
-        j     L2_153
-L2_159:
-        # t64 = &text
-        addiu $t0, $fp, -108
-        sw    $t0, -376($fp)
-        # t65 = t ptr- t64
-        lw    $t0, -112($fp)
-        lw    $t1, -376($fp)
-        subu  $t0, $t0, $t1
-        sw    $t0, -380($fp)
-        # t66 = t ptr- 1
-        lw    $t0, -112($fp)
-        li    $t1, 1
-        subu  $t0, $t0, $t1
-        sw    $t0, -384($fp)
-        # t67 = *t66
-        lw    $t8, -384($fp)
-        lb    $t0, 0($t8)
-        sb    $t0, -385($fp)
-        # t68 = chartoint t67
-        lb    $t0, -385($fp)
-        sw    $t0, -392($fp)
-        # param "%.1f %d %c\n"
-        # param d
-        # param t65
-        # param t68
-        # call printf, 4
-        addiu $sp, $sp, -24
-        la    $t0, str2
+        sw    $t0, -244($fp)
+        # i = t38
+        lw    $t0, -244($fp)
+        sw    $t0, -92($fp)
+        # goto 88
+        j     L1_88
+L1_98:
+        # param "%d\n"
+        # param s
+        # call printf, 2
+        addiu $sp, $sp, -8
+        la    $t0, str3
         sw    $t0, 0($sp)
-        l.d   $f0, -96($fp)
-        s.d   $f0, 8($sp)
-        lw    $t0, -380($fp)
-        sw    $t0, 16($sp)
-        lw    $t0, -392($fp)
-        sw    $t0, 20($sp)
+        lw    $t0, -88($fp)
+        sw    $t0, 4($sp)
         jal   __printf
-        addiu $sp, $sp, 24
-        # t69 = *p
-        lw    $t8, -12($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -396($fp)
-        # return t69
-        lw    $v0, -396($fp)
+        addiu $sp, $sp, 8
+        # return 0
+        li    $v0, 0
         j     main__exit
 main__exit:
         move  $sp, $fp

@@ -9,29 +9,13 @@
 
         .data
 str0:
-        .byte 102, 111, 114, 58, 32, 37, 100, 32, 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 10, 0
 str1:
-        .byte 119, 104, 105, 108, 101, 58, 32, 37, 100, 10, 0
+        .byte 37, 100, 10, 0
 str2:
-        .byte 100, 111, 58, 32, 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str3:
-        .byte 117, 110, 116, 105, 108, 58, 32, 37, 100, 10, 0
-str4:
-        .byte 37, 100, 32, 0
-str5:
-        .byte 10, 0
-str6:
-        .byte 37, 100, 37, 100, 32, 0
-str7:
-        .byte 103, 111, 116, 111, 58, 32, 37, 100, 10, 0
-str8:
-        .byte 98, 105, 103, 10, 0
-str9:
-        .byte 109, 101, 100, 105, 117, 109, 10, 0
-str10:
-        .byte 115, 109, 97, 108, 108, 10, 0
-str11:
-        .byte 120, 58, 32, 37, 100, 10, 0
+        .byte 97, 98, 32, 49, 50, 32, 120, 57, 59, 0
 
         .text
         .globl main
@@ -54,376 +38,392 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
+        sw    $s0, -24($fp)
+        sw    $s1, -28($fp)
         sw    $s2, -4($fp)
-        sw    $s3, -16($fp)
-        # total = 0
-        li    $s3, 0
-        # i = 0
+        sw    $s3, -32($fp)
+        sw    $s4, -8($fp)
+        sw    $s5, -12($fp)
+        sw    $s6, -16($fp)
+        sw    $s7, -20($fp)
+        # s = 0
         li    $s0, 0
+        # i = 0
+        li    $s1, 0
 L0_2:
-        # if i int>= 10 goto 13
-        li    $t1, 10
-        bge   $s0, $t1, L0_13
-        # if i int== 2 goto 6
-        li    $t1, 2
-        beq   $s0, $t1, L0_6
-        # if i int== 8 goto 13
-        li    $t1, 8
-        beq   $s0, $t1, L0_13
-        # total = total int+ i
-        addu  $s3, $s3, $s0
-L0_6:
+        # if i int>= 5 goto 11
+        li    $t1, 5
+        bge   $s1, $t1, L0_11
+        # t1 = i
+        move  $s2, $s1
         # i = i int+ 1
-        addiu $s0, $s0, 1
-        # if i int>= 10 goto 13
-        li    $t1, 10
-        bge   $s0, $t1, L0_13
-        # if i int== 2 goto 11
-        li    $t1, 2
-        beq   $s0, $t1, L0_11
-        # if i int== 8 goto 13
-        li    $t1, 8
-        beq   $s0, $t1, L0_13
-        # total = total int+ i
-        addu  $s3, $s3, $s0
-L0_11:
+        addiu $s1, $s1, 1
+        # s = s int+ t1
+        addu  $s0, $s0, $s2
+        # if i int>= 5 goto 11
+        li    $t1, 5
+        bge   $s1, $t1, L0_11
+        # t1 = i
+        move  $s2, $s1
         # i = i int+ 1
-        addiu $s0, $s0, 1
+        addiu $s1, $s1, 1
+        # s = s int+ t1
+        addu  $s0, $s0, $s2
         # goto 2
         j     L0_2
-L0_13:
-        # param "for: %d %d\n"
-        # param i
-        # param total
+L0_11:
+        # t4 = s int<< 1
+        sll   $s2, $s0, 1
+        # s = t4
+        move  $s0, $s2
+        # if t4 int< 100 goto 11
+        li    $t1, 100
+        blt   $s2, $t1, L0_11
+        # k.4 = 0
+        li    $s2, 0
+L0_15:
+        # if k.4 int>= 3 goto 22
+        li    $t1, 3
+        bge   $s2, $t1, L0_22
+        # s = s int- k.4
+        subu  $s0, $s0, $s2
+        # k.4 = k.4 int+ 1
+        addiu $s2, $s2, 1
+        # if k.4 int>= 3 goto 22
+        li    $t1, 3
+        bge   $s2, $t1, L0_22
+        # s = s int- k.4
+        subu  $s0, $s0, $s2
+        # k.4 = k.4 int+ 1
+        addiu $s2, $s2, 1
+        # goto 15
+        j     L0_15
+L0_22:
+        # i = 0
+        li    $s1, 0
+L0_23:
+        # if i int>= 4 goto 28
+        li    $t1, 4
+        bge   $s1, $t1, L0_28
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # if i int>= 4 goto 28
+        li    $t1, 4
+        bge   $s1, $t1, L0_28
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # goto 23
+        j     L0_23
+L0_28:
+        # u = 0
+        li    $s2, 0
+L0_29:
+        # if u int>= 4 goto 34
+        li    $t1, 4
+        bge   $s2, $t1, L0_34
+        # u = u int+ 1
+        addiu $s2, $s2, 1
+        # if u int>= 4 goto 34
+        li    $t1, 4
+        bge   $s2, $t1, L0_34
+        # u = u int+ 1
+        addiu $s2, $s2, 1
+        # goto 29
+        j     L0_29
+L0_34:
+        # param "%d %d\n"
+        # param s
+        # param u
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str0
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
-        sw    $s3, 8($sp)
+        sw    $s2, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # n = 5
-        li    $s1, 5
-        # fact = 1
-        li    $s2, 1
-L0_19:
-        # if n int<= 1 goto 26
+        # out = 0
+        li    $s0, 0
+        # i = 0
+        li    $s1, 0
+L0_40:
+        # if i int>= 6 goto 71
+        li    $t1, 6
+        bge   $s1, $t1, L0_71
+        # goto 48
+        j     L0_48
+L0_42:
+        # out = out int+ 1
+        addiu $s0, $s0, 1
+L0_43:
+        # out = out int+ 10
+        addiu $s0, $s0, 10
+        # goto 53
+        j     L0_53
+L0_45:
+        # out = out int+ 100
+        addiu $s0, $s0, 100
+L0_46:
+        # out = out int+ 1000
+        addiu $s0, $s0, 1000
+        # goto 54
+        j     L0_54
+L0_48:
+        # if i int== 0 goto 42
+        beq   $s1, $zero, L0_42
+        # if i int== 1 goto 42
         li    $t1, 1
-        ble   $s1, $t1, L0_26
-        # fact = fact int* n
-        mul   $s2, $s2, $s1
-        # n = n int- 1
-        addiu $s1, $s1, -1
-        # if n int<= 1 goto 26
+        beq   $s1, $t1, L0_42
+        # if i int== 4 goto 45
+        li    $t1, 4
+        beq   $s1, $t1, L0_45
+        # if i int== 5 goto 46
+        li    $t1, 5
+        beq   $s1, $t1, L0_46
+        # goto 43
+        j     L0_43
+L0_53:
+        # out = out int+ 5
+        addiu $s0, $s0, 5
+L0_54:
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # if i int>= 6 goto 71
+        li    $t1, 6
+        bge   $s1, $t1, L0_71
+        # goto 63
+        j     L0_63
+L0_57:
+        # out = out int+ 1
+        addiu $s0, $s0, 1
+L0_58:
+        # out = out int+ 10
+        addiu $s0, $s0, 10
+        # goto 68
+        j     L0_68
+L0_60:
+        # out = out int+ 100
+        addiu $s0, $s0, 100
+L0_61:
+        # out = out int+ 1000
+        addiu $s0, $s0, 1000
+        # goto 69
+        j     L0_69
+L0_63:
+        # if i int== 0 goto 57
+        beq   $s1, $zero, L0_57
+        # if i int== 1 goto 57
         li    $t1, 1
-        ble   $s1, $t1, L0_26
-        # fact = fact int* n
-        mul   $s2, $s2, $s1
-        # n = n int- 1
-        addiu $s1, $s1, -1
-        # goto 19
-        j     L0_19
-L0_26:
-        # param "while: %d\n"
-        # param fact
+        beq   $s1, $t1, L0_57
+        # if i int== 4 goto 60
+        li    $t1, 4
+        beq   $s1, $t1, L0_60
+        # if i int== 5 goto 61
+        li    $t1, 5
+        beq   $s1, $t1, L0_61
+        # goto 58
+        j     L0_58
+L0_68:
+        # out = out int+ 5
+        addiu $s0, $s0, 5
+L0_69:
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # goto 40
+        j     L0_40
+L0_71:
+        # param "%d\n"
+        # param out
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
+        sw    $s0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L0_29:
-        # t5 = n int+ 3
-        addiu $s2, $s1, 3
-        # n = t5
-        move  $s1, $s2
-        # if t5 int< 10 goto 29
-        li    $t1, 10
-        blt   $s2, $t1, L0_29
-        # param "do: %d\n"
-        # param t5
-        # call printf, 2
-        addiu $sp, $sp, -8
+        # c = 0
+        li    $s0, 0
+        # hit = 0
+        li    $s3, 0
+        # r = 0
+        li    $s2, 0
+L0_77:
+        # if r int>= 4 goto 100
+        li    $t1, 4
+        bge   $s2, $t1, L0_100
+        # c = 0
+        li    $s0, 0
+L0_79:
+        # if c int>= 4 goto 98
+        li    $t1, 4
+        bge   $s0, $t1, L0_98
+        # if c int> r goto 98
+        bgt   $s0, $s2, L0_98
+        # t16 = r int+ c
+        addu  $s4, $s2, $s0
+        # t17 = t16 int% 2
+        li    $t1, 2
+        div   $s4, $t1
+        mfhi  $s5
+        # if t17 int!= 0 goto 87
+        bne   $s5, $zero, L0_87
+        # t18 = r int* c
+        mul   $s6, $s2, $s0
+        # if t18 int== 4 goto 100
+        li    $t1, 4
+        beq   $s6, $t1, L0_100
+        # hit = hit int+ 1
+        addiu $s3, $s3, 1
+L0_87:
+        # c = c int+ 1
+        addiu $s0, $s0, 1
+        # if c int>= 4 goto 98
+        li    $t1, 4
+        bge   $s0, $t1, L0_98
+        # if c int> r goto 98
+        bgt   $s0, $s2, L0_98
+        # t16 = r int+ c
+        addu  $s4, $s2, $s0
+        # t17 = t16 int% 2
+        li    $t1, 2
+        div   $s4, $t1
+        mfhi  $s5
+        # if t17 int!= 0 goto 96
+        bne   $s5, $zero, L0_96
+        # t18 = r int* c
+        mul   $s6, $s2, $s0
+        # if t18 int== 4 goto 100
+        li    $t1, 4
+        beq   $s6, $t1, L0_100
+        # hit = hit int+ 1
+        addiu $s3, $s3, 1
+L0_96:
+        # c = c int+ 1
+        addiu $s0, $s0, 1
+        # goto 79
+        j     L0_79
+L0_98:
+        # r = r int+ 1
+        addiu $s2, $s2, 1
+        # goto 77
+        j     L0_77
+L0_100:
+        # param "%d %d %d\n"
+        # param hit
+        # param r
+        # param c
+        # call printf, 4
+        addiu $sp, $sp, -16
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
+        sw    $s3, 4($sp)
+        sw    $s2, 8($sp)
+        sw    $s0, 12($sp)
         jal   __printf
-        addiu $sp, $sp, 8
-L0_35:
-        # if n int>= 20 goto 40
-        li    $t1, 20
-        bge   $s1, $t1, L0_40
-        # n = n int+ 4
-        addiu $s1, $s1, 4
-        # if n int>= 20 goto 40
-        li    $t1, 20
-        bge   $s1, $t1, L0_40
-        # n = n int+ 4
-        addiu $s1, $s1, 4
-        # goto 35
-        j     L0_35
-L0_40:
-        # param "until: %d\n"
-        # param n
-        # call printf, 2
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, 16
+        # state = 0
+        li    $s3, 0
+        # words = 0
+        li    $s5, 0
+        # i = 0
+        li    $s1, 0
+L0_108:
+        # t22 = "ab 12 x9;" ptr+ i
         la    $t0, str3
-        sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # i = 0
-        li    $s0, 0
-L0_44:
-        # if i int>= 6 goto 85
-        li    $t1, 6
-        bge   $s0, $t1, L0_85
-        # t14 = i
-        move  $s1, $s0
-        # goto 54
-        j     L0_54
-L0_47:
-        # t7 = 100
-        li    $s2, 100
-        # goto 60
-        j     L0_60
-L0_49:
-        # t14 = i int+ 10
-        addiu $s1, $s0, 10
-L0_50:
-        # t14 = t14 int<< 1
-        sll   $s1, $s1, 1
-        # goto 59
-        j     L0_59
-L0_52:
-        # t14 = -1
-        li    $s1, -1
-        # goto 59
-        j     L0_59
-L0_54:
-        # if i int== 0 goto 47
-        beq   $s0, $zero, L0_47
-        # if i int== 1 goto 49
-        li    $t1, 1
-        beq   $s0, $t1, L0_49
-        # if i int== 2 goto 49
-        li    $t1, 2
-        beq   $s0, $t1, L0_49
-        # if i int== 3 goto 50
-        li    $t1, 3
-        beq   $s0, $t1, L0_50
-        # goto 52
-        j     L0_52
-L0_59:
-        # t7 = t14
-        move  $s2, $s1
-L0_60:
-        # param "%d "
-        # param t7
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # if i int>= 6 goto 85
-        li    $t1, 6
-        bge   $s0, $t1, L0_85
-        # t14 = i
-        move  $s1, $s0
-        # goto 74
-        j     L0_74
-L0_67:
-        # t7 = 100
-        li    $s2, 100
-        # goto 80
-        j     L0_80
-L0_69:
-        # t14 = i int+ 10
-        addiu $s1, $s0, 10
-L0_70:
-        # t14 = t14 int<< 1
-        sll   $s1, $s1, 1
-        # goto 79
-        j     L0_79
-L0_72:
-        # t14 = -1
-        li    $s1, -1
-        # goto 79
-        j     L0_79
-L0_74:
-        # if i int== 0 goto 67
-        beq   $s0, $zero, L0_67
-        # if i int== 1 goto 69
-        li    $t1, 1
-        beq   $s0, $t1, L0_69
-        # if i int== 2 goto 69
-        li    $t1, 2
-        beq   $s0, $t1, L0_69
-        # if i int== 3 goto 70
-        li    $t1, 3
-        beq   $s0, $t1, L0_70
-        # goto 72
-        j     L0_72
-L0_79:
-        # t7 = t14
-        move  $s2, $s1
-L0_80:
-        # param "%d "
-        # param t7
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 44
-        j     L0_44
-L0_85:
-        # param "\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str5
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # i = 0
-        li    $s0, 0
-L0_88:
-        # if i int>= 3 goto 107
-        li    $t1, 3
-        bge   $s0, $t1, L0_107
-        # j = 0
-        li    $s1, 0
-L0_90:
-        # if j int>= 3 goto 105
-        li    $t1, 3
-        bge   $s1, $t1, L0_105
-        # if j int> i goto 105
-        bgt   $s1, $s0, L0_105
-        # param "%d%d "
-        # param i
-        # param j
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # j = j int+ 1
-        addiu $s1, $s1, 1
-        # if j int>= 3 goto 105
-        li    $t1, 3
-        bge   $s1, $t1, L0_105
-        # if j int> i goto 105
-        bgt   $s1, $s0, L0_105
-        # param "%d%d "
-        # param i
-        # param j
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # j = j int+ 1
-        addiu $s1, $s1, 1
-        # goto 90
-        j     L0_90
-L0_105:
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 88
-        j     L0_88
-L0_107:
-        # param "\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str5
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # count = 0
-        li    $s1, 0
-L0_110:
-        # t11 = count int+ 1
-        addiu $s0, $s1, 1
-        # count = t11
-        move  $s1, $s0
-        # if t11 int< 4 goto 110
-        li    $t1, 4
-        blt   $s0, $t1, L0_110
-        # if t11 int== 4 goto 115
-        li    $t1, 4
-        beq   $s0, $t1, L0_115
-        # count = 99
-        li    $s1, 99
-L0_115:
-        # param "goto: %d\n"
-        # param count
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str7
-        sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # x = 3
-        li    $s1, 3
-        # param "medium\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str9
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
+        addu  $s4, $t0, $s1
+        # t23 = *t22
+        lb    $s6, 0($s4)
+        # if t23 char== 0 goto 134
+        beq   $s6, $zero, L0_134
+        # t25 = *t22
+        lb    $s7, 0($s4)
+        # t30 = chartoint t25
+        move  $t0, $s7
+        move  $s0, $t0
+        # if t30 int< 48 goto 117
+        li    $t1, 48
+        blt   $s0, $t1, L0_117
+        # if t30 int> 57 goto 117
+        li    $t1, 57
+        bgt   $s0, $t1, L0_117
+        # k.13 = 1
+        li    $s2, 1
+        # goto 124
+        j     L0_124
+L0_117:
+        # if t30 int< 97 goto 119
+        li    $t1, 97
+        blt   $s0, $t1, L0_119
+        # if t30 int<= 122 goto 121
+        li    $t1, 122
+        ble   $s0, $t1, L0_121
+L0_119:
+        # if t30 int< 65 goto 123
+        li    $t1, 65
+        blt   $s0, $t1, L0_123
+        # if t30 int> 90 goto 123
+        li    $t1, 90
+        bgt   $s0, $t1, L0_123
 L0_121:
-        # t12 = x int- 1
-        addiu $s0, $s1, -1
-        # x = t12
-        move  $s1, $s0
-        # if t12 int== 1 goto 121
+        # k.13 = 2
+        li    $s2, 2
+        # goto 124
+        j     L0_124
+L0_123:
+        # k.13 = 0
+        li    $s2, 0
+L0_124:
+        # if state int!= 0 goto 129
+        bne   $s3, $zero, L0_129
+        # if k.13 int== 0 goto 129
+        beq   $s2, $zero, L0_129
+        # words = words int+ 1
+        addiu $s5, $s5, 1
+        # state = 1
+        li    $s3, 1
+        # goto 132
+        j     L0_132
+L0_129:
+        # if state int!= 1 goto 132
         li    $t1, 1
-        beq   $s0, $t1, L0_121
-        # if t12 int> 0 goto 121
-        bgt   $s0, $zero, L0_121
-        # param "x: %d\n"
-        # param t12
+        bne   $s3, $t1, L0_132
+        # if k.13 int!= 0 goto 132
+        bne   $s2, $zero, L0_132
+        # state = 0
+        li    $s3, 0
+L0_132:
+        # i = i int+ 1
+        addiu $s1, $s1, 1
+        # goto 108
+        j     L0_108
+L0_134:
+        # param "%d\n"
+        # param words
         # call printf, 2
         addiu $sp, $sp, -8
-        la    $t0, str11
+        la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        sw    $s5, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # return total
-        move  $v0, $s3
+        # return 0
+        li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
+        lw    $s0, -24($fp)
+        lw    $s1, -28($fp)
         lw    $s2, -4($fp)
-        lw    $s3, -16($fp)
+        lw    $s3, -32($fp)
+        lw    $s4, -8($fp)
+        lw    $s5, -12($fp)
+        lw    $s6, -16($fp)
+        lw    $s7, -20($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

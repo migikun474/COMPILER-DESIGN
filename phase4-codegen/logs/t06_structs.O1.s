@@ -8,29 +8,19 @@
 # generated for SPIM: `spim -file <this file> [arguments]`
 
         .data
-        .align 3
-g_origin:
-        .byte 3, 0, 0, 0, 4, 0, 0, 0
 str0:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 99, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 99, 32, 37, 100, 32, 37, 46, 49, 102
+        .byte 10, 0
 str1:
         .byte 37, 100, 32, 37, 100, 10, 0
 str2:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str3:
         .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str4:
-        .byte 37, 46, 49, 102, 32, 37, 46, 49, 102, 10, 0
-str5:
-        .byte 37, 100, 32, 37, 100, 32, 37, 99, 32, 37, 100, 32, 37, 100, 10, 0
+str3:
+        .byte 37, 120, 32, 37, 100, 32, 37, 100, 10, 0
         .align 3
-fc0:  .word 0, 1073217536        # 1.5
+fc0:  .word 0, 1074003968        # 2.5
         .align 3
-fc1:  .word 0, 1073741824        # 2
-        .align 3
-fc2:  .word 0, 1072693248        # 1
-        .align 3
-fc3:  .word 0, 1071644672        # 0.5
+fc1:  .word 1065353216        # 1
 
         .text
         .globl main
@@ -47,182 +37,66 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# make(int, int)
-_Z4makeii:
+# grow(struct Out)
+_Z4grow3Out:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        move  $s0, $a0
-        move  $s1, $a1
-        # p[0] = x
-        sw    $s0, -8($fp)
-        # p[4] = y
-        sw    $s1, -4($fp)
-        # return p
-        addiu $v0, $fp, -8
-        j     _Z4makeii_exit
-_Z4makeii_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# area(struct Rect)
-_Z4area4Rect:
         addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -8($fp)
-        sw    $s3, -16($fp)
-        sw    $a0, 8($fp)
-        sw    $a1, 12($fp)
-        sw    $a2, 16($fp)
-        sw    $a3, 20($fp)
-        # t1 = r[8]
-        lw    $s1, 16($fp)
-        # t2 = r[0]
-        lw    $s2, 8($fp)
-        # t3 = t1 int- t2
-        subu  $s0, $s1, $s2
-        # r[8] = t3
-        sw    $s0, 16($fp)
-        # t5 = r[12]
-        lw    $s1, 20($fp)
-        # t6 = r[4]
-        lw    $s2, 12($fp)
-        # t7 = t5 int- t6
-        subu  $s3, $s1, $s2
-        # t8 = t3 int* t7
-        mul   $s1, $s0, $s3
-        # return t8
-        move  $v0, $s1
-        j     _Z4area4Rect_exit
-_Z4area4Rect_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -8($fp)
-        lw    $s3, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# move(struct Point *, int)
-_Z4moveP5Pointi:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -16
         sw    $s0, -4($fp)
         sw    $s1, -8($fp)
-        sw    $s2, -12($fp)
-        sw    $s3, -16($fp)
-        move  $s2, $a0
-        move  $s3, $a1
-        # t1 = *p
-        lw    $s0, 0($s2)
-        # t2 = t1 int+ dx
-        addu  $s1, $s0, $s3
-        # *p = t2
-        sw    $s1, 0($s2)
-        # return
-        j     _Z4moveP5Pointi_exit
-_Z4moveP5Pointi_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -12($fp)
-        lw    $s3, -16($fp)
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# add(Complex, Complex)
-_Z3add7ComplexS_:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        addiu $sp, $sp, -40
-        s.d   $f20, -24($fp)
-        s.d   $f22, -32($fp)
-        s.d   $f24, -40($fp)
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         sw    $a2, 16($fp)
         sw    $a3, 20($fp)
-        # t1 = a[0]
-        l.d   $f0, 8($fp)
-        mov.d $f20, $f0
-        # t2 = b[0]
-        l.d   $f0, 24($fp)
-        mov.d $f22, $f0
-        # t3 = t1 double+ t2
-        add.d $f24, $f20, $f22
-        # c[0] = t3
-        mov.d $f0, $f24
-        s.d   $f0, -16($fp)
-        # t4 = a[8]
-        l.d   $f0, 16($fp)
-        mov.d $f20, $f0
-        # t5 = b[8]
-        l.d   $f0, 32($fp)
-        mov.d $f22, $f0
-        # t6 = t4 double+ t5
-        add.d $f24, $f20, $f22
-        # c[8] = t6
-        mov.d $f0, $f24
-        s.d   $f0, -8($fp)
-        # return c
-        addiu $v0, $fp, -16
-        j     _Z3add7ComplexS__exit
-_Z3add7ComplexS__exit:
-        l.d   $f20, -24($fp)
-        l.d   $f22, -32($fp)
-        l.d   $f24, -40($fp)
+        # t1 = o[0]
+        lw    $s0, 8($fp)
+        # t2 = t1 int+ 100
+        addiu $s1, $s0, 100
+        # o[0] = t2
+        sw    $s1, 8($fp)
+        # o[16] = 9
+        li    $t0, 9
+        sw    $t0, 24($fp)
+        # return o
+        addiu $v0, $fp, 8
+        j     _Z4grow3Out_exit
+_Z4grow3Out_exit:
+        lw    $s0, -4($fp)
+        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
         jr    $ra
 
-# length(struct Node *)
-_Z6lengthP4Node:
+# area(Pt)
+_Z4area2Pt:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
         sw    $s0, -8($fp)
-        sw    $s1, -12($fp)
-        sw    $s2, -4($fp)
-        move  $s0, $a0
-        # n = 0
-        li    $s1, 0
-L4_1:
-        # if head ptr== 0 goto 6
-        beq   $s0, $zero, L4_6
-        # n = n int+ 1
-        addiu $s1, $s1, 1
-        # t2 = head ptr+ 4
-        addiu $s2, $s0, 4
-        # head = *t2
-        lw    $s0, 0($s2)
-        # goto 1
-        j     L4_1
-L4_6:
-        # return n
-        move  $v0, $s1
-        j     _Z6lengthP4Node_exit
-_Z6lengthP4Node_exit:
+        sw    $s1, -4($fp)
+        sw    $s2, -12($fp)
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        # t1 = p[0]
+        lw    $s1, 8($fp)
+        # t2 = t1 int<< 1
+        sll   $s0, $s1, 1
+        # p[0] = t2
+        sw    $s0, 8($fp)
+        # t4 = p[4]
+        lw    $s1, 12($fp)
+        # t5 = t2 int* t4
+        mul   $s2, $s0, $s1
+        # return t5
+        move  $v0, $s2
+        j     _Z4area2Pt_exit
+_Z4area2Pt_exit:
         lw    $s0, -8($fp)
-        lw    $s1, -12($fp)
-        lw    $s2, -4($fp)
+        lw    $s1, -4($fp)
+        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -234,412 +108,291 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -216
+        addiu $sp, $sp, -240
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M5_0
+        beqz  $t8, M2_0
         j     __stack_overflow
-M5_0:
-        s.d   $f20, -208($fp)
-        s.d   $f22, -216($fp)
-        sw    $s0, -188($fp)
-        sw    $s1, -192($fp)
-        sw    $s2, -196($fp)
-        sw    $s3, -200($fp)
-        # r[0] = 1
+M2_0:
+        s.d   $f20, -240($fp)
+        sw    $s0, -212($fp)
+        sw    $s1, -216($fp)
+        sw    $s2, -220($fp)
+        sw    $s3, -224($fp)
+        sw    $s4, -228($fp)
+        sw    $s5, -232($fp)
+        # o[0] = 1
         li    $t0, 1
-        sw    $t0, -20($fp)
-        # r[4] = 2
-        li    $t0, 2
-        sw    $t0, -16($fp)
-        # r[8] = 5
+        sw    $t0, -32($fp)
+        # o[4] = 107
+        li    $t0, 107
+        sb    $t0, -28($fp)
+        # o[8] = 5
         li    $t0, 5
-        sw    $t0, -12($fp)
-        # r[12] = 8
-        li    $t0, 8
-        sw    $t0, -8($fp)
-        # r[16] = 114
-        li    $t0, 114
-        sb    $t0, -4($fp)
-        # copy = r
-        addiu $a0, $fp, -40
-        addiu $a1, $fp, -20
-        li    $a2, 20
-        jal   __memcpy
-        # copy[0] = 100
-        li    $t0, 100
-        sw    $t0, -40($fp)
-        # t1 = r[0]
-        lw    $s0, -20($fp)
-        # param r
-        # t3 = call area(struct Rect), 1
-        addiu $sp, $sp, -24
+        sw    $t0, -24($fp)
+        # o[12] = 6
+        li    $t0, 6
+        sw    $t0, -20($fp)
+        # o[16] = 7
+        li    $t0, 7
+        sw    $t0, -16($fp)
+        # o[24] = 2.5
+        l.d   $f0, fc0
+        s.d   $f0, -8($fp)
+        # param o
+        # g = call grow(struct Out), 1
+        addiu $sp, $sp, -32
         addiu $a0, $sp, 0
-        addiu $a1, $fp, -20
-        li    $a2, 20
+        addiu $a1, $fp, -32
+        li    $a2, 32
         jal   __memcpy
         lw    $a0, 0($sp)
         lw    $a1, 4($sp)
         lw    $a2, 8($sp)
         lw    $a3, 12($sp)
-        jal   _Z4area4Rect
-        addiu $sp, $sp, 24
-        move  $s1, $v0
-        # t4 = r[16]
-        lb    $s2, -4($fp)
+        jal   _Z4grow3Out
+        addiu $sp, $sp, 32
+        move  $a1, $v0
+        addiu $a0, $fp, -64
+        li    $a2, 32
+        jal   __memcpy
+        # t2 = o[0]
+        lw    $s0, -32($fp)
+        # t3 = g[0]
+        lw    $s1, -64($fp)
+        # t4 = g[4]
+        lb    $s2, -60($fp)
         # t5 = chartoint t4
         move  $t0, $s2
         move  $s3, $t0
-        # param "%d %d %d %c\n"
-        # param t1
-        # param 100
+        # t6 = g[16]
+        lw    $s2, -48($fp)
+        # t7 = o[16]
+        lw    $s4, -16($fp)
+        # t8 = t6 int+ t7
+        addu  $s5, $s2, $s4
+        # t9 = g[24]
+        l.d   $f0, -40($fp)
+        mov.d $f20, $f0
+        # param "%d %d %c %d %.1f\n"
+        # param t2
         # param t3
         # param t5
-        # call printf, 5
-        addiu $sp, $sp, -24
+        # param t8
+        # param t9
+        # call printf, 6
+        addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
-        li    $t0, 100
-        sw    $t0, 8($sp)
-        sw    $s1, 12($sp)
-        sw    $s3, 16($sp)
+        sw    $s1, 8($sp)
+        sw    $s3, 12($sp)
+        sw    $s5, 16($sp)
+        mov.d $f0, $f20
+        s.d   $f0, 24($sp)
         jal   __printf
-        addiu $sp, $sp, 24
-        # t6 = r[8]
-        lw    $s0, -12($fp)
-        # t7 = origin[0]
-        la    $t8, g_origin
-        lw    $s1, 0($t8)
-        # t8 = origin[4]
-        la    $t8, g_origin
-        lw    $s2, 4($t8)
-        # t9 = t7 int* t8
-        mul   $s3, $s1, $s2
+        addiu $sp, $sp, 32
+        # p[0] = 3
+        li    $t0, 3
+        sw    $t0, -72($fp)
+        # p[4] = 4
+        li    $t0, 4
+        sw    $t0, -68($fp)
+        # param p
+        # t10 = call area(Pt), 1
+        addiu $sp, $sp, -16
+        addiu $a0, $sp, 0
+        addiu $a1, $fp, -72
+        li    $a2, 8
+        jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        jal   _Z4area2Pt
+        addiu $sp, $sp, 16
+        move  $s0, $v0
+        # t11 = p[0]
+        lw    $s1, -72($fp)
         # param "%d %d\n"
-        # param t6
-        # param t9
+        # param t10
+        # param t11
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
-        sw    $s3, 8($sp)
+        sw    $s1, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # i = 0
-        li    $s0, 0
-L5_27:
-        # if i int>= 3 goto 36
-        li    $t1, 3
-        bge   $s0, $t1, L5_36
-        # t10 = i int<< 3
-        sll   $s1, $s0, 3
-        # t11 = i int* i
-        mul   $s2, $s0, $s0
-        # param i
-        # param t11
-        # t12 = call make(int, int), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        move  $a1, $s2
-        jal   _Z4makeii
-        addiu $sp, $sp, 16
-        move  $a1, $v0
-        addiu $a0, $fp, -168
-        li    $a2, 8
-        jal   __memcpy
-        # pts[t10] = t12
-        addiu $t8, $fp, -64
-        addu  $t8, $t8, $s1
-        addiu $a0, $t8, 0
-        addiu $a1, $fp, -168
-        li    $a2, 8
-        jal   __memcpy
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 27
-        j     L5_27
-L5_36:
-        # t14 = &pts
-        addiu $s0, $fp, -64
-        # t15 = t14 ptr+ 8
+        # t12 = &os
+        addiu $s1, $fp, -136
+        # t13 = t12 ptr+ 32
+        addiu $s0, $s1, 32
+        # op = t13
+        move  $s1, $s0
+        # ii = 1
+        li    $s1, 1
+        # jj = 2
+        li    $s1, 2
+        # os[48] = 31
+        li    $t0, 31
+        sw    $t0, -88($fp)
+        # t19 = t13 ptr+ 8
         addiu $s1, $s0, 8
-        # param t15
-        # param 10
-        # call move(struct Point *, int), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        li    $a1, 10
-        jal   _Z4moveP5Pointi
-        addiu $sp, $sp, 16
-        # t17 = t14 ptr+ 16
-        addiu $s1, $s0, 16
-        # t18 = t17 ptr+ 4
+        # t20 = t19 ptr+ 4
         addiu $s0, $s1, 4
-        # t19 = *t18
-        lw    $s1, 0($s0)
-        # t20 = t19 int+ 1
-        addiu $s2, $s1, 1
-        # *t18 = t20
-        sw    $s2, 0($s0)
-        # t22 = pts[8]
-        lw    $s0, -56($fp)
-        # t23 = pts[12]
-        lw    $s1, -52($fp)
-        # t24 = pts[20]
-        lw    $s2, -44($fp)
-        # param 3
-        # param 4
-        # t25 = call make(int, int), 2
-        addiu $sp, $sp, -16
-        li    $a0, 3
-        li    $a1, 4
-        jal   _Z4makeii
-        addiu $sp, $sp, 16
-        move  $a1, $v0
-        addiu $a0, $fp, -176
-        li    $a2, 8
+        # *t20 = 17
+        li    $t0, 17
+        sw    $t0, 0($s0)
+        # t21 = os[48]
+        lw    $s0, -88($fp)
+        # t25 = os[44]
+        lw    $s1, -92($fp)
+        # param o
+        # t26 = call grow(struct Out), 1
+        addiu $sp, $sp, -32
+        addiu $a0, $sp, 0
+        addiu $a1, $fp, -32
+        li    $a2, 32
         jal   __memcpy
-        # t26 = t25[4]
-        lw    $s3, -172($fp)
-        # param "%d %d %d %d\n"
-        # param t22
-        # param t23
-        # param t24
-        # param t26
-        # call printf, 5
-        addiu $sp, $sp, -24
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        jal   _Z4grow3Out
+        addiu $sp, $sp, 32
+        move  $a1, $v0
+        addiu $a0, $fp, -200
+        li    $a2, 32
+        jal   __memcpy
+        # t27 = t26[0]
+        lw    $s2, -200($fp)
+        # param "%d %d %d\n"
+        # param t21
+        # param t25
+        # param t27
+        # call printf, 4
+        addiu $sp, $sp, -16
         la    $t0, str2
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
         sw    $s1, 8($sp)
         sw    $s2, 12($sp)
-        sw    $s3, 16($sp)
-        jal   __printf
-        addiu $sp, $sp, 24
-        # t27 = &r
-        addiu $s0, $fp, -20
-        # t28 = t27 ptr+ 8
-        addiu $s1, $s0, 8
-        # pp = t28
-        move  $s2, $s1
-        # t29 = t28 ptr+ 4
-        addiu $s2, $s1, 4
-        # t30 = *t29
-        lw    $s3, 0($s2)
-        # t31 = t30 int+ 1
-        addiu $s2, $s3, 1
-        # *t28 = t31
-        sw    $s2, 0($s1)
-        # rp = t27
-        move  $s1, $s0
-        # param 7
-        # param 7
-        # t33 = call make(int, int), 2
-        addiu $sp, $sp, -16
-        li    $a0, 7
-        li    $a1, 7
-        jal   _Z4makeii
-        addiu $sp, $sp, 16
-        move  $a1, $v0
-        addiu $a0, $fp, -184
-        li    $a2, 8
-        jal   __memcpy
-        # *t27 = t33
-        addiu $a0, $s0, 0
-        addiu $a1, $fp, -184
-        li    $a2, 8
-        jal   __memcpy
-        # t34 = r[8]
-        lw    $s1, -12($fp)
-        # t35 = *t27
-        lw    $s2, 0($s0)
-        # t36 = t27 ptr+ 12
-        addiu $s3, $s0, 12
-        # t37 = *t36
-        lw    $s0, 0($s3)
-        # param "%d %d %d\n"
-        # param t34
-        # param t35
-        # param t37
-        # call printf, 4
-        addiu $sp, $sp, -16
-        la    $t0, str3
-        sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # a[0] = 1.5
-        l.d   $f0, fc0
-        s.d   $f0, -80($fp)
-        # a[8] = 2.0
-        l.d   $f0, fc1
-        s.d   $f0, -72($fp)
-        # b[0] = 1.0
-        l.d   $f0, fc2
-        s.d   $f0, -96($fp)
-        # b[8] = 0.5
-        l.d   $f0, fc3
-        s.d   $f0, -88($fp)
-        # param a
-        # param b
-        # c = call add(Complex, Complex), 2
-        addiu $sp, $sp, -32
-        addiu $a0, $sp, 0
-        addiu $a1, $fp, -80
-        li    $a2, 16
-        jal   __memcpy
-        addiu $a0, $sp, 16
-        addiu $a1, $fp, -96
-        li    $a2, 16
-        jal   __memcpy
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        lw    $a2, 8($sp)
-        lw    $a3, 12($sp)
-        jal   _Z3add7ComplexS_
-        addiu $sp, $sp, 32
-        move  $a1, $v0
-        addiu $a0, $fp, -112
-        li    $a2, 16
-        jal   __memcpy
-        # t39 = c[0]
-        l.d   $f0, -112($fp)
-        mov.d $f20, $f0
-        # t40 = c[8]
-        l.d   $f0, -104($fp)
-        mov.d $f22, $f0
-        # param "%.1f %.1f\n"
-        # param t39
-        # param t40
-        # call printf, 3
-        addiu $sp, $sp, -24
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        mov.d $f0, $f20
-        s.d   $f0, 8($sp)
-        mov.d $f0, $f22
-        s.d   $f0, 16($sp)
-        jal   __printf
-        addiu $sp, $sp, 24
-        # n1[0] = 1
+        # ps[0] = 1
         li    $t0, 1
-        sw    $t0, -120($fp)
-        # t41 = &n2
-        addiu $s0, $fp, -128
-        # n1[4] = t41
-        sw    $s0, -116($fp)
-        # n2[0] = 2
+        sw    $t0, -152($fp)
+        # ps[4] = 2
         li    $t0, 2
-        sw    $t0, -128($fp)
-        # t42 = &n3
-        addiu $s0, $fp, -136
-        # n2[4] = t42
-        sw    $s0, -124($fp)
-        # n3[0] = 3
+        sw    $t0, -148($fp)
+        # ps[8] = 3
         li    $t0, 3
-        sw    $t0, -136($fp)
-        # n3[4] = 0
-        sw    $zero, -132($fp)
-        # t43 = &n1
-        addiu $s0, $fp, -120
-        # param t43
-        # t44 = call length(struct Node *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z6lengthP4Node
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # t45 = n1[4]
-        lw    $s0, -116($fp)
-        # t46 = t45 ptr+ 4
-        addiu $s2, $s0, 4
-        # t47 = *t46
-        lw    $s0, 0($s2)
-        # t48 = *t47
-        lw    $s2, 0($s0)
+        sw    $t0, -144($fp)
+        # ps[12] = 4
+        li    $t0, 4
+        sw    $t0, -140($fp)
+        # t28 = ps[0]
+        addiu $a1, $fp, -152
+        addiu $a0, $fp, -208
+        li    $a2, 8
+        jal   __memcpy
+        # ps[8] = t28
+        addiu $a0, $fp, -144
+        addiu $a1, $fp, -208
+        li    $a2, 8
+        jal   __memcpy
+        # ps[4] = 50
+        li    $t0, 50
+        sw    $t0, -148($fp)
+        # t29 = ps[12]
+        lw    $s0, -140($fp)
         # param "%d %d\n"
-        # param t44
-        # param t48
+        # param t29
+        # param 50
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s2, 8($sp)
+        sw    $s0, 4($sp)
+        li    $t0, 50
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # k[0] = 1
+        # h[4] = 3
+        li    $t0, 3
+        sw    $t0, -160($fp)
+        # h[8] = 8
+        li    $t0, 8
+        sw    $t0, -156($fp)
+        # h[0] = 1
         li    $t0, 1
-        sw    $t0, -152($fp)
-        # k[4] = 16909060
-        li    $t0, 16909060
-        sw    $t0, -148($fp)
-        # k[8] = 0
-        sb    $zero, -144($fp)
-        # k[9] = 0
-        sb    $zero, -143($fp)
-        # k[10] = 0
-        sb    $zero, -142($fp)
-        # k[11] = 0
-        sb    $zero, -141($fp)
-        # k[12] = 9
-        li    $t0, 9
-        sh    $t0, -140($fp)
-        # k[9] = 120
-        li    $t0, 120
-        sb    $t0, -143($fp)
-        # t49 = k[0]
-        lw    $s0, -152($fp)
-        # t50 = k[4]
-        lw    $s1, -148($fp)
-        # t53 = k[12]
-        lh    $s2, -140($fp)
-        # t54 = shorttoint t53
-        move  $t0, $s2
-        move  $s3, $t0
-        # param "%d %d %c %d %d\n"
-        # param t49
-        # param t50
-        # param 120
-        # param t54
-        # param 16
-        # call printf, 6
-        addiu $sp, $sp, -24
-        la    $t0, str5
+        sw    $t0, -164($fp)
+        # t31 = h[8]
+        lw    $s0, -156($fp)
+        # t32 = h[4]
+        lw    $s1, -160($fp)
+        # t33 = t31 int- t32
+        subu  $s2, $s0, $s1
+        # param "%d %d\n"
+        # param t33
+        # param 12
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        sw    $s2, 4($sp)
+        li    $t0, 12
+        sw    $t0, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # param "%d %d\n"
+        # param 8
+        # param 32
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        li    $t0, 8
+        sw    $t0, 4($sp)
+        li    $t0, 32
+        sw    $t0, 8($sp)
+        jal   __printf
+        addiu $sp, $sp, 16
+        # b[0] = 1.0
+        l.s   $f0, fc1
+        s.s   $f0, -168($fp)
+        # t34 = b[0]
+        lw    $s0, -168($fp)
+        # t35 = b[3]
+        lbu   $s1, -165($fp)
+        # t36 = uchartoint t35
+        move  $t0, $s1
+        move  $s2, $t0
+        # param "%x %d %d\n"
+        # param t34
+        # param t36
+        # param 4
+        # call printf, 4
+        addiu $sp, $sp, -16
+        la    $t0, str3
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        li    $t0, 120
+        sw    $s2, 8($sp)
+        li    $t0, 4
         sw    $t0, 12($sp)
-        sw    $s3, 16($sp)
-        li    $t0, 16
-        sw    $t0, 20($sp)
         jal   __printf
-        addiu $sp, $sp, 24
-        # zero[0] = 0
-        sw    $zero, -160($fp)
-        # zero[4] = 0
-        sw    $zero, -156($fp)
-        # t55 = zero[0]
-        lw    $s0, -160($fp)
-        # t56 = pts[16]
-        lw    $s1, -48($fp)
-        # t57 = t55 int+ t56
-        addu  $s2, $s0, $s1
-        # return t57
-        move  $v0, $s2
+        addiu $sp, $sp, 16
+        # return 0
+        li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -208($fp)
-        l.d   $f22, -216($fp)
-        lw    $s0, -188($fp)
-        lw    $s1, -192($fp)
-        lw    $s2, -196($fp)
-        lw    $s3, -200($fp)
+        l.d   $f20, -240($fp)
+        lw    $s0, -212($fp)
+        lw    $s1, -216($fp)
+        lw    $s2, -220($fp)
+        lw    $s3, -224($fp)
+        lw    $s4, -228($fp)
+        lw    $s5, -232($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

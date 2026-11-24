@@ -4,7 +4,7 @@
 
    Source file   : test/t08_classes.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 261 -> 234 instruction(s)
+   Result        : Optimized three address code (-O1): 200 -> 180 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,361 +14,111 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          261 -> 234   (10% fewer)
+   instructions                          200 -> 180   (10% fewer)
 
    constants folded                        0
-   algebraic simplifications               0
-   common subexpressions                  16
-   copies / constants forwarded           18
-   temporaries merged away                 8
-   dead instructions removed              18
+   algebraic simplifications               1
+   common subexpressions                  14
+   copies / constants forwarded           14
+   temporaries merged away                 3
+   dead instructions removed              16
    jumps removed or redirected             3
    unreachable instructions removed        0
 
 ----------------------------------------------------------------------------
- GLOBALS: 1 object(s) in static storage
+ GLOBALS: 2 object(s) in static storage
 ----------------------------------------------------------------------------
 
    name             type                        width  initial value
    ---------------- -------------------------- ------  -------------
-   Dog::made        int                             4  0
+   Vec::made        int                             4  0
+   origin           class Vec                       8  0
 
  As three address code (initial values, in place before main runs):
 
-    Dog::made = 0
+    Vec::made = 0
+    origin[...] = 0                (zero-initialized)
 
 ============================================================================
- FUNCTION Animal::Animal()        (link name _ZN6AnimalC1Ev)
+ FUNCTION Part::Part()        (link name _ZN4PartC1Ev)
 ============================================================================
 
  Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   this             param   class Animal *                  4       0
+   this             param   class Part *                    4       0
 
  Code: 4 instruction(s)
 
-    100     *this = 4
-    101     param "Animal()\n"
+    100     *this = 7
+    101     param "Part "
     102     call printf, 1
     103     return
-
-============================================================================
- FUNCTION Animal::count()        (link name _ZN6Animal5countEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Animal *                  4       0
-   t1               temp    int                             4       4
-
- Code: 2 instruction(s)
-
-    104     t1 = *this
-    105     return t1
-
-============================================================================
- FUNCTION Tag::Tag()        (link name _ZN3TagC1Ev)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Tag *                     4       0
-
- Code: 4 instruction(s)
-
-    106     *this = 7
-    107     param "Tag()\n"
-    108     call printf, 1
-    109     return
-
-============================================================================
- FUNCTION Dog::Dog()        (link name _ZN3DogC1Ev)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    class Dog *                     4       8
-   (1 temporary no longer used after optimization not shown)
-
- Code: 11 instruction(s)
-
-    110     param this                          (this)
-    111     call Animal::Animal(), 1
-    112     t1 = this ptr+ 8
-    113     param t1                            (this)
-    114     call Tag::Tag(), 1
-    115     t2 = this ptr+ 4
-    116     *t2 = 0
-    117     Dog::made = Dog::made int+ 1
-    118     param "Dog()\n"
-    119     call printf, 1
-    120     return
-
-============================================================================
- FUNCTION Dog::human()        (link name _ZN3Dog5humanEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 8 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-   t4               temp    int                             4      16
-   t5               temp    int                             4      20
-   t6               temp    class Dog *                     4      24
-   t7               temp    int                             4      28
-   t8               temp    int                             4      32
-
- Code: 9 instruction(s)
-
-    121     t1 = this ptr+ 4
-    122     t2 = *t1
-    123     t3 = t2 int* 7
-    124     t4 = *this
-    125     t5 = t3 int+ t4
-    126     t6 = this ptr+ 8
-    127     t7 = *t6
-    128     t8 = t5 int+ t7
-    129     return t8
-
-============================================================================
- FUNCTION Dog::total()        (link name _ZN3Dog5totalEv)
-============================================================================
-
- Code: 1 instruction(s)
-
-    130     return Dog::made
-
-============================================================================
- FUNCTION Dog::birthday()        (link name _ZN3Dog8birthdayEv)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 20 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Dog *                     4       0
-   t1               temp    class Dog *                     4       4
-   t2               temp    int                             4       8
-   t3               temp    int                             4      12
-   (1 temporary no longer used after optimization not shown)
-
- Code: 5 instruction(s)
-
-    131     t1 = this ptr+ 4
-    132     t2 = *t1
-    133     t3 = t2 int+ 1
-    134     *t1 = t3
-    135     return
 
 ============================================================================
  FUNCTION Vec::Vec()        (link name _ZN3VecC1Ev)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
+ Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 12 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Vec *                     4       0
    t1               temp    class Vec *                     4       4
-
- Code: 4 instruction(s)
-
-    136     *this = 0
-    137     t1 = this ptr+ 4
-    138     *t1 = 0
-    139     return
-
-============================================================================
- FUNCTION Vec::operator+(class Vec)        (link name _ZN3VecplES_)
-============================================================================
-
- Symbol table: 3 parameter(s)/local(s), 8 temporaries, frame 52 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   r                local   class Vec                       8      12
-   t1               temp    class Vec *                     4      20
-   t2               temp    int                             4      24
-   t3               temp    int                             4      28
-   t4               temp    int                             4      32
-   t5               temp    class Vec *                     4      36
-   t6               temp    int                             4      40
-   t7               temp    int                             4      44
-   t8               temp    int                             4      48
-
- Code: 13 instruction(s)
-
-    140     t1 = &r
-    141     param t1                            (this)
-    142     call Vec::Vec(), 1
-    143     t2 = *this
-    144     t3 = o[0]
-    145     t4 = t2 int+ t3
-    146     r[0] = t4
-    147     t5 = this ptr+ 4
-    148     t6 = *t5
-    149     t7 = o[4]
-    150     t8 = t6 int+ t7
-    151     r[4] = t8
-    152     return r
-
-============================================================================
- FUNCTION Vec::operator-()        (link name _ZN3VecmiEv)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 6 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   r                local   class Vec                       8       4
-   t1               temp    class Vec *                     4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-
- Code: 11 instruction(s)
-
-    153     t1 = &r
-    154     param t1                            (this)
-    155     call Vec::Vec(), 1
-    156     t2 = *this
-    157     t3 = int- t2
-    158     r[0] = t3
-    159     t4 = this ptr+ 4
-    160     t5 = *t4
-    161     t6 = int- t5
-    162     r[4] = t6
-    163     return r
-
-============================================================================
- FUNCTION Vec::operator==(class Vec)        (link name _ZN3VeceqES_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 6 temporaries, frame 36 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-
- Code: 11 instruction(s)
-
-    164       t2 = *this
-    165       t3 = o[0]
-    166       if t2 int!= t3 goto L1
-    167       t4 = this ptr+ 4
-    168       t5 = *t4
-    169       t6 = o[4]
-    170       if t5 int== t6 goto L2
-    171  L1:  t1 = 0
-    172       goto L3
-    173  L2:  t1 = 1
-    174  L3:  return t1
-
-============================================================================
- FUNCTION Vec::operator[](int)        (link name _ZN3VecixEi)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 24 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   i                param   int                             4       4
-   t1               temp    int                             4       8
-   t3               temp    class Vec *                     4      16
-   (2 temporaries no longer used after optimization not shown)
-
- Code: 6 instruction(s)
-
-    175       if i int!= 0 goto L4
-    176       t1 = *this
-    177       goto L5
-    178  L4:  t3 = this ptr+ 4
-    179       t1 = *t3
-    180  L5:  return t1
-
-============================================================================
- FUNCTION Vec::operator+=(class Vec)        (link name _ZN3VecpLES_)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 7 temporaries, frame 44 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   t7               temp    int                             4      36
    (1 temporary no longer used after optimization not shown)
 
- Code: 10 instruction(s)
+ Code: 5 instruction(s)
 
-    181     t1 = *this
-    182     t2 = o[0]
-    183     t3 = t1 int+ t2
-    184     *this = t3
-    185     t4 = this ptr+ 4
-    186     t5 = *t4
-    187     t6 = o[4]
-    188     t7 = t5 int+ t6
-    189     *t4 = t7
-    190     return this
+    104     *this = 0
+    105     t1 = this ptr+ 4
+    106     *t1 = 0
+    107     Vec::made = Vec::made int+ 1
+    108     return
 
 ============================================================================
- FUNCTION Vec::operator++()        (link name _ZN3VecppEv)
+ FUNCTION Vec::operator+(class Vec &)        (link name _ZN3VecplERS_)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
+ Symbol table: 3 parameter(s)/local(s), 9 temporaries, frame 52 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Vec *                     4       0
-   t1               temp    int                             4       4
-   t2               temp    int                             4       8
+   o                param   class Vec &                     4       4
+   r                local   class Vec                       8       8
+   t1               temp    class Vec *                     4      16
+   t2               temp    int                             4      20
+   t3               temp    int                             4      24
+   t4               temp    int                             4      28
+   t5               temp    class Vec *                     4      32
+   t6               temp    int                             4      36
+   t7               temp    class Vec *                     4      40
+   t8               temp    int                             4      44
+   t9               temp    int                             4      48
 
- Code: 4 instruction(s)
+ Code: 14 instruction(s)
 
-    191     t1 = *this
-    192     t2 = t1 int+ 1
-    193     *this = t2
-    194     return this
+    109     t1 = &r
+    110     param t1                            (this)
+    111     call Vec::Vec(), 1
+    112     t2 = *this
+    113     t3 = *o
+    114     t4 = t2 int+ t3
+    115     r[0] = t4
+    116     t5 = this ptr+ 4
+    117     t6 = *t5
+    118     t7 = o ptr+ 4
+    119     t8 = *t7
+    120     t9 = t6 int+ t8
+    121     r[4] = t9
+    122     return r
 
 ============================================================================
- FUNCTION Vec::operator()(int)        (link name _ZN3VecclEi)
+ FUNCTION Vec::operator+=(int)        (link name _ZN3VecpLEi)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 28 bytes
+ Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 32 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -379,253 +129,360 @@
    t3               temp    class Vec *                     4      16
    t4               temp    int                             4      20
    t5               temp    int                             4      24
+   (1 temporary no longer used after optimization not shown)
 
- Code: 6 instruction(s)
+ Code: 8 instruction(s)
 
-    195     t1 = *this
-    196     t2 = t1 int* k
-    197     t3 = this ptr+ 4
-    198     t4 = *t3
-    199     t5 = t2 int+ t4
-    200     return t5
+    123     t1 = *this
+    124     t2 = t1 int+ k
+    125     *this = t2
+    126     t3 = this ptr+ 4
+    127     t4 = *t3
+    128     t5 = t4 int+ k
+    129     *t3 = t5
+    130     return this
 
 ============================================================================
- FUNCTION Vec::dot(class Vec)        (link name _ZN3Vec3dotES_)
+ FUNCTION Vec::operator==(class Vec &)        (link name _ZN3VeceqERS_)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 8 temporaries, frame 44 bytes
+ Symbol table: 2 parameter(s)/local(s), 7 temporaries, frame 36 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    this             param   class Vec *                     4       0
-   o                param   class Vec                       8       4
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    class Vec *                     4      24
-   t5               temp    int                             4      28
-   t6               temp    int                             4      32
-   t7               temp    int                             4      36
-   t8               temp    int                             4      40
+   o                param   class Vec &                     4       4
+   t1               temp    int                             4       8
+   t2               temp    int                             4      12
+   t3               temp    int                             4      16
+   t4               temp    class Vec *                     4      20
+   t5               temp    int                             4      24
+   t6               temp    class Vec *                     4      28
+   t7               temp    int                             4      32
 
- Code: 9 instruction(s)
+ Code: 12 instruction(s)
 
-    201     t1 = *this
-    202     t2 = o[0]
-    203     t3 = t1 int* t2
-    204     t4 = this ptr+ 4
-    205     t5 = *t4
-    206     t6 = o[4]
-    207     t7 = t5 int* t6
-    208     t8 = t3 int+ t7
-    209     return t8
+    131       t2 = *this
+    132       t3 = *o
+    133       if t2 int!= t3 goto L1
+    134       t4 = this ptr+ 4
+    135       t5 = *t4
+    136       t6 = o ptr+ 4
+    137       t7 = *t6
+    138       if t5 int== t7 goto L2
+    139  L1:  t1 = 0
+    140       goto L3
+    141  L2:  t1 = 1
+    142  L3:  return t1
 
 ============================================================================
- FUNCTION make(int, int)        (link name _Z4makeii)
+ FUNCTION Vec::operator[](int)        (link name _ZN3VecixEi)
 ============================================================================
 
- Symbol table: 3 parameter(s)/local(s), 1 temporary, frame 20 bytes
+ Symbol table: 2 parameter(s)/local(s), 1 temporary, frame 16 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   a                param   int                             4       0
-   b                param   int                             4       4
-   v                local   class Vec                       8       8
-   t1               temp    class Vec *                     4      16
+   this             param   class Vec *                     4       0
+   i                param   int                             4       4
+   t1               temp    int *                           4       8
+   (1 temporary no longer used after optimization not shown)
+
+ Code: 5 instruction(s)
+
+    143       if i int!= 0 goto L4
+    144       t1 = this
+    145       goto L5
+    146  L4:  t1 = this ptr+ 4
+    147  L5:  return t1
+
+============================================================================
+ FUNCTION Vec::operator()(int)        (link name _ZN3VecclEi)
+============================================================================
+
+ Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 16 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   this             param   class Vec *                     4       0
+   k                param   int                             4       4
+   t1               temp    int                             4       8
+   t2               temp    int                             4      12
+
+ Code: 3 instruction(s)
+
+    148     t1 = *this
+    149     t2 = t1 int* k
+    150     return t2
+
+============================================================================
+ FUNCTION peek(class Vec &)        (link name _Z4peekR3Vec)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 5 temporaries, frame 24 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   v                param   class Vec &                     4       0
+   t1               temp    int                             4       4
+   t2               temp    int                             4       8
+   t3               temp    class Vec *                     4      12
+   t4               temp    int                             4      16
+   t5               temp    int                             4      20
 
  Code: 6 instruction(s)
 
-    210     t1 = &v
-    211     param t1                            (this)
-    212     call Vec::Vec(), 1
-    213     v[0] = a
-    214     v[4] = b
-    215     return v
+    151     t1 = *v
+    152     t2 = t1 int* 100
+    153     t3 = v ptr+ 4
+    154     t4 = *t3
+    155     t5 = t2 int+ t4
+    156     return t5
 
 ============================================================================
- FUNCTION operator*(class Vec, int)        (link name _Zml3Veci)
+ FUNCTION Base::Base()        (link name _ZN4BaseC1Ev)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 5 temporaries, frame 36 bytes
+ Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   this             param   class Base *                    4       0
+
+ Code: 4 instruction(s)
+
+    157     *this = 1
+    158     param "Base "
+    159     call printf, 1
+    160     return
+
+============================================================================
+ FUNCTION Base::area()        (link name _ZN4Base4areaEv)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   this             param   class Base *                    4       0
+
+ Code: 1 instruction(s)
+
+    161     return 10
+
+============================================================================
+ FUNCTION Shape::Shape()        (link name _ZN5ShapeC1Ev)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 16 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   this             param   class Shape *                   4       0
+   t1               temp    class Shape *                   4       4
+   t2               temp    int                             4       8
+   t3               temp    int                             4      12
+
+ Code: 11 instruction(s)
+
+    162     param this                          (this)
+    163     call Base::Base(), 1
+    164     t1 = this ptr+ 4
+    165     param t1                            (this)
+    166     call Part::Part(), 1
+    167     t2 = *this
+    168     t3 = t2 int+ 1
+    169     *this = t3
+    170     param "Shape\n"
+    171     call printf, 1
+    172     return
+
+============================================================================
+ FUNCTION Shape::area()        (link name _ZN5Shape4areaEv)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 16 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   this             param   class Shape *                   4       0
+   t1               temp    int                             4       4
+   t2               temp    int                             4       8
+   t3               temp    int                             4      12
+
+ Code: 5 instruction(s)
+
+    173     param this                          (this)
+    174     t1 = call Base::area(), 1
+    175     t2 = *this
+    176     t3 = t1 int+ t2
+    177     return t3
+
+============================================================================
+ FUNCTION twice(class Vec)        (link name _Z5twice3Vec)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 20 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    v                param   class Vec                       8       0
-   k                param   int                             4       8
-   t1               temp    int                             4      12
-   t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    int                             4      24
-   t5               temp    class Vec                       8      28
+   t1               temp    int                             4       8
+   t2               temp    int                             4      12
+   (1 temporary no longer used after optimization not shown)
 
- Code: 8 instruction(s)
+ Code: 4 instruction(s)
 
-    216     t1 = v[0]
-    217     t2 = t1 int* k
-    218     t3 = v[4]
-    219     t4 = t3 int* k
-    220     param t2
-    221     param t4
-    222     t5 = call make(int, int), 2
-    223     return t5
+    178     t1 = v[0]
+    179     t2 = t1 int<< 1
+    180     v[0] = t2
+    181     return t2
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 25 temporaries, frame 292 bytes
+ Symbol table: 6 parameter(s)/local(s), 29 temporaries, frame 248 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   rex              local   class Dog                      12       0
-   base             local   class Animal *                  4      12
-   other            local   class Dog                      12      16
-   a                local   class Vec                       8      28
-   b                local   class Vec                       8      36
-   c                local   class Vec                       8      44
-   d                local   class Vec                       8      52
-   e                local   class Vec                       8      60
-   row              local   class Vec[2]                   16      68
-   w                local   int                             4      84
-   t1               temp    class Dog *                     4      88
-   t4               temp    int                             4     100
-   t6               temp    int                             4     108
-   t7               temp    int                             4     112
-   t9               temp    int                             4     120
-   t10              temp    class Dog *                     4     124
-   t12              temp    int                             4     132
-   t15              temp    class Vec *                     4     152
-   t16              temp    class Vec *                     4     156
-   t25              temp    int                             4     204
-   t26              temp    int                             4     208
-   t27              temp    int                             4     212
-   t28              temp    int                             4     216
-   t29              temp    int                             4     220
-   t30              temp    int                             4     224
-   t32              temp    int                             4     232
-   t34              temp    int                             4     240
-   t36              temp    int                             4     248
-   t38              temp    int                             4     256
-   t40              temp    int                             4     264
-   t41              temp    class Vec (*)[2]                4     268
-   t42              temp    class Vec (*)[2]                4     272
-   t43              temp    int                             4     276
-   t45              temp    int                             4     284
-   t46              temp    int                             4     288
-   (21 temporaries no longer used after optimization not shown)
+   s                local   class Shape                     8       0
+   a                local   class Vec                       8       8
+   b                local   class Vec                       8      16
+   c                local   class Vec                       8      24
+   pl               local   class Plain                     8      32
+   many             local   class Vec[3]                   24      40
+   t1               temp    class Vec *                     4      64
+   t2               temp    class Shape *                   4      68
+   t4               temp    int                             4      76
+   t5               temp    int                             4      80
+   t6               temp    int                             4      84
+   t7               temp    class Vec *                     4      88
+   t8               temp    class Vec *                     4      92
+   t14              temp    class Vec *                     4     120
+   t15              temp    int &                           4     124
+   t16              temp    int                             4     128
+   t18              temp    int &                           4     136
+   t19              temp    int                             4     140
+   t22              temp    int                             4     152
+   t24              temp    int                             4     160
+   t25              temp    int                             4     164
+   t26              temp    int                             4     168
+   t28              temp    int &                           4     176
+   t29              temp    class Plain *                   4     180
+   t30              temp    int                             4     184
+   t32              temp    int                             4     192
+   t33              temp    class Vec                       8     196
+   t34              temp    class Vec *                     4     204
+   t35              temp    int                             4     208
+   t36              temp    int                             4     212
+   t37              temp    class Vec (*)[3]                4     216
+   t38              temp    class Vec (*)[3]                4     220
+   t39              temp    class Vec (*)[3]                4     224
+   t43              temp    int                             4     240
+   t44              temp    int                             4     244
+   (15 temporaries no longer used after optimization not shown)
 
- Code: 110 instruction(s)
+ Code: 98 instruction(s)
 
-    224     t1 = &rex
-    225     param t1                            (this)
-    226     call Dog::Dog(), 1
-    227     rex[4] = 3
-    228     param t1                            (this)
-    229     call Dog::birthday(), 1
-    230     param t1                            (this)
-    231     t4 = call Dog::human(), 1
-    232     param t1                            (this)
-    233     t6 = call Animal::count(), 1
-    234     t7 = call Dog::total(), 0
-    235     param "%d %d %d\n"
-    236     param t4
-    237     param t6
-    238     param t7
-    239     call printf, 4
-    240     base = t1
-    241     t9 = *t1
-    242     param "%d\n"
-    243     param t9
-    244     call printf, 2
-    245     param "--\n"
-    246     call printf, 1
-    247     t10 = &other
-    248     param t10                           (this)
-    249     call Dog::Dog(), 1
-    250     other[4] = 5
-    251     param t10                           (this)
-    252     t12 = call Dog::human(), 1
-    253     param "%d %d\n"
-    254     param t12
-    255     param Dog::made
-    256     call printf, 3
-    257     param "--\n"
-    258     call printf, 1
-    259     param 1
-    260     param 2
-    261     a = call make(int, int), 2
-    262     param 3
-    263     param 4
-    264     b = call make(int, int), 2
-    265     t15 = &c
-    266     param t15                           (this)
-    267     call Vec::Vec(), 1
-    268     t16 = &a
-    269     param t16                           (this)
-    270     param b
-    271     c = call Vec::operator+(class Vec), 2
-    272     param t15                           (this)
-    273     d = call Vec::operator-(), 1
-    274     param a
-    275     param 3
-    276     e = call operator*(class Vec, int), 2
-    277     param t16                           (this)
-    278     param b
-    279     call Vec::operator+=(class Vec), 2
-    280     param t16                           (this)
-    281     call Vec::operator++(), 1
-    282     t25 = c[0]
-    283     t26 = c[4]
-    284     t27 = d[0]
-    285     t28 = e[4]
-    286     t29 = a[0]
-    287     t30 = a[4]
-    288     param "%d %d %d %d %d %d\n"
-    289     param t25
-    290     param t26
-    291     param t27
-    292     param t28
-    293     param t29
-    294     param t30
-    295     call printf, 7
-    296     param t16                           (this)
-    297     param b
-    298     t32 = call Vec::operator==(class Vec), 2
-    299     param t15                           (this)
-    300     param c
-    301     t34 = call Vec::operator==(class Vec), 2
-    302     param t16                           (this)
-    303     param 0
-    304     t36 = call Vec::operator[](int), 2
-    305     param t16                           (this)
-    306     param 2
-    307     t38 = call Vec::operator()(int), 2
-    308     param t16                           (this)
-    309     param b
-    310     t40 = call Vec::dot(class Vec), 2
-    311     param "%d %d %d %d %d\n"
-    312     param t32
-    313     param t34
-    314     param t36
-    315     param t38
-    316     param t40
-    317     call printf, 6
-    318     t41 = &row
-    319     param t41                           (this)
-    320     call Vec::Vec(), 1
-    321     t42 = t41 ptr+ 8
-    322     param t42                           (this)
-    323     call Vec::Vec(), 1
-    324     row[8] = 9
-    325     t43 = row[0]
-    326     param "%d %d\n"
-    327     param t43
-    328     param 9
-    329     call printf, 3
-    330     w = 7
-    331     t45 = c[0]
-    332     t46 = 7 int+ t45
-    333     return t46
+    182     t1 = &origin
+    183     param t1                            (this)
+    184     call Vec::Vec(), 1
+    185     t2 = &s
+    186     param t2                            (this)
+    187     call Shape::Shape(), 1
+    188     param t2                            (this)
+    189     t4 = call Shape::area(), 1
+    190     t5 = s[4]
+    191     t6 = s[0]
+    192     param "%d %d %d\n"
+    193     param t4
+    194     param t5
+    195     param t6
+    196     call printf, 4
+    197     t7 = &a
+    198     param t7                            (this)
+    199     call Vec::Vec(), 1
+    200     t8 = &b
+    201     param t8                            (this)
+    202     call Vec::Vec(), 1
+    203     param t7                            (this)
+    204     param 3
+    205     call Vec::operator+=(int), 2
+    206     b[0] = 1
+    207     b[4] = 2
+    208     param t7                            (this)
+    209     param t8
+    210     c = call Vec::operator+(class Vec &), 2
+    211     t14 = &c
+    212     param t14                           (this)
+    213     param 0
+    214     t15 = call Vec::operator[](int), 2
+    215     t16 = *t15
+    216     param t14                           (this)
+    217     param 1
+    218     t18 = call Vec::operator[](int), 2
+    219     t19 = *t18
+    220     param t14                           (this)
+    221     param t7
+    222     t22 = call Vec::operator==(class Vec &), 2
+    223     param t14
+    224     t24 = call peek(class Vec &), 1
+    225     param "%d %d %d %d\n"
+    226     param t16
+    227     param t19
+    228     param t22
+    229     param t24
+    230     call printf, 5
+    231     param c
+    232     t25 = call twice(class Vec), 1
+    233     t26 = c[0]
+    234     param "%d %d\n"
+    235     param t25
+    236     param t26
+    237     call printf, 3
+    238     param t14                           (this)
+    239     param 1
+    240     t28 = call Vec::operator[](int), 2
+    241     *t28 = 9
+    242     t29 = &pl
+    243     param t29                           (this)
+    244     call Base::Base(), 1
+    245     t30 = c[4]
+    246     param t14                           (this)
+    247     param 3
+    248     t32 = call Vec::operator()(int), 2
+    249     t34 = &t33
+    250     param t34                           (this)
+    251     call Vec::Vec(), 1
+    252     t35 = t33[0]
+    253     t36 = pl[0]
+    254     param "%d %d %d %d\n"
+    255     param t30
+    256     param t32
+    257     param t35
+    258     param t36
+    259     call printf, 5
+    260     t37 = &many
+    261     param t37                           (this)
+    262     call Vec::Vec(), 1
+    263     t38 = t37 ptr+ 8
+    264     param t38                           (this)
+    265     call Vec::Vec(), 1
+    266     t39 = t37 ptr+ 16
+    267     param t39                           (this)
+    268     call Vec::Vec(), 1
+    269     param t39                           (this)
+    270     param 5
+    271     call Vec::operator+=(int), 2
+    272     t43 = many[20]
+    273     t44 = origin[0]
+    274     param "%d %d %d\n"
+    275     param t43
+    276     param Vec::made
+    277     param t44
+    278     call printf, 4
+    279     return 0
 
 
 ----------------------------------------------------------------------------
@@ -635,133 +492,115 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Animal             class_tag     class Animal               -           5    -    0  size 4
-   Tag                class_tag     class Tag                  -          12    -    0  size 4
-   Dog                class_tag     class Dog                  -          18    -    0  size 12, public base Animal
-   Vec                class_tag     class Vec                  -          31    -    0  size 8
-   make               function      class Vec (int, int)       -          45    -    3  _Z4makeii; defined
-   operator*          function      class Vec (class Vec, int) -          46    -    1  _Zml3Veci; defined
-   main               function      int (void)                 -          48    -    0  defined
+   Part               class_tag     class Part                 -           6    -    0  size 4
+   Vec                class_tag     class Vec                  -           7    -    0  size 8
+   peek               function      int (class Vec &)          -          17    -    1  _Z4peekR3Vec; defined
+   Base               class_tag     class Base                 -          21    -    0  size 4
+   Plain              class_tag     class Plain                -          22    -    0  size 8, public base Base
+   Shape              class_tag     class Shape                -          23    -    0  size 8, public base Base
+   origin             variable      class Vec                  global     29    8    1  
+   twice              function      int (class Vec)            -          30    -    1  _Z5twice3Vec; defined
+   main               function      int (void)                 -          31    -    0  defined
 
- scope: global > class Animal
+ scope: global > class Part
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   legs               field         int                        member      7    4    4  Animal::legs; public, offset 0
-   Animal             constructor   void (void)                -           8    -    0  _ZN6AnimalC1Ev; public
-   count              method        int (void)                 -           9    -    1  _ZN6Animal5countEv; public, defined
-
- scope: global > class Tag
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   id                 field         int                        member     14    4    2  Tag::id; public, offset 0
-   Tag                constructor   void (void)                -          15    -    0  _ZN3TagC1Ev; public
-
- scope: global > class Dog
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   age                field         int                        member     20    4    6  Dog::age; public, offset 4
-   tag                field         class Tag                  member     21    4    1  Dog::tag; public, offset 8
-   made               field         int                        static     22    4    3  Dog::made; public, static
-   Dog                constructor   void (void)                -          23    -    2  _ZN3DogC1Ev; public
-   human              method        int (void)                 -          24    -    2  _ZN3Dog5humanEv; public, defined
-   birthday           method        void (void)                -          25    -    1  _ZN3Dog8birthdayEv; public, defined
-   total              method        int (void)                 -          26    -    1  _ZN3Dog5totalEv; public, static, defined
+   id                 field         int                        member      6    4    2  Part::id; public, offset 0
+   Part               constructor   void (void)                -           6    -    0  _ZN4PartC1Ev; public
 
  scope: global > class Vec
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  field         int                        member     33    4   24  Vec::x; public, offset 0
-   y                  field         int                        member     34    4   19  Vec::y; public, offset 4
-   Vec                constructor   void (void)                -          35    -    5  _ZN3VecC1Ev; public
-   operator+          method        class Vec (class Vec)      -          36    -    1  _ZN3VecplES_; public, defined
-   operator-          method        class Vec (void)           -          37    -    1  _ZN3VecmiEv; public, defined
-   operator==         method        int (class Vec)            -          38    -    2  _ZN3VeceqES_; public, defined
-   operator[]         method        int (int)                  -          39    -    1  _ZN3VecixEi; public, defined
-   operator+=         method        class Vec &(class Vec)     -          40    -    1  _ZN3VecpLES_; public, defined
-   operator++         method        class Vec &(void)          -          41    -    1  _ZN3VecppEv; public, defined
-   operator()         method        int (int)                  -          42    -    1  _ZN3VecclEi; public, defined
-   dot                method        int (class Vec)            -          43    -    1  _ZN3Vec3dotES_; public, defined
+   x                  field         int                        member      9    4   17  Vec::x; public, offset 0
+   y                  field         int                        member      9    4   12  Vec::y; public, offset 4
+   made               field         int                        static     10    4    2  Vec::made; public, static
+   Vec                constructor   void (void)                -          11    -    6  _ZN3VecC1Ev; public
+   operator+          method        class Vec (class Vec &)    -          12    -    1  _ZN3VecplERS_; public, defined
+   operator+=         method        class Vec &(int)           -          13    -    2  _ZN3VecpLEi; public, defined
+   operator==         method        int (class Vec &)          -          14    -    1  _ZN3VeceqERS_; public, defined
+   operator[]         method        int &(int)                 -          15    -    3  _ZN3VecixEi; public, defined
+   operator()         method        int (int)                  -          16    -    1  _ZN3VecclEi; public, defined
 
  scope: global > class Vec > operator+()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  parameter     class Vec                  param      36    8    2  o.1
-   r                  variable      class Vec                  local      36    8    3  r.2
-
- scope: global > class Vec > operator-()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  variable      class Vec                  local      37    8    3  r.3
-
- scope: global > class Vec > operator==()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  parameter     class Vec                  param      38    8    2  o.4
-
- scope: global > class Vec > operator[]()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  parameter     int                        param      39    4    1  i.5
+   o                  parameter     class Vec &                param      12    4    2  o.1
+   r                  variable      class Vec                  local      12    8    3  r.2
 
  scope: global > class Vec > operator+=()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  parameter     class Vec                  param      40    8    2  o.6
+   k                  parameter     int                        param      13    4    2  k.3
+
+ scope: global > class Vec > operator==()
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   o                  parameter     class Vec &                param      14    4    2  o.4
+
+ scope: global > class Vec > operator[]()
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   i                  parameter     int                        param      15    4    1  i.5
 
  scope: global > class Vec > operator()()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  parameter     int                        param      42    4    1  k.7
+   k                  parameter     int                        param      16    4    1  k.6
 
- scope: global > class Vec > dot()
+ scope: global > peek()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   o                  parameter     class Vec                  param      43    8    2  o.8
+   v                  parameter     class Vec &                param      20    4    2  v.7
 
- scope: global > make()
+ scope: global > class Base
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      45    4    1  a.9
-   b                  parameter     int                        param      45    4    1  b.10
-   v                  variable      class Vec                  local      45    8    3  v.11
+   b                  field         int                        member     21    4    6  Base::b; public, offset 0
+   Base               constructor   void (void)                -          21    -    0  _ZN4BaseC1Ev; public
+   area               method        int (void)                 -          21    -    1  _ZN4Base4areaEv; public, defined
 
- scope: global > operator*()
+ scope: global > class Plain
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     class Vec                  param      46    8    2  v.12
-   k                  parameter     int                        param      46    4    2  k.13
+   extra              field         int                        member     22    4    0  Plain::extra; public, offset 4
 
- scope: global > main() > block
+ scope: global > class Shape
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   rex                variable      class Dog                  local      50   12    5  rex.14
-   base               variable      class Animal *             local      54    4    1  base.15
-   other              variable      class Dog                  local      59   12    2  other.16
+   p                  field         class Part                 member     25    4    1  Shape::p; public, offset 4
+   Shape              constructor   void (void)                -          26    -    1  _ZN5ShapeC1Ev; public
+   area               method        int (void)                 -          27    -    1  _ZN5Shape4areaEv; public, defined
+
+ scope: global > twice()
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   v                  parameter     class Vec                  param      30    8    3  v.8
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      class Vec                  local      65    8   10  a.17
-   b                  variable      class Vec                  local      65    8    4  b.18
-   c                  variable      class Vec                  local      65    8    7  c.19
-   d                  variable      class Vec                  local      67    8    1  d.20
-   e                  variable      class Vec                  local      68    8    1  e.21
-   row                variable      class Vec[2]               local      73   16    3  row.22
-   w                  variable      int                        local      76    4    1  w.23
+   s                  variable      class Shape                local      32    8    3  s.9
+   a                  variable      class Vec                  local      34    8    3  a.10
+   b                  variable      class Vec                  local      34    8    3  b.11
+   c                  variable      class Vec                  local      37    8    9  c.12
+   pl                 variable      class Plain                local      41    8    1  pl.13
+   many               variable      class Vec[3]               local      43   24    2  many.14
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
 ----------------------------------------------------------------------------
 
-class Animal: size 4, align 4
-    +0  int legs  [public]
-class Tag: size 4, align 4
+class Part: size 4, align 4
     +0  int id  [public]
-class Dog: size 12, align 4
-    (base Animal, public)
-    +4  int age  [public]
-    +8  class Tag tag  [public]
-    static  int made  [public]
 class Vec: size 8, align 4
     +0  int x  [public]
     +4  int y  [public]
+    static  int made  [public]
+class Base: size 4, align 4
+    +0  int b  [public]
+class Plain: size 8, align 4
+    (base Base, public)
+    +4  int extra  [public]
+class Shape: size 8, align 4
+    (base Base, public)
+    +4  class Part p  [public]

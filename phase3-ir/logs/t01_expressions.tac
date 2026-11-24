@@ -4,7 +4,7 @@
 
    Source file   : test/t01_expressions.c
    Optimization  : no optimization
-   Result        : Three address code generated: 1 function(s), 199 instruction(s)
+   Result        : Three address code generated: 1 function(s), 193 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,71 +14,77 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 16 parameter(s)/local(s), 79 temporaries, frame 464 bytes
+ Symbol table: 22 parameter(s)/local(s), 72 temporaries, frame 432 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    a                local   int                             4       0
    b                local   int                             4       4
    c                local   int                             4       8
+   x                local   int                             4      12
    d                local   double                          8      16
    f                local   float                           4      24
-   truncated        local   int                             4      28
+   back             local   int                             4      28
    u                local   unsigned int                    4      32
-   neg              local   int                             4      36
-   ch               local   char                            1      40
-   s                local   short                           2      42
-   big              local   long long                       8      48
-   i                local   int                             4      56
-   j                local   int                             4      60
-   big2             local   int                             4      64
-   mixed            local   double                          8      72
-   wraps            local   unsigned char                   1      80
-   t1               temp    int                             4      84
-   t2               temp    int                             4      88
-   t3               temp    int                             4      92
-   t4               temp    int                             4      96
-   t5               temp    int                             4     100
-   t6               temp    int                             4     104
-   t7               temp    int                             4     108
-   t8               temp    int                             4     112
-   t9               temp    int                             4     116
-   t10              temp    int                             4     120
-   t11              temp    int                             4     124
-   t12              temp    int                             4     128
-   t13              temp    int                             4     132
-   t14              temp    int                             4     136
-   t15              temp    int                             4     140
-   t16              temp    int                             4     144
-   t17              temp    double                          8     152
-   t18              temp    double                          8     160
-   t19              temp    float                           4     168
-   t20              temp    float                           4     172
-   t21              temp    double                          8     176
-   t22              temp    int                             4     184
-   t23              temp    double                          8     192
-   t24              temp    unsigned int                    4     200
-   t25              temp    unsigned int                    4     204
-   t26              temp    unsigned int                    4     208
-   t27              temp    unsigned int                    4     212
-   t28              temp    unsigned int                    4     216
-   t29              temp    int                             4     220
-   t30              temp    int                             4     224
-   t31              temp    int                             4     228
-   t32              temp    int                             4     232
-   t33              temp    int                             4     236
-   t34              temp    int                             4     240
-   t35              temp    int                             4     244
-   t36              temp    int                             4     248
-   t37              temp    int                             4     252
-   t38              temp    int                             4     256
-   t39              temp    char                            1     260
-   t40              temp    int                             4     264
-   t41              temp    int                             4     268
-   t42              temp    short                           2     272
-   t43              temp    long long                       8     280
-   t44              temp    long long                       8     288
-   t45              temp    long long                       8     296
+   v                local   int                             4      36
+   bits             local   int                             4      40
+   t                local   int                             4      44
+   i                local   int                             4      48
+   j                local   int                             4      52
+   k                local   int                             4      56
+   m                local   int                             4      60
+   ch               local   char                            1      64
+   uch              local   unsigned char                   1      65
+   sh               local   short                           2      66
+   z                local   int                             4      68
+   w                local   int                             4      72
+   q                local   int                             4      76
+   dd               local   double                          8      80
+   t1               temp    int                             4      88
+   t2               temp    int                             4      92
+   t3               temp    int                             4      96
+   t4               temp    int                             4     100
+   t5               temp    int                             4     104
+   t6               temp    int                             4     108
+   t7               temp    int                             4     112
+   t8               temp    int                             4     116
+   t9               temp    int                             4     120
+   t10              temp    int                             4     124
+   t11              temp    int                             4     128
+   t12              temp    double                          8     136
+   t13              temp    int                             4     144
+   t14              temp    float                           4     148
+   t15              temp    double                          8     152
+   t16              temp    double                          8     160
+   t17              temp    int                             4     168
+   t18              temp    double                          8     176
+   t19              temp    double                          8     184
+   t20              temp    double                          8     192
+   t21              temp    float                           4     200
+   t22              temp    float                           4     204
+   t23              temp    double                          8     208
+   t24              temp    unsigned int                    4     216
+   t25              temp    unsigned int                    4     220
+   t26              temp    unsigned int                    4     224
+   t27              temp    unsigned int                    4     228
+   t28              temp    int                             4     232
+   t29              temp    int                             4     236
+   t30              temp    int                             4     240
+   t31              temp    int                             4     244
+   t32              temp    int                             4     248
+   t33              temp    int                             4     252
+   t34              temp    int                             4     256
+   t35              temp    int                             4     260
+   t36              temp    int                             4     264
+   t37              temp    int                             4     268
+   t38              temp    int                             4     272
+   t39              temp    int                             4     276
+   t40              temp    int                             4     280
+   t41              temp    int                             4     284
+   t42              temp    int                             4     288
+   t43              temp    int                             4     292
+   t44              temp    int                             4     296
+   t45              temp    int                             4     300
    t46              temp    int                             4     304
    t47              temp    int                             4     308
    t48              temp    int                             4     312
@@ -91,230 +97,217 @@
    t55              temp    int                             4     340
    t56              temp    int                             4     344
    t57              temp    int                             4     348
-   t58              temp    double                          8     352
-   t59              temp    double                          8     360
-   t60              temp    int                             4     368
-   t61              temp    int                             4     372
-   t62              temp    int                             4     376
-   t63              temp    int                             4     380
-   t64              temp    int                             4     384
-   t65              temp    int                             4     388
-   t66              temp    int                             4     392
-   t67              temp    int                             4     396
-   t68              temp    int                             4     400
-   t69              temp    int                             4     404
-   t70              temp    int                             4     408
+   t58              temp    int                             4     352
+   t59              temp    int                             4     356
+   t60              temp    int                             4     360
+   t61              temp    int                             4     364
+   t62              temp    int                             4     368
+   t63              temp    char                            1     372
+   t64              temp    int                             4     376
+   t65              temp    int                             4     380
+   t66              temp    int                             4     384
+   t67              temp    int                             4     388
+   t68              temp    unsigned int                    4     392
+   t69              temp    double                          8     400
+   t70              temp    double                          8     408
    t71              temp    double                          8     416
    t72              temp    double                          8     424
-   t73              temp    double                          8     432
-   t74              temp    int                             4     440
-   t75              temp    int                             4     444
-   t76              temp    unsigned char                   1     448
-   t77              temp    int                             4     452
-   t78              temp    int                             4     456
-   t79              temp    int                             4     460
 
- Code: 199 instruction(s)
+ Code: 193 instruction(s)
 
-    100       a = 7
-    101       b = 3
-    102       t1 = b int* 2
-    103       t2 = a int+ t1
-    104       t3 = a int/ b
-    105       t4 = t2 int- t3
-    106       t5 = a int% b
-    107       t6 = t4 int+ t5
-    108       c = t6
-    109       t7 = a int- b
-    110       t8 = a int* b
-    111       t9 = a int/ b
-    112       t10 = a int% b
-    113       param "%d %d %d %d %d\n"
-    114       param c
-    115       param t7
-    116       param t8
-    117       param t9
-    118       param t10
-    119       call printf, 6
-    120       t11 = int- a
-    121       t12 = b int* t11
-    122       t13 = int- a
-    123       t14 = b int* t13
-    124       t15 = t12 int+ t14
-    125       c = t15
-    126       param "%d\n"
-    127       param c
-    128       call printf, 2
-    129       d = 1.5
-    130       f = 2.5
-    131       t16 = a int* 2
-    132       t17 = inttodouble t16
-    133       t18 = d double+ t17
-    134       d = t18
-    135       t19 = inttofloat b
-    136       t20 = f float* t19
-    137       f = t20
-    138       t21 = d double/ 2.0
-    139       t22 = doubletoint t21
-    140       truncated = t22
-    141       t23 = floattodouble f
-    142       param "%.2f %.2f %d\n"
-    143       param d
-    144       param t23
-    145       param truncated
-    146       call printf, 4
-    147       u = 7
-    148       t24 = u uint/ 3
-    149       t25 = u uint<< 2
-    150       t26 = t24 uint+ t25
-    151       t27 = u uint>> 1
-    152       t28 = t26 uint+ t27
-    153       u = t28
-    154       t29 = int- 16
-    155       neg = t29
-    156       t30 = neg int>> 2
-    157       t31 = neg int/ 3
-    158       t32 = neg int% 3
-    159       param "%u %d %d %d\n"
-    160       param u
-    161       param t30
-    162       param t31
-    163       param t32
-    164       call printf, 5
-    165       t33 = a int& b
-    166       t34 = a int| b
-    167       t35 = a int^ b
-    168       t36 = int~ a
-    169       param "%d %d %d %d\n"
-    170       param t33
-    171       param t34
-    172       param t35
-    173       param t36
-    174       call printf, 5
-    175       ch = 65
-    176       t37 = chartoint ch
-    177       t38 = t37 int+ 2
-    178       t39 = inttochar t38
-    179       ch = t39
-    180       s = 300
-    181       t40 = shorttoint s
-    182       t41 = t40 int* 2
-    183       t42 = inttoshort t41
-    184       s = t42
-    185       big = 100000
-    186       t43 = big llong* big
-    187       t44 = inttollong a
-    188       t45 = t43 llong+ t44
-    189       big = t45
-    190       t46 = chartoint ch
-    191       t47 = chartoint ch
-    192       t48 = shorttoint s
-    193       param "%c %d %d %lld\n"
-    194       param t46
-    195       param t47
-    196       param t48
-    197       param big
-    198       call printf, 5
-    199       t49 = a int+ 5
-    200       a = t49
-    201       t50 = b int- 1
-    202       b = t50
-    203       t51 = c int* 2
-    204       c = t51
-    205       t52 = a int/ 3
-    206       a = t52
-    207       t53 = b int<< 3
-    208       b = t53
-    209       t54 = c int% 7
-    210       c = t54
-    211       t55 = a int| 8
-    212       a = t55
-    213       t56 = b int& 12
-    214       b = t56
-    215       t57 = c int^ 5
-    216       c = t57
-    217       t58 = d double- 0.5
-    218       d = t58
-    219       t59 = d double* 2.0
-    220       d = t59
-    221       param "%d %d %d %.1f\n"
-    222       param a
-    223       param b
-    224       param c
-    225       param d
-    226       call printf, 5
-    227       i = 5
-    228       t60 = i
-    229       t61 = i int+ 1
-    230       i = t61
-    231       t62 = t60 int+ 1
-    232       j = t62
-    233       param "%d %d\n"
-    234       param i
-    235       param j
-    236       call printf, 3
-    237       t63 = i int+ 1
-    238       i = t63
-    239       t64 = t63 int* 2
-    240       j = t64
-    241       param "%d %d\n"
-    242       param i
-    243       param j
-    244       call printf, 3
-    245       t65 = i
-    246       t66 = i int- 1
-    247       i = t66
-    248       t67 = i int- 1
-    249       i = t67
-    250       t68 = t65 int- t67
-    251       j = t68
-    252       j = 3
-    253       t69 = j int+ 4
-    254       i = t69
-    255       param "%d %d\n"
-    256       param i
-    257       param j
-    258       call printf, 3
-    259       if a int> b goto L1
-    260       goto L2
-    261  L1:  t70 = a
-    262       goto L3
-    263  L2:  t70 = b
-    264  L3:  big2 = t70
-    265       if a int> 100 goto L4
-    266       goto L5
-    267  L4:  t71 = 1.0
-    268       goto L6
-    269  L5:  t71 = 2.5
-    270  L6:  mixed = t71
-    271       param "%d %.1f\n"
-    272       param big2
-    273       param mixed
-    274       call printf, 3
-    275       param "%d %d %d\n"
-    276       param 4
-    277       param 8
-    278       param 1
-    279       call printf, 4
-    280       t72 = inttodouble a
-    281       t73 = t72 double/ 4.0
-    282       param "%d %.3f %d\n"
-    283       param 3
-    284       param t73
-    285       param 65
-    286       call printf, 4
-    287       wraps = 250
-    288       t74 = uchartoint wraps
-    289       t75 = t74 int+ 10
-    290       t76 = inttouchar t75
-    291       wraps = t76
-    292       t77 = uchartoint wraps
-    293       param "%d\n"
-    294       param t77
-    295       call printf, 2
-    296       t78 = a int+ b
-    297       t79 = t78 int% 256
-    298       return t79
+    100        a = 7
+    101        b = 2
+    102        c = 3
+    103        t1 = int- c
+    104        t2 = b int* t1
+    105        t3 = int- c
+    106        t4 = b int* t3
+    107        t5 = t2 int+ t4
+    108        x = t5
+    109        t6 = b int* c
+    110        t7 = a int+ t6
+    111        t8 = a int+ b
+    112        t9 = t8 int* c
+    113        t10 = a int/ b
+    114        t11 = a int% b
+    115        param "%d %d %d %d %d\n"
+    116        param x
+    117        param t7
+    118        param t9
+    119        param t10
+    120        param t11
+    121        call printf, 6
+    122        t12 = inttodouble a
+    123        d = t12
+    124        t13 = a int/ 2
+    125        t14 = inttofloat t13
+    126        f = t14
+    127        t15 = d double/ 2.0
+    128        t16 = t15 double+ 0.75
+    129        t17 = doubletoint t16
+    130        back = t17
+    131        t18 = inttodouble b
+    132        t19 = d double/ t18
+    133        t20 = floattodouble f
+    134        t21 = inttofloat a
+    135        t22 = t21 float/ 3.0
+    136        t23 = floattodouble t22
+    137        param "%.2f %.1f %d %.3f\n"
+    138        param t19
+    139        param t20
+    140        param back
+    141        param t23
+    142        call printf, 5
+    143        u = 10
+    144        t24 = u uint- 11
+    145        t25 = u uint* 3
+    146        t26 = t25 uint/ 4
+    147        t27 = u uint>> 1
+    148        param "%u %u %d\n"
+    149        param t24
+    150        param t26
+    151        param t27
+    152        call printf, 4
+    153        v = 182
+    154        bits = 0
+    155        t = v
+    156  L1:   if t int!= 0 goto L2
+    157        goto L3
+    158  L2:   t28 = t int& 1
+    159        t29 = bits int+ t28
+    160        bits = t29
+    161        t30 = t int>> 1
+    162        t = t30
+    163        goto L1
+    164  L3:   t32 = v int- 1
+    165        t33 = v int& t32
+    166        if t33 int== 0 goto L4
+    167        t31 = 0
+    168        goto L5
+    169  L4:   t31 = 1
+    170  L5:   t35 = 64 int& 63
+    171        if t35 int== 0 goto L6
+    172        t34 = 0
+    173        goto L7
+    174  L6:   t34 = 1
+    175  L7:   t36 = v int^ 255
+    176        t37 = int~ v
+    177        t38 = t37 int& 255
+    178        param "%d %d %d %x %x\n"
+    179        param bits
+    180        param t31
+    181        param t34
+    182        param t36
+    183        param t38
+    184        call printf, 6
+    185        x = 5
+    186        t39 = x int+ 3
+    187        x = t39
+    188        t40 = x int- 1
+    189        x = t40
+    190        t41 = x int* 4
+    191        x = t41
+    192        t42 = x int/ 3
+    193        x = t42
+    194        t43 = x int% 5
+    195        x = t43
+    196        t44 = x int<< 3
+    197        x = t44
+    198        t45 = x int>> 1
+    199        x = t45
+    200        t46 = x int| 1
+    201        x = t46
+    202        t47 = x int& 13
+    203        x = t47
+    204        t48 = x int^ 6
+    205        x = t48
+    206        param "%d\n"
+    207        param x
+    208        call printf, 2
+    209        i = 5
+    210        t49 = i
+    211        t50 = i int+ 1
+    212        i = t50
+    213        t51 = t49 int+ 1
+    214        j = t51
+    215        t52 = i int- 1
+    216        i = t52
+    217        t53 = t52 int* 2
+    218        k = t53
+    219        param "%d %d %d\n"
+    220        param i
+    221        param j
+    222        param k
+    223        call printf, 4
+    224        i = 3
+    225        t54 = i int* 4
+    226        m = t54
+    227        if i int> 2 goto L8
+    228        goto L9
+    229  L8:   t55 = 10
+    230        goto L10
+    231  L9:   t55 = 20
+    232  L10:  if a int< b goto L11
+    233        goto L12
+    234  L11:  t56 = a
+    235        goto L16
+    236  L12:  if b int< c goto L13
+    237        goto L14
+    238  L13:  t57 = b
+    239        goto L15
+    240  L14:  t57 = c
+    241  L15:  t56 = t57
+    242  L16:  param "%d %d %d\n"
+    243        param m
+    244        param t55
+    245        param t56
+    246        call printf, 4
+    247        param "%d %d %d\n"
+    248        param 4
+    249        param 8
+    250        param 1
+    251        call printf, 4
+    252        ch = -126
+    253        uch = 44
+    254        sh = 1
+    255        t58 = chartoint ch
+    256        t59 = uchartoint uch
+    257        t60 = shorttoint sh
+    258        t61 = chartoint ch
+    259        t62 = t61 int+ 200
+    260        t63 = inttochar t62
+    261        t64 = chartoint t63
+    262        param "%d %d %d %d\n"
+    263        param t58
+    264        param t59
+    265        param t60
+    266        param t64
+    267        call printf, 5
+    268        t65 = int- 7
+    269        t66 = t65 int>> 1
+    270        t67 = int- 8
+    271        t68 = t67 uint>> 29
+    272        param "%d %d\n"
+    273        param t66
+    274        param t68
+    275        call printf, 3
+    276        z = 0
+    277        w = 5
+    278        q = 6
+    279        t69 = inttodouble a
+    280        t70 = t69 double/ 2.0
+    281        t71 = t70 double- 0.25
+    282        dd = t71
+    283        t72 = dd double- 1.25
+    284        param "%d %d %d %d %.2f %d\n"
+    285        param z
+    286        param w
+    287        param q
+    288        param 2
+    289        param t72
+    290        param 0
+    291        call printf, 7
+    292        return 0
 
 
 ----------------------------------------------------------------------------
@@ -324,27 +317,33 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   main               function      int (void)                 -           4    -    0  defined
+   main               function      int (void)                 -           5    -    0  defined
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local       5    4   24  a.1
-   b                  variable      int                        local       5    4   20  b.2
-   c                  variable      int                        local       5    4    8  c.3
-   d                  variable      double                     local      11    8    7  d.4
-   f                  variable      float                      local      12    4    3  f.5
-   truncated          variable      int                        local      15    4    1  truncated.6
-   u                  variable      unsigned int               local      18    4    5  u.7
-   neg                variable      int                        local      20    4    3  neg.8
-   ch                 variable      char                       local      24    1    4  ch.9
-   s                  variable      short                      local      26    2    3  s.10
-   big                variable      long long                  local      28    8    4  big.11
-   i                  variable      int                        local      35    4    8  i.12
-   j                  variable      int                        local      35    4    8  j.13
-   big2               variable      int                        local      44    4    1  big2.14
-   mixed              variable      double                     local      45    8    1  mixed.15
-   wraps              variable      unsigned char              local      49    1    3  wraps.16
+   a                  variable      int                        local       6    4   10  a.1
+   b                  variable      int                        local       6    4   10  b.2
+   c                  variable      int                        local       6    4    6  c.3
+   x                  variable      int                        local       6    4   14  x.4
+   d                  variable      double                     local       9    8    2  d.5
+   f                  variable      float                      local      10    4    1  f.6
+   back               variable      int                        local      11    4    1  back.7
+   u                  variable      unsigned int               local      13    4    3  u.8
+   v                  variable      int                        local      15    4    5  v.9
+   bits               variable      int                        local      16    4    2  bits.10
+   t                  variable      int                        local      16    4    3  t.11
+   i                  variable      int                        local      22    4    6  i.12
+   j                  variable      int                        local      22    4    1  j.13
+   k                  variable      int                        local      22    4    1  k.14
+   m                  variable      int                        local      24    4    1  m.15
+   ch                 variable      char                       local      27    1    2  ch.16
+   uch                variable      unsigned char              local      28    1    1  uch.17
+   sh                 variable      short                      local      29    2    1  sh.18
+   z                  variable      int                        local      32    4    1  z.19
+   w                  variable      int                        local      32    4    1  w.20
+   q                  variable      int                        local      32    4    1  q.21
+   dd                 variable      double                     local      33    8    1  dd.22
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

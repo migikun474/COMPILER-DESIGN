@@ -1,68 +1,48 @@
-/* t02 -- if/else, while, do-while, for, until, switch, break, continue, goto */
-
-int classify(int n) {
-    switch (n) {
-        case 0: return 100;
-        case 1:
-        case 2: n = n + 10;              /* falls through */
-        case 3: n = n * 2; break;
-        default: n = -1;
-    }
-    return n;
+/* t02 -- control flow: if/else chains, while, do-while, for with a
+   declaration, until, switch with fall-through and default in the middle,
+   break/continue, goto out of two loops, a state machine. Expected: g++. */
+int kind(char c) {                     /* 0 other, 1 digit, 2 letter */
+    if (c >= '0' && c <= '9') return 1;
+    else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) return 2;
+    else return 0;
 }
-
 int main() {
-    int i, total = 0;
-    for (i = 0; i < 10; i++) {
-        if (i == 2) continue;
-        if (i == 8) break;
-        total += i;
-    }
-    printf("for: %d %d\n", i, total);
-
-    int n = 5, fact = 1;
-    while (n > 1) { fact = fact * n; n = n - 1; }
-    printf("while: %d\n", fact);
-
-    do { n = n + 3; } while (n < 10);
-    printf("do: %d\n", n);
-
-    until (n >= 20) { n += 4; }
-    printf("until: %d\n", n);
-
-    for (i = 0; i < 6; i++) printf("%d ", classify(i));
-    printf("\n");
-
-    for (i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            if (j > i) break;
-            printf("%d%d ", i, j);
+    int s = 0, i = 0;
+    while (i < 5) s += i++;
+    do s *= 2; while (s < 100);
+    for (int k = 0; k < 3; k++) s -= k;
+    for (i = 0; i < 4; i++) ;                  /* an empty body */
+    int u = 0;
+    until (u >= 4) u++;
+    printf("%d %d\n", s, u);
+    int out = 0;
+    for (i = 0; i < 6; i++) {
+        switch (i) {
+            case 0: case 1: out += 1;
+            default: out += 10; break;
+            case 4: out += 100;
+            case 5: out += 1000; continue;
         }
+        out += 5;
     }
-    printf("\n");
-
-    int count = 0;
-again:
-    count++;
-    if (count < 4) goto again;
-    if (count == 4) goto done;
-    count = 99;
+    printf("%d\n", out);
+    int r, c = 0, hit = 0;
+    for (r = 0; r < 4; r++)
+        for (c = 0; c < 4; c++) {
+            if (c > r) break;
+            if ((r + c) % 2) continue;
+            if (r * c == 4) goto done;
+            hit++;
+        }
 done:
-    printf("goto: %d\n", count);
-
-    int x = 3;
-    if (x > 5) printf("big\n");
-    else if (x > 2) printf("medium\n");
-    else printf("small\n");
-
-    for (;;) {
-        x--;
-        switch (x) {
-            case 1: continue;
-            default: break;
-        }
-        if (x <= 0) break;
+    printf("%d %d %d\n", hit, r, c);
+    const char *text = "ab 12 x9;";
+    int state = 0, words = 0;
+    for (i = 0; text[i]; i++) {
+        int k = kind(text[i]);
+        if (state == 0 && k) { words++; state = 1; }
+        else if (state == 1 && !k) state = 0;
     }
-    printf("x: %d\n", x);
-    return total;
+    printf("%d\n", words);
+    return 0;
 }

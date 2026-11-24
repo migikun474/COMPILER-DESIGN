@@ -247,35 +247,24 @@ the output of the same source compiled with gcc/g++.
 
 | Test | Covers |
 |---|---|
-| `t01_expressions` | arithmetic, conversions, unsigned, `long long`, bitwise, compound assignment, `++`/`--`, comma, `?:`, casts |
-| `t02_control_flow` | `if`, loops, `until`, `switch` with fall-through, `break`, `continue`, `goto` |
-| `t03_booleans` | short circuit with side effects, comparisons as values, `!` |
-| `t04_arrays` | 1-D to 3-D arrays, initializers, designators, strings, array parameters |
-| `t05_pointers` | multi-level pointers, pointer arithmetic, `void *`, pointer to array |
-| `t06_structs` | nesting, copies, by-value parameters and results, anonymous members |
-| `t07_functions` | recursion, overloading, references, varargs, `static` locals, forward calls |
-| `t08_classes` | default constructor order (base, members, body), single inheritance, static members, operators, arrays of objects |
-| `t09_memory` | `malloc` family, a linked list |
+| `t01_expressions` | arithmetic, conversions, unsigned, bitwise, compound assignment, `++`/`--`, comma, `?:`, C-style and functional casts, `sizeof`, scalar brace and paren initialization, wrap-around of every width |
+| `t02_control_flow` | `if`/`else` chains, `while`, `do`-`while`, `for` with a declaration, `until`, `switch` with fall-through and `default` in the middle, `break`, `continue`, `goto` out of two loops, a state machine |
+| `t03_booleans` | the slides' `a < b \|\| c < d && e < f`, comparisons and `!` as values, booleans stored and summed, `&&`/`\|\|` in loop conditions, `bool` |
+| `t04_arrays` | 1-D to 3-D arrays, partial and designated initializers, zeroed static data, `i[a]`, array parameters (1-D and 2-D), strings, `sizeof` of an array (plain C: expected output from gcc) |
+| `t05_pointers` | two and three levels, arithmetic and differences, `void *`, pointer to an array, array of pointers, writing through a pointer to a pointer |
+| `t06_structs` | nesting, copies, by-value parameters and results, arrays of structs, array members, anonymous members, padding, a union read through another member |
+| `t07_functions` | recursion, mutual recursion, overloading, references (to a pointer, returned, `const T &` to another type), varargs with a `va_list` passed on, `static` locals, tail recursion |
+| `t08_classes` | construction order (base, members, body), a static member, operators, arrays of objects, objects inside objects, a hidden base function called through `Base::`, `this`, a friend, a global object built before `main`, block copies |
+| `t09_memory` | `malloc`/`calloc`/`realloc`/`free`, a freed block reused, a linked list built, reversed and freed, rows from `malloc`, a long malloc/free loop |
 | `t10_io` | `printf` formats, `scanf` (input in `t10_io.in`) |
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
-| `t13_review_cases` | cases the code review found wrong: `const T &` to another type, static member initializers, an inheritance chain, null base pointers, `va_list` passed on |
-| `t14_optimizer` | constants, common subexpressions and copies next to the cases where reuse would be wrong: pointers, references, globals changed by calls |
-| `t15_global_opt` | `-O2`: constants and copies across branches and loops, dead assignments, values that differ per path or are read through a pointer |
-| `t16_runtime` | 64-bit arithmetic, int/float conversions, `printf` formats, structs and doubles through calls (aimed at the MIPS run-time library) |
-| `t17_strings` | strings by hand: length, copy, compare, reverse, number ↔ text |
-| `t18_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve |
-| `t19_scopes` | shadowing, nested blocks, `static` locals, globals |
-| `t20_bits` | bit tricks, shifts, wrap-around of every integer width, signed/unsigned comparison |
-| `t21_numeric` | `float` and `double`: Newton's method, series, rounding, mixed conversions |
-| `t22_data_structures` | linked list, binary tree, stack, table of rows from `malloc`, pointers to pointers |
-| `t23_objects` | three-level inheritance, objects inside objects, arrays of objects, operators returning references |
-| `t24_references` | reference parameters and results, references to structs and pointers, `const` references |
-| `t25_control` | state machine in a `switch`, nested loops, `goto` out of loops, `?:` chains, comma |
-| `t26_declarations` | `typedef`, `sizeof`, struct layout, nested and designated initializers |
-| `t27_object_semantics` | object rules of the reduced subset (D35): objects passed and returned by value are block copies, `?:` as an lvalue, arrays of objects built by the default constructor, a global object built before `main`, friends |
-| `t28_o3` | `-O3`: inlining (side effects, references, by-value structs, several returns), tail calls with swapped arguments, loops (unrolled, or run zero times), a division that must stay, values reused or not across branches and stores |
-| `t29_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short`/`bool` and `float`/`double` in registers, loops made of `goto` |
+| `t13_runtime` | aimed at the MIPS run-time library: 64-bit `printf`, `long long` ↔ `double`, flags, widths, precision, `%e %g %x %o %c %%`, structs and doubles through calls, varargs with doubles, `long long` and strings |
+| `t14_optimizer` | `-O1`/`-O2` must not reuse what may have changed (through a pointer, a reference, a call, an array element) and must keep what is used: wrapping constants, per-path constants, a loop-carried value, dead assignments, calls whose result is unused |
+| `t15_o3` | `-O3`: inlining (side effects, several returns, a reference, a by-value struct), a recursive function not inlined, a tail call with swapped arguments, a division in a loop that may run zero times |
+| `t16_registers` | for the MIPS register allocator: values across calls and recursion, more live values than registers, arguments computed before a call, `char`/`short` wrapping in registers, many doubles at once, a loop made of `goto` |
+| `t17_algorithms` | bubble sort, quicksort, binary search, Hanoi, Ackermann, matrix product, sieve, string reversal, number ↔ text |
+| `t18_scopes_enums` | shadowing (parameters, blocks, loop variables, a local hiding a global from its declaration on), `static` locals, `typedef`, a conditional constant initializer, enums with C++ rules |
 | `t30_int_edges` | small: `/` and `%` with negative operands, shifts of signed and unsigned values, unsigned wrap-around, `char`/`short` sign and zero extension, signed vs unsigned comparison, `INT_MAX`/`INT_MIN` |
 | `t31_short_circuit` | small: `&&`/`\|\|` skipping their right operand, `?:` evaluating one branch, comma, chained and compound assignment, `i++` in an index, side effects in a loop condition |
 | `t32_calls_registers` | small: more arguments than `$a0`–`$a3`, mixed `char`/`double`/`long long` arguments, calls as arguments, values kept across calls, a struct by value and returned, recursion with live values |
