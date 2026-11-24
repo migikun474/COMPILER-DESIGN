@@ -4,7 +4,7 @@
 
    Source file   : test/t16_runtime.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 310 -> 219 instruction(s)
+   Result        : Optimized three address code (-O2): 316 -> 224 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,18 +14,18 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          310 -> 219   (29% fewer)
+   instructions                          316 -> 224   (29% fewer)
 
    constants folded                       49
    algebraic simplifications               1
    common subexpressions                   1
-   copies / constants forwarded          108
+   copies / constants forwarded          111
    temporaries merged away                 5
    dead instructions removed              52
    jumps removed or redirected             9
    unreachable instructions removed       10
    propagated across blocks                1
-   dead assignments removed               16
+   dead assignments removed               17
 
 ============================================================================
  FUNCTION make(int)        (link name _Z4makei)
@@ -186,7 +186,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 15 parameter(s)/local(s), 24 temporaries, frame 684 bytes
+ Symbol table: 16 parameter(s)/local(s), 24 temporaries, frame 692 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -205,33 +205,34 @@
    t                local   struct Big                     40     112
    p                local   int *                           4     152
    z                local   int *                           4     156
-   t22              temp    long long                       8     312
-   t50              temp    double                          8     552
-   t51              temp    int                             4     560
-   t53              temp    char                            1     568
-   t54              temp    int                             4     572
-   t55              temp    long long                       8     576
-   t56              temp    double                          8     584
-   t57              temp    double                          8     592
-   t59              temp    void *                          4     604
-   t60              temp    int *                           4     608
-   t61              temp    int *                           4     612
-   t63              temp    void *                          4     620
-   t64              temp    void *                          4     624
-   t65              temp    int                             4     628
-   t66              temp    int *                           4     632
-   t67              temp    int                             4     636
-   t68              temp    int                             4     640
-   t69              temp    int *                           4     644
-   t70              temp    int                             4     648
-   t71              temp    int                             4     652
-   t72              temp    int                             4     656
-   t73              temp    int *                           4     660
-   t74              temp    int                             4     664
-   t75              temp    int                             4     668
+   none             local   int *                           4     160
+   t22              temp    long long                       8     320
+   t50              temp    double                          8     560
+   t51              temp    int                             4     568
+   t53              temp    char                            1     576
+   t54              temp    int                             4     580
+   t55              temp    long long                       8     584
+   t56              temp    double                          8     592
+   t57              temp    double                          8     600
+   t59              temp    void *                          4     612
+   t60              temp    int *                           4     616
+   t61              temp    int *                           4     620
+   t63              temp    void *                          4     628
+   t64              temp    void *                          4     632
+   t65              temp    int                             4     636
+   t66              temp    int *                           4     640
+   t67              temp    int                             4     644
+   t68              temp    int                             4     648
+   t69              temp    int *                           4     652
+   t70              temp    int                             4     656
+   t71              temp    int                             4     660
+   t72              temp    int                             4     664
+   t73              temp    int *                           4     668
+   t74              temp    int                             4     672
+   t75              temp    int                             4     676
    (53 temporaries no longer used after optimization not shown)
 
- Code: 160 instruction(s)
+ Code: 165 instruction(s)
 
     159       param "%lld %lld %lld\n"
     160       param 123455801358024
@@ -392,7 +393,12 @@
     315       param t74
     316       param t75
     317       call printf, 5
-    318       return 45
+    318       param "[%p] [%8p] [%-8p]\n"
+    319       param 0
+    320       param 0
+    321       param 0
+    322       call printf, 4
+    323       return 45
 
 
 ----------------------------------------------------------------------------
@@ -474,6 +480,7 @@
    t                  variable      struct Big                 local      61   40    2  t.28
    p                  variable      int *                      local      67    4    9  p.29
    z                  variable      int *                      local      70    4    3  z.30
+   none               variable      int *                      local      72    4    3  none.31
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

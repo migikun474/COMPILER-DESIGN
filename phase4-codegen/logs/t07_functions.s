@@ -997,6 +997,7 @@ _Z5lateri_exit:
         .data
 __pf_buf:    .space 96
 __pf_digits: .asciiz "0123456789abcdef"
+__pf_nil:    .asciiz "(nil)"              # %p of a null pointer, as glibc prints it
         .align 2
 __sc_peek:   .word -2                   # a character read ahead; -2 = none, -1 = end of input
 __sc_pos:    .word __sc_line            # the next unread character of the current input line
@@ -1008,8 +1009,10 @@ __c_ten:     .double 10.0
 __c_half:    .double 0.5
 __c_zero:    .double 0.0
 __c_one:     .double 1.0
+__c_split:   .double 134217729.0         # 2^27 + 1, Veltkamp's splitting constant
 __pf_mend:   .word 0                    # %g: where the digits end (the exponent, if any, follows)
 __stack_limit: .word 0                  # lowest $sp a frame may reach; set by the start-up code
+__heap_free: .word 0                    # the free list: freed blocks, most recent first (D45)
 __m_divzero: .asciiz "\nrun-time error: division by zero\n"
 __m_stack:   .asciiz "\nrun-time error: stack overflow (recursion too deep)\n"
 
@@ -1043,45 +1046,85 @@ __memcpy_done:
 
 __malloc:                               # malloc(size)
         lw    $t0, 0($sp)
-__malloc_n:                             # size in $t0; the block is 8-byte aligned,
-        addiu $a0, $t0, 23              # with its size in the 8 bytes before it
-        li    $t1, -8
-        and   $a0, $a0, $t1
+__malloc_n:                             # size in $t0 -> block in $v0 (uses $t1, $t4-$t7, $a0)
+        addiu $t1, $t0, 7               # capacity: the size rounded up to 8, at least 8
+        li    $t4, -8
+        and   $t1, $t1, $t4
+        bnez  $t1, __malloc_fit
+        li    $t1, 8
+__malloc_fit:                           # first fit in the free list, most recently freed first
+        la    $t5, __heap_free          # $t5: the word that points at the block looked at
+__malloc_scan:
+        lw    $t6, 0($t5)
+        beqz  $t6, __malloc_new
+        lw    $t7, -8($t6)              # its capacity
+        sltu  $t7, $t7, $t1
+        bnez  $t7, __malloc_next
+        lw    $t7, 0($t6)               # big enough: unlink it and hand it out whole
+        sw    $t7, 0($t5)
+        move  $v0, $t6
+        jr    $ra
+__malloc_next:
+        move  $t5, $t6                  # a free block's first word links to the next one
+        j     __malloc_scan
+__malloc_new:                           # none fits: a fresh block from sbrk, 8-byte aligned,
+        addiu $a0, $t1, 15              # with its capacity in the 8 bytes before it
+        and   $a0, $a0, $t4
         li    $v0, 9                    # sbrk
         syscall
         addiu $v0, $v0, 7
-        and   $v0, $v0, $t1
-        sw    $t0, 0($v0)
+        and   $v0, $v0, $t4
+        sw    $t1, 0($v0)
         addiu $v0, $v0, 8
         jr    $ra
 
-__calloc:                               # calloc(count, size): fresh memory is already zero
+__calloc:                               # calloc(count, size): a block, cleared
         lw    $t0, 0($sp)
         lw    $t1, 4($sp)
         mul   $t0, $t0, $t1
-        j     __malloc_n
+        move  $t9, $ra
+        jal   __malloc_n
+        lw    $t1, -8($v0)              # the whole capacity: a reused block is not zero
+        move  $t2, $v0
+__calloc_zero:
+        sw    $zero, 0($t2)
+        addiu $t2, $t2, 4
+        addiu $t1, $t1, -4
+        bnez  $t1, __calloc_zero
+        jr    $t9
 
-__realloc:                              # realloc(pointer, size): a new block and a copy
+__realloc:                              # realloc(pointer, size)
         lw    $t2, 0($sp)
         lw    $t0, 4($sp)
         move  $t9, $ra
-        jal   __malloc_n
+        beqz  $t2, __realloc_new        # realloc(0, n) is malloc(n)
+        lw    $t3, -8($t2)              # the old block's capacity
+        sltu  $t4, $t3, $t0
+        bnez  $t4, __realloc_new
+        move  $v0, $t2                  # it still fits: the same block
+        jr    $t9
+__realloc_new:
+        jal   __malloc_n                # keeps $t2, $t3, $t9
         beqz  $t2, __realloc_done
-        lw    $t3, -8($t2)              # the old size
-        sltu  $t4, $t0, $t3
-        beqz  $t4, __realloc_copy
-        move  $t3, $t0
-__realloc_copy:
         move  $t5, $v0
-        move  $a0, $v0
+        move  $a0, $v0                  # copy the old capacity (the new block is bigger)
         move  $a1, $t2
         move  $a2, $t3
         jal   __memcpy
+        lw    $t1, __heap_free          # then free the old block
+        sw    $t1, 0($t2)
+        sw    $t2, __heap_free
         move  $v0, $t5
 __realloc_done:
         jr    $t9
 
-__free:                                 # memory is not reused
+__free:                                 # free(pointer): onto the free list, for malloc to reuse
+        lw    $t0, 0($sp)
+        beqz  $t0, __free_done          # free(0) does nothing
+        lw    $t1, __heap_free
+        sw    $t1, 0($t0)
+        sw    $t0, __heap_free
+__free_done:
         jr    $ra
 
 # ------------------------------------------------------- 64-bit arithmetic
@@ -1280,7 +1323,7 @@ __dtoll_done:
         jr    $ra
 
 # ---------------------------------------------------------------- printf
-# %d %i %u %x %X %o %c %s %f %e %E %g %G %%, with '-' and '0' flags,
+# %d %i %u %x %X %o %c %s %p %f %e %E %g %G %%, with '-' and '0' flags,
 # width, precision (strings and the floating formats), '*', and the
 # lengths l / ll / h.
 #   $s0 format   $s1 next argument   $s2 left-justify   $s3 pad character
@@ -1434,6 +1477,8 @@ __pf_conv:
         li    $t3, 8
         li    $t1, 111
         beq   $t0, $t1, __pf_u
+        li    $t1, 112
+        beq   $t0, $t1, __pf_p
         move  $a0, $t0                  # "%%" and anything unknown: the character itself
         j     __pf_char
 
@@ -1513,6 +1558,39 @@ __pf_nstore:
         addiu $s6, $s6, 1
         j     __pf_nloop
 __pf_nout:
+        move  $t0, $s5
+        move  $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_p:                                 # %p: 0x and the address in hex, (nil) for 0 (as glibc)
+        lw    $t0, 0($s1)
+        addiu $s1, $s1, 4
+        li    $t2, 0
+        bnez  $t0, __pf_phex
+        la    $t0, __pf_nil
+        li    $t1, 5
+        jal   __pf_out
+        j     __pf_loop
+__pf_phex:                              # hex digits, last one first, then "0x" in front
+        la    $s5, __pf_buf+95
+        li    $s6, 0
+__pf_ploop:
+        andi  $t5, $t0, 15
+        la    $t8, __pf_digits
+        addu  $t8, $t8, $t5
+        lbu   $t5, 0($t8)
+        addiu $s5, $s5, -1
+        sb    $t5, 0($s5)
+        addiu $s6, $s6, 1
+        srl   $t0, $t0, 4
+        bnez  $t0, __pf_ploop
+        li    $t5, 120
+        sb    $t5, -1($s5)
+        li    $t5, 48
+        sb    $t5, -2($s5)
+        addiu $s5, $s5, -2
+        addiu $s6, $s6, 2
         move  $t0, $s5
         move  $t1, $s6
         jal   __pf_out
@@ -1714,14 +1792,33 @@ __pf_fixed:                             # the digits of $f12 (>= 0) with $s5 dec
         addiu $sp, $sp, -8              # end at $s6; returns their start in $s6. Keeps $t2.
         sw    $ra, 0($sp)
 __pf_fscale:                            # N = the value * 10^precision, rounded to nearest (ties to even)
-        l.d   $f18, __c_ten
+        l.d   $f16, __c_ten             # 10^precision first (exact up to 10^22) ...
+        l.d   $f18, __c_one
         move  $t5, $s5
 __pf_fscale1:
         blez  $t5, __pf_fscale2
-        mul.d $f12, $f12, $f18
+        mul.d $f18, $f18, $f16
         addiu $t5, $t5, -1
         j     __pf_fscale1
-__pf_fscale2:
+__pf_fscale2:                           # ... then one multiplication, with its exact rounding error
+        l.d   $f0, __c_split            # in $f0 (Dekker's two-product, Veltkamp splitting): when
+        mul.d $f4, $f0, $f12            # the product lands exactly on a half, the error says which
+        sub.d $f6, $f4, $f12            # side of it the true value is (2.675 is 2.67499999...)
+        sub.d $f4, $f4, $f6             # $f4 = high half of the value
+        sub.d $f6, $f12, $f4            # $f6 = low half
+        mul.d $f8, $f0, $f18
+        sub.d $f10, $f8, $f18
+        sub.d $f8, $f8, $f10            # $f8 = high half of 10^precision
+        sub.d $f10, $f18, $f8           # $f10 = low half
+        mul.d $f12, $f12, $f18          # the rounded product
+        mul.d $f0, $f4, $f8
+        sub.d $f0, $f0, $f12
+        mul.d $f18, $f4, $f10
+        add.d $f0, $f0, $f18
+        mul.d $f18, $f6, $f8
+        add.d $f0, $f0, $f18
+        mul.d $f18, $f6, $f10
+        add.d $f0, $f0, $f18            # $f0 = exact product - rounded product
         jal   __dtoll                   # $v1:$v0 = N truncated ($f12 is not negative, so it is kept)
         mtc1  $v1, $f14                 # back to double, to see what was cut off
         cvt.d.w $f14, $f14
@@ -1739,7 +1836,12 @@ __pf_fback:
         bc1t  __pf_fup
         c.eq.d $f16, $f12
         bc1f  __pf_fdigits
-        andi  $t5, $v0, 1               # exactly half: round to the even neighbour
+        l.d   $f16, __c_zero            # exactly half as computed: the true value decides
+        c.lt.d $f0, $f16
+        bc1t  __pf_fdigits              # it was just below the half: down
+        c.lt.d $f16, $f0
+        bc1t  __pf_fup                  # just above: up
+        andi  $t5, $v0, 1               # a true half: round to the even neighbour
         beqz  $t5, __pf_fdigits
 __pf_fup:
         addiu $v0, $v0, 1

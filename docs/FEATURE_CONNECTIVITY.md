@@ -440,7 +440,7 @@ F3, F4, F13, F14, F17, F19, F20 and every infrastructure analysis except I2 are 
 
 - **F7 pointers** feeds arrays, the heap, references and classes.
 - **F9 functions / S6 calls** is shared by every call; the D39 register convention lives here, so any change to argument passing must be mirrored in `Emitter::call` (caller), the prologue in `Emitter::function` (callee), and `varargStart` (variadic walk).
-- **F10 printf** is in every test program; a change there must keep all 34 TAC and 34 SPIM outputs identical.
+- **F10 printf** is in every test program; a change there must keep all 46 TAC and 46 SPIM outputs identical.
 
 ---
 

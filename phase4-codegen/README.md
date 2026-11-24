@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 36 test
+> Status: **implemented and tested** on the SPIM simulator. All 46 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization and with `-O1`, `-O2` and `-O3`
-> (`./run_tests.sh`: 36 passed).
+> (`./run_tests.sh`: 46 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention,
@@ -197,7 +197,7 @@ because SPIM has no C library:
 
 | Routine | What it does |
 |---|---|
-| `__printf` | `%d %i %u %x %X %o %c %s %p %f %e %E %g %G %%` with `-` and `0` flags, width, precision, `*`, lengths `l` `ll` `h` `z`. `%f` rounds to nearest, ties to even, like glibc. |
+| `__printf` | `%d %i %u %x %X %o %c %s %p %f %e %E %g %G %%` with `-` and `0` flags, width, precision, `*`, lengths `l` `ll` `h` `z`. `%f`, `%e` and `%g` round like glibc: the value is multiplied by 10^precision once, and when that product lands exactly on a half the exact rounding error of the multiplication (Dekker's two-product) decides, so `%.2f` of 2.675 (stored as 2.67499…) is `2.67`; only a true half goes to the even neighbour. |
 | `__scanf` | `%d %i %u %c %s %f` (`l` for `double`, a width for `%s`); input is taken a line at a time with the `read_string` system call, so it works in a terminal and in QtSpim's console |
 | `__malloc` `__calloc` `__realloc` `__free` | a free list over the `sbrk` system call (D45): each block's capacity is stored before it; `malloc` takes the most recently freed block that fits, whole, before growing the heap; `free` pushes a block on the list; `calloc` clears the block; `realloc` keeps a block that still fits |
 | `__memcpy` | struct copies |
