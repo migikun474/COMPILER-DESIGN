@@ -4,7 +4,7 @@
 
    Source file   : test/t44_long_long.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 88 -> 63 instruction(s)
+   Result        : Optimized three address code (-O1): 88 -> 49 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                           88 -> 63   (28% fewer)
+   instructions                           88 -> 49   (44% fewer)
 
-   constants folded                       16
+   calls inlined                           2
+   constants folded                       26
    algebraic simplifications               0
    common subexpressions                   0
-   copies / constants forwarded           42
+   copies / constants forwarded           68
    temporaries merged away                 0
-   dead instructions removed              16
+   dead instructions removed              34
    jumps removed or redirected             3
    unreachable instructions removed        6
 
@@ -49,7 +50,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 8 temporaries, frame 264 bytes
+ Symbol table: 10 parameter(s)/local(s), 0 temporaries, frame 344 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -63,17 +64,9 @@
    back             local   long long                       8      56
    keep             local   long long                       8      64
    r                local   long long                       8      72
-   t5               temp    long long                       8     112
-   t7               temp    long long                       8     128
-   t8               temp    long long                       8     136
-   t20              temp    double                          8     224
-   t21              temp    double                          8     232
-   t22              temp    long long                       8     240
-   t23              temp    long long                       8     248
-   t24              temp    long long                       8     256
-   (16 temporaries no longer used after optimization not shown)
+   (34 temporaries no longer used after optimization not shown)
 
- Code: 60 instruction(s)
+ Code: 46 instruction(s)
 
     103     a = 4294967295
     104     b = 1
@@ -81,60 +74,46 @@
     106     param 4294967296
     107     param -4294967296
     108     call printf, 3
-    109     param 123456789
-    110     param 1000003
-    111     param -7
-    112     t5 = call mulAdd(long long, long long, long long), 3
-    113     m = t5
-    114     t7 = t5 llong/ -1000
-    115     t8 = t5 llong% 1000
+    109     m = 123457159370360
+    110     param "%lld %lld %lld\n"
+    111     param 123457159370360
+    112     param -123457159370
+    113     param 360
+    114     call printf, 4
+    115     x = 1
     116     param "%lld %lld %lld\n"
-    117     param t5
-    118     param t7
-    119     param t8
+    117     param 2147483648
+    118     param 4294967296
+    119     param 4611686018427387904
     120     call printf, 4
-    121     x = 1
-    122     param "%lld %lld %lld\n"
-    123     param 2147483648
-    124     param 4294967296
-    125     param 4611686018427387904
-    126     call printf, 4
-    127     neg = -1000000000000
-    128     param "%lld %lld\n"
-    129     param -62500000000
-    130     param -142857142857
-    131     call printf, 3
-    132     big = 18446744073709551615
-    133     param "%llu %llu\n"
-    134     param 18446744073709551615
-    135     param 6148914691236517205
-    136     call printf, 3
-    137     param "%d %d %d\n"
-    138     param 1
-    139     param 1
-    140     param 1
-    141     call printf, 4
-    142     t20 = llongtodouble t5
-    143     dd = t20
-    144     t21 = t20 double/ 3.0
-    145     t22 = doubletollong t21
-    146     back = t22
-    147     param "%.0f %lld\n"
-    148     param t20
-    149     param t22
-    150     call printf, 3
-    151     keep = 9000000000
-    152     param 2
-    153     param 3
-    154     param 4
-    155     t23 = call mulAdd(long long, long long, long long), 3
-    156     r = t23
-    157     t24 = t23 llong+ 9000000000
-    158     param "%lld %lld\n"
-    159     param 9000000000
-    160     param t24
-    161     call printf, 3
-    162     return 0
+    121     neg = -1000000000000
+    122     param "%lld %lld\n"
+    123     param -62500000000
+    124     param -142857142857
+    125     call printf, 3
+    126     big = 18446744073709551615
+    127     param "%llu %llu\n"
+    128     param 18446744073709551615
+    129     param 6148914691236517205
+    130     call printf, 3
+    131     param "%d %d %d\n"
+    132     param 1
+    133     param 1
+    134     param 1
+    135     call printf, 4
+    136     dd = 1.2345715937036e+14
+    137     back = 41152386456786
+    138     param "%.0f %lld\n"
+    139     param 1.2345715937036e+14
+    140     param 41152386456786
+    141     call printf, 3
+    142     keep = 9000000000
+    143     r = 10
+    144     param "%lld %lld\n"
+    145     param 9000000000
+    146     param 9000000010
+    147     call printf, 3
+    148     return 0
 
 
 ----------------------------------------------------------------------------
@@ -173,3 +152,18 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+4294967296 -4294967296
+123457159370360 -123457159370 360
+2147483648 4294967296 4611686018427387904
+-62500000000 -142857142857
+18446744073709551615 6148914691236517205
+1 1 1
+123457159370360 41152386456786
+9000000000 9000000010
+
+   exit code 0, 46 instructions executed

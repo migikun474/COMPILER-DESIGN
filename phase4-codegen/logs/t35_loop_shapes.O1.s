@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t35_loop_shapes.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -34,125 +34,167 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
+        addiu $sp, $sp, -40
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -20($fp)
-        sw    $s1, -8($fp)
-        sw    $s2, -16($fp)
-        sw    $s3, -12($fp)
         # s = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -8($fp)
         # k = 0
-        li    $s2, 0
+        li    $t0, 0
+        sw    $t0, -16($fp)
         # t1 = &n
-        addiu $s1, $fp, -4
+        addiu $t0, $fp, -4
+        sw    $t0, -20($fp)
         # param "%d"
         # param t1
         # call scanf, 2
         addiu $sp, $sp, -8
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -20($fp)
+        sw    $t0, 4($sp)
         jal   __scanf
         addiu $sp, $sp, 8
         # i = 0
-        li    $s3, 0
+        li    $t0, 0
+        sw    $t0, -12($fp)
 L0_7:
         # if i int>= n goto 14
+        lw    $t0, -12($fp)
         lw    $t1, -4($fp)
-        bge   $s3, $t1, L0_14
+        bge   $t0, $t1, L0_14
         # if i int== 7 goto 14
+        lw    $t0, -12($fp)
         li    $t1, 7
-        beq   $s3, $t1, L0_14
+        beq   $t0, $t1, L0_14
         # t2 = i int% 2
+        lw    $t0, -12($fp)
         li    $t1, 2
-        div   $s3, $t1
-        mfhi  $s1
+        div   $t0, $t1
+        mfhi  $t0
+        sw    $t0, -24($fp)
         # if t2 int!= 0 goto 12
-        bne   $s1, $zero, L0_12
+        lw    $t0, -24($fp)
+        bne   $t0, $zero, L0_12
         # s = s int+ i
-        addu  $s0, $s0, $s3
+        lw    $t0, -8($fp)
+        lw    $t1, -12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -8($fp)
 L0_12:
         # i = i int+ 1
-        addiu $s3, $s3, 1
+        lw    $t0, -12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -12($fp)
         # goto 7
         j     L0_7
 L0_14:
         # if k int>= n goto 28
+        lw    $t0, -16($fp)
         lw    $t1, -4($fp)
-        bge   $s2, $t1, L0_28
+        bge   $t0, $t1, L0_28
         # t6 = k int% 3
+        lw    $t0, -16($fp)
         li    $t1, 3
-        div   $s2, $t1
-        mfhi  $s1
+        div   $t0, $t1
+        mfhi  $t0
+        sw    $t0, -28($fp)
         # goto 23
         j     L0_23
 L0_17:
         # s = s int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -8($fp)
         # goto 26
         j     L0_26
 L0_19:
         # s = s int+ 2
-        addiu $s0, $s0, 2
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 2
+        sw    $t0, -8($fp)
         # goto 26
         j     L0_26
 L0_21:
         # s = s int- 1
-        addiu $s0, $s0, -1
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, -1
+        sw    $t0, -8($fp)
         # goto 26
         j     L0_26
 L0_23:
         # if t6 int== 0 goto 17
-        beq   $s1, $zero, L0_17
+        lw    $t0, -28($fp)
+        beq   $t0, $zero, L0_17
         # if t6 int== 1 goto 19
+        lw    $t0, -28($fp)
         li    $t1, 1
-        beq   $s1, $t1, L0_19
+        beq   $t0, $t1, L0_19
         # goto 21
         j     L0_21
 L0_26:
         # k = k int+ 1
-        addiu $s2, $s2, 1
+        lw    $t0, -16($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -16($fp)
         # goto 14
         j     L0_14
 L0_28:
         # s = s int+ 10
-        addiu $s0, $s0, 10
+        lw    $t0, -8($fp)
+        addiu $t0, $t0, 10
+        sw    $t0, -8($fp)
         # t12 = n int- 1
         lw    $t0, -4($fp)
-        addiu $s1, $t0, -1
+        addiu $t0, $t0, -1
+        sw    $t0, -32($fp)
         # n = t12
-        move  $t0, $s1
+        lw    $t0, -32($fp)
         sw    $t0, -4($fp)
         # if t12 int> 0 goto 28
-        bgt   $s1, $zero, L0_28
+        lw    $t0, -32($fp)
+        bgt   $t0, $zero, L0_28
         # i = 0
-        li    $s3, 0
+        li    $t0, 0
+        sw    $t0, -12($fp)
 L0_33:
         # if i int>= 3 goto 42
+        lw    $t0, -12($fp)
         li    $t1, 3
-        bge   $s3, $t1, L0_42
+        bge   $t0, $t1, L0_42
         # k = 0
-        li    $s2, 0
+        li    $t0, 0
+        sw    $t0, -16($fp)
 L0_35:
         # if k int>= 2 goto 40
+        lw    $t0, -16($fp)
         li    $t1, 2
-        bge   $s2, $t1, L0_40
+        bge   $t0, $t1, L0_40
         # t13 = i int* k
-        mul   $s1, $s3, $s2
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -36($fp)
         # s = s int+ t13
-        addu  $s0, $s0, $s1
+        lw    $t0, -8($fp)
+        lw    $t1, -36($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -8($fp)
         # k = k int+ 1
-        addiu $s2, $s2, 1
+        lw    $t0, -16($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -16($fp)
         # goto 35
         j     L0_35
 L0_40:
         # i = i int+ 1
-        addiu $s3, $s3, 1
+        lw    $t0, -12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -12($fp)
         # goto 33
         j     L0_33
 L0_42:
@@ -163,18 +205,16 @@ L0_42:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s3, 8($sp)
+        lw    $t0, -8($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -12($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -20($fp)
-        lw    $s1, -8($fp)
-        lw    $s2, -16($fp)
-        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

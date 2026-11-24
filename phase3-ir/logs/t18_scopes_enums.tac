@@ -257,77 +257,77 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Color              enum_tag      enum Color                 -           5    -    0  
-   Red                enumerator    enum Color                 -           5    -    1  value 0
-   Green              enumerator    enum Color                 -           5    -    2  value 5
-   Blue               enumerator    enum Color                 -           5    -    1  value 6
-   (unnamed at 6:9)   enum_tag      enum (unnamed at 6:9)      -           6    -    0  
-   Lo                 enumerator    Level                      -           6    -    0  value 0
-   Hi                 enumerator    Level                      -           6    -    1  value 1
-   Level              typedef       Level                      -           6    -    0  
-   Number             typedef       int                        -           7    -    0  
-   Row                typedef       int[3]                     -           8    -    0  
-   x                  variable      int                        global      9    4    3  
-   rate               variable      double                     global     10    8    1  
-   part               variable      float                      global     11    4    1  
-   chosen             variable      double                     global     12    8    1  
-   show               function      int (int)                  -          13    -    1  _Z4showi; defined
-   show               function      int (enum Color)           -          14    -    1  _Z4show5Color; defined
-   globalX            function      int (void)                 -          15    -    1  _Z7globalXv; defined
-   hide               function      int (int)                  -          16    -    1  _Z4hidei; defined
-   countA             function      int (void)                 -          17    -    3  _Z6countAv; defined
-   countB             function      int (void)                 -          18    -    2  _Z6countBv; defined
-   name               function      const char *(enum Color)   -          19    -    2  _Z4name5Color; defined
-   main               function      int (void)                 -          20    -    0  defined
+   Color              enum_tag      enum Color                 -           7    -    0  
+   Red                enumerator    enum Color                 -           7    -    1  value 0
+   Green              enumerator    enum Color                 -           7    -    2  value 5
+   Blue               enumerator    enum Color                 -           7    -    1  value 6
+   (unnamed at 8:9)   enum_tag      enum (unnamed at 8:9)      -           8    -    0  
+   Lo                 enumerator    Level                      -           8    -    0  value 0
+   Hi                 enumerator    Level                      -           8    -    1  value 1
+   Level              typedef       Level                      -           8    -    0  
+   Number             typedef       int                        -           9    -    0  
+   Row                typedef       int[3]                     -          10    -    0  
+   x                  variable      int                        global     11    4    3  
+   rate               variable      double                     global     12    8    1  
+   part               variable      float                      global     13    4    1  
+   chosen             variable      double                     global     14    8    1  
+   show               function      int (int)                  -          15    -    1  _Z4showi; defined
+   show               function      int (enum Color)           -          16    -    1  _Z4show5Color; defined
+   globalX            function      int (void)                 -          17    -    1  _Z7globalXv; defined
+   hide               function      int (int)                  -          18    -    1  _Z4hidei; defined
+   countA             function      int (void)                 -          19    -    3  _Z6countAv; defined
+   countB             function      int (void)                 -          20    -    2  _Z6countBv; defined
+   name               function      const char *(enum Color)   -          21    -    2  _Z4name5Color; defined
+   main               function      int (void)                 -          22    -    0  defined
 
  scope: global > show()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     int                        param      13    4    0  v.1
-   c                  parameter     enum Color                 param      14    4    0  c.2
+   v                  parameter     int                        param      15    4    0  v.1
+   c                  parameter     enum Color                 param      16    4    0  c.2
 
  scope: global > hide()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  parameter     int                        param      16    4    1  x.3
-   r                  variable      int                        local      16    4    2  r.4
+   x                  parameter     int                        param      18    4    1  x.3
+   r                  variable      int                        local      18    4    2  r.4
 
  scope: global > hide() > block
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   x                  variable      int                        local      16    4    1  x.5
+   x                  variable      int                        local      18    4    1  x.5
 
  scope: global > countA()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        static     17    4    1  n.6; static
+   n                  variable      int                        static     19    4    1  n.6; static
 
  scope: global > countB()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        static     18    4    1  n.7; static
+   n                  variable      int                        static     20    4    1  n.7; static
 
  scope: global > name()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  parameter     enum Color                 param      19    4    1  c.8
+   c                  parameter     enum Color                 param      21    4    1  c.8
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   total              variable      int                        local      22    4    2  total.9
-   i                  variable      int                        local      22    4    4  i.10
-   before             variable      int                        local      25    4    1  before.12
-   x                  variable      int                        local      26    4    1  x.13
-   r                  variable      int[3]                     local      30   12    2  r.14
-   n                  variable      int                        local      31    4    1  n.15
-   c                  variable      enum Color                 local      32    4    2  c.16
-   l                  variable      Level                      local      33    4    1  l.17
+   total              variable      int                        local      24    4    2  total.9
+   i                  variable      int                        local      24    4    4  i.10
+   before             variable      int                        local      27    4    1  before.12
+   x                  variable      int                        local      28    4    1  x.13
+   r                  variable      int[3]                     local      32   12    2  r.14
+   n                  variable      int                        local      33    4    1  n.15
+   c                  variable      enum Color                 local      34    4    2  c.16
+   l                  variable      Level                      local      35    4    1  l.17
 
  scope: global > main() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      23    4    1  i.11
+   i                  variable      int                        local      25    4    1  i.11
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

@@ -16,6 +16,7 @@
 
    instructions                           76 -> 43   (43% fewer)
 
+   calls inlined                           0
    constants folded                       24
    algebraic simplifications               0
    common subexpressions                   0
@@ -122,3 +123,16 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+-3 3 0 2
+3.0 3.5 0.333
+0.333333 2.67 0 2
+1 1 1
+4000000000 2000000000
+666666666 1.23e+04 0.0001
+
+   exit code 0, 43 instructions executed

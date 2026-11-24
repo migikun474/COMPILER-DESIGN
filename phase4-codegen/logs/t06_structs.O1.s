@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t06_structs.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -43,18 +43,20 @@ _Z4grow3Out:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
-        sw    $s0, -4($fp)
-        sw    $s1, -8($fp)
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         sw    $a2, 16($fp)
         sw    $a3, 20($fp)
         # t1 = o[0]
-        lw    $s0, 8($fp)
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # t2 = t1 int+ 100
-        addiu $s1, $s0, 100
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 100
+        sw    $t0, -8($fp)
         # o[0] = t2
-        sw    $s1, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 8($fp)
         # o[16] = 9
         li    $t0, 9
         sw    $t0, 24($fp)
@@ -62,8 +64,6 @@ _Z4grow3Out:
         addiu $v0, $fp, 8
         j     _Z4grow3Out_exit
 _Z4grow3Out_exit:
-        lw    $s0, -4($fp)
-        lw    $s1, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -75,28 +75,30 @@ _Z4area2Pt:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -8($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -12($fp)
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         # t1 = p[0]
-        lw    $s1, 8($fp)
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # t2 = t1 int<< 1
-        sll   $s0, $s1, 1
+        lw    $t0, -4($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -8($fp)
         # p[0] = t2
-        sw    $s0, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 8($fp)
         # t4 = p[4]
-        lw    $s1, 12($fp)
+        lw    $t0, 12($fp)
+        sw    $t0, -12($fp)
         # t5 = t2 int* t4
-        mul   $s2, $s0, $s1
+        lw    $t0, -8($fp)
+        lw    $t1, -12($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -16($fp)
         # return t5
-        move  $v0, $s2
+        lw    $v0, -16($fp)
         j     _Z4area2Pt_exit
 _Z4area2Pt_exit:
-        lw    $s0, -8($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -108,19 +110,12 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -240
+        addiu $sp, $sp, -424
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
-        s.d   $f20, -240($fp)
-        sw    $s0, -212($fp)
-        sw    $s1, -216($fp)
-        sw    $s2, -220($fp)
-        sw    $s3, -224($fp)
-        sw    $s4, -228($fp)
-        sw    $s5, -232($fp)
         # o[0] = 1
         li    $t0, 1
         sw    $t0, -32($fp)
@@ -139,41 +134,55 @@ M2_0:
         # o[24] = 2.5
         l.d   $f0, fc0
         s.d   $f0, -8($fp)
-        # param o
-        # g = call grow(struct Out), 1
-        addiu $sp, $sp, -32
-        addiu $a0, $sp, 0
+        # t37 = o
+        addiu $a0, $fp, -352
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        lw    $a2, 8($sp)
-        lw    $a3, 12($sp)
-        jal   _Z4grow3Out
-        addiu $sp, $sp, 32
-        move  $a1, $v0
+        # t38 = t37[0]
+        lw    $t0, -352($fp)
+        sw    $t0, -356($fp)
+        # t39 = t38 int+ 100
+        lw    $t0, -356($fp)
+        addiu $t0, $t0, 100
+        sw    $t0, -360($fp)
+        # t37[0] = t39
+        lw    $t0, -360($fp)
+        sw    $t0, -352($fp)
+        # t37[16] = 9
+        li    $t0, 9
+        sw    $t0, -336($fp)
+        # g = t37
         addiu $a0, $fp, -64
+        addiu $a1, $fp, -352
         li    $a2, 32
         jal   __memcpy
         # t2 = o[0]
-        lw    $s0, -32($fp)
+        lw    $t0, -32($fp)
+        sw    $t0, -184($fp)
         # t3 = g[0]
-        lw    $s1, -64($fp)
+        lw    $t0, -64($fp)
+        sw    $t0, -188($fp)
         # t4 = g[4]
-        lb    $s2, -60($fp)
+        lb    $t0, -60($fp)
+        sb    $t0, -189($fp)
         # t5 = chartoint t4
-        move  $t0, $s2
-        move  $s3, $t0
+        lb    $t0, -189($fp)
+        sw    $t0, -196($fp)
         # t6 = g[16]
-        lw    $s2, -48($fp)
+        lw    $t0, -48($fp)
+        sw    $t0, -200($fp)
         # t7 = o[16]
-        lw    $s4, -16($fp)
+        lw    $t0, -16($fp)
+        sw    $t0, -204($fp)
         # t8 = t6 int+ t7
-        addu  $s5, $s2, $s4
+        lw    $t0, -200($fp)
+        lw    $t1, -204($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -208($fp)
         # t9 = g[24]
         l.d   $f0, -40($fp)
-        mov.d $f20, $f0
+        s.d   $f0, -216($fp)
         # param "%d %d %c %d %.1f\n"
         # param t2
         # param t3
@@ -184,11 +193,15 @@ M2_0:
         addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s3, 12($sp)
-        sw    $s5, 16($sp)
-        mov.d $f0, $f20
+        lw    $t0, -184($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -188($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -196($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -208($fp)
+        sw    $t0, 16($sp)
+        l.d   $f0, -216($fp)
         s.d   $f0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
@@ -198,74 +211,108 @@ M2_0:
         # p[4] = 4
         li    $t0, 4
         sw    $t0, -68($fp)
-        # param p
-        # t10 = call area(Pt), 1
-        addiu $sp, $sp, -16
-        addiu $a0, $sp, 0
+        # t40 = p
+        addiu $a0, $fp, -368
         addiu $a1, $fp, -72
         li    $a2, 8
         jal   __memcpy
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        jal   _Z4area2Pt
-        addiu $sp, $sp, 16
-        move  $s0, $v0
+        # t41 = t40[0]
+        lw    $t0, -368($fp)
+        sw    $t0, -372($fp)
+        # t42 = t41 int<< 1
+        lw    $t0, -372($fp)
+        sll   $t0, $t0, 1
+        sw    $t0, -376($fp)
+        # t40[0] = t42
+        lw    $t0, -376($fp)
+        sw    $t0, -368($fp)
+        # t43 = t40[4]
+        lw    $t0, -364($fp)
+        sw    $t0, -380($fp)
+        # t44 = t42 int* t43
+        lw    $t0, -376($fp)
+        lw    $t1, -380($fp)
+        mul   $t0, $t0, $t1
+        sw    $t0, -384($fp)
         # t11 = p[0]
-        lw    $s1, -72($fp)
+        lw    $t0, -72($fp)
+        sw    $t0, -220($fp)
         # param "%d %d\n"
-        # param t10
+        # param t44
         # param t11
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
+        lw    $t0, -384($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -220($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # t12 = &os
-        addiu $s1, $fp, -136
+        addiu $t0, $fp, -136
+        sw    $t0, -224($fp)
         # t13 = t12 ptr+ 32
-        addiu $s0, $s1, 32
+        lw    $t0, -224($fp)
+        addiu $t0, $t0, 32
+        sw    $t0, -228($fp)
         # op = t13
-        move  $s1, $s0
+        lw    $t0, -228($fp)
+        sw    $t0, -140($fp)
         # ii = 1
-        li    $s1, 1
+        li    $t0, 1
+        sw    $t0, -144($fp)
         # jj = 2
-        li    $s1, 2
+        li    $t0, 2
+        sw    $t0, -148($fp)
         # os[48] = 31
         li    $t0, 31
         sw    $t0, -88($fp)
         # t19 = t13 ptr+ 8
-        addiu $s1, $s0, 8
+        lw    $t0, -228($fp)
+        addiu $t0, $t0, 8
+        sw    $t0, -232($fp)
         # t20 = t19 ptr+ 4
-        addiu $s0, $s1, 4
+        lw    $t0, -232($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -236($fp)
         # *t20 = 17
+        lw    $t8, -236($fp)
         li    $t0, 17
-        sw    $t0, 0($s0)
+        sw    $t0, 0($t8)
         # t21 = os[48]
-        lw    $s0, -88($fp)
+        lw    $t0, -88($fp)
+        sw    $t0, -240($fp)
         # t25 = os[44]
-        lw    $s1, -92($fp)
-        # param o
-        # t26 = call grow(struct Out), 1
-        addiu $sp, $sp, -32
-        addiu $a0, $sp, 0
+        lw    $t0, -92($fp)
+        sw    $t0, -244($fp)
+        # t45 = o
+        addiu $a0, $fp, -416
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
-        lw    $a0, 0($sp)
-        lw    $a1, 4($sp)
-        lw    $a2, 8($sp)
-        lw    $a3, 12($sp)
-        jal   _Z4grow3Out
-        addiu $sp, $sp, 32
-        move  $a1, $v0
-        addiu $a0, $fp, -200
+        # t46 = t45[0]
+        lw    $t0, -416($fp)
+        sw    $t0, -420($fp)
+        # t47 = t46 int+ 100
+        lw    $t0, -420($fp)
+        addiu $t0, $t0, 100
+        sw    $t0, -424($fp)
+        # t45[0] = t47
+        lw    $t0, -424($fp)
+        sw    $t0, -416($fp)
+        # t45[16] = 9
+        li    $t0, 9
+        sw    $t0, -400($fp)
+        # t26 = t45
+        addiu $a0, $fp, -280
+        addiu $a1, $fp, -416
         li    $a2, 32
         jal   __memcpy
         # t27 = t26[0]
-        lw    $s2, -200($fp)
+        lw    $t0, -280($fp)
+        sw    $t0, -284($fp)
         # param "%d %d %d\n"
         # param t21
         # param t25
@@ -274,38 +321,42 @@ M2_0:
         addiu $sp, $sp, -16
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
+        lw    $t0, -240($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -244($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -284($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # ps[0] = 1
         li    $t0, 1
-        sw    $t0, -152($fp)
+        sw    $t0, -164($fp)
         # ps[4] = 2
         li    $t0, 2
-        sw    $t0, -148($fp)
+        sw    $t0, -160($fp)
         # ps[8] = 3
         li    $t0, 3
-        sw    $t0, -144($fp)
+        sw    $t0, -156($fp)
         # ps[12] = 4
         li    $t0, 4
-        sw    $t0, -140($fp)
+        sw    $t0, -152($fp)
         # t28 = ps[0]
-        addiu $a1, $fp, -152
-        addiu $a0, $fp, -208
+        addiu $a1, $fp, -164
+        addiu $a0, $fp, -292
         li    $a2, 8
         jal   __memcpy
         # ps[8] = t28
-        addiu $a0, $fp, -144
-        addiu $a1, $fp, -208
+        addiu $a0, $fp, -156
+        addiu $a1, $fp, -292
         li    $a2, 8
         jal   __memcpy
         # ps[4] = 50
         li    $t0, 50
-        sw    $t0, -148($fp)
+        sw    $t0, -160($fp)
         # t29 = ps[12]
-        lw    $s0, -140($fp)
+        lw    $t0, -152($fp)
+        sw    $t0, -296($fp)
         # param "%d %d\n"
         # param t29
         # param 50
@@ -313,26 +364,32 @@ M2_0:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -296($fp)
+        sw    $t0, 4($sp)
         li    $t0, 50
         sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # h[4] = 3
         li    $t0, 3
-        sw    $t0, -160($fp)
+        sw    $t0, -172($fp)
         # h[8] = 8
         li    $t0, 8
-        sw    $t0, -156($fp)
+        sw    $t0, -168($fp)
         # h[0] = 1
         li    $t0, 1
-        sw    $t0, -164($fp)
+        sw    $t0, -176($fp)
         # t31 = h[8]
-        lw    $s0, -156($fp)
+        lw    $t0, -168($fp)
+        sw    $t0, -300($fp)
         # t32 = h[4]
-        lw    $s1, -160($fp)
+        lw    $t0, -172($fp)
+        sw    $t0, -304($fp)
         # t33 = t31 int- t32
-        subu  $s2, $s0, $s1
+        lw    $t0, -300($fp)
+        lw    $t1, -304($fp)
+        subu  $t0, $t0, $t1
+        sw    $t0, -308($fp)
         # param "%d %d\n"
         # param t33
         # param 12
@@ -340,7 +397,8 @@ M2_0:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
+        lw    $t0, -308($fp)
+        sw    $t0, 4($sp)
         li    $t0, 12
         sw    $t0, 8($sp)
         jal   __printf
@@ -360,14 +418,16 @@ M2_0:
         addiu $sp, $sp, 16
         # b[0] = 1.0
         l.s   $f0, fc1
-        s.s   $f0, -168($fp)
+        s.s   $f0, -180($fp)
         # t34 = b[0]
-        lw    $s0, -168($fp)
+        lw    $t0, -180($fp)
+        sw    $t0, -312($fp)
         # t35 = b[3]
-        lbu   $s1, -165($fp)
+        lbu   $t0, -177($fp)
+        sb    $t0, -313($fp)
         # t36 = uchartoint t35
-        move  $t0, $s1
-        move  $s2, $t0
+        lbu   $t0, -313($fp)
+        sw    $t0, -320($fp)
         # param "%x %d %d\n"
         # param t34
         # param t36
@@ -376,8 +436,10 @@ M2_0:
         addiu $sp, $sp, -16
         la    $t0, str3
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s2, 8($sp)
+        lw    $t0, -312($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -320($fp)
+        sw    $t0, 8($sp)
         li    $t0, 4
         sw    $t0, 12($sp)
         jal   __printf
@@ -386,13 +448,6 @@ M2_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -240($fp)
-        lw    $s0, -212($fp)
-        lw    $s1, -216($fp)
-        lw    $s2, -220($fp)
-        lw    $s3, -224($fp)
-        lw    $s4, -228($fp)
-        lw    $s5, -232($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

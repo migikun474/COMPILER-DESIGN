@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t44_long_long.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -45,6 +45,10 @@ _Z6mulAddxxx:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = a llong* b
         lw    $t0, 8($fp)
         lw    $t1, 12($fp)
@@ -177,6 +181,10 @@ M1_3:
         lw    $t1, -108($fp)
         sw    $t0, 16($sp)
         sw    $t1, 20($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z6mulAddxxx
         addiu $sp, $sp, 24
         sw    $v0, -120($fp)
@@ -512,6 +520,10 @@ M1_2:
         li    $t1, 0
         sw    $t0, 16($sp)
         sw    $t1, 20($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z6mulAddxxx
         addiu $sp, $sp, 24
         sw    $v0, -256($fp)

@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t45_strings_chars.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -60,6 +60,7 @@ _Z3lenPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
         # n = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -114,6 +115,8 @@ _Z4copyPcPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
 L1_0:
         # t1 = d
         lw    $t0, 8($fp)
@@ -171,6 +174,8 @@ _Z3cmpPKcS0_:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -48
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
 L2_0:
         # t1 = *a
         lw    $t8, 8($fp)
@@ -270,23 +275,20 @@ M3_0:
         # param t1
         # param "Hello\tWorld\n"
         # call copy(char *, const char *), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -72($fp)
-        sw    $t0, 0($sp)
-        la    $t0, str0
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -72($fp)
+        la    $a1, str0
         jal   _Z4copyPcPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # t2 = &buf
         addiu $t0, $fp, -32
         sw    $t0, -76($fp)
         # param t2
         # t3 = call len(const char *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -76($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -76($fp)
         jal   _Z3lenPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -80($fp)
         # t5 = buf[5]
         addiu $t8, $fp, -32
@@ -316,11 +318,10 @@ L3_13:
         sw    $t0, -100($fp)
         # param t8
         # t9 = call len(const char *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -100($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -100($fp)
         jal   _Z3lenPKc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -104($fp)
         # t10 = t9 int- 1
         lw    $t0, -104($fp)
@@ -369,13 +370,11 @@ L3_23:
         # param "abc"
         # param "abd"
         # t14 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -8
-        la    $t0, str2
-        sw    $t0, 0($sp)
-        la    $t0, str3
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str2
+        la    $a1, str3
         jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -124($fp)
         # if t14 int< 0 goto 34
         lw    $t0, -124($fp)
@@ -394,24 +393,20 @@ L3_35:
         # param "abc"
         # param "abc"
         # t15 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -8
-        la    $t0, str2
-        sw    $t0, 0($sp)
-        la    $t0, str2
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str2
+        la    $a1, str2
         jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -128($fp)
         # param "b"
         # param "a"
         # t17 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -8
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        la    $t0, str5
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        la    $a0, str4
+        la    $a1, str5
         jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -136($fp)
         # if t17 int> 0 goto 44
         lw    $t0, -136($fp)

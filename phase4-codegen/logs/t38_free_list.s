@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t38_free_list.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -47,6 +47,7 @@ _Z5buildi:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
+        sw    $a0, 8($fp)
         # head = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -116,6 +117,7 @@ _Z5totalP4Node:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -176,6 +178,7 @@ _Z7releaseP4Node:
         beqz  $t8, M2_0
         j     __stack_overflow
 M2_0:
+        sw    $a0, 8($fp)
 L2_0:
         # if p ptr!= 0 goto 2
         lw    $t0, 8($fp)
@@ -410,22 +413,20 @@ L3_41:
         addiu $sp, $sp, 16
         # param 100
         # t14 = call build(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 100
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 100
         jal   _Z5buildi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -120($fp)
         # list = t14
         lw    $t0, -120($fp)
         sw    $t0, -32($fp)
         # param list
         # t15 = call total(struct Node *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -32($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -32($fp)
         jal   _Z5totalP4Node
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -124($fp)
         # param "list %d\n"
         # param t15
@@ -439,29 +440,26 @@ L3_41:
         addiu $sp, $sp, 8
         # param list
         # call release(struct Node *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -32($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -32($fp)
         jal   _Z7releaseP4Node
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param 200
         # t16 = call build(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 200
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 200
         jal   _Z5buildi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -128($fp)
         # list = t16
         lw    $t0, -128($fp)
         sw    $t0, -32($fp)
         # param list
         # t17 = call total(struct Node *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -32($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -32($fp)
         jal   _Z5totalP4Node
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -132($fp)
         # param "list %d\n"
         # param t17
@@ -475,11 +473,10 @@ L3_41:
         addiu $sp, $sp, 8
         # param list
         # call release(struct Node *), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -32($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -32($fp)
         jal   _Z7releaseP4Node
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         # param 64
         # t18 = call malloc, 1
         addiu $sp, $sp, -8

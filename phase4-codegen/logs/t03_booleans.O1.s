@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t03_booleans.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -44,37 +44,36 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
+        addiu $sp, $sp, -104
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -12($fp)
-        sw    $s2, -20($fp)
-        sw    $s3, -32($fp)
-        sw    $s4, -36($fp)
-        sw    $s5, -28($fp)
-        sw    $s6, -40($fp)
-        sw    $s7, -24($fp)
         # a = 1
-        li    $s6, 1
+        li    $t0, 1
+        sw    $t0, -4($fp)
         # b = 2
-        li    $s5, 2
+        li    $t0, 2
+        sw    $t0, -8($fp)
         # c = 5
-        li    $s3, 5
+        li    $t0, 5
+        sw    $t0, -12($fp)
         # d = 4
-        li    $s4, 4
+        li    $t0, 4
+        sw    $t0, -16($fp)
         # e = 6
-        li    $s7, 6
+        li    $t0, 6
+        sw    $t0, -20($fp)
         # f = 7
         li    $t0, 7
-        sw    $t0, -4($fp)
+        sw    $t0, -24($fp)
         # x = 1
-        li    $s0, 1
+        li    $t0, 1
+        sw    $t0, -28($fp)
         # y = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -32($fp)
         # param "%d %d %d %d\n"
         # param 1
         # param 0
@@ -92,51 +91,48 @@ M0_0:
         sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # goto 15
-L0_15:
-        # t5 = 1
-        li    $s1, 1
-        # if b int!= 2 goto 19
-        li    $t1, 2
-        xor   $s0, $s5, $t1
-        sltu  $s0, $zero, $s0
-L0_20:
-        # t7 = t5 int+ t6
-        addu  $s2, $s1, $s0
-        # if c int>= 5 goto 24
-        li    $t1, 5
-        slt   $s0, $s3, $t1
-        xori  $s0, $s0, 1
-L0_25:
-        # t9 = t7 int+ t8
-        addu  $s1, $s2, $s0
-        # if d int<= 3 goto 29
-        li    $t1, 3
-        slt   $s0, $t1, $s4
-        xori  $s0, $s0, 1
-L0_30:
-        # t11 = t9 int+ t10
-        addu  $s2, $s1, $s0
-        # if e int> f goto 34
-        lw    $t1, -4($fp)
-        slt   $s0, $t1, $s7
-L0_35:
-        # t = t11 int+ t12
-        addu  $s7, $s2, $s0
-        # if a int< b goto 39
-        slt   $s0, $s6, $s5
-L0_40:
-        # if t15 int== 1 goto 43
+        # t = 2
+        li    $t0, 2
+        sw    $t0, -36($fp)
+        # goto 16
+        j     L0_16
+L0_16:
+        # t15 = 1
+        li    $t0, 1
+        sw    $t0, -56($fp)
+        # if t15 int== 1 goto 20
+        lw    $t0, -56($fp)
         li    $t1, 1
-        xor   $s0, $s0, $t1
-        sltiu $s0, $s0, 1
-L0_44:
-        # if c int> d goto 47
-        slt   $s1, $s4, $s3
-L0_48:
+        beq   $t0, $t1, L0_20
+        # t14 = 0
+        li    $t0, 0
+        sw    $t0, -52($fp)
+        # goto 21
+        j     L0_21
+L0_20:
+        # t14 = 1
+        li    $t0, 1
+        sw    $t0, -52($fp)
+L0_21:
+        # if c int> d goto 24
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        bgt   $t0, $t1, L0_24
+        # t16 = 0
+        li    $t0, 0
+        sw    $t0, -60($fp)
+        # goto 25
+        j     L0_25
+L0_24:
+        # t16 = 1
+        li    $t0, 1
+        sw    $t0, -60($fp)
+L0_25:
         # t17 = t16 int* 10
+        lw    $t0, -60($fp)
         li    $t1, 10
-        mul   $s2, $s1, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -64($fp)
         # param "%d %d %d\n"
         # param t
         # param t14
@@ -145,63 +141,112 @@ L0_48:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s7, 4($sp)
-        sw    $s0, 8($sp)
-        sw    $s2, 12($sp)
+        lw    $t0, -36($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -52($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -64($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # if c int> d goto 57
-        slt   $s0, $s4, $s3
-L0_58:
-        # if t18 int!= 0 goto 61
-        xor   $s0, $s0, $zero
-        sltu  $s0, $zero, $s0
-        andi  $s0, $s0, 255
-L0_62:
+        # if c int> d goto 34
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        bgt   $t0, $t1, L0_34
+        # t18 = 0
+        li    $t0, 0
+        sw    $t0, -68($fp)
+        # goto 35
+        j     L0_35
+L0_34:
+        # t18 = 1
+        li    $t0, 1
+        sw    $t0, -68($fp)
+L0_35:
+        # if t18 int!= 0 goto 38
+        lw    $t0, -68($fp)
+        bne   $t0, $zero, L0_38
+        # t19 = 0
+        li    $t0, 0
+        sb    $t0, -69($fp)
+        # goto 39
+        j     L0_39
+L0_38:
+        # t19 = 1
+        li    $t0, 1
+        sb    $t0, -69($fp)
+L0_39:
         # p = t19
-        move  $s1, $s0
-        # if t19 bool== 0 goto 66
-        xor   $s0, $s0, $zero
-        sltiu $s0, $s0, 1
-L0_67:
-        # if t20 int!= 0 goto 70
-        xor   $s0, $s0, $zero
-        sltu  $s0, $zero, $s0
-        andi  $s0, $s0, 255
-L0_71:
+        lbu   $t0, -69($fp)
+        sb    $t0, -37($fp)
+        # if t19 bool== 0 goto 43
+        lbu   $t0, -69($fp)
+        beq   $t0, $zero, L0_43
+        # t20 = 0
+        li    $t0, 0
+        sw    $t0, -76($fp)
+        # goto 44
+        j     L0_44
+L0_43:
+        # t20 = 1
+        li    $t0, 1
+        sw    $t0, -76($fp)
+L0_44:
+        # if t20 int!= 0 goto 47
+        lw    $t0, -76($fp)
+        bne   $t0, $zero, L0_47
+        # t21 = 0
+        li    $t0, 0
+        sb    $t0, -77($fp)
+        # goto 48
+        j     L0_48
+L0_47:
+        # t21 = 1
+        li    $t0, 1
+        sb    $t0, -77($fp)
+L0_48:
         # q = t21
-        move  $s2, $s0
+        lbu   $t0, -77($fp)
+        sb    $t0, -38($fp)
         # t22 = booltoint p
-        move  $t0, $s1
-        move  $s7, $t0
+        lbu   $t0, -37($fp)
+        sw    $t0, -84($fp)
         # t23 = booltoint t21
-        move  $t0, $s0
-        sw    $t0, -8($fp)
-        # if p bool== 0 goto 76
-        beq   $s1, $zero, L0_76
-        # if q bool== 0 goto 78
-        beq   $s2, $zero, L0_78
-L0_76:
+        lbu   $t0, -77($fp)
+        sw    $t0, -88($fp)
+        # if p bool== 0 goto 53
+        lbu   $t0, -37($fp)
+        beq   $t0, $zero, L0_53
+        # if q bool== 0 goto 55
+        lbu   $t0, -38($fp)
+        beq   $t0, $zero, L0_55
+L0_53:
         # t24 = 0
-        li    $s0, 0
-        # goto 79
-        j     L0_79
-L0_78:
+        li    $t0, 0
+        sw    $t0, -92($fp)
+        # goto 56
+        j     L0_56
+L0_55:
         # t24 = 1
-        li    $s0, 1
-L0_79:
-        # if p bool!= 0 goto 83
-        bne   $s1, $zero, L0_83
-        # if q bool!= 0 goto 83
-        bne   $s2, $zero, L0_83
+        li    $t0, 1
+        sw    $t0, -92($fp)
+L0_56:
+        # if p bool!= 0 goto 60
+        lbu   $t0, -37($fp)
+        bne   $t0, $zero, L0_60
+        # if q bool!= 0 goto 60
+        lbu   $t0, -38($fp)
+        bne   $t0, $zero, L0_60
         # t25 = 0
-        li    $s1, 0
-        # goto 84
-        j     L0_84
-L0_83:
+        li    $t0, 0
+        sw    $t0, -96($fp)
+        # goto 61
+        j     L0_61
+L0_60:
         # t25 = 1
-        li    $s1, 1
-L0_84:
+        li    $t0, 1
+        sw    $t0, -96($fp)
+L0_61:
         # param "%d %d %d %d\n"
         # param t22
         # param t23
@@ -211,36 +256,50 @@ L0_84:
         addiu $sp, $sp, -24
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s7, 4($sp)
-        lw    $t0, -8($fp)
+        lw    $t0, -84($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -88($fp)
         sw    $t0, 8($sp)
-        sw    $s0, 12($sp)
-        sw    $s1, 16($sp)
+        lw    $t0, -92($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -96($fp)
+        sw    $t0, 16($sp)
         jal   __printf
         addiu $sp, $sp, 24
         # i = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -44($fp)
         # n = 0
-        li    $s1, 0
-L0_92:
-        # if i int>= 10 goto 99
+        li    $t0, 0
+        sw    $t0, -48($fp)
+L0_69:
+        # if i int>= 10 goto 76
+        lw    $t0, -44($fp)
         li    $t1, 10
-        bge   $s0, $t1, L0_99
-        # if i int> 6 goto 99
+        bge   $t0, $t1, L0_76
+        # if i int> 6 goto 76
+        lw    $t0, -44($fp)
         li    $t1, 6
-        bgt   $s0, $t1, L0_99
-        # if n int> 20 goto 99
+        bgt   $t0, $t1, L0_76
+        # if n int> 20 goto 76
+        lw    $t0, -48($fp)
         li    $t1, 20
-        bgt   $s1, $t1, L0_99
+        bgt   $t0, $t1, L0_76
         # t26 = i
-        move  $s2, $s0
+        lw    $t0, -44($fp)
+        sw    $t0, -100($fp)
         # i = i int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -44($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -44($fp)
         # n = n int+ t26
-        addu  $s1, $s1, $s2
-        # goto 92
-        j     L0_92
-L0_99:
+        lw    $t0, -48($fp)
+        lw    $t1, -100($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # goto 69
+        j     L0_69
+L0_76:
         # param "%d %d\n"
         # param i
         # param n
@@ -248,15 +307,21 @@ L0_99:
         addiu $sp, $sp, -16
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
+        lw    $t0, -44($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -48($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # if a int>= b goto 105
-        bge   $s6, $s5, L0_105
-        # if c int!= d goto 108
-        bne   $s3, $s4, L0_108
-L0_105:
+        # if a int>= b goto 82
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        bge   $t0, $t1, L0_82
+        # if c int!= d goto 85
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        bne   $t0, $t1, L0_85
+L0_82:
         # param "wrong\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -264,9 +329,9 @@ L0_105:
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-        # goto 110
-        j     L0_110
-L0_108:
+        # goto 87
+        j     L0_87
+L0_85:
         # param "right\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -274,9 +339,10 @@ L0_108:
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L0_110:
-        # if a int== 0 goto 113
-        beq   $s6, $zero, L0_113
+L0_87:
+        # if a int== 0 goto 90
+        lw    $t0, -4($fp)
+        beq   $t0, $zero, L0_90
         # param "t\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -284,19 +350,11 @@ L0_110:
         sw    $t0, 0($sp)
         jal   __printf
         addiu $sp, $sp, 8
-L0_113:
+L0_90:
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -12($fp)
-        lw    $s2, -20($fp)
-        lw    $s3, -32($fp)
-        lw    $s4, -36($fp)
-        lw    $s5, -28($fp)
-        lw    $s6, -40($fp)
-        lw    $s7, -24($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

@@ -4,7 +4,7 @@
 
    Source file   : test/t16_registers.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 135 -> 105 instruction(s)
+   Result        : Optimized three address code (-O1): 135 -> 106 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          135 -> 105   (22% fewer)
+   instructions                          135 -> 106   (21% fewer)
 
+   calls inlined                           2
    constants folded                       18
    algebraic simplifications               2
    common subexpressions                   1
-   copies / constants forwarded           47
+   copies / constants forwarded           56
    temporaries merged away                 7
-   dead instructions removed              19
+   dead instructions removed              25
    jumps removed or redirected             4
    unreachable instructions removed        1
 
@@ -107,7 +108,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 28 parameter(s)/local(s), 18 temporaries, frame 332 bytes
+ Symbol table: 28 parameter(s)/local(s), 22 temporaries, frame 372 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -142,9 +143,7 @@
    t1               temp    int                             4     136
    t11              temp    int                             4     176
    t14              temp    int *                           4     188
-   t15              temp    int                             4     192
    t16              temp    int                             4     196
-   t17              temp    int                             4     200
    t18              temp    int                             4     204
    t19              temp    int                             4     208
    t21              temp    int                             4     216
@@ -157,9 +156,15 @@
    t31              temp    unsigned int                    4     256
    t39              temp    int                             4     320
    t41              temp    int                             4     328
-   (23 temporaries no longer used after optimization not shown)
+   t43              temp    int                             4     336
+   t44              temp    int                             4     340
+   t48              temp    int                             4     356
+   t49              temp    int                             4     360
+   t50              temp    int                             4     364
+   t51              temp    int                             4     368
+   (29 temporaries no longer used after optimization not shown)
 
- Code: 84 instruction(s)
+ Code: 85 instruction(s)
 
     121       v1 = 1
     122       v2 = 2
@@ -183,68 +188,69 @@
     140       call printf, 4
     141       x = 3
     142       t14 = &x
-    143       param t14
-    144       t15 = call twice(int &), 1
-    145       tw = t15
-    146       t16 = x int+ 1
-    147       param x
-    148       param t15
-    149       param t16
-    150       t17 = call three(int, int, int), 3
-    151       r = t17
-    152       param "%d\n"
-    153       param t17
-    154       call printf, 2
-    155       c = 120
-    156       uc = 250
-    157       sh = 32760
-    158       i = 0
-    159  L2:  if i int>= 10 goto L3
-    160       t18 = chartoint c
-    161       t19 = t18 int+ 1
-    162       c = inttochar t19
-    163       t21 = uchartoint uc
-    164       t22 = t21 int+ 1
-    165       uc = inttouchar t22
-    166       t24 = shorttoint sh
-    167       t25 = t24 int+ 1
-    168       sh = inttoshort t25
-    169       i = i int+ 1
-    170       goto L2
-    171  L3:  t28 = chartoint c
-    172       t29 = uchartoint uc
-    173       t30 = shorttoint sh
-    174       t31 = ushorttouint sh
-    175       param "%d %d %d %u\n"
-    176       param t28
-    177       param t29
-    178       param t30
-    179       param t31
-    180       call printf, 5
-    181       d1 = 1.5
-    182       d2 = 2.5
-    183       d3 = 3.5
-    184       d4 = 4.5
-    185       d5 = 5.5
-    186       d6 = 6.5
-    187       d7 = 7.5
-    188       dt = 62.75
-    189       param "%.2f %.2f\n"
-    190       param 62.75
-    191       param 9.0
-    192       call printf, 3
-    193       n = 0
-    194       t = 0
-    195  L4:  t39 = n int* v2
-    196       t = t int+ t39
-    197       t41 = n int+ 1
-    198       n = t41
-    199       if t41 int< 5 goto L4
-    200       param "%d %d\n"
-    201       param t
-    202       param v9
-    203       call printf, 3
-    204       return 0
+    143       t43 = *t14
+    144       t44 = t43 int<< 1
+    145       *t14 = t44
+    146       tw = t44
+    147       t16 = x int+ 1
+    148       t48 = x int* 100
+    149       t49 = t44 int* 10
+    150       t50 = t48 int+ t49
+    151       t51 = t50 int+ t16
+    152       r = t51
+    153       param "%d\n"
+    154       param t51
+    155       call printf, 2
+    156       c = 120
+    157       uc = 250
+    158       sh = 32760
+    159       i = 0
+    160  L2:  if i int>= 10 goto L3
+    161       t18 = chartoint c
+    162       t19 = t18 int+ 1
+    163       c = inttochar t19
+    164       t21 = uchartoint uc
+    165       t22 = t21 int+ 1
+    166       uc = inttouchar t22
+    167       t24 = shorttoint sh
+    168       t25 = t24 int+ 1
+    169       sh = inttoshort t25
+    170       i = i int+ 1
+    171       goto L2
+    172  L3:  t28 = chartoint c
+    173       t29 = uchartoint uc
+    174       t30 = shorttoint sh
+    175       t31 = ushorttouint sh
+    176       param "%d %d %d %u\n"
+    177       param t28
+    178       param t29
+    179       param t30
+    180       param t31
+    181       call printf, 5
+    182       d1 = 1.5
+    183       d2 = 2.5
+    184       d3 = 3.5
+    185       d4 = 4.5
+    186       d5 = 5.5
+    187       d6 = 6.5
+    188       d7 = 7.5
+    189       dt = 62.75
+    190       param "%.2f %.2f\n"
+    191       param 62.75
+    192       param 9.0
+    193       call printf, 3
+    194       n = 0
+    195       t = 0
+    196  L4:  t39 = n int* v2
+    197       t = t int+ t39
+    198       t41 = n int+ 1
+    199       n = t41
+    200       if t41 int< 5 goto L4
+    201       param "%d %d\n"
+    202       param t
+    203       param v9
+    204       call printf, 3
+    205       return 0
 
 
 ----------------------------------------------------------------------------
@@ -317,3 +323,15 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+280 11 30
+667
+-126 4 -32766 32770
+62.75 9.00
+20 9
+
+   exit code 0, 274 instructions executed

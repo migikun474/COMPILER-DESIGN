@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t12_lecture_examples.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -31,114 +31,141 @@ main_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -144
-        s.d   $f20, -144($fp)
-        s.d   $f22, -112($fp)
-        sw    $s0, -104($fp)
-        sw    $s1, -116($fp)
-        sw    $s2, -100($fp)
-        sw    $s3, -120($fp)
-        sw    $s4, -136($fp)
-        sw    $s5, -124($fp)
-        sw    $s6, -128($fp)
-        sw    $s7, -132($fp)
+        addiu $sp, $sp, -168
         # b = 2
-        li    $s1, 2
+        li    $t0, 2
+        sw    $t0, -8($fp)
         # c = 3
-        li    $s5, 3
+        li    $t0, 3
+        sw    $t0, -12($fp)
         # d = 4
-        li    $s6, 4
+        li    $t0, 4
+        sw    $t0, -16($fp)
         # e = 5
-        li    $s7, 5
+        li    $t0, 5
+        sw    $t0, -20($fp)
         # f = 6
         li    $t0, 6
-        sw    $t0, -4($fp)
+        sw    $t0, -24($fp)
         # i = 1
-        li    $s3, 1
+        li    $t0, 1
+        sw    $t0, -28($fp)
         # r = 1.5
-        l.d   $f20, fc0
+        l.d   $f0, fc0
+        s.d   $f0, -136($fp)
         # a = -12
-        li    $s0, -12
+        li    $t0, -12
+        sw    $t0, -4($fp)
 L0_8:
         # if a int>= b goto 11
-        bge   $s0, $s1, L0_11
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        bge   $t0, $t1, L0_11
         # a = a int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -4($fp)
         # goto 8
         j     L0_8
 L0_11:
         # if a int>= b goto 14
-        bge   $s0, $s1, L0_14
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        bge   $t0, $t1, L0_14
         # x = 1
-        li    $s4, 1
+        li    $t0, 1
+        sw    $t0, -32($fp)
         # goto 15
         j     L0_15
 L0_14:
         # x = 2
-        li    $s4, 2
+        li    $t0, 2
+        sw    $t0, -32($fp)
 L0_15:
         # if a int< b goto 18
-        slt   $s2, $s0, $s1
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        blt   $t0, $t1, L0_18
+        # t7 = 0
+        li    $t0, 0
+        sw    $t0, -140($fp)
+        # goto 19
+        j     L0_19
+L0_18:
+        # t7 = 1
+        li    $t0, 1
+        sw    $t0, -140($fp)
 L0_19:
         # y = t7
-        move  $t0, $s2
-        sw    $t0, -8($fp)
+        lw    $t0, -140($fp)
+        sw    $t0, -36($fp)
         # if a int< b goto 25
-        blt   $s0, $s1, L0_25
+        lw    $t0, -4($fp)
+        lw    $t1, -8($fp)
+        blt   $t0, $t1, L0_25
         # if c int>= d goto 23
-        bge   $s5, $s6, L0_23
+        lw    $t0, -12($fp)
+        lw    $t1, -16($fp)
+        bge   $t0, $t1, L0_23
         # if e int< f goto 25
-        lw    $t1, -4($fp)
-        blt   $s7, $t1, L0_25
+        lw    $t0, -20($fp)
+        lw    $t1, -24($fp)
+        blt   $t0, $t1, L0_25
 L0_23:
         # t8 = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -144($fp)
         # goto 26
         j     L0_26
 L0_25:
         # t8 = 1
-        li    $s0, 1
+        li    $t0, 1
+        sw    $t0, -144($fp)
 L0_26:
         # y = t8
-        move  $t0, $s0
-        sw    $t0, -8($fp)
+        lw    $t0, -144($fp)
+        sw    $t0, -36($fp)
         # t9 = inttodouble i
-        move  $t0, $s3
+        lw    $t0, -28($fp)
         mtc1  $t0, $f0
         cvt.d.w $f0, $f0
-        mov.d $f22, $f0
+        s.d   $f0, -152($fp)
         # r = r double+ t9
-        add.d $f20, $f20, $f22
+        l.d   $f0, -136($fp)
+        l.d   $f2, -152($fp)
+        add.d $f0, $f0, $f2
+        s.d   $f0, -136($fp)
         # t11 = i int<< 2
-        sll   $s1, $s3, 2
+        lw    $t0, -28($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -156($fp)
         # t12 = arr[t11]
-        addiu $t8, $fp, -48
-        addu  $t8, $t8, $s1
-        lw    $s2, 0($t8)
+        addiu $t8, $fp, -76
+        lw    $t9, -156($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, 0($t8)
+        sw    $t0, -160($fp)
         # x = t12
-        move  $s4, $s2
+        lw    $t0, -160($fp)
+        sw    $t0, -32($fp)
         # t14 = t11 int+ 2
-        addiu $s3, $s1, 2
+        lw    $t0, -156($fp)
+        addiu $t0, $t0, 2
+        sw    $t0, -164($fp)
         # t15 = t14 int<< 2
-        sll   $s1, $s3, 2
+        lw    $t0, -164($fp)
+        sll   $t0, $t0, 2
+        sw    $t0, -168($fp)
         # m[t15] = t12
-        addiu $t8, $fp, -96
-        addu  $t8, $t8, $s1
-        sw    $s2, 0($t8)
+        addiu $t8, $fp, -124
+        lw    $t9, -168($fp)
+        addu  $t8, $t8, $t9
+        lw    $t0, -160($fp)
+        sw    $t0, 0($t8)
         # return t8
-        move  $v0, $s0
+        lw    $v0, -144($fp)
         j     main__exit
 main__exit:
-        l.d   $f20, -144($fp)
-        l.d   $f22, -112($fp)
-        lw    $s0, -104($fp)
-        lw    $s1, -116($fp)
-        lw    $s2, -100($fp)
-        lw    $s3, -120($fp)
-        lw    $s4, -136($fp)
-        lw    $s5, -124($fp)
-        lw    $s6, -128($fp)
-        lw    $s7, -132($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8

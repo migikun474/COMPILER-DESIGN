@@ -4,7 +4,7 @@
 
    Source file   : test/t14_optimizer.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 125 -> 94 instruction(s)
+   Result        : Optimized three address code (-O1): 125 -> 101 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          125 -> 94   (24% fewer)
+   instructions                          125 -> 101   (19% fewer)
 
+   calls inlined                           4
    constants folded                       14
    algebraic simplifications               3
    common subexpressions                   3
-   copies / constants forwarded           36
-   temporaries merged away                 6
-   dead instructions removed              15
+   copies / constants forwarded           39
+   temporaries merged away                 7
+   dead instructions removed              16
    jumps removed or redirected             6
    unreachable instructions removed        4
 
@@ -80,7 +81,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 26 parameter(s)/local(s), 11 temporaries, frame 240 bytes
+ Symbol table: 26 parameter(s)/local(s), 15 temporaries, frame 264 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -121,9 +122,13 @@
    t17              temp    int                             4     180
    t18              temp    int                             4     184
    t31              temp    int                             4     236
-   (20 temporaries no longer used after optimization not shown)
+   t32              temp    int                             4     240
+   t34              temp    int                             4     248
+   t35              temp    int                             4     252
+   t36              temp    int                             4     256
+   (22 temporaries no longer used after optimization not shown)
 
- Code: 86 instruction(s)
+ Code: 93 instruction(s)
 
     108       big = 2147483647
     109       w = 2147483647
@@ -146,71 +151,78 @@
     126       t12 = x int+ y
     127       s4 = t12
     128       h = g
-    129       call touch(), 0
-    130       t13 = g int+ h
-    131       s5 = t13
-    132       t14 = &y
-    133       param t14
-    134       call bump(int &), 1
-    135       t15 = x int+ y
-    136       param "%d %d %d %d %d %d\n"
-    137       param t7
-    138       param t7
-    139       param t10
-    140       param t12
-    141       param t13
-    142       param t15
-    143       call printf, 7
-    144       a[0] = 1
-    145       a[4] = 2
-    146       a[8] = 3
-    147       i = 1
-    148       t17 = a[4]
-    149       t18 = t17 int<< 1
-    150       e1 = t18
-    151       a[4] = 9
-    152       param "%d %d\n"
-    153       param t18
-    154       param 18
-    155       call printf, 3
-    156       if calls int== 0 goto L1
-    157       z = 1
-    158       goto L2
-    159  L1:  z = 2
-    160  L2:  k = 0
-    161       step = 3
-    162       acc = 0
-    163  L3:  if k int>= 5 goto L4
-    164       acc = acc int+ step
-    165       k = k int+ 1
-    166       goto L3
-    167  L4:  same = x
-    168       all = -1
-    169       some = x int| 4
-    170       cmp = 0
-    171       cmp = 1
-    172       cmp = 3
-    173       ignored = call touch(), 0
-    174       param "%d %d %d %d\n"
-    175       param same
-    176       param -1
-    177       param some
-    178       param 3
-    179       call printf, 5
-    180       dead = 7
-    181       dead = 8
-    182       call touch(), 0
-    183       m[0] = 42
-    184       r = 42
-    185       t31 = 42 int+ calls
-    186       param "%d %d %d %d %d\n"
-    187       param z
-    188       param acc
-    189       param k
-    190       param 8
-    191       param t31
-    192       call printf, 6
-    193       return 0
+    129       calls = calls int+ 1
+    130       t32 = g int+ 1
+    131       g = t32
+    132       t13 = t32 int+ h
+    133       s5 = t13
+    134       t14 = &y
+    135       t34 = *t14
+    136       t35 = t34 int+ 100
+    137       *t14 = t35
+    138       t15 = x int+ y
+    139       param "%d %d %d %d %d %d\n"
+    140       param t7
+    141       param t7
+    142       param t10
+    143       param t12
+    144       param t13
+    145       param t15
+    146       call printf, 7
+    147       a[0] = 1
+    148       a[4] = 2
+    149       a[8] = 3
+    150       i = 1
+    151       t17 = a[4]
+    152       t18 = t17 int<< 1
+    153       e1 = t18
+    154       a[4] = 9
+    155       param "%d %d\n"
+    156       param t18
+    157       param 18
+    158       call printf, 3
+    159       if calls int== 0 goto L1
+    160       z = 1
+    161       goto L2
+    162  L1:  z = 2
+    163  L2:  k = 0
+    164       step = 3
+    165       acc = 0
+    166  L3:  if k int>= 5 goto L4
+    167       acc = acc int+ step
+    168       k = k int+ 1
+    169       goto L3
+    170  L4:  same = x
+    171       all = -1
+    172       some = x int| 4
+    173       cmp = 0
+    174       cmp = 1
+    175       cmp = 3
+    176       calls = calls int+ 1
+    177       t36 = g int+ 1
+    178       g = t36
+    179       ignored = t36
+    180       param "%d %d %d %d\n"
+    181       param same
+    182       param -1
+    183       param some
+    184       param 3
+    185       call printf, 5
+    186       dead = 7
+    187       dead = 8
+    188       calls = calls int+ 1
+    189       g = g int+ 1
+    190       m[0] = 42
+    191       r = 42
+    192       t31 = 42 int+ calls
+    193       param "%d %d %d %d %d\n"
+    194       param z
+    195       param acc
+    196       param k
+    197       param 8
+    198       param t31
+    199       call printf, 6
+    200       return 0
 
 
 ----------------------------------------------------------------------------
@@ -266,3 +278,15 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+-2 -1073741824 17
+10 10 26 16 11 116
+4 18
+10 -1 14 3
+1 15 5 8 45
+
+   exit code 0, 109 instructions executed

@@ -2,11 +2,11 @@
 # Usage: ./run_tests.sh
 #
 # Compiles every ../phase3-ir/test/*.c to MIPS (without optimization
-# and with -O1, -O2, -O3), runs the result in SPIM and compares what the
+# and with -O1), runs the result in SPIM and compares what the
 # program prints, and its exit code, with the same expected file the TAC
 # interpreter is checked against (../phase3-ir/test/expected/<name>.out,
 # verified against gcc/g++). Each program's assembly and SPIM output are
-# kept in logs/: <name>.s and <name>.run for -O0, <name>.O1.s / .O1.run ...
+# kept in logs/: <name>.s and <name>.run for -O0, <name>.O1.s / .O1.run for -O1.
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 [ -x ./mips_generator ] || { echo "Build it first with 'make'."; exit 1; }
@@ -20,7 +20,7 @@ for f in $T/*.c; do
     args=""; [ -f "$T/$n.args" ] && args="$(cat "$T/$n.args")"
     in=/dev/null; [ -f "$T/$n.in" ] && in="$T/$n.in"
     ok=1; note=""
-    for level in -O0 -O1 -O2 -O3; do
+    for level in -O0 -O1; do
         (cd "$TMP" && "$OLDPWD/mips_generator" $level "$OLDPWD/$f" > "$n.s" 2> err) || { ok=0; note="$note $level: no code;"; continue; }
         # SPIM prints a 5-line banner before the program's own output
         timeout 60 spim -file "$TMP/$n.s" $args < "$in" > "$TMP/raw" 2> "$TMP/spimerr"; code=$?

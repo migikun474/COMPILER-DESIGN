@@ -4,7 +4,7 @@
 
    Source file   : test/t09_memory.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 157 -> 130 instruction(s)
+   Result        : Optimized three address code (-O1): 157 -> 133 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          157 -> 130   (17% fewer)
+   instructions                          157 -> 133   (15% fewer)
 
+   calls inlined                           1
    constants folded                        4
    algebraic simplifications               3
    common subexpressions                  10
-   copies / constants forwarded           31
+   copies / constants forwarded           33
    temporaries merged away                 7
-   dead instructions removed              14
+   dead instructions removed              17
    jumps removed or redirected             6
    unreachable instructions removed        0
 
@@ -53,7 +54,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 12 parameter(s)/local(s), 37 temporaries, frame 292 bytes
+ Symbol table: 12 parameter(s)/local(s), 39 temporaries, frame 312 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -106,133 +107,138 @@
    t52              temp    void *                          4     256
    t53              temp    int *                           4     260
    t56              temp    long long                       8     272
-   (21 temporaries no longer used after optimization not shown)
+   t61              temp    void *                          4     300
+   t63              temp    struct Node *                   4     308
+   (24 temporaries no longer used after optimization not shown)
 
- Code: 123 instruction(s)
+ Code: 126 instruction(s)
 
     107        list = 0
     108        rev = 0
     109        i = 1
     110  L1:   if i int> 5 goto L2
-    111        param list
-    112        param i
-    113        list = call push(struct Node *, int), 2
-    114        i = i int+ 1
-    115        goto L1
-    116  L2:   if list ptr== 0 goto L3
-    117        t3 = list ptr+ 4
-    118        t4 = *t3
-    119        n.7 = t4
-    120        *t3 = rev
-    121        rev = list
-    122        list = t4
-    123        goto L2
-    124  L3:   s = 0
-    125        list = rev
-    126  L4:   if list ptr== 0 goto L5
-    127        t6 = s int* 10
-    128        t7 = *list
-    129        s = t6 int+ t7
-    130        t9 = list ptr+ 4
-    131        list = *t9
-    132        goto L4
-    133  L5:   param "%d\n"
-    134        param s
-    135        call printf, 2
-    136  L6:   if rev ptr== 0 goto L7
-    137        t11 = rev ptr+ 4
-    138        t12 = *t11
-    139        n.9 = t12
-    140        param rev
-    141        call free, 1
-    142        rev = t12
-    143        goto L6
-    144  L7:   param 12
-    145        rows = call malloc, 1
-    146        i = 0
-    147  L8:   if i int>= 3 goto L9
-    148        t15 = i int<< 2
-    149        t16 = rows ptr+ t15
-    150        param 4
-    151        param 4
-    152        t17 = call calloc, 2
-    153        *t16 = t17
-    154        t22 = t17 ptr+ t15
-    155        t23 = i int+ 1
-    156        *t22 = t23
-    157        i = t23
-    158        goto L8
-    159  L9:   t25 = rows ptr+ 8
-    160        t26 = *t25
-    161        t27 = t26 ptr+ 8
-    162        t28 = *t27
-    163        t29 = rows ptr+ 4
-    164        t30 = *t29
-    165        t31 = *t30
-    166        t32 = *rows
-    167        t33 = *t32
-    168        t36 = t30 ptr+ 4
-    169        t37 = *t36
-    170        t38 = t33 int+ t37
-    171        param "%d %d %d\n"
-    172        param t28
-    173        param t31
-    174        param t38
-    175        call printf, 4
-    176        param 8
-    177        t40 = call malloc, 1
-    178        g = t40
-    179        *t40 = 11
-    180        t41 = t40 ptr+ 4
-    181        *t41 = 22
-    182        param t40
-    183        param 200
-    184        t43 = call realloc, 2
-    185        g = t43
-    186        param t43
-    187        param 8
-    188        t45 = call realloc, 2
-    189        g = t45
-    190        t46 = *t45
-    191        t47 = t45 ptr+ 4
-    192        t48 = *t47
-    193        param "%d %d\n"
-    194        param t46
-    195        param t48
-    196        call printf, 3
-    197        param 100
-    198        t49 = call malloc, 1
-    199        a = t49
-    200        param t49
-    201        call free, 1
-    202        param 100
-    203        t50 = call malloc, 1
-    204        b = t50
-    205        if t49 ptr== t50 goto L10
-    206        t51 = 0
-    207        goto L11
-    208  L10:  t51 = 1
-    209  L11:  param "%d\n"
-    210        param t51
-    211        call printf, 2
-    212        total = 0
-    213        i = 0
-    214  L12:  if i int>= 30000 goto L13
-    215        param 400
-    216        t52 = call malloc, 1
-    217        t = t52
-    218        t53 = t52 ptr+ 396
-    219        *t53 = i
-    220        t56 = inttollong i
-    221        total = total llong+ t56
-    222        param t52
-    223        call free, 1
-    224        i = i int+ 1
-    225        goto L12
-    226  L13:  param "%lld\n"
-    227        param total
-    228        call printf, 2
-    229        return 0
+    111        param 8
+    112        t61 = call malloc, 1
+    113        *t61 = i
+    114        t63 = t61 ptr+ 4
+    115        *t63 = list
+    116        list = t61
+    117        i = i int+ 1
+    118        goto L1
+    119  L2:   if list ptr== 0 goto L3
+    120        t3 = list ptr+ 4
+    121        t4 = *t3
+    122        n.7 = t4
+    123        *t3 = rev
+    124        rev = list
+    125        list = t4
+    126        goto L2
+    127  L3:   s = 0
+    128        list = rev
+    129  L4:   if list ptr== 0 goto L5
+    130        t6 = s int* 10
+    131        t7 = *list
+    132        s = t6 int+ t7
+    133        t9 = list ptr+ 4
+    134        list = *t9
+    135        goto L4
+    136  L5:   param "%d\n"
+    137        param s
+    138        call printf, 2
+    139  L6:   if rev ptr== 0 goto L7
+    140        t11 = rev ptr+ 4
+    141        t12 = *t11
+    142        n.9 = t12
+    143        param rev
+    144        call free, 1
+    145        rev = t12
+    146        goto L6
+    147  L7:   param 12
+    148        rows = call malloc, 1
+    149        i = 0
+    150  L8:   if i int>= 3 goto L9
+    151        t15 = i int<< 2
+    152        t16 = rows ptr+ t15
+    153        param 4
+    154        param 4
+    155        t17 = call calloc, 2
+    156        *t16 = t17
+    157        t22 = t17 ptr+ t15
+    158        t23 = i int+ 1
+    159        *t22 = t23
+    160        i = t23
+    161        goto L8
+    162  L9:   t25 = rows ptr+ 8
+    163        t26 = *t25
+    164        t27 = t26 ptr+ 8
+    165        t28 = *t27
+    166        t29 = rows ptr+ 4
+    167        t30 = *t29
+    168        t31 = *t30
+    169        t32 = *rows
+    170        t33 = *t32
+    171        t36 = t30 ptr+ 4
+    172        t37 = *t36
+    173        t38 = t33 int+ t37
+    174        param "%d %d %d\n"
+    175        param t28
+    176        param t31
+    177        param t38
+    178        call printf, 4
+    179        param 8
+    180        t40 = call malloc, 1
+    181        g = t40
+    182        *t40 = 11
+    183        t41 = t40 ptr+ 4
+    184        *t41 = 22
+    185        param t40
+    186        param 200
+    187        t43 = call realloc, 2
+    188        g = t43
+    189        param t43
+    190        param 8
+    191        t45 = call realloc, 2
+    192        g = t45
+    193        t46 = *t45
+    194        t47 = t45 ptr+ 4
+    195        t48 = *t47
+    196        param "%d %d\n"
+    197        param t46
+    198        param t48
+    199        call printf, 3
+    200        param 100
+    201        t49 = call malloc, 1
+    202        a = t49
+    203        param t49
+    204        call free, 1
+    205        param 100
+    206        t50 = call malloc, 1
+    207        b = t50
+    208        if t49 ptr== t50 goto L10
+    209        t51 = 0
+    210        goto L11
+    211  L10:  t51 = 1
+    212  L11:  param "%d\n"
+    213        param t51
+    214        call printf, 2
+    215        total = 0
+    216        i = 0
+    217  L12:  if i int>= 30000 goto L13
+    218        param 400
+    219        t52 = call malloc, 1
+    220        t = t52
+    221        t53 = t52 ptr+ 396
+    222        *t53 = i
+    223        t56 = inttollong i
+    224        total = total llong+ t56
+    225        param t52
+    226        call free, 1
+    227        i = i int+ 1
+    228        goto L12
+    229  L13:  param "%lld\n"
+    230        param total
+    231        call printf, 2
+    232        return 0
 
 
 ----------------------------------------------------------------------------
@@ -290,3 +296,15 @@
 struct Node: size 8, align 4
     +0  int v  [public]
     +4  struct Node * next  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+12345
+3 0 3
+11 22
+1
+449985000
+
+   exit code 0, 360270 instructions executed

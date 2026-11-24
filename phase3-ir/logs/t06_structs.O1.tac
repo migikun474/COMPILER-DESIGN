@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 109 -> 98 instruction(s)
+   Result        : Optimized three address code (-O1): 109 -> 110 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          109 -> 98   (10% fewer)
+   instructions                          109 -> 110   (0% fewer)
 
+   calls inlined                           3
    constants folded                        8
    algebraic simplifications               1
    common subexpressions                   2
-   copies / constants forwarded           15
+   copies / constants forwarded           16
    temporaries merged away                 1
-   dead instructions removed              10
+   dead instructions removed              11
    jumps removed or redirected             0
    unreachable instructions removed        0
 
@@ -73,7 +74,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 10 parameter(s)/local(s), 26 temporaries, frame 396 bytes
+ Symbol table: 10 parameter(s)/local(s), 36 temporaries, frame 504 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -95,7 +96,6 @@
    t7               temp    int                             4     236
    t8               temp    int                             4     240
    t9               temp    double                          8     248
-   t10              temp    int                             4     256
    t11              temp    int                             4     260
    t12              temp    struct Out *                    4     264
    t13              temp    struct Out *                    4     268
@@ -113,9 +113,20 @@
    t34              temp    unsigned int                    4     384
    t35              temp    unsigned char                   1     388
    t36              temp    int                             4     392
-   (10 temporaries no longer used after optimization not shown)
+   t37              temp    struct Out                     32     400
+   t38              temp    int                             4     432
+   t39              temp    int                             4     436
+   t40              temp    Pt                              8     440
+   t41              temp    int                             4     448
+   t42              temp    int                             4     452
+   t43              temp    int                             4     456
+   t44              temp    int                             4     460
+   t45              temp    struct Out                     32     464
+   t46              temp    int                             4     496
+   t47              temp    int                             4     500
+   (11 temporaries no longer used after optimization not shown)
 
- Code: 87 instruction(s)
+ Code: 99 instruction(s)
 
     111     o[0] = 1
     112     o[4] = 107
@@ -123,87 +134,99 @@
     114     o[12] = 6
     115     o[16] = 7
     116     o[24] = 2.5
-    117     param o
-    118     g = call grow(struct Out), 1
-    119     t2 = o[0]
-    120     t3 = g[0]
-    121     t4 = g[4]
-    122     t5 = chartoint t4
-    123     t6 = g[16]
-    124     t7 = o[16]
-    125     t8 = t6 int+ t7
-    126     t9 = g[24]
-    127     param "%d %d %c %d %.1f\n"
-    128     param t2
-    129     param t3
-    130     param t5
-    131     param t8
-    132     param t9
-    133     call printf, 6
-    134     p[0] = 3
-    135     p[4] = 4
-    136     param p
-    137     t10 = call area(Pt), 1
-    138     t11 = p[0]
-    139     param "%d %d\n"
-    140     param t10
-    141     param t11
-    142     call printf, 3
-    143     t12 = &os
-    144     t13 = t12 ptr+ 32
-    145     op = t13
-    146     ii = 1
-    147     jj = 2
-    148     os[48] = 31
-    149     t19 = t13 ptr+ 8
-    150     t20 = t19 ptr+ 4
-    151     *t20 = 17
-    152     t21 = os[48]
-    153     t25 = os[44]
-    154     param o
-    155     t26 = call grow(struct Out), 1
-    156     t27 = t26[0]
-    157     param "%d %d %d\n"
-    158     param t21
-    159     param t25
-    160     param t27
-    161     call printf, 4
-    162     ps[0] = 1
-    163     ps[4] = 2
-    164     ps[8] = 3
-    165     ps[12] = 4
-    166     t28 = ps[0]
-    167     ps[8] = t28
-    168     ps[4] = 50
-    169     t29 = ps[12]
-    170     param "%d %d\n"
-    171     param t29
-    172     param 50
-    173     call printf, 3
-    174     h[4] = 3
-    175     h[8] = 8
-    176     h[0] = 1
-    177     t31 = h[8]
-    178     t32 = h[4]
-    179     t33 = t31 int- t32
-    180     param "%d %d\n"
-    181     param t33
-    182     param 12
-    183     call printf, 3
-    184     param "%d %d\n"
-    185     param 8
-    186     param 32
-    187     call printf, 3
-    188     b[0] = 1.0
-    189     t34 = b[0]
-    190     t35 = b[3]
-    191     t36 = uchartoint t35
-    192     param "%x %d %d\n"
-    193     param t34
-    194     param t36
-    195     param 4
-    196     call printf, 4
-    197     return 0
+    117     t37 = o
+    118     t38 = t37[0]
+    119     t39 = t38 int+ 100
+    120     t37[0] = t39
+    121     t37[16] = 9
+    122     g = t37
+    123     t2 = o[0]
+    124     t3 = g[0]
+    125     t4 = g[4]
+    126     t5 = chartoint t4
+    127     t6 = g[16]
+    128     t7 = o[16]
+    129     t8 = t6 int+ t7
+    130     t9 = g[24]
+    131     param "%d %d %c %d %.1f\n"
+    132     param t2
+    133     param t3
+    134     param t5
+    135     param t8
+    136     param t9
+    137     call printf, 6
+    138     p[0] = 3
+    139     p[4] = 4
+    140     t40 = p
+    141     t41 = t40[0]
+    142     t42 = t41 int<< 1
+    143     t40[0] = t42
+    144     t43 = t40[4]
+    145     t44 = t42 int* t43
+    146     t11 = p[0]
+    147     param "%d %d\n"
+    148     param t44
+    149     param t11
+    150     call printf, 3
+    151     t12 = &os
+    152     t13 = t12 ptr+ 32
+    153     op = t13
+    154     ii = 1
+    155     jj = 2
+    156     os[48] = 31
+    157     t19 = t13 ptr+ 8
+    158     t20 = t19 ptr+ 4
+    159     *t20 = 17
+    160     t21 = os[48]
+    161     t25 = os[44]
+    162     t45 = o
+    163     t46 = t45[0]
+    164     t47 = t46 int+ 100
+    165     t45[0] = t47
+    166     t45[16] = 9
+    167     t26 = t45
+    168     t27 = t26[0]
+    169     param "%d %d %d\n"
+    170     param t21
+    171     param t25
+    172     param t27
+    173     call printf, 4
+    174     ps[0] = 1
+    175     ps[4] = 2
+    176     ps[8] = 3
+    177     ps[12] = 4
+    178     t28 = ps[0]
+    179     ps[8] = t28
+    180     ps[4] = 50
+    181     t29 = ps[12]
+    182     param "%d %d\n"
+    183     param t29
+    184     param 50
+    185     call printf, 3
+    186     h[4] = 3
+    187     h[8] = 8
+    188     h[0] = 1
+    189     t31 = h[8]
+    190     t32 = h[4]
+    191     t33 = t31 int- t32
+    192     param "%d %d\n"
+    193     param t33
+    194     param 12
+    195     call printf, 3
+    196     param "%d %d\n"
+    197     param 8
+    198     param 32
+    199     call printf, 3
+    200     b[0] = 1.0
+    201     t34 = b[0]
+    202     t35 = b[3]
+    203     t36 = uchartoint t35
+    204     param "%x %d %d\n"
+    205     param t34
+    206     param t36
+    207     param 4
+    208     call printf, 4
+    209     return 0
 
 
 ----------------------------------------------------------------------------
@@ -312,3 +335,17 @@ union Bits: size 4, align 4
     +0  float f  [public]
     +0  unsigned int u  [public]
     +0  unsigned char[4] b  [public]
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+1 101 k 16 2.5
+24 3
+31 17 101
+2 50
+5 12
+8 32
+3f800000 63 4
+
+   exit code 0, 99 instructions executed

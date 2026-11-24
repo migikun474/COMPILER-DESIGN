@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t30_int_edges.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -42,21 +42,24 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -32
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -4($fp)
         # a = -7
-        li    $s0, -7
+        li    $t0, -7
+        sw    $t0, -4($fp)
         # b = 2
-        li    $s0, 2
+        li    $t0, 2
+        sw    $t0, -8($fp)
         # big = 2147483647
-        li    $s0, 2147483647
+        li    $t0, 2147483647
+        sw    $t0, -12($fp)
         # small = -2147483648
-        li    $s0, -2147483648
+        li    $t0, -2147483648
+        sw    $t0, -16($fp)
         # param "%d %d %d %d\n"
         # param -3
         # param -1
@@ -112,9 +115,11 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 24
         # u = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -20($fp)
         # u = 4294967295
-        li    $s0, -1
+        li    $t0, -1
+        sw    $t0, -20($fp)
         # param "%u %u %d\n"
         # param 4294967295
         # param 1
@@ -132,13 +137,17 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 16
         # c = -56
-        li    $s0, -56
+        li    $t0, -56
+        sb    $t0, -21($fp)
         # uc = 200
-        li    $s0, 200
+        li    $t0, 200
+        sb    $t0, -22($fp)
         # s = -25536
-        li    $s0, -25536
+        li    $t0, -25536
+        sh    $t0, -24($fp)
         # us = 4464
-        li    $s0, 4464
+        li    $t0, 4464
+        sh    $t0, -26($fp)
         # param "%d %d %d %d\n"
         # param -56
         # param 200
@@ -187,9 +196,11 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 16
         # x = 1000
-        li    $s0, 1000
+        li    $t0, 1000
+        sw    $t0, -32($fp)
         # x = 3000000
-        li    $s0, 3000000
+        li    $t0, 3000000
+        sw    $t0, -32($fp)
         # param "%d %d %d\n"
         # param 3000000
         # param 0
@@ -209,7 +220,6 @@ M0_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

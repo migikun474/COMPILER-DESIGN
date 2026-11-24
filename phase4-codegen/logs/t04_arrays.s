@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t04_arrays.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -43,6 +43,8 @@ _Z3sumPii:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # s = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -107,6 +109,7 @@ _Z5tracePA3_i:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -32
+        sw    $a0, 8($fp)
         # t1 = *m
         lw    $t8, 8($fp)
         lw    $t0, 0($t8)
@@ -305,13 +308,11 @@ M2_0:
         # param t1
         # param 6
         # t2 = call sum(int *, int), 2
-        addiu $sp, $sp, -8
-        lw    $t0, -116($fp)
-        sw    $t0, 0($sp)
-        li    $t0, 6
-        sw    $t0, 4($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -116($fp)
+        li    $a1, 6
         jal   _Z3sumPii
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -120($fp)
         # t3 = a[12]
         addiu $t8, $fp, -24
@@ -361,11 +362,10 @@ M2_0:
         sw    $t0, -144($fp)
         # param t8
         # t9 = call trace(int (*)[3]), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -144($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -144($fp)
         jal   _Z5tracePA3_i
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -148($fp)
         # t10 = m[24]
         addiu $t8, $fp, -60

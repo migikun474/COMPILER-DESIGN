@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t46_classes_small.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -45,17 +45,16 @@ _ZN4BaseC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -4($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
         # *this = 1
+        lw    $t8, 8($fp)
         li    $t0, 1
-        sw    $t0, 0($s0)
+        sw    $t0, 0($t8)
         # Base::made = Base::made int+ 1
         lw    $t0, g_Base__made
         addiu $t0, $t0, 1
@@ -70,7 +69,6 @@ M0_0:
         # return
         j     _ZN4BaseC1Ev_exit
 _ZN4BaseC1Ev_exit:
-        lw    $s0, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -113,28 +111,40 @@ _ZN3MidC1Ev:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -8
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -12($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -8($fp)
-        move  $s0, $a0
-        # param this
-        # call Base::Base(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN4BaseC1Ev
-        addiu $sp, $sp, 16
+        sw    $a0, 8($fp)
+        # *this = 1
+        lw    $t8, 8($fp)
+        li    $t0, 1
+        sw    $t0, 0($t8)
+        # Base::made = Base::made int+ 1
+        lw    $t0, g_Base__made
+        addiu $t0, $t0, 1
+        sw    $t0, g_Base__made
+        # param "Base "
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str0
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # t1 = *this
-        lw    $s1, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -4($fp)
         # t2 = t1 int+ 1
-        addiu $s2, $s1, 1
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -8($fp)
         # *this = t2
-        sw    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # param "Mid "
         # call printf, 1
         addiu $sp, $sp, -8
@@ -145,9 +155,6 @@ M3_0:
         # return
         j     _ZN3MidC1Ev_exit
 _ZN3MidC1Ev_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -196,23 +203,45 @@ _ZN4LeafC1Ev:
         beqz  $t8, M6_0
         j     __stack_overflow
 M6_0:
-        sw    $s0, -12($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -8($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
         # param this
-        # call Mid::Mid(), 1
+        # call Base::Base(), 1
         addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN3MidC1Ev
+        lw    $a0, 8($fp)
+        jal   _ZN4BaseC1Ev
         addiu $sp, $sp, 16
+        # t4 = *this
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -12($fp)
+        # t5 = t4 int+ 1
+        lw    $t0, -12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -16($fp)
+        # *this = t5
+        lw    $t8, 8($fp)
+        lw    $t0, -16($fp)
+        sw    $t0, 0($t8)
+        # param "Mid "
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # t1 = *this
-        lw    $s1, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -4($fp)
         # t2 = t1 int* 10
+        lw    $t0, -4($fp)
         li    $t1, 10
-        mul   $s2, $s1, $t1
+        mul   $t0, $t0, $t1
+        sw    $t0, -8($fp)
         # *this = t2
-        sw    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # param "Leaf\n"
         # call printf, 1
         addiu $sp, $sp, -8
@@ -223,9 +252,6 @@ M6_0:
         # return
         j     _ZN4LeafC1Ev_exit
 _ZN4LeafC1Ev_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -8($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -252,27 +278,26 @@ _ZN4LeafpLEi:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
-        sw    $s0, -16($fp)
-        sw    $s1, -4($fp)
-        sw    $s2, -8($fp)
-        sw    $s3, -12($fp)
-        move  $s0, $a0
-        move  $s3, $a1
+        addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = *this
-        lw    $s1, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -4($fp)
         # t2 = t1 int+ k
-        addu  $s2, $s1, $s3
+        lw    $t0, -4($fp)
+        lw    $t1, 12($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -8($fp)
         # *this = t2
-        sw    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, 0($t8)
         # return this
-        move  $v0, $s0
+        lw    $v0, 8($fp)
         j     _ZN4LeafpLEi_exit
 _ZN4LeafpLEi_exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -4($fp)
-        lw    $s2, -8($fp)
-        lw    $s3, -12($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -284,150 +309,179 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -40
+        addiu $sp, $sp, -80
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M9_0
         j     __stack_overflow
 M9_0:
-        sw    $s0, -16($fp)
-        sw    $s1, -20($fp)
-        sw    $s2, -24($fp)
-        sw    $s3, -28($fp)
-        sw    $s4, -32($fp)
-        sw    $s5, -36($fp)
         # t1 = &l
-        addiu $s0, $fp, -4
+        addiu $t0, $fp, -4
+        sw    $t0, -24($fp)
         # param t1
-        # call Leaf::Leaf(), 1
+        # call Mid::Mid(), 1
         addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN4LeafC1Ev
+        lw    $a0, -24($fp)
+        jal   _ZN3MidC1Ev
         addiu $sp, $sp, 16
+        # t19 = *t1
+        lw    $t8, -24($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -44($fp)
+        # t20 = t19 int* 10
+        lw    $t0, -44($fp)
+        li    $t1, 10
+        mul   $t0, $t0, $t1
+        sw    $t0, -48($fp)
+        # *t1 = t20
+        lw    $t8, -24($fp)
+        lw    $t0, -48($fp)
+        sw    $t0, 0($t8)
+        # param "Leaf\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str2
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # b = t1
-        move  $s1, $s0
+        lw    $t0, -24($fp)
+        sw    $t0, -8($fp)
         # m = t1
-        move  $s1, $s0
+        lw    $t0, -24($fp)
+        sw    $t0, -12($fp)
         # t4 = l[0]
-        lw    $s1, -4($fp)
-        # param t1
-        # t5 = call Base::who(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN4Base3whoEv
-        addiu $sp, $sp, 16
-        move  $s2, $v0
-        # param t1
-        # t6 = call Mid::who(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN3Mid3whoEv
-        addiu $sp, $sp, 16
-        move  $s3, $v0
-        # param t1
-        # t7 = call Base::plain(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN4Base5plainEv
-        addiu $sp, $sp, 16
-        move  $s4, $v0
-        # param t1
-        # t8 = call Mid::plain(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN3Mid5plainEv
-        addiu $sp, $sp, 16
-        move  $s5, $v0
+        lw    $t0, -4($fp)
+        sw    $t0, -28($fp)
         # param "%d %d %d %d %d\n"
         # param t4
-        # param t5
-        # param t6
-        # param t7
-        # param t8
+        # param 1
+        # param 2
+        # param 10
+        # param 20
         # call printf, 6
         addiu $sp, $sp, -24
         la    $t0, str3
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s3, 12($sp)
-        sw    $s4, 16($sp)
-        sw    $s5, 20($sp)
+        lw    $t0, -28($fp)
+        sw    $t0, 4($sp)
+        li    $t0, 1
+        sw    $t0, 8($sp)
+        li    $t0, 2
+        sw    $t0, 12($sp)
+        li    $t0, 10
+        sw    $t0, 16($sp)
+        li    $t0, 20
+        sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param t1
-        # param 5
-        # t10 = call Leaf::operator+=(int), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        li    $a1, 5
-        jal   _ZN4LeafpLEi
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # param t10
-        # param 2
-        # call Leaf::operator+=(int), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        li    $a1, 2
-        jal   _ZN4LeafpLEi
-        addiu $sp, $sp, 16
+        # t27 = *t1
+        lw    $t8, -24($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -52($fp)
+        # t28 = t27 int+ 5
+        lw    $t0, -52($fp)
+        addiu $t0, $t0, 5
+        sw    $t0, -56($fp)
+        # *t1 = t28
+        lw    $t8, -24($fp)
+        lw    $t0, -56($fp)
+        sw    $t0, 0($t8)
+        # t32 = t28 int+ 2
+        lw    $t0, -56($fp)
+        addiu $t0, $t0, 2
+        sw    $t0, -60($fp)
+        # *t1 = t32
+        lw    $t8, -24($fp)
+        lw    $t0, -60($fp)
+        sw    $t0, 0($t8)
         # t12 = l[0]
-        lw    $s0, -4($fp)
+        lw    $t0, -4($fp)
+        sw    $t0, -32($fp)
         # param "%d\n"
         # param t12
         # call printf, 2
         addiu $sp, $sp, -8
         la    $t0, str4
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
+        lw    $t0, -32($fp)
+        sw    $t0, 4($sp)
         jal   __printf
         addiu $sp, $sp, 8
         # t13 = &arr
-        addiu $s0, $fp, -12
+        addiu $t0, $fp, -20
+        sw    $t0, -36($fp)
         # param t13
-        # call Mid::Mid(), 1
+        # call Base::Base(), 1
         addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _ZN3MidC1Ev
+        lw    $a0, -36($fp)
+        jal   _ZN4BaseC1Ev
         addiu $sp, $sp, 16
+        # t34 = *t13
+        lw    $t8, -36($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -64($fp)
+        # t35 = t34 int+ 1
+        lw    $t0, -64($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -68($fp)
+        # *t13 = t35
+        lw    $t8, -36($fp)
+        lw    $t0, -68($fp)
+        sw    $t0, 0($t8)
+        # param "Mid "
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # t14 = t13 ptr+ 4
-        addiu $s1, $s0, 4
+        lw    $t0, -36($fp)
+        addiu $t0, $t0, 4
+        sw    $t0, -40($fp)
         # param t14
-        # call Mid::Mid(), 1
+        # call Base::Base(), 1
         addiu $sp, $sp, -16
-        move  $a0, $s1
-        jal   _ZN3MidC1Ev
+        lw    $a0, -40($fp)
+        jal   _ZN4BaseC1Ev
         addiu $sp, $sp, 16
-        # param t14
-        # t17 = call Mid::who(), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        jal   _ZN3Mid3whoEv
-        addiu $sp, $sp, 16
-        move  $s0, $v0
+        # t37 = *t14
+        lw    $t8, -40($fp)
+        lw    $t0, 0($t8)
+        sw    $t0, -72($fp)
+        # t38 = t37 int+ 1
+        lw    $t0, -72($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -76($fp)
+        # *t14 = t38
+        lw    $t8, -40($fp)
+        lw    $t0, -76($fp)
+        sw    $t0, 0($t8)
+        # param "Mid "
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str1
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
         # param "\n%d %d\n"
         # param Base::made
-        # param t17
+        # param 2
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str5
         sw    $t0, 0($sp)
         lw    $t0, g_Base__made
         sw    $t0, 4($sp)
-        sw    $s0, 8($sp)
+        li    $t0, 2
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -16($fp)
-        lw    $s1, -20($fp)
-        lw    $s2, -24($fp)
-        lw    $s3, -28($fp)
-        lw    $s4, -32($fp)
-        lw    $s5, -36($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

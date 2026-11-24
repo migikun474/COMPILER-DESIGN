@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t45_strings_chars.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -59,35 +59,36 @@ _Z3lenPKc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -16
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -4($fp)
-        sw    $s3, -8($fp)
-        move  $s0, $a0
+        sw    $a0, 8($fp)
         # n = 0
-        li    $s1, 0
+        li    $t0, 0
+        sw    $t0, -4($fp)
 L0_1:
         # t1 = s
-        move  $s2, $s0
+        lw    $t0, 8($fp)
+        sw    $t0, -8($fp)
         # s = s ptr+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, 8($fp)
         # t3 = *t1
-        lb    $s3, 0($s2)
+        lw    $t8, -8($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -9($fp)
         # if t3 char== 0 goto 7
-        beq   $s3, $zero, L0_7
+        lb    $t0, -9($fp)
+        beq   $t0, $zero, L0_7
         # n = n int+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, -4($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -4($fp)
         # goto 1
         j     L0_1
 L0_7:
         # return n
-        move  $v0, $s1
+        lw    $v0, -4($fp)
         j     _Z3lenPKc_exit
 _Z3lenPKc_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -4($fp)
-        lw    $s3, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -98,37 +99,38 @@ _Z4copyPcPKc:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -24
-        sw    $s0, -12($fp)
-        sw    $s1, -16($fp)
-        sw    $s2, -20($fp)
-        sw    $s3, -4($fp)
-        sw    $s4, -8($fp)
-        move  $s1, $a0
-        move  $s2, $a1
+        addiu $sp, $sp, -16
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
 L1_0:
         # t1 = d
-        move  $s3, $s1
+        lw    $t0, 8($fp)
+        sw    $t0, -4($fp)
         # d = d ptr+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, 8($fp)
         # t3 = s
-        move  $s4, $s2
+        lw    $t0, 12($fp)
+        sw    $t0, -8($fp)
         # s = s ptr+ 1
-        addiu $s2, $s2, 1
+        lw    $t0, 12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, 12($fp)
         # t5 = *t3
-        lb    $s0, 0($s4)
+        lw    $t8, -8($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -9($fp)
         # *t1 = t5
-        sb    $s0, 0($s3)
+        lw    $t8, -4($fp)
+        lb    $t0, -9($fp)
+        sb    $t0, 0($t8)
         # if t5 char!= 0 goto 0
-        bne   $s0, $zero, L1_0
+        lb    $t0, -9($fp)
+        bne   $t0, $zero, L1_0
         # return
         j     _Z4copyPcPKc_exit
 _Z4copyPcPKc_exit:
-        lw    $s0, -12($fp)
-        lw    $s1, -16($fp)
-        lw    $s2, -20($fp)
-        lw    $s3, -4($fp)
-        lw    $s4, -8($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -139,63 +141,69 @@ _Z3cmpPKcS0_:
         addiu $sp, $sp, -8
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -32
-        sw    $s0, -24($fp)
-        sw    $s1, -28($fp)
-        sw    $s2, -4($fp)
-        sw    $s3, -8($fp)
-        sw    $s4, -12($fp)
-        sw    $s5, -16($fp)
-        sw    $s6, -20($fp)
-        move  $s0, $a0
-        move  $s1, $a1
+        addiu $sp, $sp, -40
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
 L2_0:
         # t1 = *a
-        lb    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -1($fp)
         # if t1 char== 0 goto 10
-        beq   $s2, $zero, L2_10
+        lb    $t0, -1($fp)
+        beq   $t0, $zero, L2_10
         # t2 = *a
-        lb    $s3, 0($s0)
+        lw    $t8, 8($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -2($fp)
         # t3 = chartoint t2
-        move  $t0, $s3
-        move  $s4, $t0
+        lb    $t0, -2($fp)
+        sw    $t0, -8($fp)
         # t4 = *b
-        lb    $s5, 0($s1)
+        lw    $t8, 12($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -9($fp)
         # t5 = chartoint t4
-        move  $t0, $s5
-        move  $s6, $t0
+        lb    $t0, -9($fp)
+        sw    $t0, -16($fp)
         # if t3 int!= t5 goto 10
-        bne   $s4, $s6, L2_10
+        lw    $t0, -8($fp)
+        lw    $t1, -16($fp)
+        bne   $t0, $t1, L2_10
         # a = a ptr+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, 8($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, 8($fp)
         # b = b ptr+ 1
-        addiu $s1, $s1, 1
+        lw    $t0, 12($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, 12($fp)
         # goto 0
         j     L2_0
 L2_10:
         # t8 = *a
-        lb    $s2, 0($s0)
+        lw    $t8, 8($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -17($fp)
         # t9 = chartoint t8
-        move  $t0, $s2
-        move  $s0, $t0
+        lb    $t0, -17($fp)
+        sw    $t0, -24($fp)
         # t10 = *b
-        lb    $s2, 0($s1)
+        lw    $t8, 12($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -25($fp)
         # t11 = chartoint t10
-        move  $t0, $s2
-        move  $s1, $t0
+        lb    $t0, -25($fp)
+        sw    $t0, -32($fp)
         # t12 = t9 int- t11
-        subu  $s2, $s0, $s1
+        lw    $t0, -24($fp)
+        lw    $t1, -32($fp)
+        subu  $t0, $t0, $t1
+        sw    $t0, -36($fp)
         # return t12
-        move  $v0, $s2
+        lw    $v0, -36($fp)
         j     _Z3cmpPKcS0__exit
 _Z3cmpPKcS0__exit:
-        lw    $s0, -24($fp)
-        lw    $s1, -28($fp)
-        lw    $s2, -4($fp)
-        lw    $s3, -8($fp)
-        lw    $s4, -12($fp)
-        lw    $s5, -16($fp)
-        lw    $s6, -20($fp)
         move  $sp, $fp
         lw    $fp, 0($sp)
         addiu $sp, $sp, 8
@@ -207,70 +215,153 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -88
+        addiu $sp, $sp, -384
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
-        sw    $s0, -60($fp)
-        sw    $s1, -68($fp)
-        sw    $s2, -64($fp)
-        sw    $s3, -72($fp)
-        sw    $s4, -76($fp)
-        sw    $s5, -80($fp)
-        sw    $s6, -84($fp)
-        sw    $s7, -88($fp)
         # t1 = &buf
-        addiu $s0, $fp, -32
-        # param t1
-        # param "Hello\tWorld\n"
-        # call copy(char *, const char *), 2
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        la    $a1, str0
-        jal   _Z4copyPcPKc
-        addiu $sp, $sp, 16
-        # param t1
-        # t3 = call len(const char *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s0
-        jal   _Z3lenPKc
-        addiu $sp, $sp, 16
-        move  $s2, $v0
-        # t5 = buf[5]
-        lb    $s0, -27($fp)
-        # t6 = chartoint t5
-        move  $t0, $s0
-        move  $s1, $t0
-        # if t6 int== 9 goto 11
-        li    $t1, 9
-        xor   $s0, $s1, $t1
-        sltiu $s0, $s0, 1
+        addiu $t0, $fp, -32
+        sw    $t0, -72($fp)
+        # t47 = t1
+        lw    $t0, -72($fp)
+        sw    $t0, -204($fp)
+        # t48 = "Hello\tWorld\n"
+        la    $t0, str0
+        sw    $t0, -208($fp)
+L3_3:
+        # t49 = t47
+        lw    $t0, -204($fp)
+        sw    $t0, -212($fp)
+        # t47 = t47 ptr+ 1
+        lw    $t0, -204($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -204($fp)
+        # t50 = t48
+        lw    $t0, -208($fp)
+        sw    $t0, -216($fp)
+        # t48 = t48 ptr+ 1
+        lw    $t0, -208($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -208($fp)
+        # t51 = *t50
+        lw    $t8, -216($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -217($fp)
+        # *t49 = t51
+        lw    $t8, -212($fp)
+        lb    $t0, -217($fp)
+        sb    $t0, 0($t8)
+        # if t51 char!= 0 goto 3
+        lb    $t0, -217($fp)
+        bne   $t0, $zero, L3_3
+        # t52 = t1
+        lw    $t0, -72($fp)
+        sw    $t0, -224($fp)
+        # t53 = 0
+        li    $t0, 0
+        sw    $t0, -228($fp)
 L3_12:
-        # t8 = &buf
-        addiu $s1, $fp, -32
-        # param t8
-        # t9 = call len(const char *), 1
-        addiu $sp, $sp, -16
-        move  $a0, $s1
-        jal   _Z3lenPKc
-        addiu $sp, $sp, 16
-        move  $s3, $v0
-        # t10 = t9 int- 1
-        addiu $s1, $s3, -1
+        # t54 = t52
+        lw    $t0, -224($fp)
+        sw    $t0, -232($fp)
+        # t52 = t52 ptr+ 1
+        lw    $t0, -224($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -224($fp)
+        # t55 = *t54
+        lw    $t8, -232($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -233($fp)
+        # if t55 char== 0 goto 18
+        lb    $t0, -233($fp)
+        beq   $t0, $zero, L3_18
+        # t53 = t53 int+ 1
+        lw    $t0, -228($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -228($fp)
+        # goto 12
+        j     L3_12
+L3_18:
+        # t3 = t53
+        lw    $t0, -228($fp)
+        sw    $t0, -76($fp)
+        # t5 = buf[5]
+        lb    $t0, -27($fp)
+        sb    $t0, -81($fp)
+        # t6 = chartoint t5
+        lb    $t0, -81($fp)
+        sw    $t0, -88($fp)
+        # if t6 int== 9 goto 24
+        lw    $t0, -88($fp)
+        li    $t1, 9
+        beq   $t0, $t1, L3_24
+        # t4 = 0
+        li    $t0, 0
+        sw    $t0, -80($fp)
+        # goto 25
+        j     L3_25
+L3_24:
+        # t4 = 1
+        li    $t0, 1
+        sw    $t0, -80($fp)
+L3_25:
+        # t56 = &buf
+        addiu $t0, $fp, -32
+        sw    $t0, -240($fp)
+        # t57 = 0
+        li    $t0, 0
+        sw    $t0, -244($fp)
+L3_27:
+        # t58 = t56
+        lw    $t0, -240($fp)
+        sw    $t0, -248($fp)
+        # t56 = t56 ptr+ 1
+        lw    $t0, -240($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -240($fp)
+        # t59 = *t58
+        lw    $t8, -248($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -249($fp)
+        # if t59 char== 0 goto 33
+        lb    $t0, -249($fp)
+        beq   $t0, $zero, L3_33
+        # t57 = t57 int+ 1
+        lw    $t0, -244($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -244($fp)
+        # goto 27
+        j     L3_27
+L3_33:
+        # t10 = t57 int- 1
+        lw    $t0, -244($fp)
+        addiu $t0, $t0, -1
+        sw    $t0, -96($fp)
         # t11 = buf[t10]
         addiu $t8, $fp, -32
-        addu  $t8, $t8, $s1
-        lb    $s3, 0($t8)
+        lw    $t9, -96($fp)
+        addu  $t8, $t8, $t9
+        lb    $t0, 0($t8)
+        sb    $t0, -97($fp)
         # t12 = chartoint t11
-        move  $t0, $s3
-        move  $s1, $t0
-        # if t12 int== 10 goto 21
+        lb    $t0, -97($fp)
+        sw    $t0, -104($fp)
+        # if t12 int== 10 goto 39
+        lw    $t0, -104($fp)
         li    $t1, 10
-        xor   $s1, $s1, $t1
-        sltiu $s1, $s1, 1
-L3_22:
+        beq   $t0, $t1, L3_39
+        # t7 = 0
+        li    $t0, 0
+        sw    $t0, -92($fp)
+        # goto 40
+        j     L3_40
+L3_39:
+        # t7 = 1
+        li    $t0, 1
+        sw    $t0, -92($fp)
+L3_40:
         # param "%d %d %d\n"
         # param t3
         # param t4
@@ -279,44 +370,226 @@ L3_22:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
-        sw    $s0, 8($sp)
-        sw    $s1, 12($sp)
+        lw    $t0, -76($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -80($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -92($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # param "abc"
-        # param "abd"
-        # t14 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str2
-        la    $a1, str3
-        jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t14 int< 0 goto 33
-        slt   $s0, $s0, $zero
-L3_34:
-        # param "abc"
-        # param "abc"
-        # t15 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str2
-        la    $a1, str2
-        jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 16
-        move  $s2, $v0
-        # param "b"
-        # param "a"
-        # t17 = call cmp(const char *, const char *), 2
-        addiu $sp, $sp, -16
-        la    $a0, str4
-        la    $a1, str5
-        jal   _Z3cmpPKcS0_
-        addiu $sp, $sp, 16
-        move  $s1, $v0
-        # if t17 int> 0 goto 43
-        slt   $s1, $zero, $s1
-L3_44:
+        # t60 = "abc"
+        la    $t0, str2
+        sw    $t0, -256($fp)
+        # t61 = "abd"
+        la    $t0, str3
+        sw    $t0, -260($fp)
+L3_47:
+        # t62 = *t60
+        lw    $t8, -256($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -261($fp)
+        # if t62 char== 0 goto 57
+        lb    $t0, -261($fp)
+        beq   $t0, $zero, L3_57
+        # t63 = *t60
+        lw    $t8, -256($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -262($fp)
+        # t64 = chartoint t63
+        lb    $t0, -262($fp)
+        sw    $t0, -268($fp)
+        # t65 = *t61
+        lw    $t8, -260($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -269($fp)
+        # t66 = chartoint t65
+        lb    $t0, -269($fp)
+        sw    $t0, -276($fp)
+        # if t64 int!= t66 goto 57
+        lw    $t0, -268($fp)
+        lw    $t1, -276($fp)
+        bne   $t0, $t1, L3_57
+        # t60 = t60 ptr+ 1
+        lw    $t0, -256($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -256($fp)
+        # t61 = t61 ptr+ 1
+        lw    $t0, -260($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -260($fp)
+        # goto 47
+        j     L3_47
+L3_57:
+        # t67 = *t60
+        lw    $t8, -256($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -277($fp)
+        # t68 = chartoint t67
+        lb    $t0, -277($fp)
+        sw    $t0, -284($fp)
+        # t69 = *t61
+        lw    $t8, -260($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -285($fp)
+        # t70 = chartoint t69
+        lb    $t0, -285($fp)
+        sw    $t0, -292($fp)
+        # t71 = t68 int- t70
+        lw    $t0, -284($fp)
+        lw    $t1, -292($fp)
+        subu  $t0, $t0, $t1
+        sw    $t0, -296($fp)
+        # if t71 int< 0 goto 65
+        lw    $t0, -296($fp)
+        blt   $t0, $zero, L3_65
+        # t13 = 0
+        li    $t0, 0
+        sw    $t0, -108($fp)
+        # goto 66
+        j     L3_66
+L3_65:
+        # t13 = 1
+        li    $t0, 1
+        sw    $t0, -108($fp)
+L3_66:
+        # t72 = "abc"
+        la    $t0, str2
+        sw    $t0, -300($fp)
+        # t73 = "abc"
+        la    $t0, str2
+        sw    $t0, -304($fp)
+L3_68:
+        # t74 = *t72
+        lw    $t8, -300($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -305($fp)
+        # if t74 char== 0 goto 78
+        lb    $t0, -305($fp)
+        beq   $t0, $zero, L3_78
+        # t75 = *t72
+        lw    $t8, -300($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -306($fp)
+        # t76 = chartoint t75
+        lb    $t0, -306($fp)
+        sw    $t0, -312($fp)
+        # t77 = *t73
+        lw    $t8, -304($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -313($fp)
+        # t78 = chartoint t77
+        lb    $t0, -313($fp)
+        sw    $t0, -320($fp)
+        # if t76 int!= t78 goto 78
+        lw    $t0, -312($fp)
+        lw    $t1, -320($fp)
+        bne   $t0, $t1, L3_78
+        # t72 = t72 ptr+ 1
+        lw    $t0, -300($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -300($fp)
+        # t73 = t73 ptr+ 1
+        lw    $t0, -304($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -304($fp)
+        # goto 68
+        j     L3_68
+L3_78:
+        # t79 = *t72
+        lw    $t8, -300($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -321($fp)
+        # t80 = chartoint t79
+        lb    $t0, -321($fp)
+        sw    $t0, -328($fp)
+        # t81 = *t73
+        lw    $t8, -304($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -329($fp)
+        # t82 = chartoint t81
+        lb    $t0, -329($fp)
+        sw    $t0, -336($fp)
+        # t15 = t80 int- t82
+        lw    $t0, -328($fp)
+        lw    $t1, -336($fp)
+        subu  $t0, $t0, $t1
+        sw    $t0, -112($fp)
+        # t84 = "b"
+        la    $t0, str4
+        sw    $t0, -340($fp)
+        # t85 = "a"
+        la    $t0, str5
+        sw    $t0, -344($fp)
+L3_85:
+        # t86 = *t84
+        lw    $t8, -340($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -345($fp)
+        # if t86 char== 0 goto 95
+        lb    $t0, -345($fp)
+        beq   $t0, $zero, L3_95
+        # t87 = *t84
+        lw    $t8, -340($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -346($fp)
+        # t88 = chartoint t87
+        lb    $t0, -346($fp)
+        sw    $t0, -352($fp)
+        # t89 = *t85
+        lw    $t8, -344($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -353($fp)
+        # t90 = chartoint t89
+        lb    $t0, -353($fp)
+        sw    $t0, -360($fp)
+        # if t88 int!= t90 goto 95
+        lw    $t0, -352($fp)
+        lw    $t1, -360($fp)
+        bne   $t0, $t1, L3_95
+        # t84 = t84 ptr+ 1
+        lw    $t0, -340($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -340($fp)
+        # t85 = t85 ptr+ 1
+        lw    $t0, -344($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -344($fp)
+        # goto 85
+        j     L3_85
+L3_95:
+        # t91 = *t84
+        lw    $t8, -340($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -361($fp)
+        # t92 = chartoint t91
+        lb    $t0, -361($fp)
+        sw    $t0, -368($fp)
+        # t93 = *t85
+        lw    $t8, -344($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -369($fp)
+        # t94 = chartoint t93
+        lb    $t0, -369($fp)
+        sw    $t0, -376($fp)
+        # t95 = t92 int- t94
+        lw    $t0, -368($fp)
+        lw    $t1, -376($fp)
+        subu  $t0, $t0, $t1
+        sw    $t0, -380($fp)
+        # if t95 int> 0 goto 103
+        lw    $t0, -380($fp)
+        bgt   $t0, $zero, L3_103
+        # t16 = 0
+        li    $t0, 0
+        sw    $t0, -116($fp)
+        # goto 104
+        j     L3_104
+L3_103:
+        # t16 = 1
+        li    $t0, 1
+        sw    $t0, -116($fp)
+L3_104:
         # param "%d %d %d\n"
         # param t13
         # param t15
@@ -325,9 +598,12 @@ L3_44:
         addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s2, 8($sp)
-        sw    $s1, 12($sp)
+        lw    $t0, -108($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -112($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -116($fp)
+        sw    $t0, 12($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # up[0] = 109
@@ -351,41 +627,54 @@ L3_44:
         # up[7] = 0
         sb    $zero, -33($fp)
         # i = 0
-        li    $s0, 0
-L3_58:
+        li    $t0, 0
+        sw    $t0, -44($fp)
+L3_118:
         # t18 = up[i]
         addiu $t8, $fp, -40
-        addu  $t8, $t8, $s0
-        lb    $s1, 0($t8)
-        # if t18 char== 0 goto 68
-        beq   $s1, $zero, L3_68
+        lw    $t9, -44($fp)
+        addu  $t8, $t8, $t9
+        lb    $t0, 0($t8)
+        sb    $t0, -117($fp)
+        # if t18 char== 0 goto 128
+        lb    $t0, -117($fp)
+        beq   $t0, $zero, L3_128
         # t19 = up[i]
         addiu $t8, $fp, -40
-        addu  $t8, $t8, $s0
-        lb    $s2, 0($t8)
+        lw    $t9, -44($fp)
+        addu  $t8, $t8, $t9
+        lb    $t0, 0($t8)
+        sb    $t0, -118($fp)
         # t20 = chartoint t19
-        move  $t0, $s2
-        move  $s3, $t0
+        lb    $t0, -118($fp)
+        sw    $t0, -124($fp)
         # t21 = t20 int- 97
-        addiu $s4, $s3, -97
+        lw    $t0, -124($fp)
+        addiu $t0, $t0, -97
+        sw    $t0, -128($fp)
         # t22 = t21 int+ 65
-        addiu $s5, $s4, 65
+        lw    $t0, -128($fp)
+        addiu $t0, $t0, 65
+        sw    $t0, -132($fp)
         # t23 = inttochar t22
-        move  $t0, $s5
-        move  $s6, $t0
-        sll   $s6, $s6, 24
-        sra   $s6, $s6, 24
+        lw    $t0, -132($fp)
+        sb    $t0, -133($fp)
         # up[i] = t23
         addiu $t8, $fp, -40
-        addu  $t8, $t8, $s0
-        sb    $s6, 0($t8)
+        lw    $t9, -44($fp)
+        addu  $t8, $t8, $t9
+        lb    $t0, -133($fp)
+        sb    $t0, 0($t8)
         # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 58
-        j     L3_58
-L3_68:
+        lw    $t0, -44($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -44($fp)
+        # goto 118
+        j     L3_118
+L3_128:
         # t25 = &up
-        addiu $s1, $fp, -40
+        addiu $t0, $fp, -40
+        sw    $t0, -140($fp)
         # param "%s %c %c\n"
         # param t25
         # param 98
@@ -394,7 +683,8 @@ L3_68:
         addiu $sp, $sp, -16
         la    $t0, str6
         sw    $t0, 0($sp)
-        sw    $s1, 4($sp)
+        lw    $t0, -140($fp)
+        sw    $t0, 4($sp)
         li    $t0, 98
         sw    $t0, 8($sp)
         li    $t0, 97
@@ -402,79 +692,114 @@ L3_68:
         jal   __printf
         addiu $sp, $sp, 16
         # digits = "40213"
-        la    $s1, str7
+        la    $t0, str7
+        sw    $t0, -48($fp)
         # value = 0
-        li    $s2, 0
-        # i = 0
-        li    $s0, 0
-L3_77:
-        # t28 = digits ptr+ i
-        addu  $s3, $s1, $s0
-        # t29 = *t28
-        lb    $s4, 0($s3)
-        # if t29 char== 0 goto 88
-        beq   $s4, $zero, L3_88
-        # t30 = value int* 10
-        li    $t1, 10
-        mul   $s5, $s2, $t1
-        # t31 = digits ptr+ i
-        addu  $s6, $s1, $s0
-        # t32 = *t31
-        lb    $s7, 0($s6)
-        # t33 = chartoint t32
-        move  $t0, $s7
+        li    $t0, 0
         sw    $t0, -52($fp)
-        # t34 = t33 int- 48
-        addiu $t0, $t0, -48
-        sw    $t0, -56($fp)
-        # value = t30 int+ t34
-        move  $t1, $t0
-        addu  $s2, $s5, $t1
-        # i = i int+ 1
-        addiu $s0, $s0, 1
-        # goto 77
-        j     L3_77
-L3_88:
-        # n = 0
-        li    $s1, 0
-        # v = value
-        move  $s0, $s2
-L3_90:
-        # if v int<= 0 goto 99
-        ble   $s0, $zero, L3_99
-        # t37 = n
-        move  $s3, $s1
-        # n = n int+ 1
-        addiu $s1, $s1, 1
-        # t39 = v int% 10
+        # i = 0
+        li    $t0, 0
+        sw    $t0, -44($fp)
+L3_137:
+        # t28 = digits ptr+ i
+        lw    $t0, -48($fp)
+        lw    $t1, -44($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -144($fp)
+        # t29 = *t28
+        lw    $t8, -144($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -145($fp)
+        # if t29 char== 0 goto 148
+        lb    $t0, -145($fp)
+        beq   $t0, $zero, L3_148
+        # t30 = value int* 10
+        lw    $t0, -52($fp)
         li    $t1, 10
-        div   $s0, $t1
-        mfhi  $s4
+        mul   $t0, $t0, $t1
+        sw    $t0, -152($fp)
+        # t31 = digits ptr+ i
+        lw    $t0, -48($fp)
+        lw    $t1, -44($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -156($fp)
+        # t32 = *t31
+        lw    $t8, -156($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -157($fp)
+        # t33 = chartoint t32
+        lb    $t0, -157($fp)
+        sw    $t0, -164($fp)
+        # t34 = t33 int- 48
+        lw    $t0, -164($fp)
+        addiu $t0, $t0, -48
+        sw    $t0, -168($fp)
+        # value = t30 int+ t34
+        lw    $t0, -152($fp)
+        lw    $t1, -168($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -52($fp)
+        # i = i int+ 1
+        lw    $t0, -44($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -44($fp)
+        # goto 137
+        j     L3_137
+L3_148:
+        # n = 0
+        li    $t0, 0
+        sw    $t0, -64($fp)
+        # v = value
+        lw    $t0, -52($fp)
+        sw    $t0, -68($fp)
+L3_150:
+        # if v int<= 0 goto 159
+        lw    $t0, -68($fp)
+        ble   $t0, $zero, L3_159
+        # t37 = n
+        lw    $t0, -64($fp)
+        sw    $t0, -172($fp)
+        # n = n int+ 1
+        lw    $t0, -64($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -64($fp)
+        # t39 = v int% 10
+        lw    $t0, -68($fp)
+        li    $t1, 10
+        div   $t0, $t1
+        mfhi  $t0
+        sw    $t0, -176($fp)
         # t40 = 48 int+ t39
         li    $t0, 48
-        addu  $s5, $t0, $s4
+        lw    $t1, -176($fp)
+        addu  $t0, $t0, $t1
+        sw    $t0, -180($fp)
         # t41 = inttochar t40
-        move  $t0, $s5
-        move  $s6, $t0
-        sll   $s6, $s6, 24
-        sra   $s6, $s6, 24
+        lw    $t0, -180($fp)
+        sb    $t0, -181($fp)
         # out[t37] = t41
-        addiu $t8, $fp, -48
-        addu  $t8, $t8, $s3
-        sb    $s6, 0($t8)
+        addiu $t8, $fp, -60
+        lw    $t9, -172($fp)
+        addu  $t8, $t8, $t9
+        lb    $t0, -181($fp)
+        sb    $t0, 0($t8)
         # v = v int/ 10
+        lw    $t0, -68($fp)
         li    $t1, 10
-        div   $s0, $t1
-        mflo  $s0
-        # goto 90
-        j     L3_90
-L3_99:
+        div   $t0, $t1
+        mflo  $t0
+        sw    $t0, -68($fp)
+        # goto 150
+        j     L3_150
+L3_159:
         # out[n] = 0
-        addiu $t8, $fp, -48
-        addu  $t8, $t8, $s1
+        addiu $t8, $fp, -60
+        lw    $t9, -64($fp)
+        addu  $t8, $t8, $t9
         sb    $zero, 0($t8)
         # t43 = &out
-        addiu $s0, $fp, -48
+        addiu $t0, $fp, -60
+        sw    $t0, -188($fp)
         # param "%d %s\n"
         # param value
         # param t43
@@ -482,8 +807,10 @@ L3_99:
         addiu $sp, $sp, -16
         la    $t0, str8
         sw    $t0, 0($sp)
-        sw    $s2, 4($sp)
-        sw    $s0, 8($sp)
+        lw    $t0, -52($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -188($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # param "[%5s] [%-5s] [%.2s] [%c]\n"
@@ -507,12 +834,15 @@ L3_99:
         addiu $sp, $sp, 24
         # t44 = "quote\"d" ptr+ 5
         la    $t0, str13
-        addiu $s0, $t0, 5
+        addiu $t0, $t0, 5
+        sw    $t0, -192($fp)
         # t45 = *t44
-        lb    $s1, 0($s0)
+        lw    $t8, -192($fp)
+        lb    $t0, 0($t8)
+        sb    $t0, -193($fp)
         # t46 = chartoint t45
-        move  $t0, $s1
-        move  $s0, $t0
+        lb    $t0, -193($fp)
+        sw    $t0, -200($fp)
         # param "%d %d\n"
         # param 92
         # param t46
@@ -522,21 +852,14 @@ L3_99:
         sw    $t0, 0($sp)
         li    $t0, 92
         sw    $t0, 4($sp)
-        sw    $s0, 8($sp)
+        lw    $t0, -200($fp)
+        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -60($fp)
-        lw    $s1, -68($fp)
-        lw    $s2, -64($fp)
-        lw    $s3, -72($fp)
-        lw    $s4, -76($fp)
-        lw    $s5, -80($fp)
-        lw    $s6, -84($fp)
-        lw    $s7, -88($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

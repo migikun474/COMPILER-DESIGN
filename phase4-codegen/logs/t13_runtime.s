@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t13_runtime.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -84,6 +84,7 @@ _Z4makei:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -72
+        sw    $a0, 8($fp)
         # t1 = inttodouble k
         lw    $t0, 8($fp)
         mtc1  $t0, $f0
@@ -164,6 +165,10 @@ _Z5weigh3Bigdci:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -48
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = b[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -212,6 +217,10 @@ _Z3mixiz:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -112
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # va_start ap, n
         addiu $t0, $fp, 12
         sw    $t0, -4($fp)
@@ -543,11 +552,10 @@ M3_0:
         addiu $sp, $sp, 48
         # param 2
         # t13 = call make(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z4makei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         move  $a1, $v0
         addiu $a0, $fp, -192
         li    $a2, 32
@@ -602,6 +610,10 @@ M3_0:
         sw    $t0, 40($sp)
         li    $t0, 5
         sw    $t0, 44($sp)
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z5weigh3Bigdci
         addiu $sp, $sp, 48
         s.d   $f0, -232($fp)
@@ -635,8 +647,6 @@ M3_0:
         # param "Z"
         # t20 = call mix(int, ...), 4
         addiu $sp, $sp, -32
-        li    $t0, 1
-        sw    $t0, 0($sp)
         l.d   $f0, fc3
         s.d   $f0, 8($sp)
         li    $t0, 3
@@ -645,6 +655,9 @@ M3_0:
         sw    $t1, 20($sp)
         la    $t0, str7
         sw    $t0, 24($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
+        li    $a0, 1
         jal   _Z3mixiz
         addiu $sp, $sp, 32
         s.d   $f0, -240($fp)

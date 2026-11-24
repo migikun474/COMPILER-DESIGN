@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t33_brace_elision.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -50,20 +50,12 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -128
+        addiu $sp, $sp, -224
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        sw    $s0, -96($fp)
-        sw    $s1, -100($fp)
-        sw    $s2, -104($fp)
-        sw    $s3, -108($fp)
-        sw    $s4, -112($fp)
-        sw    $s5, -116($fp)
-        sw    $s6, -120($fp)
-        sw    $s7, -124($fp)
         # s[0] = 1
         li    $t0, 1
         sw    $t0, -24($fp)
@@ -150,23 +142,31 @@ M0_0:
         sb    $zero, -69($fp)
         # t1 = g[0]
         la    $t8, g_g
-        lw    $s0, 0($t8)
+        lw    $t0, 0($t8)
+        sw    $t0, -96($fp)
         # t2 = g[4]
         la    $t8, g_g
-        lw    $s1, 4($t8)
+        lw    $t0, 4($t8)
+        sw    $t0, -100($fp)
         # t3 = g[8]
         la    $t8, g_g
-        lw    $s2, 8($t8)
+        lw    $t0, 8($t8)
+        sw    $t0, -104($fp)
         # t4 = g[12]
         la    $t8, g_g
-        lw    $s3, 12($t8)
+        lw    $t0, 12($t8)
+        sw    $t0, -108($fp)
         # t5 = g[16]
         la    $t8, g_g
-        lw    $s4, 16($t8)
+        lw    $t0, 16($t8)
+        sw    $t0, -112($fp)
         # t6 = &g
-        la    $s5, g_g
+        la    $t0, g_g
+        sw    $t0, -116($fp)
         # t7 = t6 ptr+ 20
-        addiu $s6, $s5, 20
+        lw    $t0, -116($fp)
+        addiu $t0, $t0, 20
+        sw    $t0, -120($fp)
         # param "%d %d %d %d %d %s\n"
         # param t1
         # param t2
@@ -178,28 +178,42 @@ M0_0:
         addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
-        sw    $s3, 16($sp)
-        sw    $s4, 20($sp)
-        sw    $s6, 24($sp)
+        lw    $t0, -96($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -100($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -104($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -108($fp)
+        sw    $t0, 16($sp)
+        lw    $t0, -112($fp)
+        sw    $t0, 20($sp)
+        lw    $t0, -120($fp)
+        sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # t8 = s[0]
-        lw    $s0, -24($fp)
+        lw    $t0, -24($fp)
+        sw    $t0, -124($fp)
         # t9 = s[4]
-        lw    $s1, -20($fp)
+        lw    $t0, -20($fp)
+        sw    $t0, -128($fp)
         # t10 = s[8]
-        lw    $s2, -16($fp)
+        lw    $t0, -16($fp)
+        sw    $t0, -132($fp)
         # t11 = s[12]
-        lw    $s3, -12($fp)
+        lw    $t0, -12($fp)
+        sw    $t0, -136($fp)
         # t12 = s[16]
-        lw    $s4, -8($fp)
+        lw    $t0, -8($fp)
+        sw    $t0, -140($fp)
         # t13 = &s
-        addiu $s5, $fp, -24
+        addiu $t0, $fp, -24
+        sw    $t0, -144($fp)
         # t14 = t13 ptr+ 20
-        addiu $s6, $s5, 20
+        lw    $t0, -144($fp)
+        addiu $t0, $t0, 20
+        sw    $t0, -148($fp)
         # param "%d %d %d %d %d %s\n"
         # param t8
         # param t9
@@ -211,28 +225,42 @@ M0_0:
         addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
-        sw    $s3, 16($sp)
-        sw    $s4, 20($sp)
-        sw    $s6, 24($sp)
+        lw    $t0, -124($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -128($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -132($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -136($fp)
+        sw    $t0, 16($sp)
+        lw    $t0, -140($fp)
+        sw    $t0, 20($sp)
+        lw    $t0, -148($fp)
+        sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # t15 = t[0]
-        lw    $s0, -48($fp)
+        lw    $t0, -48($fp)
+        sw    $t0, -152($fp)
         # t16 = t[4]
-        lw    $s1, -44($fp)
+        lw    $t0, -44($fp)
+        sw    $t0, -156($fp)
         # t17 = t[8]
-        lw    $s2, -40($fp)
+        lw    $t0, -40($fp)
+        sw    $t0, -160($fp)
         # t18 = t[12]
-        lw    $s3, -36($fp)
+        lw    $t0, -36($fp)
+        sw    $t0, -164($fp)
         # t19 = t[16]
-        lw    $s4, -32($fp)
+        lw    $t0, -32($fp)
+        sw    $t0, -168($fp)
         # t20 = &t
-        addiu $s5, $fp, -48
+        addiu $t0, $fp, -48
+        sw    $t0, -172($fp)
         # t21 = t20 ptr+ 20
-        addiu $s6, $s5, 20
+        lw    $t0, -172($fp)
+        addiu $t0, $t0, 20
+        sw    $t0, -176($fp)
         # param "%d %d %d %d %d %s\n"
         # param t15
         # param t16
@@ -244,23 +272,32 @@ M0_0:
         addiu $sp, $sp, -32
         la    $t0, str0
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
-        sw    $s3, 16($sp)
-        sw    $s4, 20($sp)
-        sw    $s6, 24($sp)
+        lw    $t0, -152($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -156($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -160($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -164($fp)
+        sw    $t0, 16($sp)
+        lw    $t0, -168($fp)
+        sw    $t0, 20($sp)
+        lw    $t0, -176($fp)
+        sw    $t0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # t23 = pts[12]
         la    $t8, g_pts
-        lw    $s0, 12($t8)
+        lw    $t0, 12($t8)
+        sw    $t0, -180($fp)
         # t24 = pts[16]
         la    $t8, g_pts
-        lw    $s1, 16($t8)
+        lw    $t0, 16($t8)
+        sw    $t0, -184($fp)
         # t25 = pts[20]
         la    $t8, g_pts
-        lw    $s2, 20($t8)
+        lw    $t0, 20($t8)
+        sw    $t0, -188($fp)
         # param "%d %d %d %d %d\n"
         # param 3
         # param t23
@@ -273,32 +310,42 @@ M0_0:
         sw    $t0, 0($sp)
         li    $t0, 3
         sw    $t0, 4($sp)
-        sw    $s0, 8($sp)
-        sw    $s1, 12($sp)
-        sw    $s2, 16($sp)
+        lw    $t0, -180($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -184($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -188($fp)
+        sw    $t0, 16($sp)
         li    $t0, 2
         sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
         # t27 = u[0]
-        lw    $s0, -68($fp)
+        lw    $t0, -68($fp)
+        sw    $t0, -192($fp)
         # t28 = u[4]
-        lw    $s1, -64($fp)
+        lw    $t0, -64($fp)
+        sw    $t0, -196($fp)
         # t29 = u[8]
-        lw    $s2, -60($fp)
+        lw    $t0, -60($fp)
+        sw    $t0, -200($fp)
         # t30 = m[12]
         la    $t8, g_m
-        lw    $s3, 12($t8)
+        lw    $t0, 12($t8)
+        sw    $t0, -204($fp)
         # t31 = m[20]
         la    $t8, g_m
-        lw    $s4, 20($t8)
+        lw    $t0, 20($t8)
+        sw    $t0, -208($fp)
         # t32 = d[16]
-        lw    $s5, -76($fp)
+        lw    $t0, -76($fp)
+        sw    $t0, -212($fp)
         # t33 = d[20]
-        lb    $s6, -72($fp)
+        lb    $t0, -72($fp)
+        sb    $t0, -213($fp)
         # t34 = chartoint t33
-        move  $t0, $s6
-        move  $s7, $t0
+        lb    $t0, -213($fp)
+        sw    $t0, -220($fp)
         # param "%d %d %d %d %d %d %d\n"
         # param t27
         # param t28
@@ -311,27 +358,26 @@ M0_0:
         addiu $sp, $sp, -32
         la    $t0, str2
         sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        sw    $s1, 8($sp)
-        sw    $s2, 12($sp)
-        sw    $s3, 16($sp)
-        sw    $s4, 20($sp)
-        sw    $s5, 24($sp)
-        sw    $s7, 28($sp)
+        lw    $t0, -192($fp)
+        sw    $t0, 4($sp)
+        lw    $t0, -196($fp)
+        sw    $t0, 8($sp)
+        lw    $t0, -200($fp)
+        sw    $t0, 12($sp)
+        lw    $t0, -204($fp)
+        sw    $t0, 16($sp)
+        lw    $t0, -208($fp)
+        sw    $t0, 20($sp)
+        lw    $t0, -212($fp)
+        sw    $t0, 24($sp)
+        lw    $t0, -220($fp)
+        sw    $t0, 28($sp)
         jal   __printf
         addiu $sp, $sp, 32
         # return 0
         li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -96($fp)
-        lw    $s1, -100($fp)
-        lw    $s2, -104($fp)
-        lw    $s3, -108($fp)
-        lw    $s4, -112($fp)
-        lw    $s5, -116($fp)
-        lw    $s6, -120($fp)
-        lw    $s7, -124($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

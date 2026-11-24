@@ -4,7 +4,7 @@
 
    Source file   : test/t45_strings_chars.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 173 -> 151 instruction(s)
+   Result        : Optimized three address code (-O1): 173 -> 211 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          173 -> 151   (12% fewer)
+   instructions                          173 -> 211   (-21% fewer)
 
+   calls inlined                           6
    constants folded                        2
    algebraic simplifications               0
    common subexpressions                   1
-   copies / constants forwarded            3
-   temporaries merged away                11
-   dead instructions removed               3
+   copies / constants forwarded            6
+   temporaries merged away                13
+   dead instructions removed               6
    jumps removed or redirected             8
    unreachable instructions removed        1
 
@@ -121,7 +122,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 8 parameter(s)/local(s), 38 temporaries, frame 248 bytes
+ Symbol table: 8 parameter(s)/local(s), 82 temporaries, frame 444 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -139,16 +140,12 @@
    t5               temp    char                            1      84
    t6               temp    int                             4      88
    t7               temp    int                             4      92
-   t8               temp    char *                          4      96
-   t9               temp    int                             4     100
    t10              temp    int                             4     104
    t11              temp    char                            1     108
    t12              temp    int                             4     112
    t13              temp    int                             4     116
-   t14              temp    int                             4     120
    t15              temp    int                             4     124
    t16              temp    int                             4     128
-   t17              temp    int                             4     132
    t18              temp    char                            1     136
    t19              temp    char                            1     137
    t20              temp    int                             4     140
@@ -171,129 +168,237 @@
    t44              temp    char *                          4     236
    t45              temp    char                            1     240
    t46              temp    int                             4     244
-   (8 temporaries no longer used after optimization not shown)
+   t47              temp    char *                          4     248
+   t48              temp    const char *                    4     252
+   t49              temp    char *                          4     256
+   t50              temp    const char *                    4     260
+   t51              temp    char                            1     264
+   t52              temp    const char *                    4     268
+   t53              temp    int                             4     272
+   t54              temp    const char *                    4     276
+   t55              temp    char                            1     280
+   t56              temp    const char *                    4     284
+   t57              temp    int                             4     288
+   t58              temp    const char *                    4     292
+   t59              temp    char                            1     296
+   t60              temp    const char *                    4     300
+   t61              temp    const char *                    4     304
+   t62              temp    char                            1     308
+   t63              temp    char                            1     312
+   t64              temp    int                             4     316
+   t65              temp    char                            1     320
+   t66              temp    int                             4     324
+   t67              temp    char                            1     328
+   t68              temp    int                             4     332
+   t69              temp    char                            1     336
+   t70              temp    int                             4     340
+   t71              temp    int                             4     344
+   t72              temp    const char *                    4     348
+   t73              temp    const char *                    4     352
+   t74              temp    char                            1     356
+   t75              temp    char                            1     360
+   t76              temp    int                             4     364
+   t77              temp    char                            1     368
+   t78              temp    int                             4     372
+   t79              temp    char                            1     376
+   t80              temp    int                             4     380
+   t81              temp    char                            1     384
+   t82              temp    int                             4     388
+   t84              temp    const char *                    4     396
+   t85              temp    const char *                    4     400
+   t86              temp    char                            1     404
+   t87              temp    char                            1     408
+   t88              temp    int                             4     412
+   t89              temp    char                            1     416
+   t90              temp    int                             4     420
+   t91              temp    char                            1     424
+   t92              temp    int                             4     428
+   t93              temp    char                            1     432
+   t94              temp    int                             4     436
+   t95              temp    int                             4     440
+   (13 temporaries no longer used after optimization not shown)
 
- Code: 119 instruction(s)
+ Code: 179 instruction(s)
 
     132        t1 = &buf
-    133        param t1
-    134        param "Hello\tWorld\n"
-    135        call copy(char *, const char *), 2
-    136        param t1
-    137        t3 = call len(const char *), 1
-    138        t5 = buf[5]
-    139        t6 = chartoint t5
-    140        if t6 int== 9 goto L6
-    141        t4 = 0
-    142        goto L7
-    143  L6:   t4 = 1
-    144  L7:   t8 = &buf
-    145        param t8
-    146        t9 = call len(const char *), 1
-    147        t10 = t9 int- 1
-    148        t11 = buf[t10]
-    149        t12 = chartoint t11
-    150        if t12 int== 10 goto L8
-    151        t7 = 0
-    152        goto L9
-    153  L8:   t7 = 1
-    154  L9:   param "%d %d %d\n"
-    155        param t3
-    156        param t4
-    157        param t7
-    158        call printf, 4
-    159        param "abc"
-    160        param "abd"
-    161        t14 = call cmp(const char *, const char *), 2
-    162        if t14 int< 0 goto L10
-    163        t13 = 0
+    133        t47 = t1
+    134        t48 = "Hello\tWorld\n"
+    135  L6:   t49 = t47
+    136        t47 = t47 ptr+ 1
+    137        t50 = t48
+    138        t48 = t48 ptr+ 1
+    139        t51 = *t50
+    140        *t49 = t51
+    141        if t51 char!= 0 goto L6
+    142        t52 = t1
+    143        t53 = 0
+    144  L7:   t54 = t52
+    145        t52 = t52 ptr+ 1
+    146        t55 = *t54
+    147        if t55 char== 0 goto L8
+    148        t53 = t53 int+ 1
+    149        goto L7
+    150  L8:   t3 = t53
+    151        t5 = buf[5]
+    152        t6 = chartoint t5
+    153        if t6 int== 9 goto L9
+    154        t4 = 0
+    155        goto L10
+    156  L9:   t4 = 1
+    157  L10:  t56 = &buf
+    158        t57 = 0
+    159  L11:  t58 = t56
+    160        t56 = t56 ptr+ 1
+    161        t59 = *t58
+    162        if t59 char== 0 goto L12
+    163        t57 = t57 int+ 1
     164        goto L11
-    165  L10:  t13 = 1
-    166  L11:  param "abc"
-    167        param "abc"
-    168        t15 = call cmp(const char *, const char *), 2
-    169        param "b"
-    170        param "a"
-    171        t17 = call cmp(const char *, const char *), 2
-    172        if t17 int> 0 goto L12
-    173        t16 = 0
-    174        goto L13
-    175  L12:  t16 = 1
-    176  L13:  param "%d %d %d\n"
-    177        param t13
-    178        param t15
-    179        param t16
-    180        call printf, 4
-    181        up[0] = 109
-    182        up[1] = 105
-    183        up[2] = 112
-    184        up[3] = 115
-    185        up[4] = 0
-    186        up[5] = 0
-    187        up[6] = 0
-    188        up[7] = 0
-    189        i = 0
-    190  L14:  t18 = up[i]
-    191        if t18 char== 0 goto L15
-    192        t19 = up[i]
-    193        t20 = chartoint t19
-    194        t21 = t20 int- 97
-    195        t22 = t21 int+ 65
-    196        t23 = inttochar t22
-    197        up[i] = t23
-    198        i = i int+ 1
-    199        goto L14
-    200  L15:  t25 = &up
-    201        param "%s %c %c\n"
-    202        param t25
-    203        param 98
-    204        param 97
-    205        call printf, 4
-    206        digits = "40213"
-    207        value = 0
-    208        i = 0
-    209  L16:  t28 = digits ptr+ i
-    210        t29 = *t28
-    211        if t29 char== 0 goto L17
-    212        t30 = value int* 10
-    213        t31 = digits ptr+ i
-    214        t32 = *t31
-    215        t33 = chartoint t32
-    216        t34 = t33 int- 48
-    217        value = t30 int+ t34
-    218        i = i int+ 1
-    219        goto L16
-    220  L17:  n = 0
-    221        v = value
-    222  L18:  if v int<= 0 goto L19
-    223        t37 = n
-    224        n = n int+ 1
-    225        t39 = v int% 10
-    226        t40 = 48 int+ t39
-    227        t41 = inttochar t40
-    228        out[t37] = t41
-    229        v = v int/ 10
-    230        goto L18
-    231  L19:  out[n] = 0
-    232        t43 = &out
-    233        param "%d %s\n"
-    234        param value
-    235        param t43
-    236        call printf, 3
-    237        param "[%5s] [%-5s] [%.2s] [%c]\n"
-    238        param "ab"
-    239        param "ab"
-    240        param "abcdef"
-    241        param 81
-    242        call printf, 5
-    243        t44 = "quote\"d" ptr+ 5
-    244        t45 = *t44
-    245        t46 = chartoint t45
-    246        param "%d %d\n"
-    247        param 92
-    248        param t46
-    249        call printf, 3
-    250        return 0
+    165  L12:  t10 = t57 int- 1
+    166        t11 = buf[t10]
+    167        t12 = chartoint t11
+    168        if t12 int== 10 goto L13
+    169        t7 = 0
+    170        goto L14
+    171  L13:  t7 = 1
+    172  L14:  param "%d %d %d\n"
+    173        param t3
+    174        param t4
+    175        param t7
+    176        call printf, 4
+    177        t60 = "abc"
+    178        t61 = "abd"
+    179  L15:  t62 = *t60
+    180        if t62 char== 0 goto L16
+    181        t63 = *t60
+    182        t64 = chartoint t63
+    183        t65 = *t61
+    184        t66 = chartoint t65
+    185        if t64 int!= t66 goto L16
+    186        t60 = t60 ptr+ 1
+    187        t61 = t61 ptr+ 1
+    188        goto L15
+    189  L16:  t67 = *t60
+    190        t68 = chartoint t67
+    191        t69 = *t61
+    192        t70 = chartoint t69
+    193        t71 = t68 int- t70
+    194        if t71 int< 0 goto L17
+    195        t13 = 0
+    196        goto L18
+    197  L17:  t13 = 1
+    198  L18:  t72 = "abc"
+    199        t73 = "abc"
+    200  L19:  t74 = *t72
+    201        if t74 char== 0 goto L20
+    202        t75 = *t72
+    203        t76 = chartoint t75
+    204        t77 = *t73
+    205        t78 = chartoint t77
+    206        if t76 int!= t78 goto L20
+    207        t72 = t72 ptr+ 1
+    208        t73 = t73 ptr+ 1
+    209        goto L19
+    210  L20:  t79 = *t72
+    211        t80 = chartoint t79
+    212        t81 = *t73
+    213        t82 = chartoint t81
+    214        t15 = t80 int- t82
+    215        t84 = "b"
+    216        t85 = "a"
+    217  L21:  t86 = *t84
+    218        if t86 char== 0 goto L22
+    219        t87 = *t84
+    220        t88 = chartoint t87
+    221        t89 = *t85
+    222        t90 = chartoint t89
+    223        if t88 int!= t90 goto L22
+    224        t84 = t84 ptr+ 1
+    225        t85 = t85 ptr+ 1
+    226        goto L21
+    227  L22:  t91 = *t84
+    228        t92 = chartoint t91
+    229        t93 = *t85
+    230        t94 = chartoint t93
+    231        t95 = t92 int- t94
+    232        if t95 int> 0 goto L23
+    233        t16 = 0
+    234        goto L24
+    235  L23:  t16 = 1
+    236  L24:  param "%d %d %d\n"
+    237        param t13
+    238        param t15
+    239        param t16
+    240        call printf, 4
+    241        up[0] = 109
+    242        up[1] = 105
+    243        up[2] = 112
+    244        up[3] = 115
+    245        up[4] = 0
+    246        up[5] = 0
+    247        up[6] = 0
+    248        up[7] = 0
+    249        i = 0
+    250  L25:  t18 = up[i]
+    251        if t18 char== 0 goto L26
+    252        t19 = up[i]
+    253        t20 = chartoint t19
+    254        t21 = t20 int- 97
+    255        t22 = t21 int+ 65
+    256        t23 = inttochar t22
+    257        up[i] = t23
+    258        i = i int+ 1
+    259        goto L25
+    260  L26:  t25 = &up
+    261        param "%s %c %c\n"
+    262        param t25
+    263        param 98
+    264        param 97
+    265        call printf, 4
+    266        digits = "40213"
+    267        value = 0
+    268        i = 0
+    269  L27:  t28 = digits ptr+ i
+    270        t29 = *t28
+    271        if t29 char== 0 goto L28
+    272        t30 = value int* 10
+    273        t31 = digits ptr+ i
+    274        t32 = *t31
+    275        t33 = chartoint t32
+    276        t34 = t33 int- 48
+    277        value = t30 int+ t34
+    278        i = i int+ 1
+    279        goto L27
+    280  L28:  n = 0
+    281        v = value
+    282  L29:  if v int<= 0 goto L30
+    283        t37 = n
+    284        n = n int+ 1
+    285        t39 = v int% 10
+    286        t40 = 48 int+ t39
+    287        t41 = inttochar t40
+    288        out[t37] = t41
+    289        v = v int/ 10
+    290        goto L29
+    291  L30:  out[n] = 0
+    292        t43 = &out
+    293        param "%d %s\n"
+    294        param value
+    295        param t43
+    296        call printf, 3
+    297        param "[%5s] [%-5s] [%.2s] [%c]\n"
+    298        param "ab"
+    299        param "ab"
+    300        param "abcdef"
+    301        param 81
+    302        call printf, 5
+    303        t44 = "quote\"d" ptr+ 5
+    304        t45 = *t44
+    305        t46 = chartoint t45
+    306        param "%d %d\n"
+    307        param 92
+    308        param t46
+    309        call printf, 3
+    310        return 0
 
 
 ----------------------------------------------------------------------------
@@ -343,3 +448,16 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+12 1 1
+1 0 1
+MIPS b a
+40213 31204
+[   ab] [ab   ] [ab] [Q]
+92 34
+
+   exit code 0, 547 instructions executed

@@ -4,7 +4,7 @@
 
    Source file   : test/t07_functions.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 184 -> 165 instruction(s)
+   Result        : Optimized three address code (-O1): 184 -> 180 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,16 +14,17 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          184 -> 165   (10% fewer)
+   instructions                          184 -> 180   (2% fewer)
 
-   constants folded                        0
+   calls inlined                          14
+   constants folded                        4
    algebraic simplifications               0
-   common subexpressions                   3
-   copies / constants forwarded            6
-   temporaries merged away                 9
-   dead instructions removed               3
-   jumps removed or redirected             7
-   unreachable instructions removed        0
+   common subexpressions                   4
+   copies / constants forwarded           34
+   temporaries merged away                10
+   dead instructions removed              23
+   jumps removed or redirected             9
+   unreachable instructions removed        4
 
 ----------------------------------------------------------------------------
  GLOBALS: 1 object(s) in static storage
@@ -41,47 +42,65 @@
  FUNCTION even(int)        (link name _Z4eveni)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
+ Symbol table: 1 parameter(s)/local(s), 5 temporaries, frame 28 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
    t1               temp    int                             4       4
    t2               temp    int                             4       8
+   t4               temp    int                             4      16
+   t5               temp    int                             4      20
+   t6               temp    int                             4      24
    (1 temporary no longer used after optimization not shown)
 
- Code: 7 instruction(s)
+ Code: 13 instruction(s)
 
     100       if n int!= 0 goto L1
     101       t1 = 1
-    102       goto L2
+    102       goto L4
     103  L1:  t2 = n int- 1
-    104       param t2
-    105       t1 = call odd(int), 1
-    106  L2:  return t1
+    104       t4 = t2
+    105       if t2 int!= 0 goto L2
+    106       t5 = 0
+    107       goto L3
+    108  L2:  t6 = t4 int- 1
+    109       param t6
+    110       t5 = call even(int), 1
+    111  L3:  t1 = t5
+    112  L4:  return t1
 
 ============================================================================
  FUNCTION odd(int)        (link name _Z3oddi)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
+ Symbol table: 1 parameter(s)/local(s), 5 temporaries, frame 28 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
    t1               temp    int                             4       4
    t2               temp    int                             4       8
+   t4               temp    int                             4      16
+   t5               temp    int                             4      20
+   t6               temp    int                             4      24
    (1 temporary no longer used after optimization not shown)
 
- Code: 7 instruction(s)
+ Code: 13 instruction(s)
 
-    107       if n int!= 0 goto L3
-    108       t1 = 0
-    109       goto L4
-    110  L3:  t2 = n int- 1
-    111       param t2
-    112       t1 = call even(int), 1
-    113  L4:  return t1
+    113       if n int!= 0 goto L5
+    114       t1 = 0
+    115       goto L8
+    116  L5:  t2 = n int- 1
+    117       t4 = t2
+    118       if t2 int!= 0 goto L6
+    119       t5 = 1
+    120       goto L7
+    121  L6:  t6 = t4 int- 1
+    122       param t6
+    123       t5 = call odd(int), 1
+    124  L7:  t1 = t5
+    125  L8:  return t1
 
 ============================================================================
  FUNCTION fib(int)        (link name _Z3fibi)
@@ -101,17 +120,17 @@
 
  Code: 11 instruction(s)
 
-    114       if n int>= 2 goto L5
-    115       t1 = n
-    116       goto L6
-    117  L5:  t2 = n int- 1
-    118       param t2
-    119       t3 = call fib(int), 1
-    120       t4 = n int- 2
-    121       param t4
-    122       t5 = call fib(int), 1
-    123       t1 = t3 int+ t5
-    124  L6:  return t1
+    126        if n int>= 2 goto L9
+    127        t1 = n
+    128        goto L10
+    129  L9:   t2 = n int- 1
+    130        param t2
+    131        t3 = call fib(int), 1
+    132        t4 = n int- 2
+    133        param t4
+    134        t5 = call fib(int), 1
+    135        t1 = t3 int+ t5
+    136  L10:  return t1
 
 ============================================================================
  FUNCTION gcd(int, int)        (link name _Z3gcdii)
@@ -129,14 +148,14 @@
 
  Code: 8 instruction(s)
 
-    125       if b int!= 0 goto L7
-    126       t1 = a
-    127       goto L8
-    128  L7:  t2 = a int% b
-    129       param b
-    130       param t2
-    131       t1 = call gcd(int, int), 2
-    132  L8:  return t1
+    137        if b int!= 0 goto L11
+    138        t1 = a
+    139        goto L12
+    140  L11:  t2 = a int% b
+    141        param b
+    142        param t2
+    143        t1 = call gcd(int, int), 2
+    144  L12:  return t1
 
 ============================================================================
  FUNCTION pick(int)        (link name _Z4picki)
@@ -150,7 +169,7 @@
 
  Code: 1 instruction(s)
 
-    133     return 1
+    145     return 1
 
 ============================================================================
  FUNCTION pick(double)        (link name _Z4pickd)
@@ -164,7 +183,7 @@
 
  Code: 1 instruction(s)
 
-    134     return 2
+    146     return 2
 
 ============================================================================
  FUNCTION pick(const char *)        (link name _Z4pickPKc)
@@ -178,7 +197,7 @@
 
  Code: 1 instruction(s)
 
-    135     return 3
+    147     return 3
 
 ============================================================================
  FUNCTION swap(int &, int &)        (link name _Z4swapRiS_)
@@ -196,12 +215,12 @@
 
  Code: 6 instruction(s)
 
-    136     t1 = *a
-    137     t = t1
-    138     t2 = *b
-    139     *a = t2
-    140     *b = t1
-    141     return
+    148     t1 = *a
+    149     t = t1
+    150     t2 = *b
+    151     *a = t2
+    152     *b = t1
+    153     return
 
 ============================================================================
  FUNCTION advance(int *&)        (link name _Z7advanceRPi)
@@ -217,10 +236,10 @@
 
  Code: 4 instruction(s)
 
-    142     t1 = *p
-    143     t2 = t1 ptr+ 4
-    144     *p = t2
-    145     return
+    154     t1 = *p
+    155     t2 = t1 ptr+ 4
+    156     *p = t2
+    157     return
 
 ============================================================================
  FUNCTION bigger(int &, int &)        (link name _Z6biggerRiS_)
@@ -238,13 +257,13 @@
 
  Code: 7 instruction(s)
 
-    146        t2 = *a
-    147        t3 = *b
-    148        if t2 int<= t3 goto L9
-    149        t1 = a
-    150        goto L10
-    151  L9:   t1 = b
-    152  L10:  return t1
+    158        t2 = *a
+    159        t3 = *b
+    160        if t2 int<= t3 goto L13
+    161        t1 = a
+    162        goto L14
+    163  L13:  t1 = b
+    164  L14:  return t1
 
 ============================================================================
  FUNCTION half(const double &)        (link name _Z4halfRKd)
@@ -260,9 +279,9 @@
 
  Code: 3 instruction(s)
 
-    153     t1 = *v
-    154     t2 = t1 double/ 2.0
-    155     return t2
+    165     t1 = *v
+    166     t2 = t1 double/ 2.0
+    167     return t2
 
 ============================================================================
  FUNCTION sumv(va_list, int)        (link name _Z4sumvPvi)
@@ -281,14 +300,14 @@
 
  Code: 8 instruction(s)
 
-    156        s = 0
-    157  L11:  t1 = n
-    158        n = n int- 1
-    159        if t1 int== 0 goto L12
-    160        t3 = va_arg ap, int
-    161        s = s int+ t3
-    162        goto L11
-    163  L12:  return s
+    168        s = 0
+    169  L15:  t1 = n
+    170        n = n int- 1
+    171        if t1 int== 0 goto L16
+    172        t3 = va_arg ap, int
+    173        s = s int+ t3
+    174        goto L15
+    175  L16:  return s
 
 ============================================================================
  FUNCTION sum(int, ...)        (link name _Z3sumiz)
@@ -305,13 +324,13 @@
 
  Code: 7 instruction(s)
 
-    164     va_start ap, n
-    165     param ap
-    166     param n
-    167     t1 = call sumv(va_list, int), 2
-    168     s = t1
-    169     va_end ap
-    170     return t1
+    176     va_start ap, n
+    177     param ap
+    178     param n
+    179     t1 = call sumv(va_list, int), 2
+    180     s = t1
+    181     va_end ap
+    182     return t1
 
 ============================================================================
  FUNCTION avg(int, ...)        (link name _Z3avgiz)
@@ -332,18 +351,18 @@
 
  Code: 12 instruction(s)
 
-    171        va_start ap, n
-    172        t = 0.0
-    173        i = 0
-    174  L13:  if i int>= n goto L14
-    175        t1 = va_arg ap, double
-    176        t = t double+ t1
-    177        i = i int+ 1
-    178        goto L13
-    179  L14:  va_end ap
-    180        t4 = inttodouble n
-    181        t5 = t double/ t4
-    182        return t5
+    183        va_start ap, n
+    184        t = 0.0
+    185        i = 0
+    186  L17:  if i int>= n goto L18
+    187        t1 = va_arg ap, double
+    188        t = t double+ t1
+    189        i = i int+ 1
+    190        goto L17
+    191  L18:  va_end ap
+    192        t4 = inttodouble n
+    193        t5 = t double/ t4
+    194        return t5
 
 ============================================================================
  FUNCTION counter()        (link name _Z7counterv)
@@ -357,15 +376,15 @@
 
  Code: 3 instruction(s)
 
-    183     t1 = c.26 int+ 1
-    184     c.26 = t1
-    185     return t1
+    195     t1 = c.26 int+ 1
+    196     c.26 = t1
+    197     return t1
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 5 parameter(s)/local(s), 18 temporaries, frame 140 bytes
+ Symbol table: 5 parameter(s)/local(s), 25 temporaries, frame 268 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -375,106 +394,116 @@
    p                local   int *                           4      20
    ra               local   int &                           4      24
    t1               temp    int                             4      28
-   t2               temp    int                             4      32
    t3               temp    int                             4      36
    t4               temp    int                             4      40
-   t5               temp    int                             4      44
-   t6               temp    int                             4      48
-   t7               temp    int                             4      52
    t9               temp    int *                           4      60
    t11              temp    int *                           4      68
    t12              temp    int **                          4      72
-   t15              temp    int &                           4      84
    t16              temp    int                             4      88
    t17              temp    double                          8      96
    t18              temp    const double *                  4     104
-   t19              temp    double                          8     112
    t20              temp    int                             4     120
    t21              temp    double                          8     128
-   t22              temp    int                             4     136
-   (4 temporaries no longer used after optimization not shown)
+   t27              temp    int                             4     156
+   t36              temp    int                             4     196
+   t38              temp    int *                           4     204
+   t39              temp    int *                           4     208
+   t40              temp    int &                           4     212
+   t41              temp    int &                           4     216
+   t42              temp    int                             4     220
+   t43              temp    int                             4     224
+   t44              temp    int *                           4     228
+   t46              temp    double                          8     240
+   t47              temp    double                          8     248
+   t48              temp    int                             4     256
+   t49              temp    int                             4     260
+   t50              temp    int                             4     264
+   (25 temporaries no longer used after optimization not shown)
 
- Code: 79 instruction(s)
+ Code: 82 instruction(s)
 
-    186     param 10
-    187     t1 = call even(int), 1
-    188     param 7
-    189     t2 = call odd(int), 1
-    190     param 15
-    191     t3 = call fib(int), 1
-    192     param 84
-    193     param 36
-    194     t4 = call gcd(int, int), 2
-    195     param "%d %d %d %d\n"
-    196     param t1
-    197     param t2
-    198     param t3
-    199     param t4
-    200     call printf, 5
-    201     param 1
-    202     t5 = call pick(int), 1
-    203     param 1.0
-    204     t6 = call pick(double), 1
-    205     param "s"
-    206     t7 = call pick(const char *), 1
-    207     param "%d %d %d\n"
-    208     param t5
-    209     param t6
-    210     param t7
-    211     call printf, 4
-    212     a = 1
-    213     b = 2
-    214     arr[0] = 7
-    215     arr[4] = 8
-    216     arr[8] = 9
-    217     p = &arr
-    218     t9 = &a
-    219     ra = t9
-    220     *t9 = 30
-    221     t11 = &b
-    222     param t9
-    223     param t11
-    224     call swap(int &, int &), 2
-    225     t12 = &p
-    226     param t12
-    227     call advance(int *&), 1
-    228     param t9
-    229     param t11
-    230     t15 = call bigger(int &, int &), 2
-    231     *t15 = 40
-    232     t16 = *p
-    233     t17 = 5.0
-    234     t18 = &t17
-    235     param t18
-    236     t19 = call half(const double &), 1
-    237     param "%d %d %d %.1f\n"
-    238     param a
-    239     param b
-    240     param t16
-    241     param t19
-    242     call printf, 5
-    243     param 4
-    244     param 1
-    245     param 2
-    246     param 3
-    247     param 4
-    248     t20 = call sum(int, ...), 5
-    249     param 3
-    250     param 1.0
-    251     param 2.0
-    252     param 4.5
-    253     t21 = call avg(int, ...), 4
-    254     param "%d %.2f\n"
-    255     param t20
-    256     param t21
-    257     call printf, 3
-    258     call counter(), 0
-    259     call counter(), 0
-    260     t22 = call counter(), 0
-    261     param "%d\n"
-    262     param t22
-    263     call printf, 2
-    264     return 0
+    198        param 9
+    199        t1 = call odd(int), 1
+    200        param 6
+    201        t27 = call even(int), 1
+    202        param 15
+    203        t3 = call fib(int), 1
+    204        param 84
+    205        param 36
+    206        t4 = call gcd(int, int), 2
+    207        param "%d %d %d %d\n"
+    208        param t1
+    209        param t27
+    210        param t3
+    211        param t4
+    212        call printf, 5
+    213        param "%d %d %d\n"
+    214        param 1
+    215        param 2
+    216        param 3
+    217        call printf, 4
+    218        a = 1
+    219        b = 2
+    220        arr[0] = 7
+    221        arr[4] = 8
+    222        arr[8] = 9
+    223        p = &arr
+    224        t9 = &a
+    225        ra = t9
+    226        *t9 = 30
+    227        t11 = &b
+    228        t36 = *t11
+    229        *t9 = t36
+    230        *t11 = 30
+    231        t12 = &p
+    232        t38 = *t12
+    233        t39 = t38 ptr+ 4
+    234        *t12 = t39
+    235        t40 = t9
+    236        t41 = t11
+    237        t42 = *t9
+    238        t43 = *t11
+    239        if t42 int<= t43 goto L19
+    240        t44 = t40
+    241        goto L20
+    242  L19:  t44 = t41
+    243  L20:  *t44 = 40
+    244        t16 = *p
+    245        t17 = 5.0
+    246        t18 = &t17
+    247        t46 = *t18
+    248        t47 = t46 double/ 2.0
+    249        param "%d %d %d %.1f\n"
+    250        param a
+    251        param b
+    252        param t16
+    253        param t47
+    254        call printf, 5
+    255        param 4
+    256        param 1
+    257        param 2
+    258        param 3
+    259        param 4
+    260        t20 = call sum(int, ...), 5
+    261        param 3
+    262        param 1.0
+    263        param 2.0
+    264        param 4.5
+    265        t21 = call avg(int, ...), 4
+    266        param "%d %.2f\n"
+    267        param t20
+    268        param t21
+    269        call printf, 3
+    270        t48 = c.26 int+ 1
+    271        c.26 = t48
+    272        t49 = t48 int+ 1
+    273        c.26 = t49
+    274        t50 = t49 int+ 1
+    275        c.26 = t50
+    276        param "%d\n"
+    277        param t50
+    278        call printf, 2
+    279        return 0
 
 
 ----------------------------------------------------------------------------
@@ -593,3 +622,15 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+1 1 610 12
+1 2 3
+2 40 8 2.5
+10 2.50
+3
+
+   exit code 0, 13052 instructions executed

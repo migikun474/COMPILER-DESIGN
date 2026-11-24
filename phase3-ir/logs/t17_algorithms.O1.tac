@@ -16,6 +16,7 @@
 
    instructions                          358 -> 292   (18% fewer)
 
+   calls inlined                           0
    constants folded                        1
    algebraic simplifications              24
    common subexpressions                  12
@@ -615,3 +616,14 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+1 9 0 9 5 -1
+1023 9
+19 22 43 50
+15 relipmoc 9081
+
+   exit code 0, 2519 instructions executed

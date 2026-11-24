@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t06_structs.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -44,6 +44,10 @@ _Z4grow3Out:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
+        sw    $a2, 16($fp)
+        sw    $a3, 20($fp)
         # t1 = o[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -84,6 +88,8 @@ _Z4area2Pt:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
+        sw    $a1, 12($fp)
         # t1 = p[0]
         addiu $t8, $fp, 8
         li    $t9, 0
@@ -183,6 +189,10 @@ M2_0:
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z4grow3Out
         addiu $sp, $sp, 32
         move  $a1, $v0
@@ -274,13 +284,15 @@ M2_0:
         sw    $t0, 0($t8)
         # param p
         # t10 = call area(Pt), 1
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         addiu $a0, $sp, 0
         addiu $a1, $fp, -72
         li    $a2, 8
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
         jal   _Z4area2Pt
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -260($fp)
         # t11 = p[0]
         addiu $t8, $fp, -72
@@ -397,6 +409,10 @@ M2_0:
         addiu $a1, $fp, -32
         li    $a2, 32
         jal   __memcpy
+        lw    $a0, 0($sp)
+        lw    $a1, 4($sp)
+        lw    $a2, 8($sp)
+        lw    $a3, 12($sp)
         jal   _Z4grow3Out
         addiu $sp, $sp, 32
         move  $a1, $v0

@@ -2,11 +2,11 @@
    unchanged) -> TAC -> MIPS assembly for SPIM, written to standard output;
    a stage flag stops earlier and prints that stage instead (D40).
 
-     mips_generator [-O1|-O2|-O3] file.c > file.s
+     mips_generator [-O1] file.c > file.s
      spim -file file.s [program arguments]
      mips_generator --tokens|--ast|--symbols file.c
-     mips_generator [-On] --tac file.c
-     mips_generator [-On] --run file.c [program arguments] < input          */
+     mips_generator [-O1] --tac file.c
+     mips_generator [-O1] --run file.c [program arguments] < input          */
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -33,25 +33,23 @@ namespace fs = std::filesystem;
 int main(int argc, char **argv) {
     const char *path = nullptr;
     int level = 0;
-    bool machine = true; /* registers, immediates, peephole (with -O1 and above) */
     std::string stage;   /* "" = MIPS; tokens, ast, symbols, tac, run */
     std::vector<std::string> programArgs;
     for (int i = 1; i < argc; ++i) {
         if (path) { programArgs.push_back(argv[i]); continue; } /* after the file: arguments for --run */
         if (!std::strcmp(argv[i], "-O1")) level = 1;
-        else if (!std::strcmp(argv[i], "-O2")) level = 2;
-        else if (!std::strcmp(argv[i], "-O3")) level = 3;
         else if (!std::strcmp(argv[i], "-O0")) level = 0;
-        else if (!std::strcmp(argv[i], "--stack-only")) machine = false;
         else if (!std::strcmp(argv[i], "--tokens") || !std::strcmp(argv[i], "--ast") || !std::strcmp(argv[i], "--symbols") ||
                  !std::strcmp(argv[i], "--tac") || !std::strcmp(argv[i], "--run"))
             stage = argv[i] + 2;
-        else path = argv[i];
+        else if (argv[i][0] == '-') {
+            fprintf(stderr, "unknown option '%s' (the only optimization level is -O1)\n", argv[i]);
+            return 1;
+        } else path = argv[i];
     }
     if (!path) {
-        fprintf(stderr, "Usage: %s [-O1|-O2|-O3] [--stack-only] [stage] <source-file> [program arguments]\n"
+        fprintf(stderr, "Usage: %s [-O1] [stage] <source-file> [program arguments]\n"
                         "  (the assembly is written to standard output)\n"
-                        "  --stack-only  keep every value in the stack frame even when optimizing (no registers, immediates or peephole)\n"
                         "  stage: stop after a phase and print it instead of the assembly\n"
                         "    --tokens   the token table          --ast   the syntax tree\n"
                         "    --symbols  the semantic symbol table --tac   the three-address code\n"
@@ -120,7 +118,7 @@ int main(int argc, char **argv) {
         sem::printSemanticSymbolTable(table, std::cout);
         return 0;
     }
-    if (level > 0) tac::optimize(program, level);
+    if (level > 0) tac::optimize(program);
     if (stage == "tac") {
         tac::printProgram(program, std::cout);
         return 0;
@@ -136,18 +134,17 @@ int main(int argc, char **argv) {
         }
         return r.exitCode;
     }
-    std::string assembly = mips::generate(program, runtime.str(), level > 0 && machine);
+    std::string assembly = mips::generate(program, runtime.str(), level > 0);
     fputs(assembly.c_str(), stdout);
-    /* also logs/<file>.s, or .O1.s ... (.stack.O1.s with --stack-only): runnable as it is */
+    /* also logs/<file>.s, or <file>.O1.s: runnable as it is */
     fs::create_directories("logs");
-    std::string suffix = (level > 0 && !machine ? ".stack" : "") + std::string(level > 0 ? ".O" + std::to_string(level) : "") + ".s";
+    std::string suffix = level > 0 ? ".O1.s" : ".s";
     std::ofstream log("logs/" + fs::path(path).stem().string() + suffix);
-    static const char *what[] = {"no optimization (every value in the stack frame)", "-O1", "-O2", "-O3"};
     log << "# =========================================================================\n"
         << "#  MIPS ASSEMBLY  --  run with: spim -file <this file>\n"
         << "# =========================================================================\n"
         << "#  Source file  : " << path << "\n"
-        << "#  Optimization : " << what[level] << (level > 0 ? (machine ? " (TAC optimizations, registers, peephole)" : " (TAC optimizations only, --stack-only)") : "") << "\n"
+        << "#  Optimization : " << (level > 0 ? "-O1 (TAC optimizations inside basic blocks, constants inside instructions)" : "no optimization") << "\n"
         << "# =========================================================================\n\n"
         << assembly;
     return 0;

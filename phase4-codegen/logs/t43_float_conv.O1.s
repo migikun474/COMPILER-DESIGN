@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t43_float_conv.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -73,20 +73,21 @@ main_:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -16
+        addiu $sp, $sp, -72
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -8($fp)
-        sw    $s0, -12($fp)
         # d = -3.99
-        l.d   $f20, fc0
+        l.d   $f0, fc0
+        s.d   $f0, -8($fp)
         # e = 3.99
-        l.d   $f20, fc1
+        l.d   $f0, fc1
+        s.d   $f0, -16($fp)
         # f = 2.5
-        l.s   $f20, fc2
+        l.s   $f0, fc2
+        s.s   $f0, -20($fp)
         # param "%d %d %d %d\n"
         # param -3
         # param 3
@@ -106,11 +107,14 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 24
         # i = 7
-        li    $s0, 7
+        li    $t0, 7
+        sw    $t0, -24($fp)
         # h = 3.0
-        l.d   $f20, fc3
+        l.d   $f0, fc3
+        s.d   $f0, -32($fp)
         # q = 3.5
-        l.d   $f20, fc4
+        l.d   $f0, fc4
+        s.d   $f0, -40($fp)
         # param "%.1f %.1f %.3f\n"
         # param 3.0
         # param 3.5
@@ -128,7 +132,8 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 32
         # third = 0.33333334
-        l.s   $f20, fc6
+        l.s   $f0, fc6
+        s.s   $f0, -44($fp)
         # param "%.6f %.2f %.0f %.0f\n"
         # param 0.3333333432674408
         # param 2.675
@@ -165,9 +170,11 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 16
         # u = 4000000000
-        li    $s0, -294967296
+        li    $t0, -294967296
+        sw    $t0, -48($fp)
         # ud = 4e+09
-        l.d   $f20, fc11
+        l.d   $f0, fc11
+        s.d   $f0, -56($fp)
         # param "%.0f %u\n"
         # param 4e+09
         # param 2000000000
@@ -182,9 +189,11 @@ M0_0:
         jal   __printf
         addiu $sp, $sp, 24
         # big = 1e+09
-        l.d   $f20, fc12
+        l.d   $f0, fc12
+        s.d   $f0, -64($fp)
         # back = 666666666
-        li    $s0, 666666666
+        li    $t0, 666666666
+        sw    $t0, -68($fp)
         # param "%d %.2e %g\n"
         # param 666666666
         # param 12345.678
@@ -205,8 +214,6 @@ M0_0:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -8($fp)
-        lw    $s0, -12($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

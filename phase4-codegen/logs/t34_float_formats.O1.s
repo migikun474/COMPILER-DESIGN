@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t34_float_formats.c
-#  Optimization : -O1 (TAC optimizations, registers, peephole)
+#  Optimization : -O1 (TAC optimizations inside basic blocks, constants inside instructions)
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -74,10 +74,6 @@ main_:
         beqz  $t8, M0_0
         j     __stack_overflow
 M0_0:
-        s.d   $f20, -120($fp)
-        sw    $s0, -124($fp)
-        sw    $s1, -108($fp)
-        sw    $s2, -128($fp)
         # v[0] = 1234.5678
         l.d   $f0, fc0
         s.d   $f0, -104($fp)
@@ -118,19 +114,26 @@ M0_0:
         l.d   $f0, fc12
         s.d   $f0, -8($fp)
         # n = 13
-        li    $s2, 13
+        li    $t0, 13
+        sw    $t0, -108($fp)
         # i = 0
-        li    $s0, 0
+        li    $t0, 0
+        sw    $t0, -112($fp)
 L0_15:
         # if i int>= n goto 32
-        bge   $s0, $s2, L0_32
+        lw    $t0, -112($fp)
+        lw    $t1, -108($fp)
+        bge   $t0, $t1, L0_32
         # t2 = i int<< 3
-        sll   $s1, $s0, 3
+        lw    $t0, -112($fp)
+        sll   $t0, $t0, 3
+        sw    $t0, -120($fp)
         # t3 = v[t2]
         addiu $t8, $fp, -104
-        addu  $t8, $t8, $s1
+        lw    $t9, -120($fp)
+        addu  $t8, $t8, $t9
         l.d   $f0, 0($t8)
-        mov.d $f20, $f0
+        s.d   $f0, -128($fp)
         # param "[%e] [%E] [%.2e] [%.0e] [%g] [%G] [%.3g] [%12.4e] [%-12g] [%012.3e]\n"
         # param t3
         # param t3
@@ -146,35 +149,38 @@ L0_15:
         addiu $sp, $sp, -88
         la    $t0, str0
         sw    $t0, 0($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 8($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 16($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 24($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 32($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 40($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 48($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 56($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 64($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 72($sp)
-        mov.d $f0, $f20
+        l.d   $f0, -128($fp)
         s.d   $f0, 80($sp)
         jal   __printf
         addiu $sp, $sp, 88
         # i = i int+ 1
-        addiu $s0, $s0, 1
+        lw    $t0, -112($fp)
+        addiu $t0, $t0, 1
+        sw    $t0, -112($fp)
         # goto 15
         j     L0_15
 L0_32:
         # f = 2.5
-        l.s   $f20, fc13
+        l.s   $f0, fc13
+        s.s   $f0, -116($fp)
         # param "%e %g %f\n"
         # param 2.5
         # param 2.5
@@ -195,10 +201,6 @@ L0_32:
         li    $v0, 0
         j     main__exit
 main__exit:
-        l.d   $f20, -120($fp)
-        lw    $s0, -124($fp)
-        lw    $s1, -108($fp)
-        lw    $s2, -128($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

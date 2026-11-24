@@ -4,7 +4,7 @@
 
    Source file   : test/t36_enums_unions.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 171 -> 142 instruction(s)
+   Result        : Optimized three address code (-O1): 171 -> 169 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          171 -> 142   (16% fewer)
+   instructions                          171 -> 169   (1% fewer)
 
+   calls inlined                           7
    constants folded                        7
    algebraic simplifications               5
    common subexpressions                   3
-   copies / constants forwarded           29
+   copies / constants forwarded           39
    temporaries merged away                 4
-   dead instructions removed              10
+   dead instructions removed              20
    jumps removed or redirected             7
    unreachable instructions removed        8
 
@@ -168,7 +169,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 21 parameter(s)/local(s), 32 temporaries, frame 296 bytes
+ Symbol table: 21 parameter(s)/local(s), 47 temporaries, frame 396 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -195,9 +196,6 @@
    hi               local   int                             4      96
    t5               temp    const char *                    4     116
    t6               temp    const char *                    4     120
-   t8               temp    int                             4     128
-   t9               temp    int                             4     132
-   t10              temp    int                             4     136
    t11              temp    enum Color                      4     140
    t12              temp    int                             4     144
    t13              temp    float                           4     148
@@ -223,124 +221,169 @@
    t40              temp    int                             4     264
    t43              temp    int                             4     276
    t44              temp    union Word *                    4     280
-   t45              temp    int                             4     284
    t46              temp    double                          8     288
-   (14 temporaries no longer used after optimization not shown)
+   t48              temp    int                             4     300
+   t50              temp    int                             4     308
+   t54              temp    union Word                      4     324
+   t55              temp    int                             4     328
+   t56              temp    unsigned int                    4     332
+   t58              temp    unsigned char                   1     340
+   t59              temp    int                             4     344
+   t60              temp    union Word *                    4     348
+   t61              temp    unsigned char                   1     352
+   t62              temp    int                             4     356
+   t63              temp    int                             4     360
+   t64              temp    union Word *                    4     364
+   t65              temp    unsigned char                   1     368
+   t66              temp    int                             4     372
+   t67              temp    int                             4     376
+   t68              temp    union Word *                    4     380
+   t69              temp    unsigned char                   1     384
+   t70              temp    int                             4     388
+   t71              temp    int                             4     392
+   (24 temporaries no longer used after optimization not shown)
 
- Code: 112 instruction(s)
+ Code: 139 instruction(s)
 
-    130       c = 6
-    131       d = 5
-    132       l = 1
-    133       n = 7
-    134       big = 1
-    135       e = 6
-    136       size = 16
-    137       t[0] = 5
-    138       t[4] = 42
-    139       param 6
-    140       t5 = call name(enum Color), 1
-    141       param 5
-    142       t6 = call name(enum Color), 1
-    143       param 6
-    144       t8 = call show(enum Color), 1
-    145       param 5
-    146       t9 = call show(int), 1
-    147       param 1
-    148       t10 = call show(Level), 1
-    149       param "%s %s %d %d %d %d %d\n"
-    150       param t5
-    151       param t6
-    152       param 7
-    153       param 1
-    154       param t8
-    155       param t9
-    156       param t10
-    157       call printf, 8
-    158       t11 = t[0]
-    159       t12 = t[4]
-    160       param "%d %d %d %d %d\n"
-    161       param 6
-    162       param 16
-    163       param t11
-    164       param t12
-    165       param 28
-    166       call printf, 6
-    167       w[0] = 1078530011
-    168       t13 = w[0]
-    169       f1 = t13
-    170       w[0] = 2.0
-    171       t14 = w[0]
-    172       i1 = t14
-    173       w[0] = 7
-    174       i2 = 14
-    175       w[0] = 1
-    176       t18 = w[0]
-    177       i3 = t18
-    178       w[2] = 2
-    179       t19 = w[0]
-    180       i4 = t19
-    181       param w
-    182       fl = call flip(union Word), 1
-    183       g[0] = -1.5
-    184       t22 = g[0]
-    185       gb = t22
-    186       t23 = floattodouble t13
-    187       t24 = fl[0]
-    188       param "%.4f %x %d %x %x %x %x\n"
-    189       param t23
-    190       param t14
-    191       param 14
-    192       param t18
-    193       param t19
-    194       param t24
-    195       param t22
-    196       call printf, 8
-    197       s = 0
-    198       k = 0
-    199  L5:  if k int>= 3 goto L6
-    200       t25 = k int<< 2                     (w = 4)
-    201       t26 = k int<< 8
-    202       t27 = t26 int+ 1
-    203       arr[t25] = t27
-    204       k = k int+ 1
-    205       goto L5
-    206  L6:  k = 0
-    207  L7:  if k int>= 3 goto L9
-    208       t29 = k int<< 2                     (w = 4)
-    209       t30 = t29 int+ 1
-    210       t31 = arr[t30]
-    211       t32 = uchartoint t31
-    212       if t32 int<= 0 goto L8
-    213       t33 = k int<< 2                     (w = 4)
-    214       t34 = arr[t33]
-    215       t35 = uchartoint t34
-    216       t37 = t33 int+ 1
-    217       t38 = arr[t37]
-    218       t39 = uchartoint t38
-    219       t40 = t35 int+ t39
-    220       s = s int+ t40
-    221  L8:  k = k int+ 1
-    222       goto L7
-    223  L9:  x[0] = 1.0
-    224       t43 = x[4]
-    225       hi = t43
-    226       x[0] = 5
-    227       x[0] = 0
-    228       x[4] = 1073741824
-    229       t44 = &w
-    230       param t44
-    231       t45 = call sumBytes(union Word *), 1
-    232       t46 = x[0]
-    233       param "%d %d %x %.1f %d %d\n"
-    234       param s
-    235       param t45
-    236       param t43
-    237       param t46
-    238       param 8
-    239       param 4
-    240       call printf, 7
-    241       return 0
+    130        c = 6
+    131        d = 5
+    132        l = 1
+    133        n = 7
+    134        big = 1
+    135        e = 6
+    136        size = 16
+    137        t[0] = 5
+    138        t[4] = 42
+    139        t48 = 6
+    140        goto L8
+    141  L5:   t5 = "red"
+    142        goto L9
+    143  L6:   t5 = "green"
+    144        goto L9
+    145  L7:   t5 = "blue"
+    146        goto L9
+    147  L8:   if t48 int== 0 goto L5
+    148        if t48 int== 5 goto L6
+    149        goto L7
+    150  L9:   t50 = 5
+    151        goto L13
+    152  L10:  t6 = "red"
+    153        goto L14
+    154  L11:  t6 = "green"
+    155        goto L14
+    156  L12:  t6 = "blue"
+    157        goto L14
+    158  L13:  if t50 int== 0 goto L10
+    159        if t50 int== 5 goto L11
+    160        goto L12
+    161  L14:  param "%s %s %d %d %d %d %d\n"
+    162        param t5
+    163        param t6
+    164        param 7
+    165        param 1
+    166        param 2
+    167        param 1
+    168        param 3
+    169        call printf, 8
+    170        t11 = t[0]
+    171        t12 = t[4]
+    172        param "%d %d %d %d %d\n"
+    173        param 6
+    174        param 16
+    175        param t11
+    176        param t12
+    177        param 28
+    178        call printf, 6
+    179        w[0] = 1078530011
+    180        t13 = w[0]
+    181        f1 = t13
+    182        w[0] = 2.0
+    183        t14 = w[0]
+    184        i1 = t14
+    185        w[0] = 7
+    186        i2 = 14
+    187        w[0] = 1
+    188        t18 = w[0]
+    189        i3 = t18
+    190        w[2] = 2
+    191        t19 = w[0]
+    192        i4 = t19
+    193        t54 = w
+    194        t55 = t54[0]
+    195        t56 = t55 uint^ 2147483648
+    196        t54[0] = t56
+    197        fl = t54
+    198        g[0] = -1.5
+    199        t22 = g[0]
+    200        gb = t22
+    201        t23 = floattodouble t13
+    202        t24 = fl[0]
+    203        param "%.4f %x %d %x %x %x %x\n"
+    204        param t23
+    205        param t14
+    206        param 14
+    207        param t18
+    208        param t19
+    209        param t24
+    210        param t22
+    211        call printf, 8
+    212        s = 0
+    213        k = 0
+    214  L15:  if k int>= 3 goto L16
+    215        t25 = k int<< 2                     (w = 4)
+    216        t26 = k int<< 8
+    217        t27 = t26 int+ 1
+    218        arr[t25] = t27
+    219        k = k int+ 1
+    220        goto L15
+    221  L16:  k = 0
+    222  L17:  if k int>= 3 goto L19
+    223        t29 = k int<< 2                     (w = 4)
+    224        t30 = t29 int+ 1
+    225        t31 = arr[t30]
+    226        t32 = uchartoint t31
+    227        if t32 int<= 0 goto L18
+    228        t33 = k int<< 2                     (w = 4)
+    229        t34 = arr[t33]
+    230        t35 = uchartoint t34
+    231        t37 = t33 int+ 1
+    232        t38 = arr[t37]
+    233        t39 = uchartoint t38
+    234        t40 = t35 int+ t39
+    235        s = s int+ t40
+    236  L18:  k = k int+ 1
+    237        goto L17
+    238  L19:  x[0] = 1.0
+    239        t43 = x[4]
+    240        hi = t43
+    241        x[0] = 5
+    242        x[0] = 0
+    243        x[4] = 1073741824
+    244        t44 = &w
+    245        t58 = *t44
+    246        t59 = uchartoint t58
+    247        t60 = t44 ptr+ 1
+    248        t61 = *t60
+    249        t62 = uchartoint t61
+    250        t63 = t59 int+ t62
+    251        t64 = t44 ptr+ 2
+    252        t65 = *t64
+    253        t66 = uchartoint t65
+    254        t67 = t63 int+ t66
+    255        t68 = t44 ptr+ 3
+    256        t69 = *t68
+    257        t70 = uchartoint t69
+    258        t71 = t67 int+ t70
+    259        t46 = x[0]
+    260        param "%d %d %x %.1f %d %d\n"
+    261        param s
+    262        param t71
+    263        param t43
+    264        param t46
+    265        param 8
+    266        param 4
+    267        call printf, 7
+    268        return 0
 
 
 ----------------------------------------------------------------------------
@@ -468,3 +511,14 @@ Level: int
 enum (unnamed at 35:5): int
     Small = 4
     Large = 16
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+blue green 7 1 2 1 3
+6 16 5 42 28
+3.1416 40000000 14 1 20001 80020001 bfc00000
+5 3 3ff00000 2.0 8 4
+
+   exit code 0, 170 instructions executed

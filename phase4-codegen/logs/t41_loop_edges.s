@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t41_loop_edges.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -39,6 +39,7 @@ _Z5counti:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
         # c = 0
         li    $t0, 0
         sw    $t0, -4($fp)
@@ -101,43 +102,38 @@ main_:
 M1_0:
         # param 0
         # t1 = call count(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 0
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 0
         jal   _Z5counti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -40($fp)
         # param 1
         # t2 = call count(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 1
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 1
         jal   _Z5counti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -44($fp)
         # param 2
         # t3 = call count(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 2
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 2
         jal   _Z5counti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -48($fp)
         # param 3
         # t4 = call count(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z5counti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -52($fp)
         # param 7
         # t5 = call count(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 7
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 7
         jal   _Z5counti
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -56($fp)
         # param "%d %d %d %d %d\n"
         # param t1

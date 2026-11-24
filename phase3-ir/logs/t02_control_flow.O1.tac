@@ -4,7 +4,7 @@
 
    Source file   : test/t02_control_flow.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 158 -> 111 instruction(s)
+   Result        : Optimized three address code (-O1): 158 -> 127 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,12 +14,13 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          158 -> 111   (29% fewer)
+   instructions                          158 -> 127   (19% fewer)
 
+   calls inlined                           1
    constants folded                        0
    algebraic simplifications               1
    common subexpressions                   0
-   copies / constants forwarded            1
+   copies / constants forwarded            2
    temporaries merged away                18
    dead instructions removed               0
    jumps removed or redirected            25
@@ -63,7 +64,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 12 parameter(s)/local(s), 10 temporaries, frame 160 bytes
+ Symbol table: 12 parameter(s)/local(s), 17 temporaries, frame 188 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -89,9 +90,16 @@
    t23              temp    char                            1     136
    t24              temp    const char *                    4     140
    t25              temp    char                            1     144
+   t29              temp    char                            1     160
+   t30              temp    int                             4     164
+   t31              temp    int                             4     168
+   t32              temp    int                             4     172
+   t33              temp    int                             4     176
+   t34              temp    int                             4     180
+   t35              temp    int                             4     184
    (18 temporaries no longer used after optimization not shown)
 
- Code: 96 instruction(s)
+ Code: 112 instruction(s)
 
     115        s = 0
     116        i = 0
@@ -170,25 +178,41 @@
     189        i = 0
     190  L27:  t22 = text ptr+ i
     191        t23 = *t22
-    192        if t23 char== 0 goto L30
+    192        if t23 char== 0 goto L35
     193        t24 = text ptr+ i
     194        t25 = *t24
-    195        param t25
-    196        k.13 = call kind(char), 1
-    197        if state int!= 0 goto L28
-    198        if k.13 int== 0 goto L28
-    199        words = words int+ 1
-    200        state = 1
-    201        goto L29
-    202  L28:  if state int!= 1 goto L29
-    203        if k.13 int!= 0 goto L29
-    204        state = 0
-    205  L29:  i = i int+ 1
-    206        goto L27
-    207  L30:  param "%d\n"
-    208        param words
-    209        call printf, 2
-    210        return 0
+    195        t29 = t25
+    196        t30 = chartoint t25
+    197        if t30 int< 48 goto L28
+    198        t31 = chartoint t29
+    199        if t31 int> 57 goto L28
+    200        k.13 = 1
+    201        goto L32
+    202  L28:  t32 = chartoint t29
+    203        if t32 int< 97 goto L29
+    204        t33 = chartoint t29
+    205        if t33 int<= 122 goto L30
+    206  L29:  t34 = chartoint t29
+    207        if t34 int< 65 goto L31
+    208        t35 = chartoint t29
+    209        if t35 int> 90 goto L31
+    210  L30:  k.13 = 2
+    211        goto L32
+    212  L31:  k.13 = 0
+    213  L32:  if state int!= 0 goto L33
+    214        if k.13 int== 0 goto L33
+    215        words = words int+ 1
+    216        state = 1
+    217        goto L34
+    218  L33:  if state int!= 1 goto L34
+    219        if k.13 int!= 0 goto L34
+    220        state = 0
+    221  L34:  i = i int+ 1
+    222        goto L27
+    223  L35:  param "%d\n"
+    224        param words
+    225        call printf, 2
+    226        return 0
 
 
 ----------------------------------------------------------------------------
@@ -236,3 +260,14 @@
 ----------------------------------------------------------------------------
 
 (no records)
+
+----------------------------------------------------------------------------
+ PROGRAM OUTPUT (the TAC run by the interpreter)
+----------------------------------------------------------------------------
+
+157 4
+2162
+3 2 2
+3
+
+   exit code 0, 424 instructions executed

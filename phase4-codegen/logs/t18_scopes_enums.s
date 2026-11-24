@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t18_scopes_enums.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -61,6 +61,7 @@ _Z4showi:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 1
         li    $v0, 1
         j     _Z4showi_exit
@@ -77,6 +78,7 @@ _Z4show5Color:
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
+        sw    $a0, 8($fp)
         # return 2
         li    $v0, 2
         j     _Z4show5Color_exit
@@ -115,6 +117,7 @@ _Z4hidei:
         beqz  $t8, M3_0
         j     __stack_overflow
 M3_0:
+        sw    $a0, 8($fp)
         # r = x.3
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -130,7 +133,9 @@ M3_0:
         lw    $t0, -12($fp)
         sw    $t0, -4($fp)
         # t2 = call globalX(), 0
+        addiu $sp, $sp, -16
         jal   _Z7globalXv
+        addiu $sp, $sp, 16
         sw    $v0, -16($fp)
         # t3 = r int+ t2
         lw    $t0, -4($fp)
@@ -204,6 +209,7 @@ _Z4name5Color:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -8
+        sw    $a0, 8($fp)
         # t1 = c
         lw    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -258,11 +264,10 @@ main_:
 M7_0:
         # param 3
         # t1 = call hide(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4hidei
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -48($fp)
         # t2 = floattodouble part
         l.s   $f0, g_part
@@ -359,16 +364,26 @@ L7_20:
         jal   __printf
         addiu $sp, $sp, 16
         # call countA(), 0
+        addiu $sp, $sp, -16
         jal   _Z6countAv
+        addiu $sp, $sp, 16
         # call countB(), 0
+        addiu $sp, $sp, -16
         jal   _Z6countBv
+        addiu $sp, $sp, 16
         # call countA(), 0
+        addiu $sp, $sp, -16
         jal   _Z6countAv
+        addiu $sp, $sp, 16
         # t5 = call countA(), 0
+        addiu $sp, $sp, -16
         jal   _Z6countAv
+        addiu $sp, $sp, 16
         sw    $v0, -68($fp)
         # t6 = call countB(), 0
+        addiu $sp, $sp, -16
         jal   _Z6countBv
+        addiu $sp, $sp, 16
         sw    $v0, -72($fp)
         # param "%d %d\n"
         # param t5
@@ -429,35 +444,31 @@ L7_20:
         sw    $t0, -44($fp)
         # param c
         # t10 = call name(enum Color), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -40($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -40($fp)
         jal   _Z4name5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -88($fp)
         # param 5
         # t11 = call name(enum Color), 1
-        addiu $sp, $sp, -8
-        li    $t0, 5
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 5
         jal   _Z4name5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -92($fp)
         # param c
         # t12 = call show(enum Color), 1
-        addiu $sp, $sp, -8
-        lw    $t0, -40($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lw    $a0, -40($fp)
         jal   _Z4show5Color
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -96($fp)
         # param 3
         # t13 = call show(int), 1
-        addiu $sp, $sp, -8
-        li    $t0, 3
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        li    $a0, 3
         jal   _Z4showi
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -100($fp)
         # param "%d %s %s %d %d %d %d\n"
         # param n.15

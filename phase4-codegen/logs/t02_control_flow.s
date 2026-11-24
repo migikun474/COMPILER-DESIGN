@@ -2,7 +2,7 @@
 #  MIPS ASSEMBLY  --  run with: spim -file <this file>
 # =========================================================================
 #  Source file  : ../phase3-ir/test/t02_control_flow.c
-#  Optimization : no optimization (every value in the stack frame)
+#  Optimization : no optimization
 # =========================================================================
 
 # generated for SPIM: `spim -file <this file> [arguments]`
@@ -39,6 +39,7 @@ _Z4kindc:
         sw    $fp, 0($sp)
         move  $fp, $sp
         addiu $sp, $sp, -24
+        sw    $a0, 8($fp)
         # t1 = chartoint c
         lb    $t0, 8($fp)
         sw    $t0, -4($fp)
@@ -546,11 +547,10 @@ L1_109:
         sb    $t0, -145($fp)
         # param t25
         # t26 = call kind(char), 1
-        addiu $sp, $sp, -8
-        lb    $t0, -145($fp)
-        sw    $t0, 0($sp)
+        addiu $sp, $sp, -16
+        lb    $a0, -145($fp)
         jal   _Z4kindc
-        addiu $sp, $sp, 8
+        addiu $sp, $sp, 16
         sw    $v0, -152($fp)
         # k.13 = t26
         lw    $t0, -152($fp)
