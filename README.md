@@ -193,6 +193,115 @@ features (variable arguments, dynamic memory, command-line input,
 typedef, references, `until`, multi-level pointers, multi-dimensional
 arrays) are covered.
 
+### Virtual functions (run-time overriding)
+
+Calls to a virtual function through a pointer or a reference are bound
+**at run time**, from the object's real class (decision D44):
+
+```cpp
+class Shape {
+public:
+    virtual int area() = 0;              /* pure virtual: Shape is abstract */
+    virtual int sides() { return 0; }
+};
+class Rect : public Shape {
+public:
+    int w, h;
+    Rect() { w = 2; h = 3; }
+    int area() { return w * h; }         /* overrides, with or without `virtual` */
+    int sides() { return 4; }
+};
+class Square : public Rect {
+public:
+    Square() { w = 4; h = 4; }
+    int area() { return w * w; }         /* overrides again; sides() is inherited */
+};
+int describe(Shape *s) { return s->area() * 10 + s->sides(); }
+int main() {
+    Rect r;
+    Square q;
+    Shape *all[2];
+    all[0] = &r;
+    all[1] = &q;
+    printf("%d %d %d\n", describe(all[0]), describe(all[1]), q.Rect::area());
+    return 0;
+}
+```
+
+Output, the same from g++, the TAC interpreter and SPIM at every `-O`
+level: `64 164 16`. The same `describe()` call runs `Rect::area` for `r`
+and `Square::area` for `q`; `q.Rect::area()` names a class, so it is an
+ordinary direct call.
+
+**The rules** (C++):
+
+| Rule | What happens |
+|---|---|
+| Overriding | Mark a function `virtual` once in a base class. A function in a derived class with the same name and parameters overrides it, with or without `virtual`, and must return the same type |
+| Pure virtual, abstract | `virtual int area() = 0;` is pure. A class with a pure function not overridden is **abstract**: no variables, members, arrays, by-value parameters or results, or `T()` of it; pointers and references are fine |
+| Which calls dispatch | A call through a pointer (`p->f()`), a reference (`r.f()`), `*p` or the implicit `this` inside a method is dispatched at run time; a call on a named object (`obj.f()`) or with a class name (`p->Base::f()`) is direct |
+| During construction | A virtual call made while a base constructor runs reaches the base's version |
+| Copies | A copy that creates an object (`Rect c = *p;`, a by-value parameter, a returned value) is exactly its declared class; an assignment (`*p = other;`) copies the members and keeps the object's own class |
+| Operators | A virtual `operator` called on `*p` or a reference dispatches too |
+| Not supported | `override` / `final`, covariant return types, RTTI, multiple and virtual inheritance |
+
+**How each pass handles it:**
+
+| Pass | What it does | Code |
+|---|---|---|
+| 1. Parse | `virtual` is a declaration specifier; `= 0` after a virtual function makes it pure | `parser.y`, `declarators.cpp` |
+| 2. Semantic | When a class is complete, `virtualFunctions()` copies the base's table, lets matching functions take over their slots, appends new virtual functions, and marks the class abstract if a pure slot is left. `layoutRecord()` puts the **vtable pointer** right after the base part of the first class with virtual functions (here at `+0` of `Shape`), so a base still starts at offset 0 of a derived object | `declarations.cpp`, `types.cpp` |
+| 3. TAC | One global table per class (`_ZTV<class>`), each slot a function address. Constructors store the table's address after building the base. A virtual call loads the table pointer, then the slot, and calls through it: `call *t` | `gen_expr.cpp` |
+| 5. Optimizer | Functions named in a table count as used, so `-O3` never removes them; only direct calls are inlined | `opt.cpp` |
+| 6. MIPS | `jalr` on the loaded address; the start-up code fills each table with the function labels | `mips.cpp` |
+
+The semantic analyzer prints each class's slots:
+
+```
+class Shape: size 4, align 4
+    +0  vtable pointer
+    slot 0: Shape::area  (pure)
+    slot 1: Shape::sides
+    (abstract)
+class Square: size 12, align 4
+    (base Rect, public)
+    slot 0: Square::area
+    slot 1: Rect::sides
+```
+
+The tables and the dispatch in TAC:
+
+```
+   _ZTV4Rect        unsigned int[2]                 8  { +0: &Rect::area(), +4: &Rect::sides() }
+   _ZTV6Square      unsigned int[2]                 8  { +0: &Square::area(), +4: &Rect::sides() }
+
+ FUNCTION Rect::Rect()
+    101     t1 = &_ZTV5Shape           <- the base part is a Shape first
+    102     *this = t1
+    103     t2 = &_ZTV4Rect            <- then a Rect
+    104     *this = t2
+
+ FUNCTION describe(class Shape *)
+    132     t1 = *s                    <- the table pointer
+    133     t2 = *t1                   <- slot 0: area
+    134     param s                             (this)
+    135     t3 = call *t2, 1                    (virtual Shape::area())
+```
+
+and in MIPS (`-O1`):
+
+```asm
+        lw    $s1, 0($s0)       # t1 = *s: the table pointer
+        lw    $s2, 0($s1)       # t2 = *t1: slot 0
+        addiu $sp, $sp, -16
+        move  $a0, $s0          # this
+        jalr  $s2               # call through the address
+```
+
+The full test is `phase3-ir/test/t37_virtual.c` (run on the interpreter
+and SPIM at every level); the design is decision D44 in
+[`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md).
+
 ### Not supported
 
 | Rejected | Examples | Why |
