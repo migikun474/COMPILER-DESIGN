@@ -4,7 +4,7 @@
 
    Source file   : test/t26_declarations.c
    Optimization  : -O3: -O2 plus inlining and loop optimizations
-   Result        : Optimized three address code (-O3): 197 -> 193 instruction(s)
+   Result        : Optimized three address code (-O3): 198 -> 193 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O3)
 ----------------------------------------------------------------------------
 
-   instructions                          197 -> 193   (2% fewer)
+   instructions                          198 -> 193   (2% fewer)
 
    constants folded                        8
    algebraic simplifications               3
    common subexpressions                   3
    copies / constants forwarded           17
    temporaries merged away                 6
-   dead instructions removed              11
+   dead instructions removed              12
    jumps removed or redirected             4
    unreachable instructions removed        2
    propagated across blocks                4
@@ -111,45 +111,45 @@
    t32              temp    short                           2     416
    t33              temp    double                          8     424
    t34              temp    double                          8     432
-   t35              temp    char                            1     440
-   t36              temp    int                             4     444
+   t36              temp    char                            1     444
    t37              temp    int                             4     448
-   t38              temp    char                            1     452
-   t39              temp    int                             4     456
-   t40              temp    short                           2     460
-   t41              temp    int                             4     464
-   t42              temp    double                          8     472
-   t43              temp    char                            1     480
-   t44              temp    int                             4     484
-   t46              temp    char *                          4     492
-   t47              temp    double                          8     496
-   t48              temp    double                          8     504
-   t49              temp    double                          8     512
-   t50              temp    int                             4     520
-   t51              temp    int                             4     524
-   t52              temp    int                             4     528
-   t53              temp    int                             4     532
-   t54              temp    int                             4     536
-   t55              temp    int                             4     540
-   t56              temp    int                             4     544
-   t59              temp    const char *                    4     556
-   t60              temp    char                            1     560
-   t61              temp    int                             4     564
-   t62              temp    char *                          4     568
-   t65              temp    int                             4     580
-   t66              temp    const int *                     4     584
-   t67              temp    int                             4     588
-   t68              temp    int                             4     592
-   t69              temp    int                             4     596
-   t70              temp    const int *                     4     600
-   t71              temp    int                             4     604
-   t72              temp    const int *                     4     608
-   t73              temp    int                             4     612
-   t74              temp    int                             4     616
-   t75              temp    int                             4     620
-   t76              temp    const int *                     4     624
-   t77              temp    int                             4     628
-   (17 temporaries no longer used after optimization not shown)
+   t38              temp    int                             4     452
+   t39              temp    char                            1     456
+   t40              temp    int                             4     460
+   t41              temp    short                           2     464
+   t42              temp    int                             4     468
+   t43              temp    double                          8     472
+   t44              temp    char                            1     480
+   t45              temp    int                             4     484
+   t47              temp    char *                          4     492
+   t48              temp    double                          8     496
+   t49              temp    double                          8     504
+   t50              temp    double                          8     512
+   t51              temp    int                             4     520
+   t52              temp    int                             4     524
+   t53              temp    int                             4     528
+   t54              temp    int                             4     532
+   t55              temp    int                             4     536
+   t56              temp    int                             4     540
+   t57              temp    int                             4     544
+   t60              temp    const char *                    4     556
+   t61              temp    char                            1     560
+   t62              temp    int                             4     564
+   t63              temp    char *                          4     568
+   t66              temp    int                             4     580
+   t67              temp    const int *                     4     584
+   t68              temp    int                             4     588
+   t69              temp    int                             4     592
+   t70              temp    int                             4     596
+   t71              temp    const int *                     4     600
+   t72              temp    int                             4     604
+   t73              temp    const int *                     4     608
+   t74              temp    int                             4     612
+   t75              temp    int                             4     616
+   t76              temp    int                             4     620
+   t77              temp    const int *                     4     624
+   t78              temp    int                             4     628
+   (18 temporaries no longer used after optimization not shown)
 
  Code: 193 instruction(s)
 
@@ -157,39 +157,39 @@
     101       r[4] = 9
     102       r[8] = 2
     103       r[12] = 4
-    104       t66 = &r
-    105       t67 = 0
-    106       t68 = 0
-    107  L1:  if t68 int>= 4 goto L2
-    108       t69 = t68 int<< 2
-    109       t70 = t66 ptr+ t69
-    110       t71 = *t70
-    111       t67 = t67 int+ t71
-    112       t68 = t68 int+ 1
-    113       if t68 int>= 4 goto L2
-    114       t69 = t68 int<< 2
-    115       t70 = t66 ptr+ t69
-    116       t71 = *t70
-    117       t67 = t67 int+ t71
-    118       t68 = t68 int+ 1
+    104       t67 = &r
+    105       t68 = 0
+    106       t69 = 0
+    107  L1:  if t69 int>= 4 goto L2
+    108       t70 = t69 int<< 2
+    109       t71 = t67 ptr+ t70
+    110       t72 = *t71
+    111       t68 = t68 int+ t72
+    112       t69 = t69 int+ 1
+    113       if t69 int>= 4 goto L2
+    114       t70 = t69 int<< 2
+    115       t71 = t67 ptr+ t70
+    116       t72 = *t71
+    117       t68 = t68 int+ t72
+    118       t69 = t69 int+ 1
     119       goto L1
-    120  L2:  t72 = &primes
-    121       t73 = 0
-    122       t74 = 0
-    123  L3:  if t74 int>= 4 goto L4
-    124       t75 = t74 int<< 2
-    125       t76 = t72 ptr+ t75
-    126       t77 = *t76
-    127       t73 = t73 int+ t77
-    128       t74 = t74 int+ 1
-    129       if t74 int>= 4 goto L4
-    130       t75 = t74 int<< 2
-    131       t76 = t72 ptr+ t75
-    132       t77 = *t76
-    133       t73 = t73 int+ t77
-    134       t74 = t74 int+ 1
+    120  L2:  t73 = &primes
+    121       t74 = 0
+    122       t75 = 0
+    123  L3:  if t75 int>= 4 goto L4
+    124       t76 = t75 int<< 2
+    125       t77 = t73 ptr+ t76
+    126       t78 = *t77
+    127       t74 = t74 int+ t78
+    128       t75 = t75 int+ 1
+    129       if t75 int>= 4 goto L4
+    130       t76 = t75 int<< 2
+    131       t77 = t73 ptr+ t76
+    132       t78 = *t77
+    133       t74 = t74 int+ t78
+    134       t75 = t75 int+ 1
     135       goto L3
-    136  L4:  t7 = t67 int+ t73
+    136  L4:  t7 = t68 int+ t74
     137       if t7 int<= 100 goto L5
     138       t11 = t7
     139       goto L6
@@ -256,38 +256,38 @@
     200       m[24] = 122
     201       copy = m
     202       copy[4] = 100
-    203       t35 = m[0]
-    204       t36 = chartoint t35
-    205       t37 = m[4]
-    206       t38 = m[8]
-    207       t39 = chartoint t38
-    208       t40 = m[10]
-    209       t41 = shorttoint t40
-    210       t42 = m[16]
-    211       t43 = m[24]
-    212       t44 = chartoint t43
+    203       t36 = m[0]
+    204       t37 = chartoint t36
+    205       t38 = m[4]
+    206       t39 = m[8]
+    207       t40 = chartoint t39
+    208       t41 = m[10]
+    209       t42 = shorttoint t41
+    210       t43 = m[16]
+    211       t44 = m[24]
+    212       t45 = chartoint t44
     213       param "%c %d %c %d %.1f %c %d\n"
-    214       param t36
-    215       param t37
-    216       param t39
-    217       param t41
-    218       param t42
-    219       param t44
+    214       param t37
+    215       param t38
+    216       param t40
+    217       param t42
+    218       param t43
+    219       param t45
     220       param 100
     221       call printf, 8
-    222       t46 = &letters
-    223       t47 = table[0]
-    224       t48 = table[8]
-    225       t49 = table[16]
-    226       t50 = matrix[20]
-    227       t51 = matrix[0]
-    228       t52 = t50 int- t51
+    222       t47 = &letters
+    223       t48 = table[0]
+    224       t49 = table[8]
+    225       t50 = table[16]
+    226       t51 = matrix[20]
+    227       t52 = matrix[0]
+    228       t53 = t51 int- t52
     229       param "%s %.1f %.1f %.1f %d\n"
-    230       param t46
-    231       param t47
-    232       param t48
-    233       param t49
-    234       param t52
+    230       param t47
+    231       param t48
+    232       param t49
+    233       param t50
+    234       param t53
     235       call printf, 6
     236       grid[0] = 1
     237       grid[4] = 0
@@ -304,18 +304,18 @@
     248       trace = 0
     249       i = 0
     250  L7:  if i int>= 3 goto L8
-    251       t53 = i int<< 2                     (n2 = 4)
-    252       t54 = t53 int+ i
-    253       t55 = t54 int<< 2                   (w = 4)
-    254       t56 = grid[t55]
-    255       trace = trace int+ t56
+    251       t54 = i int<< 2                     (n2 = 4)
+    252       t55 = t54 int+ i
+    253       t56 = t55 int<< 2                   (w = 4)
+    254       t57 = grid[t56]
+    255       trace = trace int+ t57
     256       i = i int+ 1
     257       if i int>= 3 goto L8
-    258       t53 = i int<< 2                     (n2 = 4)
-    259       t54 = t53 int+ i
-    260       t55 = t54 int<< 2                   (w = 4)
-    261       t56 = grid[t55]
-    262       trace = trace int+ t56
+    258       t54 = i int<< 2                     (n2 = 4)
+    259       t55 = t54 int+ i
+    260       t56 = t55 int<< 2                   (w = 4)
+    261       t57 = grid[t56]
+    262       trace = trace int+ t57
     263       i = i int+ 1
     264       goto L7
     265  L8:  words[0] = "one"
@@ -333,19 +333,19 @@
     277       rows[9] = 0
     278       rows[10] = 0
     279       rows[11] = 0
-    280       t59 = words[8]
-    281       t60 = rows[8]
-    282       t61 = chartoint t60
-    283       t62 = &rows
+    280       t60 = words[8]
+    281       t61 = rows[8]
+    282       t62 = chartoint t61
+    283       t63 = &rows
     284       param "%d %s %c %s %d\n"
     285       param trace
-    286       param t59
-    287       param t61
-    288       param t62
+    286       param t60
+    287       param t62
+    288       param t63
     289       param 3
     290       call printf, 6
-    291       t65 = 10 int+ kept.17
-    292       return t65
+    291       t66 = 10 int+ kept.17
+    292       return t66
 
 
 ----------------------------------------------------------------------------

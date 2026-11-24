@@ -4,7 +4,7 @@
 
    Source file   : test/t23_objects.c
    Optimization  : no optimization
-   Result        : Three address code generated: 21 function(s), 352 instruction(s)
+   Result        : Three address code generated: 21 function(s), 356 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -431,7 +431,7 @@
  FUNCTION Segment::length2()        (link name _ZN7Segment7length2Ev)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 9 temporaries, frame 52 bytes
+ Symbol table: 2 parameter(s)/local(s), 10 temporaries, frame 56 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -439,29 +439,31 @@
    d                local   class Point                     8       4
    t1               temp    class Segment *                 4      12
    t2               temp    class Point                     8      16
-   t3               temp    int                             4      24
+   t3               temp    class Point *                   4      24
    t4               temp    int                             4      28
    t5               temp    int                             4      32
    t6               temp    int                             4      36
    t7               temp    int                             4      40
    t8               temp    int                             4      44
    t9               temp    int                             4      48
+   t10              temp    int                             4      52
 
- Code: 13 instruction(s)
+ Code: 14 instruction(s)
 
     221     t1 = this ptr+ 8
     222     param t1                            (this)
     223     param this
     224     t2 = call Point::operator-(const class Point &), 2
     225     d = t2
-    226     t3 = d[0]
+    226     t3 = &d
     227     t4 = d[0]
-    228     t5 = t3 int* t4
-    229     t6 = d[4]
+    228     t5 = d[0]
+    229     t6 = t4 int* t5
     230     t7 = d[4]
-    231     t8 = t6 int* t7
-    232     t9 = t5 int+ t8
-    233     return t9
+    231     t8 = d[4]
+    232     t9 = t7 int* t8
+    233     t10 = t6 int+ t9
+    234     return t10
 
 ============================================================================
  FUNCTION total(class Rect &)        (link name _Z5totalR4Rect)
@@ -478,11 +480,11 @@
 
  Code: 5 instruction(s)
 
-    234     param r                             (this)
-    235     t1 = call Rect::area(), 1
-    236     t2 = *r
-    237     t3 = t1 int+ t2
-    238     return t3
+    235     param r                             (this)
+    236     t1 = call Rect::area(), 1
+    237     t2 = *r
+    238     t3 = t1 int+ t2
+    239     return t3
 
 ============================================================================
  FUNCTION through(class Shape *)        (link name _Z7throughP5Shape)
@@ -499,12 +501,12 @@
 
  Code: 6 instruction(s)
 
-    239     param s                             (this)
-    240     t1 = call Shape::area(), 1
-    241     param s                             (this)
-    242     t2 = call Shape::name(), 1
-    243     t3 = t1 int+ t2
-    244     return t3
+    240     param s                             (this)
+    241     t1 = call Shape::area(), 1
+    242     param s                             (this)
+    243     t2 = call Shape::name(), 1
+    244     t3 = t1 int+ t2
+    245     return t3
 
 ============================================================================
  FUNCTION grow(class Rect *, int)        (link name _Z4growP4Recti)
@@ -527,23 +529,23 @@
 
  Code: 11 instruction(s)
 
-    245     t1 = r ptr+ 4
-    246     t2 = *t1
-    247     t3 = t2 int+ by
-    248     t4 = r ptr+ 4
-    249     *t4 = t3
-    250     t5 = r ptr+ 8
-    251     t6 = *t5
-    252     t7 = t6 int+ by
-    253     t8 = r ptr+ 8
-    254     *t8 = t7
-    255     return
+    246     t1 = r ptr+ 4
+    247     t2 = *t1
+    248     t3 = t2 int+ by
+    249     t4 = r ptr+ 4
+    250     *t4 = t3
+    251     t5 = r ptr+ 8
+    252     t6 = *t5
+    253     t7 = t6 int+ by
+    254     t8 = r ptr+ 8
+    255     *t8 = t7
+    256     return
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 11 parameter(s)/local(s), 77 temporaries, frame 432 bytes
+ Symbol table: 11 parameter(s)/local(s), 80 temporaries, frame 444 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -592,248 +594,254 @@
    t32              temp    int                             4     236
    t33              temp    int                             4     240
    t34              temp    class Point                     8     244
-   t35              temp    class Point                     8     252
-   t36              temp    class Point *                   4     260
+   t35              temp    class Point *                   4     252
+   t36              temp    class Point                     8     256
    t37              temp    class Point *                   4     264
-   t38              temp    class Point &                   4     268
+   t38              temp    class Point *                   4     268
    t39              temp    class Point *                   4     272
-   t40              temp    class Point *                   4     276
-   t41              temp    class Point &                   4     280
+   t40              temp    class Point &                   4     276
+   t41              temp    class Point *                   4     280
    t42              temp    class Point *                   4     284
    t43              temp    class Point &                   4     288
    t44              temp    class Point *                   4     292
-   t45              temp    int &                           4     296
+   t45              temp    class Point &                   4     296
    t46              temp    class Point *                   4     300
    t47              temp    int &                           4     304
-   t48              temp    int                             4     308
-   t49              temp    int                             4     312
-   t50              temp    class Point *                   4     316
-   t51              temp    class Point *                   4     320
-   t52              temp    class Point                     8     324
-   t53              temp    int                             4     332
-   t54              temp    int                             4     336
-   t55              temp    int                             4     340
+   t48              temp    class Point *                   4     308
+   t49              temp    int &                           4     312
+   t50              temp    int                             4     316
+   t51              temp    int                             4     320
+   t52              temp    class Point *                   4     324
+   t53              temp    class Point *                   4     328
+   t54              temp    class Point                     8     332
+   t55              temp    class Point *                   4     340
    t56              temp    int                             4     344
-   t57              temp    class Point *                   4     348
-   t58              temp    class Point *                   4     352
-   t59              temp    bool                            1     356
-   t60              temp    int                             4     360
+   t57              temp    int                             4     348
+   t58              temp    int                             4     352
+   t59              temp    int                             4     356
+   t60              temp    class Point *                   4     360
    t61              temp    class Point *                   4     364
-   t62              temp    class Point *                   4     368
-   t63              temp    bool                            1     372
-   t64              temp    int                             4     376
-   t65              temp    class Segment *                 4     380
-   t66              temp    class Segment *                 4     384
-   t67              temp    class Segment *                 4     388
+   t62              temp    bool                            1     368
+   t63              temp    int                             4     372
+   t64              temp    class Point *                   4     376
+   t65              temp    class Point *                   4     380
+   t66              temp    bool                            1     384
+   t67              temp    int                             4     388
    t68              temp    class Segment *                 4     392
-   t69              temp    int                             4     396
-   t70              temp    int                             4     400
-   t71              temp    class Rect *                    4     404
-   t72              temp    class Rect *                    4     408
-   t73              temp    class Rect *                    4     412
+   t69              temp    class Segment *                 4     396
+   t70              temp    class Segment *                 4     400
+   t71              temp    class Segment *                 4     404
+   t72              temp    int                             4     408
+   t73              temp    int                             4     412
    t74              temp    class Rect *                    4     416
-   t75              temp    int                             4     420
-   t76              temp    int                             4     424
-   t77              temp    int                             4     428
+   t75              temp    class Rect *                    4     420
+   t76              temp    class Rect *                    4     424
+   t77              temp    class Rect *                    4     428
+   t78              temp    int                             4     432
+   t79              temp    int                             4     436
+   t80              temp    int                             4     440
 
- Code: 196 instruction(s)
+ Code: 199 instruction(s)
 
-    256     t1 = &r
-    257     param t1                            (this)
-    258     call Rect::Rect(), 1
-    259     t2 = &r
-    260     param t2                            (this)
-    261     param 3
-    262     param 4
-    263     call Rect::set(int, int), 3
-    264     t3 = &q
-    265     param t3                            (this)
-    266     call Rect::Rect(), 1
-    267     t4 = &q
-    268     param t4                            (this)
-    269     param 5
-    270     call Square::side(int), 2
-    271     t5 = &r
-    272     param t5                            (this)
-    273     t6 = call Rect::area(), 1
-    274     t7 = &q
-    275     param t7                            (this)
-    276     t8 = call Rect::area(), 1
-    277     t9 = &q
-    278     param t9                            (this)
-    279     t10 = call Rect::perimeter(), 1
-    280     param "%d %d %d %d\n"
-    281     param t6
-    282     param t8
-    283     param t10
-    284     param Shape::live
-    285     call printf, 5
-    286     t11 = &q
-    287     asShape = t11
-    288     t12 = &r
-    289     param t12
-    290     t13 = call total(class Rect &), 1
-    291     t14 = &q
-    292     param t14
-    293     t15 = call through(class Shape *), 1
-    294     t16 = &q
-    295     param t16                           (this)
-    296     t17 = call Square::name(), 1
-    297     param asShape                       (this)
-    298     t18 = call Shape::name(), 1
-    299     param "%d %d %c %c\n"
-    300     param t13
-    301     param t15
-    302     param t17
-    303     param t18
-    304     call printf, 5
-    305     t19 = &q
-    306     param t19
-    307     param 1
-    308     call grow(class Rect *, int), 2
-    309     t20 = &q
-    310     alias = t20
-    311     t21 = alias ptr+ 4
-    312     *t21 = 10
-    313     t22 = &q
-    314     param t22                           (this)
-    315     t23 = call Rect::area(), 1
-    316     param alias                         (this)
-    317     t24 = call Rect::perimeter(), 1
-    318     param "%d %d\n"
-    319     param t23
-    320     param t24
-    321     call printf, 3
-    322     t25 = &pair
-    323     param t25                           (this)
-    324     call Rect::Rect(), 1
-    325     t26 = t25 ptr+ 12
-    326     param t26                           (this)
-    327     call Rect::Rect(), 1
-    328     pair[16] = 6
-    329     t27 = &pair
-    330     param t27                           (this)
-    331     t28 = call Rect::area(), 1
-    332     t29 = &pair
-    333     t30 = t29 ptr+ 12
-    334     param t30                           (this)
-    335     t31 = call Rect::area(), 1
-    336     t32 = t28 int+ t31
-    337     t33 = pair[12]
-    338     param "%d %d %d\n"
-    339     param t32
-    340     param t33
-    341     param Shape::live
-    342     call printf, 4
-    343     param "%d\n"
-    344     param Shape::live
-    345     call printf, 2
-    346     param 3
-    347     param 4
-    348     t34 = call at(int, int), 2
-    349     a = t34
-    350     param 1
-    351     param 1
-    352     t35 = call at(int, int), 2
-    353     b = t35
-    354     t36 = &a
-    355     t37 = &b
-    356     param t36                           (this)
-    357     param t37
-    358     t38 = call Point::operator+=(const class Point &), 2
-    359     t39 = &a
-    360     t40 = &b
-    361     param t39                           (this)
-    362     param t40
-    363     t41 = call Point::operator+=(const class Point &), 2
-    364     t42 = &b
-    365     param t41                           (this)
-    366     param t42
-    367     t43 = call Point::operator+=(const class Point &), 2
-    368     t44 = &a
-    369     param t44                           (this)
-    370     param 0
-    371     t45 = call Point::operator[](int), 2
-    372     t46 = &a
-    373     param t46                           (this)
-    374     param 1
-    375     t47 = call Point::operator[](int), 2
-    376     t48 = *t47
-    377     t49 = t48 int* 2
-    378     *t45 = t49
-    379     t50 = &a
-    380     t51 = &b
-    381     param t50                           (this)
-    382     param t51
-    383     t52 = call Point::operator-(const class Point &), 2
-    384     c = t52
-    385     t53 = a[0]
-    386     t54 = a[4]
-    387     t55 = c[0]
-    388     t56 = c[4]
-    389     t57 = &b
-    390     t58 = &a
-    391     param t57                           (this)
-    392     param t58
-    393     t59 = call Point::operator<(const class Point &), 2
-    394     t60 = booltoint t59
-    395     t61 = &a
-    396     t62 = &b
-    397     param t61                           (this)
-    398     param t62
-    399     t63 = call Point::operator<(const class Point &), 2
-    400     t64 = booltoint t63
-    401     param "%d %d %d %d %d %d\n"
-    402     param t53
-    403     param t54
-    404     param t55
-    405     param t56
-    406     param t60
-    407     param t64
-    408     call printf, 7
-    409     t65 = &s
-    410     param t65                           (this)
-    411     call Point::Point(), 1
-    412     t66 = t65 ptr+ 8
-    413     param t66                           (this)
-    414     call Point::Point(), 1
-    415     t67 = &s
-    416     param t67                           (this)
-    417     param 1
-    418     param 2
-    419     param 4
-    420     param 6
-    421     call Segment::set(int, int, int, int), 5
-    422     t68 = &s
-    423     param t68                           (this)
-    424     t69 = call Segment::length2(), 1
-    425     t70 = s[12]
-    426     param "%d %d\n"
-    427     param t69
-    428     param t70
-    429     call printf, 3
-    430     t71 = &last
-    431     param t71                           (this)
-    432     call Rect::Rect(), 1
-    433     t72 = &last
-    434     param t72                           (this)
-    435     param 2
-    436     param 9
-    437     call Rect::set(int, int), 3
-    438     t73 = &last
-    439     base = t73
-    440     t74 = &last
-    441     param t74                           (this)
-    442     t75 = call Rect::area(), 1
-    443     param base                          (this)
-    444     t76 = call Shape::area(), 1
-    445     t77 = *base
-    446     param "%d %d %d\n"
-    447     param t75
-    448     param t76
-    449     param t77
-    450     call printf, 4
-    451     return Shape::live
+    257     t1 = &r
+    258     param t1                            (this)
+    259     call Rect::Rect(), 1
+    260     t2 = &r
+    261     param t2                            (this)
+    262     param 3
+    263     param 4
+    264     call Rect::set(int, int), 3
+    265     t3 = &q
+    266     param t3                            (this)
+    267     call Rect::Rect(), 1
+    268     t4 = &q
+    269     param t4                            (this)
+    270     param 5
+    271     call Square::side(int), 2
+    272     t5 = &r
+    273     param t5                            (this)
+    274     t6 = call Rect::area(), 1
+    275     t7 = &q
+    276     param t7                            (this)
+    277     t8 = call Rect::area(), 1
+    278     t9 = &q
+    279     param t9                            (this)
+    280     t10 = call Rect::perimeter(), 1
+    281     param "%d %d %d %d\n"
+    282     param t6
+    283     param t8
+    284     param t10
+    285     param Shape::live
+    286     call printf, 5
+    287     t11 = &q
+    288     asShape = t11
+    289     t12 = &r
+    290     param t12
+    291     t13 = call total(class Rect &), 1
+    292     t14 = &q
+    293     param t14
+    294     t15 = call through(class Shape *), 1
+    295     t16 = &q
+    296     param t16                           (this)
+    297     t17 = call Square::name(), 1
+    298     param asShape                       (this)
+    299     t18 = call Shape::name(), 1
+    300     param "%d %d %c %c\n"
+    301     param t13
+    302     param t15
+    303     param t17
+    304     param t18
+    305     call printf, 5
+    306     t19 = &q
+    307     param t19
+    308     param 1
+    309     call grow(class Rect *, int), 2
+    310     t20 = &q
+    311     alias = t20
+    312     t21 = alias ptr+ 4
+    313     *t21 = 10
+    314     t22 = &q
+    315     param t22                           (this)
+    316     t23 = call Rect::area(), 1
+    317     param alias                         (this)
+    318     t24 = call Rect::perimeter(), 1
+    319     param "%d %d\n"
+    320     param t23
+    321     param t24
+    322     call printf, 3
+    323     t25 = &pair
+    324     param t25                           (this)
+    325     call Rect::Rect(), 1
+    326     t26 = t25 ptr+ 12
+    327     param t26                           (this)
+    328     call Rect::Rect(), 1
+    329     pair[16] = 6
+    330     t27 = &pair
+    331     param t27                           (this)
+    332     t28 = call Rect::area(), 1
+    333     t29 = &pair
+    334     t30 = t29 ptr+ 12
+    335     param t30                           (this)
+    336     t31 = call Rect::area(), 1
+    337     t32 = t28 int+ t31
+    338     t33 = pair[12]
+    339     param "%d %d %d\n"
+    340     param t32
+    341     param t33
+    342     param Shape::live
+    343     call printf, 4
+    344     param "%d\n"
+    345     param Shape::live
+    346     call printf, 2
+    347     param 3
+    348     param 4
+    349     t34 = call at(int, int), 2
+    350     a = t34
+    351     t35 = &a
+    352     param 1
+    353     param 1
+    354     t36 = call at(int, int), 2
+    355     b = t36
+    356     t37 = &b
+    357     t38 = &a
+    358     t39 = &b
+    359     param t38                           (this)
+    360     param t39
+    361     t40 = call Point::operator+=(const class Point &), 2
+    362     t41 = &a
+    363     t42 = &b
+    364     param t41                           (this)
+    365     param t42
+    366     t43 = call Point::operator+=(const class Point &), 2
+    367     t44 = &b
+    368     param t43                           (this)
+    369     param t44
+    370     t45 = call Point::operator+=(const class Point &), 2
+    371     t46 = &a
+    372     param t46                           (this)
+    373     param 0
+    374     t47 = call Point::operator[](int), 2
+    375     t48 = &a
+    376     param t48                           (this)
+    377     param 1
+    378     t49 = call Point::operator[](int), 2
+    379     t50 = *t49
+    380     t51 = t50 int* 2
+    381     *t47 = t51
+    382     t52 = &a
+    383     t53 = &b
+    384     param t52                           (this)
+    385     param t53
+    386     t54 = call Point::operator-(const class Point &), 2
+    387     c = t54
+    388     t55 = &c
+    389     t56 = a[0]
+    390     t57 = a[4]
+    391     t58 = c[0]
+    392     t59 = c[4]
+    393     t60 = &b
+    394     t61 = &a
+    395     param t60                           (this)
+    396     param t61
+    397     t62 = call Point::operator<(const class Point &), 2
+    398     t63 = booltoint t62
+    399     t64 = &a
+    400     t65 = &b
+    401     param t64                           (this)
+    402     param t65
+    403     t66 = call Point::operator<(const class Point &), 2
+    404     t67 = booltoint t66
+    405     param "%d %d %d %d %d %d\n"
+    406     param t56
+    407     param t57
+    408     param t58
+    409     param t59
+    410     param t63
+    411     param t67
+    412     call printf, 7
+    413     t68 = &s
+    414     param t68                           (this)
+    415     call Point::Point(), 1
+    416     t69 = t68 ptr+ 8
+    417     param t69                           (this)
+    418     call Point::Point(), 1
+    419     t70 = &s
+    420     param t70                           (this)
+    421     param 1
+    422     param 2
+    423     param 4
+    424     param 6
+    425     call Segment::set(int, int, int, int), 5
+    426     t71 = &s
+    427     param t71                           (this)
+    428     t72 = call Segment::length2(), 1
+    429     t73 = s[12]
+    430     param "%d %d\n"
+    431     param t72
+    432     param t73
+    433     call printf, 3
+    434     t74 = &last
+    435     param t74                           (this)
+    436     call Rect::Rect(), 1
+    437     t75 = &last
+    438     param t75                           (this)
+    439     param 2
+    440     param 9
+    441     call Rect::set(int, int), 3
+    442     t76 = &last
+    443     base = t76
+    444     t77 = &last
+    445     param t77                           (this)
+    446     t78 = call Rect::area(), 1
+    447     param base                          (this)
+    448     t79 = call Shape::area(), 1
+    449     t80 = *base
+    450     param "%d %d %d\n"
+    451     param t78
+    452     param t79
+    453     param t80
+    454     call printf, 4
+    455     return Shape::live
 
 
 ----------------------------------------------------------------------------

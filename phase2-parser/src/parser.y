@@ -76,7 +76,8 @@
 %token STRUCT CLASS UNION ENUM
 %token PUBLIC PRIVATE PROTECTED THIS
 %token STATIC TYPEDEF AUTO CONST FRIEND
-%token VIRTUAL EXPLICIT   /* reserved but rejected by the scanner (D35); never reach the grammar */
+%token VIRTUAL           /* virtual functions (D44) */
+%token EXPLICIT          /* reserved but rejected by the scanner (D35); never reaches the grammar */
 %token IF ELSE FOR WHILE DO UNTIL SWITCH CASE DEFAULT
 %token BREAK CONTINUE GOTO RETURN
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
@@ -197,6 +198,7 @@ declaration_specifiers
           if ($2.typeSpec.isConst) $$.typeSpec.isConst = true;
           if ($2.typeSpec.isAuto) $$.typeSpec.isAuto = true;
           if ($2.typeSpec.isFriend) $$.typeSpec.isFriend = true;
+          if ($2.typeSpec.isVirtual) $$.typeSpec.isVirtual = true;
           if (!$2.typeSpec.tagName.empty()) $$.typeSpec.tagName = $2.typeSpec.tagName;
           if (!$2.typeSpec.typedefName.empty()) $$.typeSpec.typedefName = $2.typeSpec.typedefName;
           if ($2.node) $$.node = $2.node;
@@ -210,6 +212,7 @@ storage_or_type_specifier
     | TYPEDEF  { $$.typeSpec.isTypedefStorage = true; $$.typeSpec.storageClasses = 1; }
     | CONST    { $$.typeSpec.isConst = true; } /* now actually tracked -- see Symbol/SymbolTableEntry */
     | FRIEND   { $$ = ParserValue(); $$.typeSpec.isFriend = true; }
+    | VIRTUAL  { $$ = ParserValue(); $$.typeSpec.isVirtual = true; }
     | type_specifier { $$ = $1; }
     ;
 

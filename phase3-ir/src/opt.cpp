@@ -1253,12 +1253,18 @@ OptStats optimize(Program &program, int level) {
             pass.runLoops();
             if (pass.unrollLoops()) pass.run(); /* once: unrolling again would double the copies */
         }
-        /* dead functions: keep only what main reaches through calls (there are no
-           function pointers, so every use of a function is a `call`) */
+        /* dead functions: keep only what main reaches through calls, and what a
+           table of virtual functions names (there are no function pointers) */
         std::set<const sem::Symbol *> live;
         std::vector<const Function *> work;
         for (const auto &f : program.functions)
             if (f.sym && f.sym->name == "main" && !f.sym->ownerRecord) work.push_back(&f);
+        /* a function whose address is in a table of virtual functions (D44) may be called through it */
+        for (const auto &g : program.globals)
+            for (const auto &init : g.init)
+                if (init.kind == GlobalInit::Address)
+                    for (const auto &f : program.functions)
+                        if (f.sym.get() == init.target) work.push_back(&f);
         while (!work.empty()) {
             const Function *f = work.back();
             work.pop_back();

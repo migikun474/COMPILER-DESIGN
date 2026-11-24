@@ -33,6 +33,7 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->isAuto = ts.isAuto;
     t->isTypedef = ts.isTypedefStorage;
     t->isFriend = ts.isFriend;
+    t->isVirtual = ts.isVirtual;
     t->pointerLevel = d.pointerLevel;
     t->isReference = d.isReference;
     t->arrayDims = d.arrayDims;
@@ -123,10 +124,14 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
 
         auto node = atToken(mkNode(ASTKind::FunctionDecl, d.name + " : " + mangled), d.nameIdx);
         node->typeExpr = makeTypeExpr(ts, d);
-        if (d.initExpr) /* `int area() = 0;`: there are no pure virtual functions (D35) */
-            reportDiagnostic(node->line, node->column, "= ",
-                             "function '" + d.name + "' cannot have an initializer ('= 0' pure virtual functions are not supported)",
-                             "Syntax error");
+        if (d.initExpr) { /* `virtual int area() = 0;`: a pure virtual function (D44); nothing else takes `= ...` */
+            if (ts.isVirtual && d.initExpr->kind == ASTKind::IntLiteral && d.initExpr->label == "0")
+                node->typeExpr->isPure = true;
+            else
+                reportDiagnostic(node->line, node->column, "= ",
+                                 "function '" + d.name + "' cannot have an initializer (only a virtual function may be declared '= 0')",
+                                 "Syntax error");
+        }
         for (auto &p : d.params) {
             if (!p.name.empty()) {
                 auto pn = atToken(mkNode(ASTKind::ParamDecl, p.name + " : " + p.typeStr), p.nameIdx);

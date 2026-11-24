@@ -4,7 +4,7 @@
 
    Source file   : test/t06_structs.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 182 -> 167 instruction(s)
+   Result        : Optimized three address code (-O2): 183 -> 167 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,14 +14,14 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          182 -> 167   (8% fewer)
+   instructions                          183 -> 167   (8% fewer)
 
    constants folded                        1
    algebraic simplifications               1
    common subexpressions                   6
    copies / constants forwarded           12
    temporaries merged away                 4
-   dead instructions removed               7
+   dead instructions removed               8
    jumps removed or redirected             2
    unreachable instructions removed        0
    propagated across blocks                0
@@ -165,7 +165,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 14 parameter(s)/local(s), 49 temporaries, frame 436 bytes
+ Symbol table: 14 parameter(s)/local(s), 49 temporaries, frame 444 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -215,24 +215,24 @@
    t35              temp    int                             4     324
    t36              temp    struct Rect *                   4     328
    t37              temp    int                             4     332
-   t39              temp    double                          8     352
    t40              temp    double                          8     360
-   t41              temp    struct Node *                   4     368
-   t42              temp    struct Node *                   4     372
-   t43              temp    struct Node *                   4     376
-   t44              temp    int                             4     380
-   t45              temp    struct Node *                   4     384
-   t46              temp    struct Node *                   4     388
-   t47              temp    struct Node *                   4     392
-   t48              temp    int                             4     396
-   t49              temp    int                             4     400
-   t50              temp    int                             4     404
-   t53              temp    short                           2     416
-   t54              temp    int                             4     420
-   t55              temp    int                             4     424
-   t56              temp    int                             4     428
-   t57              temp    int                             4     432
-   (8 temporaries no longer used after optimization not shown)
+   t41              temp    double                          8     368
+   t42              temp    struct Node *                   4     376
+   t43              temp    struct Node *                   4     380
+   t44              temp    struct Node *                   4     384
+   t45              temp    int                             4     388
+   t46              temp    struct Node *                   4     392
+   t47              temp    struct Node *                   4     396
+   t48              temp    struct Node *                   4     400
+   t49              temp    int                             4     404
+   t50              temp    int                             4     408
+   t51              temp    int                             4     412
+   t54              temp    short                           2     424
+   t55              temp    int                             4     428
+   t56              temp    int                             4     432
+   t57              temp    int                             4     436
+   t58              temp    int                             4     440
+   (9 temporaries no longer used after optimization not shown)
 
  Code: 135 instruction(s)
 
@@ -321,30 +321,30 @@
     214       param a
     215       param b
     216       c = call add(Complex, Complex), 2
-    217       t39 = c[0]
-    218       t40 = c[8]
+    217       t40 = c[0]
+    218       t41 = c[8]
     219       param "%.1f %.1f\n"
-    220       param t39
-    221       param t40
+    220       param t40
+    221       param t41
     222       call printf, 3
     223       n1[0] = 1
-    224       t41 = &n2
-    225       n1[4] = t41
+    224       t42 = &n2
+    225       n1[4] = t42
     226       n2[0] = 2
-    227       t42 = &n3
-    228       n2[4] = t42
+    227       t43 = &n3
+    228       n2[4] = t43
     229       n3[0] = 3
     230       n3[4] = 0
-    231       t43 = &n1
-    232       param t43
-    233       t44 = call length(struct Node *), 1
-    234       t45 = n1[4]
-    235       t46 = t45 ptr+ 4
-    236       t47 = *t46
-    237       t48 = *t47
+    231       t44 = &n1
+    232       param t44
+    233       t45 = call length(struct Node *), 1
+    234       t46 = n1[4]
+    235       t47 = t46 ptr+ 4
+    236       t48 = *t47
+    237       t49 = *t48
     238       param "%d %d\n"
-    239       param t44
-    240       param t48
+    239       param t45
+    240       param t49
     241       call printf, 3
     242       k[0] = 1
     243       k[4] = 16909060
@@ -354,23 +354,23 @@
     247       k[11] = 0
     248       k[12] = 9
     249       k[9] = 120
-    250       t49 = k[0]
-    251       t50 = k[4]
-    252       t53 = k[12]
-    253       t54 = shorttoint t53
+    250       t50 = k[0]
+    251       t51 = k[4]
+    252       t54 = k[12]
+    253       t55 = shorttoint t54
     254       param "%d %d %c %d %d\n"
-    255       param t49
-    256       param t50
+    255       param t50
+    256       param t51
     257       param 120
-    258       param t54
+    258       param t55
     259       param 16
     260       call printf, 6
     261       zero[0] = 0
     262       zero[4] = 0
-    263       t55 = zero[0]
-    264       t56 = pts[16]
-    265       t57 = t55 int+ t56
-    266       return t57
+    263       t56 = zero[0]
+    264       t57 = pts[16]
+    265       t58 = t56 int+ t57
+    266       return t58
 
 
 ----------------------------------------------------------------------------

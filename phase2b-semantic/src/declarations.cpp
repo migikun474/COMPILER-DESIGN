@@ -95,7 +95,7 @@ void SemanticAnalyzer::analyze(const ASTNodePtr &root) {
        can never be linked -- there is no separate compilation here */
     for (const auto &s : st.allSymbols()) {
         if (s->kind == SymbolKind::Function && !s->isDefined && s->useCount > 0 &&
-            !s->isConstructor) {
+            !s->isConstructor && !s->isPure) { /* a pure virtual function is only called through the table */
             warning(s->line, s->column, "function '" + s->name + "' is used but never defined",
                     "undefined-function");
         }
@@ -434,7 +434,7 @@ static bool hasConstructor(const TypePtr &tIn) {
     while (t && isArray(t)) t = t->elem;
     RecordInfo *rec = t && isRecord(t) ? t->record.get() : nullptr;
     if (!rec || !rec->complete) return false;
-    if (!rec->constructors.empty()) return true;
+    if (!rec->constructors.empty() || rec->polymorphic) return true; /* a vptr to set up */
     for (const auto &b : rec->bases)
         if (b.record && hasConstructor(recordType(b.record))) return true;
     for (const auto &f : rec->fields)
@@ -603,6 +603,7 @@ SymbolPtr SemanticAnalyzer::variable(const ASTNodePtr &n, DeclCtx ctx) {
         error(line, col, what + " '" + name + "' has incomplete type " + q(t), "incomplete-type");
         t = errorType();
     }
+    checkNotAbstract(t, line, col, what + " '" + name + "'");
     if (isReference(t) && !init && ctx != DeclCtx::Member) {
         error(line, col, "declaration of reference variable '" + name + "' requires an initializer", "reference");
     }
@@ -889,6 +890,12 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
         }
         if (isRecord(target)) {
             RecordInfo *rec = target->record.get();
+            if (rec->polymorphic) {
+                error(init.get(), "an object of " + q(target) + " cannot be initialized with a brace list (its class has "
+                                  "virtual functions)",
+                      "initializer");
+                return;
+            }
             std::vector<SymbolPtr> fields;
             for (const auto &f : rec->fields) {
                 if (f->storage == Storage::Member) fields.push_back(f);
@@ -1078,6 +1085,9 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     }
     TypePtr ft = r.type;
     if (!isFunction(ft)) return nullptr;
+    for (size_t i = 0; i < ft->params.size(); ++i)
+        checkNotAbstract(ft->params[i], line, col, "parameter " + std::to_string(i + 1) + " of '" + name + "'");
+    checkNotAbstract(ft->ret, line, col, "the return type of '" + name + "'");
     if (isDefinition && ctx != DeclCtx::Member && !isVoid(ft->ret) && !isError(ft->ret) && !isComplete(ft->ret) &&
         !isReference(ft->ret)) {
         error(line, col, "function '" + name + "' has incomplete return type " + q(ft->ret), "incomplete-type");
@@ -1153,6 +1163,15 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
          ++k) {
         sym->uniqueName = (sym->mangledName.empty() ? name : sym->mangledName) + "_" + std::to_string(k);
     }
+    if (te.isVirtual) { /* D44 */
+        if (!rec || te.isFriend)
+            error(line, col, "'virtual' can only be used on a member function, inside its class", "virtual");
+        else if (te.isStatic)
+            error(line, col, "static member function '" + name + "' cannot be virtual", "virtual");
+        else
+            sym->isVirtual = true;
+    }
+    sym->isPure = te.isPure && sym->isVirtual;
     if (rec) {
         sym->isMethod = true;
         sym->ownerRecord = rec;
@@ -1230,6 +1249,10 @@ void SemanticAnalyzer::outOfClassDefinition(const ASTNodePtr &n) {
     RecordInfo *rec = tag->record.get();
     Resolved r = resolveType(te, n.get(), false);
     if (!isFunction(r.type)) return;
+    if (te.isVirtual)
+        error(line, col, "'virtual' is only allowed on the declaration inside the class, not on '" + te.className + "::" +
+                             te.name + "'",
+              "virtual");
     SymbolPtr match;
     auto it = rec->members.find(te.name);
     if (it != rec->members.end()) {
@@ -1702,6 +1725,7 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
     };
     for (const auto &m : n->children) memberItem(m, defaultAccess, true);
     st.exitScope();
+    virtualFunctions(rec.get(), n);
     layoutRecord(*rec);
     /* a promoted member sits at its holder's offset plus its own */
     for (auto &p : promotions) p.promoted->offset = p.holder->offset + p.inner->offset;
@@ -1710,6 +1734,81 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
     /* member function bodies see the complete class (C++ rule) */
     for (auto &[node, sym] : bodies) functionBody(node, sym, rec.get());
     for (auto &[node, sym] : friendBodies) functionBody(node, sym, nullptr); /* not members: no `this` */
+}
+
+/* ---------------- virtual functions (D44) ---------------- */
+
+/* same name and parameters: one overrides the other */
+static bool sameSlot(const Symbol *a, const Symbol *b) {
+    return a->name == b->name && sameParameterLists(a->type, b->type);
+}
+
+/* once a class's members are known (before its layout): which member
+   functions are virtual, the slots of its table and the function each
+   slot calls, and whether the class is abstract. A function that matches
+   a virtual function of the base overrides it, with or without the
+   keyword (C++); a new virtual function gets the next slot. */
+void SemanticAnalyzer::virtualFunctions(RecordInfo *rec, const ASTNodePtr &n) {
+    std::vector<Symbol *> methods; /* declaration order */
+    std::function<void(const ASTNodePtr &)> walk = [&](const ASTNodePtr &m) {
+        if (!m) return;
+        if (m->kind == ASTKind::DeclGroup) {
+            for (const auto &c : m->children) walk(c);
+            return;
+        }
+        if ((m->kind == ASTKind::FunctionDecl || m->kind == ASTKind::FunctionDef) && m->symbol &&
+            m->symbol->ownerRecord == rec && std::find(methods.begin(), methods.end(), m->symbol.get()) == methods.end())
+            methods.push_back(m->symbol.get());
+    };
+    for (const auto &m : n->children) walk(m);
+    RecordInfo *base = !rec->bases.empty() ? rec->bases[0].record.get() : nullptr;
+    bool inherited = base && base->polymorphic;
+    if (inherited) rec->vtable = base->vtable;
+    for (Symbol *m : methods) {
+        if (m->isStatic) continue;
+        for (size_t k = 0; k < rec->vtable.size(); ++k) {
+            if (!sameSlot(rec->vtable[k], m)) continue;
+            if (!sameType(m->type->ret, rec->vtable[k]->type->ret, true))
+                error(m->line, m->column, "'" + rec->tag + "::" + m->name + "' overrides a virtual function but its return " +
+                                              "type differs (" + q(m->type->ret) + " vs " + q(rec->vtable[k]->type->ret) + ")",
+                      "virtual");
+            m->isVirtual = true; /* overriding makes it virtual, with or without the keyword */
+            m->vtableIndex = static_cast<int>(k);
+            rec->vtable[k] = m;
+            break;
+        }
+        if (m->isVirtual && m->vtableIndex < 0) {
+            m->vtableIndex = static_cast<int>(rec->vtable.size());
+            rec->vtable.push_back(m);
+        }
+    }
+    rec->polymorphic = !rec->vtable.empty();
+    rec->ownVptr = rec->polymorphic && !inherited;
+    rec->abstract = std::any_of(rec->vtable.begin(), rec->vtable.end(), [](const Symbol *f) { return f->isPure; });
+}
+
+bool SemanticAnalyzer::isAbstractType(const TypePtr &t) const {
+    TypePtr e = t;
+    while (e && isArray(e)) e = e->elem;
+    return e && isRecord(e) && e->record && e->record->abstract;
+}
+
+/* no object of an abstract class: only pointers and references to one */
+void SemanticAnalyzer::checkNotAbstract(const TypePtr &t, int line, int col, const std::string &what) {
+    if (!isAbstractType(t)) return;
+    TypePtr e = t;
+    while (isArray(e)) e = e->elem;
+    std::string pure;
+    for (const Symbol *f : e->record->vtable)
+        if (f->isPure) {
+            pure = f->name + "(";
+            for (size_t i = 0; i < f->type->params.size(); ++i)
+                pure += (i ? ", " : "") + typeToString(f->type->params[i]);
+            pure += ")";
+            break;
+        }
+    error(line, col, what + " has abstract type " + q(e) + " (pure virtual function '" + pure + "' is not overridden)",
+          "abstract");
 }
 
 /* `friend int peek(const Shape &);` inside a class: an ordinary function

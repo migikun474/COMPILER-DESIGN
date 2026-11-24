@@ -602,8 +602,11 @@ struct Emitter {
         /* a call to a user function passes the first 16 bytes in $a0-$a3 as
            well (D39, MIPS o32 style) and always reserves them as the callee's
            home area; the run-time library keeps the all-stack convention, and
-           so does -O0 / --stack-only, the direct translation */
-        bool regs = optimize && q.callee != nullptr;
+           so does -O0 / --stack-only, the direct translation. A virtual call
+           (`call *t`, D44) always reaches a user function, so it passes them
+           the same way */
+        bool indirect = !q.callee && q.calleeName.empty() && !q.a.isNone();
+        bool regs = optimize && (q.callee != nullptr || indirect);
         size = roundUp(size, 8);
         if (regs) size = std::max(size, 16);
         if (size) ins("addiu $sp, $sp, -" + std::to_string(size));
@@ -628,7 +631,8 @@ struct Emitter {
                 if (r != a) ins("move  " + a + ", " + r);
             }
         }
-        ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
+        if (indirect) ins("jalr  " + use(q.a, "$t9")); /* the address taken from the object's table */
+        else ins("jal   " + (q.callee ? functionLabel.count(q.callee) ? functionLabel[q.callee] : "__undefined" : "__" + q.calleeName));
         if (size) ins("addiu $sp, $sp, " + std::to_string(size));
         if (q.r.isNone()) return;
         Cls c = classOf(q.r.type);

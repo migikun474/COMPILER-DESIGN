@@ -277,6 +277,7 @@ void Generator::initObject(const LValue &obj, const ASTNodePtr &init) {
         constructInto(address(obj), rec, init->children);
     } else {
         store(obj, rvalue(init)); /* Dog d = other;  Dog d = f();  a block copy */
+        installVptr(address(obj), rec); /* `Base b = *p;` makes a Base, whatever *p is */
     }
 }
 
@@ -618,6 +619,15 @@ void Generator::function(const ASTNodePtr &n) {
         fn->thisSym = self.get();
     }
     if (sym->isConstructor && cls) constructSubobjects(thisOperand(), cls); /* base and members first */
+    for (const auto &p : sym->params) { /* a by-value object parameter is a copy: it is exactly its declared class */
+        RecordInfo *pr = p->type && sem::isRecord(p->type) ? p->type->record.get() : nullptr;
+        if (!pr || !pr->polymorphic) continue;
+        LValue lv;
+        lv.kind = LValue::Direct;
+        lv.base = var(p.get());
+        lv.type = p->type;
+        installVptr(address(lv), pr);
+    }
     if (sym->name == "main" && !cls) {
         /* objects with static storage whose constructor must run */
         for (const auto &g : dynamicGlobals) {

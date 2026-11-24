@@ -676,17 +676,17 @@ M16_0:
         addiu $a0, $fp, -8
         li    $a2, 8
         jal   __memcpy
-        # t3 = d[0]
+        # t4 = d[0]
         lw    $s0, -8($fp)
-        # t5 = t3 int* t3
+        # t6 = t4 int* t4
         mul   $s1, $s0, $s0
-        # t6 = d[4]
+        # t7 = d[4]
         lw    $s0, -4($fp)
-        # t8 = t6 int* t6
+        # t9 = t7 int* t7
         mul   $s2, $s0, $s0
-        # t9 = t5 int+ t8
+        # t10 = t6 int+ t9
         addu  $s0, $s1, $s2
-        # return t9
+        # return t10
         move  $v0, $s0
         j     _ZN7Segment7length2Ev_exit
 _ZN7Segment7length2Ev_exit:
@@ -1075,6 +1075,8 @@ M20_0:
         addiu $a0, $fp, -56
         li    $a2, 8
         jal   __memcpy
+        # t35 = &a
+        addiu $s0, $fp, -56
         # param 1
         # param 1
         # b = call at(int, int), 2
@@ -1087,11 +1089,9 @@ M20_0:
         addiu $a0, $fp, -64
         li    $a2, 8
         jal   __memcpy
-        # t36 = &a
-        addiu $s0, $fp, -56
         # t37 = &b
         addiu $s1, $fp, -64
-        # param t36
+        # param t35
         # param t37
         # call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -16
@@ -1099,16 +1099,16 @@ M20_0:
         move  $a1, $s1
         jal   _ZN5PointpLERKS_
         addiu $sp, $sp, 16
-        # param t36
+        # param t35
         # param t37
-        # t41 = call Point::operator+=(const class Point &), 2
+        # t43 = call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -16
         move  $a0, $s0
         move  $a1, $s1
         jal   _ZN5PointpLERKS_
         addiu $sp, $sp, 16
         move  $s2, $v0
-        # param t41
+        # param t43
         # param t37
         # call Point::operator+=(const class Point &), 2
         addiu $sp, $sp, -16
@@ -1116,31 +1116,31 @@ M20_0:
         move  $a1, $s1
         jal   _ZN5PointpLERKS_
         addiu $sp, $sp, 16
-        # param t36
+        # param t35
         # param 0
-        # t45 = call Point::operator[](int), 2
+        # t47 = call Point::operator[](int), 2
         addiu $sp, $sp, -16
         move  $a0, $s0
         move  $a1, $zero
         jal   _ZN5PointixEi
         addiu $sp, $sp, 16
         move  $s2, $v0
-        # param t36
+        # param t35
         # param 1
-        # t47 = call Point::operator[](int), 2
+        # t49 = call Point::operator[](int), 2
         addiu $sp, $sp, -16
         move  $a0, $s0
         li    $a1, 1
         jal   _ZN5PointixEi
         addiu $sp, $sp, 16
         move  $s3, $v0
-        # t48 = *t47
+        # t50 = *t49
         lw    $s4, 0($s3)
-        # t49 = t48 int<< 1
+        # t51 = t50 int<< 1
         sll   $s3, $s4, 1
-        # *t45 = t49
+        # *t47 = t51
         sw    $s3, 0($s2)
-        # param t36
+        # param t35
         # param t37
         # c = call Point::operator-(const class Point &), 2
         addiu $sp, $sp, -16
@@ -1152,17 +1152,17 @@ M20_0:
         addiu $a0, $fp, -72
         li    $a2, 8
         jal   __memcpy
-        # t53 = a[0]
+        # t56 = a[0]
         lw    $s2, -56($fp)
-        # t54 = a[4]
+        # t57 = a[4]
         lw    $s3, -52($fp)
-        # t55 = c[0]
+        # t58 = c[0]
         lw    $s4, -72($fp)
-        # t56 = c[4]
+        # t59 = c[4]
         lw    $s5, -68($fp)
         # param t37
-        # param t36
-        # t59 = call Point::operator<(const class Point &), 2
+        # param t35
+        # t62 = call Point::operator<(const class Point &), 2
         addiu $sp, $sp, -16
         move  $a0, $s1
         move  $a1, $s0
@@ -1170,12 +1170,12 @@ M20_0:
         addiu $sp, $sp, 16
         move  $s6, $v0
         andi  $s6, $s6, 255
-        # t60 = booltoint t59
+        # t63 = booltoint t62
         move  $t0, $s6
         move  $s7, $t0
-        # param t36
+        # param t35
         # param t37
-        # t63 = call Point::operator<(const class Point &), 2
+        # t66 = call Point::operator<(const class Point &), 2
         addiu $sp, $sp, -16
         move  $a0, $s0
         move  $a1, $s1
@@ -1183,16 +1183,16 @@ M20_0:
         addiu $sp, $sp, 16
         move  $s6, $v0
         andi  $s6, $s6, 255
-        # t64 = booltoint t63
+        # t67 = booltoint t66
         move  $t0, $s6
         move  $s0, $t0
         # param "%d %d %d %d %d %d\n"
-        # param t53
-        # param t54
-        # param t55
         # param t56
-        # param t60
-        # param t64
+        # param t57
+        # param t58
+        # param t59
+        # param t63
+        # param t67
         # call printf, 7
         addiu $sp, $sp, -32
         la    $t0, str6
@@ -1205,23 +1205,23 @@ M20_0:
         sw    $s0, 24($sp)
         jal   __printf
         addiu $sp, $sp, 32
-        # t65 = &s
+        # t68 = &s
         addiu $s0, $fp, -88
-        # param t65
+        # param t68
         # call Point::Point(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN5PointC1Ev
         addiu $sp, $sp, 16
-        # t66 = t65 ptr+ 8
+        # t69 = t68 ptr+ 8
         addiu $s1, $s0, 8
-        # param t66
+        # param t69
         # call Point::Point(), 1
         addiu $sp, $sp, -16
         move  $a0, $s1
         jal   _ZN5PointC1Ev
         addiu $sp, $sp, 16
-        # param t65
+        # param t68
         # param 1
         # param 2
         # param 4
@@ -1236,18 +1236,18 @@ M20_0:
         li    $a3, 4
         jal   _ZN7Segment3setEiiii
         addiu $sp, $sp, 24
-        # param t65
-        # t69 = call Segment::length2(), 1
+        # param t68
+        # t72 = call Segment::length2(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN7Segment7length2Ev
         addiu $sp, $sp, 16
         move  $s1, $v0
-        # t70 = s[12]
+        # t73 = s[12]
         lw    $s0, -76($fp)
         # param "%d %d\n"
-        # param t69
-        # param t70
+        # param t72
+        # param t73
         # call printf, 3
         addiu $sp, $sp, -16
         la    $t0, str3
@@ -1256,15 +1256,15 @@ M20_0:
         sw    $s0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # t71 = &last
+        # t74 = &last
         addiu $s0, $fp, -100
-        # param t71
+        # param t74
         # call Rect::Rect(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN4RectC1Ev
         addiu $sp, $sp, 16
-        # param t71
+        # param t74
         # param 2
         # param 9
         # call Rect::set(int, int), 3
@@ -1274,28 +1274,28 @@ M20_0:
         li    $a2, 9
         jal   _ZN4Rect3setEii
         addiu $sp, $sp, 16
-        # base = t71
+        # base = t74
         move  $s1, $s0
-        # param t71
-        # t75 = call Rect::area(), 1
+        # param t74
+        # t78 = call Rect::area(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN4Rect4areaEv
         addiu $sp, $sp, 16
         move  $s1, $v0
-        # param t71
-        # t76 = call Shape::area(), 1
+        # param t74
+        # t79 = call Shape::area(), 1
         addiu $sp, $sp, -16
         move  $a0, $s0
         jal   _ZN5Shape4areaEv
         addiu $sp, $sp, 16
         move  $s2, $v0
-        # t77 = *t71
+        # t80 = *t74
         lw    $s3, 0($s0)
         # param "%d %d %d\n"
-        # param t75
-        # param t76
-        # param t77
+        # param t78
+        # param t79
+        # param t80
         # call printf, 4
         addiu $sp, $sp, -16
         la    $t0, str4
