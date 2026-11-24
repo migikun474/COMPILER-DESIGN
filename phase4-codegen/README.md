@@ -1,9 +1,9 @@
 # Phase 4 — MIPS Code Generation
 
-> Status: **implemented and tested** on the SPIM simulator. All 34 test
+> Status: **implemented and tested** on the SPIM simulator. All 35 test
 > programs give the output and exit code that gcc/g++ give, compiled
 > without optimization and with `-O1`, `-O2` and `-O3`
-> (`./run_tests.sh`: 34 passed).
+> (`./run_tests.sh`: 35 passed).
 
 Design decisions and their reasons: [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)
 (D18 SPIM, D23 `printf`, D24 `long long`, D25 calling convention,
@@ -199,7 +199,7 @@ because SPIM has no C library:
 |---|---|
 | `__printf` | `%d %i %u %x %X %o %c %s %f %e %E %g %G %%` with `-` and `0` flags, width, precision, `*`, lengths `l` `ll` `h` `z`. `%f` rounds to nearest, ties to even, like glibc. |
 | `__scanf` | `%d %i %u %c %s %f` (`l` for `double`, a width for `%s`); input is taken a line at a time with the `read_string` system call, so it works in a terminal and in QtSpim's console |
-| `__malloc` `__calloc` `__realloc` `__free` | over the `sbrk` system call; a block's size is stored before it; memory is not reused |
+| `__malloc` `__calloc` `__realloc` `__free` | a free list over the `sbrk` system call (D45): each block's capacity is stored before it; `malloc` takes the most recently freed block that fits, whole, before growing the heap; `free` pushes a block on the list; `calloc` clears the block; `realloc` keeps a block that still fits |
 | `__memcpy` | struct copies |
 | `__div_by_zero` `__stack_overflow` | print `run-time error: division by zero` or `run-time error: stack overflow (recursion too deep)` and exit with code 2 |
 | `__divll` `__modll` `__udivll` `__umodll` | 64-bit division by shift and subtract |
@@ -233,6 +233,7 @@ programs of the semantic and parser suites were compiled at `-O0` and
 - `%f`, `%e` and `%g` need the value, scaled by the precision, below
   about 9·10¹⁸ (they convert through a 64-bit integer). `scanf` has no `%x`.
 - `double` → `long long` needs a result below 2⁶³/2 in magnitude.
-- `free` does not reuse memory.
+- Freed blocks are reused whole: a large free block is not split, and
+  neighbouring free blocks are not merged.
 - The limits of the TAC generator apply unchanged (see
   [`../phase3-ir/README.md`](../phase3-ir/README.md#limitations)).

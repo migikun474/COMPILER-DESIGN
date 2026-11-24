@@ -274,7 +274,7 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 |---|---|---|
 | Reserved built-ins | L/S | `MALLOC`, `FREE`, … ; `builtinCall` |
 | Interpreter heap | T | `heapAlloc` in `interp.cpp` |
-| Bump allocator over `sbrk` | M | `__malloc`, `__calloc`, `__realloc`, `__free` (no reuse) |
+| Free-list allocator over `sbrk` (D45) | M/I | `__malloc`, `__calloc`, `__realloc`, `__free`, `__heap_free`; interpreter `mallocBlock`, `freeBlock` |
 
 - **Relies on:** F7, S8.
 - **Used by:** nothing in the compiler (programs only).

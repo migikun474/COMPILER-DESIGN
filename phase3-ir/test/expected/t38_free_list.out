@@ -1,0 +1,7 @@
+reused 1
+loop 3749925000
+list 5050
+list 20100
+calloc 0
+realloc 64 2016 7
+exit: 0

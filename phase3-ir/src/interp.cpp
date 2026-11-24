@@ -1,6 +1,7 @@
 /* The TAC interpreter: a small machine with byte-addressed memory. */
 #include "interp.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -99,7 +100,8 @@ class Machine {
     std::map<const Function *, Layout> layouts;
     uint32_t dataTop = DATA_BASE, heapTop = HEAP_BASE, stackTop = STACK_BASE;
     int depth = 0;
-    std::map<uint32_t, uint32_t> blocks; /* heap block -> size */
+    std::map<uint32_t, uint32_t> blocks; /* heap block -> capacity */
+    std::vector<uint32_t> freed;         /* the free list, most recently freed last */
     long long executed = 0;
     std::string output;
 
@@ -402,8 +404,31 @@ class Machine {
         heapTop += std::max<uint32_t>(size, 1);
         need(at, std::max<uint32_t>(size, 1));
         memset(&mem[at], 0, std::max<uint32_t>(size, 1));
-        blocks[at] = size;
         return at;
+    }
+
+    /* the run-time library's allocator (D45), so both back ends behave
+       alike: a block's capacity is its size rounded up to 8 (at least 8);
+       malloc takes the most recently freed block that is big enough, whole,
+       before growing the heap; free puts a block back */
+    uint32_t mallocBlock(uint32_t size) {
+        uint32_t cap = std::max<uint32_t>(8, alignUp(size, 8));
+        for (size_t k = freed.size(); k-- > 0;) {
+            uint32_t at = freed[k];
+            if (blocks[at] < cap) continue;
+            freed.erase(freed.begin() + static_cast<long>(k));
+            return at;
+        }
+        uint32_t at = heapAlloc(cap);
+        blocks[at] = cap;
+        return at;
+    }
+
+    void freeBlock(uint32_t at) {
+        if (!at) return;
+        if (!blocks.count(at)) throw Fault("free of a pointer that malloc did not return");
+        if (std::find(freed.begin(), freed.end(), at) != freed.end()) throw Fault("free of a block that is already free");
+        freed.push_back(at);
     }
 
     std::string format(const std::vector<Arg> &args) {
@@ -528,17 +553,26 @@ class Machine {
         } else if (name == "scanf") {
             r.i = args.empty() ? 0 : scan(args);
         } else if (name == "malloc") {
-            r.i = heapAlloc(static_cast<uint32_t>(arg(0)));
+            r.i = mallocBlock(static_cast<uint32_t>(arg(0)));
         } else if (name == "calloc") {
-            r.i = heapAlloc(static_cast<uint32_t>(arg(0) * arg(1)));
+            uint32_t at = mallocBlock(static_cast<uint32_t>(arg(0) * arg(1)));
+            memset(&mem[at], 0, blocks[at]); /* a reused block is not zero */
+            r.i = at;
         } else if (name == "realloc") {
             uint32_t old = static_cast<uint32_t>(arg(0)), size = static_cast<uint32_t>(arg(1));
-            uint32_t fresh = heapAlloc(size);
-            auto known = blocks.find(old);
-            if (old && known != blocks.end()) copy(fresh, old, std::min(size, known->second));
-            r.i = fresh;
+            if (old && !blocks.count(old)) throw Fault("realloc of a pointer that malloc did not return");
+            if (old && blocks[old] >= size) {
+                r.i = old; /* it still fits: the same block */
+            } else {
+                uint32_t fresh = mallocBlock(size);
+                if (old) {
+                    copy(fresh, old, blocks[old]);
+                    freeBlock(old);
+                }
+                r.i = fresh;
+            }
         } else if (name == "free") {
-            /* memory is not reused: a freed block stays readable, as on a real heap */
+            freeBlock(static_cast<uint32_t>(arg(0)));
         } else {
             throw Fault("call to unknown built-in function '" + name + "'");
         }
