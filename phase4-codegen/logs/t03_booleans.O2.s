@@ -8,33 +8,20 @@
 # generated for SPIM: `spim -file <this file> [arguments]`
 
         .data
-        .align 3
-g_calls:
-        .byte 0, 0, 0, 0
 str0:
-        .byte 37, 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str1:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37
-        .byte 100, 10, 0
+        .byte 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
 str2:
-        .byte 110, 111, 10, 0
-str3:
-        .byte 99, 97, 108, 108, 115, 32, 97, 102, 116, 101, 114, 32, 38, 38, 58, 32
-        .byte 37, 100, 10, 0
-str4:
-        .byte 111, 114, 32, 116, 97, 107, 101, 110, 10, 0
-str5:
-        .byte 99, 97, 108, 108, 115, 32, 97, 102, 116, 101, 114, 32, 124, 124, 58, 32
-        .byte 37, 100, 10, 0
-str6:
         .byte 37, 100, 32, 37, 100, 10, 0
-str7:
-        .byte 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 32, 37, 100, 10, 0
-str8:
-        .byte 100, 111, 117, 98, 108, 101, 32, 105, 115, 32, 116, 114, 117, 101, 10, 0
-str9:
-        .byte 110, 117, 108, 108, 32, 112, 111, 105, 110, 116, 101, 114, 32, 105, 115, 32
-        .byte 102, 97, 108, 115, 101, 10, 0
+str3:
+        .byte 119, 114, 111, 110, 103, 10, 0
+str4:
+        .byte 114, 105, 103, 104, 116, 10, 0
+str5:
+        .byte 116, 10, 0
+str6:
+        .byte 110, 101, 118, 101, 114, 10, 0
 
         .text
         .globl main
@@ -51,215 +38,62 @@ main:
         li    $v0, 17                 # exit with main's result
         syscall
 
-# yes()
-_Z3yesv:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        # calls = calls int+ 1
-        lw    $t0, g_calls
-        addiu $t0, $t0, 1
-        sw    $t0, g_calls
-        # return 1
-        li    $v0, 1
-        j     _Z3yesv_exit
-_Z3yesv_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
-# no()
-_Z2nov:
-        addiu $sp, $sp, -8
-        sw    $fp, 0($sp)
-        move  $fp, $sp
-        # calls = calls int+ 1
-        lw    $t0, g_calls
-        addiu $t0, $t0, 1
-        sw    $t0, g_calls
-        # return 0
-        li    $v0, 0
-        j     _Z2nov_exit
-_Z2nov_exit:
-        move  $sp, $fp
-        lw    $fp, 0($sp)
-        addiu $sp, $sp, 8
-        jr    $ra
-
 # main()
 main_:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -8
+        addiu $sp, $sp, -16
         lw    $t8, __stack_limit
         sltu  $t8, $sp, $t8
-        beqz  $t8, M2_0
+        beqz  $t8, M0_0
         j     __stack_overflow
-M2_0:
-        sw    $s0, -4($fp)
-        # param "%d\n"
+M0_0:
+        sw    $s0, -8($fp)
+        sw    $s1, -12($fp)
+        sw    $s2, -4($fp)
+        # param "%d %d %d %d\n"
         # param 1
-        # call printf, 2
-        addiu $sp, $sp, -8
+        # param 0
+        # param 0
+        # param 1
+        # call printf, 5
+        addiu $sp, $sp, -24
         la    $t0, str0
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
+        sw    $zero, 8($sp)
+        sw    $zero, 12($sp)
+        li    $t0, 1
+        sw    $t0, 16($sp)
         jal   __printf
-        addiu $sp, $sp, 8
-        # param "%d %d %d %d %d %d\n"
-        # param 0
+        addiu $sp, $sp, 24
+        # param "%d %d %d\n"
+        # param 2
         # param 1
-        # param 1
-        # param 0
-        # param 1
-        # param 0
-        # call printf, 7
-        addiu $sp, $sp, -32
+        # param 10
+        # call printf, 4
+        addiu $sp, $sp, -16
         la    $t0, str1
         sw    $t0, 0($sp)
-        sw    $zero, 4($sp)
+        li    $t0, 2
+        sw    $t0, 4($sp)
         li    $t0, 1
         sw    $t0, 8($sp)
-        li    $t0, 1
+        li    $t0, 10
         sw    $t0, 12($sp)
-        sw    $zero, 16($sp)
-        li    $t0, 1
-        sw    $t0, 20($sp)
-        sw    $zero, 24($sp)
-        jal   __printf
-        addiu $sp, $sp, 32
-        # calls = 0
-        li    $t0, 0
-        sw    $t0, g_calls
-        # t8 = call no(), 0
-        addiu $sp, $sp, -16
-        jal   _Z2nov
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t8 int== 0 goto 18
-        beq   $s0, $zero, L2_18
-        # t9 = call yes(), 0
-        addiu $sp, $sp, -16
-        jal   _Z3yesv
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t9 int== 0 goto 18
-        beq   $s0, $zero, L2_18
-        # param "no\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str2
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-L2_18:
-        # param "calls after &&: %d\n"
-        # param calls
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str3
-        sw    $t0, 0($sp)
-        lw    $t0, g_calls
-        sw    $t0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # calls = 0
-        li    $t0, 0
-        sw    $t0, g_calls
-        # t10 = call yes(), 0
-        addiu $sp, $sp, -16
-        jal   _Z3yesv
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t10 int!= 0 goto 26
-        bne   $s0, $zero, L2_26
-        # t11 = call no(), 0
-        addiu $sp, $sp, -16
-        jal   _Z2nov
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t11 int== 0 goto 28
-        beq   $s0, $zero, L2_28
-L2_26:
-        # param "or taken\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str4
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-L2_28:
-        # param "calls after ||: %d\n"
-        # param calls
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str5
-        sw    $t0, 0($sp)
-        lw    $t0, g_calls
-        sw    $t0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # calls = 0
-        li    $t0, 0
-        sw    $t0, g_calls
-        # t13 = call no(), 0
-        addiu $sp, $sp, -16
-        jal   _Z2nov
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t13 int!= 0 goto 36
-        bne   $s0, $zero, L2_36
-        # t14 = call yes(), 0
-        addiu $sp, $sp, -16
-        jal   _Z3yesv
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t14 int== 0 goto 38
-        beq   $s0, $zero, L2_38
-L2_36:
-        # t15 = call no(), 0
-        addiu $sp, $sp, -16
-        jal   _Z2nov
-        addiu $sp, $sp, 16
-        move  $s0, $v0
-        # if t15 int== 0 goto 40
-        beq   $s0, $zero, L2_40
-L2_38:
-        # t12 = 0
-        li    $s0, 0
-        # goto 41
-        j     L2_41
-L2_40:
-        # t12 = 1
-        li    $s0, 1
-L2_41:
-        # param "%d %d\n"
-        # param t12
-        # param calls
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        sw    $s0, 4($sp)
-        lw    $t0, g_calls
-        sw    $t0, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # x = 0
-        li    $s0, 0
-        # param "%d %d %d %d %d\n"
+        # param "%d %d %d %d\n"
         # param 1
         # param 0
         # param 1
         # param 1
-        # param 1
-        # call printf, 6
+        # call printf, 5
         addiu $sp, $sp, -24
-        la    $t0, str7
+        la    $t0, str0
         sw    $t0, 0($sp)
         li    $t0, 1
         sw    $t0, 4($sp)
@@ -268,98 +102,63 @@ L2_41:
         sw    $t0, 12($sp)
         li    $t0, 1
         sw    $t0, 16($sp)
-        li    $t0, 1
-        sw    $t0, 20($sp)
         jal   __printf
         addiu $sp, $sp, 24
-        # param "double is true\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str8
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "null pointer is false\n"
-        # call printf, 1
-        addiu $sp, $sp, -8
-        la    $t0, str9
-        sw    $t0, 0($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "%d\n"
-        # param 2
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str0
-        sw    $t0, 0($sp)
-        li    $t0, 2
-        sw    $t0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "%d %d\n"
-        # param 1
-        # param 0
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
-        sw    $zero, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-        # param "%d %d\n"
-        # param 1
-        # param 1
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
-        li    $t0, 1
-        sw    $t0, 8($sp)
-        jal   __printf
-        addiu $sp, $sp, 16
-L2_68:
-        # if x int>= 3 goto 72
-        li    $t1, 3
-        bge   $s0, $t1, L2_72
-        # if x int== 2 goto 72
-        li    $t1, 2
-        beq   $s0, $t1, L2_72
-        # x = x int+ 1
+        # i = 0
+        li    $s0, 0
+        # n = 0
+        li    $s1, 0
+L0_19:
+        # if i int>= 10 goto 26
+        li    $t1, 10
+        bge   $s0, $t1, L0_26
+        # if i int> 6 goto 26
+        li    $t1, 6
+        bgt   $s0, $t1, L0_26
+        # if n int> 20 goto 26
+        li    $t1, 20
+        bgt   $s1, $t1, L0_26
+        # t26 = i
+        move  $s2, $s0
+        # i = i int+ 1
         addiu $s0, $s0, 1
-        # goto 68
-        j     L2_68
-L2_72:
-        # param "%d\n"
-        # param x
-        # call printf, 2
-        addiu $sp, $sp, -8
-        la    $t0, str0
+        # n = n int+ t26
+        addu  $s1, $s1, $s2
+        # goto 19
+        j     L0_19
+L0_26:
+        # param "%d %d\n"
+        # param i
+        # param n
+        # call printf, 3
+        addiu $sp, $sp, -16
+        la    $t0, str2
         sw    $t0, 0($sp)
         sw    $s0, 4($sp)
-        jal   __printf
-        addiu $sp, $sp, 8
-        # param "%d %d\n"
-        # param 1
-        # param 1
-        # call printf, 3
-        addiu $sp, $sp, -16
-        la    $t0, str6
-        sw    $t0, 0($sp)
-        li    $t0, 1
-        sw    $t0, 4($sp)
-        li    $t0, 1
-        sw    $t0, 8($sp)
+        sw    $s1, 8($sp)
         jal   __printf
         addiu $sp, $sp, 16
-        # return 1
-        li    $v0, 1
+        # param "right\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str4
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # param "t\n"
+        # call printf, 1
+        addiu $sp, $sp, -8
+        la    $t0, str5
+        sw    $t0, 0($sp)
+        jal   __printf
+        addiu $sp, $sp, 8
+        # return 0
+        li    $v0, 0
         j     main__exit
 main__exit:
-        lw    $s0, -4($fp)
+        lw    $s0, -8($fp)
+        lw    $s1, -12($fp)
+        lw    $s2, -4($fp)
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)

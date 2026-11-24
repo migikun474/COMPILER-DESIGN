@@ -1,47 +1,32 @@
-/* t09 -- dynamic memory: malloc / calloc / realloc / free,
-   a linked list and a growing array */
-
-struct Node { int value; struct Node *next; };
-
-struct Node *push(struct Node *head, int v) {
-    struct Node *n = (struct Node *) malloc(sizeof(struct Node));
-    n->value = v;
-    n->next = head;
-    return n;
-}
-
+/* t09 -- the heap: malloc, calloc (zeroed even when reused), realloc
+   keeping the contents, free giving memory back (the next malloc of that
+   size reuses it), a linked list built, reversed and freed, a table of
+   rows from malloc, a long malloc/free loop. Expected: g++. */
+struct Node { int v; struct Node *next; };
+struct Node *push(struct Node *h, int v) { struct Node *n = (struct Node *)malloc(sizeof(struct Node)); n->v = v; n->next = h; return n; }
 int main() {
-    int n = 5;
-    int *a = (int *) malloc(n * sizeof(int));
-    for (int i = 0; i < n; i++) a[i] = i * i;
-    int *z = (int *) calloc(n, sizeof(int));
-    z[2] = a[4] + z[1];
-    a = (int *) realloc(a, 2 * n * sizeof(int));
-    for (int i = n; i < 2 * n; i++) a[i] = a[i - n] + 100;
-    printf("%d %d %d %d\n", a[4], a[9], z[2], z[0]);
-
-    struct Node *list = 0;
-    for (int i = 1; i <= 4; i++) list = push(list, i * 10);
-    int sum = 0;
-    for (struct Node *p = list; p; p = p->next) sum += p->value;
-    printf("%d %d\n", sum, list->next->value);
-    while (list) {
-        struct Node *dead = list;
-        list = list->next;
-        free(dead);
-    }
-
-    double *d = (double *) malloc(3 * sizeof(double));
-    d[0] = 1.5; d[1] = 2.5; d[2] = d[0] + d[1];
-    int *one = (int *) malloc(sizeof(int));
-    *one = 42;
-    char *text = (char *) malloc(8);
-    text[0] = 'o'; text[1] = 'k'; text[2] = 0;
-    printf("%.1f %d %s\n", d[2], *one, text);
-    free(d);
-    free(one);
-    free(text);
+    struct Node *list = 0, *rev = 0;
+    int i;
+    for (i = 1; i <= 5; i++) list = push(list, i);
+    while (list) { struct Node *n = list->next; list->next = rev; rev = list; list = n; }
+    int s = 0;
+    for (list = rev; list; list = list->next) s = s * 10 + list->v;
+    printf("%d\n", s);
+    while (rev) { struct Node *n = rev->next; free(rev); rev = n; }
+    int **rows = (int **)malloc(3 * sizeof(int *));
+    for (i = 0; i < 3; i++) { rows[i] = (int *)calloc(4, sizeof(int)); rows[i][i] = i + 1; }
+    printf("%d %d %d\n", rows[2][2], rows[1][0], rows[0][0] + rows[1][1]);
+    int *g = (int *)malloc(2 * sizeof(int));
+    g[0] = 11; g[1] = 22;
+    g = (int *)realloc(g, 50 * sizeof(int));
+    g = (int *)realloc(g, 2 * sizeof(int));        /* shrinking: the same block */
+    printf("%d %d\n", g[0], g[1]);
+    char *a = (char *)malloc(100);
     free(a);
-    free(z);
-    return sum / 10;
+    char *b = (char *)malloc(100);
+    printf("%d\n", a == b);
+    long long total = 0;
+    for (i = 0; i < 30000; i++) { int *t = (int *)malloc(400); t[99] = i; total += t[99]; free(t); }
+    printf("%lld\n", total);
+    return 0;
 }

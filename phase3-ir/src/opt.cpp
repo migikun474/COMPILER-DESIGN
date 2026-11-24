@@ -578,6 +578,10 @@ struct FunctionPass {
         }
     }
 
+    /* what a quad assigns, for reaching definitions: also `va_start(ap, last)`,
+       which gives ap its value without a result operand */
+    static Operand assigned(const Quad &q) { return q.op == Op::VaStart && isName(q.a) ? q.a : defined(q); }
+
     /* a scalar local nothing but its own assignments can change */
     bool isPrivate(const Operand &o) const { return isName(o) && !inMemory(o) && !isBlock(o); }
 
@@ -727,13 +731,13 @@ struct FunctionPass {
         }
         size_t entryDefs = defs.size();
         for (size_t i = 0; i < fn.quads.size(); ++i) {
-            Operand r = defined(fn.quads[i]);
+            Operand r = assigned(fn.quads[i]);
             if (isName(r)) addDef(nameOf(r), static_cast<int>(i));
         }
         std::vector<std::set<int>> gen(blocks.size()), kill(blocks.size()), in(blocks.size()), out(blocks.size());
         for (size_t k = 0; k < blocks.size(); ++k)
             for (size_t i = blocks[k].begin; i < blocks[k].end; ++i) {
-                Operand r = defined(fn.quads[i]);
+                Operand r = assigned(fn.quads[i]);
                 if (!isName(r)) continue;
                 for (int d : byName[nameOf(r)]) { /* this definition replaces every other one of the name */
                     gen[k].erase(d);
@@ -783,7 +787,7 @@ struct FunctionPass {
                             return;
                         }
                 });
-                Operand r = defined(fn.quads[i]);
+                Operand r = assigned(fn.quads[i]);
                 if (!isName(r)) continue;
                 for (auto it = reach.begin(); it != reach.end();) /* this quad's definition replaces the name's others */
                     it = defs[*it].name == nameOf(r) ? reach.erase(it) : std::next(it);

@@ -4,7 +4,7 @@
 
    Source file   : test/t09_memory.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 151 -> 132 instruction(s)
+   Result        : Optimized three address code (-O1): 157 -> 130 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,15 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          151 -> 132   (12% fewer)
+   instructions                          157 -> 130   (17% fewer)
 
-   constants folded                        2
-   algebraic simplifications               6
-   common subexpressions                   3
-   copies / constants forwarded           26
-   temporaries merged away                 9
-   dead instructions removed               5
-   jumps removed or redirected             5
+   constants folded                        4
+   algebraic simplifications               3
+   common subexpressions                  10
+   copies / constants forwarded           31
+   temporaries merged away                 7
+   dead instructions removed              14
+   jumps removed or redirected             6
    unreachable instructions removed        0
 
 ============================================================================
@@ -33,7 +33,7 @@
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   head             param   struct Node *                   4       0
+   h                param   struct Node *                   4       0
    v                param   int                             4       4
    n                local   struct Node *                   4       8
    t1               temp    void *                          4      12
@@ -46,205 +46,193 @@
     102     n = t1
     103     *t1 = v
     104     t2 = t1 ptr+ 4
-    105     *t2 = head
+    105     *t2 = h
     106     return t1
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 13 parameter(s)/local(s), 46 temporaries, frame 312 bytes
+ Symbol table: 12 parameter(s)/local(s), 37 temporaries, frame 292 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   n                local   int                             4       0
-   a                local   int *                           4       4
-   i.6              local   int                             4       8
-   z                local   int *                           4      12
-   i.8              local   int                             4      16
-   list             local   struct Node *                   4      20
-   i.10             local   int                             4      24
-   sum              local   int                             4      28
-   p                local   struct Node *                   4      32
-   dead             local   struct Node *                   4      36
-   d                local   double *                        4      40
-   one              local   int *                           4      44
-   text             local   char *                          4      48
-   t3               temp    int                             4      60
-   t4               temp    int *                           4      64
-   t5               temp    int                             4      68
-   t7               temp    void *                          4      76
-   t8               temp    int *                           4      80
-   t9               temp    int                             4      84
-   t10              temp    int *                           4      88
-   t11              temp    int                             4      92
-   t12              temp    int                             4      96
-   t13              temp    int *                           4     100
-   t14              temp    int                             4     104
-   t15              temp    unsigned int                    4     108
-   t17              temp    int                             4     116
-   t18              temp    int                             4     120
-   t19              temp    int *                           4     124
-   t20              temp    int                             4     128
-   t21              temp    int                             4     132
+   list             local   struct Node *                   4       0
+   rev              local   struct Node *                   4       4
+   i                local   int                             4       8
+   n.7              local   struct Node *                   4      12
+   s                local   int                             4      16
+   n.9              local   struct Node *                   4      20
+   rows             local   int **                          4      24
+   g                local   int *                           4      28
+   a                local   char *                          4      32
+   b                local   char *                          4      36
+   total            local   long long                       8      40
+   t                local   int *                           4      48
+   t3               temp    struct Node *                   4      60
+   t4               temp    struct Node *                   4      64
+   t6               temp    int                             4      72
+   t7               temp    int                             4      76
+   t9               temp    struct Node *                   4      84
+   t11              temp    struct Node *                   4      92
+   t12              temp    struct Node *                   4      96
+   t15              temp    int                             4     108
+   t16              temp    int **                          4     112
+   t17              temp    void *                          4     116
    t22              temp    int *                           4     136
    t23              temp    int                             4     140
-   t24              temp    int                             4     144
+   t25              temp    int **                          4     148
    t26              temp    int *                           4     152
-   t27              temp    int                             4     156
-   t28              temp    int *                           4     160
-   t29              temp    int                             4     164
+   t27              temp    int *                           4     156
+   t28              temp    int                             4     160
+   t29              temp    int **                          4     164
    t30              temp    int *                           4     168
    t31              temp    int                             4     172
-   t32              temp    int                             4     176
+   t32              temp    int *                           4     176
    t33              temp    int                             4     180
-   t36              temp    int                             4     192
-   t38              temp    struct Node *                   4     200
-   t40              temp    struct Node *                   4     208
-   t41              temp    struct Node *                   4     212
-   t42              temp    int                             4     216
-   t43              temp    struct Node *                   4     220
-   t46              temp    void *                          4     232
-   t47              temp    double *                        4     236
-   t48              temp    double                          8     240
-   t51              temp    double                          8     264
-   t52              temp    double *                        4     272
-   t53              temp    void *                          4     276
-   t54              temp    void *                          4     280
-   t55              temp    char *                          4     284
-   t56              temp    char *                          4     288
-   t58              temp    double                          8     296
-   t59              temp    int                             4     304
-   t60              temp    int                             4     308
-   (14 temporaries no longer used after optimization not shown)
+   t36              temp    int *                           4     192
+   t37              temp    int                             4     196
+   t38              temp    int                             4     200
+   t40              temp    void *                          4     208
+   t41              temp    int *                           4     212
+   t43              temp    void *                          4     220
+   t45              temp    void *                          4     228
+   t46              temp    int                             4     232
+   t47              temp    int *                           4     236
+   t48              temp    int                             4     240
+   t49              temp    void *                          4     244
+   t50              temp    void *                          4     248
+   t51              temp    int                             4     252
+   t52              temp    void *                          4     256
+   t53              temp    int *                           4     260
+   t56              temp    long long                       8     272
+   (21 temporaries no longer used after optimization not shown)
 
- Code: 125 instruction(s)
+ Code: 123 instruction(s)
 
-    107        n = 5
-    108        param 20
-    109        a = call malloc, 1
-    110        i.6 = 0
-    111  L1:   if i.6 int>= n goto L2
-    112        t3 = i.6 int<< 2
-    113        t4 = a ptr+ t3
-    114        t5 = i.6 int* i.6
-    115        *t4 = t5
-    116        i.6 = i.6 int+ 1
-    117        goto L1
-    118  L2:   param n
-    119        param 4
-    120        t7 = call calloc, 2
-    121        z = t7
-    122        t8 = a ptr+ 16
-    123        t9 = *t8
-    124        t10 = t7 ptr+ 4
-    125        t11 = *t10
-    126        t12 = t9 int+ t11
-    127        t13 = t7 ptr+ 8
-    128        *t13 = t12
-    129        t14 = n int<< 1
-    130        t15 = t14 uint<< 2
-    131        param a
-    132        param t15
-    133        a = call realloc, 2
-    134        i.8 = n
-    135  L3:   t17 = n int<< 1
-    136        if i.8 int>= t17 goto L4
-    137        t18 = i.8 int<< 2
-    138        t19 = a ptr+ t18
-    139        t20 = i.8 int- n
-    140        t21 = t20 int<< 2
-    141        t22 = a ptr+ t21
-    142        t23 = *t22
-    143        t24 = t23 int+ 100
-    144        *t19 = t24
-    145        i.8 = i.8 int+ 1
-    146        goto L3
-    147  L4:   t26 = a ptr+ 16
-    148        t27 = *t26
-    149        t28 = a ptr+ 36
-    150        t29 = *t28
-    151        t30 = z ptr+ 8
-    152        t31 = *t30
-    153        t32 = *z
-    154        param "%d %d %d %d\n"
-    155        param t27
-    156        param t29
-    157        param t31
-    158        param t32
-    159        call printf, 5
-    160        list = 0
-    161        i.10 = 1
-    162  L5:   if i.10 int> 4 goto L6
-    163        t33 = i.10 int* 10
-    164        param list
-    165        param t33
-    166        list = call push(struct Node *, int), 2
-    167        i.10 = i.10 int+ 1
-    168        goto L5
-    169  L6:   sum = 0
-    170        p = list
-    171  L7:   if p ptr== 0 goto L8
-    172        t36 = *p
-    173        sum = sum int+ t36
-    174        t38 = p ptr+ 4
-    175        p = *t38
-    176        goto L7
-    177  L8:   t40 = list ptr+ 4
-    178        t41 = *t40
-    179        t42 = *t41
-    180        param "%d %d\n"
-    181        param sum
-    182        param t42
-    183        call printf, 3
-    184  L9:   if list ptr== 0 goto L10
-    185        dead = list
-    186        t43 = list ptr+ 4
-    187        list = *t43
-    188        param dead
-    189        call free, 1
-    190        goto L9
-    191  L10:  param 24
-    192        t46 = call malloc, 1
-    193        d = t46
-    194        *t46 = 1.5
-    195        t47 = t46 ptr+ 8
-    196        *t47 = 2.5
-    197        t48 = *t46
-    198        t51 = t48 double+ 2.5
-    199        t52 = t46 ptr+ 16
-    200        *t52 = t51
-    201        param 4
-    202        t53 = call malloc, 1
-    203        one = t53
-    204        *t53 = 42
-    205        param 8
-    206        t54 = call malloc, 1
-    207        text = t54
-    208        *t54 = 111
-    209        t55 = t54 ptr+ 1
-    210        *t55 = 107
-    211        t56 = t54 ptr+ 2
-    212        *t56 = 0
-    213        t58 = *t52
-    214        t59 = *t53
-    215        param "%.1f %d %s\n"
-    216        param t58
-    217        param t59
-    218        param t54
-    219        call printf, 4
-    220        param t46
-    221        call free, 1
-    222        param t53
+    107        list = 0
+    108        rev = 0
+    109        i = 1
+    110  L1:   if i int> 5 goto L2
+    111        param list
+    112        param i
+    113        list = call push(struct Node *, int), 2
+    114        i = i int+ 1
+    115        goto L1
+    116  L2:   if list ptr== 0 goto L3
+    117        t3 = list ptr+ 4
+    118        t4 = *t3
+    119        n.7 = t4
+    120        *t3 = rev
+    121        rev = list
+    122        list = t4
+    123        goto L2
+    124  L3:   s = 0
+    125        list = rev
+    126  L4:   if list ptr== 0 goto L5
+    127        t6 = s int* 10
+    128        t7 = *list
+    129        s = t6 int+ t7
+    130        t9 = list ptr+ 4
+    131        list = *t9
+    132        goto L4
+    133  L5:   param "%d\n"
+    134        param s
+    135        call printf, 2
+    136  L6:   if rev ptr== 0 goto L7
+    137        t11 = rev ptr+ 4
+    138        t12 = *t11
+    139        n.9 = t12
+    140        param rev
+    141        call free, 1
+    142        rev = t12
+    143        goto L6
+    144  L7:   param 12
+    145        rows = call malloc, 1
+    146        i = 0
+    147  L8:   if i int>= 3 goto L9
+    148        t15 = i int<< 2
+    149        t16 = rows ptr+ t15
+    150        param 4
+    151        param 4
+    152        t17 = call calloc, 2
+    153        *t16 = t17
+    154        t22 = t17 ptr+ t15
+    155        t23 = i int+ 1
+    156        *t22 = t23
+    157        i = t23
+    158        goto L8
+    159  L9:   t25 = rows ptr+ 8
+    160        t26 = *t25
+    161        t27 = t26 ptr+ 8
+    162        t28 = *t27
+    163        t29 = rows ptr+ 4
+    164        t30 = *t29
+    165        t31 = *t30
+    166        t32 = *rows
+    167        t33 = *t32
+    168        t36 = t30 ptr+ 4
+    169        t37 = *t36
+    170        t38 = t33 int+ t37
+    171        param "%d %d %d\n"
+    172        param t28
+    173        param t31
+    174        param t38
+    175        call printf, 4
+    176        param 8
+    177        t40 = call malloc, 1
+    178        g = t40
+    179        *t40 = 11
+    180        t41 = t40 ptr+ 4
+    181        *t41 = 22
+    182        param t40
+    183        param 200
+    184        t43 = call realloc, 2
+    185        g = t43
+    186        param t43
+    187        param 8
+    188        t45 = call realloc, 2
+    189        g = t45
+    190        t46 = *t45
+    191        t47 = t45 ptr+ 4
+    192        t48 = *t47
+    193        param "%d %d\n"
+    194        param t46
+    195        param t48
+    196        call printf, 3
+    197        param 100
+    198        t49 = call malloc, 1
+    199        a = t49
+    200        param t49
+    201        call free, 1
+    202        param 100
+    203        t50 = call malloc, 1
+    204        b = t50
+    205        if t49 ptr== t50 goto L10
+    206        t51 = 0
+    207        goto L11
+    208  L10:  t51 = 1
+    209  L11:  param "%d\n"
+    210        param t51
+    211        call printf, 2
+    212        total = 0
+    213        i = 0
+    214  L12:  if i int>= 30000 goto L13
+    215        param 400
+    216        t52 = call malloc, 1
+    217        t = t52
+    218        t53 = t52 ptr+ 396
+    219        *t53 = i
+    220        t56 = inttollong i
+    221        total = total llong+ t56
+    222        param t52
     223        call free, 1
-    224        param t54
-    225        call free, 1
-    226        param a
-    227        call free, 1
-    228        param z
-    229        call free, 1
-    230        t60 = sum int/ 10
-    231        return t60
+    224        i = i int+ 1
+    225        goto L12
+    226  L13:  param "%lld\n"
+    227        param total
+    228        call printf, 2
+    229        return 0
 
 
 ----------------------------------------------------------------------------
@@ -254,52 +242,51 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   Node               struct_tag    struct Node                -           4    -    0  size 8
+   Node               struct_tag    struct Node                -           5    -    0  size 8
    push               function      struct Node *(struct Node *, int) -           6    -    1  _Z4pushP4Nodei; defined
-   main               function      int (void)                 -          13    -    0  defined
+   main               function      int (void)                 -           7    -    0  defined
 
  scope: global > struct Node
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   value              field         int                        member      4    4    3  Node::value; public, offset 0
-   next               field         struct Node *              member      4    4    4  Node::next; public, offset 4
+   v                  field         int                        member      5    4    2  Node::v; public, offset 0
+   next               field         struct Node *              member      5    4    5  Node::next; public, offset 4
 
  scope: global > push()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   head               parameter     struct Node *              param       6    4    1  head.1
+   h                  parameter     struct Node *              param       6    4    1  h.1
    v                  parameter     int                        param       6    4    1  v.2
-   n                  variable      struct Node *              local       7    4    3  n.3
+   n                  variable      struct Node *              local       6    4    3  n.3
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  variable      int                        local      14    4    7  n.4
-   a                  variable      int *                      local      15    4    9  a.5
-   z                  variable      int *                      local      17    4    5  z.7
-   list               variable      struct Node *              local      23    4    8  list.9
-   sum                variable      int                        local      25    4    3  sum.11
-   d                  variable      double *                   local      34    4    7  d.14
-   one                variable      int *                      local      36    4    3  one.15
-   text               variable      char *                     local      38    4    5  text.16
-
- scope: global > main() > for
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      16    4    5  i.6
-   i                  variable      int                        local      20    4    4  i.8
-   i                  variable      int                        local      24    4    3  i.10
-   p                  variable      struct Node *              local      26    4    4  p.12
+   list               variable      struct Node *              local       8    4   12  list.4
+   rev                variable      struct Node *              local       8    4    7  rev.5
+   i                  variable      int                        local       9    4   15  i.6
+   s                  variable      int                        local      12    4    3  s.8
+   rows               variable      int **                     local      16    4    6  rows.10
+   g                  variable      int *                      local      19    4    8  g.11
+   a                  variable      char *                     local      24    4    2  a.12
+   b                  variable      char *                     local      26    4    1  b.13
+   total              variable      long long                  local      28    8    2  total.14
 
  scope: global > main() > while
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   dead               variable      struct Node *              local      29    4    1  dead.13
+   n                  variable      struct Node *              local      11    4    1  n.7
+   n                  variable      struct Node *              local      15    4    1  n.9
+
+ scope: global > main() > for > for body
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   t                  variable      int *                      local      29    4    3  t.15
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
 ----------------------------------------------------------------------------
 
 struct Node: size 8, align 4
-    +0  int value  [public]
+    +0  int v  [public]
     +4  struct Node * next  [public]

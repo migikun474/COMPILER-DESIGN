@@ -4,7 +4,7 @@
 
    Source file   : test/t07_functions.c
    Optimization  : -O2: -O1 plus data flow across blocks
-   Result        : Optimized three address code (-O2): 182 -> 165 instruction(s)
+   Result        : Optimized three address code (-O2): 184 -> 162 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,65 +14,82 @@
  OPTIMIZATION SUMMARY (-O2)
 ----------------------------------------------------------------------------
 
-   instructions                          182 -> 165   (9% fewer)
+   instructions                          184 -> 162   (11% fewer)
 
    constants folded                        0
    algebraic simplifications               0
-   common subexpressions                   4
-   copies / constants forwarded           10
-   temporaries merged away                 4
-   dead instructions removed               4
-   jumps removed or redirected             5
+   common subexpressions                   3
+   copies / constants forwarded            6
+   temporaries merged away                 9
+   dead instructions removed               3
+   jumps removed or redirected             7
    unreachable instructions removed        0
    propagated across blocks                0
-   dead assignments removed                4
+   dead assignments removed                3
 
 ----------------------------------------------------------------------------
- GLOBALS: 3 object(s) in static storage
+ GLOBALS: 1 object(s) in static storage
 ----------------------------------------------------------------------------
 
    name             type                        width  initial value
    ---------------- -------------------------- ------  -------------
-   calls.25         int                             4  0
-   global           int                             4  10
-   ratio            double                          8  2.5
+   c.26             int                             4  0
 
  As three address code (initial values, in place before main runs):
 
-    calls.25 = 0
-    global = 10
-    ratio = 2.5
+    c.26 = 0
 
 ============================================================================
- FUNCTION fact(int)        (link name _Z4facti)
+ FUNCTION even(int)        (link name _Z4eveni)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 3 temporaries, frame 20 bytes
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
    t1               temp    int                             4       4
    t2               temp    int                             4       8
-   t3               temp    int                             4      12
    (1 temporary no longer used after optimization not shown)
 
- Code: 8 instruction(s)
+ Code: 7 instruction(s)
 
-    100       if n int> 1 goto L1
+    100       if n int!= 0 goto L1
     101       t1 = 1
     102       goto L2
     103  L1:  t2 = n int- 1
     104       param t2
-    105       t3 = call fact(int), 1
-    106       t1 = n int* t3
-    107  L2:  return t1
+    105       t1 = call odd(int), 1
+    106  L2:  return t1
+
+============================================================================
+ FUNCTION odd(int)        (link name _Z3oddi)
+============================================================================
+
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 16 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   n                param   int                             4       0
+   t1               temp    int                             4       4
+   t2               temp    int                             4       8
+   (1 temporary no longer used after optimization not shown)
+
+ Code: 7 instruction(s)
+
+    107       if n int!= 0 goto L3
+    108       t1 = 0
+    109       goto L4
+    110  L3:  t2 = n int- 1
+    111       param t2
+    112       t1 = call even(int), 1
+    113  L4:  return t1
 
 ============================================================================
  FUNCTION fib(int)        (link name _Z3fibi)
 ============================================================================
 
- Symbol table: 1 parameter(s)/local(s), 5 temporaries, frame 24 bytes
+ Symbol table: 1 parameter(s)/local(s), 5 temporaries, frame 28 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -82,41 +99,46 @@
    t3               temp    int                             4      12
    t4               temp    int                             4      16
    t5               temp    int                             4      20
+   (1 temporary no longer used after optimization not shown)
 
- Code: 10 instruction(s)
+ Code: 11 instruction(s)
 
-    108       if n int>= 2 goto L3
-    109       return n
-    110  L3:  t1 = n int- 1
-    111       param t1
-    112       t2 = call fib(int), 1
-    113       t3 = n int- 2
-    114       param t3
-    115       t4 = call fib(int), 1
-    116       t5 = t2 int+ t4
-    117       return t5
+    114       if n int>= 2 goto L5
+    115       t1 = n
+    116       goto L6
+    117  L5:  t2 = n int- 1
+    118       param t2
+    119       t3 = call fib(int), 1
+    120       t4 = n int- 2
+    121       param t4
+    122       t5 = call fib(int), 1
+    123       t1 = t3 int+ t5
+    124  L6:  return t1
 
 ============================================================================
  FUNCTION gcd(int, int)        (link name _Z3gcdii)
 ============================================================================
 
- Symbol table: 3 parameter(s)/local(s), 1 temporary, frame 16 bytes
+ Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 20 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    a                param   int                             4       0
    b                param   int                             4       4
-   t                local   int                             4       8
-   t1               temp    int                             4      12
+   t1               temp    int                             4       8
+   t2               temp    int                             4      12
+   (1 temporary no longer used after optimization not shown)
 
- Code: 6 instruction(s)
+ Code: 8 instruction(s)
 
-    118  L4:  if b int== 0 goto L5
-    119       t1 = a int% b
-    120       a = b
-    121       b = t1
-    122       goto L4
-    123  L5:  return a
+    125       if b int!= 0 goto L7
+    126       t1 = a
+    127       goto L8
+    128  L7:  t2 = a int% b
+    129       param b
+    130       param t2
+    131       t1 = call gcd(int, int), 2
+    132  L8:  return t1
 
 ============================================================================
  FUNCTION pick(int)        (link name _Z4picki)
@@ -126,11 +148,11 @@
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   a                param   int                             4       0
+   x                param   int                             4       0
 
  Code: 1 instruction(s)
 
-    124     return 1
+    133     return 1
 
 ============================================================================
  FUNCTION pick(double)        (link name _Z4pickd)
@@ -140,62 +162,28 @@
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   a                param   double                          8       0
+   x                param   double                          8       0
 
  Code: 1 instruction(s)
 
-    125     return 2
+    134     return 2
 
 ============================================================================
- FUNCTION pick(char *)        (link name _Z4pickPc)
+ FUNCTION pick(const char *)        (link name _Z4pickPKc)
 ============================================================================
 
  Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 4 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   s                param   char *                          4       0
+   s                param   const char *                    4       0
 
  Code: 1 instruction(s)
 
-    126     return 3
+    135     return 3
 
 ============================================================================
- FUNCTION pick(int, int)        (link name _Z4pickii)
-============================================================================
-
- Symbol table: 2 parameter(s)/local(s), 0 temporaries, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   a                param   int                             4       0
-   b                param   int                             4       4
-
- Code: 1 instruction(s)
-
-    127     return 4
-
-============================================================================
- FUNCTION bump(int &)        (link name _Z4bumpRi)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   r                param   int &                           4       0
-   t1               temp    int                             4       4
-   t2               temp    int                             4       8
-
- Code: 4 instruction(s)
-
-    128     t1 = *r
-    129     t2 = t1 int+ 1
-    130     *r = t2
-    131     return
-
-============================================================================
- FUNCTION exchange(int &, int &)        (link name _Z8exchangeRiS_)
+ FUNCTION swap(int &, int &)        (link name _Z4swapRiS_)
 ============================================================================
 
  Symbol table: 3 parameter(s)/local(s), 2 temporaries, frame 20 bytes
@@ -210,32 +198,54 @@
 
  Code: 5 instruction(s)
 
-    132     t1 = *a
-    133     t2 = *b
-    134     *a = t2
-    135     *b = t1
-    136     return
+    136     t1 = *a
+    137     t2 = *b
+    138     *a = t2
+    139     *b = t1
+    140     return
 
 ============================================================================
- FUNCTION largest(int &, int &)        (link name _Z7largestRiS_)
+ FUNCTION advance(int *&)        (link name _Z7advanceRPi)
 ============================================================================
 
- Symbol table: 2 parameter(s)/local(s), 2 temporaries, frame 16 bytes
+ Symbol table: 1 parameter(s)/local(s), 2 temporaries, frame 12 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   p                param   int *&                          4       0
+   t1               temp    int *                           4       4
+   t2               temp    int *                           4       8
+
+ Code: 4 instruction(s)
+
+    141     t1 = *p
+    142     t2 = t1 ptr+ 4
+    143     *p = t2
+    144     return
+
+============================================================================
+ FUNCTION bigger(int &, int &)        (link name _Z6biggerRiS_)
+============================================================================
+
+ Symbol table: 2 parameter(s)/local(s), 3 temporaries, frame 20 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    a                param   int &                           4       0
    b                param   int &                           4       4
-   t1               temp    int                             4       8
+   t1               temp    int *                           4       8
    t2               temp    int                             4      12
+   t3               temp    int                             4      16
 
- Code: 5 instruction(s)
+ Code: 7 instruction(s)
 
-    137       t1 = *a
-    138       t2 = *b
-    139       if t1 int<= t2 goto L6
-    140       return a
-    141  L6:  return b
+    145        t2 = *a
+    146        t3 = *b
+    147        if t2 int<= t3 goto L9
+    148        t1 = a
+    149        goto L10
+    150  L9:   t1 = b
+    151  L10:  return t1
 
 ============================================================================
  FUNCTION half(const double &)        (link name _Z4halfRKd)
@@ -251,63 +261,89 @@
 
  Code: 3 instruction(s)
 
-    142     t1 = *v
-    143     t2 = t1 double/ 2.0
-    144     return t2
+    152     t1 = *v
+    153     t2 = t1 double/ 2.0
+    154     return t2
+
+============================================================================
+ FUNCTION sumv(va_list, int)        (link name _Z4sumvPvi)
+============================================================================
+
+ Symbol table: 3 parameter(s)/local(s), 2 temporaries, frame 28 bytes
+
+   name             kind    type                        width  offset
+   ---------------- ------- -------------------------- ------ -------
+   ap               param   va_list                         4       0
+   n                param   int                             4       4
+   s                local   int                             4       8
+   t1               temp    int                             4      12
+   t3               temp    int                             4      20
+   (2 temporaries no longer used after optimization not shown)
+
+ Code: 8 instruction(s)
+
+    155        s = 0
+    156  L11:  t1 = n
+    157        n = n int- 1
+    158        if t1 int== 0 goto L12
+    159        t3 = va_arg ap, int
+    160        s = s int+ t3
+    161        goto L11
+    162  L12:  return s
 
 ============================================================================
  FUNCTION sum(int, ...)        (link name _Z3sumiz)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 1 temporary, frame 28 bytes
+ Symbol table: 3 parameter(s)/local(s), 1 temporary, frame 16 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
    ap               local   va_list                         4       4
    s                local   int                             4       8
-   i                local   int                             4      12
-   t1               temp    int                             4      16
-   (2 temporaries no longer used after optimization not shown)
+   t1               temp    int                             4      12
 
- Code: 10 instruction(s)
+ Code: 6 instruction(s)
 
-    145       va_start ap, n
-    146       s = 0
-    147       i = 0
-    148  L7:  if i int>= n goto L8
-    149       t1 = va_arg ap, int
-    150       s = s int+ t1
-    151       i = i int+ 1
-    152       goto L7
-    153  L8:  va_end ap
-    154       return s
+    163     va_start ap, n
+    164     param ap
+    165     param n
+    166     t1 = call sumv(va_list, int), 2
+    167     va_end ap
+    168     return t1
 
 ============================================================================
- FUNCTION mix(int, ...)        (link name _Z3mixiz)
+ FUNCTION avg(int, ...)        (link name _Z3avgiz)
 ============================================================================
 
- Symbol table: 3 parameter(s)/local(s), 4 temporaries, frame 48 bytes
+ Symbol table: 4 parameter(s)/local(s), 3 temporaries, frame 64 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
    ap               local   va_list                         4       4
-   s                local   double                          8       8
-   t1               temp    double                          8      16
-   t2               temp    int                             4      24
-   t3               temp    double                          8      32
-   t4               temp    double                          8      40
+   t                local   double                          8       8
+   i                local   int                             4      16
+   t1               temp    double                          8      24
+   t4               temp    double                          8      48
+   t5               temp    double                          8      56
+   (2 temporaries no longer used after optimization not shown)
 
- Code: 7 instruction(s)
+ Code: 12 instruction(s)
 
-    155     va_start ap, n
-    156     t1 = va_arg ap, double
-    157     t2 = va_arg ap, int
-    158     t3 = inttodouble t2
-    159     t4 = t1 double+ t3
-    160     va_end ap
-    161     return t4
+    169        va_start ap, n
+    170        t = 0.0
+    171        i = 0
+    172  L13:  if i int>= n goto L14
+    173        t1 = va_arg ap, double
+    174        t = t double+ t1
+    175        i = i int+ 1
+    176        goto L13
+    177  L14:  va_end ap
+    178        t4 = inttodouble n
+    179        t5 = t double/ t4
+    180        return t5
 
 ============================================================================
  FUNCTION counter()        (link name _Z7counterv)
@@ -321,179 +357,123 @@
 
  Code: 3 instruction(s)
 
-    162     t1 = calls.25 int+ 1
-    163     calls.25 = t1
-    164     return t1
-
-============================================================================
- FUNCTION scale(int)        (link name _Z5scalei)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 0 temporaries, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   k                param   int                             4       0
-   (1 temporary no longer used after optimization not shown)
-
- Code: 2 instruction(s)
-
-    165     global = global int* k
-    166     return
+    181     t1 = c.26 int+ 1
+    182     c.26 = t1
+    183     return t1
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 25 temporaries, frame 164 bytes
+ Symbol table: 5 parameter(s)/local(s), 18 temporaries, frame 140 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   text             local   char[4]                         4       0
-   x                local   int                             4       4
-   y                local   int                             4       8
-   alias            local   int &                           4      12
-   t1               temp    int                             4      16
-   t2               temp    int                             4      20
-   t3               temp    int                             4      24
-   t4               temp    int                             4      28
-   t5               temp    int                             4      32
-   t6               temp    int                             4      36
-   t7               temp    char *                          4      40
-   t8               temp    int                             4      44
-   t9               temp    int                             4      48
-   t10              temp    int                             4      52
-   t11              temp    int *                           4      56
-   t13              temp    int *                           4      64
-   t15              temp    int                             4      72
-   t16              temp    int                             4      76
-   t19              temp    int &                           4      88
-   t20              temp    double                          8      96
-   t21              temp    const double *                  4     104
-   t22              temp    double                          8     112
-   t23              temp    int                             4     120
-   t24              temp    int                             4     124
-   t25              temp    double                          8     128
-   t26              temp    int                             4     136
-   t27              temp    double                          8     144
-   t28              temp    double                          8     152
-   t29              temp    int                             4     160
+   a                local   int                             4       0
+   b                local   int                             4       4
+   arr              local   int[3]                         12       8
+   p                local   int *                           4      20
+   ra               local   int &                           4      24
+   t1               temp    int                             4      28
+   t2               temp    int                             4      32
+   t3               temp    int                             4      36
+   t4               temp    int                             4      40
+   t5               temp    int                             4      44
+   t6               temp    int                             4      48
+   t7               temp    int                             4      52
+   t9               temp    int *                           4      60
+   t11              temp    int *                           4      68
+   t12              temp    int **                          4      72
+   t15              temp    int &                           4      84
+   t16              temp    int                             4      88
+   t17              temp    double                          8      96
+   t18              temp    const double *                  4     104
+   t19              temp    double                          8     112
+   t20              temp    int                             4     120
+   t21              temp    double                          8     128
+   t22              temp    int                             4     136
    (4 temporaries no longer used after optimization not shown)
 
- Code: 96 instruction(s)
+ Code: 78 instruction(s)
 
-    167     param 6
-    168     t1 = call fact(int), 1
-    169     param 10
-    170     t2 = call fib(int), 1
-    171     param 84
-    172     param 36
-    173     t3 = call gcd(int, int), 2
-    174     param 4
-    175     t4 = call later(int), 1
-    176     param "%d %d %d %d\n"
-    177     param t1
-    178     param t2
-    179     param t3
-    180     param t4
-    181     call printf, 5
-    182     text[0] = 97
-    183     text[1] = 98
-    184     text[2] = 99
-    185     text[3] = 0
-    186     param 1
-    187     t5 = call pick(int), 1
-    188     param 2.5
-    189     t6 = call pick(double), 1
-    190     t7 = &text
-    191     param t7
-    192     t8 = call pick(char *), 1
-    193     param 1
-    194     param 2
-    195     t9 = call pick(int, int), 2
-    196     param 99
-    197     t10 = call pick(int), 1
-    198     param "%d %d %d %d %d\n"
-    199     param t5
-    200     param t6
-    201     param t8
-    202     param t9
-    203     param t10
-    204     call printf, 6
-    205     x = 5
-    206     y = 9
-    207     t11 = &x
-    208     param t11
-    209     call bump(int &), 1
-    210     t13 = &y
-    211     param t11
-    212     param t13
-    213     call exchange(int &, int &), 2
-    214     t15 = *t11
-    215     t16 = t15 int+ 100
-    216     *t11 = t16
-    217     param t11
-    218     param t13
-    219     t19 = call largest(int &, int &), 2
-    220     *t19 = 0
-    221     t20 = 5.0
-    222     t21 = &t20
-    223     param t21
-    224     t22 = call half(const double &), 1
-    225     param "%d %d %.2f\n"
-    226     param x
-    227     param y
-    228     param t22
-    229     call printf, 4
-    230     param 3
-    231     param 10
-    232     param 20
-    233     param 30
-    234     t23 = call sum(int, ...), 4
-    235     param 0
-    236     t24 = call sum(int, ...), 1
-    237     param 2
-    238     param 1.5
-    239     param 4
-    240     t25 = call mix(int, ...), 3
-    241     param "%d %d %.1f\n"
-    242     param t23
-    243     param t24
-    244     param t25
-    245     call printf, 4
-    246     call counter(), 0
-    247     call counter(), 0
-    248     t26 = call counter(), 0
-    249     param "%d\n"
-    250     param t26
-    251     call printf, 2
-    252     param 3
-    253     call scale(int), 1
-    254     t27 = inttodouble global
-    255     t28 = ratio double* t27
-    256     param "%d %.1f\n"
-    257     param global
-    258     param t28
-    259     call printf, 3
-    260     param 1
-    261     t29 = call later(int), 1
-    262     return t29
-
-============================================================================
- FUNCTION later(int)        (link name _Z5lateri)
-============================================================================
-
- Symbol table: 1 parameter(s)/local(s), 1 temporary, frame 8 bytes
-
-   name             kind    type                        width  offset
-   ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
-   t1               temp    int                             4       4
-
- Code: 2 instruction(s)
-
-    263     t1 = n int* 11
-    264     return t1
+    184     param 10
+    185     t1 = call even(int), 1
+    186     param 7
+    187     t2 = call odd(int), 1
+    188     param 15
+    189     t3 = call fib(int), 1
+    190     param 84
+    191     param 36
+    192     t4 = call gcd(int, int), 2
+    193     param "%d %d %d %d\n"
+    194     param t1
+    195     param t2
+    196     param t3
+    197     param t4
+    198     call printf, 5
+    199     param 1
+    200     t5 = call pick(int), 1
+    201     param 1.0
+    202     t6 = call pick(double), 1
+    203     param "s"
+    204     t7 = call pick(const char *), 1
+    205     param "%d %d %d\n"
+    206     param t5
+    207     param t6
+    208     param t7
+    209     call printf, 4
+    210     a = 1
+    211     b = 2
+    212     arr[0] = 7
+    213     arr[4] = 8
+    214     arr[8] = 9
+    215     p = &arr
+    216     t9 = &a
+    217     *t9 = 30
+    218     t11 = &b
+    219     param t9
+    220     param t11
+    221     call swap(int &, int &), 2
+    222     t12 = &p
+    223     param t12
+    224     call advance(int *&), 1
+    225     param t9
+    226     param t11
+    227     t15 = call bigger(int &, int &), 2
+    228     *t15 = 40
+    229     t16 = *p
+    230     t17 = 5.0
+    231     t18 = &t17
+    232     param t18
+    233     t19 = call half(const double &), 1
+    234     param "%d %d %d %.1f\n"
+    235     param a
+    236     param b
+    237     param t16
+    238     param t19
+    239     call printf, 5
+    240     param 4
+    241     param 1
+    242     param 2
+    243     param 3
+    244     param 4
+    245     t20 = call sum(int, ...), 5
+    246     param 3
+    247     param 1.0
+    248     param 2.0
+    249     param 4.5
+    250     t21 = call avg(int, ...), 4
+    251     param "%d %.2f\n"
+    252     param t20
+    253     param t21
+    254     call printf, 3
+    255     call counter(), 0
+    256     call counter(), 0
+    257     t22 = call counter(), 0
+    258     param "%d\n"
+    259     param t22
+    260     call printf, 2
+    261     return 0
 
 
 ----------------------------------------------------------------------------
@@ -503,120 +483,109 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   later              function      int (int)                  -           4    -    2  _Z5lateri; defined
-   fact               function      int (int)                  -           6    -    2  _Z4facti; defined
-   fib                function      int (int)                  -           7    -    3  _Z3fibi; defined
-   gcd                function      int (int, int)             -           8    -    1  _Z3gcdii; defined
-   pick               function      int (int)                  -          10    -    2  _Z4picki; defined
+   odd                function      int (int)                  -           5    -    2  _Z3oddi; defined
+   even               function      int (int)                  -           6    -    2  _Z4eveni; defined
+   fib                function      int (int)                  -           8    -    3  _Z3fibi; defined
+   gcd                function      int (int, int)             -           9    -    2  _Z3gcdii; defined
+   pick               function      int (int)                  -          10    -    1  _Z4picki; defined
    pick               function      int (double)               -          11    -    1  _Z4pickd; defined
-   pick               function      int (char *)               -          12    -    1  _Z4pickPc; defined
-   pick               function      int (int, int)             -          13    -    1  _Z4pickii; defined
-   bump               function      void (int &)               -          15    -    1  _Z4bumpRi; defined
-   exchange           function      void (int &, int &)        -          16    -    1  _Z8exchangeRiS_; defined
-   largest            function      int &(int &, int &)        -          17    -    1  _Z7largestRiS_; defined
-   half               function      double (const double &)    -          18    -    1  _Z4halfRKd; defined
-   sum                function      int (int, ...)             -          20    -    2  _Z3sumiz; defined
-   mix                function      double (int, ...)          -          29    -    1  _Z3mixiz; defined
-   counter            function      int (void)                 -          37    -    3  _Z7counterv; defined
-   global             variable      int                        global     43    4    4  
-   ratio              variable      double                     global     44    8    1  
-   scale              function      void (int)                 -          45    -    1  _Z5scalei; defined
-   main               function      int (void)                 -          47    -    0  defined
+   pick               function      int (const char *)         -          12    -    1  _Z4pickPKc; defined
+   swap               function      void (int &, int &)        -          13    -    1  _Z4swapRiS_; defined
+   advance            function      void (int *&)              -          14    -    1  _Z7advanceRPi; defined
+   bigger             function      int &(int &, int &)        -          15    -    1  _Z6biggerRiS_; defined
+   half               function      double (const double &)    -          16    -    1  _Z4halfRKd; defined
+   sumv               function      int (va_list, int)         -          17    -    1  _Z4sumvPvi; defined
+   sum                function      int (int, ...)             -          18    -    1  _Z3sumiz; defined
+   avg                function      double (int, ...)          -          19    -    1  _Z3avgiz; defined
+   counter            function      int (void)                 -          20    -    3  _Z7counterv; defined
+   main               function      int (void)                 -          21    -    0  defined
 
- scope: global > fact()
+ scope: global > even()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       6    4    3  n.1
+   n                  parameter     int                        param       6    4    2  n.1
+
+ scope: global > odd()
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   n                  parameter     int                        param       7    4    2  n.2
 
  scope: global > fib()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       7    4    4  n.2
+   n                  parameter     int                        param       8    4    4  n.3
 
  scope: global > gcd()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param       8    4    3  a.3
-   b                  parameter     int                        param       8    4    4  b.4
-
- scope: global > gcd() > while
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   t                  variable      int                        local       8    4    1  t.5
+   a                  parameter     int                        param       9    4    2  a.4
+   b                  parameter     int                        param       9    4    3  b.5
 
  scope: global > pick()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int                        param      10    4    0  a.6
-   a                  parameter     double                     param      11    8    0  a.7
-   s                  parameter     char *                     param      12    4    0  s.8
-   a                  parameter     int                        param      13    4    0  a.9
-   b                  parameter     int                        param      13    4    0  b.10
+   x                  parameter     int                        param      10    4    0  x.6
+   x                  parameter     double                     param      11    8    0  x.7
+   s                  parameter     const char *               param      12    4    0  s.8
 
- scope: global > bump()
+ scope: global > swap()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   r                  parameter     int &                      param      15    4    2  r.11
+   a                  parameter     int &                      param      13    4    2  a.9
+   b                  parameter     int &                      param      13    4    2  b.10
+   t                  variable      int                        local      13    4    1  t.11
 
- scope: global > exchange()
+ scope: global > advance()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int &                      param      16    4    2  a.12
-   b                  parameter     int &                      param      16    4    2  b.13
-   t                  variable      int                        local      16    4    1  t.14
+   p                  parameter     int *&                     param      14    4    1  p.12
 
- scope: global > largest()
+ scope: global > bigger()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  parameter     int &                      param      17    4    2  a.15
-   b                  parameter     int &                      param      17    4    2  b.16
+   a                  parameter     int &                      param      15    4    2  a.13
+   b                  parameter     int &                      param      15    4    2  b.14
 
  scope: global > half()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   v                  parameter     const double &             param      18    4    1  v.17
+   v                  parameter     const double &             param      16    4    1  v.15
+
+ scope: global > sumv()
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   ap                 parameter     va_list                    param      17    4    1  ap.16
+   n                  parameter     int                        param      17    4    1  n.17
+   s                  variable      int                        local      17    4    2  s.18
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      20    4    2  n.18
-   ap                 variable      va_list                    local      21    4    3  ap.19
-   s                  variable      int                        local      23    4    2  s.20
+   n                  parameter     int                        param      18    4    2  n.19
+   ap                 variable      va_list                    local      18    4    3  ap.20
+   s                  variable      int                        local      18    4    1  s.21
 
- scope: global > sum() > for
+ scope: global > avg()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   i                  variable      int                        local      24    4    2  i.21
-
- scope: global > mix()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      29    4    1  n.22
-   ap                 variable      va_list                    local      30    4    4  ap.23
-   s                  variable      double                     local      32    8    1  s.24
+   n                  parameter     int                        param      19    4    3  n.22
+   ap                 variable      va_list                    local      19    4    3  ap.23
+   t                  variable      double                     local      19    8    2  t.24
+   i                  variable      int                        local      19    4    3  i.25
 
  scope: global > counter()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   calls              variable      int                        static     38    4    2  calls.25; static
-
- scope: global > scale()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  parameter     int                        param      45    4    1  k.26
+   c                  variable      int                        static     20    4    1  c.26; static
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   text               variable      char[4]                    local      49    4    1  text.27
-   x                  variable      int                        local      52    4    5  x.28
-   y                  variable      int                        local      52    4    3  y.29
-   alias              variable      int &                      local      55    4    2  alias.30
-
- scope: global > later()
-   name               kind          type                       storage  line size uses  TAC name / notes
-   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      68    4    1  n.31
+   a                  variable      int                        local      24    4    4  a.27
+   b                  variable      int                        local      24    4    3  b.28
+   arr                variable      int[3]                     local      24   12    1  arr.29
+   p                  variable      int *                      local      24    4    2  p.30
+   ra                 variable      int &                      local      25    4    1  ra.31
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
