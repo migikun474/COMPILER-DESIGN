@@ -1,6 +1,6 @@
 /* t16 -- what the MIPS run-time library has to get right: 64-bit
    arithmetic, conversions between integers and floating point, printf
-   formats, structs and doubles passed and returned on the stack */
+   formats (including %p), structs and doubles passed and returned on the stack */
 
 struct Big { double d; int n[5]; char tag; long long w; };
 
@@ -69,5 +69,7 @@ int main() {
     p = (int *) realloc(p, 6 * sizeof(int));
     int *z = (int *) calloc(4, sizeof(int));
     printf("%d %d %d %d\n", p[0] + p[1] + p[2], z[0], z[3], p != z);
+    int *none = 0;                       /* %p: only a null pointer prints the same everywhere */
+    printf("[%p] [%8p] [%-8p]\n", none, none, none);
     return (int) (a % 100);
 }

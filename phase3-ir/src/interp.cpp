@@ -478,7 +478,19 @@ class Machine {
                     out += big.data();
                     continue;
                 }
-                case 'p': snprintf(buf, sizeof buf, "0x%x", static_cast<uint32_t>(take().v.i)); break;
+                case 'p': { /* as glibc: 0x and lowercase hex, (nil) for a null pointer; the width pads it */
+                    uint32_t v = static_cast<uint32_t>(take().v.i);
+                    char text[32];
+                    if (v) snprintf(text, sizeof text, "0x%x", v);
+                    else snprintf(text, sizeof text, "(nil)");
+                    bool left = spec.find('-') != std::string::npos;
+                    size_t w = 0, d = spec.find_first_of("123456789");
+                    if (d != std::string::npos && (spec.find('.') == std::string::npos || d < spec.find('.')))
+                        w = std::strtoul(spec.c_str() + d, nullptr, 10);
+                    std::string s = text, pad(w > s.size() ? w - s.size() : 0, ' ');
+                    out += left ? s + pad : pad + s;
+                    continue;
+                }
                 default: buf[0] = conv; buf[1] = 0; break;
             }
             out += buf;

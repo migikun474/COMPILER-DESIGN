@@ -20,6 +20,7 @@
         .data
 __pf_buf:    .space 96
 __pf_digits: .asciiz "0123456789abcdef"
+__pf_nil:    .asciiz "(nil)"              # %p of a null pointer, as glibc prints it
         .align 2
 __sc_peek:   .word -2                   # a character read ahead; -2 = none, -1 = end of input
 __sc_pos:    .word __sc_line            # the next unread character of the current input line
@@ -344,7 +345,7 @@ __dtoll_done:
         jr    $ra
 
 # ---------------------------------------------------------------- printf
-# %d %i %u %x %X %o %c %s %f %e %E %g %G %%, with '-' and '0' flags,
+# %d %i %u %x %X %o %c %s %p %f %e %E %g %G %%, with '-' and '0' flags,
 # width, precision (strings and the floating formats), '*', and the
 # lengths l / ll / h.
 #   $s0 format   $s1 next argument   $s2 left-justify   $s3 pad character
@@ -498,6 +499,8 @@ __pf_conv:
         li    $t3, 8
         li    $t1, 111
         beq   $t0, $t1, __pf_u
+        li    $t1, 112
+        beq   $t0, $t1, __pf_p
         move  $a0, $t0                  # "%%" and anything unknown: the character itself
         j     __pf_char
 
@@ -577,6 +580,39 @@ __pf_nstore:
         addiu $s6, $s6, 1
         j     __pf_nloop
 __pf_nout:
+        move  $t0, $s5
+        move  $t1, $s6
+        jal   __pf_out
+        j     __pf_loop
+
+__pf_p:                                 # %p: 0x and the address in hex, (nil) for 0 (as glibc)
+        lw    $t0, 0($s1)
+        addiu $s1, $s1, 4
+        li    $t2, 0
+        bnez  $t0, __pf_phex
+        la    $t0, __pf_nil
+        li    $t1, 5
+        jal   __pf_out
+        j     __pf_loop
+__pf_phex:                              # hex digits, last one first, then "0x" in front
+        la    $s5, __pf_buf+95
+        li    $s6, 0
+__pf_ploop:
+        andi  $t5, $t0, 15
+        la    $t8, __pf_digits
+        addu  $t8, $t8, $t5
+        lbu   $t5, 0($t8)
+        addiu $s5, $s5, -1
+        sb    $t5, 0($s5)
+        addiu $s6, $s6, 1
+        srl   $t0, $t0, 4
+        bnez  $t0, __pf_ploop
+        li    $t5, 120
+        sb    $t5, -1($s5)
+        li    $t5, 48
+        sb    $t5, -2($s5)
+        addiu $s5, $s5, -2
+        addiu $s6, $s6, 2
         move  $t0, $s5
         move  $t1, $s6
         jal   __pf_out
