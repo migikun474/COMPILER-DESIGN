@@ -37,7 +37,6 @@ enum class SymKind {
     PARAMETER,
     STRUCT_TAG,
     CLASS_TAG,
-    UNION_TAG,
     ENUM_TAG,
     ENUM_CONST,
     TYPEDEF_NAME,

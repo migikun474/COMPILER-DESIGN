@@ -305,7 +305,7 @@ std::string checkCast(const TypePtr &fromIn, const TypePtr &to) {
     if (isVoid(from)) return "a void expression cannot be cast to a non-void type";
     if (isRecord(to) || isRecord(from)) {
         if (sameType(from, to)) return "";
-        return "cannot cast between a struct/union/class type and another type";
+        return "cannot cast between a struct/class type and another type";
     }
     if (isArithmetic(from) && isArithmetic(to)) return "";
     if (isPointer(from) && isPointer(to)) return "";
@@ -362,22 +362,16 @@ void layoutRecord(RecordInfo &r) {
         offset += b.record->size;
         align = std::max(align, b.record->align);
     }
-    long long largest = 0; /* union: every member at offset 0, the size of the largest */
     for (auto &f : r.fields) {
         if (f->storage != Storage::Member) continue; /* static members live elsewhere */
         long long fs = std::max(0LL, sizeOf(f->type));
         int fa = alignOf(f->type);
         align = std::max(align, fa);
-        if (r.kind == RecordKind::Union) {
-            f->offset = 0;
-            largest = std::max(largest, fs);
-            continue;
-        }
         offset = alignUp(offset, fa);
         f->offset = offset;
         offset += fs;
     }
-    long long size = r.kind == RecordKind::Union ? largest : offset;
+    long long size = offset;
     if (size == 0) size = 1; /* no zero-sized objects (C++ rule) */
     r.size = alignUp(size, align);
     r.align = align;
@@ -398,7 +392,6 @@ std::string accessName(Access a) {
 std::string recordKindName(RecordKind k) {
     switch (k) {
         case RecordKind::Struct: return "struct";
-        case RecordKind::Union: return "union";
         case RecordKind::Class: return "class";
     }
     return "?";

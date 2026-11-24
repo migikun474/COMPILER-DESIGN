@@ -116,7 +116,7 @@ A **`sem::Symbol`** (every field that exists):
 | `isMethod`, `isConstructor`, `mangledName` | callables |
 | `params`, `locals`, `bodyScopeId` | functions: parameter symbols in order (unnamed ones too), every local, the body scope |
 | `ownerRecord`, `access`, `offset` | members: owning `RecordInfo`, `public`/`protected`/`private`, byte offset (MIPS32 layout) |
-| `record`, `enumInfo` | tags: the `RecordInfo` of a struct/union/class, or the `EnumInfo` of an enum |
+| `record`, `enumInfo` | tags: the `RecordInfo` of a struct/class, or the `EnumInfo` of an enum |
 | `declNode` | the declaring AST node |
 
 ### Operations

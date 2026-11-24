@@ -2,30 +2,30 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : test/test21_syntax_errors_cascading_recovery.c
+Source File : /home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c
 
-test/test21_syntax_errors_cascading_recovery.c:30:1: syntax error: syntax error, unexpected INT, expecting ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:30:1: syntax error: syntax error, unexpected INT, expecting ';'
  30 | int c;
     | ^
     | note: insert ';' here
 
-test/test21_syntax_errors_cascading_recovery.c:31:9: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:31:9: syntax error: syntax error, unexpected ';'
  31 | int d = ;
     |         ^
 
-test/test21_syntax_errors_cascading_recovery.c:32:8: syntax error: syntax error, unexpected ';'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:32:8: syntax error: syntax error, unexpected ';'
  32 | int e, ;
     |        ^
 
-test/test21_syntax_errors_cascading_recovery.c:33:20: syntax error: syntax error, unexpected ';', expecting '}' or ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:33:20: syntax error: syntax error, unexpected ';', expecting '}' or ','
  33 | int f[3] = {1, 2, 3;
     |                    ^
 
-test/test21_syntax_errors_cascading_recovery.c:34:16: syntax error: syntax error, unexpected ','
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:34:16: syntax error: syntax error, unexpected ','
  34 | int g[3] = {1, , 3};
     |                ^
 
-test/test21_syntax_errors_cascading_recovery.c:39:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
+/home/amirishetty/Desktop/semantics/phase2-parser/test/test21_syntax_errors_cascading_recovery.c:39:15: syntax error: syntax error, unexpected '{', expecting ',' or ')'
  39 |     if (x > 0 {
     |               ^
 

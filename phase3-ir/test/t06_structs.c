@@ -1,13 +1,12 @@
-/* t06 -- structs and unions: nesting, copies (the original stays the
+/* t06 -- structs: nesting, copies (the original stays the
    same), by-value parameters and results, an array of structs, a struct
    with an array member, anonymous struct members, a typedef'd unnamed
-   struct, layout with padding, a union read through another member.
+   struct, layout with padding.
    Expected: g++. */
 struct In { int a; char tag; };
 struct Out { struct In in; int list[3]; double w; };
 typedef struct { int x, y; } Pt;
 struct Holder { int id; struct { int lo, hi; }; };
-union Bits { float f; unsigned u; unsigned char b[4]; };
 struct Out grow(struct Out o) { o.in.a += 100; o.list[2] = 9; return o; }
 int area(Pt p) { p.x = p.x * 2; return p.x * p.y; }
 int main() {
@@ -30,8 +29,5 @@ int main() {
     h.lo = 3; h.hi = 8; h.id = 1;
     printf("%d %d\n", h.hi - h.lo, (int)sizeof(struct Holder));
     printf("%d %d\n", (int)sizeof(struct In), (int)sizeof(struct Out));
-    union Bits b;
-    b.f = 1.0f;
-    printf("%x %d %d\n", b.u, b.b[3], (int)sizeof(union Bits));
     return 0;
 }

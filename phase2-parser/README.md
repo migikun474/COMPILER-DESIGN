@@ -115,7 +115,7 @@ log; see [`../docs/SYMBOL_TABLE.md`](../docs/SYMBOL_TABLE.md#part-1--the-parse-t
 |---|---|
 | Program | `translation_unit` → `external_decl` (function definitions, declarations, out-of-class constructors) |
 | Declarations | `declaration`, `declaration_specifiers`, `storage_or_type_specifier`, `type_specifier`, `init_declarator_list`, `declarator`, `direct_declarator`, `pointer`, `abstract_declarator`, `initializer`, `initializer_list` |
-| Aggregates | `struct_or_class_specifier` (named and unnamed struct/union/class, and enums), `enumerator_list`, `enumerator`, `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `out_of_class_special` |
+| Aggregates | `struct_or_class_specifier` (named and unnamed struct/class, and enums), `enumerator_list`, `enumerator`, `member_decl_list`, `member_item`, `inheritance_opt`, `access_specifier`, `constructor_def`, `out_of_class_special` |
 | Functions | `function_definition`, `parameter_list`, `parameter_decl`, `operator_function_id` |
 | Statements | `statement`, `compound_stmt`, `expr_stmt`, `selection_stmt` (if/else, switch), `iteration_stmt` (while, do-while, for, until), `labeled_stmt` (case, default, labels), `jump_stmt` (goto, break, continue, return) |
 | Expressions | `expr` (comma), `assignment_expr`, `binary_expr`, `unary_expr`, `postfix_expr`, `primary_expr`, `builtin_call` |
@@ -219,7 +219,7 @@ break/continue/return; declarations with pointers, arrays (any number of
 dimensions), parenthesized declarators
 (`int (*pa)[3]`), references, `const`, `static`/
 `typedef`/`auto`; initializer lists with designators;
-structs and unions (named or unnamed); enums (`enum Color { Red, Green = 5, Blue, }`,
+structs (named or unnamed); enums (`enum Color { Red, Green = 5, Blue, }`,
 trailing comma allowed); classes with single inheritance, access
 specifiers, default constructors (in or out of class), `friend`, operator
 overloading; C-style and functional casts;
@@ -227,7 +227,8 @@ overloading; C-style and functional casts;
 
 **Removed** (2026-10-07, see [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)):
 the file-manipulation built-ins, lambdas and function pointers (`enum`
-and `union` were removed then too, and came back with D42). Their
+and `union` were removed then too; `enum` came back with D42; `union`
+came back with D42 and was removed again with D50: the scanner rejects it). Their
 tokens and rules are gone, so `FILE`, `fopen` … and `mutable` scan as
 ordinary identifiers; so do `register`, `volatile` (D31) and `extern`
 (D43), removed later. A parameter list

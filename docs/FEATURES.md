@@ -82,7 +82,6 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 | Function overloading (C++ ranking, ambiguity) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test12, S:v11 v16 e04 | all phases |
 | `const`, `auto` (type deduction) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v01 v11 v18 | all phases |
 | `enum` (C++ rules: its own type, enum → int implicit, int → enum by cast, mangled by name) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v28 e25, I:t36 | D42; an int in TAC and MIPS |
-| `union` (plain: data members at offset 0, one-member initializer) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v28 e25, I:t36 | D42; no anonymous unions, no methods |
 | Casts: C-style `(T)e`, functional `T(e)`, `int(x)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | P:test25, S:v19 | all phases |
 | `sizeof` (expression and type) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 v22 v24 | all phases |
 | Ternary `?:`, comma operator | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v02 | all phases |
@@ -133,7 +132,7 @@ arrays.
 
 Classes/objects/`this`, single inheritance, access modifiers, default
 constructors, operator overloading, function overloading, `const`/`auto`,
-`enum` and `union` (D42), C-style and functional casts, `sizeof`, ternary
+`enum` (D42), C-style and functional casts, `sizeof`, ternary
 and comma operators, designated and empty initializers, unnamed
 structs and anonymous struct members, hex/octal/binary literals with
 suffixes, `bool`, Itanium name mangling — plus the analysis capabilities
@@ -171,8 +170,9 @@ then dropped before the back end was started — see
 [`DESIGN_LOG.md`](DESIGN_LOG.md), decisions D1–D6): file manipulation
 (`FILE`, `fopen`, `fclose`, `fread`, `fwrite`, `fprintf`, `fscanf`,
 `fgets`, `fputs`, `feof`), lambdas, and function pointers (`enum` and
-`union` were dropped too and came back with D42; anonymous unions did
-not). Their keywords are ordinary identifiers again. Lambdas and
+`union` were dropped too; `enum` came back with D42, `union` came back
+with D42 and was removed again with D50, where `union` is a reserved
+word the scanner rejects). Their keywords are ordinary identifiers again. Lambdas and
 function-pointer declarators are syntax errors
 (P:test29); a function name used as a value, a parameter of function
 type and the now-undeclared file names are semantic errors (S:e19);

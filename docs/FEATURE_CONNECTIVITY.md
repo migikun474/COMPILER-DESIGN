@@ -56,7 +56,7 @@ flowchart LR
         F7["F7 pointers"]
         F8["F8 structures"]
         F11["F11 static const"]
-        F19["F19 enum union"]
+        F19["F19 enum"]
         F13["F13 dynamic memory"]
         F15["F15 typedef references"]
     end
@@ -340,19 +340,18 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 - **Relies on:** F9, S2, S3.
 - **Used by:** F17.
 
-### F19 enum and union (D42)
+### F19 enum (D42)
 
 | Internal piece | Phase | Code |
 |---|---|---|
-| Keywords, enum and union rules | L/P | `ENUM`, `UNION` tokens; `struct_or_class_specifier` (`UnionDecl`, `EnumDecl`), `enumerator_list`, `enumerator`; `UNION_TAG`, `ENUM_TAG`, `ENUM_CONST` in the parse-time table |
+| Keyword and enum rules | L/P | `ENUM` token; `struct_or_class_specifier` (`EnumDecl`), `enumerator_list`, `enumerator`; `ENUM_TAG`, `ENUM_CONST` in the parse-time table; `union` is reserved and rejected by the scanner (D50) |
 | Enum type | S | an Int `Type` with `enumInfo` (`enumType`, `isEnum`, `EnumInfo`); C++ conversions in `implicitConversion`; promotion in `integerPromotion`; `?:` in `ternary()`; no `++`/`--` |
 | Enumerators | S | `enumDefinition()`: `SymbolKind::EnumConstant`, value folded onto each use by `identifier()` |
 | Enum link names | S | `Mangler::canonical` (an enum by its name) |
-| Union layout and rules | S | `RecordKind::Union` in `layoutRecord` (every member at 0); member checks in `recordDefinition`; one-member initializer in `checkInitializer` / `takeElided` |
-| Lowering | T | an enumerator is `icon()` in `rvalue()`; an enum is a plain int; a union member is offset 0 |
-| Back end | O/M | nothing new: loads are keyed by machine class and every store invalidates memory, so type punning stays correct |
+| Lowering | T | an enumerator is `icon()` in `rvalue()`; an enum is a plain int |
+| Back end | O/M | nothing new: an enum is an int |
 
-- **Relies on:** F5 (an enum is an int), F8 (a union is a record), F18 (overloading on enums), S2, S3.
+- **Relies on:** F5 (an enum is an int), F18 (overloading on enums), S2, S3.
 - **Used by:** nothing.
 
 ---
@@ -403,7 +402,7 @@ What you must touch if you **remove** or **change** each feature. "Tests" names 
 | F16 classes | `recordDefinition` class parts, `this`, `checkAccess`, friends | F17 | `t08`, `t23`, `t27`, `v10`, `v27`, `e09`, `e23` |
 | F17 constructors / operators | `construct`, `constructSubobjects`, `overloadedOperator` | nothing | `t08`, `t27`, `v17` |
 | F18 overloading | `resolveOverload`, `mangle` | F17 operators, F19 enum overloads | `v21`, `e15` |
-| F19 enum / union | the tokens and rules, `enumDefinition`, `enumInfo` checks, `RecordKind::Union` paths, `icon()` for enumerators | nothing | `v28`, `e25`, `t36` |
+| F19 enum | the token and rules, `enumDefinition`, `enumInfo` checks, `icon()` for enumerators | nothing | `v28`, `e25`, `t36` |
 
 ### Changes that are cheap because nothing depends on them
 
@@ -434,5 +433,5 @@ The earlier [advanced feature analysis](ADVANCED_COMPILER_FEATURE_ANALYSIS.md) w
 | INF-04 reaching definitions | Implemented (D38), drives the uninitialized warning |
 | BCK-06 register calling convention, BCK-09 frame slot reclamation | Implemented (D39) |
 | INF-16 combined driver | Implemented (D40) |
-| enum, union (dropped by D1) | Back (D42): enums with C++ rules, plain unions |
+| enum, union (dropped by D1) | enum back (D42) with C++ rules; union back with D42, removed again (D50) |
 | `extern` | Removed (D43) |

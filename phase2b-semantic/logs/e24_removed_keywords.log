@@ -2,15 +2,27 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e24_removed_keywords.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c
 
-Syntax analysis failed: 2 error(s); semantic analysis was not run.
+Syntax analysis failed: 5 error(s); semantic analysis was not run.
 
-/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e24_removed_keywords.c:6:5: lexical error: 'virtual' is not supported: this language has no virtual functions
- 6 |     virtual int area() { return 0; }          // error: 'virtual' is not supported: this language has no virtual functions
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c:7:5: lexical error: 'virtual' is not supported: this language has no virtual functions
+ 7 |     virtual int area() { return 0; }          // error: 'virtual' is not supported: this language has no virtual functions
    |     ^
 
-/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/invalid/e24_removed_keywords.c:7:5: lexical error: 'explicit' is not supported: this language has no converting constructors
- 7 |     explicit Shape() { }                      // error: 'explicit' is not supported: this language has no converting constructors
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c:8:5: lexical error: 'explicit' is not supported: this language has no converting constructors
+ 8 |     explicit Shape() { }                      // error: 'explicit' is not supported: this language has no converting constructors
    |     ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c:10:1: lexical error: 'union' is not supported: this language has no unions
+ 10 | union Value { int i; float f; };              // error: 'union' is not supported: this language has no unions
+    | ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c:10:7: syntax error: syntax error, unexpected IDENTIFIER
+ 10 | union Value { int i; float f; };              // error: 'union' is not supported: this language has no unions
+    |       ^
+
+/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e24_removed_keywords.c:10:31: syntax error: syntax error, unexpected '}'
+ 10 | union Value { int i; float f; };              // error: 'union' is not supported: this language has no unions
+    |                               ^
 

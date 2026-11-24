@@ -73,7 +73,7 @@
 
 /* ---- keywords ---- */
 %token INT CHAR FLOAT DOUBLE VOID SHORT LONG SIGNED UNSIGNED
-%token STRUCT CLASS UNION ENUM
+%token STRUCT CLASS ENUM
 %token PUBLIC PRIVATE PROTECTED THIS
 %token STATIC TYPEDEF AUTO CONST FRIEND
 %token VIRTUAL EXPLICIT   /* reserved but rejected by the scanner (D35); never reach the grammar */
@@ -230,7 +230,7 @@ type_specifier
           setCategory($1.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back(s ? s->typeStr : "INT");
           $$.typeSpec.typedefName = $1.str;
-          if (s && (s->kind == SymKind::STRUCT_TAG || s->kind == SymKind::CLASS_TAG || s->kind == SymKind::UNION_TAG)) {
+          if (s && (s->kind == SymKind::STRUCT_TAG || s->kind == SymKind::CLASS_TAG)) {
               $$.typeSpec.tagName = $1.str; /* "Dog d;" -- Dog referenced directly,
                                                 without repeating class/struct */
           } else if (s && s->kind == SymKind::TYPEDEF_NAME && s->typeExpr && s->typeExpr->pointerLevel == 0 &&
@@ -295,45 +295,6 @@ struct_or_class_specifier
           const Symbol *s = lookupTypeSymbol($2.str);
           setCategory($2.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back("STRUCT");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION tag_name {
-          declareSymbol($2.str, SymKind::UNION_TAG, "UNION", SymbolDeclInfo{$2.idx});
-          setCategory($2.idx, "UNION");
-          enterClass($2.str, "union");
-      } '{' { pushScope("union " + $2.str); markAggregateMemberDepth(); } member_decl_list_opt '}' {
-          popScope(); leaveClass();
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-          addTypeName($2.str);
-          auto node = atToken(mkNode(ASTKind::UnionDecl, $2.str), $2.idx);
-          for (auto &m : $6.nodeList) addChild(node, m);
-          $$.node = node;
-      }
-    | UNION '{' {
-          $$.str = anonymousTagAt($1.idx);
-          declareSymbol($$.str, SymKind::UNION_TAG, "UNION", SymbolDeclInfo{$1.idx});
-          enterClass($$.str, "union");
-          pushScope("union " + $$.str);
-          markAggregateMemberDepth();
-      } member_decl_list_opt '}' {
-          popScope(); leaveClass();
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $3.str;
-          auto node = atToken(mkNode(ASTKind::UnionDecl, $3.str), $1.idx);
-          for (auto &m : $4.nodeList) addChild(node, m);
-          $$.node = node;
-      }
-    | UNION IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "UNION");
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("UNION");
           $$.typeSpec.tagName = $2.str;
       }
     | ENUM IDENTIFIER {
@@ -1127,18 +1088,6 @@ type_name_specifier
           const Symbol *s = lookupTypeSymbol($2.str);
           setCategory($2.idx, categoryForTypeName(s));
           $$.typeSpec.parts.push_back("STRUCT");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION IDENTIFIER {
-          const Symbol *s = lookupSymbol($2.str);
-          setCategory($2.idx, s ? s->typeStr : "UNION");
-          $$.typeSpec.parts.push_back("UNION");
-          $$.typeSpec.tagName = $2.str;
-      }
-    | UNION TYPE_NAME {
-          const Symbol *s = lookupTypeSymbol($2.str);
-          setCategory($2.idx, categoryForTypeName(s));
-          $$.typeSpec.parts.push_back("UNION");
           $$.typeSpec.tagName = $2.str;
       }
     | ENUM IDENTIFIER {

@@ -150,22 +150,14 @@ TypePtr SemanticAnalyzer::resolveTag(const ASTTypeExpr &te, const std::string &k
         else error(line, col, "use of undeclared enum 'enum " + tag + "'", "unknown-type");
         return errorType();
     }
-    /* `struct Dog` may name a class and `class Point` a struct (C++), but a
-       union is a different kind of tag */
-    RecordKind want = kindPart == "UNION" ? RecordKind::Union
-                      : kindPart == "CLASS" ? RecordKind::Class
-                                            : RecordKind::Struct;
+    /* `struct Dog` may name a class and `class Point` a struct (C++) */
+    RecordKind want = kindPart == "CLASS" ? RecordKind::Class : RecordKind::Struct;
     if (sym) {
         if (!sym->record) {
             error(line, col, "use of '" + tag + "' with tag type '" + recordKindName(want) +
                                  "' that does not match its declaration as an enum",
                   "tag-mismatch");
             return errorType();
-        }
-        if ((want == RecordKind::Union) != (sym->record->kind == RecordKind::Union)) {
-            error(line, col, "use of '" + tag + "' with tag type '" + recordKindName(want) +
-                                 "' that does not match its declaration as '" + recordKindName(sym->record->kind) + "'",
-                  "tag-mismatch");
         }
         return recordType(sym->record);
     }
@@ -209,10 +201,10 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
     } else {
         std::map<std::string, int> n;
         for (const auto &p : te.specParts) n[p]++;
-        for (const char *tagKw : {"STRUCT", "CLASS", "UNION", "ENUM"}) {
+        for (const char *tagKw : {"STRUCT", "CLASS", "ENUM"}) {
             if (n.count(tagKw)) {
                 if (te.specParts.size() != 1) {
-                    error(line, col, "cannot combine a struct/union/class/enum type with other type specifiers",
+                    error(line, col, "cannot combine a struct/class/enum type with other type specifiers",
                           "invalid-specifiers");
                 }
                 return qualified(resolveTag(te, tagKw, at), te.isConst);
@@ -481,7 +473,7 @@ void SemanticAnalyzer::declaration(const ASTNodePtr &n, DeclCtx ctx) {
         case ASTKind::DeclGroup:
             /* `struct { ... } p;`: the type, then what it declares */
             for (const auto &c : n->children) {
-                if (c->kind == ASTKind::StructDecl || c->kind == ASTKind::ClassDecl || c->kind == ASTKind::UnionDecl)
+                if (c->kind == ASTKind::StructDecl || c->kind == ASTKind::ClassDecl)
                     recordDefinition(c);
                 else if (c->kind == ASTKind::EnumDecl)
                     enumDefinition(c);
@@ -491,16 +483,9 @@ void SemanticAnalyzer::declaration(const ASTNodePtr &n, DeclCtx ctx) {
             break;
         case ASTKind::StructDecl:
         case ASTKind::ClassDecl:
-        case ASTKind::UnionDecl:
             recordDefinition(n);
             /* `struct { int x; };`: a type nobody can name (gcc says the same) */
-            if (isAnonymousTag(tagFromLabel(n->label))) {
-                if (n->kind == ASTKind::UnionDecl)
-                    error(n.get(), "anonymous unions are not supported: name the union or declare a variable of it",
-                          "anonymous-union");
-                else
-                    warning(n.get(), "unnamed struct that defines no instances", "anonymous");
-            }
+            if (isAnonymousTag(tagFromLabel(n->label))) warning(n.get(), "unnamed struct that defines no instances", "anonymous");
             break;
         case ASTKind::EnumDecl: enumDefinition(n); break; /* `enum { A, B };` declares A and B */
         case ASTKind::ConstructorDef: outOfClassSpecial(n); break; /* `Dog::Dog() {}` */
@@ -777,9 +762,7 @@ ASTNodePtr SemanticAnalyzer::takeElided(const TypePtr &sub, const std::vector<AS
     group->line = c->line;
     group->column = c->column;
     std::vector<SymbolPtr> fields = isRecord(sub) ? memberFields(sub) : std::vector<SymbolPtr>();
-    size_t count = isArray(sub) ? (sub->arraySize < 0 ? items.size() : static_cast<size_t>(sub->arraySize))
-                   : sub->record->kind == RecordKind::Union ? std::min<size_t>(1, fields.size()) /* a union takes one value */
-                                                            : fields.size();
+    size_t count = isArray(sub) ? (sub->arraySize < 0 ? items.size() : static_cast<size_t>(sub->arraySize)) : fields.size();
     for (size_t k = 0; k < count && i < items.size() && items[i]->kind != ASTKind::DesignatedInit; ++k)
         group->children.push_back(takeElided(isArray(sub) ? sub->elem : fields[k]->type, items, i));
     if (group->children.empty()) { /* nothing to fill (an empty struct): the value stays where it was */
@@ -894,15 +877,6 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
                 if (f->storage == Storage::Member) fields.push_back(f);
             }
             size_t limit = fields.size();
-            if (rec->kind == RecordKind::Union) { /* one member: the first, or the designated one */
-                limit = std::min<size_t>(1, fields.size());
-                if (items.size() > 1) {
-                    error(items[1].get(), "excess elements in union initializer for " + q(target) +
-                                              " (a union holds one member at a time)",
-                          "initializer");
-                    for (size_t k = 1; k < items.size(); ++k) checkInitializer(errorType(), items[k], false, what);
-                }
-            }
             /* positional, or `.field = v` (later positional values continue after it) */
             size_t pos = 0;
             for (const auto &c : items) {
@@ -944,8 +918,7 @@ void SemanticAnalyzer::checkInitializer(const TypePtr &target, const ASTNodePtr 
                     c->semType = (*it)->type;
                     value = c->children[0];
                 }
-                if (rec->kind == RecordKind::Union && c != items.front()) break; /* reported above */
-                if (pos >= limit && !(rec->kind == RecordKind::Union && c->kind == ASTKind::DesignatedInit)) {
+                if (pos >= limit) {
                     error(c.get(), "excess elements in " + recordKindName(rec->kind) + " initializer for " + q(target),
                           "initializer");
                     checkInitializer(errorType(), value, false, what);
@@ -1428,9 +1401,7 @@ void SemanticAnalyzer::enumDefinition(const ASTNodePtr &n) {
 }
 
 void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
-    RecordKind kind = n->kind == ASTKind::ClassDecl   ? RecordKind::Class
-                      : n->kind == ASTKind::UnionDecl ? RecordKind::Union
-                                                      : RecordKind::Struct;
+    RecordKind kind = n->kind == ASTKind::ClassDecl ? RecordKind::Class : RecordKind::Struct;
     std::string tag = tagFromLabel(n->label);
     int scopeId = declScopeForTags();
     auto &tags = st.scope(scopeId).tags;
@@ -1441,12 +1412,6 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
         if (!prev->record) {
             error(n.get(), "'" + tag + "' redeclared as a different kind of tag (previously an enum at line " +
                                displayLine(prev->line) + ")",
-                  "redefinition");
-            return;
-        }
-        if ((kind == RecordKind::Union) != (prev->record->kind == RecordKind::Union)) {
-            error(n.get(), "'" + tag + "' redeclared as a different kind of tag (previously a " +
-                               recordKindName(prev->record->kind) + " at line " + displayLine(prev->line) + ")",
                   "redefinition");
             return;
         }
@@ -1551,14 +1516,6 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
         if (!m->access.empty()) {
             a = m->access == "public" ? Access::Public : m->access == "protected" ? Access::Protected : Access::Private;
         }
-        if (kind == RecordKind::Union &&
-            (m->kind == ASTKind::FunctionDecl || m->kind == ASTKind::FunctionDef || m->kind == ASTKind::ConstructorDef ||
-             m->kind == ASTKind::FriendDecl)) {
-            /* plain unions (D42): data members only */
-            error(m.get(), "union '" + tag + "' cannot have member functions, constructors or friends: unions hold data only",
-                  "union");
-            return;
-        }
         switch (m->kind) {
             case ASTKind::DeclGroup:
                 for (const auto &c : m->children) memberItem(c, a, false);
@@ -1579,16 +1536,6 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 }
                 SymbolPtr f = variable(m, DeclCtx::Member);
                 if (!f) return;
-                if (kind == RecordKind::Union) {
-                    std::string why = f->storage == Storage::Static ? "cannot be static"
-                                      : isReference(f->type)       ? "cannot be a reference"
-                                      : hasConstructor(f->type)    ? "has a class type with a constructor"
-                                                                   : "";
-                    if (!why.empty()) {
-                        error(line, col, "member '" + te.name + "' of union '" + tag + "' " + why, "union");
-                        return;
-                    }
-                }
                 f->ownerRecord = rec.get();
                 f->access = a;
                 rec->fields.push_back(f);
@@ -1672,17 +1619,11 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
             }
             case ASTKind::StructDecl:
             case ASTKind::ClassDecl:
-            case ASTKind::UnionDecl:
                 if (isCxxClass(m) || (kind == RecordKind::Class && !isAnonymousTag(tagFromLabel(m->label)))) {
                     /* a class inside a class (D35); C's nested data structs and unnamed members stay */
-                    error(m.get(), "nested " + std::string(m->kind == ASTKind::ClassDecl ? "class" : m->kind == ASTKind::UnionDecl ? "union" : "struct") + " '" +
+                    error(m.get(), "nested " + std::string(m->kind == ASTKind::ClassDecl ? "class" : "struct") + " '" +
                                        tagFromLabel(m->label) + "' is not supported: define it outside '" + tag + "'",
                           "nested-class");
-                    break;
-                }
-                if (bare && m->kind == ASTKind::UnionDecl && isAnonymousTag(tagFromLabel(m->label))) {
-                    /* plain unions only (D42): `union { int i; float f; };` as a member */
-                    error(m.get(), "anonymous unions are not supported: give the union member a name", "anonymous-union");
                     break;
                 }
                 recordDefinition(m);

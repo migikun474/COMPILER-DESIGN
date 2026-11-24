@@ -1,6 +1,6 @@
 /* test29 -- the features dropped before the back end was built: file
    manipulation, lambdas, function pointers (enum and union were dropped
-   too, and came back with D42), and new/delete/register/volatile, dropped
+   too; enum came back with D42, union was removed again with D50), and new/delete/register/volatile, dropped
    later. Their keywords are no longer reserved and their grammar rules
    are gone, so each construct below is an ordinary syntax error. One per
    top-level declaration or function, each followed by a resync anchor

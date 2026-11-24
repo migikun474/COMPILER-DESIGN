@@ -222,7 +222,7 @@ const Symbol *lookupTypeSymbol(const std::string &name) {
         for (auto s = found->second.rbegin(); s != found->second.rend(); ++s) {
             switch (s->kind) {
                 case SymKind::TYPEDEF_NAME: case SymKind::STRUCT_TAG: case SymKind::CLASS_TAG:
-                case SymKind::UNION_TAG: case SymKind::ENUM_TAG:
+                case SymKind::ENUM_TAG:
                     return &*s;
                 default:
                     break;
@@ -297,7 +297,7 @@ std::string categoryForTypeName(const Symbol *s) {
     if (!s) return "TYPEDEF";
     switch (s->kind) {
         case SymKind::TYPEDEF_NAME: return "TYPEDEF";
-        default: return s->typeStr; /* CLASS / STRUCT / UNION / ENUM tags */
+        default: return s->typeStr; /* CLASS / STRUCT / ENUM tags */
     }
 }
 
@@ -308,7 +308,6 @@ std::string symKindName(SymKind k) {
         case SymKind::PARAMETER: return "parameter";
         case SymKind::STRUCT_TAG: return "struct_tag";
         case SymKind::CLASS_TAG: return "class_tag";
-        case SymKind::UNION_TAG: return "union_tag";
         case SymKind::ENUM_TAG: return "enum_tag";
         case SymKind::ENUM_CONST: return "enum_constant";
         case SymKind::TYPEDEF_NAME: return "typedef";
@@ -513,7 +512,7 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
     std::map<std::string, int> n;
     for (const auto &p : te.specParts) n[p]++;
     auto c = [&](const char *k) { return n.count(k) ? n[k] : 0; };
-    if (c("STRUCT") || c("CLASS") || c("UNION")) {
+    if (c("STRUCT") || c("CLASS")) {
         auto r = std::make_shared<RecordInfo>();
         r->tag = te.tagName;
         r->typedefName = anonymousTagName(te.tagName);

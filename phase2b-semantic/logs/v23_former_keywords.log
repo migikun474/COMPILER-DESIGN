@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v23_former_keywords.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v23_former_keywords.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v23_former_keywords.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v23_former_keywords.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -87,26 +87,26 @@ Program "translation_unit"
 === Semantic Symbol Table ===
 Name               Kind           Type                       Storage  Scope                          Line  Size  Uses  Unique Name          Mangled Name             Notes
 ----               ----           ----                       -------  -----                          ----  ----  ----  -----------          ------------             -----
-FILE               struct_tag     struct FILE                -        global                         6     -     0     FILE                 -                        size 4
-FILE::fd           field          int                        member   global > struct FILE           6     4     2     FILE::fd             -                        public, offset 0
-fopen              function       int (int)                  -        global                         8     -     1     _Z5fopeni            _Z5fopeni                defined
-mode               parameter      int                        param    global > fopen()               8     4     1     mode.1               -                        
-fclose             function       int (struct FILE *)        -        global                         9     -     1     _Z6fcloseP4FILE      _Z6fcloseP4FILE          defined
-f                  parameter      struct FILE *              param    global > fclose()              9     4     1     f.2                  -                        
-feof               function       int (int, int)             -        global                         10    -     1     _Z4feofii            _Z4feofii                defined
-at                 parameter      int                        param    global > feof()                10    4     1     at.3                 -                        
-size               parameter      int                        param    global > feof()                10    4     1     size.4               -                        
-main               function       int (void)                 -        global                         12    -     0     main                 main                     defined
-lambda             variable       int                        local    global > main()                13    4     1     lambda.5             -                        
-closure            variable       int                        local    global > main()                14    4     1     closure.6            -                        
-mutable            variable       int                        local    global > main()                15    4     1     mutable.7            -                        
-fread              variable       int                        local    global > main()                16    4     1     fread.8              -                        
-fwrite             variable       int                        local    global > main()                16    4     1     fwrite.9             -                        
-fgets              variable       int                        local    global > main()                16    4     2     fgets.10             -                        
-fputs              variable       int                        local    global > main()                16    4     1     fputs.11             -                        
-fprintf            variable       int                        local    global > main()                16    4     1     fprintf.12           -                        
-fscanf             variable       int                        local    global > main()                16    4     1     fscanf.13            -                        
-file               variable       struct FILE                local    global > main()                17    4     2     file.14              -                        
+FILE               struct_tag     struct FILE                -        global                         7     -     0     FILE                 -                        size 4
+FILE::fd           field          int                        member   global > struct FILE           7     4     2     FILE::fd             -                        public, offset 0
+fopen              function       int (int)                  -        global                         9     -     1     _Z5fopeni            _Z5fopeni                defined
+mode               parameter      int                        param    global > fopen()               9     4     1     mode.1               -                        
+fclose             function       int (struct FILE *)        -        global                         10    -     1     _Z6fcloseP4FILE      _Z6fcloseP4FILE          defined
+f                  parameter      struct FILE *              param    global > fclose()              10    4     1     f.2                  -                        
+feof               function       int (int, int)             -        global                         11    -     1     _Z4feofii            _Z4feofii                defined
+at                 parameter      int                        param    global > feof()                11    4     1     at.3                 -                        
+size               parameter      int                        param    global > feof()                11    4     1     size.4               -                        
+main               function       int (void)                 -        global                         13    -     0     main                 main                     defined
+lambda             variable       int                        local    global > main()                14    4     1     lambda.5             -                        
+closure            variable       int                        local    global > main()                15    4     1     closure.6            -                        
+mutable            variable       int                        local    global > main()                16    4     1     mutable.7            -                        
+fread              variable       int                        local    global > main()                17    4     1     fread.8              -                        
+fwrite             variable       int                        local    global > main()                17    4     1     fwrite.9             -                        
+fgets              variable       int                        local    global > main()                17    4     2     fgets.10             -                        
+fputs              variable       int                        local    global > main()                17    4     1     fputs.11             -                        
+fprintf            variable       int                        local    global > main()                17    4     1     fprintf.12           -                        
+fscanf             variable       int                        local    global > main()                17    4     1     fscanf.13            -                        
+file               variable       struct FILE                local    global > main()                18    4     2     file.14              -                        
 
 === Record Layouts (MIPS32) ===
 struct FILE: size 4, align 4

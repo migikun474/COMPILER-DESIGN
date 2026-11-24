@@ -151,7 +151,7 @@ a type or an overload.
 | `if`, `while`, `for`, `do`, `until`, `?:`, `&&`, `\|\|`, `!` | jumping code with backpatching |
 | `switch` | subject in a temporary, body, then a chain of `if t == v goto Lcase` and a `goto` to the default |
 | `break`, `continue`, `goto` | `goto` |
-| arrays, `struct` / `union` fields | `x = a[offset]`, offset from the slides' formula or the field's layout offset (always 0 in a union) |
+| arrays, `struct` fields | `x = a[offset]`, offset from the slides' formula or the field's layout offset |
 | enums | an enum value is an `int`; an enumerator is an integer constant operand (it has no storage) |
 | pointers, `p->f`, `p[i]` | `ptr+` and `*` |
 | references | hold an address: `r = &x`, a use is `*r` |
@@ -237,7 +237,7 @@ the output of the same source compiled with gcc/g++.
 | `t03_booleans` | the slides' `a < b \|\| c < d && e < f`, comparisons and `!` as values, booleans stored and summed, `&&`/`\|\|` in loop conditions, `bool` |
 | `t04_arrays` | 1-D to 3-D arrays, partial and designated initializers, zeroed static data, `i[a]`, array parameters (1-D and 2-D), strings, `sizeof` of an array (plain C: expected output from gcc) |
 | `t05_pointers` | two and three levels, arithmetic and differences, `void *`, pointer to an array, array of pointers, writing through a pointer to a pointer |
-| `t06_structs` | nesting, copies, by-value parameters and results, arrays of structs, array members, anonymous members, padding, a union read through another member |
+| `t06_structs` | nesting, copies, by-value parameters and results, arrays of structs, array members, anonymous members, padding |
 | `t07_functions` | recursion, mutual recursion, overloading, references (to a pointer, returned, `const T &` to another type), varargs with a `va_list` passed on, `static` locals, tail recursion |
 | `t08_classes` | construction order (base, members, body), a static member, operators, arrays of objects, objects inside objects, a hidden base function called through `Base::`, `this`, a friend, a global object built before `main`, block copies |
 | `t09_memory` | `malloc`/`calloc`/`realloc`/`free`, a freed block reused, a linked list built, reversed and freed, rows from `malloc`, a long malloc/free loop |
@@ -256,7 +256,7 @@ the output of the same source compiled with gcc/g++.
 | `t33_brace_elision` | `struct { int a[2]; int b; } s = {1, 2, 3}` and friends, for globals (static data) and locals |
 | `t34_float_formats` | `printf` `%e` `%E` `%g` `%G` next to `%f`: precision, width, flags, rounding into the next power of ten, zero, negatives, where `%g` changes style |
 | `t35_loop_shapes` | `break`, `continue`, a `switch` inside a `while`, `do`-`while`, nested `for` (the program that hung global common subexpressions before D41; input in `t35_loop_shapes.in`) |
-| `t36_enums_unions` | enums (switch, overloading, casts into an enum, `?:`) and unions read through another member than the one written, in a block, across blocks and calls, in arrays and by value, with 8-byte members (D42) |
+| `t36_enums` | enums with C++ rules: auto-numbered and set enumerators, a typedef'd unnamed enum, an enum in a struct and as an array size, `switch`, overloading on an enum, casts into an enum, `?:` keeping the enum type, an anonymous enum for constants |
 | `t38_free_list` | the heap reuses freed memory (D45): the same block back after `free`, a 50,000-iteration malloc/free loop in constant space, a list freed and rebuilt, `calloc` of a reused dirty block, `realloc` growing and shrinking, `free(0)` |
 | `t39_printf_pointers` | `printf("%p")`: `0x` and lowercase hex, `(nil)` for a null pointer, width and `-` over the whole text, pointer arithmetic shown through `%p`; the pointers are made from fixed numbers so g++, the interpreter and SPIM print the same |
 | `t40_aliasing` | small: the optimizer must not reuse a value changed through a pointer, through a second pointer, through another array index, by a call to a global or through an address passed to a call |

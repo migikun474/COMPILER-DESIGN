@@ -686,7 +686,7 @@ static int emitShared(TokenType t) {
    `Dog::Dog(...)`, `~Dog()`, `struct S (...)`, `unsigned int (x)` */
 static bool typePositionAfter(int tok) {
     switch (tok) {
-        case SCOPE_RES: case '~': case STRUCT: case CLASS: case UNION: case ENUM: case OPERATOR:
+        case SCOPE_RES: case '~': case STRUCT: case CLASS: case ENUM: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
         case VA_LIST:
@@ -711,11 +711,14 @@ static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns n
 
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
-    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT)) {
-        /* still reserved so the message is clear, but no longer part of the language (D35) */
+    if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT ||
+                           kw.value() == TokenType::UNION)) {
+        /* still reserved so the message is clear, but no longer part of the language (D35, D50) */
+        const char *missing = kw.value() == TokenType::VIRTUAL ? "virtual functions"
+                              : kw.value() == TokenType::UNION ? "unions"
+                                                                : "converting constructors";
         reportDiagnostic(yylineno, g_tokStartCol, yytext,
-                         std::string("'") + yytext + "' is not supported: this language has no " +
-                             (kw.value() == TokenType::VIRTUAL ? "virtual functions" : "converting constructors"),
+                         std::string("'") + yytext + "' is not supported: this language has no " + missing,
                          "Lexical error");
         return SKIP_TOKEN;
     }
@@ -740,9 +743,9 @@ static int identifierOrKeyword(bool beforeParen) {
     }
     return emit(IDENTIFIER, "IDENTIFIER");
 }
-#line 744 "build/lex.yy.cpp"
+#line 747 "build/lex.yy.cpp"
 
-#line 746 "build/lex.yy.cpp"
+#line 749 "build/lex.yy.cpp"
 
 #define INITIAL 0
 #define STRSTATE 1
@@ -969,10 +972,10 @@ YY_DECL
 		}
 
 	{
-#line 139 "src/scanner.l"
+#line 142 "src/scanner.l"
 
 
-#line 976 "build/lex.yy.cpp"
+#line 979 "build/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1065,37 +1068,37 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 141 "src/scanner.l"
+#line 144 "src/scanner.l"
 { litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(COMMENTSTATE); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 142 "src/scanner.l"
+#line 145 "src/scanner.l"
 { BEGIN(INITIAL); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 143 "src/scanner.l"
+#line 146 "src/scanner.l"
 { g_col = 1; }
 	YY_BREAK
 case YY_STATE_EOF(COMMENTSTATE):
-#line 144 "src/scanner.l"
+#line 147 "src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, "/*", "Unterminated block comment", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 145 "src/scanner.l"
+#line 148 "src/scanner.l"
 { }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 147 "src/scanner.l"
+#line 150 "src/scanner.l"
 { }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 149 "src/scanner.l"
+#line 152 "src/scanner.l"
 {
     /* there is no preprocessor (D34): a directive is an error, and the
        rest of its line is skipped so it does not cascade into syntax errors */
@@ -1111,107 +1114,107 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 162 "src/scanner.l"
+#line 165 "src/scanner.l"
 { int t = identifierOrKeyword(/*beforeParen=*/true); if (t != SKIP_TOKEN) return t; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 163 "src/scanner.l"
+#line 166 "src/scanner.l"
 { int t = identifierOrKeyword(/*beforeParen=*/false); if (t != SKIP_TOKEN) return t; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 165 "src/scanner.l"
+#line 168 "src/scanner.l"
 { strbuf = "\""; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(STRSTATE); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 166 "src/scanner.l"
+#line 169 "src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 167 "src/scanner.l"
+#line 170 "src/scanner.l"
 { strbuf += "\""; BEGIN(INITIAL); return emitText(STRING_LITERAL, strbuf, "STRING_LITERAL"); }
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 168 "src/scanner.l"
+#line 171 "src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(STRSTATE):
-#line 169 "src/scanner.l"
+#line 172 "src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated string literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 170 "src/scanner.l"
+#line 173 "src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 172 "src/scanner.l"
+#line 175 "src/scanner.l"
 { strbuf = "'"; litStartLine = yylineno; litStartCol = g_tokStartCol; BEGIN(CHRSTATE); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 173 "src/scanner.l"
+#line 176 "src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 174 "src/scanner.l"
+#line 177 "src/scanner.l"
 { strbuf += "'"; BEGIN(INITIAL); return emitText(CHAR_LITERAL, strbuf, "CHAR_LITERAL"); }
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 175 "src/scanner.l"
+#line 178 "src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyless(0); }
 	YY_BREAK
 case YY_STATE_EOF(CHRSTATE):
-#line 176 "src/scanner.l"
+#line 179 "src/scanner.l"
 { reportDiagnostic(litStartLine, litStartCol, strbuf, "Unterminated character literal", "Lexical error"); BEGIN(INITIAL); yyterminate(); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 177 "src/scanner.l"
+#line 180 "src/scanner.l"
 { strbuf += yytext; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 179 "src/scanner.l"
+#line 182 "src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 180 "src/scanner.l"
+#line 183 "src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 181 "src/scanner.l"
+#line 184 "src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 182 "src/scanner.l"
+#line 185 "src/scanner.l"
 { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 183 "src/scanner.l"
+#line 186 "src/scanner.l"
 { return emit(FLOAT_LITERAL, "FLOAT_LITERAL"); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 184 "src/scanner.l"
+#line 187 "src/scanner.l"
 { return emit(INT_LITERAL, "INT_LITERAL"); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 186 "src/scanner.l"
+#line 189 "src/scanner.l"
 {
     /* `(*)` / `(&)` right after a type: a nameless declarator, as in
        `sizeof(int (*)[3])`, never the argument list of `int(...)` */
@@ -1222,54 +1225,54 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 26:
-#line 196 "src/scanner.l"
-case 27:
-#line 197 "src/scanner.l"
-case 28:
-#line 198 "src/scanner.l"
-case 29:
 #line 199 "src/scanner.l"
-case 30:
+case 27:
 #line 200 "src/scanner.l"
-case 31:
+case 28:
 #line 201 "src/scanner.l"
-case 32:
+case 29:
 #line 202 "src/scanner.l"
-case 33:
+case 30:
 #line 203 "src/scanner.l"
-case 34:
+case 31:
 #line 204 "src/scanner.l"
-case 35:
+case 32:
 #line 205 "src/scanner.l"
-case 36:
+case 33:
 #line 206 "src/scanner.l"
-case 37:
+case 34:
 #line 207 "src/scanner.l"
-case 38:
+case 35:
 #line 208 "src/scanner.l"
-case 39:
+case 36:
 #line 209 "src/scanner.l"
-case 40:
+case 37:
 #line 210 "src/scanner.l"
-case 41:
+case 38:
 #line 211 "src/scanner.l"
-case 42:
+case 39:
 #line 212 "src/scanner.l"
-case 43:
+case 40:
 #line 213 "src/scanner.l"
-case 44:
+case 41:
 #line 214 "src/scanner.l"
-case 45:
+case 42:
 #line 215 "src/scanner.l"
-case 46:
+case 43:
 #line 216 "src/scanner.l"
-case 47:
+case 44:
 #line 217 "src/scanner.l"
-case 48:
+case 45:
 #line 218 "src/scanner.l"
+case 46:
+#line 219 "src/scanner.l"
+case 47:
+#line 220 "src/scanner.l"
+case 48:
+#line 221 "src/scanner.l"
 case 49:
 YY_RULE_SETUP
-#line 218 "src/scanner.l"
+#line 221 "src/scanner.l"
 {
     auto op = operator_token(yytext);
     if (op.has_value()) {
@@ -1280,26 +1283,26 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 226 "src/scanner.l"
+#line 229 "src/scanner.l"
 { }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 227 "src/scanner.l"
+#line 230 "src/scanner.l"
 { g_col = 1; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 229 "src/scanner.l"
+#line 232 "src/scanner.l"
 { reportDiagnostic(yylineno, g_tokStartCol, yytext, "Illegal character", "Lexical error"); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 231 "src/scanner.l"
+#line 234 "src/scanner.l"
 ECHO;
 	YY_BREAK
-#line 1303 "build/lex.yy.cpp"
+#line 1306 "build/lex.yy.cpp"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -2250,6 +2253,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 231 "src/scanner.l"
+#line 234 "src/scanner.l"
 
 

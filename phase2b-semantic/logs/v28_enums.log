@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/.worktrees/st/phase2b-semantic/test/valid/v28_enums_unions.c
+Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v28_enums.c
 
 No errors found.
 
@@ -31,24 +31,6 @@ Hi                             ENUM_CONSTANT
 }                              close_brace_op      
 Level                          TYPEDEF             
 ;                              semicolon_op        
-union                          union               
-Value                          UNION               
-{                              open_brace_op       
-int                            int                 
-i                              INT                 
-;                              semicolon_op        
-float                          float               
-f                              FLOAT               
-;                              semicolon_op        
-unsigned                       unsigned            
-char                           char                
-b                              UNSIGNED_CHAR_ARRAY 
-[                              open_bracket_op     
-4                              INT_LITERAL         
-]                              close_bracket_op    
-;                              semicolon_op        
-}                              close_brace_op      
-;                              semicolon_op        
 struct                         struct              
 Tagged                         STRUCT              
 {                              open_brace_op       
@@ -56,9 +38,8 @@ enum                           enum
 Color                          ENUM                
 kind                           ENUM                
 ;                              semicolon_op        
-union                          union               
-Value                          UNION               
-v                              UNION               
+int                            int                 
+value                          INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 ;                              semicolon_op        
@@ -93,20 +74,6 @@ l                              ENUM
 {                              open_brace_op       
 return                         return              
 3                              INT_LITERAL         
-;                              semicolon_op        
-}                              close_brace_op      
-int                            int                 
-bits                           PROCEDURE           
-(                              open_paren_op       
-union                          union               
-Value                          UNION               
-v                              UNION               
-)                              close_paren_op      
-{                              open_brace_op       
-return                         return              
-v                              UNION               
-.                              dot_op              
-i                              INT                 
 ;                              semicolon_op        
 }                              close_brace_op      
 const                          const               
@@ -214,25 +181,6 @@ size                           ENUM
 =                              assign_op           
 Large                          ENUM_CONSTANT       
 ;                              semicolon_op        
-union                          union               
-Value                          UNION               
-v                              UNION               
-=                              assign_op           
-{                              open_brace_op       
-.                              dot_op              
-f                              IDENTIFIER          
-=                              assign_op           
-1.0f                           FLOAT_LITERAL       
-}                              close_brace_op      
-;                              semicolon_op        
-union                          union               
-Value                          UNION               
-w                              UNION               
-=                              assign_op           
-{                              open_brace_op       
-7                              INT_LITERAL         
-}                              close_brace_op      
-;                              semicolon_op        
 struct                         struct              
 Tagged                         STRUCT              
 t                              STRUCT              
@@ -240,20 +188,8 @@ t                              STRUCT
 {                              open_brace_op       
 Green                          ENUM_CONSTANT       
 ,                              comma_op            
-{                              open_brace_op       
 42                             INT_LITERAL         
 }                              close_brace_op      
-}                              close_brace_op      
-;                              semicolon_op        
-v                              UNION               
-.                              dot_op              
-i                              INT                 
-=                              assign_op           
-v                              UNION               
-.                              dot_op              
-i                              INT                 
-+                              plus_op             
-1                              INT_LITERAL         
 ;                              semicolon_op        
 return                         return              
 n                              INT                 
@@ -273,16 +209,13 @@ show                           PROCEDURE
 5                              INT_LITERAL         
 )                              close_paren_op      
 +                              plus_op             
-bits                           PROCEDURE           
-(                              open_paren_op       
-w                              UNION               
-)                              close_paren_op      
+t                              STRUCT              
+.                              dot_op              
+kind                           ENUM                
 +                              plus_op             
 t                              STRUCT              
 .                              dot_op              
-v                              UNION               
-.                              dot_op              
-i                              INT                 
+value                          INT                 
 +                              plus_op             
 table                          INT_ARRAY           
 [                              open_bracket_op     
@@ -294,12 +227,6 @@ d                              ENUM
 e                              ENUM                
 +                              plus_op             
 size                           ENUM                
-+                              plus_op             
-sizeof                         sizeof              
-(                              open_paren_op       
-union                          union               
-Value                          UNION               
-)                              close_paren_op      
 ;                              semicolon_op        
 }                              close_brace_op      
 
@@ -311,17 +238,13 @@ Program "translation_unit"
 |   |   `-- IntLiteral "5"
 |   `-- Enumerator "Blue"
 |-- DeclGroup
-|   |-- EnumDecl "(unnamed at 6:9)"
+|   |-- EnumDecl "(unnamed at 5:9)"
 |   |   |-- Enumerator "Lo"
 |   |   `-- Enumerator "Hi"
 |   `-- TypedefDecl "Level = ENUM"
-|-- UnionDecl "Value"
-|   |-- VarDecl "i : INT"
-|   |-- VarDecl "f : FLOAT"
-|   `-- VarDecl "b : UNSIGNED_CHAR_ARRAY"
 |-- StructDecl "Tagged"
 |   |-- VarDecl "kind : ENUM"
-|   `-- VarDecl "v : UNION"
+|   `-- VarDecl "value : INT"
 |-- FunctionDef "show : _Z4showi"
 |   |-- ParamDecl "x : INT"
 |   `-- CompoundStmt
@@ -337,12 +260,6 @@ Program "translation_unit"
 |   `-- CompoundStmt
 |       `-- ReturnStmt
 |           `-- IntLiteral "3"
-|-- FunctionDef "bits : _Z4bits5Value"
-|   |-- ParamDecl "v : UNION"
-|   `-- CompoundStmt
-|       `-- ReturnStmt
-|           `-- MemberExpr "i"
-|               `-- Identifier "v"
 |-- FunctionDef "name : _Z4name5Color"
 |   |-- ParamDecl "c : ENUM"
 |   `-- CompoundStmt
@@ -383,7 +300,7 @@ Program "translation_unit"
         |       |-- Identifier "c"
         |       `-- IntLiteral "1"
         |-- DeclGroup
-        |   |-- EnumDecl "(unnamed at 29:5)"
+        |   |-- EnumDecl "(unnamed at 26:5)"
         |   |   |-- Enumerator "Small"
         |   |   |   `-- BinaryExpr "<<"
         |   |   |       |-- IntLiteral "1"
@@ -394,26 +311,10 @@ Program "translation_unit"
         |   |           `-- IntLiteral "4"
         |   `-- VarDecl "size : ENUM"
         |       `-- Identifier "Large"
-        |-- VarDecl "v : UNION"
-        |   `-- InitializerList
-        |       `-- DesignatedInit ".f"
-        |           `-- FloatLiteral "1.0f"
-        |-- VarDecl "w : UNION"
-        |   `-- InitializerList
-        |       `-- IntLiteral "7"
         |-- VarDecl "t : STRUCT"
         |   `-- InitializerList
         |       |-- Identifier "Green"
-        |       `-- InitializerList
-        |           `-- IntLiteral "42"
-        |-- ExprStmt
-        |   `-- AssignExpr "="
-        |       |-- MemberExpr "i"
-        |       |   `-- Identifier "v"
-        |       `-- BinaryExpr "+"
-        |           |-- MemberExpr "i"
-        |           |   `-- Identifier "v"
-        |           `-- IntLiteral "1"
+        |       `-- IntLiteral "42"
         `-- ReturnStmt
             `-- BinaryExpr "+"
                 |-- BinaryExpr "+"
@@ -424,71 +325,59 @@ Program "translation_unit"
                 |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |-- BinaryExpr "+"
                 |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |-- BinaryExpr "+"
-                |   |   |   |   |   |   |   |   |   |-- Identifier "n"
-                |   |   |   |   |   |   |   |   |   `-- CallExpr "_Z4show5Color"
-                |   |   |   |   |   |   |   |   |       |-- Identifier "show"
-                |   |   |   |   |   |   |   |   |       `-- Identifier "c"
+                |   |   |   |   |   |   |   |   |-- Identifier "n"
                 |   |   |   |   |   |   |   |   `-- CallExpr "_Z4show5Color"
                 |   |   |   |   |   |   |   |       |-- Identifier "show"
-                |   |   |   |   |   |   |   |       `-- Identifier "l"
-                |   |   |   |   |   |   |   `-- CallExpr "_Z4showi"
+                |   |   |   |   |   |   |   |       `-- Identifier "c"
+                |   |   |   |   |   |   |   `-- CallExpr "_Z4show5Color"
                 |   |   |   |   |   |   |       |-- Identifier "show"
-                |   |   |   |   |   |   |       `-- IntLiteral "5"
-                |   |   |   |   |   |   `-- CallExpr
-                |   |   |   |   |   |       |-- Identifier "bits"
-                |   |   |   |   |   |       `-- Identifier "w"
-                |   |   |   |   |   `-- MemberExpr "i"
-                |   |   |   |   |       `-- MemberExpr "v"
-                |   |   |   |   |           `-- Identifier "t"
-                |   |   |   |   `-- IndexExpr
-                |   |   |   |       |-- Identifier "table"
-                |   |   |   |       `-- IntLiteral "0"
-                |   |   |   `-- Identifier "d"
-                |   |   `-- Identifier "e"
-                |   `-- Identifier "size"
-                `-- SizeofExpr "UNION"
+                |   |   |   |   |   |   |       `-- Identifier "l"
+                |   |   |   |   |   |   `-- CallExpr "_Z4showi"
+                |   |   |   |   |   |       |-- Identifier "show"
+                |   |   |   |   |   |       `-- IntLiteral "5"
+                |   |   |   |   |   `-- MemberExpr "kind"
+                |   |   |   |   |       `-- Identifier "t"
+                |   |   |   |   `-- MemberExpr "value"
+                |   |   |   |       `-- Identifier "t"
+                |   |   |   `-- IndexExpr
+                |   |   |       |-- Identifier "table"
+                |   |   |       `-- IntLiteral "0"
+                |   |   `-- Identifier "d"
+                |   `-- Identifier "e"
+                `-- Identifier "size"
 
 
 === Symbol Table ===
 Name                 Kind           Line   Scope                        Type             Qualifiers               Uses      Signature              Mangled Name
 ----                 ----           ----   -----                        ----             ----------               ----      ---------              ------------
-Color                enum_tag       5      global                       ENUM                                      0                                
-Red                  enum_constant  5      global                       ENUM_CONSTANT                             2                                
-Green                enum_constant  5      global                       ENUM_CONSTANT                             3                                
-Blue                 enum_constant  5      global                       ENUM_CONSTANT                             2                                
-(unnamed at 6:9)     enum_tag       6      global                       ENUM                                      0                                
-Lo                   enum_constant  6      global                       ENUM_CONSTANT                             0                                
-Hi                   enum_constant  6      global                       ENUM_CONSTANT                             1                                
-Level                typedef        6      global                       ENUM                                      0                                
-Value                union_tag      7      global                       UNION                                     0                                
-Value::i             union_member   7      global > union Value         INT                                       0                                
-Value::f             union_member   7      global > union Value         FLOAT                                     0                                
-Value::b             union_member   7      global > union Value         UNSIGNED_CHAR_ARRAY []                       0                                
-Tagged               struct_tag     8      global                       STRUCT                                    0                                
-Tagged::kind         struct_member  8      global > struct Tagged       ENUM                                      0                                
-Tagged::v            struct_member  8      global > struct Tagged       UNION                                     0                                
-show                 procedure      10     global                       PROCEDURE                                 1         INT (INT)              _Z4showi
-x                    parameter      10     global > show()              INT                                       0                                
-show                 procedure      11     global                       PROCEDURE                                 2         INT (ENUM)             _Z4show5Color
-c                    parameter      11     global > show()              ENUM                                      0                                
-show                 procedure      12     global                       PROCEDURE                                 0         INT (ENUM)             _Z4show5Level
-l                    parameter      12     global > show()              ENUM                                      0                                
-bits                 procedure      13     global                       PROCEDURE                                 1         INT (UNION)            _Z4bits5Value
-v                    parameter      13     global > bits()              UNION                                     1                                
-name                 procedure      14     global                       PROCEDURE        const *                  0         CHAR_POINTER (ENUM)    _Z4name5Color
-c                    parameter      14     global > name()              ENUM                                      1                                
-table                variable       21     global                       INT_ARRAY        []                       1                                
-main                 procedure      23     global                       PROCEDURE                                 0         INT ()                 main
-c                    variable       24     global > main()              ENUM                                      3                                
-d                    variable       25     global > main()              ENUM                                      1                                
-e                    variable       26     global > main()              ENUM                                      1                                
-l                    variable       27     global > main()              ENUM                                      1                                
-n                    variable       28     global > main()              INT                                       1                                
-(unnamed at 29:5)    enum_tag       29     global > main()              ENUM                                      0                                
-Small                enum_constant  29     global > main()              ENUM_CONSTANT                             1                                
-Large                enum_constant  29     global > main()              ENUM_CONSTANT                             1                                
-size                 variable       29     global > main()              ENUM                                      1                                
-v                    variable       30     global > main()              UNION                                     2                                
-w                    variable       31     global > main()              UNION                                     1                                
-t                    variable       32     global > main()              STRUCT                                    1                                
+Color                enum_tag       4      global                       ENUM                                      0                                
+Red                  enum_constant  4      global                       ENUM_CONSTANT                             2                                
+Green                enum_constant  4      global                       ENUM_CONSTANT                             3                                
+Blue                 enum_constant  4      global                       ENUM_CONSTANT                             2                                
+(unnamed at 5:9)     enum_tag       5      global                       ENUM                                      0                                
+Lo                   enum_constant  5      global                       ENUM_CONSTANT                             0                                
+Hi                   enum_constant  5      global                       ENUM_CONSTANT                             1                                
+Level                typedef        5      global                       ENUM                                      0                                
+Tagged               struct_tag     6      global                       STRUCT                                    0                                
+Tagged::kind         struct_member  6      global > struct Tagged       ENUM                                      0                                
+Tagged::value        struct_member  6      global > struct Tagged       INT                                       0                                
+show                 procedure      8      global                       PROCEDURE                                 1         INT (INT)              _Z4showi
+x                    parameter      8      global > show()              INT                                       0                                
+show                 procedure      9      global                       PROCEDURE                                 2         INT (ENUM)             _Z4show5Color
+c                    parameter      9      global > show()              ENUM                                      0                                
+show                 procedure      10     global                       PROCEDURE                                 0         INT (ENUM)             _Z4show5Level
+l                    parameter      10     global > show()              ENUM                                      0                                
+name                 procedure      11     global                       PROCEDURE        const *                  0         CHAR_POINTER (ENUM)    _Z4name5Color
+c                    parameter      11     global > name()              ENUM                                      1                                
+table                variable       18     global                       INT_ARRAY        []                       1                                
+main                 procedure      20     global                       PROCEDURE                                 0         INT ()                 main
+c                    variable       21     global > main()              ENUM                                      3                                
+d                    variable       22     global > main()              ENUM                                      1                                
+e                    variable       23     global > main()              ENUM                                      1                                
+l                    variable       24     global > main()              ENUM                                      1                                
+n                    variable       25     global > main()              INT                                       1                                
+(unnamed at 26:5)    enum_tag       26     global > main()              ENUM                                      0                                
+Small                enum_constant  26     global > main()              ENUM_CONSTANT                             1                                
+Large                enum_constant  26     global > main()              ENUM_CONSTANT                             1                                
+size                 variable       26     global > main()              ENUM                                      1                                
+t                    variable       27     global > main()              STRUCT                                    2                                
