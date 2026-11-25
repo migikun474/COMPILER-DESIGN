@@ -4,7 +4,7 @@
 
    Source file   : test/t02_control_flow.c
    Optimization  : no optimization
-   Result        : Three address code generated: 2 function(s), 158 instruction(s)
+   Result        : Three address code generated: 2 function(s), 204 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -57,7 +57,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 12 parameter(s)/local(s), 28 temporaries, frame 160 bytes
+ Symbol table: 18 parameter(s)/local(s), 36 temporaries, frame 216 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -65,44 +65,58 @@
    i                local   int                             4       4
    k.4              local   int                             4       8
    u                local   int                             4      12
-   out              local   int                             4      16
-   r                local   int                             4      20
-   c                local   int                             4      24
-   hit              local   int                             4      28
-   text             local   const char *                    4      32
-   state            local   int                             4      36
-   words            local   int                             4      40
-   k.13             local   int                             4      44
-   t1               temp    int                             4      48
-   t2               temp    int                             4      52
-   t3               temp    int                             4      56
-   t4               temp    int                             4      60
-   t5               temp    int                             4      64
-   t6               temp    int                             4      68
-   t7               temp    int                             4      72
-   t8               temp    int                             4      76
-   t9               temp    int                             4      80
-   t10              temp    int                             4      84
-   t11              temp    int                             4      88
-   t12              temp    int                             4      92
-   t13              temp    int                             4      96
-   t14              temp    int                             4     100
-   t15              temp    int                             4     104
-   t16              temp    int                             4     108
-   t17              temp    int                             4     112
-   t18              temp    int                             4     116
-   t19              temp    int                             4     120
-   t20              temp    int                             4     124
-   t21              temp    int                             4     128
-   t22              temp    const char *                    4     132
-   t23              temp    char                            1     136
-   t24              temp    const char *                    4     140
-   t25              temp    char                            1     144
-   t26              temp    int                             4     148
-   t27              temp    int                             4     152
-   t28              temp    int                             4     156
+   never            local   int                             4      16
+   steps            local   int                             4      20
+   odd              local   int                             4      24
+   cells            local   int                             4      28
+   rows             local   int                             4      32
+   c.11             local   int                             4      36
+   out              local   int                             4      40
+   r                local   int                             4      44
+   c.14             local   int                             4      48
+   hit              local   int                             4      52
+   text             local   const char *                    4      56
+   state            local   int                             4      60
+   words            local   int                             4      64
+   k.19             local   int                             4      68
+   t1               temp    int                             4      72
+   t2               temp    int                             4      76
+   t3               temp    int                             4      80
+   t4               temp    int                             4      84
+   t5               temp    int                             4      88
+   t6               temp    int                             4      92
+   t7               temp    int                             4      96
+   t8               temp    int                             4     100
+   t9               temp    int                             4     104
+   t10              temp    int                             4     108
+   t11              temp    int                             4     112
+   t12              temp    int                             4     116
+   t13              temp    int                             4     120
+   t14              temp    int                             4     124
+   t15              temp    int                             4     128
+   t16              temp    int                             4     132
+   t17              temp    int                             4     136
+   t18              temp    int                             4     140
+   t19              temp    int                             4     144
+   t20              temp    int                             4     148
+   t21              temp    int                             4     152
+   t22              temp    int                             4     156
+   t23              temp    int                             4     160
+   t24              temp    int                             4     164
+   t25              temp    int                             4     168
+   t26              temp    int                             4     172
+   t27              temp    int                             4     176
+   t28              temp    int                             4     180
+   t29              temp    int                             4     184
+   t30              temp    const char *                    4     188
+   t31              temp    char                            1     192
+   t32              temp    const char *                    4     196
+   t33              temp    char                            1     200
+   t34              temp    int                             4     204
+   t35              temp    int                             4     208
+   t36              temp    int                             4     212
 
- Code: 134 instruction(s)
+ Code: 180 instruction(s)
 
     124        s = 0
     125        i = 0
@@ -142,102 +156,148 @@
     159        param s
     160        param u
     161        call printf, 3
-    162        out = 0
-    163        i = 0
-    164  L23:  if i int< 6 goto L24
-    165        goto L32
-    166  L24:  t9 = i
-    167        goto L29
-    168  L25:  t10 = out int+ 1
-    169        out = t10
-    170  L26:  t11 = out int+ 10
-    171        out = t11
-    172        goto L30
-    173  L27:  t12 = out int+ 100
-    174        out = t12
-    175  L28:  t13 = out int+ 1000
-    176        out = t13
-    177        goto L31
-    178        goto L30
-    179  L29:  if t9 int== 0 goto L25
-    180        if t9 int== 1 goto L25
-    181        if t9 int== 4 goto L27
-    182        if t9 int== 5 goto L28
-    183        goto L26
-    184  L30:  t14 = out int+ 5
-    185        out = t14
-    186  L31:  t15 = i int+ 1
-    187        i = t15
-    188        goto L23
-    189  L32:  param "%d\n"
-    190        param out
-    191        call printf, 2
-    192        c = 0
-    193        hit = 0
-    194        r = 0
-    195  L33:  if r int< 4 goto L34
-    196        goto L45
-    197  L34:  c = 0
-    198  L35:  if c int< 4 goto L36
-    199        goto L44
-    200  L36:  if c int> r goto L37
-    201        goto L38
-    202  L37:  goto L44
-    203  L38:  t16 = r int+ c
-    204        t17 = t16 int% 2
-    205        if t17 int!= 0 goto L39
-    206        goto L40
-    207  L39:  goto L43
-    208  L40:  t18 = r int* c
-    209        if t18 int== 4 goto L41
-    210        goto L42
-    211  L41:  goto L45
-    212  L42:  t19 = hit int+ 1
-    213        hit = t19
-    214  L43:  t20 = c int+ 1
-    215        c = t20
-    216        goto L35
-    217  L44:  t21 = r int+ 1
-    218        r = t21
-    219        goto L33
-    220  L45:  param "%d %d %d\n"
-    221        param hit
-    222        param r
-    223        param c
-    224        call printf, 4
-    225        text = "ab 12 x9;"
-    226        state = 0
-    227        words = 0
-    228        i = 0
-    229  L46:  t22 = text ptr+ i
-    230        t23 = *t22
-    231        if t23 char!= 0 goto L47
-    232        goto L54
-    233  L47:  t24 = text ptr+ i
-    234        t25 = *t24
-    235        param t25
-    236        t26 = call kind(char), 1
-    237        k.13 = t26
-    238        if state int== 0 goto L48
-    239        goto L50
-    240  L48:  if k.13 int!= 0 goto L49
-    241        goto L50
-    242  L49:  t27 = words int+ 1
-    243        words = t27
-    244        state = 1
-    245        goto L53
-    246  L50:  if state int== 1 goto L51
-    247        goto L53
-    248  L51:  if k.13 int!= 0 goto L53
-    249        goto L52
-    250  L52:  state = 0
-    251  L53:  t28 = i int+ 1
-    252        i = t28
-    253        goto L46
-    254  L54:  param "%d\n"
-    255        param words
-    256        call printf, 2
-    257        return 0
+    162        never = 0
+    163        steps = 0
+    164        odd = 0
+    165        cells = 0
+    166        rows = 0
+    167  L23:  goto L24
+    168        t9 = never int+ 1
+    169        never = t9
+    170        goto L23
+    171  L24:  if steps int== 10 goto L30
+    172        goto L25
+    173  L25:  t10 = steps int+ 1
+    174        steps = t10
+    175        t11 = steps int% 2
+    176        if t11 int== 0 goto L26
+    177        goto L27
+    178  L26:  goto L24
+    179  L27:  if steps int> 7 goto L28
+    180        goto L29
+    181  L28:  goto L30
+    182  L29:  t12 = odd int+ steps
+    183        odd = t12
+    184        goto L24
+    185  L30:  if rows int>= 3 goto L36
+    186        goto L31
+    187  L31:  if cells int> 4 goto L36
+    188        goto L32
+    189  L32:  c.11 = 0
+    190  L33:  t13 = rows int+ 1
+    191        if c.11 int== t13 goto L35
+    192        goto L34
+    193  L34:  t14 = cells int+ 1
+    194        cells = t14
+    195        t15 = c.11 int+ 1
+    196        c.11 = t15
+    197        goto L33
+    198  L35:  t16 = rows int+ 1
+    199        rows = t16
+    200        goto L30
+    201  L36:  param "%d %d %d %d %d\n"
+    202        param never
+    203        param steps
+    204        param odd
+    205        param rows
+    206        param cells
+    207        call printf, 6
+    208        out = 0
+    209        i = 0
+    210  L37:  if i int< 6 goto L38
+    211        goto L46
+    212  L38:  t17 = i
+    213        goto L43
+    214  L39:  t18 = out int+ 1
+    215        out = t18
+    216  L40:  t19 = out int+ 10
+    217        out = t19
+    218        goto L44
+    219  L41:  t20 = out int+ 100
+    220        out = t20
+    221  L42:  t21 = out int+ 1000
+    222        out = t21
+    223        goto L45
+    224        goto L44
+    225  L43:  if t17 int== 0 goto L39
+    226        if t17 int== 1 goto L39
+    227        if t17 int== 4 goto L41
+    228        if t17 int== 5 goto L42
+    229        goto L40
+    230  L44:  t22 = out int+ 5
+    231        out = t22
+    232  L45:  t23 = i int+ 1
+    233        i = t23
+    234        goto L37
+    235  L46:  param "%d\n"
+    236        param out
+    237        call printf, 2
+    238        c.14 = 0
+    239        hit = 0
+    240        r = 0
+    241  L47:  if r int< 4 goto L48
+    242        goto L59
+    243  L48:  c.14 = 0
+    244  L49:  if c.14 int< 4 goto L50
+    245        goto L58
+    246  L50:  if c.14 int> r goto L51
+    247        goto L52
+    248  L51:  goto L58
+    249  L52:  t24 = r int+ c.14
+    250        t25 = t24 int% 2
+    251        if t25 int!= 0 goto L53
+    252        goto L54
+    253  L53:  goto L57
+    254  L54:  t26 = r int* c.14
+    255        if t26 int== 4 goto L55
+    256        goto L56
+    257  L55:  goto L59
+    258  L56:  t27 = hit int+ 1
+    259        hit = t27
+    260  L57:  t28 = c.14 int+ 1
+    261        c.14 = t28
+    262        goto L49
+    263  L58:  t29 = r int+ 1
+    264        r = t29
+    265        goto L47
+    266  L59:  param "%d %d %d\n"
+    267        param hit
+    268        param r
+    269        param c.14
+    270        call printf, 4
+    271        text = "ab 12 x9;"
+    272        state = 0
+    273        words = 0
+    274        i = 0
+    275  L60:  t30 = text ptr+ i
+    276        t31 = *t30
+    277        if t31 char!= 0 goto L61
+    278        goto L68
+    279  L61:  t32 = text ptr+ i
+    280        t33 = *t32
+    281        param t33
+    282        t34 = call kind(char), 1
+    283        k.19 = t34
+    284        if state int== 0 goto L62
+    285        goto L64
+    286  L62:  if k.19 int!= 0 goto L63
+    287        goto L64
+    288  L63:  t35 = words int+ 1
+    289        words = t35
+    290        state = 1
+    291        goto L67
+    292  L64:  if state int== 1 goto L65
+    293        goto L67
+    294  L65:  if k.19 int!= 0 goto L67
+    295        goto L66
+    296  L66:  state = 0
+    297  L67:  t36 = i int+ 1
+    298        i = t36
+    299        goto L60
+    300  L68:  param "%d\n"
+    301        param words
+    302        call printf, 2
+    303        return 0
 
 
 ----------------------------------------------------------------------------
@@ -247,38 +307,48 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   kind               function      int (char)                 -           4    -    1  _Z4kindc; defined
-   main               function      int (void)                 -           9    -    0  defined
+   kind               function      int (char)                 -           6    -    1  _Z4kindc; defined
+   main               function      int (void)                 -          11    -    0  defined
 
  scope: global > kind()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  parameter     char                       param       4    1    6  c.1
+   c                  parameter     char                       param       6    1    6  c.1
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   done               label         -                          -          37    -    1  main.done
-   s                  variable      int                        local      10    4    5  s.2
-   i                  variable      int                        local      10    4   13  i.3
-   u                  variable      int                        local      15    4    3  u.5
-   out                variable      int                        local      18    4    6  out.6
-   r                  variable      int                        local      29    4    7  r.7
-   c                  variable      int                        local      29    4    7  c.8
-   hit                variable      int                        local      29    4    2  hit.9
-   text               variable      const char *               local      39    4    2  text.10
-   state              variable      int                        local      40    4    4  state.11
-   words              variable      int                        local      40    4    2  words.12
+   done               label         -                          -          53    -    1  main.done
+   s                  variable      int                        local      12    4    5  s.2
+   i                  variable      int                        local      12    4   13  i.3
+   u                  variable      int                        local      17    4    3  u.5
+   never              variable      int                        local      20    4    2  never.6
+   steps              variable      int                        local      20    4    6  steps.7
+   odd                variable      int                        local      20    4    2  odd.8
+   cells              variable      int                        local      20    4    3  cells.9
+   rows               variable      int                        local      20    4    4  rows.10
+   out                variable      int                        local      34    4    6  out.12
+   r                  variable      int                        local      45    4    7  r.13
+   c                  variable      int                        local      45    4    7  c.14
+   hit                variable      int                        local      45    4    2  hit.15
+   text               variable      const char *               local      55    4    2  text.16
+   state              variable      int                        local      56    4    4  state.17
+   words              variable      int                        local      56    4    2  words.18
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      13    4    3  k.4
+   k                  variable      int                        local      15    4    3  k.4
+
+ scope: global > main() > until
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   c                  variable      int                        local      29    4    2  c.11
 
  scope: global > main() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      42    4    2  k.13
+   k                  variable      int                        local      58    4    2  k.19
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

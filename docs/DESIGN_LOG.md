@@ -1430,6 +1430,23 @@ completely, except for `printf` and `scanf`.
   `v18`, `v21` and `e15`; `e24_removed_keywords` checks `va_list`;
   parser `test17` and `test24`, lexer `test4` updated.
 
+### D52. The test programs run under g++ too, `until` included (2026-11-25)
+
+**Decided by:** the user: the `until` test cases must also run on g++.
+
+- `until` is not C or C++, and a test program cannot define a macro (no
+  preprocessor, D34). `phase3-ir/test/gpp_prelude.h` is given to g++
+  with `-include` instead: the standard headers plus
+  `#define until(c) while (!(c))`. The programs themselves are unchanged
+  in form and still contain no `#` line.
+- `phase3-ir/check_with_gpp.sh` compiles every phase 3 test with g++
+  (gcc in C mode for `t04`'s C designator) and compares the native run
+  with `test/expected/*.out` -- the same files the compiler is checked
+  against. 34 of 34 match.
+- `t02_control_flow` covers more `until` shapes: a loop never entered,
+  `break` and `continue` inside, a compound condition, and a nested
+  `until`; its expected output comes from g++ through the prelude.
+
 ---
 
 ## Open questions
