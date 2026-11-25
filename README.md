@@ -338,7 +338,7 @@ One suite per pass:
 | Lexer | `cd phase1-lexer && ./run.sh` | 8 programs; `test6_lexical_errors.c` must report 11 errors and 1 warning, each with its line and column |
 | Pass 1 (parser) | `cd phase2-parser && ./run.sh` | 37 programs: 24 valid, 13 with deliberate syntax errors |
 | Pass 2 (semantic, self-checking) | `cd phase2b-semantic && ./run_tests.sh` | 27 valid + 24 invalid programs with the expected diagnostics written inline (`// error: …`, `// warning: …`, `// mangled: …`), plus the 37 parser programs end to end — **88 checks, all passing** |
-| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 34 programs executed by the TAC interpreter, raw and at `-O1`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++); plus the uninitialized-variable warnings — **35 checks, all passing** |
+| Passes 3–5 (TAC, self-checking) | `cd phase3-ir && ./run_tests.sh` | 34 programs executed by the TAC interpreter, raw and at `-O1`; output and exit code must equal `test/expected/*.out` (verified against gcc / g++, re-checkable with `./check_with_gpp.sh`, which also runs the `until` loops under g++ through `test/gpp_prelude.h`); plus the uninitialized-variable warnings — **35 checks, all passing** |
 | Pass 6 (MIPS on SPIM, self-checking) | `cd phase4-codegen && ./run_tests.sh` | the same 34 programs compiled to MIPS without optimization and at `-O1` and run in SPIM against the same outputs — **34 checks, all passing** |
 
 The `run.sh` scripts print each program's output for inspection; the

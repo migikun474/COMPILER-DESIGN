@@ -225,14 +225,25 @@ runner prints the figure per test.
 Each `test/tNN_*.c` is generated and executed raw and with `-O1`;
 every time what it prints and its exit code must equal
 `test/expected/<name>.out`. The programs are also
-valid C or C++, and every expected file was checked to be identical to
-the output of the same source compiled with gcc/g++.
-`t12_lecture_examples` additionally compares the TAC listing itself.
+valid C or C++, and every expected file is the output of the same
+source compiled with g++ (gcc for `t04_arrays`, which uses a C
+designator). That can be re-checked at any time:
+
+```bash
+./check_with_gpp.sh
+```
+
+It compiles every test with g++ and runs it natively against the same
+expected files. The programs have no `#include` and cannot define
+macros (no preprocessor, D34), so `test/gpp_prelude.h` is passed to g++
+with `-include`: it adds `stdio.h`, `stdlib.h`, `string.h` and
+`#define until(c) while (!(c))`, which lets the `until` loops run under
+g++ too. `t12_lecture_examples` additionally compares the TAC listing itself.
 
 | Test | Covers |
 |---|---|
 | `t01_expressions` | arithmetic, conversions, unsigned, bitwise, compound assignment, `++`/`--`, comma, `?:`, C-style and functional casts, `sizeof`, scalar brace and paren initialization, wrap-around of every width |
-| `t02_control_flow` | `if`/`else` chains, `while`, `do`-`while`, `for` with a declaration, `until`, `switch` with fall-through and `default` in the middle, `break`, `continue`, `goto` out of two loops, a state machine |
+| `t02_control_flow` | `if`/`else` chains, `while`, `do`-`while`, `for` with a declaration, `until` (plain, never entered, with `break` and `continue`, a compound condition, nested), `switch` with fall-through and `default` in the middle, `break`, `continue`, `goto` out of two loops, a state machine |
 | `t03_booleans` | the slides' `a < b \|\| c < d && e < f`, comparisons and `!` as values, booleans stored and summed, `&&`/`\|\|` in loop conditions, `bool` |
 | `t04_arrays` | 1-D to 3-D arrays, partial and designated initializers, zeroed static data, `i[a]`, array parameters (1-D and 2-D), strings, `sizeof` of an array (plain C: expected output from gcc) |
 | `t05_pointers` | two and three levels, arithmetic and differences, `void *`, pointer to an array, array of pointers, writing through a pointer to a pointer |

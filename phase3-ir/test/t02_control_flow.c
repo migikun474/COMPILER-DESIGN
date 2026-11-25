@@ -1,6 +1,8 @@
 /* t02 -- control flow: if/else chains, while, do-while, for with a
-   declaration, until, switch with fall-through and default in the middle,
-   break/continue, goto out of two loops, a state machine. Expected: g++. */
+   declaration, until (plain, never entered, with break and continue, a
+   compound condition, nested), switch with fall-through and default in
+   the middle, break/continue, goto out of two loops, a state machine.
+   Expected: g++ -include test/gpp_prelude.h (it defines until). */
 int kind(char c) {                     /* 0 other, 1 digit, 2 letter */
     if (c >= '0' && c <= '9') return 1;
     else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) return 2;
@@ -15,6 +17,20 @@ int main() {
     int u = 0;
     until (u >= 4) u++;
     printf("%d %d\n", s, u);
+    int never = 0, steps = 0, odd = 0, cells = 0, rows = 0;
+    until (1) never++;                         /* the condition holds at once: no iteration */
+    until (steps == 10) {
+        steps++;
+        if (steps % 2 == 0) continue;
+        if (steps > 7) break;
+        odd += steps;
+    }
+    until (rows >= 3 || cells > 4) {           /* a compound condition */
+        int c = 0;
+        until (c == rows + 1) { cells++; c++; } /* nested */
+        rows++;
+    }
+    printf("%d %d %d %d %d\n", never, steps, odd, rows, cells);
     int out = 0;
     for (i = 0; i < 6; i++) {
         switch (i) {

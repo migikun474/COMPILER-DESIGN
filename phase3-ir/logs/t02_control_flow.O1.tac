@@ -4,7 +4,7 @@
 
    Source file   : test/t02_control_flow.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 158 -> 127 instruction(s)
+   Result        : Optimized three address code (-O1): 204 -> 157 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,17 +14,17 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          158 -> 127   (19% fewer)
+   instructions                          204 -> 157   (23% fewer)
 
    calls inlined                           1
    constants folded                        0
    algebraic simplifications               1
    common subexpressions                   0
-   copies / constants forwarded            2
-   temporaries merged away                18
+   copies / constants forwarded            3
+   temporaries merged away                23
    dead instructions removed               0
-   jumps removed or redirected            25
-   unreachable instructions removed        7
+   jumps removed or redirected            36
+   unreachable instructions removed       10
 
 ============================================================================
  FUNCTION kind(char)        (link name _Z4kindc)
@@ -64,7 +64,7 @@
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 12 parameter(s)/local(s), 17 temporaries, frame 188 bytes
+ Symbol table: 18 parameter(s)/local(s), 20 temporaries, frame 244 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -72,34 +72,43 @@
    i                local   int                             4       4
    k.4              local   int                             4       8
    u                local   int                             4      12
-   out              local   int                             4      16
-   r                local   int                             4      20
-   c                local   int                             4      24
-   hit              local   int                             4      28
-   text             local   const char *                    4      32
-   state            local   int                             4      36
-   words            local   int                             4      40
-   k.13             local   int                             4      44
-   t1               temp    int                             4      48
-   t4               temp    int                             4      60
-   t9               temp    int                             4      80
-   t16              temp    int                             4     108
-   t17              temp    int                             4     112
-   t18              temp    int                             4     116
-   t22              temp    const char *                    4     132
-   t23              temp    char                            1     136
-   t24              temp    const char *                    4     140
-   t25              temp    char                            1     144
-   t29              temp    char                            1     160
-   t30              temp    int                             4     164
-   t31              temp    int                             4     168
-   t32              temp    int                             4     172
-   t33              temp    int                             4     176
-   t34              temp    int                             4     180
-   t35              temp    int                             4     184
-   (18 temporaries no longer used after optimization not shown)
+   never            local   int                             4      16
+   steps            local   int                             4      20
+   odd              local   int                             4      24
+   cells            local   int                             4      28
+   rows             local   int                             4      32
+   c.11             local   int                             4      36
+   out              local   int                             4      40
+   r                local   int                             4      44
+   c.14             local   int                             4      48
+   hit              local   int                             4      52
+   text             local   const char *                    4      56
+   state            local   int                             4      60
+   words            local   int                             4      64
+   k.19             local   int                             4      68
+   t1               temp    int                             4      72
+   t4               temp    int                             4      84
+   t10              temp    int                             4     108
+   t11              temp    int                             4     112
+   t13              temp    int                             4     120
+   t17              temp    int                             4     136
+   t24              temp    int                             4     164
+   t25              temp    int                             4     168
+   t26              temp    int                             4     172
+   t30              temp    const char *                    4     188
+   t31              temp    char                            1     192
+   t32              temp    const char *                    4     196
+   t33              temp    char                            1     200
+   t37              temp    char                            1     216
+   t38              temp    int                             4     220
+   t39              temp    int                             4     224
+   t40              temp    int                             4     228
+   t41              temp    int                             4     232
+   t42              temp    int                             4     236
+   t43              temp    int                             4     240
+   (23 temporaries no longer used after optimization not shown)
 
- Code: 112 instruction(s)
+ Code: 142 instruction(s)
 
     115        s = 0
     116        i = 0
@@ -128,91 +137,121 @@
     139        param s
     140        param u
     141        call printf, 3
-    142        out = 0
-    143        i = 0
-    144  L13:  if i int>= 6 goto L21
-    145        t9 = i
-    146        goto L18
-    147  L14:  out = out int+ 1
-    148  L15:  out = out int+ 10
-    149        goto L19
-    150  L16:  out = out int+ 100
-    151  L17:  out = out int+ 1000
-    152        goto L20
-    153  L18:  if t9 int== 0 goto L14
-    154        if t9 int== 1 goto L14
-    155        if t9 int== 4 goto L16
-    156        if t9 int== 5 goto L17
-    157        goto L15
-    158  L19:  out = out int+ 5
-    159  L20:  i = i int+ 1
-    160        goto L13
-    161  L21:  param "%d\n"
-    162        param out
-    163        call printf, 2
-    164        c = 0
-    165        hit = 0
-    166        r = 0
-    167  L22:  if r int>= 4 goto L26
-    168        c = 0
-    169  L23:  if c int>= 4 goto L25
-    170        if c int> r goto L25
-    171        t16 = r int+ c
-    172        t17 = t16 int% 2
-    173        if t17 int!= 0 goto L24
-    174        t18 = r int* c
-    175        if t18 int== 4 goto L26
-    176        hit = hit int+ 1
-    177  L24:  c = c int+ 1
-    178        goto L23
-    179  L25:  r = r int+ 1
-    180        goto L22
-    181  L26:  param "%d %d %d\n"
-    182        param hit
-    183        param r
-    184        param c
-    185        call printf, 4
-    186        text = "ab 12 x9;"
-    187        state = 0
-    188        words = 0
-    189        i = 0
-    190  L27:  t22 = text ptr+ i
-    191        t23 = *t22
-    192        if t23 char== 0 goto L35
-    193        t24 = text ptr+ i
-    194        t25 = *t24
-    195        t29 = t25
-    196        t30 = chartoint t25
-    197        if t30 int< 48 goto L28
-    198        t31 = chartoint t29
-    199        if t31 int> 57 goto L28
-    200        k.13 = 1
-    201        goto L32
-    202  L28:  t32 = chartoint t29
-    203        if t32 int< 97 goto L29
-    204        t33 = chartoint t29
-    205        if t33 int<= 122 goto L30
-    206  L29:  t34 = chartoint t29
-    207        if t34 int< 65 goto L31
-    208        t35 = chartoint t29
-    209        if t35 int> 90 goto L31
-    210  L30:  k.13 = 2
-    211        goto L32
-    212  L31:  k.13 = 0
-    213  L32:  if state int!= 0 goto L33
-    214        if k.13 int== 0 goto L33
-    215        words = words int+ 1
-    216        state = 1
-    217        goto L34
-    218  L33:  if state int!= 1 goto L34
-    219        if k.13 int!= 0 goto L34
-    220        state = 0
-    221  L34:  i = i int+ 1
-    222        goto L27
-    223  L35:  param "%d\n"
-    224        param words
-    225        call printf, 2
-    226        return 0
+    142        never = 0
+    143        steps = 0
+    144        odd = 0
+    145        cells = 0
+    146        rows = 0
+    147  L13:  if steps int== 10 goto L14
+    148        t10 = steps int+ 1
+    149        steps = t10
+    150        t11 = t10 int% 2
+    151        if t11 int== 0 goto L13
+    152        if steps int> 7 goto L14
+    153        odd = odd int+ steps
+    154        goto L13
+    155  L14:  if rows int>= 3 goto L17
+    156        if cells int> 4 goto L17
+    157        c.11 = 0
+    158  L15:  t13 = rows int+ 1
+    159        if c.11 int== t13 goto L16
+    160        cells = cells int+ 1
+    161        c.11 = c.11 int+ 1
+    162        goto L15
+    163  L16:  rows = rows int+ 1
+    164        goto L14
+    165  L17:  param "%d %d %d %d %d\n"
+    166        param never
+    167        param steps
+    168        param odd
+    169        param rows
+    170        param cells
+    171        call printf, 6
+    172        out = 0
+    173        i = 0
+    174  L18:  if i int>= 6 goto L26
+    175        t17 = i
+    176        goto L23
+    177  L19:  out = out int+ 1
+    178  L20:  out = out int+ 10
+    179        goto L24
+    180  L21:  out = out int+ 100
+    181  L22:  out = out int+ 1000
+    182        goto L25
+    183  L23:  if t17 int== 0 goto L19
+    184        if t17 int== 1 goto L19
+    185        if t17 int== 4 goto L21
+    186        if t17 int== 5 goto L22
+    187        goto L20
+    188  L24:  out = out int+ 5
+    189  L25:  i = i int+ 1
+    190        goto L18
+    191  L26:  param "%d\n"
+    192        param out
+    193        call printf, 2
+    194        c.14 = 0
+    195        hit = 0
+    196        r = 0
+    197  L27:  if r int>= 4 goto L31
+    198        c.14 = 0
+    199  L28:  if c.14 int>= 4 goto L30
+    200        if c.14 int> r goto L30
+    201        t24 = r int+ c.14
+    202        t25 = t24 int% 2
+    203        if t25 int!= 0 goto L29
+    204        t26 = r int* c.14
+    205        if t26 int== 4 goto L31
+    206        hit = hit int+ 1
+    207  L29:  c.14 = c.14 int+ 1
+    208        goto L28
+    209  L30:  r = r int+ 1
+    210        goto L27
+    211  L31:  param "%d %d %d\n"
+    212        param hit
+    213        param r
+    214        param c.14
+    215        call printf, 4
+    216        text = "ab 12 x9;"
+    217        state = 0
+    218        words = 0
+    219        i = 0
+    220  L32:  t30 = text ptr+ i
+    221        t31 = *t30
+    222        if t31 char== 0 goto L40
+    223        t32 = text ptr+ i
+    224        t33 = *t32
+    225        t37 = t33
+    226        t38 = chartoint t33
+    227        if t38 int< 48 goto L33
+    228        t39 = chartoint t37
+    229        if t39 int> 57 goto L33
+    230        k.19 = 1
+    231        goto L37
+    232  L33:  t40 = chartoint t37
+    233        if t40 int< 97 goto L34
+    234        t41 = chartoint t37
+    235        if t41 int<= 122 goto L35
+    236  L34:  t42 = chartoint t37
+    237        if t42 int< 65 goto L36
+    238        t43 = chartoint t37
+    239        if t43 int> 90 goto L36
+    240  L35:  k.19 = 2
+    241        goto L37
+    242  L36:  k.19 = 0
+    243  L37:  if state int!= 0 goto L38
+    244        if k.19 int== 0 goto L38
+    245        words = words int+ 1
+    246        state = 1
+    247        goto L39
+    248  L38:  if state int!= 1 goto L39
+    249        if k.19 int!= 0 goto L39
+    250        state = 0
+    251  L39:  i = i int+ 1
+    252        goto L32
+    253  L40:  param "%d\n"
+    254        param words
+    255        call printf, 2
+    256        return 0
 
 
 ----------------------------------------------------------------------------
@@ -222,38 +261,48 @@
  scope: global
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   kind               function      int (char)                 -           4    -    1  _Z4kindc; defined
-   main               function      int (void)                 -           9    -    0  defined
+   kind               function      int (char)                 -           6    -    1  _Z4kindc; defined
+   main               function      int (void)                 -          11    -    0  defined
 
  scope: global > kind()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  parameter     char                       param       4    1    6  c.1
+   c                  parameter     char                       param       6    1    6  c.1
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   done               label         -                          -          37    -    1  main.done
-   s                  variable      int                        local      10    4    5  s.2
-   i                  variable      int                        local      10    4   13  i.3
-   u                  variable      int                        local      15    4    3  u.5
-   out                variable      int                        local      18    4    6  out.6
-   r                  variable      int                        local      29    4    7  r.7
-   c                  variable      int                        local      29    4    7  c.8
-   hit                variable      int                        local      29    4    2  hit.9
-   text               variable      const char *               local      39    4    2  text.10
-   state              variable      int                        local      40    4    4  state.11
-   words              variable      int                        local      40    4    2  words.12
+   done               label         -                          -          53    -    1  main.done
+   s                  variable      int                        local      12    4    5  s.2
+   i                  variable      int                        local      12    4   13  i.3
+   u                  variable      int                        local      17    4    3  u.5
+   never              variable      int                        local      20    4    2  never.6
+   steps              variable      int                        local      20    4    6  steps.7
+   odd                variable      int                        local      20    4    2  odd.8
+   cells              variable      int                        local      20    4    3  cells.9
+   rows               variable      int                        local      20    4    4  rows.10
+   out                variable      int                        local      34    4    6  out.12
+   r                  variable      int                        local      45    4    7  r.13
+   c                  variable      int                        local      45    4    7  c.14
+   hit                variable      int                        local      45    4    2  hit.15
+   text               variable      const char *               local      55    4    2  text.16
+   state              variable      int                        local      56    4    4  state.17
+   words              variable      int                        local      56    4    2  words.18
 
  scope: global > main() > for
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      13    4    3  k.4
+   k                  variable      int                        local      15    4    3  k.4
+
+ scope: global > main() > until
+   name               kind          type                       storage  line size uses  TAC name / notes
+   ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
+   c                  variable      int                        local      29    4    2  c.11
 
  scope: global > main() > for > for body
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   k                  variable      int                        local      42    4    2  k.13
+   k                  variable      int                        local      58    4    2  k.19
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -266,8 +315,9 @@
 ----------------------------------------------------------------------------
 
 157 4
+0 9 16 3 6
 2162
 3 2 2
 3
 
-   exit code 0, 424 instructions executed
+   exit code 0, 546 instructions executed
