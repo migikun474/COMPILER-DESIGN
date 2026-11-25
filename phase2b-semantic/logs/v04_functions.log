@@ -2,9 +2,9 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v04_functions.c
+Source File : /home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/valid/v04_functions.c
 
-Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v04_functions.c'.
+Semantic analysis successful: 0 error(s), 0 warning(s) in '/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/valid/v04_functions.c'.
 
 === Annotated AST ===
 Program "translation_unit"
@@ -96,7 +96,7 @@ Program "translation_unit"
 |           `-- IndexExpr  <char> lvalue
 |               |-- Identifier "s"  <char *> lvalue  -> s.9 (parameter, param)
 |               `-- IntLiteral "0"  <int> =0
-|-- FunctionDef "sum : _Z3sumiz"  <int (int, ...)>  -> _Z3sumiz (function)
+|-- FunctionDef "sum : _Z3sumi"  <int (int)>  -> _Z3sumi (function)
 |   |-- ParamDecl "count : INT"  <int>  -> count.10 (parameter, param)
 |   `-- CompoundStmt
 |       `-- ReturnStmt
@@ -142,15 +142,12 @@ Program "translation_unit"
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
 |       |       `-- BinaryExpr "+"  <int>
-|       |           |-- CallExpr  <int>  -> _Z3sumiz (function)
-|       |           |   |-- Identifier "sum"  <int (int, ...)>  -> _Z3sumiz (function)
+|       |           |-- CallExpr  <int>  -> _Z3sumi (function)
+|       |           |   |-- Identifier "sum"  <int (int)>  -> _Z3sumi (function)
 |       |           |   `-- IntLiteral "1"  <int> =1
-|       |           `-- CallExpr  <int>  -> _Z3sumiz (function)
-|       |               |-- Identifier "sum"  <int (int, ...)>  -> _Z3sumiz (function)
-|       |               |-- IntLiteral "3"  <int> =3
-|       |               |-- IntLiteral "1"  <int> =1
-|       |               |-- FloatLiteral "2.0"  <double>
-|       |               `-- StringLiteral ""x""  <char[2]> lvalue
+|       |           `-- CallExpr  <int>  -> _Z3sumi (function)
+|       |               |-- Identifier "sum"  <int (int)>  -> _Z3sumi (function)
+|       |               `-- IntLiteral "3"  <int> =3
 |       |-- ExprStmt
 |       |   `-- AssignExpr "="  <int>
 |       |       |-- Identifier "r"  <int> lvalue  -> r.11 (variable, local)
@@ -188,7 +185,7 @@ a                  parameter      int                        param    global > a
 b                  parameter      int                        param    global > average()             23    4     1     b.8                  -                        
 first              function       char (char *)              -        global                         24    -     1     _Z5firstPc           _Z5firstPc               defined
 s                  parameter      char *                     param    global > first()               24    4     1     s.9                  -                        
-sum                function       int (int, ...)             -        global                         25    -     2     _Z3sumiz             _Z3sumiz                 defined
+sum                function       int (int)                  -        global                         25    -     2     _Z3sumi              _Z3sumi                  defined
 count              parameter      int                        param    global > sum()                 25    4     1     count.10             -                        
 main               function       int (void)                 -        global                         27    -     0     main                 main                     defined
 r                  variable       int                        local    global > main()                28    4     7     r.11                 -                        

@@ -2,51 +2,51 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c
+Source File : /home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c
 
-Semantic analysis failed: 11 error(s), 0 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c'.
+Semantic analysis failed: 11 error(s), 0 warning(s) in '/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c'.
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:5:6: semantic error: redefinition of 'enum Color' (previous definition at line 2) [redefinition]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:5:6: semantic error: redefinition of 'enum Color' (previous definition at line 2) [redefinition]
  5 | enum Color { Again };                           // error: redefinition of 'enum Color'
    |      ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:6:12: semantic error: redefinition of 'Red' (previously declared as an enumerator at line 2) [redeclaration]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:6:12: semantic error: redefinition of 'Red' (previously declared as an enumerator at line 2) [redeclaration]
  6 | enum Dup { Red };                               // error: redefinition of 'Red' (previously declared as an enumerator
    |            ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:7:8: semantic error: value 3000000000 of enumerator 'Big' does not fit the enum's underlying type 'int' [enum]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:7:8: semantic error: value 3000000000 of enumerator 'Big' does not fit the enum's underlying type 'int' [enum]
  7 | enum { Big = 3000000000 };                      // error: does not fit the enum's underlying type 'int'
    |        ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:8:21: semantic error: an enum cannot be defined inside 'Outer': define it at file scope or in a function [nested-enum]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:8:21: semantic error: an enum cannot be defined inside 'Outer': define it at file scope or in a function [nested-enum]
  8 | struct Outer { enum Inner { A, B } in; };       // error: an enum cannot be defined inside 'Outer'
    |                     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:12:20: semantic error: type mismatch: cannot initialize variable 'c' of type 'enum Color' with a value of type 'int' (a value converts to an enum type only with a cast) [type-mismatch]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:12:20: semantic error: type mismatch: cannot initialize variable 'c' of type 'enum Color' with a value of type 'int' (a value converts to an enum type only with a cast) [type-mismatch]
  12 |     enum Color c = 1;                           // error: a value converts to an enum type only with a cast
     |                    ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:13:15: semantic error: type mismatch: cannot initialize variable 'd' of type 'enum Color' with a value of type 'enum Size' (different enum types do not convert to each other) [type-mismatch]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:13:15: semantic error: type mismatch: cannot initialize variable 'd' of type 'enum Color' with a value of type 'enum Size' (different enum types do not convert to each other) [type-mismatch]
  13 |     Color d = Small;                            // error: different enum types do not convert to each other
     |               ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:14:11: semantic error: type mismatch: cannot assign 'int' to 'enum Color' (a value converts to an enum type only with a cast) [type-mismatch]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:14:11: semantic error: type mismatch: cannot assign 'int' to 'enum Color' (a value converts to an enum type only with a cast) [type-mismatch]
  14 |     c = c + 1;                                  // error: cannot assign 'int' to 'enum Color'
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:15:6: semantic error: cannot increment a value of type 'enum Color' [invalid-operands]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:15:6: semantic error: cannot increment a value of type 'enum Color' [invalid-operands]
  15 |     c++;                                        // error: cannot increment a value of type 'enum Color'
     |      ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:16:5: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:16:5: semantic error: lvalue required as left operand of assignment (this expression is not assignable) [lvalue]
  16 |     Red = 4;                                    // error: lvalue required
     |     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:17:15: semantic error: use of undeclared enum 'enum Nope' [unknown-type]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:17:15: semantic error: use of undeclared enum 'enum Nope' [unknown-type]
  17 |     enum Nope e;                                // error: use of undeclared enum 'enum Nope'
     |               ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e25_enums.c:18:12: semantic error: 'S' is not an enum (it is a struct) [tag-mismatch]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e25_enums.c:18:12: semantic error: 'S' is not an enum (it is a struct) [tag-mismatch]
  18 |     enum S s2;                                  // error: 'S' is not an enum
     |            ^
 

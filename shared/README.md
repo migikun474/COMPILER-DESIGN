@@ -66,7 +66,7 @@ type), which is why they live in the same library.
 |---|---|
 | phase1-lexer | `lexer.l` (standalone flex scanner), its token list and log writer |
 | phase2-parser | `scanner.l`, `parser.y`, `parser_value.h` (Bison's value type), `declarators` (declaration → AST + symbols), `scanner_support` (lookahead decisions), `token_converter` (TokenType → Bison codes) |
-| phase2b-semantic | the analyzer: `declarations`, `statements`, `expressions`, `cxx` (default constructors, operators, varargs), `sequencing` (sequence points), `report` (annotated AST) |
+| phase2b-semantic | the analyzer: `declarations`, `statements`, `expressions`, `cxx` (default constructors, operators), `sequencing` (sequence points), `report` (annotated AST) |
 
 ## Main entry points
 

@@ -260,9 +260,8 @@ private:
         if (q.cls != Cls::Block) expressions[loadKey(q.a, static_cast<int>(q.cls))] = valueOfOperand(q.r);
     }
 
-    void numberCallLike(Quad &q) {
+    void numberCall(Quad &q) {
         forgetMemory();
-        if (q.op != Op::Call && isName(q.a)) valueHeldBy.erase(nameOf(q.a));
         if (!q.r.isNone()) assignValue(q.r, newValue());
     }
 
@@ -282,7 +281,7 @@ private:
             case Op::Param: case Op::Return:
                 if (!q.a.isNone() && !isBlock(q.a)) q.a = cheapestForm(q.a);
                 break;
-            case Op::Call: case Op::VaArg: case Op::VaStart: numberCallLike(q); break;
+            case Op::Call: numberCall(q); break;
             default: break;
         }
     }

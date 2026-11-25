@@ -4,7 +4,7 @@
 
    Source file   : test/t07_functions.c
    Optimization  : no optimization
-   Result        : Three address code generated: 16 function(s), 184 instruction(s)
+   Result        : Three address code generated: 16 function(s), 188 instruction(s)
 
    Contents      : globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -16,11 +16,11 @@
 
    name             type                        width  initial value
    ---------------- -------------------------- ------  -------------
-   c.26             int                             4  0
+   c.25             int                             4  0
 
  As three address code (initial values, in place before main runs):
 
-    c.26 = 0
+    c.25 = 0
 
 ============================================================================
  FUNCTION even(int)        (link name _Z4eveni)
@@ -259,22 +259,24 @@
     164     return t2
 
 ============================================================================
- FUNCTION sumv(va_list, int)        (link name _Z4sumvPvi)
+ FUNCTION sumv(int *, int)        (link name _Z4sumvPii)
 ============================================================================
 
- Symbol table: 3 parameter(s)/local(s), 4 temporaries, frame 28 bytes
+ Symbol table: 3 parameter(s)/local(s), 6 temporaries, frame 36 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   ap               param   va_list                         4       0
+   v                param   int *                           4       0
    n                param   int                             4       4
    s                local   int                             4       8
    t1               temp    int                             4      12
    t2               temp    int                             4      16
-   t3               temp    int                             4      20
-   t4               temp    int                             4      24
+   t3               temp    int *                           4      20
+   t4               temp    int *                           4      24
+   t5               temp    int                             4      28
+   t6               temp    int                             4      32
 
- Code: 11 instruction(s)
+ Code: 14 instruction(s)
 
     165        s = 0
     166  L16:  t1 = n
@@ -282,70 +284,71 @@
     168        n = t2
     169        if t1 int!= 0 goto L17
     170        goto L18
-    171  L17:  t3 = va_arg ap, int
-    172        t4 = s int+ t3
-    173        s = t4
-    174        goto L16
-    175  L18:  return s
+    171  L17:  t3 = v
+    172        t4 = v ptr+ 4
+    173        v = t4
+    174        t5 = *t3
+    175        t6 = s int+ t5
+    176        s = t6
+    177        goto L16
+    178  L18:  return s
 
 ============================================================================
- FUNCTION sum(int, ...)        (link name _Z3sumiz)
+ FUNCTION sum(int *, int)        (link name _Z3sumPii)
 ============================================================================
 
- Symbol table: 3 parameter(s)/local(s), 1 temporary, frame 16 bytes
+ Symbol table: 2 parameter(s)/local(s), 1 temporary, frame 12 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
-   ap               local   va_list                         4       4
-   s                local   int                             4       8
-   t1               temp    int                             4      12
+   v                param   int *                           4       0
+   n                param   int                             4       4
+   t1               temp    int                             4       8
 
- Code: 7 instruction(s)
+ Code: 4 instruction(s)
 
-    176     va_start ap, n
-    177     param ap
-    178     param n
-    179     t1 = call sumv(va_list, int), 2
-    180     s = t1
-    181     va_end ap
-    182     return s
+    179     param v
+    180     param n
+    181     t1 = call sumv(int *, int), 2
+    182     return t1
 
 ============================================================================
- FUNCTION avg(int, ...)        (link name _Z3avgiz)
+ FUNCTION avg(double *, int)        (link name _Z3avgPdi)
 ============================================================================
 
- Symbol table: 4 parameter(s)/local(s), 5 temporaries, frame 64 bytes
+ Symbol table: 4 parameter(s)/local(s), 7 temporaries, frame 72 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
-   n                param   int                             4       0
-   ap               local   va_list                         4       4
+   v                param   double *                        4       0
+   n                param   int                             4       4
    t                local   double                          8       8
    i                local   int                             4      16
-   t1               temp    double                          8      24
-   t2               temp    double                          8      32
-   t3               temp    int                             4      40
-   t4               temp    double                          8      48
-   t5               temp    double                          8      56
+   t1               temp    int                             4      20
+   t2               temp    double *                        4      24
+   t3               temp    double                          8      32
+   t4               temp    double                          8      40
+   t5               temp    int                             4      48
+   t6               temp    double                          8      56
+   t7               temp    double                          8      64
 
  Code: 15 instruction(s)
 
-    183        va_start ap, n
-    184        t = 0.0
-    185        i = 0
-    186  L19:  if i int< n goto L20
-    187        goto L21
-    188  L20:  t1 = va_arg ap, double
-    189        t2 = t double+ t1
-    190        t = t2
-    191        t3 = i int+ 1
-    192        i = t3
-    193        goto L19
-    194  L21:  va_end ap
-    195        t4 = inttodouble n
-    196        t5 = t double/ t4
-    197        return t5
+    183        t = 0.0
+    184        i = 0
+    185  L19:  if i int< n goto L20
+    186        goto L21
+    187  L20:  t1 = i int* 8
+    188        t2 = v ptr+ t1
+    189        t3 = *t2
+    190        t4 = t double+ t3
+    191        t = t4
+    192        t5 = i int+ 1
+    193        i = t5
+    194        goto L19
+    195  L21:  t6 = inttodouble n
+    196        t7 = t double/ t6
+    197        return t7
 
 ============================================================================
  FUNCTION counter()        (link name _Z7counterv)
@@ -359,15 +362,15 @@
 
  Code: 3 instruction(s)
 
-    198     t1 = c.26 int+ 1
-    199     c.26 = t1
+    198     t1 = c.25 int+ 1
+    199     c.25 = t1
     200     return t1
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 5 parameter(s)/local(s), 22 temporaries, frame 140 bytes
+ Symbol table: 7 parameter(s)/local(s), 24 temporaries, frame 188 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -376,30 +379,34 @@
    arr              local   int[3]                         12       8
    p                local   int *                           4      20
    ra               local   int &                           4      24
-   t1               temp    int                             4      28
-   t2               temp    int                             4      32
-   t3               temp    int                             4      36
-   t4               temp    int                             4      40
-   t5               temp    int                             4      44
-   t6               temp    int                             4      48
-   t7               temp    int                             4      52
-   t8               temp    int *                           4      56
-   t9               temp    int *                           4      60
-   t10              temp    int *                           4      64
-   t11              temp    int *                           4      68
-   t12              temp    int **                          4      72
-   t13              temp    int *                           4      76
-   t14              temp    int *                           4      80
-   t15              temp    int &                           4      84
-   t16              temp    int                             4      88
-   t17              temp    double                          8      96
-   t18              temp    const double *                  4     104
-   t19              temp    double                          8     112
-   t20              temp    int                             4     120
-   t21              temp    double                          8     128
-   t22              temp    int                             4     136
+   nums             local   int[4]                         16      28
+   ds               local   double[3]                      24      48
+   t1               temp    int                             4      72
+   t2               temp    int                             4      76
+   t3               temp    int                             4      80
+   t4               temp    int                             4      84
+   t5               temp    int                             4      88
+   t6               temp    int                             4      92
+   t7               temp    int                             4      96
+   t8               temp    int *                           4     100
+   t9               temp    int *                           4     104
+   t10              temp    int *                           4     108
+   t11              temp    int *                           4     112
+   t12              temp    int **                          4     116
+   t13              temp    int *                           4     120
+   t14              temp    int *                           4     124
+   t15              temp    int &                           4     128
+   t16              temp    int                             4     132
+   t17              temp    double                          8     136
+   t18              temp    const double *                  4     144
+   t19              temp    double                          8     152
+   t20              temp    int *                           4     160
+   t21              temp    int                             4     164
+   t22              temp    double *                        4     168
+   t23              temp    double                          8     176
+   t24              temp    int                             4     184
 
- Code: 83 instruction(s)
+ Code: 87 instruction(s)
 
     201     param 10
     202     t1 = call even(int), 1
@@ -462,28 +469,32 @@
     259     param t16
     260     param t19
     261     call printf, 5
-    262     param 4
-    263     param 1
-    264     param 2
-    265     param 3
-    266     param 4
-    267     t20 = call sum(int, ...), 5
-    268     param 3
-    269     param 1.0
-    270     param 2.0
-    271     param 4.5
-    272     t21 = call avg(int, ...), 4
-    273     param "%d %.2f\n"
-    274     param t20
-    275     param t21
-    276     call printf, 3
-    277     call counter(), 0
-    278     call counter(), 0
-    279     t22 = call counter(), 0
-    280     param "%d\n"
-    281     param t22
-    282     call printf, 2
-    283     return 0
+    262     nums[0] = 1
+    263     nums[4] = 2
+    264     nums[8] = 3
+    265     nums[12] = 4
+    266     ds[0] = 1.0
+    267     ds[8] = 2.0
+    268     ds[16] = 4.5
+    269     t20 = &nums
+    270     param t20
+    271     param 4
+    272     t21 = call sum(int *, int), 2
+    273     t22 = &ds
+    274     param t22
+    275     param 3
+    276     t23 = call avg(double *, int), 2
+    277     param "%d %.2f\n"
+    278     param t21
+    279     param t23
+    280     call printf, 3
+    281     call counter(), 0
+    282     call counter(), 0
+    283     t24 = call counter(), 0
+    284     param "%d\n"
+    285     param t24
+    286     call printf, 2
+    287     return 0
 
 
 ----------------------------------------------------------------------------
@@ -504,9 +515,9 @@
    advance            function      void (int *&)              -          14    -    1  _Z7advanceRPi; defined
    bigger             function      int &(int &, int &)        -          15    -    1  _Z6biggerRiS_; defined
    half               function      double (const double &)    -          16    -    1  _Z4halfRKd; defined
-   sumv               function      int (va_list, int)         -          17    -    1  _Z4sumvPvi; defined
-   sum                function      int (int, ...)             -          18    -    1  _Z3sumiz; defined
-   avg                function      double (int, ...)          -          19    -    1  _Z3avgiz; defined
+   sumv               function      int (int *, int)           -          17    -    1  _Z4sumvPii; defined
+   sum                function      int (int *, int)           -          18    -    1  _Z3sumPii; defined
+   avg                function      double (double *, int)     -          19    -    1  _Z3avgPdi; defined
    counter            function      int (void)                 -          20    -    3  _Z7counterv; defined
    main               function      int (void)                 -          21    -    0  defined
 
@@ -564,38 +575,39 @@
  scope: global > sumv()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   ap                 parameter     va_list                    param      17    4    1  ap.16
+   v                  parameter     int *                      param      17    4    1  v.16
    n                  parameter     int                        param      17    4    1  n.17
    s                  variable      int                        local      17    4    2  s.18
 
  scope: global > sum()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      18    4    2  n.19
-   ap                 variable      va_list                    local      18    4    3  ap.20
-   s                  variable      int                        local      18    4    1  s.21
+   v                  parameter     int *                      param      18    4    1  v.19
+   n                  parameter     int                        param      18    4    1  n.20
 
  scope: global > avg()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param      19    4    3  n.22
-   ap                 variable      va_list                    local      19    4    3  ap.23
-   t                  variable      double                     local      19    8    2  t.24
-   i                  variable      int                        local      19    4    3  i.25
+   v                  parameter     double *                   param      19    4    1  v.21
+   n                  parameter     int                        param      19    4    2  n.22
+   t                  variable      double                     local      19    8    2  t.23
+   i                  variable      int                        local      19    4    4  i.24
 
  scope: global > counter()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   c                  variable      int                        static     20    4    1  c.26; static
+   c                  variable      int                        static     20    4    1  c.25; static
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   a                  variable      int                        local      24    4    4  a.27
-   b                  variable      int                        local      24    4    3  b.28
-   arr                variable      int[3]                     local      24   12    1  arr.29
-   p                  variable      int *                      local      24    4    2  p.30
-   ra                 variable      int &                      local      25    4    1  ra.31
+   a                  variable      int                        local      24    4    4  a.26
+   b                  variable      int                        local      24    4    3  b.27
+   arr                variable      int[3]                     local      24   12    1  arr.28
+   p                  variable      int *                      local      24    4    2  p.29
+   ra                 variable      int &                      local      25    4    1  ra.30
+   nums               variable      int[4]                     local      31   16    1  nums.31
+   ds                 variable      double[3]                  local      32   24    1  ds.32
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)

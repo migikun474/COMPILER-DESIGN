@@ -63,7 +63,7 @@ flowchart LR
     subgraph CALLS["Functions"]
         F9["F9 functions recursion"]
         F10["F10 printf scanf"]
-        F12["F12 varargs"]
+        F12["F12 varargs (removed, D51)"]
         F14["F14 argc argv"]
         F18["F18 function overloading"]
     end
@@ -231,11 +231,11 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 |---|---|---|
 | Reserved words, built-in calls | L/S | `PRINTF`, `SCANF` tokens; `builtinCall` |
 | Format checking | S | `checkFormat` |
-| Built-in call quads, variadic promotion | T | `builtin()`, `promoteVariadic` |
+| Built-in call quads, default promotions of the extra arguments | T | `builtin()`, `promoteVariadic` |
 | Interpreter | T | host `printf`/`scanf` in `interp.cpp` |
 | Hand-written MIPS routines | M | `__printf`, `__scanf` in `runtime.s` (always all arguments on the stack) |
 
-- **Relies on:** F9, F12 (variadic arguments), S8.
+- **Relies on:** F9, S8. `printf` and `scanf` are the only variadic calls (D51).
 - **Used by:** nearly every test program, so it is the riskiest to change.
 
 ### F11 static, const
@@ -253,17 +253,15 @@ Each feature lists its internal pieces (with code), what it relies on, and what 
 - **Relies on:** S2, S3.
 - **Used by:** F16 (static members are static data).
 
-### F12 Variable arguments (`...`, `va_*`)
+### F12 Variable arguments (`...`, `va_*`) — removed (D51)
 
 | Internal piece | Phase | Code |
 |---|---|---|
-| `...` parameters, `va_*` built-ins | P/S | `ELLIPSIS`, `VA_*` tokens; `varargBuiltin` |
-| Default promotions | T | `promoteVariadic` |
-| `VaStart`, `VaArg`, `VaEnd` quads | T | `builtin()` |
-| Walk the argument area | M | `varargStart`; a variadic callee spills all of `$a0`–`$a3` to its home area (D39) |
+| `va_list`, `va_start`, `va_arg`, `va_end` | L | reserved; `identifierOrKeyword` reports them as a lexical error |
+| `...` in a parameter list | P | `parameter_list ',' ELLIPSIS` exists only to report it |
 
-- **Relies on:** F9, S6 (arguments must be in memory for the walk).
-- **Used by:** F10.
+- **Relies on:** nothing. The `VaStart` / `VaArg` / `VaEnd` quads, the `va_list` type and the variadic prologue are gone.
+- **Used by:** nothing (`printf` / `scanf` are built-ins with their own argument handling, F10).
 
 ### F13 Dynamic memory (`malloc` … `free`)
 
@@ -395,7 +393,7 @@ What you must touch if you **remove** or **change** each feature. "Tests" names 
 | F9 functions | (not removable) | most features | all |
 | F10 printf / scanf | `builtin()`, `checkFormat`, `__printf`, `__scanf` | every test's output | all |
 | F11 static / const | `Storage`, `globals()`, `checkModifiable` | static members (F16) | `t19`, `t26` |
-| F12 varargs | `varargBuiltin`, `VaStart`…, `varargStart`, variadic spill in prologue | F10 if written in C; the runtime does not need it | `t07`, `t16` |
+| F12 varargs (removed) | the scanner's rejection, the `ELLIPSIS` rule | nothing | `e24`, parser `test17` |
 | F13 malloc | built-ins, `__malloc` | nothing in the compiler | `t09` |
 | F14 argc / argv | start-up code, `checkMainSignature` | nothing | `t11` |
 | F15 typedef / references | lexer hack, `typedefDecl`, `referenceTo` | reference parameters in F16 and F17 | `t24`, `t26` |
@@ -411,7 +409,7 @@ F3, F4, F13, F14, F17, F19 and every infrastructure analysis except I2 are leave
 ### Changes that ripple
 
 - **F7 pointers** feeds arrays, the heap, references and classes.
-- **F9 functions / S6 calls** is shared by every call; the D39 register convention lives here, so any change to argument passing must be mirrored in `Emitter::call` (caller), the prologue in `Emitter::function` (callee), and `varargStart` (variadic walk).
+- **F9 functions / S6 calls** is shared by every call; the D39 register convention lives here, so any change to argument passing must be mirrored in `Emitter::call` / `loadArgumentRegisters` (caller) and `saveArgumentRegisters` in the prologue (callee).
 - **F10 printf** is in every test program; a change there must keep all 45 TAC and 45 SPIM outputs identical.
 
 ---

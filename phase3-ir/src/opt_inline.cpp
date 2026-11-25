@@ -28,13 +28,8 @@ bool callsItself(const Function &f) {
     return std::any_of(f.quads.begin(), f.quads.end(), [&](const Quad &q) { return q.op == Op::Call && q.callee == f.sym.get(); });
 }
 
-bool usesVarargs(const Function &f) {
-    if (f.sym->type && f.sym->type->variadic) return true;
-    return std::any_of(f.quads.begin(), f.quads.end(), [](const Quad &q) { return q.op == Op::VaStart || q.op == Op::VaArg; });
-}
-
 bool isInlinable(const Function &f) {
-    return f.quads.size() <= MAX_INLINED_QUADS && f.linkName != "main" && f.sym->type && !usesVarargs(f) && !callsItself(f);
+    return f.quads.size() <= MAX_INLINED_QUADS && f.linkName != "main" && f.sym->type && !callsItself(f);
 }
 
 std::vector<const sem::Symbol *> formalParameters(const Function &f) {

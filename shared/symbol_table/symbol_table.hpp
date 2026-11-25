@@ -220,18 +220,15 @@ extern std::vector<SymbolTableEntry> g_symbolTable;
    what they name, struct/class types appear by tag, top-level const is
    dropped and arrays decay to pointers, exactly as the ABI requires.
    Repeated components use the ABI's substitutions (`S_`, `S0_`, ...:
-   `f(Point *, Point *)` is _Z1fP5PointS0_). Target-specific choice:
-   `va_list` is MIPS o32's `void *`. `main` is never mangled.
+   `f(Point *, Point *)` is _Z1fP5PointS0_). `main` is never mangled.
 
    The encoder works on sem::Type. The semantic phase hands it resolved
    types; the parser builds the same types structurally from the
    declaration (parseTimeType), so both symbol tables show the same name.
    ===================================================================== */
-std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className = "");
+std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, const std::string &className = "");
 /* the parser's entry point: parameters as written (ASTTypeExpr) */
-std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className = "");
+std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, const std::string &className = "");
 /* a type as the parser sees it: specifiers, tags, typedefs (through this
    table), pointers, references, arrays and function types -- no checks,
    that is the semantic phase's job. Parameters decay like in C. */

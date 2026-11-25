@@ -179,7 +179,7 @@ The full matrix with the test that covers each row is in
 | Operators | arithmetic, logical (short-circuit), relational, bitwise, assignment and compound assignment, unary, `?:`, comma, `sizeof`, C-style and functional casts |
 | Control flow | if / else, for, while, do-while, `until`, switch / case / default, goto and labels, break, continue |
 | Types | `int`, `char`, `short`, `long`, `long long`, `float`, `double`, `bool`, `void`, signed / unsigned; arrays of any dimension; pointers and pointer arithmetic; structures (named, unnamed, anonymous members); `enum` with C++ rules; `typedef`; references; `const`; `auto` |
-| Functions | recursion, prototypes, calls before the declaration, variable arguments (`...`, `va_*`), `main(argc, argv)` |
+| Functions | recursion, prototypes, calls before the declaration, `main(argc, argv)`; only the built-in `printf` and `scanf` take a variable number of arguments |
 | Built-ins | `printf`, `scanf` (format strings checked like gcc), `malloc`, `calloc`, `realloc`, `free` (freed memory is reused through a free list) |
 | Storage | locals, globals, `static` locals and members |
 | C++ subset | classes, objects and `this`; single inheritance with access control; `public` / `protected` / `private`; `friend`; default constructors; static members; function and operator overloading with Itanium name mangling |
@@ -189,7 +189,7 @@ The full matrix with the test that covers each row is in
 All the specification's basic features (operators, if-else, loops,
 switch, int and char arrays, pointers, structures, printf / scanf,
 calls with arguments, goto / break / continue, `static`) and advanced
-features (variable arguments, dynamic memory, command-line input,
+features (dynamic memory, command-line input,
 typedef, references, `until`, multi-level pointers, multi-dimensional
 arrays) are covered.
 
@@ -197,7 +197,7 @@ arrays) are covered.
 
 | Rejected | Examples | Why |
 |---|---|---|
-| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`, `union`; from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, virtual functions, multiple inheritance, object slicing, nested and local classes, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43, D47, D50 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
+| Removed on purpose | the preprocessor (`#include`, `#define`), `extern`, file I/O (`FILE`, `fopen` …), lambdas, function pointers, `new` / `delete`, `register`, `volatile`, `long double`, `union`, user-written variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`); from C++: destructors, constructors with parameters, initializer lists, copy and converting constructors, `const` member functions, virtual functions, multiple inheritance, object slicing, nested and local classes, `enum class`; loop-invariant code motion | decisions D1–D6, D31, D34–D36, D43, D47, D50, D51 in [`docs/DESIGN_LOG.md`](docs/DESIGN_LOG.md) |
 | Never implemented | bit-fields, default arguments, templates, namespaces, `using`, exceptions, `inline`, `override` / `final`, compound literals, nested functions, wide characters | out of scope |
 
 `printf`, `scanf`, `malloc` and the other built-ins are part of the
@@ -220,6 +220,7 @@ so that their error message can name them.
 | 2026-11-24 | D45 | a free list: `free` hands blocks back and `malloc` reuses them |
 | 2026-11-24 | D47 | virtual functions removed again: no run-time overriding, vtables or abstract classes; `virtual` is reserved and rejected |
 | 2026-11-24 | D50 | `union` removed again; `enum` stays |
+| 2026-11-25 | D51 | user-written variable-argument functions removed; `printf` and `scanf` stay variadic built-ins |
 
 ---
 

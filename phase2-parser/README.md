@@ -59,7 +59,7 @@ instead of a `%union`):
 | `str`, `idx` | a token's text and its index in the token log (for line/column) |
 | `node`, `nodeList` | the AST built so far |
 | `typeSpec` (`TypeSpec`) | declaration specifiers: `parts` (`"UNSIGNED"`, `"INT"`), `tagName`, `typedefName`, `isStatic`, `isExtern`, `storageClasses`, `isTypedefStorage`, `isConst`, `isAuto` |
-| `decl` (`DeclInfo`) | a declarator: `name`, `pointerLevel`, `arrayLevel`, `arrayDims`, `ptrOps`, `isReference`, `isFunction`, `isFunctionPointer`, `params`, `isVariadic`, `grouped`, `initExpr`, `ctorInit`, `className` … |
+| `decl` (`DeclInfo`) | a declarator: `name`, `pointerLevel`, `arrayLevel`, `arrayDims`, `ptrOps`, `isReference`, `isFunction`, `isFunctionPointer`, `params`, `grouped`, `initExpr`, `ctorInit`, `className` … |
 | `paramList`, `bases` | parameter lists, base classes |
 
 **AST** ([`../shared/ast/ast.hpp`](../shared/ast/ast.hpp)): one generic
@@ -223,7 +223,8 @@ structs (named or unnamed); enums (`enum Color { Red, Green = 5, Blue, }`,
 trailing comma allowed); classes with single inheritance, access
 specifiers, default constructors (in or out of class), `friend`, operator
 overloading; C-style and functional casts;
-`sizeof`; the built-in I/O, memory and varargs operations.
+`sizeof`; the built-in I/O and memory operations. `...` and the `va_*`
+words are rejected: there are no variable-argument functions (D51).
 
 **Removed** (2026-10-07, see [`../docs/DESIGN_LOG.md`](../docs/DESIGN_LOG.md)):
 the file-manipulation built-ins, lambdas and function pointers (`enum`

@@ -210,61 +210,20 @@ _Z5weigh3Bigdci_exit:
         addiu $sp, $sp, 8
         jr    $ra
 
-# mix(int, ...)
-_Z3mixiz:
+# mix(int, double, long long, char *)
+_Z3mixidxPc:
         addiu $sp, $sp, -8
         sw    $ra, 4($sp)
         sw    $fp, 0($sp)
         move  $fp, $sp
-        addiu $sp, $sp, -112
+        addiu $sp, $sp, -56
         sw    $a0, 8($fp)
         sw    $a1, 12($fp)
         sw    $a2, 16($fp)
         sw    $a3, 20($fp)
-        # va_start ap, n
-        addiu $t0, $fp, 12
-        sw    $t0, -4($fp)
-        # t1 = va_arg ap, double
-        lw    $t8, -4($fp)
-        addiu $t8, $t8, 7
-        li    $t9, -8
-        and   $t8, $t8, $t9
-        addiu $t9, $t8, 8
-        sw    $t9, -4($fp)
-        l.d   $f0, 0($t8)
-        s.d   $f0, -40($fp)
-        # d = t1
-        l.d   $f0, -40($fp)
-        s.d   $f0, -16($fp)
-        # t2 = va_arg ap, llong
-        lw    $t8, -4($fp)
-        addiu $t8, $t8, 7
-        li    $t9, -8
-        and   $t8, $t8, $t9
-        addiu $t9, $t8, 8
-        sw    $t9, -4($fp)
-        lw    $t1, 4($t8)
-        lw    $t0, 0($t8)
-        sw    $t0, -48($fp)
-        sw    $t1, -44($fp)
-        # w = t2
-        lw    $t0, -48($fp)
-        lw    $t1, -44($fp)
-        sw    $t0, -24($fp)
-        sw    $t1, -20($fp)
-        # t3 = va_arg ap, ptr
-        lw    $t8, -4($fp)
-        addiu $t9, $t8, 4
-        sw    $t9, -4($fp)
-        lw    $t0, 0($t8)
-        sw    $t0, -52($fp)
-        # s = t3
-        lw    $t0, -52($fp)
-        sw    $t0, -28($fp)
-        # va_end ap
-        # t4 = llongtodouble w
-        lw    $t0, -24($fp)
-        lw    $t1, -20($fp)
+        # t1 = llongtodouble w
+        lw    $t0, 24($fp)
+        lw    $t1, 28($fp)
         mtc1  $t1, $f0
         cvt.d.w $f0, $f0
         l.d   $f4, fc1
@@ -276,40 +235,40 @@ _Z3mixiz:
         add.d $f0, $f0, $f2
 M2_0:
         add.d $f0, $f0, $f6
-        s.d   $f0, -64($fp)
-        # t5 = d double+ t4
-        l.d   $f0, -16($fp)
-        l.d   $f2, -64($fp)
+        s.d   $f0, -8($fp)
+        # t2 = d double+ t1
+        l.d   $f0, 16($fp)
+        l.d   $f2, -8($fp)
         add.d $f0, $f0, $f2
-        s.d   $f0, -72($fp)
-        # t6 = *s
-        lw    $t8, -28($fp)
+        s.d   $f0, -16($fp)
+        # t3 = *s
+        lw    $t8, 32($fp)
         lb    $t0, 0($t8)
-        sb    $t0, -73($fp)
-        # t7 = chartodouble t6
-        lb    $t0, -73($fp)
+        sb    $t0, -17($fp)
+        # t4 = chartodouble t3
+        lb    $t0, -17($fp)
         mtc1  $t0, $f0
         cvt.d.w $f0, $f0
-        s.d   $f0, -88($fp)
-        # t8 = t5 double+ t7
-        l.d   $f0, -72($fp)
-        l.d   $f2, -88($fp)
+        s.d   $f0, -32($fp)
+        # t5 = t2 double+ t4
+        l.d   $f0, -16($fp)
+        l.d   $f2, -32($fp)
         add.d $f0, $f0, $f2
-        s.d   $f0, -96($fp)
-        # t9 = inttodouble n
+        s.d   $f0, -40($fp)
+        # t6 = inttodouble n
         lw    $t0, 8($fp)
         mtc1  $t0, $f0
         cvt.d.w $f0, $f0
-        s.d   $f0, -104($fp)
-        # t10 = t8 double+ t9
-        l.d   $f0, -96($fp)
-        l.d   $f2, -104($fp)
+        s.d   $f0, -48($fp)
+        # t7 = t5 double+ t6
+        l.d   $f0, -40($fp)
+        l.d   $f2, -48($fp)
         add.d $f0, $f0, $f2
-        s.d   $f0, -112($fp)
-        # return t10
-        l.d   $f0, -112($fp)
-        j     _Z3mixiz_exit
-_Z3mixiz_exit:
+        s.d   $f0, -56($fp)
+        # return t7
+        l.d   $f0, -56($fp)
+        j     _Z3mixidxPc_exit
+_Z3mixidxPc_exit:
         move  $sp, $fp
         lw    $ra, 4($sp)
         lw    $fp, 0($sp)
@@ -645,7 +604,7 @@ M3_0:
         # param 2.5
         # param 3
         # param "Z"
-        # t20 = call mix(int, ...), 4
+        # t20 = call mix(int, double, long long, char *), 4
         addiu $sp, $sp, -32
         l.d   $f0, fc3
         s.d   $f0, 8($sp)
@@ -658,7 +617,7 @@ M3_0:
         lw    $a2, 8($sp)
         lw    $a3, 12($sp)
         li    $a0, 1
-        jal   _Z3mixiz
+        jal   _Z3mixidxPc
         addiu $sp, $sp, 32
         s.d   $f0, -240($fp)
         # param "%.2f\n"

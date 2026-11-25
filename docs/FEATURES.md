@@ -61,7 +61,7 @@ Test names: `L:` phase1-lexer/test, `P:` phase2-parser/test,
 
 | Feature | Lexer | Parser | AST | Semantic | IR | MIPS | Tests | Status |
 |---|---|---|---|---|---|---|---|---|
-| Variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, S:v04 v18 e15 | all phases |
+| Variable-argument functions (`...`, `va_list`, `va_start`, `va_arg`, `va_end`) | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | S:e24 | removed (D51): rejected; only `printf` / `scanf` take extra arguments |
 | Dynamic memory (`malloc` `calloc` `realloc` `free`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, P:test6, S:v09 e10 | all phases |
 | Command-line input (`int main(int argc, char **argv)`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | S:v12 v13 e11 e12 | all phases (`main` signature checked) |
 | typedef | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | L:test4, S:v01 v07 | all phases |
@@ -123,8 +123,10 @@ arguments, goto/break/continue, `static`.
 
 ### B. Advanced features — implemented (all phases)
 
-All of the specification's advanced features: variable-argument
-functions, dynamic memory allocation, command-line input, typedef,
+The specification's advanced features except user-written
+variable-argument functions (removed by D51; `printf` and `scanf` are
+the only calls with a variable number of arguments): dynamic memory
+allocation, command-line input, typedef,
 references, the `until` loop, multi-level pointers, multi-dimensional
 arrays.
 

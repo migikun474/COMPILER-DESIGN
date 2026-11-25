@@ -63,7 +63,7 @@ source line and a caret. A report goes to `logs/<file-stem>.log`.
   ([full description](../docs/SYMBOL_TABLE.md#part-2--the-semantic-table-semsymboltable)).
 - **`sem::Type`** — structural types: `Pointer(Pointer(Int))`,
   `Array(3, Array(4, Int))`, `Function(ret, params, variadic)`,
-  `Record` → `RecordInfo`, plus `Reference`, `Opaque` (`va_list`) and
+  `Record` → `RecordInfo`, plus `Reference` and
   `Error`. A `Function` type only describes a declared function: there
   are no function pointers, so a function is never a value.
   Sizes and layouts follow MIPS32 (ILP32).
@@ -340,12 +340,12 @@ typedef'd function type, and the former file names, which are now
 simply undeclared (`test/invalid/e19_dropped_features.c`).
 
 **Built-ins** — `printf`, `scanf`, `malloc`, `calloc`, `realloc`,
-`free` and `va_start`/`va_arg`/`va_end` are checked
-against built-in signatures; `scanf` arguments must be pointers to
+and `free` are checked against built-in signatures (`printf` and
+`scanf` are the only functions that take a variable number of
+arguments: user-written ones were removed, D51); `scanf` arguments must be pointers to
 writable storage (`did you forget '&'?`); literal format strings are
 checked like gcc's `-Wformat` (argument count, kind, length modifiers
-`hh h l ll z`, `scanf` pointee types); `va_arg` warns when the type is
-promoted through `...`.
+`hh h l ll z`, `scanf` pointee types).
 
 ## What the IR phase gets
 

@@ -42,7 +42,6 @@ ASTTypeExprPtr makeTypeExpr(const TypeSpec &ts, const DeclInfo &d) {
     t->ptrOps = d.ptrOps;
     t->innerPtrOps = d.innerPtrOps;
     t->isFunction = d.isFunction;
-    t->isVariadic = d.isVariadic;
     for (const auto &p : d.params) {
         t->params.push_back(p.typeExpr ? p.typeExpr : std::make_shared<ASTTypeExpr>());
     }
@@ -105,7 +104,7 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
     } else if (d.isFunction) {
         std::vector<std::string> paramTypes;
         for (auto &p : d.params) paramTypes.push_back(p.typeStr);
-        std::string mangled = mangle(d.name, paramExprs(d.params), d.isVariadic, ts.isFriend ? "" : currentClassName());
+        std::string mangled = mangle(d.name, paramExprs(d.params), ts.isFriend ? "" : currentClassName());
         std::string returnType = computeTypeStr(ts, d.pointerLevel, d.arrayLevel);
 
         SymbolDeclInfo extra;
@@ -159,10 +158,10 @@ ASTNodePtr registerDeclarator(DeclInfo &d, TypeSpec &ts) {
 }
 
 ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::vector<DeclInfo> &params,
-                               bool variadic, const std::string &className, const ASTNodePtr &body) {
+                               const std::string &className, const ASTNodePtr &body) {
     std::vector<std::string> paramTypes;
     for (auto &p : params) paramTypes.push_back(p.typeStr);
-    std::string mangled = mangle(name, paramExprs(params), variadic, className);
+    std::string mangled = mangle(name, paramExprs(params), className);
     SymbolDeclInfo extra;
     extra.tokenIdx = nameIdx;
     extra.returnType = "VOID";
@@ -174,7 +173,6 @@ ASTNodePtr makeConstructorNode(const std::string &name, int nameIdx, const std::
     ctor.name = name;
     ctor.nameIdx = nameIdx;
     ctor.isFunction = true;
-    ctor.isVariadic = variadic;
     ctor.params = params;
     ctor.className = className;
     node->typeExpr = makeTypeExpr(TypeSpec(), ctor);

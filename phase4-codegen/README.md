@@ -141,8 +141,8 @@ about it (`[uninitialized]`, see `../phase3-ir/README.md`).
   `float`/`double`). A struct is returned as its address in `$v0` and
   copied by the caller at once.
 - The caller removes the arguments. `$sp` is always 8-byte aligned.
-- Variable arguments need nothing special: `va_start` is the address
-  after the last named argument, `va_arg` reads and advances.
+- There are no user-written variable-argument functions (D51); the
+  run-time `printf` and `scanf` read their arguments from the stack.
 
 `main` in the assembly file is a small start-up stub: it aligns the
 stack, records the lowest address the stack may reach in

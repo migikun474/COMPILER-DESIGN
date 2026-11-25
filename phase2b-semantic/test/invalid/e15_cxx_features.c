@@ -1,4 +1,4 @@
-/* invalid: constructors, operator overloading, varargs, declarators,
+/* invalid: constructors, operator overloading, declarators,
    designated initializers */
 typedef int T;
 typedef char T;                   // error: typedef redefinition with different types ('char' vs 'int')
@@ -16,16 +16,6 @@ private:
 int operator+(int a, int b);      // error: must have at least one parameter of class type
 Vec operator=(Vec a, Vec b);      // error: overloaded 'operator=' must be a non-static member function
 Vec::Vec(double d) { x = 0; }     // error: constructor 'Vec' cannot take parameters: only default constructors 'Vec()' are supported
-int fixed(int n) { va_list ap; va_start(ap, n); return 0; }   // error: 'va_start' used in function 'fixed', which has fixed arguments
-int var(int n, ...) {
-    va_list ap;
-    int k = 0;
-    va_start(k, n);               // error: argument 1 of 'va_start' must be a 'va_list' variable
-    char c = va_arg(ap, char);    // warning: 'char' is promoted to 'int' when passed through '...'
-    int z = va_arg(ap, 3);        // error: second argument of 'va_arg' must be a type
-    va_end(ap);
-    return c + z;
-}
 int main() {
     Vec a;                        // error: 'Vec::Vec()' is a private member of 'class Vec'
     Vec b(1, 2);                  // error: 'class Vec' cannot be constructed from 2 arguments: only default construction is supported

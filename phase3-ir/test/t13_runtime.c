@@ -1,16 +1,11 @@
 /* t13 -- what the MIPS run-time library must get right: 64-bit printf,
    long long <-> double, printf flags, widths, precision, %e %g %x %o %c
-   %%, structs and doubles passed and returned through calls, varargs with
-   doubles, long long and strings, Newton's method. Expected: g++. */
+   %%, structs and doubles passed and returned through calls, a double, a
+   long long and a string as arguments, Newton's method. Expected: g++. */
 struct Big { double d; int n[3]; char tag; long long w; };
 struct Big make(int k) { struct Big b; b.d = k * 1.5; b.n[2] = k; b.tag = 'A' + k; b.w = 10000000000LL * k; return b; }
 double weigh(struct Big b, double f, char c, int i) { return b.d * f + c + i; }
-double mix(int n, ...) {
-    va_list ap; va_start(ap, n);
-    double d = va_arg(ap, double); long long w = va_arg(ap, long long); char *s = va_arg(ap, char *);
-    va_end(ap);
-    return d + (double)w + s[0] + n;
-}
+double mix(int n, double d, long long w, char *s) { return d + (double)w + s[0] + n; }
 int main() {
     long long big = 123456789012345LL;
     long long other = 987654321098LL;

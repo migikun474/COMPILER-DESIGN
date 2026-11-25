@@ -53,7 +53,6 @@ struct DeclInfo {
                                       the grammar rejects it) from `int *f(...)`
                                       (a function returning a pointer) */
     bool isReference = false;           /* declarator began with '&' */
-    bool isVariadic = false;            /* parameter list ended in `...` */
     bool grouped = false;               /* see ASTTypeExpr::grouped */
     int innerPointerLevel = 0;
     int innerArrayCount = 0;

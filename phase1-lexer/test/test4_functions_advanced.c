@@ -4,7 +4,7 @@ int add(int a, int b) {
     return a + b;
 }
 
-int sum(int count, ...) {
+int sum(int count, int first) {
     int total = 0;
     return total;
 }
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     MyInt y = 10;
     int z = add(x, y);
 
-    int total = sum(3, 1, 2, 3);
+    int total = sum(3, 1);
 
     int *heap = (int *) malloc(10 * sizeof(int));
     heap[0] = 42;

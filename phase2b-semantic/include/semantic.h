@@ -187,7 +187,7 @@ class SemanticAnalyzer {
                      bool isScanf, const ASTNode *at);
     void foldBinary(const ASTNodePtr &n, const std::string &op);
 
-    /* ---- constructors, operator overloading, va_* (cxx.cpp) ---- */
+    /* ---- constructors, operator overloading (cxx.cpp) ---- */
     /* default construction only (D35): checks `args` and returns `rec`'s
        constructor to call, or null when there is none to call */
     SymbolPtr construct(RecordInfo *rec, const std::vector<ASTNodePtr> &args, const ASTNode *at);
@@ -201,7 +201,6 @@ class SemanticAnalyzer {
        `operator<op>` (member or free). False when no such operator exists. */
     bool overloadedOperator(const ASTNodePtr &n, const std::string &op, const std::vector<ASTNodePtr> &operands,
                             TypePtr &result);
-    TypePtr varargBuiltin(const ASTNodePtr &n);
 };
 
 std::string describeSignature(const SymbolPtr &fnSym);

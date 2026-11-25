@@ -98,7 +98,7 @@ bool parenGroupIsExpression(int line, int column) {
     if (first == ")" ) return true;                       /* `T()` */
     if (first == "#num" || first == "#str") return true;  /* `T(4)` */
     static const char *exprOnly[] = {"this", "sizeof", "true", "false", "printf", "scanf",
-                                     "malloc", "calloc", "realloc", "va_arg"};
+                                     "malloc", "calloc", "realloc"};
     for (const char *w : exprOnly) {
         if (first == w) return true;
     }

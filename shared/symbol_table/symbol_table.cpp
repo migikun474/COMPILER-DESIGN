@@ -364,7 +364,7 @@ class Mangler {
 
     /* a type, using substitutions for components seen before */
     std::string type(const TypePtr &tIn) {
-        TypePtr t = normalize(tIn);
+        TypePtr t = tIn ? tIn : sem::errorType();
         std::string plain = canonical(t);
         if (!t->isConst && !t->enumInfo && !builtinCode(*t).empty()) return plain;
         for (size_t i = 0; i < subs_.size(); ++i) {
@@ -380,22 +380,21 @@ class Mangler {
                 case TypeKind::Array: out = arrayCode(*t) + type(t->elem); break;
                 case TypeKind::Function: {
                     out = "F" + type(t->ret);
-                    out += paramList(t->params, t->variadic);
+                    out += paramList(t->params);
                     out += "E";
                     break;
                 }
-                default: out = plain; break; /* record, enum, va_list */
+                default: out = plain; break; /* record, enum */
             }
         }
         subs_.push_back(plain);
         return out;
     }
 
-    std::string paramList(const std::vector<TypePtr> &params, bool variadic) {
-        if (params.empty() && !variadic) return "v";
+    std::string paramList(const std::vector<TypePtr> &params) {
+        if (params.empty()) return "v";
         std::string out;
         for (const auto &p : params) out += type(p ? sem::unqualified(p) : sem::errorType()); /* top-level cv is not part of the signature */
-        if (variadic) out += "z";
         return out;
     }
 
@@ -420,16 +419,9 @@ class Mangler {
         if (!isAnonymousTag(tag)) return sourceName(tag);
         return typedefName.empty() ? "Ut_" : sourceName(typedefName);
     }
-    /* va_list is `void *` on MIPS o32 */
-    static TypePtr normalize(const TypePtr &t) {
-        if (!t) return sem::errorType();
-        if (t->kind == TypeKind::Opaque && t->name == "va_list")
-            return sem::qualified(sem::pointerTo(sem::voidType()), t->isConst);
-        return t;
-    }
     /* the full encoding without substitutions: the identity of a component */
     static std::string canonical(const TypePtr &tIn) {
-        TypePtr t = normalize(tIn);
+        TypePtr t = tIn ? tIn : sem::errorType();
         if (t->isConst) return "K" + canonical(sem::unqualified(t));
         if (t->enumInfo) return typeName(t->enumInfo->tag, t->enumInfo->typedefName); /* an enum is mangled by name */
         std::string b = builtinCode(*t);
@@ -440,15 +432,13 @@ class Mangler {
             case TypeKind::Array: return arrayCode(*t) + canonical(t->elem);
             case TypeKind::Function: {
                 std::string out = "F" + canonical(t->ret);
-                if (t->params.empty() && !t->variadic) out += "v";
+                if (t->params.empty()) out += "v";
                 for (const auto &p : t->params) out += canonical(sem::unqualified(p));
-                if (t->variadic) out += "z";
                 return out + "E";
             }
             /* an unnamed type is known by its first typedef name (C++
                [dcl.typedef]/9); one with none has no linkage: Ut_ */
             case TypeKind::Record: return t->record ? typeName(t->record->tag, t->record->typedefName) : "Ut_";
-            case TypeKind::Opaque: return sourceName(t->name);
             default: return "u5error"; /* a vendor-extended type: only after an error */
         }
     }
@@ -456,8 +446,7 @@ class Mangler {
 
 } // namespace
 
-std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, bool variadic,
-                   const std::string &className) {
+std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &params, const std::string &className) {
     if (name == "main" && className.empty()) return "main";
     Mangler m;
     std::string out = "_Z";
@@ -469,11 +458,10 @@ std::string mangle(const std::string &name, const std::vector<sem::TypePtr> &par
     } else {
         out += sourceName(name);
     }
-    return out + m.paramList(params, variadic);
+    return out + m.paramList(params);
 }
 
-std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, bool variadic,
-                   const std::string &className) {
+std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &params, const std::string &className) {
     std::vector<sem::TypePtr> types;
     /* `f(void)` has no parameters */
     bool voidList = params.size() == 1 && params[0] && params[0]->specParts.size() == 1 &&
@@ -483,7 +471,7 @@ std::string mangle(const std::string &name, const std::vector<ASTTypeExprPtr> &p
     if (!voidList) {
         for (const auto &p : params) types.push_back(p ? parseTimeType(*p, true) : sem::errorType());
     }
-    return mangle(name, types, variadic, className);
+    return mangle(name, types, className);
 }
 
 /* mirrors the semantic phase's resolveType()/resolveSpecifiers() minus
@@ -524,7 +512,6 @@ static sem::TypePtr parseTimeSpecifiers(const ASTTypeExpr &te, int depth) {
         base = enumType(e);
     } else if (c("VOID")) base = voidType();
     else if (c("BOOL")) base = boolType();
-    else if (c("VA_LIST")) base = opaqueType("va_list");
     else if (c("FLOAT")) base = basicType(TypeKind::Float);
     else if (c("DOUBLE")) base = doubleType();
     else if (c("CHAR")) base = basicType(TypeKind::Char, c("UNSIGNED") > 0);
@@ -571,7 +558,7 @@ sem::TypePtr parseTimeType(const ASTTypeExpr &te, bool isParam) {
         for (const auto &p : te.params) params.push_back(parseTimeType(*p, true));
     }
     TypePtr t = wrapPointers(base, outerOps);
-    if (te.isFunction) t = functionType(t, params, te.isVariadic);
+    if (te.isFunction) t = functionType(t, params, false);
     else t = wrapArrays(t, innerDims, te.arrayDims.size());
     if (te.grouped) {
         t = wrapPointers(t, innerOps);

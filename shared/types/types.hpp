@@ -50,8 +50,7 @@ enum class TypeKind {
                   accepted silently everywhere to avoid cascades */
     Void, Bool, Char, Short, Int, Long, LongLong, Float, Double,
     Pointer, Reference, Array, Function,
-    Record,    /* struct / class */
-    Opaque     /* va_list */
+    Record     /* struct / class */
 };
 
 /* NoAccess = "not accessible at all from here", e.g. a base class's
@@ -69,11 +68,10 @@ struct Type {
 
     TypePtr ret;                 /* Function */
     std::vector<TypePtr> params;
-    bool variadic = false;
+    bool variadic = false;       /* only the built-in printf and scanf (D51) */
 
     std::shared_ptr<RecordInfo> record; /* Record */
     std::shared_ptr<EnumInfo> enumInfo; /* Int: this int is an enum type (D42) */
-    std::string name;            /* Opaque: "va_list" */
 };
 
 struct BaseClass {
@@ -134,7 +132,6 @@ TypePtr arrayOf(const TypePtr &elem, long long size);
 TypePtr functionType(const TypePtr &ret, const std::vector<TypePtr> &params, bool variadic);
 TypePtr recordType(const std::shared_ptr<RecordInfo> &r);
 TypePtr enumType(const std::shared_ptr<EnumInfo> &e);
-TypePtr opaqueType(const std::string &name);
 TypePtr qualified(const TypePtr &t, bool isConst); /* adds to existing */
 TypePtr unqualified(const TypePtr &t);
 

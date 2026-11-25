@@ -69,7 +69,6 @@ static bool typePositionAfter(int tok) {
         case SCOPE_RES: case '~': case STRUCT: case CLASS: case ENUM: case OPERATOR:
         case INT: case CHAR: case FLOAT: case DOUBLE: case VOID: case BOOL: case SHORT: case LONG:
         case SIGNED: case UNSIGNED: case TYPE_NAME: case STATIC: case TYPEDEF: case AUTO: case CONST:
-        case VA_LIST:
             return true;
         default:
             return false;
@@ -91,12 +90,15 @@ static const int SKIP_TOKEN = -1; /* reported and dropped: the scanner returns n
 
 static int identifierOrKeyword(bool beforeParen) {
     auto kw = reserved_word(yytext);
+    bool varargWord = kw.has_value() && (kw.value() == TokenType::VA_LIST || kw.value() == TokenType::VA_START ||
+                                         kw.value() == TokenType::VA_ARG || kw.value() == TokenType::VA_END);
     if (kw.has_value() && (kw.value() == TokenType::VIRTUAL || kw.value() == TokenType::EXPLICIT ||
-                           kw.value() == TokenType::UNION)) {
-        /* still reserved so the message is clear, but no longer part of the language (D35, D50) */
+                           kw.value() == TokenType::UNION || varargWord)) {
+        /* still reserved so the message is clear, but no longer part of the language (D35, D50, D51) */
         const char *missing = kw.value() == TokenType::VIRTUAL ? "virtual functions"
                               : kw.value() == TokenType::UNION ? "unions"
-                                                                : "converting constructors";
+                              : varargWord ? "variable-argument functions (only printf and scanf take a variable number of arguments)"
+                                           : "converting constructors";
         reportDiagnostic(yylineno, g_tokStartCol, yytext,
                          std::string("'") + yytext + "' is not supported: this language has no " + missing,
                          "Lexical error");
@@ -158,7 +160,7 @@ FRAC        ({DIGIT}+\.{DIGIT}*|\.{DIGIT}+)
     word = from == std::string::npos ? "" : word.substr(from, to == std::string::npos ? std::string::npos : to - from);
     reportDiagnostic(yylineno, g_tokStartCol + static_cast<int>(hash - yytext), "#" + word,
                      "preprocessor directive '#" + word + "' is not supported: this compiler has no preprocessor "
-                     "(printf, scanf, malloc, free and va_list are built in, so no #include is needed)",
+                     "(printf, scanf, malloc and free are built in, so no #include is needed)",
                      "Lexical error");
 }
 

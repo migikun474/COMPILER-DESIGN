@@ -109,7 +109,6 @@ function (numbering runs through the program from 100).
 | `x = &y`, `x = *y`, `*x = y` | address, load and store through a pointer |
 | `param x`, `call f, n`, `x = call f, n` | arguments left to right, then the call |
 | `return`, `return x` | |
-| `va_start ap, last`, `x = va_arg ap, type`, `va_end ap` | variable arguments |
 
 Every instruction that is a jump target gets a label (`L1`, `L2` …,
 unique in the program); the instruction number stays visible.
@@ -160,7 +159,7 @@ a type or an overload.
 | constructors | default constructors only (D35): a call with the object's address; the base and the members are built first, in declaration order, then the body runs. There are no destructors |
 | operator overloading | a call to `operator<op>` |
 | `printf`, `scanf`, `malloc`, `calloc`, `realloc`, `free` | `call` to the built-in by name |
-| variable arguments | `va_start` / `va_arg` / `va_end` instructions; extra arguments promoted as in C |
+| `printf` / `scanf` arguments | after the format, each argument gets C's default promotions (`float` → `double`, `char`/`short` → `int`); user-written variable-argument functions do not exist (D51) |
 | globals, `static` locals | data in the `globals` table; class objects among them are constructed when `main` starts |
 
 ## The interpreter
@@ -195,7 +194,7 @@ passes run again on the larger bodies.
 | temporary merging | `t1 = a + b ; x = t1` → `x = a + b` |
 | dead temporaries | an instruction whose result no instruction reads is removed (a call stays, only its unused result goes) |
 | jump clean-up | jump to the next instruction; jump to a jump; `if c goto L1 ; goto L2 ; L1:` → `if !c goto L2`; code no path reaches |
-| function inlining | a call to a function of at most 16 instructions, not recursive and not variadic, is replaced by its body; parameters, locals and temporaries become temporaries of the caller | `square(3)` → `9` after folding |
+| function inlining | a call to a function of at most 16 instructions, not recursive, is replaced by its body; parameters, locals and temporaries become temporaries of the caller | `square(3)` → `9` after folding |
 
 What keeps it correct: a value read from memory is only reused while
 nothing can have changed it. Any store through a pointer, any array or
@@ -238,13 +237,13 @@ the output of the same source compiled with gcc/g++.
 | `t04_arrays` | 1-D to 3-D arrays, partial and designated initializers, zeroed static data, `i[a]`, array parameters (1-D and 2-D), strings, `sizeof` of an array (plain C: expected output from gcc) |
 | `t05_pointers` | two and three levels, arithmetic and differences, `void *`, pointer to an array, array of pointers, writing through a pointer to a pointer |
 | `t06_structs` | nesting, copies, by-value parameters and results, arrays of structs, array members, anonymous members, padding |
-| `t07_functions` | recursion, mutual recursion, overloading, references (to a pointer, returned, `const T &` to another type), varargs with a `va_list` passed on, `static` locals, tail recursion |
+| `t07_functions` | recursion, mutual recursion, overloading, references (to a pointer, returned, `const T &` to another type), arrays passed with their length, `static` locals, tail recursion |
 | `t08_classes` | construction order (base, members, body), a static member, operators, arrays of objects, objects inside objects, a hidden base function called through `Base::`, `this`, a friend, a global object built before `main`, block copies |
 | `t09_memory` | `malloc`/`calloc`/`realloc`/`free`, a freed block reused, a linked list built, reversed and freed, rows from `malloc`, a long malloc/free loop |
 | `t10_io` | `printf` formats, `scanf` (input in `t10_io.in`) |
 | `t11_main_args` | `argc` / `argv` (arguments in `t11_main_args.args`) |
 | `t12_lecture_examples` | the slides' examples, with the expected listing |
-| `t13_runtime` | aimed at the MIPS run-time library: 64-bit `printf`, `long long` ↔ `double`, flags, widths, precision, `%e %g %x %o %c %%`, structs and doubles through calls, varargs with doubles, `long long` and strings |
+| `t13_runtime` | aimed at the MIPS run-time library: 64-bit `printf`, `long long` ↔ `double`, flags, widths, precision, `%e %g %x %o %c %%`, structs and doubles through calls, a `double`, a `long long` and a string as arguments |
 | `t14_optimizer` | `-O1` must not reuse what may have changed (through a pointer, a reference, a call, an array element) and must keep what is used: wrapping constants, per-path constants, a loop-carried value, dead assignments, calls whose result is unused |
 | `t15_o3` | inlining (side effects, several returns, a reference, a by-value struct), a recursive function not inlined, a tail call with swapped arguments, a division in a loop that may run zero times |
 | `t16_registers` | for the MIPS back end: values across calls and recursion, many live values at once, arguments computed before a call, `char`/`short` wrapping in registers, many doubles at once, a loop made of `goto` |

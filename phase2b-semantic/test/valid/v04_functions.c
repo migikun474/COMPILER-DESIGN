@@ -22,7 +22,7 @@ void log_value(int v) {
 
 double average(int a, int b) { return (a + b) / 2.0; }
 char first(char *s) { return s[0]; }
-int sum(int count, ...) { return count; }   /* variadic */
+int sum(int count) { return count; }
 
 int main() {
     int r = add(1, 2);
@@ -30,7 +30,7 @@ int main() {
     double avg = average(3, 4);
     log_value(r);
     r = factorial(5) + is_odd(3) + first("abc");
-    r = sum(1) + sum(3, 1, 2.0, "x");
+    r = sum(1) + sum(3);
     r = later(r);                 /* defined below: file-scope functions may be called before their definition */
     return r + avg;
 }

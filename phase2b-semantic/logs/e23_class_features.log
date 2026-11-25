@@ -2,67 +2,67 @@
        SEMANTIC ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c
+Source File : /home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c
 
-Semantic analysis failed: 13 error(s), 2 warning(s) in '/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c'.
+Semantic analysis failed: 13 error(s), 2 warning(s) in '/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c'.
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:6:7: semantic error: 'Two' cannot have a second base class 'Other': only single inheritance is supported [inheritance]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:6:7: semantic error: 'Two' cannot have a second base class 'Other': only single inheritance is supported [inheritance]
  6 | class Two : public Base, public Other { };    // error: 'Two' cannot have a second base class 'Other': only single inheritance is supported
    |       ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:11:5: semantic error: constructor 'Point' cannot take parameters: only default constructors 'Point()' are supported [constructor]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:11:5: semantic error: constructor 'Point' cannot take parameters: only default constructors 'Point()' are supported [constructor]
  11 |     Point(int a) { x = a; }                   // error: constructor 'Point' cannot take parameters: only default constructors 'Point()' are supported
     |     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:18:11: semantic error: nested class 'Inner' is not supported: define it outside 'Counter' [nested-class]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:18:11: semantic error: nested class 'Inner' is not supported: define it outside 'Counter' [nested-class]
  18 |     class Inner { int i; };                   // error: nested class 'Inner' is not supported: define it outside 'Counter'
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:21:32: semantic error: 'hidden' is a private member of 'class Secret' and is not accessible outside the class [access]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:21:32: semantic error: 'hidden' is a private member of 'class Secret' and is not accessible outside the class [access]
  21 | int peek(Secret &s) { return s.hidden; }      // error: is a private member
     |                                ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:24:17: semantic error: jump to label 'out' crosses the initialization of 'y' (line 25) [jump-over-init]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:24:17: semantic error: jump to label 'out' crosses the initialization of 'y' (line 25) [jump-over-init]
  24 |     if (k) goto out;                          // error: jump to label 'out' crosses the initialization of 'y'
     |                 ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:34:5: semantic error: jump to case label crosses the initialization of 'z' (line 32); put the case's declarations in a block [jump-over-init]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:34:5: semantic error: jump to case label crosses the initialization of 'z' (line 32); put the case's declarations in a block [jump-over-init]
  34 |     case 2:                                   // error: jump to case label crosses the initialization of 'z'
     |     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:40:20: semantic error: static local 'c' of type 'class Counter' is not supported: its class has a constructor (make it a global or a non-static local) [static-object]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:40:20: semantic error: static local 'c' of type 'class Counter' is not supported: its class has a constructor (make it a global or a non-static local) [static-object]
  40 |     static Counter c;                         // error: static local 'c' of type 'class Counter' is not supported: its class has a constructor
     |                    ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:44:11: semantic error: a class cannot be defined inside a function (no local classes): define it at file scope [local-class]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:44:11: semantic error: a class cannot be defined inside a function (no local classes): define it at file scope [local-class]
  44 |     class Local { public: int f() { return 1; } };   // error: a class cannot be defined inside a function (no local classes)
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:49:14: semantic error: type mismatch: cannot initialize variable 'b' of type 'class Base' with a value of type 'class Derived' (a derived object cannot be copied into a base object: object slicing is not supported; use a pointer or a reference) [slicing]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:49:14: semantic error: type mismatch: cannot initialize variable 'b' of type 'class Base' with a value of type 'class Derived' (a derived object cannot be copied into a base object: object slicing is not supported; use a pointer or a reference) [slicing]
  49 |     Base b = d;                               // error: object slicing is not supported
     |              ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:50:9: semantic error: type mismatch: cannot assign 'class Derived' to 'class Base' (a derived object cannot be copied into a base object: object slicing is not supported; use a pointer or a reference) [slicing]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:50:9: semantic error: type mismatch: cannot assign 'class Derived' to 'class Base' (a derived object cannot be copied into a base object: object slicing is not supported; use a pointer or a reference) [slicing]
  50 |     b = d;                                    // error: object slicing is not supported
     |         ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:51:21: semantic error: type mismatch: argument 1 of 'byValue' expects 'class Base' but got 'class Derived' (a derived object cannot be passed as a base object by value (no object slicing); pass a pointer or a reference) [argument-type]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:51:21: semantic error: type mismatch: argument 1 of 'byValue' expects 'class Base' but got 'class Derived' (a derived object cannot be passed as a base object by value (no object slicing); pass a pointer or a reference) [argument-type]
  51 |     int r = byValue(d);                       // error: no object slicing
     |                     ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:52:14: semantic error: 'class Counter' cannot be constructed from 1 argument: only default construction is supported ('Counter x;') [constructor]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:52:14: semantic error: 'class Counter' cannot be constructed from 1 argument: only default construction is supported ('Counter x;') [constructor]
  52 |     Counter c(3);                             // error: 'class Counter' cannot be constructed from 1 argument: only default construction is supported
     |              ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:55:11: semantic error: member function 'value' cannot be called on a const object (there are no const member functions) [const-object]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:55:11: semantic error: member function 'value' cannot be called on a const object (there are no const member functions) [const-object]
  55 |     r = k.value();                            // error: member function 'value' cannot be called on a const object (there are no const member functions)
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:59:11: semantic warning: assignment used as the condition of 'if'; did you mean '=='? [assign-condition]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:59:11: semantic warning: assignment used as the condition of 'if'; did you mean '=='? [assign-condition]
  59 |     if (a = b) return 1;                      // warning: assignment used as the condition of 'if'; did you mean '=='?
     |           ^
 
-/home/amirishetty/Desktop/semantics/phase2b-semantic/test/invalid/e23_class_features.c:60:14: semantic warning: assignment used as the condition of 'while'; did you mean '=='? [assign-condition]
+/home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/invalid/e23_class_features.c:60:14: semantic warning: assignment used as the condition of 'while'; did you mean '=='? [assign-condition]
  60 |     while (a = 0) { }                         // warning: assignment used as the condition of 'while'
     |              ^
 

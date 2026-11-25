@@ -25,7 +25,6 @@
      x = &y              x = *y              *x = y
      param x             call f, n           x = call f, n
      return              return x
-     va_start x, y       x = va_arg y        va_end x
    ===================================================================== */
 
 #include <memory>
@@ -75,10 +74,7 @@ enum class Op {
     Store,                                                /* *a = r */
     Param,                                                /* param a */
     Call,                                                 /* [r =] call callee, nargs */
-    Return,                                               /* return [a] */
-    VaStart,                                              /* va_start a, b */
-    VaArg,                                                /* r = va_arg a */
-    VaEnd                                                 /* va_end a */
+    Return                                                /* return [a] */
 };
 
 struct Quad {

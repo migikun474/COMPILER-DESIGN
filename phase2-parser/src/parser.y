@@ -82,7 +82,6 @@
 %token PRINTF SCANF MALLOC FREE CALLOC REALLOC
 %token BOOL
 %token SIZEOF
-%token VA_LIST VA_START VA_ARG VA_END
 %token OPERATOR
 %token FCAST        /* a type name / type keyword starting `T(...)` that can only be an
                        expression (`Dog(4).bark();`), decided by the scanner's lookahead */
@@ -224,7 +223,6 @@ type_specifier
     | LONG     { $$.typeSpec.parts.push_back("LONG"); g_afterTypeKeyword = true; }
     | SIGNED   { $$.typeSpec.parts.push_back("SIGNED"); g_afterTypeKeyword = true; }
     | UNSIGNED { $$.typeSpec.parts.push_back("UNSIGNED"); g_afterTypeKeyword = true; }
-    | VA_LIST  { $$.typeSpec.parts.push_back("VA_LIST"); g_afterTypeKeyword = true; }
     | TYPE_NAME {
           const Symbol *s = lookupTypeSymbol($1.str);
           setCategory($1.idx, categoryForTypeName(s));
@@ -490,18 +488,17 @@ constructor_head
           }
           $$ = $1;
           $$.paramList = $4.paramList;
-          $$.decl.isVariadic = $4.decl.isVariadic;
       }
     ;
 
 constructor_def
     : constructor_head compound_stmt {
           popScope();
-          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), $2.node);
+          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, currentClassName(), $2.node);
       }
     | constructor_head ';' {
           popScope();
-          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, $1.decl.isVariadic, currentClassName(), nullptr);
+          $$.node = makeConstructorNode($1.str, $1.idx, $1.paramList, currentClassName(), nullptr);
       }
     ;
 
@@ -524,7 +521,7 @@ out_of_class_special
           }
       } compound_stmt {
           popScope();
-          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $6.decl.isVariadic, $1.str, $9.node);
+          $$.node = makeConstructorNode($3.str, $3.idx, $6.paramList, $1.str, $9.node);
           leaveClass();
       }
     ;
@@ -692,7 +689,6 @@ direct_declarator
           $$.decl.isFunction = true;
           $$.decl.wasParenGrouped = false; /* consumed */
           $$.decl.params = $4.paramList;
-          $$.decl.isVariadic = $4.decl.isVariadic;
           popScope(); /* only used to keep param names out of the
                          enclosing scope while scanning the list; the
                          real function-body scope is pushed again by
@@ -747,13 +743,19 @@ parameter_list_opt
 parameter_list
     : parameter_decl {
           if ($1.decl.nameIdx >= 0 || !$1.decl.typeStr.empty()) $$.paramList.push_back($1.decl);
-          $$.decl.isVariadic = false; /* $$ started as a copy of this param's own decl */
       }
     | parameter_list ',' parameter_decl {
           $$ = $1;
           $$.paramList.push_back($3.decl);
       }
-    | parameter_list ',' ELLIPSIS { $$ = $1; $$.decl.isVariadic = true; }
+    | parameter_list ',' ELLIPSIS {
+          /* recognized only to be reported: no variable-argument functions (D51) */
+          $$ = $1;
+          reportDiagnostic(g_tokens[$3.idx].line, g_tokens[$3.idx].column, "...",
+                           "'...' is not supported: this language has no variable-argument functions "
+                           "(only printf and scanf take a variable number of arguments)",
+                           "Syntax error");
+      }
     ;
 
 parameter_decl
@@ -781,7 +783,7 @@ function_definition
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
           std::string owner = $1.typeSpec.isFriend ? "" : currentClassName(); /* a friend is not a member */
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, owner);
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), owner);
           std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
           SymbolDeclInfo extra;
           extra.tokenIdx = $2.decl.nameIdx;
@@ -820,7 +822,7 @@ function_definition
              again. */
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic,
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params),
                                        $1.typeSpec.isFriend ? "" : currentClassName());
           if (outOfClass) leaveClass();
           auto node = atToken(mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled), $2.decl.nameIdx);
@@ -1067,7 +1069,6 @@ type_name_specifier
     | LONG     %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("LONG"); }
     | SIGNED   %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("SIGNED"); }
     | UNSIGNED %prec PREFER_EXPRESSION { $$.typeSpec.parts.push_back("UNSIGNED"); }
-    | VA_LIST  { $$.typeSpec.parts.push_back("VA_LIST"); }
     | CONST    { $$ = ParserValue(); $$.typeSpec.isConst = true; }
     | TYPE_NAME %prec PREFER_EXPRESSION {
           /* in a cast / sizeof / call argument, `T(` is the expression
@@ -1189,9 +1190,6 @@ builtin_call
     | FREE '(' argument_list_opt ')'    { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "free"), $1.idx);    for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | CALLOC '(' argument_list_opt ')'  { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "calloc"), $1.idx);  for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     | REALLOC '(' argument_list_opt ')' { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "realloc"), $1.idx); for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | VA_START '(' argument_list_opt ')' { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_start"), $1.idx); for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | VA_ARG '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_arg"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
-    | VA_END '(' argument_list_opt ')'   { auto n = atToken(mkNode(ASTKind::BuiltinCallExpr, "va_end"), $1.idx);   for (auto &a : $3.nodeList) addChild(n, a); $$.node = n; }
     ;
 
 constructor_args_opt

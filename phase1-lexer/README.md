@@ -97,7 +97,7 @@ first rule**. On top of that:
 | Qualifiers, storage classes | `const static typedef auto` (`extern` was removed, D43) |
 | Aggregates, OOP | `struct class enum public private protected this operator friend`; `virtual`, `explicit` and `union` are reserved only to be reported (D35, D50) |
 | Control flow | `if else for while do until switch case default break continue goto return` |
-| Reserved library names (custom to this language) | `printf scanf malloc free calloc realloc va_list va_start va_arg va_end` |
+| Reserved library names (custom to this language) | `printf scanf malloc free calloc realloc`; `va_list va_start va_arg va_end` (reserved only to be rejected by the parser, D51) |
 | Other | `sizeof`, `true`, `false` (`BOOL_LITERAL`) |
 | Integer literals | decimal, hex `0x1F`, octal `017`, binary `0b101`, suffixes `u`, `l`, `ll` in either order (`10UL`, `10LLU`) |
 | Floating literals | `5.5`, `5.`, `.5`, `1e3`, `2.5e-3f` |
@@ -210,7 +210,7 @@ with the shared library. `./run.sh` runs the lexer on every file in
 | `test1_arithmetic_logical.c` | arithmetic, relational, logical, bitwise, assignment operators |
 | `test2_control_flow.c` | if-else, for, while, do-while, switch, goto, break, continue, static, until |
 | `test3_arrays_pointers_structs.c` | arrays, multi-dimensional arrays, pointers, structs |
-| `test4_functions_advanced.c` | calls, varargs, dynamic memory, argc/argv, typedef, references |
+| `test4_functions_advanced.c` | calls, dynamic memory, argc/argv, typedef, references |
 | `test5_until_loop.c` | until, float/hex/char/string constants |
 | `test6_lexical_errors.c` | every lexical error kind: **11 errors and 1 warning** |
 | `test7_type_modifiers_and_custom_keywords.c` | type modifiers, numeric literal forms, suffixes, booleans, I/O and memory keywords |
@@ -222,7 +222,7 @@ with the shared library. `./run.sh` runs the lexer on every file in
 
 | Behaviour here | In C | Reason |
 |---|---|---|
-| `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc` and `va_*` are reserved words | ordinary library identifiers | the language treats I/O, memory and varargs as built-ins, so later phases check them against fixed signatures |
+| `printf`, `scanf`, `malloc`, `free`, `calloc`, `realloc` and `va_*` are reserved words | ordinary library identifiers | the language treats I/O and memory as built-ins, so later phases check them against fixed signatures; `va_*` stay reserved only so the parser can reject them (D51) |
 | `until`, `true`, `false`, `bool`, `class`, `this`, `::`, … are reserved | not keywords in C | language extensions |
 | `12abc` → two tokens | one malformed preprocessing number | the lexer only recognizes valid token shapes; the parser reports the error |
 

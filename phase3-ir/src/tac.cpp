@@ -22,7 +22,7 @@ Cls classOf(const TypePtr &t) {
         case TypeKind::LongLong: return t->isUnsigned ? Cls::ULLong : Cls::LLong;
         case TypeKind::Float: return Cls::Float;
         case TypeKind::Double: return Cls::Double;
-        case TypeKind::Pointer: case TypeKind::Reference: case TypeKind::Array: case TypeKind::Opaque:
+        case TypeKind::Pointer: case TypeKind::Reference: case TypeKind::Array:
             return Cls::Ptr; /* an array used as a value is the address of its first element */
         case TypeKind::Record: return Cls::Block;
         default: return Cls::Void;
@@ -186,9 +186,6 @@ std::string quadTextWith(const Program &p, const Names &names, const Quad &q,
             break;
         }
         case Op::Return: s = q.a.isNone() ? "return" : "return " + T(q.a); break;
-        case Op::VaStart: s = "va_start " + T(q.a) + ", " + T(q.b); break;
-        case Op::VaArg: s = T(q.r) + " = va_arg " + T(q.a) + ", " + clsName(q.cls); break;
-        case Op::VaEnd: s = "va_end " + T(q.a); break;
     }
     return s;
 }

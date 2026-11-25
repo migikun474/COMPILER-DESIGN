@@ -930,7 +930,7 @@ Operand Generator::call(sem::Symbol *callee, const Operand &thisArgIn, const std
     std::vector<Operand> values; /* all arguments first: an argument may itself contain a call */
     for (size_t i = 0; i < args.size(); ++i) {
         if (ft && i < ft->params.size()) values.push_back(argumentFor(ft->params[i], args[i]));
-        else values.push_back(promoteVariadic(rvalue(args[i])));
+        else values.push_back(rvalue(args[i]));
     }
     for (const auto &e : extraArgs) values.push_back(e);
     if (!thisArg.isNone()) {
@@ -991,23 +991,6 @@ Operand Generator::overloaded(const ASTNodePtr &n) {
 Operand Generator::builtin(const ASTNodePtr &n, bool discard) {
     const std::string &name = n->label;
     const auto &args = n->children;
-    if (name == "va_start" || name == "va_end") {
-        Quad q;
-        q.op = name == "va_start" ? Op::VaStart : Op::VaEnd;
-        q.a = lvalue(args[0]).base;
-        if (name == "va_start" && args.size() > 1) q.b = lvalue(args[1]).base;
-        emit(q);
-        return {};
-    }
-    if (name == "va_arg") {
-        Quad q;
-        q.op = Op::VaArg;
-        q.a = lvalue(args[0]).base;
-        q.r = newTemp(n->semType);
-        q.cls = classOf(n->semType);
-        emit(q);
-        return q.r;
-    }
     TypePtr i = sem::intType(), vp = sem::pointerTo(sem::voidType()), cstr = sem::pointerTo(sem::charType());
     std::vector<TypePtr> fixed;
     if (name == "printf" || name == "scanf") fixed = {cstr};

@@ -4,7 +4,7 @@
 
    Source file   : test/t13_runtime.c
    Optimization  : -O1: optimized inside basic blocks
-   Result        : Optimized three address code (-O1): 127 -> 114 instruction(s)
+   Result        : Optimized three address code (-O1): 119 -> 105 instruction(s)
 
    Contents      : optimization summary, globals, one section per function
                    (its symbol table, then its code), the semantic symbol table,
@@ -14,15 +14,15 @@
  OPTIMIZATION SUMMARY (-O1)
 ----------------------------------------------------------------------------
 
-   instructions                          127 -> 114   (10% fewer)
+   instructions                          119 -> 105   (11% fewer)
 
-   calls inlined                           2
-   constants folded                       20
+   calls inlined                           3
+   constants folded                       23
    algebraic simplifications               0
    common subexpressions                   0
-   copies / constants forwarded           38
+   copies / constants forwarded           43
    temporaries merged away                 3
-   dead instructions removed              25
+   dead instructions removed              33
    jumps removed or redirected             1
    unreachable instructions removed        0
 
@@ -87,53 +87,41 @@
     117     return t6
 
 ============================================================================
- FUNCTION mix(int, ...)        (link name _Z3mixiz)
+ FUNCTION mix(int, double, long long, char *)        (link name _Z3mixidxPc)
 ============================================================================
 
- Symbol table: 5 parameter(s)/local(s), 10 temporaries, frame 112 bytes
+ Symbol table: 4 parameter(s)/local(s), 7 temporaries, frame 88 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
    n                param   int                             4       0
-   ap               local   va_list                         4       4
-   d                local   double                          8       8
-   w                local   long long                       8      16
-   s                local   char *                          4      24
+   d                param   double                          8       8
+   w                param   long long                       8      16
+   s                param   char *                          4      24
    t1               temp    double                          8      32
-   t2               temp    long long                       8      40
-   t3               temp    char *                          4      48
+   t2               temp    double                          8      40
+   t3               temp    char                            1      48
    t4               temp    double                          8      56
    t5               temp    double                          8      64
-   t6               temp    char                            1      72
+   t6               temp    double                          8      72
    t7               temp    double                          8      80
-   t8               temp    double                          8      88
-   t9               temp    double                          8      96
-   t10              temp    double                          8     104
 
- Code: 16 instruction(s)
+ Code: 8 instruction(s)
 
-    118     va_start ap, n
-    119     t1 = va_arg ap, double
-    120     d = t1
-    121     t2 = va_arg ap, llong
-    122     w = t2
-    123     t3 = va_arg ap, ptr
-    124     s = t3
-    125     va_end ap
-    126     t4 = llongtodouble t2
-    127     t5 = t1 double+ t4
-    128     t6 = *t3
-    129     t7 = chartodouble t6
-    130     t8 = t5 double+ t7
-    131     t9 = inttodouble n
-    132     t10 = t8 double+ t9
-    133     return t10
+    118     t1 = llongtodouble w
+    119     t2 = d double+ t1
+    120     t3 = *s
+    121     t4 = chartodouble t3
+    122     t5 = t2 double+ t4
+    123     t6 = inttodouble n
+    124     t7 = t5 double+ t6
+    125     return t7
 
 ============================================================================
  FUNCTION main()        (link name main)
 ============================================================================
 
- Symbol table: 6 parameter(s)/local(s), 14 temporaries, frame 440 bytes
+ Symbol table: 6 parameter(s)/local(s), 17 temporaries, frame 528 bytes
 
    name             kind    type                        width  offset
    ---------------- ------- -------------------------- ------ -------
@@ -148,7 +136,6 @@
    t16              temp    char                            1     204
    t17              temp    int                             4     208
    t18              temp    long long                       8     216
-   t20              temp    double                          8     232
    t21              temp    double                          8     240
    t22              temp    double                          8     248
    t28              temp    struct Big                     32     288
@@ -157,90 +144,93 @@
    t38              temp    double                          8     400
    t40              temp    double                          8     416
    t42              temp    double                          8     432
-   (28 temporaries no longer used after optimization not shown)
+   t49              temp    char                            1     488
+   t50              temp    double                          8     496
+   t51              temp    double                          8     504
+   t53              temp    double                          8     520
+   (36 temporaries no longer used after optimization not shown)
 
- Code: 80 instruction(s)
+ Code: 79 instruction(s)
 
-    134       big = 123456789012345
-    135       other = 987654321098
-    136       param "%lld %lld %llu %lld %lld\n"
-    137       param 123456789012345
-    138       param -17636684144620
-    139       param 370370367037035
-    140       param 122469134691247
-    141       param -987654321099
-    142       call printf, 6
-    143       param "%.1f %lld %d\n"
-    144       param 123456789012345.0
-    145       param 39900000000
-    146       param -2
-    147       call printf, 4
-    148       param "[%6.2f] [%-8.3f] [%08.2f] [%.0f] [%d]\n"
-    149       param 3.14159
-    150       param -2.5
-    151       param 7.125
-    152       param 0.5
-    153       param 2
-    154       call printf, 6
-    155       param "[%5d] [%-5d] [%05d] [%x] [%X] [%o] [%c] [%%]\n"
-    156       param -42
-    157       param 42
-    158       param -42
-    159       param 255
-    160       param 255
-    161       param 8
-    162       param 122
-    163       call printf, 8
-    164       param "%e %E %g %g %.3g\n"
-    165       param 12345.678
-    166       param 0.000123
-    167       param 1e+05
-    168       param 1e-05
-    169       param 0.6666666666666666
-    170       call printf, 6
-    171       t28[0] = 3.0
-    172       t28[16] = 2
-    173       t28[20] = 67
-    174       t28[24] = 20000000000
-    175       s = t28
-    176       t14 = s[0]
-    177       t15 = s[16]
-    178       t16 = s[20]
-    179       t17 = chartoint t16
-    180       t18 = s[24]
-    181       t33 = s
-    182       t37 = t33[0]
-    183       t38 = t37 double* 2.0
-    184       t40 = t38 double+ 97.0
-    185       t42 = t40 double+ 5.0
-    186       param "%.1f %d %c %lld %.1f\n"
-    187       param t14
-    188       param t15
-    189       param t17
-    190       param t18
-    191       param t42
-    192       call printf, 6
-    193       param 1
-    194       param 2.5
-    195       param 3
-    196       param "Z"
-    197       t20 = call mix(int, ...), 4
-    198       param "%.2f\n"
-    199       param t20
-    200       call printf, 2
-    201       x = 2.0
-    202       r = 1.0
-    203       i = 0
-    204  L1:  if i int>= 20 goto L2
-    205       t21 = x double/ r
-    206       t22 = r double+ t21
-    207       r = t22 double/ 2.0
-    208       i = i int+ 1
-    209       goto L1
-    210  L2:  param "%.10f\n"
-    211       param r
-    212       call printf, 2
-    213       return 0
+    126       big = 123456789012345
+    127       other = 987654321098
+    128       param "%lld %lld %llu %lld %lld\n"
+    129       param 123456789012345
+    130       param -17636684144620
+    131       param 370370367037035
+    132       param 122469134691247
+    133       param -987654321099
+    134       call printf, 6
+    135       param "%.1f %lld %d\n"
+    136       param 123456789012345.0
+    137       param 39900000000
+    138       param -2
+    139       call printf, 4
+    140       param "[%6.2f] [%-8.3f] [%08.2f] [%.0f] [%d]\n"
+    141       param 3.14159
+    142       param -2.5
+    143       param 7.125
+    144       param 0.5
+    145       param 2
+    146       call printf, 6
+    147       param "[%5d] [%-5d] [%05d] [%x] [%X] [%o] [%c] [%%]\n"
+    148       param -42
+    149       param 42
+    150       param -42
+    151       param 255
+    152       param 255
+    153       param 8
+    154       param 122
+    155       call printf, 8
+    156       param "%e %E %g %g %.3g\n"
+    157       param 12345.678
+    158       param 0.000123
+    159       param 1e+05
+    160       param 1e-05
+    161       param 0.6666666666666666
+    162       call printf, 6
+    163       t28[0] = 3.0
+    164       t28[16] = 2
+    165       t28[20] = 67
+    166       t28[24] = 20000000000
+    167       s = t28
+    168       t14 = s[0]
+    169       t15 = s[16]
+    170       t16 = s[20]
+    171       t17 = chartoint t16
+    172       t18 = s[24]
+    173       t33 = s
+    174       t37 = t33[0]
+    175       t38 = t37 double* 2.0
+    176       t40 = t38 double+ 97.0
+    177       t42 = t40 double+ 5.0
+    178       param "%.1f %d %c %lld %.1f\n"
+    179       param t14
+    180       param t15
+    181       param t17
+    182       param t18
+    183       param t42
+    184       call printf, 6
+    185       t49 = *"Z"
+    186       t50 = chartodouble t49
+    187       t51 = 5.5 double+ t50
+    188       t53 = t51 double+ 1.0
+    189       param "%.2f\n"
+    190       param t53
+    191       call printf, 2
+    192       x = 2.0
+    193       r = 1.0
+    194       i = 0
+    195  L1:  if i int>= 20 goto L2
+    196       t21 = x double/ r
+    197       t22 = r double+ t21
+    198       r = t22 double/ 2.0
+    199       i = i int+ 1
+    200       goto L1
+    201  L2:  param "%.10f\n"
+    202       param r
+    203       call printf, 2
+    204       return 0
 
 
 ----------------------------------------------------------------------------
@@ -253,8 +243,8 @@
    Big                struct_tag    struct Big                 -           5    -    0  size 32
    make               function      struct Big (int)           -           6    -    1  _Z4makei; defined
    weigh              function      double (struct Big, double, char, int) -           7    -    1  _Z5weigh3Bigdci; defined
-   mix                function      double (int, ...)          -           8    -    1  _Z3mixiz; defined
-   main               function      int (void)                 -          14    -    0  defined
+   mix                function      double (int, double, long long, char *) -           8    -    1  _Z3mixidxPc; defined
+   main               function      int (void)                 -           9    -    0  defined
 
  scope: global > struct Big
    name               kind          type                       storage  line size uses  TAC name / notes
@@ -281,21 +271,20 @@
  scope: global > mix()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   n                  parameter     int                        param       8    4    2  n.7
-   ap                 variable      va_list                    local       9    4    5  ap.8
-   d                  variable      double                     local      10    8    1  d.9
-   w                  variable      long long                  local      10    8    1  w.10
-   s                  variable      char *                     local      10    4    1  s.11
+   n                  parameter     int                        param       8    4    1  n.7
+   d                  parameter     double                     param       8    8    1  d.8
+   w                  parameter     long long                  param       8    8    1  w.9
+   s                  parameter     char *                     param       8    4    1  s.10
 
  scope: global > main()
    name               kind          type                       storage  line size uses  TAC name / notes
    ------------------ ------------- -------------------------- ------- ----- ---- ----  ----------------
-   big                variable      long long                  local      15    8    5  big.12
-   other              variable      long long                  local      16    8    2  other.13
-   s                  variable      struct Big                 local      22   32    5  s.14
-   x                  variable      double                     local      25    8    1  x.15
-   r                  variable      double                     local      25    8    4  r.16
-   i                  variable      int                        local      26    4    3  i.17
+   big                variable      long long                  local      10    8    5  big.11
+   other              variable      long long                  local      11    8    2  other.12
+   s                  variable      struct Big                 local      17   32    5  s.13
+   x                  variable      double                     local      20    8    1  x.14
+   r                  variable      double                     local      20    8    4  r.15
+   i                  variable      int                        local      21    4    3  i.16
 
 ----------------------------------------------------------------------------
  RECORD LAYOUTS (MIPS32 sizes and offsets)
@@ -320,4 +309,4 @@ struct Big: size 32, align 8
 96.50
 1.4142135624
 
-   exit code 0, 211 instructions executed
+   exit code 0, 194 instructions executed

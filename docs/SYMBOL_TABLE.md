@@ -227,9 +227,8 @@ struct Type {
     bool isConst, isUnsigned;
     TypePtr elem;                // Pointer / Reference target, Array element
     long long arraySize;         // Array: element count, -1 for []
-    TypePtr ret; std::vector<TypePtr> params; bool variadic;   // Function
+    TypePtr ret; std::vector<TypePtr> params; bool variadic;   // Function (variadic: printf/scanf only)
     std::shared_ptr<RecordInfo> record;
-    std::string name;            // Opaque ("va_list")
 };
 ```
 
@@ -244,7 +243,6 @@ struct Type {
 | `int f(int, char *)` | `Function(ret = Int, params = [Int, Pointer(Char)])` — only ever the type of a declared function; `Pointer(Function)` is never built | — |
 | `int &r` | `Reference(Int)` | 4 |
 | `struct P`, `class C` | `Record` → a shared `RecordInfo` (fields, members, bases, layout) | from `layoutRecord()` |
-| `va_list` | `Opaque` | 4 |
 
 Type equality is structural for these constructors and **by name** for
 records: two `struct P` types are the same type exactly when

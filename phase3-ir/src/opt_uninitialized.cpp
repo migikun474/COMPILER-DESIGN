@@ -43,10 +43,8 @@ std::vector<FlowBlock> flowGraph(const Function &fn) {
 
 Operand assignedName(const Quad &q) {
     switch (q.op) {
-        case Op::VaStart:
-            return isName(q.a) ? q.a : Operand();
         case Op::Store: case Op::IndexStore: case Op::Goto: case Op::IfRel: case Op::Param:
-        case Op::Return: case Op::VaEnd:
+        case Op::Return:
             return Operand();
         default:
             return isName(q.r) ? q.r : Operand();
