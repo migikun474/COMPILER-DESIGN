@@ -2,8 +2,7 @@
    language's C++-style features can actually be *used*: default
    constructors defined out of class, `Class::member` in
    expressions, a class name used as a type inside its own body,
-   operator overloading,
-   va_list / va_start / va_arg / va_end, const pointers and references
+   operator overloading, const pointers and references
    to pointers, unnamed (abstract) parameters and pointer-to-array casts,
    designated and empty initializers, adjacent string literals, and a
    struct that is a type only inside its own block. A fully valid
@@ -21,11 +20,8 @@ public:
 Node::Node() { value = 1; next = 0; }
 int Node::count() { return 1; }
 struct Pt { int x; int y; };
-int sum(int n, ...) {
-    va_list ap;
-    va_start(ap, n);
-    int s = va_arg(ap, int);
-    va_end(ap);
+int sum(int n, int m) {
+    int s = n + m;
     return s;
 }
 int apply(int *, int);

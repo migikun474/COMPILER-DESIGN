@@ -2,7 +2,7 @@
         SYNTAX ANALYSIS REPORT
 =========================================
 
-Source File : /home/amirishetty/Desktop/semantics/phase2b-semantic/test/valid/v21_mangling.c
+Source File : /home/amirishetty/Desktop/phase 4 compiler/phase2b-semantic/test/valid/v21_mangling.c
 
 No errors found.
 
@@ -417,8 +417,6 @@ const                          const
 char                           char                
 *                              star_op             
 fmt                            CHAR_POINTER        
-,                              comma_op            
-...                            ellipsis_op         
 )                              close_paren_op      
 {                              open_brace_op       
 }                              close_brace_op      
@@ -760,7 +758,7 @@ Program "translation_unit"
 |-- FunctionDef "f26 : _Z3f26PA4_i"
 |   |-- ParamDecl "a : INT_ARRAY_ARRAY"
 |   `-- CompoundStmt
-|-- FunctionDef "f14 : _Z3f14PKcz"
+|-- FunctionDef "f14 : _Z3f14PKc"
 |   |-- ParamDecl "fmt : CHAR_POINTER"
 |   `-- CompoundStmt
 |-- FunctionDef "f17 : _Z3f17RiS_"
@@ -940,7 +938,7 @@ f13                  procedure      48     global                       PROCEDUR
 p                    parameter      48     global > f13()               INT_POINTER_ARRAY                          0                                
 f26                  procedure      49     global                       PROCEDURE                                 0         VOID (INT_ARRAY_ARRAY) _Z3f26PA4_i
 a                    parameter      49     global > f26()               INT_ARRAY_ARRAY                           0                                
-f14                  procedure      51     global                       PROCEDURE                                 0         VOID (CHAR_POINTER)    _Z3f14PKcz
+f14                  procedure      51     global                       PROCEDURE                                 0         VOID (CHAR_POINTER)    _Z3f14PKc
 fmt                  parameter      51     global > f14()               CHAR_POINTER                              0                                
 f17                  procedure      52     global                       PROCEDURE                                 0         VOID (INT_POINTER, INT_POINTER) _Z3f17RiS_
 a                    parameter      52     global > f17()               INT_POINTER                               0                                

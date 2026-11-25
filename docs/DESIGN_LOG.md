@@ -1401,6 +1401,35 @@ union half of D42.
   become `v28_enums` and `e25_enums`; `e24_removed_keywords` checks
   that `union` is rejected.
 
+### D51. User-written variable-argument functions removed (2026-11-25)
+
+**Decided by:** the user: remove variable-argument function calls
+completely, except for `printf` and `scanf`.
+
+- `va_list`, `va_start`, `va_arg` and `va_end` stay reserved words, and
+  the scanner rejects them: "'va_list' is not supported: this language
+  has no variable-argument functions (only printf and scanf take a
+  variable number of arguments)" (like `virtual` and `union`, D47/D50).
+- `...` in a parameter list is still recognized by the grammar, only to
+  report the same message as one syntax error (dropping it in the
+  scanner would leave `int f(int n, )` and a second, confusing error).
+- Gone: the `va_list` type (`TypeKind::Opaque`), `varargBuiltin` and its
+  checks, the `isVariadic` flag of declarators and the `z` in mangled
+  names, the `VaStart` / `VaArg` / `VaEnd` quads in TAC, the
+  interpreter, the optimizer and MIPS, and the variadic prologue that
+  stored all of `$a0`-`$a3`. D48's reaching-definitions special case for
+  `va_start` went with them.
+- Kept: `printf` and `scanf` are built-ins whose function type is still
+  variadic (`Type::variadic` now means only them); their extra arguments
+  get C's default promotions (`promoteVariadic`) and the run-time
+  routines read them from the stack.
+- Tests: `t07_functions` passes arrays with their length instead,
+  `t13_runtime` passes a double, a long long and a string as ordinary
+  arguments (both print exactly what they printed before, checked with
+  g++); the varargs cases left `diagnostics/uninitialized`, `v04`,
+  `v18`, `v21` and `e15`; `e24_removed_keywords` checks `va_list`;
+  parser `test17` and `test24`, lexer `test4` updated.
+
 ---
 
 ## Open questions

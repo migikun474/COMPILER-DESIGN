@@ -58,7 +58,7 @@ struct Emitter {
     std::string label;                          /* its assembly name */
     std::map<const sem::Symbol *, int> varOff;  /* $fp-relative */
     std::map<int, int> tempOff;
-    int frameSize = 0, varargStart = 0, fnIndex = 0, localLabels = 0;
+    int frameSize = 0, argumentBytes = 0, fnIndex = 0, localLabels = 0;
     std::vector<const Quad *> params;           /* `param`s waiting for their call */
 
     explicit Emitter(const Program &p) : prog(p) {}
@@ -512,9 +512,8 @@ struct Emitter {
         }
     }
 
-    void saveArgumentRegisters(const Function &f) {
-        bool variadic = f.sym->type && f.sym->type->variadic;
-        int words = variadic ? ARGUMENT_REGISTER_BYTES / 4 : std::min(ARGUMENT_REGISTER_BYTES / 4, (varargStart + 3) / 4);
+    void saveArgumentRegisters() {
+        int words = std::min(ARGUMENT_REGISTER_BYTES / 4, (argumentBytes + 3) / 4);
         for (int word = 0; word < words; ++word)
             ins("sw    " + argumentRegister(word) + ", " + std::to_string(8 + 4 * word) + "($fp)");
     }
@@ -633,25 +632,6 @@ struct Emitter {
                 }
                 ins("j     " + label + "_exit");
                 break;
-            case Op::VaStart: /* the first argument after the named ones */
-                ins("addiu $t0, $fp, " + std::to_string(8 + varargStart));
-                ins("sw    $t0, " + mem(q.a));
-                break;
-            case Op::VaArg: {
-                auto s = slot(q.r.type);
-                ins("lw    $t8, " + mem(q.a));
-                if (s.second == 8) {
-                    ins("addiu $t8, $t8, 7");
-                    ins("li    $t9, -8");
-                    ins("and   $t8, $t8, $t9");
-                }
-                ins("addiu $t9, $t8, " + std::to_string(s.first));
-                ins("sw    $t9, " + mem(q.a));
-                loadValueFrom("0($t8)", q.r);
-                break;
-            }
-            case Op::VaEnd:
-                break;
         }
     }
 
@@ -679,7 +659,7 @@ struct Emitter {
             varOff[p] = 8 + at;
             at += s.first;
         }
-        varargStart = at;
+        argumentBytes = at;
 
         /* locals, and the temporaries the code still uses, below $fp */
         int depth = 0;
@@ -729,7 +709,7 @@ struct Emitter {
             ins("j     __stack_overflow");
             lab(ok);
         }
-        saveArgumentRegisters(f);
+        saveArgumentRegisters();
         for (const auto &line : code) text << line << "\n";
         for (const auto &line : body) text << line << "\n";
         code.clear();

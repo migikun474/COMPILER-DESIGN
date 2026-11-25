@@ -35,7 +35,7 @@ bool isTemporaryCopiedOnward(const Quad &q, const Quad &next) {
 
 bool removeIfUnread(Quad &q, size_t i, std::vector<bool> &removed) {
     switch (q.op) {
-        case Op::Store: case Op::IndexStore: case Op::VaArg:
+        case Op::Store: case Op::IndexStore:
             return false;
         case Op::Call:
             q.r = Operand();

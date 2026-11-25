@@ -20,7 +20,8 @@ any interesting ambiguity/precedence decisions behind the rule's shape.
 > this document is historical. `enum` and `union` came back on
 > 2026-11-23 (D42: `union` shares the struct rules, `enum` has
 > `enumerator_list` / `enumerator`), and `extern` was removed (D43).
-> `union` was removed again on 2026-11-24 (D50).
+> `union` was removed again on 2026-11-24 (D50), and user-written
+> variable-argument functions (`...`, `va_*`) on 2026-11-25 (D51).
 
 ---
 
@@ -83,7 +84,7 @@ function_definition
           if (outOfClass) enterClass($2.decl.className);
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), currentClassName());
           std::string returnType = computeTypeStr($1.typeSpec, $2.decl.pointerLevel, $2.decl.arrayLevel);
           SymbolDeclInfo extra;
           extra.tokenIdx = $2.decl.nameIdx;
@@ -113,7 +114,7 @@ function_definition
           if (outOfClass) enterClass($2.decl.className);
           std::vector<std::string> paramTypes;
           for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+          std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), currentClassName());
           if (outOfClass) leaveClass();
           auto node = mkNode(ASTKind::FunctionDef, $2.decl.name + " : " + mangled);
           for (auto &p : $2.decl.params) {
@@ -202,7 +203,7 @@ is still active here).
 ```cpp
 std::vector<std::string> paramTypes;
 for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), currentClassName());
 ```
 Hands each parameter's type expression (`paramExprs()`: the
 `ASTTypeExpr` of every parameter) to `mangle()`, which builds the real
@@ -294,7 +295,7 @@ bool outOfClass = !$2.decl.className.empty();
 if (outOfClass) enterClass($2.decl.className);
 std::vector<std::string> paramTypes;
 for (auto &p : $2.decl.params) paramTypes.push_back(p.typeStr);
-std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), $2.decl.isVariadic, currentClassName());
+std::string mangled = mangle($2.decl.name, paramExprs($2.decl.params), currentClassName());
 if (outOfClass) leaveClass();
 ```
 The exact same mangled-name computation as Step 3, run a second time.

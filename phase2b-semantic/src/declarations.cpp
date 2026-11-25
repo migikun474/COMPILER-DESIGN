@@ -220,8 +220,7 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
         }
         auto c = [&](const char *k) { return n.count(k) ? n[k] : 0; };
         int ints = c("INT"), chars = c("CHAR"), shorts = c("SHORT"), longs = c("LONG"), sig = c("SIGNED"),
-            uns = c("UNSIGNED"), flts = c("FLOAT"), dbls = c("DOUBLE"), voids = c("VOID"), bools = c("BOOL"),
-            valists = c("VA_LIST");
+            uns = c("UNSIGNED"), flts = c("FLOAT"), dbls = c("DOUBLE"), voids = c("VOID"), bools = c("BOOL");
         std::string spelled;
         for (const auto &p : te.specParts) {
             std::string lower = p;
@@ -229,13 +228,12 @@ TypePtr SemanticAnalyzer::resolveSpecifiers(const ASTTypeExpr &te, const ASTNode
             spelled += (spelled.empty() ? "" : " ") + lower;
         }
         bool bad = ints > 1 || chars > 1 || shorts > 1 || longs > 2 || sig > 1 || uns > 1 || flts > 1 ||
-                   dbls > 1 || voids > 1 || bools > 1 || valists > 1 || (sig && uns);
+                   dbls > 1 || voids > 1 || bools > 1 || (sig && uns);
         int others = static_cast<int>(te.specParts.size());
         if (!bad) {
-            if (voids || bools || flts || valists) {
+            if (voids || bools || flts) {
                 bad = others != 1;
-                base = voids ? voidType() : bools ? boolType()
-                     : valists ? opaqueType("va_list") : basicType(TypeKind::Float);
+                base = voids ? voidType() : bools ? boolType() : basicType(TypeKind::Float);
             } else if (dbls) {
                 bad = others != 1; /* `long double` is not a type of this language */
                 base = doubleType();
@@ -403,7 +401,7 @@ SemanticAnalyzer::Resolved SemanticAnalyzer::resolveType(const ASTTypeExpr &te, 
             error(line, col, "function " + who + " cannot return an array type", "invalid-declarator");
             t = errorType();
         }
-        t = functionType(t, resolveParams(te, at), te.isVariadic);
+        t = functionType(t, resolveParams(te, at), false);
     } else {
         t = wrapArrays(t, innerDims, te.arrayDims.size());
     }
@@ -1116,7 +1114,7 @@ SymbolPtr SemanticAnalyzer::functionSignature(const ASTNodePtr &n, DeclCtx ctx, 
     sym->declNode = n.get();
     /* the link name, from the resolved signature (Itanium C++ ABI) */
     sym->mangledName = (name == "main" && ctx == DeclCtx::Global) ? "main"
-                                                                  : mangle(name, ft->params, ft->variadic, rec ? rec->tag : "");
+                                                                  : mangle(name, ft->params, rec ? rec->tag : "");
     sym->uniqueName = sym->mangledName;
     /* distinct signatures always mangle differently; this only guards
        the TAC namespace against a declaration that already failed */
@@ -1146,8 +1144,8 @@ void SemanticAnalyzer::checkMainSignature(const SymbolPtr &s, const ASTNode *at)
     if (!isError(ft->ret) && !(ft->ret->kind == TypeKind::Int && !ft->ret->isUnsigned)) {
         error(s->line, s->column, "'main' must return 'int' (declared to return " + q(ft->ret) + ")", "main");
     }
-    bool ok = ft->params.empty() && !ft->variadic;
-    if (ft->params.size() == 2 && !ft->variadic) {
+    bool ok = ft->params.empty();
+    if (ft->params.size() == 2) {
         TypePtr argvType = pointerTo(pointerTo(charType()));
         ok = ft->params[0]->kind == TypeKind::Int && !ft->params[0]->isUnsigned &&
              sameType(ft->params[1], argvType);
@@ -1585,7 +1583,7 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 s->name = tag;
                 s->kind = SymbolKind::Function;
                 std::vector<TypePtr> params = m->typeExpr ? resolveParams(*m->typeExpr, m.get()) : std::vector<TypePtr>{};
-                if (!params.empty() || (m->typeExpr && m->typeExpr->isVariadic)) {
+                if (!params.empty()) {
                     /* only the default constructor exists in this language (D35) */
                     error(m.get(), "constructor '" + tag + "' cannot take parameters: only default constructors '" + tag +
                                        "()' are supported",
@@ -1602,7 +1600,7 @@ void SemanticAnalyzer::recordDefinition(const ASTNodePtr &n) {
                 s->line = m->line;
                 s->column = m->column;
                 s->declNode = m.get();
-                s->mangledName = mangle(s->name, s->type->params, s->type->variadic, tag);
+                s->mangledName = mangle(s->name, s->type->params, tag);
                 s->uniqueName = s->mangledName;
                 if (!rec->constructors.empty()) {
                     error(m.get(), "constructor '" + describeSignature(s) + "' is already declared at line " +

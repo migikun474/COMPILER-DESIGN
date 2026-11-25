@@ -1,5 +1,5 @@
 /* The C++-style parts of the language: constructors and object
-   construction, operator overloading, and va_start/va_arg/va_end. */
+   construction and operator overloading. */
 #include <algorithm>
 #include <functional>
 #include <set>
@@ -154,7 +154,7 @@ void SemanticAnalyzer::outOfClassSpecial(const ASTNodePtr &n) {
         error(n.get(), "constructor name '" + name + "' does not match the class name '" + rec->tag + "'", "constructor");
         return;
     }
-    if (!resolveParams(*n->typeExpr, n.get()).empty() || n->typeExpr->isVariadic) {
+    if (!resolveParams(*n->typeExpr, n.get()).empty()) {
         error(n.get(), "constructor '" + rec->tag + "' cannot take parameters: only default constructors '" + rec->tag +
                            "()' are supported",
               "constructor");
@@ -211,7 +211,6 @@ void SemanticAnalyzer::checkOperatorDeclaration(const SymbolPtr &s, const ASTNod
     auto bad = [&](const std::string &why) { error(at, "overloaded '" + s->name + "' " + why, "operator-overload"); };
     if (!member && memberOnly.count(op)) return bad("must be a non-static member function");
     if (op == "()") return;
-    if (s->type->variadic) return bad("cannot be variadic");
     if (binaryOnly.count(op) && operands != 2) return bad("must be a binary operator (it has " + std::to_string(operands) + " operand" + (operands == 1 ? "" : "s") + ")");
     if (unaryOnly.count(op) && operands != 1) return bad("must be a unary operator (it has " + std::to_string(operands) + " operands)");
     if (either.count(op) && operands != 1 && operands != 2) return bad("must be a unary or binary operator (it has " + std::to_string(operands) + " operands)");
@@ -286,70 +285,6 @@ bool SemanticAnalyzer::overloadedOperator(const ASTNodePtr &n, const std::string
     }
     result = r;
     return true;
-}
-
-/* ---------------- va_start / va_arg / va_end ---------------- */
-
-TypePtr SemanticAnalyzer::varargBuiltin(const ASTNodePtr &n) {
-    const std::string &name = n->label;
-    const auto &args = n->children;
-    size_t want = name == "va_end" ? 1 : 2;
-    for (size_t i = 0; i < args.size(); ++i) {
-        if (!(name == "va_arg" && i == 1 && args[i]->kind == ASTKind::TypeNameNode)) expr(args[i]);
-    }
-    if (args.size() != want) {
-        error(n.get(), "'" + name + "' expects " + std::to_string(want) + " argument" + (want == 1 ? "" : "s") + " but " +
-                           std::to_string(args.size()) + (args.size() == 1 ? " was" : " were") + " provided",
-              "argument-count");
-        return name == "va_arg" ? errorType() : voidType();
-    }
-    const ASTNodePtr &ap = args[0];
-    TypePtr apt = stripRef(ap->semType);
-    if (!isError(apt) && !(apt->kind == TypeKind::Opaque && apt->name == "va_list")) {
-        error(ap.get(), "argument 1 of '" + name + "' must be a 'va_list' variable, not " + q(ap->semType), "varargs");
-    } else if (!isError(apt) && !ap->isLValue) {
-        error(ap.get(), "argument 1 of '" + name + "' must be a 'va_list' variable (an lvalue)", "varargs");
-    }
-    if (name == "va_start") {
-        FunctionCtx *f = fn();
-        Symbol *fsym = f ? f->fn : nullptr;
-        if (!fsym || !fsym->type->variadic) {
-            error(n.get(), "'va_start' used in " + std::string(fsym ? "function '" + fsym->name + "', which has fixed arguments"
-                                                                    : "a context that is not a variadic function"),
-                  "varargs");
-        } else if (fsym->params.empty()) {
-            error(n.get(), "'va_start' needs a named parameter before the '...'", "varargs");
-        } else {
-            const SymbolPtr &last = fsym->params.back();
-            if (!(args[1]->kind == ASTKind::Identifier && args[1]->symbol == last)) {
-                warning(args[1].get(), "second argument of 'va_start' is not the last named parameter ('" + last->name + "')",
-                        "varargs");
-            }
-        }
-        return voidType();
-    }
-    if (name == "va_end") return voidType();
-    /* va_arg(ap, T) */
-    const ASTNodePtr &tn = args[1];
-    if (tn->kind != ASTKind::TypeNameNode || !tn->typeExpr) {
-        error(tn.get(), "second argument of 'va_arg' must be a type", "varargs");
-        return errorType();
-    }
-    TypePtr t = resolveType(*tn->typeExpr, tn.get(), false).type;
-    tn->semType = t;
-    if (!t || isError(t)) return errorType();
-    if (!isComplete(t) || isArray(t) || isFunction(t)) {
-        error(tn.get(), "'va_arg' cannot fetch a value of type " + q(t), "varargs");
-        return errorType();
-    }
-    TypePtr promoted = integerPromotion(t);
-    if (t->kind == TypeKind::Float) promoted = doubleType();
-    if (!sameType(promoted, t)) {
-        warning(tn.get(), q(t) + " is promoted to " + q(promoted) + " when passed through '...', so 'va_arg' must ask for " +
-                              q(promoted),
-                "varargs");
-    }
-    return unqualified(t);
 }
 
 } // namespace sem

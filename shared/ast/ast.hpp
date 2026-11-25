@@ -73,7 +73,6 @@ struct ASTTypeExpr {
     std::string ptrOps;
     std::string innerPtrOps;
     bool isFunction = false;
-    bool isVariadic = false;
     std::vector<std::shared_ptr<ASTTypeExpr>> params;
 
     std::string className;              /* `Class::member` out-of-class definitions */

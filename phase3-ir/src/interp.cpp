@@ -41,7 +41,6 @@ struct Frame {
     const Function *fn = nullptr;
     const Layout *layout = nullptr;
     uint32_t base = 0;
-    std::vector<Arg> varargs;
 };
 
 struct Fault : std::runtime_error {
@@ -594,13 +593,13 @@ class Machine {
         need(fr.base, fr.layout->width + 8);
         memset(&mem[fr.base], 0, fr.layout->width + 8);
 
-        /* bind `this`, then the declared parameters; the rest are `...` */
+        /* bind `this`, then the declared parameters */
         std::vector<const sem::Symbol *> params;
         if (f.thisSym) params.push_back(f.thisSym);
         if (f.sym)
             for (const auto &p : f.sym->params) params.push_back(p.get());
         for (size_t i = 0; i < args.size(); ++i) {
-            if (i >= params.size()) { fr.varargs.push_back(args[i]); continue; }
+            if (i >= params.size()) break;
             auto slot = fr.layout->vars.find(params[i]);
             if (slot == fr.layout->vars.end()) continue;
             uint32_t at = fr.base + slot->second;
@@ -722,26 +721,6 @@ class Machine {
                         }
                     }
                     return result;
-                case Op::VaStart: {
-                    /* the extra arguments in 8-byte slots (double or 64-bit integer);
-                       `ap` is a pointer into them, so it can be passed on */
-                    uint32_t area = heapAlloc(8 * static_cast<uint32_t>(fr.varargs.size()) + 8);
-                    for (size_t i = 0; i < fr.varargs.size(); ++i)
-                        write(area + 8 * static_cast<uint32_t>(i), isFloatCls(fr.varargs[i].cls) ? Cls::Double : Cls::LLong,
-                              fr.varargs[i].v);
-                    write(addressOf(q.a, fr), Cls::Ptr, {area, 0});
-                    break;
-                }
-                case Op::VaArg: {
-                    uint32_t cursor = addressOf(q.a, fr);
-                    uint32_t slot = static_cast<uint32_t>(read(cursor, Cls::Ptr).i);
-                    Val v = read(slot, isFloatCls(q.cls) ? Cls::Double : Cls::LLong);
-                    write(cursor, Cls::Ptr, {slot + 8, 0});
-                    write(addressOf(q.r, fr), classOf(q.r.type), v);
-                    break;
-                }
-                case Op::VaEnd:
-                    break;
             }
             pc = nextPc;
         }

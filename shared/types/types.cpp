@@ -71,13 +71,6 @@ TypePtr enumType(const std::shared_ptr<EnumInfo> &e) {
     return make(t);
 }
 
-TypePtr opaqueType(const std::string &name) {
-    Type t;
-    t.kind = TypeKind::Opaque;
-    t.name = name;
-    return make(t);
-}
-
 TypePtr qualified(const TypePtr &t, bool isConst) {
     if (!t || !isConst || t->isConst) return t;
     Type q = *t;
@@ -157,8 +150,6 @@ bool sameType(const TypePtr &a, const TypePtr &b, bool exactQualifiers) {
             return true;
         case TypeKind::Record:
             return a->record == b->record;
-        case TypeKind::Opaque:
-            return a->name == b->name;
         default:
             return true; /* Void, Bool, Float, Double, Error */
     }
@@ -332,8 +323,6 @@ long long sizeOf(const TypePtr &t) {
         }
         case TypeKind::Record:
             return (t->record && t->record->complete) ? t->record->size : -1;
-        case TypeKind::Opaque:
-            return 4; /* va_list: a cursor into the argument area */
         default:
             return -1;
     }
@@ -414,7 +403,6 @@ static std::string baseName(const TypePtr &t) {
         case TypeKind::Double: return "double";
         case TypeKind::Record:
             return t->record ? recordDisplayName(*t->record) : "struct ?";
-        case TypeKind::Opaque: return t->name;
         default: return "?";
     }
 }

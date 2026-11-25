@@ -1,5 +1,5 @@
 /* test17 -- syntax errors in function definitions: missing return
-   type, malformed parameter lists, misuse of variadic '...', and
+   type, malformed parameter lists, a variadic '...', and
    mismatched braces spanning a function boundary. One function per
    case, each verified independently. */
 
@@ -21,8 +21,8 @@ int t03_untyped_param(a, int b) {
     return a + b;
 }
 
-/* [4] '...' with no ordinary parameter before it -- the grammar only
-   allows ELLIPSIS after a real parameter_list, not on its own */
+/* [4] '...' -- this language has no variable-argument functions: the
+   grammar recognizes it only to report it (D51) */
 int t04_ellipsis_with_no_params(...) {
     return 0;
 }

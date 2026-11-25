@@ -1,17 +1,12 @@
 /* valid: const pointers and references to pointers, unnamed parameters,
-   designated and empty initializers, va_list, string concatenation,
+   designated and empty initializers, string concatenation,
    scoped type names */
 typedef int T;
 struct Pt { int x; int y; int z; };
 struct Node { int v; struct Node *next; };
 
-int sum(int n, ...) {
-    va_list ap;
-    va_start(ap, n);
-    int s = 0;
-    for (int i = 0; i < n; i++) s += va_arg(ap, int);
-    double tail = va_arg(ap, double);
-    va_end(ap);
+int sum(int n, int a, int b, double tail) {
+    int s = n + a + b;
     return s + tail;
 }
 int apply(int *, int);                  /* unnamed parameters */

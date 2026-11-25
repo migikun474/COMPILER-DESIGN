@@ -53,7 +53,6 @@ void becomeCopy(Quad &q, Operand source) {
 MemoryModel::MemoryModel(const Function &fn) {
     for (const auto &q : fn.quads) {
         if (q.op == Op::AddrOf && isName(q.a)) taken.insert(nameOf(q.a));
-        if (q.op == Op::VaStart && isName(q.b)) taken.insert(nameOf(q.b));
     }
 }
 

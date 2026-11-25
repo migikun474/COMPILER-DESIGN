@@ -1288,7 +1288,6 @@ const Builtin *builtinFor(const std::string &name) {
 } // namespace
 
 TypePtr SemanticAnalyzer::builtinCall(const ASTNodePtr &n) {
-    if (n->label.compare(0, 3, "va_") == 0) return varargBuiltin(n);
     std::vector<ASTNodePtr> args(n->children.begin(), n->children.end());
     for (const auto &a : args) expr(a);
     const Builtin *b = builtinFor(n->label);

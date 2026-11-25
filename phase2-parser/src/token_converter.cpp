@@ -45,6 +45,11 @@ int to_bison_token(TokenType t) {
         case TokenType::AUTO:    return AUTO;
         case TokenType::VIRTUAL:  return VIRTUAL;
         case TokenType::EXPLICIT: return EXPLICIT;
+        /* reserved but not part of the grammar: the scanner reports them (D50, D51) */
+        case TokenType::UNION: case TokenType::VA_LIST: case TokenType::VA_START: case TokenType::VA_ARG:
+        case TokenType::VA_END:
+            return -1;
+        case TokenType::ELLIPSIS_OP:         return ELLIPSIS;
         case TokenType::FRIEND:   return FRIEND;
 
         // ---- control-flow keywords ----
@@ -74,15 +79,10 @@ int to_bison_token(TokenType t) {
         case TokenType::FREE:    return FREE;
         case TokenType::CALLOC:  return CALLOC;
         case TokenType::REALLOC: return REALLOC;
-        case TokenType::VA_LIST:      return VA_LIST;
-        case TokenType::VA_START:     return VA_START;
-        case TokenType::VA_ARG:       return VA_ARG;
-        case TokenType::VA_END:       return VA_END;
         case TokenType::OPERATOR:     return OPERATOR;
 
         // ---- multi-character operators ----
         case TokenType::ARROW_OP:            return ARROW;
-        case TokenType::ELLIPSIS_OP:         return ELLIPSIS;
         case TokenType::SCOPE_RESOLUTION_OP: return SCOPE_RES;
 
         case TokenType::PLUS_ASSIGN_OP:      return PLUS_ASSIGN;
